@@ -1,0 +1,72 @@
+#
+# Makefile for Glauber calculations:	Wim Cosyn
+#
+#-------------------------------------------------------------------------
+#
+
+#		Version number
+VERSION =	
+
+#		Calc-path
+CPATH 	=	.
+
+#		C compilation...
+CC      = 	g++
+
+#		Flags
+OPTFLAG	=	-O3
+STATIC  =	--static
+DBGFLAG	=	-g
+GPFLAG  = 	-pg
+WFLAG   = 	-Wall
+CFLAGS	=	$(OPTFLAG) $(WFLAG) $(GPFLAG)  #$(DBGFLAG)  #$(STATIC)
+
+#		Executable file
+EFILE   = 	../bin/dis
+EFILEST   = 	../bin/staticdis
+
+
+#		Mathematical functions
+LIBS =	 	-lm  -lgfortran 
+WIMLIBS = -lmephys -lglauber
+ROOT =		`/usr/local/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+ LIBDIRS = -L/home/wim/Code/lib
+ INCLUDEDIRS =  -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber
+STATICLIBS = /home/wim/Code/lib/libglauber.a  /home/wim/Code/lib/libmephys.a 
+
+#		Header files
+HDRS =		$(CPATH)/DeuteronMomDistr.hpp\
+		$(CPATH)/DeuteronCross.hpp
+
+# root headers
+
+#		Object files
+OBJS = 	        $(HDRS:.hpp=.o) $(CPATH)/deepstest.o
+
+#-------------------------------------------------------------------------
+
+#		Targets...
+
+all:		$(EFILE)
+static:		$(EFILEST)
+#-------------------------------------------------------------------------
+clean:;		@rm -f $(OBJS) core*
+
+#-------------------------------------------------------------------------
+
+$(EFILE):	$(OBJS) $(HDRS)
+		@echo "Linking $(EFILE)..."
+		$(CC) $(CFLAGS) -o $(EFILE) $(MAIN1) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
+$(EFILEST):	$(OBJS) $(HDRS) 
+		@echo "Linking $(EFILEST)..."
+		$(CC) $(CFLAGS) -o $(EFILEST) $(MAIN1) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
+
+# $(OBJS):	$(HDRS) $(HDRS2) $(DICTHDRS) $(INCHDRS)
+
+#------
+
+
+#		Rule to make objectfile
+%.o: 		%.cpp
+		@echo "Compiling..."
+		$(CC) $(CFLAGS) -c $*.cpp -o $*.o $(ROOT) $(INCLUDEDIRS)

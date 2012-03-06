@@ -1,0 +1,89 @@
+#
+# Makefile for Glauber calculations:	Wim Cosyn
+#
+#-------------------------------------------------------------------------
+#
+
+#		Version number
+VERSION =	
+
+#		Calc-path
+CPATH 	=	.
+
+#		C compilation...
+CC      = 	g++
+
+#		Flags
+OPTFLAG	=	-O3 -fPIC
+STATIC  =	--static
+DBGFLAG	=	-g
+GPFLAG  = 	-pg
+WFLAG   = 	-Wall
+CFLAGS	=	$(OPTFLAG) $(WFLAG)   $(GPFLAG) #$(DBGFLAG)  #$(STATIC)
+
+#		Executable file
+EFILE   = 	../lib/libglauber.so.1.0
+EFILEST   = 	../lib/libglauber.a
+
+
+#		Mathematical functions
+LIBS =	 	-lm -lmephys
+ROOT =		`/usr/local/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`   
+LIBDIRS = -L/home/wim/Code/lib
+INCLUDEDIRS = -I/home/wim/Code/Tools
+
+#		Header files
+HDRS =		$(CPATH)/MeanFieldNucleus.hpp\
+		$(CPATH)/MeanFieldNucleusThick.hpp\
+		$(CPATH)/Utilfunctions.hpp\
+		$(CPATH)/FsiCorrelator.hpp\
+		$(CPATH)/FastParticle.hpp\
+		$(CPATH)/AbstractFsiGrid.hpp\
+		$(CPATH)/AbstractFsiCTGrid.hpp\
+		$(CPATH)/AbstractFsiGridThick.hpp\
+		$(CPATH)/AbstractFsiCTGridThick.hpp\
+		$(CPATH)/GlauberGrid.hpp\
+		$(CPATH)/GlauberGridThick.hpp\
+		$(CPATH)/OneGlauberGrid.hpp\
+		$(CPATH)/TMFSpinor.hpp
+
+DICTHDRS =	$(CPATH)/TMFSpinorDict.h
+
+#		Object files
+OBJS = 	        $(HDRS:.hpp=.o) $(DICTHDRS:.h=.o)
+
+
+#-------------------------------------------------------------------------
+
+#		Targets...
+
+all:		$(EFILE)
+static:		$(EFILEST)
+#-------------------------------------------------------------------------
+clean:;		@rm -f $(OBJS)  $(DICTHDRS) $(DICTHDRS:.h=.cpp) core*
+
+#-------------------------------------------------------------------------
+
+$(EFILE):	$(OBJS) $(HDRS) $(DICTHDRS)
+		@echo "Linking library $(EFILE)..."
+		$(CC) -shared -Wl,-soname,libglauber.so.1 -o $(EFILE) $(OBJS) $(LIBS) $(ROOT) $(LIBDIRS)
+		ln -sf ../lib/libglauber.so.1.0 ../lib/libglauber.so
+		ln -sf ../lib/libglauber.so.1.0 ../lib/libglauber.so.1
+    
+$(EFILEST):	$(OBJS) $(HDRS) $(DICTHDRS) $(HDRS2) $(INCHDRS)
+		@echo "Linking static library $(EFILEST)..."
+		ar -cvr $(EFILEST) $(OBJS)
+
+# $(OBJS):	$(HDRS) $(HDRS2) $(DICTHDRS) $(INCHDRS)
+
+#------
+
+
+#		Rule to make objectfile
+%.o: 		%.cpp
+		@echo "Compiling..."
+		$(CC) $(CFLAGS) -c $*.cpp -o $*.o $(ROOT) $(INCLUDEDIRS)
+
+%Dict.cpp:	%.hpp %LinkDef.h
+		@echo "Making dictionary..."
+		@rootcint -f $*Dict.cpp -c -p `root-config --cflags` $(CFLAGS) $(INCLUDEDIRS) $*.hpp $*LinkDef.h
