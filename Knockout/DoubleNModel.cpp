@@ -64,8 +64,8 @@ complex<double> DoubleNModel::getMatrixEl(const TKinematics2to3 &tk, int spinout
   if(!pw){
     gridf1 = new GlauberGridThick(60,18,5,pnucl,homedir);
     gridf2 = new GlauberGridThick(60,18,5,pnucl,homedir);
-    gridf1->addParticle(&nucl1);
-    gridf2->addParticle(&nucl2);
+    gridf1->addParticle(nucl1);
+    gridf2->addParticle(nucl2);
     //gridf1->printParticles();
     //gridf2->printParticles();
     gridf1->fillGrids();

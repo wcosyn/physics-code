@@ -60,13 +60,13 @@ public:
   int getThindex() const;/*!<  returns the index for theta used in the 3d interpolation*/
   int getPhiindex() const;/*!<  returns the index for phi used in the 3d interpolation */
   MeanFieldNucleus *getPnucleus() const;/*!<  returns the pointer to the MeanFieldNucleus instance */
-  vector<FastParticle*> getParticles() const{return particles;}/*!<  returns the vector with all particles subject to isi/fsi */
+  vector<FastParticle> & getParticles() {return particles;}/*!<  returns the vector with all particles subject to isi/fsi */
   vector<int> getKnockoutLevels() const;/*!< returns the vector with all the shell index values of knocked out nucleons */
   vector<int> getKnockoutM() const;/*!<  returns the vector with all the m values of knocked out nucleons */
   bool getAllinplane() const;/*!<  returns 1 if all the isi/fsi particles lie in the x-z plane */
   /*! add particle subject to isi/fsi, checks to see that the vector contains max one incoming particle
    *\param newparticle pointer to instance of FastParticle you want to add*/
-  virtual void addParticle(FastParticle* newparticle); 
+  virtual void addParticle(FastParticle &newparticle); 
   void printParticles() const; /*!< Print contents of isi/fsi particles vector*/
   /*! add quantum numbers of particle that is knocked out from nucleus
    *\param level shellindex level
@@ -147,7 +147,7 @@ private:
   int protonknockout;  /*!<  total protons that are knocked out from nucleus*/
   int neutronknockout; /*!<  total neutrons that are knocked out from nucleus*/
     
-  vector<FastParticle*> particles; /*!<  the vector with all particles subject to isi/fsi */
+  vector<FastParticle> particles; /*!<  the vector with all particles subject to isi/fsi */
   vector<int> knockoutlevels; /*!< the vector with all the shell index values of knocked out nucleons */
   vector<int> knockoutm; /*!<  the vector with all the m values of knocked out nucleons */
   

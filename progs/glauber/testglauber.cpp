@@ -44,22 +44,30 @@ int main(int argc, char *argv[])
   proton2.printParticle();
   //FastParticle pion(2, 0, 1234,-1.,0.,3.,homedir);
 //   OneGlauberGrid grid(60,18,&CarbonThick,homedir);
-//   grid.addParticle(&proton2);
-//   //grid.addParticle(&pion);
-// //  grid.printParticles();
+//   grid.addParticle(proton2);
+  //grid.addParticle(&pion);
+//  grid.printParticles();
 //   grid.fillGrids();
 //   grid.addKnockout(0,0);
 //    grid.printFsi_grid();
    GlauberGridThick gridthick(60,18,5,&CarbonThick,homedir);
-  gridthick.addParticle(&proton2);
-//   gridthick.printParticles();
+  gridthick.addParticle(proton2);
+   gridthick.printParticles();
   gridthick.fillGrids();
-   GlauberGrid grid(60,18,5,&CarbonThick,homedir);
-  grid.addParticle(&proton2);
-//   gridthick.printParticles();
+//   gridthick.printFsi_src_ct_grid();
+  GlauberGrid grid(60,18,5,&CarbonThick,homedir);
+  grid.addParticle(proton2);
+   grid.printParticles();
   grid.fillGrids();
-
- /*  MeanFieldNucleusThick CupperThick(6,homedir);
+//   grid.printFsi_grid();
+  OneGlauberGrid onegrid(60,18,&CarbonThick,homedir);
+  onegrid.addParticle(proton2);
+  onegrid.printParticles();
+  onegrid.fillGrids();
+  onegrid.printFsi_ct_grid();
+  
+  
+  /*  MeanFieldNucleusThick CupperThick(6,homedir);
   OneGlauberGrid grid3(60,18,&CupperThick,homedir);
   FastParticle pion(2, 0, 2570,0.,0.,3.,homedir);
   grid3.addParticle(&pion);

@@ -221,7 +221,7 @@ void GlauberGridThick::constructAllGrids(){
 	sincos(phi_hit,&sinphi_hit,&cosphi_hit);
 	if(treshold[j][k]==0){ //if treshold is true, we're close enough to one and we don't have to compute everything again and again 
 	  for(size_t it=0; it<getParticles().size();it++){
-	    getParticles()[it]->setHitcoord(r_hit, costheta_hit,sintheta_hit, cosphi_hit, sinphi_hit);
+	    getParticles()[it].setHitcoord(r_hit, costheta_hit,sintheta_hit, cosphi_hit, sinphi_hit);
 	  }
 	  calcGlauberphasesBoth(i,j,k);
 		  	  
@@ -333,7 +333,7 @@ void GlauberGridThick::constructCtGrid(){
 	sincos(phi_hit,&sinphi_hit,&cosphi_hit);
 	if(treshold[j][k]==0){ //if treshold is true, we're close enough to one and we don't have to compute everything again and again 
 	  for(size_t it=0; it<getParticles().size();it++){
-	    getParticles()[it]->setHitcoord(r_hit, costheta_hit,sintheta_hit, cosphi_hit, sinphi_hit);
+	    getParticles()[it].setHitcoord(r_hit, costheta_hit,sintheta_hit, cosphi_hit, sinphi_hit);
 	  }
 	  calcGlauberphasesCt(i,j,k);
 	
@@ -535,21 +535,21 @@ void GlauberGridThick::intGlauberPhi(const double phi, complex<double>* results,
   results[2]=1.;
   
   for(size_t it=0;it<getParticles().size();it++){
-    double zmom=getParticles()[it]->calcZ(r,costheta,sintheta,cosphi,sinphi);
-    bool check=(zmom>getParticles()[it]->getHitz());
-    if(getParticles()[it]->getIncoming()) check=!check;
+    double zmom=getParticles()[it].calcZ(r,costheta,sintheta,cosphi,sinphi);
+    bool check=(zmom>getParticles()[it].getHitz());
+    if(getParticles()[it].getIncoming()) check=!check;
     if(check){
-      complex<double> temp=getParticles()[it]->getSigma(proton,getPnucleusthick())
-			    *(1.-I*getParticles()[it]->getEpsilon(proton,getPnucleusthick()))
-			    /(4.*PI*getParticles()[it]->getBetasq(proton,getPnucleusthick()))
-			    *exp(-getParticles()[it]->getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
-			          /(2.*getParticles()[it]->getBetasq(proton,getPnucleusthick())));
+      complex<double> temp=getParticles()[it].getSigma(proton,getPnucleusthick())
+			    *(1.-I*getParticles()[it].getEpsilon(proton,getPnucleusthick()))
+			    /(4.*PI*getParticles()[it].getBetasq(proton,getPnucleusthick()))
+			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
+			          /(2.*getParticles()[it].getBetasq(proton,getPnucleusthick())));
       results[0]*=1.-temp;
-      results[2]*=1.-temp*(((abs(zmom-getParticles()[it]->getHitz()) > getParticles()[it]->getLc())
-			    ||(getParticles()[it]->getHardScale() < getParticles()[it]->getNkt_sq()))? 
-			    1.:(abs(zmom-getParticles()[it]->getHitz())/getParticles()[it]->getLc() 
-			    + getParticles()[it]->getNkt_sq()/getParticles()[it]->getHardScale()*
-			    (1.-abs(zmom-getParticles()[it]->getHitz()) / getParticles()[it]->getLc())));
+      results[2]*=1.-temp*(((abs(zmom-getParticles()[it].getHitz()) > getParticles()[it].getLc())
+			    ||(getParticles()[it].getHardScale() < getParticles()[it].getNkt_sq()))? 
+			    1.:(abs(zmom-getParticles()[it].getHitz())/getParticles()[it].getLc() 
+			    + getParticles()[it].getNkt_sq()/getParticles()[it].getHardScale()*
+			    (1.-abs(zmom-getParticles()[it].getHitz()) / getParticles()[it].getLc())));
     }
   }
   double gr=getFsiCorrelator().correlation(normr(r,costheta,sintheta,cosphi,sinphi,r_hit,costheta_hit,sintheta_hit,cosphi_hit,sinphi_hit));
@@ -589,20 +589,20 @@ void GlauberGridThick::intGlauberPhiCT(const double phi, complex<double>* result
   results[0]=1.;
   
   for(size_t it=0;it<getParticles().size();it++){
-    double zmom=getParticles()[it]->calcZ(r,costheta,sintheta,cosphi,sinphi);
-    bool check=(zmom>getParticles()[it]->getHitz());
-    if(getParticles()[it]->getIncoming()) check=!check;
+    double zmom=getParticles()[it].calcZ(r,costheta,sintheta,cosphi,sinphi);
+    bool check=(zmom>getParticles()[it].getHitz());
+    if(getParticles()[it].getIncoming()) check=!check;
     if(check){
-      results[0]*=1.-getParticles()[it]->getSigma(proton,getPnucleusthick())
-			    *(1.-I*getParticles()[it]->getEpsilon(proton,getPnucleusthick()))
-			    /(4.*PI*getParticles()[it]->getBetasq(proton,getPnucleusthick()))
-			    *exp(-getParticles()[it]->getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
-			          /(2.*getParticles()[it]->getBetasq(proton,getPnucleusthick())))
-			    *(((abs(zmom-getParticles()[it]->getHitz()) > getParticles()[it]->getLc())
-			    ||(getParticles()[it]->getHardScale() < getParticles()[it]->getNkt_sq()))? 
-			    1.:(abs(zmom-getParticles()[it]->getHitz())/getParticles()[it]->getLc() 
-			    + getParticles()[it]->getNkt_sq()/getParticles()[it]->getHardScale()*
-			    (1.-abs(zmom-getParticles()[it]->getHitz()) / getParticles()[it]->getLc())));
+      results[0]*=1.-getParticles()[it].getSigma(proton,getPnucleusthick())
+			    *(1.-I*getParticles()[it].getEpsilon(proton,getPnucleusthick()))
+			    /(4.*PI*getParticles()[it].getBetasq(proton,getPnucleusthick()))
+			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
+			          /(2.*getParticles()[it].getBetasq(proton,getPnucleusthick())))
+			    *(((abs(zmom-getParticles()[it].getHitz()) > getParticles()[it].getLc())
+			    ||(getParticles()[it].getHardScale() < getParticles()[it].getNkt_sq()))? 
+			    1.:(abs(zmom-getParticles()[it].getHitz())/getParticles()[it].getLc() 
+			    + getParticles()[it].getNkt_sq()/getParticles()[it].getHardScale()*
+			    (1.-abs(zmom-getParticles()[it].getHitz()) / getParticles()[it].getLc())));
     }
   }
   double gr=getFsiCorrelator().correlation(normr(r,costheta,sintheta,cosphi,sinphi,r_hit,costheta_hit,sintheta_hit,cosphi_hit,sinphi_hit));

@@ -138,37 +138,37 @@ bool AbstractFsiGrid::getAllinplane() const{
 
   
 //add particle to the particles vector
-void AbstractFsiGrid::addParticle(FastParticle* newparticle){
+void AbstractFsiGrid::addParticle(FastParticle& newparticle){
   if(!filledgrid){
     if (particles.empty()){
       particles.push_back(newparticle);
-      if(newparticle->getParticletype()==0){
-	if(newparticle->getIncoming()) totalprotonout--;
+      if(newparticle.getParticletype()==0){
+	if(newparticle.getIncoming()) totalprotonout--;
 	else totalprotonout++;
       }
-      if(newparticle->getParticletype()==1){
-	if(newparticle->getIncoming()) totalneutronout--;
+      if(newparticle.getParticletype()==1){
+	if(newparticle.getIncoming()) totalneutronout--;
 	else totalneutronout++;
       }    
     }
     else{
-      if(newparticle->getIncoming()){
-	if(particles[0]->getIncoming()){
+      if(newparticle.getIncoming()){
+	if(particles[0].getIncoming()){
 	  cerr << "Not more than one incoming particle possible in the particle list!!!" << endl <<
 	  "Replacing old incoming particle with this one" << endl;
-	  if(particles[0]->getParticletype()==0) totalprotonout++;
-	  if(particles[0]->getParticletype()==1) totalneutronout++;
+	  if(particles[0].getParticletype()==0) totalprotonout++;
+	  if(particles[0].getParticletype()==1) totalneutronout++;
 	  particles[0]=newparticle;
-	  if(particles[0]->getParticletype()==0) totalprotonout--;
-	  if(particles[0]->getParticletype()==1) totalneutronout--;	
+	  if(particles[0].getParticletype()==0) totalprotonout--;
+	  if(particles[0].getParticletype()==1) totalneutronout--;	
 	}
 	else particles.insert(particles.begin(),newparticle);
-	if(particles[0]->getParticletype()==0) totalprotonout--;
-	if(particles[0]->getParticletype()==1) totalneutronout--;	
+	if(particles[0].getParticletype()==0) totalprotonout--;
+	if(particles[0].getParticletype()==1) totalneutronout--;	
       }
       else particles.push_back(newparticle);
-      if(newparticle->getParticletype()==0) totalprotonout--;
-      if(newparticle->getParticletype()==1) totalneutronout--;	    
+      if(newparticle.getParticletype()==0) totalprotonout--;
+      if(newparticle.getParticletype()==1) totalneutronout--;	    
     }
   }
   else{
@@ -182,7 +182,7 @@ void AbstractFsiGrid::printParticles() const{
   //cout << endl << endl << "Printing contents of particle vector in FSI grid" << endl;
   for(size_t i=0;i<particles.size();i++){
     cout <<"Particle " << i+1 << endl;
-    particles[i]->printParticle();
+    particles[i].printParticle();
   }
 }
 
@@ -319,9 +319,9 @@ complex<double> AbstractFsiGrid::getInterp(complex<double> ***grid){
 void AbstractFsiGrid::setFilenames(string homedir){
   fsi_filename=homedir+pnucleus->getNucleusName();
   for(size_t i=0;i<particles.size();i++){
-    if(particles[i]->getIncoming()) fsi_filename+=".inc";
-    fsi_filename+=".Ptype"+to_string(particles[i]->getParticletype())+".p"+to_string(int(particles[i]->getP()/10))
-		  +".th"+to_string(int(particles[i]->getTheta()*10))+".ph"+to_string(int(particles[i]->getPhi()*10));
+    if(particles[i].getIncoming()) fsi_filename+=".inc";
+    fsi_filename+=".Ptype"+to_string(particles[i].getParticletype())+".p"+to_string(int(particles[i].getP()/10))
+		  +".th"+to_string(int(particles[i].getTheta()*10))+".ph"+to_string(int(particles[i].getPhi()*10));
   }
   fsi_filename+=".r"+to_string(getRgrid())+".th"+to_string(getThgrid())+".phi"+to_string(getPhigrid())+".dat";
 }
@@ -332,7 +332,7 @@ void AbstractFsiGrid::setFilenames(string homedir){
 void AbstractFsiGrid::fillGrids(){
   for(size_t i=0;i<getParticles().size();i++){
     allinplane=1;
-    if((getParticles()[i]->getPhi()!=0.)&&(getParticles()[i]->getPhi()!=PI)){      
+    if((getParticles()[i].getPhi()!=0.)&&(getParticles()[i].getPhi()!=PI)){      
       allinplane=0;
       break;
     }

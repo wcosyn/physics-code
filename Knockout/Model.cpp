@@ -97,7 +97,7 @@ complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonp
   if(!pw){
     if(SRC) grid = new GlauberGridThick(60,18,5,pnucl,homedir);
     else grid = new OneGlauberGrid(60,18,pnucl,homedir);
-    grid->addParticle(&proton);
+    grid->addParticle(proton);
     grid->fillGrids();
     grid->clearKnockout();
     grid->addKnockout(shellindex,m);
@@ -154,7 +154,7 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   if(!pw){
     if(SRC) grid = new GlauberGridThick(60,18,5,pnucl,homedir);
     else grid = new OneGlauberGrid(60,18,pnucl,homedir);
-    grid->addParticle(&proton);
+    grid->addParticle(proton);
     grid->fillGrids();
     grid->clearKnockout();
     grid->addKnockout(shellindex,m);

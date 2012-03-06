@@ -56,7 +56,7 @@ void AbstractFsiCTGrid::setFilenames(string homedir){
   fsi_ct_filename=getFsi_Filename();
   fsi_ct_filename.insert(fsi_ct_filename.size()-4,".CT");
   for(size_t i=0;i<getParticles().size();i++){
-    fsi_ct_filename.insert(fsi_ct_filename.size()-4,("."+to_string(int(getParticles()[i]->getHardScale()*10))));
+    fsi_ct_filename.insert(fsi_ct_filename.size()-4,("."+to_string(int(getParticles()[i].getHardScale()*10))));
   }
   //cout << fsi_ct_filename << endl;
 }

@@ -12,7 +12,6 @@
 #include <complex>
 #include <vector>
 
-#include "FastParticle.hpp"
 #include "MeanFieldNucleus.hpp"
 #include "AbstractFsiGrid.hpp"
 

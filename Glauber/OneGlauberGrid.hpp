@@ -27,7 +27,7 @@ public:
   virtual complex<double> getInterp(complex<double> ***grid);  
   /*! add particle subject to isi/fsi, checks to see the vector only contains max one particle 
    *\param newparticle pointer to instance of FastParticle you want to add*/
-  virtual void addParticle(FastParticle* newparticle);
+  virtual void addParticle(FastParticle& newparticle);
   
   
 private:
