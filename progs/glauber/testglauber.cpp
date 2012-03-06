@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
   //FsiCorrelator CarbonCorr(&CarbonThick,90,90,homedir);
   //FastParticle proton(0, 1, 1234,0.,0.,3.,homedir);
   FastParticle proton2(0, 0, 4878,0.,0.,8.,homedir);
+  proton2.printParticle();
   //FastParticle pion(2, 0, 1234,-1.,0.,3.,homedir);
 //   OneGlauberGrid grid(60,18,&CarbonThick,homedir);
 //   grid.addParticle(&proton2);

@@ -40,7 +40,12 @@ public:
    * \param dir homedir where all input is located
    */
   FastParticle(const int particletype, const int incoming, const TVector3 &pvec, const double hard_scale, string dir);
+  /*! Copy Constructor
+   * \param Copy copy
+   */
+  FastParticle(const FastParticle &Copy);
   ~FastParticle(); /*!< Destructor */
+  FastParticle& operator=(const FastParticle&);/*!< assignment overloading */
 
   int getParticletype() const; /*!< get type of particle */
   bool getIncoming() const;/*!<  get if the particle is a beam particle */

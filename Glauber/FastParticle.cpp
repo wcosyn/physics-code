@@ -87,6 +87,46 @@ FastParticle::FastParticle(const int type, const int inc, const TVector3 &pvec, 
   
 }
 
+FastParticle::FastParticle(const FastParticle &Copy):
+particletype(Copy.getParticletype()),
+incoming(Copy.getIncoming()),
+p(Copy.getP()),
+theta(Copy.getTheta()),
+phi(Copy.getPhi()),
+ex(Copy.getEx()),
+ey(Copy.getEy()),
+ez(Copy.getEz()),
+hitz(Copy.getHitz()),
+hitbnorm(Copy.getHitbnorm()),
+beta2p(Copy.getBeta2p()),
+sigmap(Copy.getSigmap()),
+epsilonp(Copy.getEpsilonp()),
+beta2n(Copy.getBeta2n()),
+sigman(Copy.getSigman()),
+epsilonn(Copy.getEpsilonn()),
+hardscale(Copy.getHardScale()),
+nkt_sq(Copy.getNkt_sq()),
+lc(Copy.getLc())
+{
+  for(int i=0;i<3;i++) hitb[i]=Copy.getHitbvec()[i];
+}
+
+
+FastParticle& FastParticle::operator=(const FastParticle& rhs)
+{
+  // Assignment
+  if( this!=&rhs) { // avoid self-assignment
+     (*this)=FastParticle(rhs);
+     
+     
+     
+  }
+
+  return *this;
+}
+
+
+
 FastParticle::~FastParticle(){
   //cout << "Deleting Particle object..." << endl;
 }
