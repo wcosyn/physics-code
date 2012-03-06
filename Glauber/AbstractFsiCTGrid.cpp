@@ -64,7 +64,7 @@ void AbstractFsiCTGrid::setFilenames(string homedir){
 //fills the grids, uses pure virtual functions!!!!
 void AbstractFsiCTGrid::fillGrids(){
   AbstractFsiGrid::fillGrids();
-  AbstractFsiCTGrid::setFilenames(getDir());
+  setFilenames(getDir());
   if(filledallgrid){
     filledctgrid=1;
     ofstream outfile2(fsi_ct_filename.c_str(),ios::out|ios::binary);

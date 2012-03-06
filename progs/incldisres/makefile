@@ -16,12 +16,12 @@ CPATH 	=	.
 
 #		Flags
 # OPTFLAG	=	-O3 -fPIC
-OPTFLAG	=	-O3 -mtune=core2 -march=corei7-avx -fp-model source -ipo -fPIC
+OPTFLAG	=	-O3 -parallel -xhost -ipo -fPIC -fp-model source -shared-intel
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
 WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG)  $(DBGFLAG)  #$(GPFLAG) #$(STATIC)
+CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 
 #		Executable file
 EFILE   = 	../../bin/inclusiveres
