@@ -17,10 +17,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(ROOT REQUIRED)
 find_package(GSL REQUIRED)
 #Check the compiler and set the compile and link flags
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+# set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
+MESSAGE("${CMAKE_CXX_COMPILER}")
+MESSAGE("${CMAKE_C_COMPILER}")
 
 
 # Create a library called "libEvent" which includes the source files given in
@@ -45,7 +47,41 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 
 EXEC_PROGRAM("hostname" OUTPUT_VARIABLE hostname)
 
-if (hostname MATCHES talvin13 OR hostname MATCHES accident OR hostname MATCHES trillian)
+if (hostname MATCHES accident)
+   MESSAGE("--- Configuring for accident")
+   if (CMAKE_COMPILER_IS_GNUCXX)
+      MESSAGE("--- Found GNU compiler collection")
+
+#       SET(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
+#       SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
+
+      # Select flags.
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -fPIC -g")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -fPIC")
+      set(CMAKE_CXX_FLAGS_DEBUG          "-g -fPIC -O2 -fno-reorder-blocks -fno-schedule-insns -fno-inline")
+      set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3 -fPIC -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
+      set(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fPIC -fno-inline -ftest-coverage -fprofile-arcs")
+      set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3 -fPIC -g")
+      set(CMAKE_C_FLAGS_RELEASE          "-O3 -fPIC")
+      set(CMAKE_C_FLAGS_DEBUG            "-g -O3 -fPIC -fno-reorder-blocks -fno-schedule-insns -fno-inline")
+      set(CMAKE_C_FLAGS_DEBUGFULL        "-g3 -fPIC -fno-inline -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common")
+      set(CMAKE_C_FLAGS_PROFILE          "-g3 -fPIC -fno-inline -ftest-coverage -fprofile-arcs")
+
+      
+      
+    endif (CMAKE_COMPILER_IS_GNUCXX)
+    if(${CMAKE_CXX_COMPILER} MATCHES "icpc")
+      MESSAGE("--- Found Intel compiler collection")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -xhost -fp-model source -ipo -unroll -pthread -fPIC -g -shared-intel ")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -parallel -xhost -ipo -fPIC -fp-model source -shared-intel")
+      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O3 -xhost -fp-model source -ipo -unroll -pthread -fPIC -fno-reorder-blocks -fno-schedule-insns -fno-inline")
+      set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3 -fPIC -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
+      set(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fPIC -fno-inline -ftest-coverage -fprofile-arcs")
+    endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
+
+endif (hostname MATCHES accident) 
+
+if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
    MESSAGE("--- Configuring for talvin13")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
@@ -70,14 +106,14 @@ if (hostname MATCHES talvin13 OR hostname MATCHES accident OR hostname MATCHES t
     endif (CMAKE_COMPILER_IS_GNUCXX)
     if(${CMAKE_CXX_COMPILER} MATCHES "icpc")
       MESSAGE("--- Found Intel compiler collection")
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -mtune=core2 -march=corei7-avx -fp-model source -ipo -unroll -pthread -fPIC -g")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -mtune=core2 -march=corei7-avx -fp-model source -ipo -unroll -pthread -fPIC")
-      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O3 -mtune=core2 -march=corei7-avx -fp-model source -ipo -unroll -pthread -fPIC -fno-reorder-blocks -fno-schedule-insns -fno-inline")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -xhost -fp-model source -ipo -unroll -pthread -fPIC -g -shared-intel ")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -parallel -xhost -ipo -fPIC -fp-model source -shared-intel")
+      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O3 -xhost -fp-model source -ipo -unroll -pthread -fPIC -fno-reorder-blocks -fno-schedule-insns -fno-inline")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3 -fPIC -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fPIC -fno-inline -ftest-coverage -fprofile-arcs")
     endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
 
-endif (hostname MATCHES talvin13 OR hostname MATCHES accident OR hostname MATCHES trillian) 
+endif (hostname MATCHES talvin13 OR hostname MATCHES trillian) 
 
 enable_language (Fortran)
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
@@ -89,7 +125,7 @@ if (Fortran_COMPILER_NAME STREQUAL "gfortran")
 elseif (Fortran_COMPILER_NAME STREQUAL "ifort")
       MESSAGE("--- Found Intel fortran compiler collection")
   # ifort (untested)
-  set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O3")
+  set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O3 -coarray=shared -xhost -ipo -unroll")
   set (CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
 elseif (Fortran_COMPILER_NAME STREQUAL "g77")
   # g77
