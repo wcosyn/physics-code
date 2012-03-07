@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
-
+#include <time.h>
 
 using namespace std;
 
@@ -28,6 +28,15 @@ int main(int argc, char *argv[])
 {
     double Ein=5000.;  
     double Q2=atof(argv[4])*1.E06;
+    srand(atoi(argv[12]));
+    
+    double alpha = float(rand())/RAND_MAX*sqrt(2./3.);
+    double beta = 0.;
+    if(rand()%2) beta = (-alpha+sqrt(2.-3.*alpha*alpha))/2.;
+    else beta = (-alpha-sqrt(2.-3.*alpha*alpha))/2.;
+    double gamma = -alpha-beta;
+    cout << alpha << " " << beta << " " << gamma << " " << alpha*alpha+beta*beta+gamma*gamma << endl;
+    
     for(int i=1;i<20;i++){
       double x=0.05*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
@@ -35,12 +44,12 @@ int main(int argc, char *argv[])
       double teller=0.,fsi1=0.,fsi2=0.,noemer=0.;
       for(int proton=0;proton<=1;++proton){
 	InclusiveCrossRes Dinc(proton,argv[6],argv[5],*elec,atoi(argv[1]),atoi(argv[2]),atoi(argv[3]));
-	Resonance res1=Resonance(atof(argv[9])*1.E03,1./sqrt(2),atof(argv[7]), atof(argv[8]));
-	Resonance res2=Resonance(atof(argv[10])*1.E03,-1./sqrt(2),atof(argv[7]), atof(argv[8]));
-	//Resonance res3=Resonance(atof(argv[11])*1.E03,-1./sqrt(2),atof(argv[7]), atof(argv[8]));
+	Resonance res1=Resonance(atof(argv[9])*1.E03,alpha,atof(argv[7]), atof(argv[8]));
+	Resonance res2=Resonance(atof(argv[10])*1.E03,beta,atof(argv[7]), atof(argv[8]));
+	Resonance res3=Resonance(atof(argv[11])*1.E03,gamma,atof(argv[7]), atof(argv[8]));
 	Dinc.addResonance(res1);
 	Dinc.addResonance(res2);
-	//Dinc.addResonance(res3);
+	Dinc.addResonance(res3);
 	NuclStructure nucleon(proton, Q2, x, 0, argv[6]);
 	teller+=Dinc.calc_F2Dinc(Q2,x);
 	double f1,f2;

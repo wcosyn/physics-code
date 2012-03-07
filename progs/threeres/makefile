@@ -24,8 +24,8 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/inclusiveres
-EFILEST   = 	../../bin/staticinclusiveres
+EFILE   = 	../../bin/threeres
+EFILEST   = 	../../bin/staticthreeres
 
 
 #		Mathematical functions
@@ -42,7 +42,7 @@ HDRS =
 # root headers
 
 #		Object files
-OBJS = 	        $(HDRS:.hpp=.o) $(CPATH)/increstest.o
+OBJS = 	        $(HDRS:.hpp=.o) $(CPATH)/threeres.o
 
 #-------------------------------------------------------------------------
 

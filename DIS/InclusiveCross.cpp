@@ -550,7 +550,7 @@ double InclusiveCrossRes::calc_F2Dinc(double Q2,double x){
   
   double result;
   double prestimate=0.,cosestimate=0.;
-  rombergerN(this,&InclusiveCrossRes::int_pr,0.,1.e03,1,&result,PREC*0.01,3,10,&prestimate, x, Q2, &cosestimate);
+  rombergerN(this,&InclusiveCrossRes::int_pr,0.,1.e03,1,&result,PREC*1.E-03,3,10,&prestimate, x, Q2, &cosestimate);
   return 2.*PI*2.*massi/MASSD*result;
   
   
@@ -570,7 +570,7 @@ void InclusiveCrossRes::int_pr(double prnorm, double *result, va_list ap){
   double lowerlimit= -(-Q2+pow(MASSD-Er,2.)-prnorm*prnorm+2.*(MASSD-Er)*Q2/(2.*massi*x))/(2.*qvec*prnorm);
   if(lowerlimit>lo) {lo=lowerlimit;}
   if(hi<lo){ *result=0.; return;}
-  rombergerN(this, &InclusiveCrossRes::int_costheta_incl,lo+1e-04,hi-1.e-04,1,result,PREC*0.01,3,10,pcosestimate,prnorm, x,Q2);
+  rombergerN(this, &InclusiveCrossRes::int_costheta_incl,lo+1e-04,hi-1.e-04,1,result,PREC*1.E-03,3,10,pcosestimate,prnorm, x,Q2);
   if(prnorm<1.e-04) *result=0.; 
   else *result*=prnorm*prnorm*(pow(wf->GetUp(prnorm),2.)+pow(wf->GetWp(prnorm),2.))/(4.*PI)*(MASSD/(2.*(MASSD-Er)));
   return;
@@ -614,7 +614,7 @@ void InclusiveCrossRes::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,dou
     for(size_t res2=0; res2<max; res2++){
       double results[2];
       double prestimate=0.,cosestimate=0.;
-      rombergerN(this,&InclusiveCrossRes::int_pr_fsi,0.,1.e03,2,results,PREC*0.01,3,10,&prestimate, x, Q2, res1, res2, &cosestimate);
+      rombergerN(this,&InclusiveCrossRes::int_pr_fsi,0.,1.e03,2,results,PREC,3,10,&prestimate, x, Q2, res1, res2, &cosestimate);
       double chi2 = sqrt(s*s-2.*s*(getResonance_vec()[res1].getMass2()+massr*massr)+pow(massr*massr-getResonance_vec()[res1].getMass2(),2.));
       //cout << res1 << " " << res2 << " " << results[0]*chi2 << " " << results[1]*chi2 << endl;
       //cout << res1 << " " << res2 << " " << s*1.E-06 << " " << chi2*1.E-06 << endl;
@@ -643,7 +643,7 @@ void InclusiveCrossRes::int_pr_fsi(double prnorm, double *results, va_list ap){
   double lowerlimit= -(-Q2+pow(MASSD-Er,2.)-prnorm*prnorm+2.*(MASSD-Er)*Q2/(2.*massi*x))/(2.*qvec*prnorm);
   if(lowerlimit>lo) {lo=lowerlimit;}
   if(hi<lo){ results[0]=0.; results[1]=0.; return;}
-  rombergerN(this, &InclusiveCrossRes::int_costheta_incl_fsi,lo+1e-04,hi-1.e-04,2,results,PREC*0.1,3,10,pcosestimate,prnorm, x,Q2,res1,res2);
+  rombergerN(this, &InclusiveCrossRes::int_costheta_incl_fsi,lo+1e-04,hi-1.e-04,2,results,PREC,3,8,pcosestimate,prnorm, x,Q2,res1,res2);
 
   results[0]*=prnorm*prnorm;
   results[1]*=prnorm*prnorm;
@@ -675,7 +675,7 @@ void InclusiveCrossRes::int_costheta_incl_fsi(double costheta, double *results, 
 								   prnorm*costheta)); 
   double qresults[2];
   double qestimate=0.,qphiestimate=0.;
-  rombergerN(this,&InclusiveCrossRes::int_qt,0.,1.E03,2,qresults,PREC*0.1,3,8,&qestimate,kin,wave,res1,res2,&qphiestimate);
+  rombergerN(this,&InclusiveCrossRes::int_qt,0.,1.E03,2,qresults,PREC,3,7,&qestimate,kin,wave,res1,res2,&qphiestimate);
   
   results[0]= structfactor/(kin->GetKlab()*32.*PI*PI*3.)
 		*sqrt(MASSD/(2.*(MASSD-Er)*Er))/**chi*/;
@@ -696,7 +696,7 @@ void InclusiveCrossRes::int_qt(double qt, double *results, va_list ap){
   double *pqphiestimate = va_arg(ap,double*);
   
   if(qt<1.E-03) {results[0]=results[1]=0.; return;}
-  rombergerN(this, &InclusiveCrossRes::int_qphi,0.,2*PI,2,results,PREC*0.1,3,8,pqphiestimate,qt,pkin,wave,res1,res2);
+  rombergerN(this, &InclusiveCrossRes::int_qphi,0.,2*PI,2,results,PREC,3,7,pqphiestimate,qt,pkin,wave,res1,res2);
   
   results[0]*=qt;
   results[1]*=qt;

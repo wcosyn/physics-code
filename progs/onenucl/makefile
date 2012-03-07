@@ -16,7 +16,7 @@ CPATH 	=	.
 
 #		Flags
 # OPTFLAG	=	-O3 -fPIC
-OPTFLAG	=	-O3 -parallel -xhost -ipo -fPIC -fp-model source -shared-intel
+OPTFLAG	=	-O0 -fPIC -shared-intel -fp-model source -unroll -msse4.1 -pthread -ipo -xsse4.2 -parallel 
 
 STATIC  =	--static
 DBGFLAG	=	-g

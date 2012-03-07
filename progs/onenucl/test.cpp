@@ -31,16 +31,22 @@ using namespace std;
 int main(int argc, char *argv[])
 {
   
-  string homedir="/home/wim/Code";
+  string homedir="/home/wim/Code/share";
 
   MeanFieldNucleusThick Carbon(1,homedir);
   TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",atof(argv[1]),atof(argv[2]),atof(argv[3]));
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);
   Cross obs(*elec,&Carbon,homedir);
-  double cross=obs.getDiffCross(kin, 0, 0, 0, 1, 0.);
+  double crossp=obs.getDiffCross(kin, 0, 0, 0, 1, 0.);
+  double crosss=obs.getDiffCross(kin, 0, 0, 0, 0, 0.);
+  double crosspsrc=obs.getDiffCross(kin, 1, 0, 0, 1, 0.);
+  double crosspct=obs.getDiffCross(kin, 0, 1, 0, 1, 0.);
+  double crosspsrcct=obs.getDiffCross(kin, 1, 1, 0, 1, 0.);
+  double crossppw=obs.getDiffCross(kin, 0, 0, 1, 1, 0.);
   double free=obs.getElCross(kin,0.)*HBARC*HBARC;
   cout << free/HBARC/HBARC << endl;
-  cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  cross << " " << free << " " << cross/free << endl;
+  cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  crossp << " " << free << " " << crossp/free << endl;
+  cout << crossp << " " << crosss << " " << crosspsrc << " " << crosspct << " " << crosspsrcct << " " << crossppw << endl;
   //cout << obs.getElCross(kin,0.) << " " << obs.getElCross(kin,PI) <<endl;
 //   Model test(&Carbon,0,homedir);
 //   cout << test.getMatrixEl(kin,-1,0,0,-1,1,1) << endl;

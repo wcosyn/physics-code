@@ -54,12 +54,12 @@ int main(int argc, char *argv[])
   gridthick.addParticle(proton2);
    gridthick.printParticles();
   gridthick.fillGrids();
-//   gridthick.printFsi_src_ct_grid();
+   gridthick.printFsi_src_ct_grid();
   GlauberGrid grid(60,18,5,&CarbonThick,homedir);
   grid.addParticle(proton2);
    grid.printParticles();
   grid.fillGrids();
-//   grid.printFsi_grid();
+   grid.printFsi_grid();
   OneGlauberGrid onegrid(60,18,&CarbonThick,homedir);
   onegrid.addParticle(proton2);
   onegrid.printParticles();
