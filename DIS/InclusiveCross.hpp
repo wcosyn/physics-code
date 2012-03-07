@@ -62,7 +62,7 @@ private:
 class InclusiveCrossRes{
   
 public:
-  InclusiveCrossRes(bool proton, string strucname, string wavename, TElectronKinematics &elec, int symm, int offshell);
+  InclusiveCrossRes(bool proton, string strucname, string wavename, TElectronKinematics &elec, int symm, int offshell, bool fixprop);
   ~InclusiveCrossRes();
   double calc_F2Dinc(double Q2,double x);
   void calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double x);
@@ -74,6 +74,7 @@ private:
   double massi;
   double massr;
   int symm;
+  bool fixprop;
   
   double przprime;
   double prz;

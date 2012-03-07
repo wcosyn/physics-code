@@ -519,10 +519,12 @@ void InclusiveCross::get_przs(double pperp2, double pperp2other, double qvec, do
 */
 
 
-InclusiveCrossRes::InclusiveCrossRes(bool proton, string strucname, string wavename, TElectronKinematics &elec, int sym, int offshell)
+InclusiveCrossRes::InclusiveCrossRes(bool proton, string strucname, string wavename, 
+				     TElectronKinematics &elec, int sym, int offshell, bool fixpropp)
 :massi(proton? MASSP:MASSN),
 massr(proton? MASSN:MASSP),
 symm(sym),
+fixprop(fixpropp),
 prz(-9999.),
 offshellset(offshell),
 electron(elec),
@@ -548,7 +550,7 @@ double InclusiveCrossRes::calc_F2Dinc(double Q2,double x){
   
   double result;
   double prestimate=0.,cosestimate=0.;
-  rombergerN(this,&InclusiveCrossRes::int_pr,0.,1.e03,1,&result,PREC,3,7,&prestimate, x, Q2, &cosestimate);
+  rombergerN(this,&InclusiveCrossRes::int_pr,0.,1.e03,1,&result,PREC*0.01,3,10,&prestimate, x, Q2, &cosestimate);
   return 2.*PI*2.*massi/MASSD*result;
   
   
@@ -568,7 +570,7 @@ void InclusiveCrossRes::int_pr(double prnorm, double *result, va_list ap){
   double lowerlimit= -(-Q2+pow(MASSD-Er,2.)-prnorm*prnorm+2.*(MASSD-Er)*Q2/(2.*massi*x))/(2.*qvec*prnorm);
   if(lowerlimit>lo) {lo=lowerlimit;}
   if(hi<lo){ *result=0.; return;}
-  rombergerN(this, &InclusiveCrossRes::int_costheta_incl,lo+1e-04,hi-1.e-04,1,result,PREC,3,7,pcosestimate,prnorm, x,Q2);
+  rombergerN(this, &InclusiveCrossRes::int_costheta_incl,lo+1e-04,hi-1.e-04,1,result,PREC*0.01,3,10,pcosestimate,prnorm, x,Q2);
   if(prnorm<1.e-04) *result=0.; 
   else *result*=prnorm*prnorm*(pow(wf->GetUp(prnorm),2.)+pow(wf->GetWp(prnorm),2.))/(4.*PI)*(MASSD/(2.*(MASSD-Er)));
   return;
@@ -612,7 +614,7 @@ void InclusiveCrossRes::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,dou
     for(size_t res2=0; res2<max; res2++){
       double results[2];
       double prestimate=0.,cosestimate=0.;
-      rombergerN(this,&InclusiveCrossRes::int_pr_fsi,0.,1.e03,2,results,PREC,3,7,&prestimate, x, Q2, res1, res2, &cosestimate);
+      rombergerN(this,&InclusiveCrossRes::int_pr_fsi,0.,1.e03,2,results,PREC*0.01,3,10,&prestimate, x, Q2, res1, res2, &cosestimate);
       double chi2 = sqrt(s*s-2.*s*(getResonance_vec()[res1].getMass2()+massr*massr)+pow(massr*massr-getResonance_vec()[res1].getMass2(),2.));
       //cout << res1 << " " << res2 << " " << results[0]*chi2 << " " << results[1]*chi2 << endl;
       //cout << res1 << " " << res2 << " " << s*1.E-06 << " " << chi2*1.E-06 << endl;
@@ -641,7 +643,7 @@ void InclusiveCrossRes::int_pr_fsi(double prnorm, double *results, va_list ap){
   double lowerlimit= -(-Q2+pow(MASSD-Er,2.)-prnorm*prnorm+2.*(MASSD-Er)*Q2/(2.*massi*x))/(2.*qvec*prnorm);
   if(lowerlimit>lo) {lo=lowerlimit;}
   if(hi<lo){ results[0]=0.; results[1]=0.; return;}
-  rombergerN(this, &InclusiveCrossRes::int_costheta_incl_fsi,lo+1e-04,hi-1.e-04,2,results,PREC,3,7,pcosestimate,prnorm, x,Q2,res1,res2);
+  rombergerN(this, &InclusiveCrossRes::int_costheta_incl_fsi,lo+1e-04,hi-1.e-04,2,results,PREC*0.1,3,10,pcosestimate,prnorm, x,Q2,res1,res2);
 
   results[0]*=prnorm*prnorm;
   results[1]*=prnorm*prnorm;
@@ -661,9 +663,10 @@ void InclusiveCrossRes::int_costheta_incl_fsi(double costheta, double *results, 
   double qvec=sqrt(Q2+pow(Q2/(2.*massi*x),2.));
   double nu=Q2/(2.*massi*x);
   Wxprime2=MASSD*MASSD-Q2+massr*massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*prnorm*costheta;
-  //TKinematics2to2 kin("","",MASSD,massr,sqrt(getResonance_vec()[res1].getMass2()),"qsquared:wlab:pklab",Q2,nu,prnorm);
-  TKinematics2to2 kin("","",MASSD,massr,sqrt(Wxprime2),"qsquared:wlab:pklab",Q2,nu,prnorm);
-  double structfactor=structure.getInclStructure(kin,MASSD-Er);
+  TKinematics2to2 *kin;
+  if(fixprop) kin= new TKinematics2to2("","",MASSD,massr,sqrt(getResonance_vec()[res1].getMass2()),"qsquared:wlab:pklab",Q2,nu,prnorm);
+  else kin= new TKinematics2to2("","",MASSD,massr,sqrt(Wxprime2),"qsquared:wlab:pklab",Q2,nu,prnorm);
+  double structfactor=structure.getInclStructure(*kin,MASSD-Er);
   if(abs(structfactor<1E-09)||isnan(structfactor)) {results[0]=0.; results[1]=0.; return; }
 //   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*
 // 	      (getResonance_vec()[res1].getMass2()+massr*massr)+pow(massr*massr-getResonance_vec()[res1].getMass2(),2.));
@@ -672,13 +675,14 @@ void InclusiveCrossRes::int_costheta_incl_fsi(double costheta, double *results, 
 								   prnorm*costheta)); 
   double qresults[2];
   double qestimate=0.,qphiestimate=0.;
-  rombergerN(this,&InclusiveCrossRes::int_qt,0.,1.E03,2,qresults,PREC,3,6,&qestimate,&kin,wave,res1,res2,&qphiestimate);
+  rombergerN(this,&InclusiveCrossRes::int_qt,0.,1.E03,2,qresults,PREC*0.1,3,8,&qestimate,kin,wave,res1,res2,&qphiestimate);
   
-  results[0]= structfactor/(kin.GetKlab()*32.*PI*PI*3.)
+  results[0]= structfactor/(kin->GetKlab()*32.*PI*PI*3.)
 		*sqrt(MASSD/(2.*(MASSD-Er)*Er))/**chi*/;
   results[1]= results[0];
   results[0]*=qresults[0];
   results[1]*=qresults[1];
+  delete kin;
   return;
   
 }
@@ -692,7 +696,7 @@ void InclusiveCrossRes::int_qt(double qt, double *results, va_list ap){
   double *pqphiestimate = va_arg(ap,double*);
   
   if(qt<1.E-03) {results[0]=results[1]=0.; return;}
-  rombergerN(this, &InclusiveCrossRes::int_qphi,0.,2*PI,2,results,PREC,3,6,pqphiestimate,qt,pkin,wave,res1,res2);
+  rombergerN(this, &InclusiveCrossRes::int_qphi,0.,2*PI,2,results,PREC*0.1,3,8,pqphiestimate,qt,pkin,wave,res1,res2);
   
   results[0]*=qt;
   results[1]*=qt;
@@ -702,128 +706,29 @@ void InclusiveCrossRes::int_qt(double qt, double *results, va_list ap){
 
 void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
 
-//   double qt = va_arg(ap,double);
-//   TKinematics2to2 *pkin = va_arg(ap, TKinematics2to2*);
-//   complex<double>* wave = va_arg(ap,complex<double>*);
-//   size_t res1 = va_arg(ap, size_t);
-//   size_t res2 = va_arg(ap, size_t);
-//   
-//   double prt=pkin->GetPklab()*sqrt(1.-pkin->GetCosthklab()*pkin->GetCosthklab());
-//   double pt2=prt*prt+qt*qt-2.*prt*qt*cos(qphi);  
-//   double Er=sqrt(massr*massr+pkin->GetPklab()*pkin->GetPklab());
-//   prz=pkin->GetPklab()*pkin->GetCosthklab();
-//   double sinqphi,cosqphi;
-//   sincos(qphi,&sinqphi,&cosqphi);
-//   double cosphiprime = (prt-qt*cosqphi)/sqrt(pt2);
-//   double sinphiprime = -qt*sinqphi/sqrt(pt2);
-//   if(abs(pt2)<1.E-03){
-//     pt2=0.;
-//     cosphiprime=1.;
-//     sinphiprime=0.;
-//   }
-//     
-//   get_prz(pt2,Er,pkin,1,res1,res2);
-//   double pprime = sqrt(pt2+przprime*przprime);
-//   double costhetaprime=przprime/pprime;
-//   double sinthetaprime=sqrt(pt2)/pprime;
-//   if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=1.;}
-//   double Erprime=sqrt(massr*massr+pprime*pprime);
-//   if(Erprime>MASSD) {results[0]=0.;}
-//   else{
-//     //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-//     double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
-//     double offshellness=0.;
-//     if(offshellset==0){
-//       double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*prz;
-//       offshellness=exp((getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta())/2.*massdiff);
-//     }
-//     if(offshellset==1) {
-//       double onshellm=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()+massi*massi+2.*pkin->GetWlab()*massi;
-//       double lambda=(getResonance_vec()[res1].getLambda()+getResonance_vec()[res2].getLambda());
-//       offshellness=pow(lambda*lambda-onshellm,2.)/(pow(getResonance_vec()[res1].getMass2()-onshellm,2.)+pow(lambda*lambda-onshellm,2.));
-//     }
-//     if(offshellset==2){
-// //       betaoff=16.8*1.E-06;
-//       //sigma=(25.2+(53*(sqrt(otherWx2)-MASSP))/(1.E-03*pkin->GetQsquared()))/10*INVHBARC*INVHBARC;
-//       offshellness=exp(((getResonance_vec()[res1].getBetaoff()+getResonance_vec()[res2].getBetaoff())
-// 		      -(getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta()))*t/4.);
-//     }
-//     if(offshellset==3) offshellness=0.;
-//     if(offshellset==4) offshellness=1.;
-//     complex<double> wave2[12];
-//     TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
-//     for(int i=0;i<12;i++) wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime)
-// 		      -offshellness*wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 
-//     complex<double> temp=0.;
-//     for(int i=0;i<12;i++) temp+=wave[i]*conj(wave2[i]);
-//     results[0]= imag(scatter(t,pkin->GetQsquared(),res1,res2)*temp
-// 	  *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
-// 
-//   }
-// 
-//   
-//   //otherWx2=-1.;
-//   get_prz(pt2,Er,pkin,0,res1,res2);
-// //   
-//   pprime = sqrt(pt2+przprime*przprime);
-//   costhetaprime=przprime/pprime;
-//   sinthetaprime=sqrt(pt2)/pprime;
-//   if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=1.;}
-//   Erprime=sqrt(massr*massr+pprime*pprime);
-//   if(Erprime>MASSD) {results[1]=0.; return;}
-//   //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-//   double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
-//   double offshellness=0.;
-//   if(offshellset==0){
-//     double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*przprime;
-//     offshellness=exp((getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta())/2.*massdiff);
-//   }
-//   if(offshellset==1) {
-//     double onshellm=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()+massi*massi+2.*pkin->GetWlab()*massi;
-//     double lambda=(getResonance_vec()[res1].getLambda()+getResonance_vec()[res2].getLambda());
-//     offshellness=pow(lambda*lambda-onshellm,2.)/(pow(getResonance_vec()[res1].getMass2()-onshellm,2.)+pow(lambda*lambda-onshellm,2.));
-//   }
-//   if(offshellset==2){
-// //     betaoff=16.8*1.E-06;
-// //     sigma=4.*INVHBARC*INVHBARC;//(25.3+53*(sqrt(Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
-//     offshellness=exp(((getResonance_vec()[res1].getBetaoff()+getResonance_vec()[res2].getBetaoff())
-// 		      -(getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta()))*t/4.);
-//   }
-//   if(offshellset==3) offshellness=0.;
-//   if(offshellset==4) offshellness=1.;
-//   complex<double> wave2[12];
-//   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
-//   for(int i=0;i<12;i++) wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime)
-// 		    +offshellness*wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 
-//   complex<double> temp=0.;
-//   for(int i=0;i<12;i++) temp+=conj(wave[i])*wave2[i];
-//   results[1]= imag(scatter(t,pkin->GetQsquared(),res1,res2)*temp
-// 	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
-
   double qt = va_arg(ap,double);
   TKinematics2to2 *pkin = va_arg(ap, TKinematics2to2*);
   complex<double>* wave = va_arg(ap,complex<double>*);
   size_t res1 = va_arg(ap, size_t);
   size_t res2 = va_arg(ap, size_t);
-  
-  double prt=pkin->GetPklab()*sqrt(1.-pkin->GetCosthklab()*pkin->GetCosthklab());
-  double pt2=prt*prt+qt*qt-2.*prt*qt*cos(qphi);  
-  double Er=sqrt(massr*massr+pkin->GetPklab()*pkin->GetPklab());
-  prz=pkin->GetPklab()*pkin->GetCosthklab();
-  double sinqphi,cosqphi;
-  sincos(qphi,&sinqphi,&cosqphi);
-  double cosphiprime = (prt-qt*cosqphi)/sqrt(pt2);
-  double sinphiprime = -qt*sinqphi/sqrt(pt2);
-  if(abs(pt2)<1.E-03){
-    pt2=0.;
-    cosphiprime=1.;
-    sinphiprime=0.;
-  }
     
-  otherWx2=-1.;
-  get_prz(pt2,Er,pkin,1,res1,res2);
-  if(otherWx2<0.) results[0]=0.;
-  else{
+  if(fixprop){
+    
+    double prt=pkin->GetPklab()*sqrt(1.-pkin->GetCosthklab()*pkin->GetCosthklab());
+    double pt2=prt*prt+qt*qt-2.*prt*qt*cos(qphi);  
+    double Er=sqrt(massr*massr+pkin->GetPklab()*pkin->GetPklab());
+    prz=pkin->GetPklab()*pkin->GetCosthklab();
+    double sinqphi,cosqphi;
+    sincos(qphi,&sinqphi,&cosqphi);
+    double cosphiprime = (prt-qt*cosqphi)/sqrt(pt2);
+    double sinphiprime = -qt*sinqphi/sqrt(pt2);
+    if(abs(pt2)<1.E-03){
+      pt2=0.;
+      cosphiprime=1.;
+      sinphiprime=0.;
+    }
+      
+    get_prz(pt2,Er,pkin,1,res1,res2);
     double pprime = sqrt(pt2+przprime*przprime);
     double costhetaprime=przprime/pprime;
     double sinthetaprime=sqrt(pt2)/pprime;
@@ -833,8 +738,6 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
     else{
       double Ex = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
       double Exprime = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
-      //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-      //double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
       double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
       double offshellness=0.;
       if(offshellset==0){
@@ -848,7 +751,7 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
       }
       if(offshellset==2){
 	offshellness=exp(((getResonance_vec()[res1].getBetaoff()+getResonance_vec()[res2].getBetaoff())
-			  -(getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta()))*t/4.);
+			-(getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta()))*t/4.);
       }
       if(offshellset==3) offshellness=0.;
       if(offshellset==4) offshellness=1.;
@@ -862,103 +765,207 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
 	    *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
 
     }
-  }
-  
-  otherWx2=-1.;
-  get_prz(pt2,Er,pkin,0,res1,res2);
-//   
-  if(otherWx2<0.) {results[1]=0.; return;}
-  double pprime = sqrt(pt2+przprime*przprime);
-  double costhetaprime=przprime/pprime;
-  double sinthetaprime=sqrt(pt2)/pprime;
-  if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
-  double Erprime=sqrt(massr*massr+pprime*pprime);
-  if(Erprime>MASSD) {results[1]=0.; return;}
-  double Ex = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
-  double Exprime = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
-  //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-  //double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
-  double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
-  double offshellness=0.;
-  if(offshellset==0){
-    double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*przprime;
-    offshellness=exp((getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta())/2.*massdiff);
-  }
-  if(offshellset==1) {
-    double onshellm=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()+massi*massi+2.*pkin->GetWlab()*massi;
-    double lambda=(getResonance_vec()[res1].getLambda()+getResonance_vec()[res2].getLambda());
-    offshellness=pow(lambda*lambda-onshellm,2.)/(pow(getResonance_vec()[res1].getMass2()-onshellm,2.)+pow(lambda*lambda-onshellm,2.));
-  }
-  if(offshellset==2){
-    offshellness=exp(((getResonance_vec()[res1].getBetaoff()+getResonance_vec()[res2].getBetaoff())
-		      -(getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta()))*t/4.);
-  }
-  if(offshellset==3) offshellness=0.;
-  if(offshellset==4) offshellness=1.;
-  complex<double> wave2[12];
-  TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
-  for(int i=0;i<12;i++) wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime)
-		    +offshellness*wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 
-  complex<double> temp=0.;
-  for(int i=0;i<12;i++) temp+=conj(wave[i])*wave2[i];
-  results[1]= imag(scatter(t,pkin->GetQsquared(),res1,res2)*temp
-	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
 
+    
+    //otherWx2=-1.;
+    get_prz(pt2,Er,pkin,0,res1,res2);
+  //   
+    pprime = sqrt(pt2+przprime*przprime);
+    costhetaprime=przprime/pprime;
+    sinthetaprime=sqrt(pt2)/pprime;
+    if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
+    Erprime=sqrt(massr*massr+pprime*pprime);
+    if(Erprime>MASSD) {results[1]=0.; return;}
+    double Ex = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
+    double Exprime = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
+    //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
+    //double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+    double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+    double offshellness=0.;
+    if(offshellset==0){
+      double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*przprime;
+      offshellness=exp((getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta())/2.*massdiff);
+    }
+    if(offshellset==1) {
+      double onshellm=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()+massi*massi+2.*pkin->GetWlab()*massi;
+      double lambda=(getResonance_vec()[res1].getLambda()+getResonance_vec()[res2].getLambda());
+      offshellness=pow(lambda*lambda-onshellm,2.)/(pow(getResonance_vec()[res1].getMass2()-onshellm,2.)+pow(lambda*lambda-onshellm,2.));
+    }
+    if(offshellset==2){
+      offshellness=exp(((getResonance_vec()[res1].getBetaoff()+getResonance_vec()[res2].getBetaoff())
+			-(getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta()))*t/4.);
+    }
+    if(offshellset==3) offshellness=0.;
+    if(offshellset==4) offshellness=1.;
+    complex<double> wave2[12];
+    TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
+    for(int i=0;i<12;i++) wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime)
+		      +offshellness*wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 
+    complex<double> temp=0.;
+    for(int i=0;i<12;i++) temp+=conj(wave[i])*wave2[i];
+    results[1]= imag(scatter(t,pkin->GetQsquared(),res1,res2)*temp
+	  *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
+  }
+    
+    
+  else{
+    
+    double prt=pkin->GetPklab()*sqrt(1.-pkin->GetCosthklab()*pkin->GetCosthklab());
+    double pt2=prt*prt+qt*qt-2.*prt*qt*cos(qphi);  
+    double Er=sqrt(massr*massr+pkin->GetPklab()*pkin->GetPklab());
+    prz=pkin->GetPklab()*pkin->GetCosthklab();
+    double sinqphi,cosqphi;
+    sincos(qphi,&sinqphi,&cosqphi);
+    double cosphiprime = (prt-qt*cosqphi)/sqrt(pt2);
+    double sinphiprime = -qt*sinqphi/sqrt(pt2);
+    if(abs(pt2)<1.E-03){
+      pt2=0.;
+      cosphiprime=1.;
+      sinphiprime=0.;
+    }
+      
+    otherWx2=-1.;
+    get_prz(pt2,Er,pkin,1,res1,res2);
+    if(otherWx2<0.) results[0]=0.;
+    else{
+      double pprime = sqrt(pt2+przprime*przprime);
+      double costhetaprime=przprime/pprime;
+      double sinthetaprime=sqrt(pt2)/pprime;
+      if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
+      double Erprime=sqrt(massr*massr+pprime*pprime);
+      if(Erprime>MASSD) {results[0]=0.;}
+      else{
+	double Ex = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
+	double Exprime = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
+	double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+	double offshellness=0.;
+	if(offshellset==0){
+	  double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*prz;
+	  offshellness=exp((getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta())/2.*massdiff);
+	}
+	if(offshellset==1) {
+	  double onshellm=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()+massi*massi+2.*pkin->GetWlab()*massi;
+	  double lambda=(getResonance_vec()[res1].getLambda()+getResonance_vec()[res2].getLambda());
+	  offshellness=pow(lambda*lambda-onshellm,2.)/(pow(getResonance_vec()[res1].getMass2()-onshellm,2.)+pow(lambda*lambda-onshellm,2.));
+	}
+	if(offshellset==2){
+	  offshellness=exp(((getResonance_vec()[res1].getBetaoff()+getResonance_vec()[res2].getBetaoff())
+			    -(getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta()))*t/4.);
+	}
+	if(offshellset==3) offshellness=0.;
+	if(offshellset==4) offshellness=1.;
+	complex<double> wave2[12];
+	TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
+	for(int i=0;i<12;i++) wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime)
+			  -offshellness*wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 
+	complex<double> temp=0.;
+	for(int i=0;i<12;i++) temp+=wave[i]*conj(wave2[i]);
+	results[0]= imag(scatter(t,pkin->GetQsquared(),res1,res2)*temp
+	      *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
+
+      }
+    }
+    
+    otherWx2=-1.;
+    get_prz(pt2,Er,pkin,0,res1,res2);
+  //   
+    if(otherWx2<0.) {results[1]=0.; return;}
+    double pprime = sqrt(pt2+przprime*przprime);
+    double costhetaprime=przprime/pprime;
+    double sinthetaprime=sqrt(pt2)/pprime;
+    if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
+    double Erprime=sqrt(massr*massr+pprime*pprime);
+    if(Erprime>MASSD) {results[1]=0.; return;}
+    double Ex = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
+    double Exprime = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
+    //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
+    //double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+    double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+    double offshellness=0.;
+    if(offshellset==0){
+      double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*przprime;
+      offshellness=exp((getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta())/2.*massdiff);
+    }
+    if(offshellset==1) {
+      double onshellm=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()+massi*massi+2.*pkin->GetWlab()*massi;
+      double lambda=(getResonance_vec()[res1].getLambda()+getResonance_vec()[res2].getLambda());
+      offshellness=pow(lambda*lambda-onshellm,2.)/(pow(getResonance_vec()[res1].getMass2()-onshellm,2.)+pow(lambda*lambda-onshellm,2.));
+    }
+    if(offshellset==2){
+      offshellness=exp(((getResonance_vec()[res1].getBetaoff()+getResonance_vec()[res2].getBetaoff())
+			-(getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta()))*t/4.);
+    }
+    if(offshellset==3) offshellness=0.;
+    if(offshellset==4) offshellness=1.;
+    complex<double> wave2[12];
+    TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
+    for(int i=0;i<12;i++) wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime)
+		      +offshellness*wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 
+    complex<double> temp=0.;
+    for(int i=0;i<12;i++) temp+=conj(wave[i])*wave2[i];
+    results[1]= imag(scatter(t,pkin->GetQsquared(),res1,res2)*temp
+	  *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
+  }
+    
   return;  
 }
 
 
 void InclusiveCrossRes::get_prz(double pt2, double Er, TKinematics2to2 *pkin, int first, size_t res1, size_t res2){
-//   przprime=0.;
-//   for(int i=0;i<50;i++){
-//     double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
-//     //guess for invariant mass initial X'
-// //     double f_Wxprime2=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()
-// // 		      +pow(MASSD-f_Erprime,2.)-pt2-przprime*przprime
-// // 		      +2.*pkin->GetWlab()*(MASSD-f_Erprime)+2.*pkin->GetKlab()*przprime;
-// 		      
-//     double f_prz=prz-(pkin->GetWlab()+MASSD)/pkin->GetKlab()*(Er-f_Erprime);  //new value for prz 
-//     //add mass diff term if necessary
-//     if(!symm){
-//       if(first/*&&(getResonance_vec()[res1].getMass2()<getResonance_vec()[res1].getMass2())*/) 
-// 	f_prz-=(getResonance_vec()[res1].getMass2()-getResonance_vec()[res2].getMass2())/(2.*pkin->GetKlab());
-//       if((!first)/*&&(getResonance_vec()[res1].getMass2()>getResonance_vec()[res1].getMass2())*/) 
-// 	f_prz-=(getResonance_vec()[res2].getMass2()-getResonance_vec()[res1].getMass2())/(2.*pkin->GetKlab());
-//     }
-//     //check convergence
-//     if((abs((przprime-f_prz)/f_prz)<1e-03)) {przprime = f_prz; return;}
-//     //start again
-//     przprime=f_prz;
-//     //otherWx2=f_Wxprime2;  
-//   }
-//   //no real convergence
 
-
-  przprime=0.;
-  for(int i=0;i<50;i++){
-    double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
-    //guess for invariant mass initial X'
-    double f_Wxprime2=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()
-		      +pow(MASSD-f_Erprime,2.)-pt2-przprime*przprime
-		      +2.*pkin->GetWlab()*(MASSD-f_Erprime)+2.*pkin->GetKlab()*przprime;
-		      
-    double f_prz=prz-(pkin->GetWlab()+MASSD)/pkin->GetKlab()*(Er-f_Erprime);  //new value for prz 
-    //add mass diff term if necessary
-    if(symm==0){
-      if(first/*&&(Wxprime2<f_Wxprime2)*/) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
-      if((!first)/*&&(Wxprime2>f_Wxprime2)*/) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
+  if(fixprop){
+    przprime=0.;
+    for(int i=0;i<50;i++){
+      double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
+      double f_prz=prz-(pkin->GetWlab()+MASSD)/pkin->GetKlab()*(Er-f_Erprime);  //new value for prz 
+      //add mass diff term if necessary
+      if(symm==0){
+	if(first/*&&(getResonance_vec()[res1].getMass2()<getResonance_vec()[res1].getMass2())*/) 
+	  f_prz-=(getResonance_vec()[res1].getMass2()-getResonance_vec()[res2].getMass2())/(2.*pkin->GetKlab());
+	if((!first)/*&&(getResonance_vec()[res1].getMass2()>getResonance_vec()[res1].getMass2())*/) 
+	  f_prz-=(getResonance_vec()[res2].getMass2()-getResonance_vec()[res1].getMass2())/(2.*pkin->GetKlab());
+      }
+      if(symm==-1){
+	if(first&&(getResonance_vec()[res1].getMass2()<getResonance_vec()[res1].getMass2())) 
+	  f_prz-=(getResonance_vec()[res1].getMass2()-getResonance_vec()[res2].getMass2())/(2.*pkin->GetKlab());
+	if((!first)&&(getResonance_vec()[res1].getMass2()>getResonance_vec()[res1].getMass2())) 
+	  f_prz-=(getResonance_vec()[res2].getMass2()-getResonance_vec()[res1].getMass2())/(2.*pkin->GetKlab());
+      }
+      //check convergence
+      if((abs((przprime-f_prz)/f_prz)<1e-03)) {przprime = f_prz; return;}
+      //start again
+      przprime=f_prz;
+      //otherWx2=f_Wxprime2;  
     }
-    if(symm==-1){
-      if(first&&(Wxprime2<f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
-      if((!first)&&(Wxprime2>f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
-    }
-    //check convergence
-    if((abs((przprime-f_prz)/f_prz)<1e-03)) {otherWx2= f_Wxprime2; przprime = f_prz; return;}
-    //start again
-    przprime=f_prz;
-    otherWx2=f_Wxprime2;  
+    //no real convergence
   }
-
+  else{
+      
+    przprime=0.;
+    for(int i=0;i<50;i++){
+      double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
+      //guess for invariant mass initial X'
+      double f_Wxprime2=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()
+			+pow(MASSD-f_Erprime,2.)-pt2-przprime*przprime
+			+2.*pkin->GetWlab()*(MASSD-f_Erprime)+2.*pkin->GetKlab()*przprime;
+			
+      double f_prz=prz-(pkin->GetWlab()+MASSD)/pkin->GetKlab()*(Er-f_Erprime);  //new value for prz 
+      //add mass diff term if necessary
+      if(symm==0){
+	if(first/*&&(Wxprime2<f_Wxprime2)*/) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
+	if((!first)/*&&(Wxprime2>f_Wxprime2)*/) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
+      }
+      if(symm==-1){
+	if(first&&(Wxprime2<f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
+	if((!first)&&(Wxprime2>f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
+      }
+      //check convergence
+      if((abs((przprime-f_prz)/f_prz)<1e-03)) {otherWx2= f_Wxprime2; przprime = f_prz; return;}
+      //start again
+      przprime=f_prz;
+      otherWx2=f_Wxprime2;  
+    }
+  }
 
   return;
 }
