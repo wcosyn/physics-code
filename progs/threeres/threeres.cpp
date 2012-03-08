@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     double gamma = -alpha-beta;
     cout << alpha << " " << beta << " " << gamma << " " << alpha*alpha+beta*beta+gamma*gamma << endl;
     
-    for(int i=1;i<20;i++){
+    for(int i=6;i<20;i++){
       double x=0.05*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);

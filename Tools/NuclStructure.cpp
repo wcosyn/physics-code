@@ -59,8 +59,8 @@ void NuclStructure::getF_Alekhin(double &F1, double &F2){
   strcpy(dir_.homedir,dir.c_str());
   strcpy(dir_.a09file1,dir.c_str());
   strcpy(dir_.a09file2,dir.c_str());
-  strcat(dir_.a09file1,"/grids/a09.sfs_lNNC");
-  strcat(dir_.a09file2,"/grids/a09.dsfs_lNNC");
+  strcat(dir_.a09file1,"/alekhin/a09.sfs_lNNC");
+  strcat(dir_.a09file2,"/alekhin/a09.dsfs_lNNC");
   //cout <<dir_.a09file1 << endl;
   int ONE=1;
   int ZERO=0;
