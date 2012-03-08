@@ -45,6 +45,10 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 
 
+enable_language (Fortran)
+get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
+
+
 EXEC_PROGRAM("hostname" OUTPUT_VARIABLE hostname)
 
 if (hostname MATCHES accident)
@@ -79,6 +83,29 @@ if (hostname MATCHES accident)
       set(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fPIC -fno-inline -ftest-coverage -fprofile-arcs")
     endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
 
+  if (Fortran_COMPILER_NAME STREQUAL "gfortran")
+    # gfortran
+    set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
+    set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g")
+  elseif (Fortran_COMPILER_NAME STREQUAL "ifort")
+	MESSAGE("--- Found Intel fortran compiler collection")
+    # ifort (untested)
+    set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O0 -coarray=shared -fPIC  -shared-intel  -fp-model source -unroll -msse4.1 -pthread -ipo -xsse4.2 -parallel")
+    set (CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
+  elseif (Fortran_COMPILER_NAME STREQUAL "g77")
+    # g77
+    set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3 -m32")
+    set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g -m32")
+  else (Fortran_COMPILER_NAME STREQUAL "gfortran")
+    message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
+    message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
+    message ("No optimized Fortran compiler flags are known, we just try -O2...")
+    set (CMAKE_Fortran_FLAGS_RELEASE "-O2")
+    set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
+  endif (Fortran_COMPILER_NAME STREQUAL "gfortran")
+
+
+
 endif (hostname MATCHES accident) 
 
 if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
@@ -107,37 +134,39 @@ if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
     if(${CMAKE_CXX_COMPILER} MATCHES "icpc")
       MESSAGE("--- Found Intel compiler collection")
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -xhost -fp-model source -ipo -unroll -pthread -fPIC -g -shared-intel ")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -xhost -fp-model source -ipo -unroll -pthread -fPIC -g -shared-intel ")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O0 -fPIC -shared-intel -fp-model source -unroll -msse4.1 -pthread -ipo -xsse4.2 -parallel")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O3 -xhost -fp-model source -ipo -unroll -pthread -fPIC -fno-reorder-blocks -fno-schedule-insns -fno-inline")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3 -fPIC -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fPIC -fno-inline -ftest-coverage -fprofile-arcs")
     endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
 
+
+  if (Fortran_COMPILER_NAME STREQUAL "gfortran")
+    # gfortran
+    set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
+    set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g")
+  elseif (Fortran_COMPILER_NAME STREQUAL "ifort")
+	MESSAGE("--- Found Intel fortran compiler collection")
+    # ifort (untested)
+    set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O0 -coarray=shared -fPIC  -shared-intel  -fp-model source -unroll -msse4.1 -pthread -ipo -xsse4.2 -parallel")
+    set (CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
+  elseif (Fortran_COMPILER_NAME STREQUAL "g77")
+    # g77
+    set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3 -m32")
+    set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g -m32")
+  else (Fortran_COMPILER_NAME STREQUAL "gfortran")
+    message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
+    message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
+    message ("No optimized Fortran compiler flags are known, we just try -O2...")
+    set (CMAKE_Fortran_FLAGS_RELEASE "-O2")
+    set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
+  endif (Fortran_COMPILER_NAME STREQUAL "gfortran")
+
+
+
 endif (hostname MATCHES talvin13 OR hostname MATCHES trillian) 
 
-enable_language (Fortran)
-get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
-if (Fortran_COMPILER_NAME STREQUAL "gfortran")
-  # gfortran
-  set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g")
-elseif (Fortran_COMPILER_NAME STREQUAL "ifort")
-      MESSAGE("--- Found Intel fortran compiler collection")
-  # ifort (untested)
-  set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O0 -coarray=shared -fPIC  -shared-intel  -fp-model source -unroll -msse4.1 -pthread -ipo -xsse4.2 -parallel")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
-elseif (Fortran_COMPILER_NAME STREQUAL "g77")
-  # g77
-  set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3 -m32")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g -m32")
-else (Fortran_COMPILER_NAME STREQUAL "gfortran")
-  message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
-  message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
-  message ("No optimized Fortran compiler flags are known, we just try -O2...")
-  set (CMAKE_Fortran_FLAGS_RELEASE "-O2")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
-endif (Fortran_COMPILER_NAME STREQUAL "gfortran")
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR})
 FIND_PROGRAM(XIAR xiar)
 IF(XIAR)
