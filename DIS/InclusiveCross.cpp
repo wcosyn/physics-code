@@ -616,7 +616,7 @@ void InclusiveCrossRes::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,dou
       double prestimate=0.,cosestimate=0.;
       rombergerN(this,&InclusiveCrossRes::int_pr_fsi,0.,1.e03,2,results,PREC,3,10,&prestimate, x, Q2, res1, res2, &cosestimate);
       double chi2 = sqrt(s*s-2.*s*(getResonance_vec()[res1].getMass2()+massr*massr)+pow(massr*massr-getResonance_vec()[res1].getMass2(),2.));
-      //cout << res1 << " " << res2 << " " << results[0]*chi2 << " " << results[1]*chi2 << endl;
+      cout << res1 << " " << res2 << " " << results[0]*chi2 << " " << results[1]*chi2 << endl;
       //cout << res1 << " " << res2 << " " << s*1.E-06 << " " << chi2*1.E-06 << endl;
       fsi1+=results[0]*2.*PI*2.*massi/MASSD*chi2;
       fsi2+=results[1]*2.*PI*2.*massi/MASSD*chi2;                
@@ -736,9 +736,15 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
     double Erprime=sqrt(massr*massr+pprime*pprime);
     if(Erprime>MASSD) {results[0]=0.;}
     else{
-      double Ex = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
-      double Exprime = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
-      double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+//       double Ex = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
+//       double Exprime = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
+//       double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+
+      double t = getResonance_vec()[res1].getMass2() + getResonance_vec()[res2].getMass2()
+	  -2.*(-pkin->GetQsquared()+2.*MASSD*pkin->GetWlab()+MASSD*MASSD
+	    -(MASSD+pkin->GetWlab())*(Er+Erprime)+pkin->GetKlab()*(prz+przprime)
+	  +Er*Erprime-prt*sqrt(pt2)*cosphiprime-prz*przprime);
+      
       double offshellness=0.;
       if(offshellset==0){
 	double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*prz;
@@ -776,11 +782,15 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
     if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
     Erprime=sqrt(massr*massr+pprime*pprime);
     if(Erprime>MASSD) {results[1]=0.; return;}
-    double Ex = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
-    double Exprime = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
-    //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-    //double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
-    double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+//     double Ex = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
+//     double Exprime = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
+//     double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+
+    double t = getResonance_vec()[res1].getMass2() + getResonance_vec()[res2].getMass2()
+	-2.*(-pkin->GetQsquared()+2.*MASSD*pkin->GetWlab()+MASSD*MASSD
+	  -(MASSD+pkin->GetWlab())*(Er+Erprime)+pkin->GetKlab()*(prz+przprime)
+	+Er*Erprime-prt*sqrt(pt2)*cosphiprime-prz*przprime);
+
     double offshellness=0.;
     if(offshellset==0){
       double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*przprime;
@@ -835,9 +845,14 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
       double Erprime=sqrt(massr*massr+pprime*pprime);
       if(Erprime>MASSD) {results[0]=0.;}
       else{
-	double Ex = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
-	double Exprime = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
-	double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+// 	double Ex = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
+// 	double Exprime = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
+// 	double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+	double t = getResonance_vec()[res1].getMass2() + getResonance_vec()[res2].getMass2()
+	    -2.*(-pkin->GetQsquared()+2.*MASSD*pkin->GetWlab()+MASSD*MASSD
+	      -(MASSD+pkin->GetWlab())*(Er+Erprime)+pkin->GetKlab()*(prz+przprime)
+	    +Er*Erprime-prt*sqrt(pt2)*cosphiprime-prz*przprime);
+
 	double offshellness=0.;
 	if(offshellset==0){
 	  double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*prz;
@@ -876,11 +891,18 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
     if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
     double Erprime=sqrt(massr*massr+pprime*pprime);
     if(Erprime>MASSD) {results[1]=0.; return;}
-    double Ex = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
-    double Exprime = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
-    //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-    //double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
-    double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+//     double Ex = sqrt(getResonance_vec()[res2].getMass2()+(pkin->GetKlab()-prz)*(pkin->GetKlab()-prz)+prt*prt);
+//     double Exprime = sqrt(getResonance_vec()[res1].getMass2()+(pkin->GetKlab()-przprime)*(pkin->GetKlab()-przprime)+pt2);
+//     //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
+//     //double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+//     double t = (Ex-Exprime)*(Ex-Exprime)-(prz-przprime)*(prz-przprime)-qt*qt;
+
+    double t = getResonance_vec()[res1].getMass2() + getResonance_vec()[res2].getMass2()
+	-2.*(-pkin->GetQsquared()+2.*MASSD*pkin->GetWlab()+MASSD*MASSD
+	  -(MASSD+pkin->GetWlab())*(Er+Erprime)+pkin->GetKlab()*(prz+przprime)
+	+Er*Erprime-prt*sqrt(pt2)*cosphiprime-prz*przprime);
+
+
     double offshellness=0.;
     if(offshellset==0){
       double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-massi*massi+2.*pkin->GetWlab()*(MASSD-Erprime-massi)+2.*pkin->GetKlab()*przprime;

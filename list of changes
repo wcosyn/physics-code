@@ -1,0 +1,56 @@
+list of changes
+
+-moved from kinematics2to3.h and.cpp to fourvector.h:
+// Global functions for conversion 
+// from ROOT 4vectors to strangecalc 4vectors.
+template<typename T>
+FourVector<T> operator*(const TLorentzRotation&, const FourVector<T>&);
+
+FourVector<double> ToFourVector(const TLorentzVector&);
+TLorentzVector ToLorentzVector(const FourVector<double>&);
+
+-moved definitions of T0FourVector and ToLorentzVector from kinematics2to3.cpp to a new file FourVector.cpp
+
+-commented out #include "2to3kinematics.h" in TDeuteron.cpp
+
+-commented out all hash functions 
+-commented out numtoa.h includes
+
+-moved all the necessary wrapper classes in the dir with deuteron code, changed #include <> to #include ""
+
+-commented out all includes of Structures.h as only defines of constants were needed
+
+-included needed constants (STRANGEUFLOW, M_P, M_N) to my file constants.hpp (some  double definitions now of course)
+
+-replaced all includes of Structures.h with #include "constants.hpp" (was not even needed in TYukawaPWF.cpp)
+
+-changed TYukawaPWF to also include parmetrization with non-equidistant Mass(i) (AV18 f.i.)
+  -added double *fM member
+  -added fM(NULL) to initializer list of constructor
+  -added new constructor with array of m values
+  -check in constructor to delete fM when necessary
+  -modified Mass(int i) for this case
+
+-added AV18 and Av18b Deuteron wf to TDeuteron.h & TDeuteron.cpp
+
+-added coordinate state wavefunction functions to TDeuteron
+-some more vector types to DeuteronRState and DeuteronPState
+-added off-shell momentum wave function parts to TWaveFunctionImplementation and derived classes
+  (GetUpoff etc, DeuteronPStateOff functions...)
+
+
+-commented out hash functions in TKinematics.cpp
+
+-added hypron kin vars in TKinematics.cpp: updated constructors, getters, updatekinematics
+-pklab: ++energycount changed naar ++anglecount
+-l1250 added pklab kinematics
+
+-added tan2 to Electronkin
+
+-electronkinematics changed all 2to3 to 2to2
+
+-added TKinematics2to3 to Tools, commented out functions that I moved previously...
+
+-added masses to constructors to Tkinematics2to3(withlabangles)
+changed setisospin function for masses functionality
+
