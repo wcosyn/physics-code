@@ -16,7 +16,7 @@ CPATH 	=	.
 
 #		Flags
 # OPTFLAG	=	-O3 -fPIC
-OPTFLAG	=	-O3 -mtune=core2 -march=corei7-avx -fp-model source -ipo -fPIC
+OPTFLAG	=	-O0 -fPIC -shared-intel -fp-model source -unroll -msse4.1 -pthread -ipo -xsse4.2 -parallel 
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
@@ -31,7 +31,7 @@ EFILEST   = 	../../bin/staticinclusive
 #		Mathematical functions
 LIBS =	 	-lm  -lifcore
 WIMLIBS = -lMePhys -lGlauber -lDIS
-ROOT =		`/usr/local/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L/home/wim/Code/lib
  INCLUDEDIRS =  -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber -I/home/wim/Code/DIS
 STATICLIBS = /home/wim/Code/lib/libglauber.a  /home/wim/Code/lib/libmephys.a /home/wim/Code/lib/libdis.a 

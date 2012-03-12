@@ -29,7 +29,7 @@ EFILE   = 	../../bin/glaubertest
 #		Mathematical functions
 LIBS =	 	-lm  -lifcore
 WIMLIBS = -lMePhys -lGlauber 
-ROOT =		`/usr/local/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L/home/wim/Code/lib
  INCLUDEDIRS =  -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber 
 STATICLIBS = /home/wim/Code/lib/libGlauber.a  /home/wim/Code/lib/libMephys.a 

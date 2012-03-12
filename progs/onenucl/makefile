@@ -32,10 +32,10 @@ EFILEST   = 	../../bin/staticonenucl
 #		Mathematical functions
 LIBS =	 	-lm  -lifcore
 WIMLIBS = -lMePhys -lGlauber -lKnockout
-ROOT =		`/usr/local/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L/home/wim/Code/lib
  INCLUDEDIRS =  -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber -I/home/wim/Code/Knockout
-STATICLIBS = /home/wim/Code/lib/libGlauber.a  /home/wim/Code/lib/libMephys.a /home/wim/Code/lib/libKnockout.a
+STATICLIBS = /home/wim/Code/lib/libMePhys.a /home/wim/Code/lib/libGlauber.a   /home/wim/Code/lib/libKnockout.a
 
 
 #		Header files
@@ -62,7 +62,7 @@ $(EFILE):	$(OBJS) $(HDRS)
 		$(CC) $(CFLAGS) -o $(EFILE) $(MAIN1) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
 $(EFILEST):	$(OBJS) $(HDRS) 
 		@echo "Linking $(EFILEST)..."
-		$(CC) $(CFLAGS) -o $(EFILEST) $(MAIN1) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
+		$(CC) $(CFLAGS) -o $(EFILEST) $(MAIN1) $(OBJS) $(STATICLIBS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
 
 
 # $(OBJS):	$(HDRS) $(HDRS2) $(DICTHDRS) $(INCHDRS)
