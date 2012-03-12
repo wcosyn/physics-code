@@ -9,6 +9,8 @@
 
 # Check if cmake has the required version
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+MESSAGE("c++ ${CMAKE_CXX_COMPILER}")
+MESSAGE("c ${CMAKE_C_COMPILER}")
 
 # Set name of our project to "Event". Has to be done
 # after check of cmake version since this is a new feature                  
@@ -21,8 +23,6 @@ find_package(GSL REQUIRED)
 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
-MESSAGE("${CMAKE_CXX_COMPILER}")
-MESSAGE("${CMAKE_C_COMPILER}")
 
 
 # Create a library called "libEvent" which includes the source files given in
