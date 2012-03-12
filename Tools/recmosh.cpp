@@ -261,7 +261,7 @@ double RecMosh::getMatrixElement( int n, int l, int N, int Lambda, int na, int l
 			else if (Na == N)
 			{
 				if( Lambdaa == Lambda-1)
-					return pow(-1,f+1)*sqrt(n*(N+Lambda+0.5)*(l+1)*Lambda)*pow(-1.,L+Lambda+l)*Wc(l,l+1,Lambda,Lambda-1,1,L);
+					return pow(-1.,f+1)*sqrt(n*(N+Lambda+0.5)*(l+1)*Lambda)*pow(-1.,L+Lambda+l)*Wc(l,l+1,Lambda,Lambda-1,1,L);
 				else return 0;
 			}
 			else return 0;
@@ -290,7 +290,7 @@ double RecMosh::getMatrixElement( int n, int l, int N, int Lambda, int na, int l
 			else if ( Na == N)
 			{
 				if( Lambdaa == Lambda-1)
-					return pow(-1.,f+1)*sqrt((n+l+0.5)*(N+Lambda+0.5)*l*Lambda)*pow(-1,L+Lambda+l)*Wc(l,l-1,Lambda,Lambda-1,1,L);
+					return pow(-1.,f+1)*sqrt((n+l+0.5)*(N+Lambda+0.5)*l*Lambda)*pow(-1.,L+Lambda+l)*Wc(l,l-1,Lambda,Lambda-1,1,L);
 				else return 0;
 			}
 			else return 0;
