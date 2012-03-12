@@ -172,7 +172,7 @@ complex<double> Pair::angularwf( int l, int two_S, int two_j, int two_mj, double
 	    // clebsch * angularwf
 	    double clebsch = gsl_sf_coupling_3j( 2*l, two_S, two_j, two_mj-two_mS, two_mS, -two_mj );
 	    if(abs(clebsch)>1.E-03){
-	      resultsum+= pow(-1, (2*l-two_S+two_mj)/2) * sqrt(two_j+1) * clebsch
+	      resultsum+= pow(-1., (2*l-two_S+two_mj)/2) * sqrt(two_j+1) * clebsch
 			  * angularwf( l, (two_mj-two_mS)/2, costh, phi);			
 			   }
 	}
@@ -183,7 +183,7 @@ complex<double> Pair::angularwf( int l, int two_S, int two_j, int two_mj, double
 complex<double> Pair::angularwfsplit( int l, int two_S, int two_ms, int two_j, int two_mj, double costh, double phi) const
 {
   if(abs((two_mj-two_ms)/2)>l) { /*cout << "blaaa " << (two_mj-two_ms)/2 << " " << two_mj << " " << two_ms << endl ;*/ return 0.;}
-  else return  pow(-1, (2*l-two_S+two_mj)/2) * sqrt(two_j+1) 
+  else return  pow(-1., (2*l-two_S+two_mj)/2) * sqrt(two_j+1) 
 		*gsl_sf_coupling_3j( 2*l, two_S, two_j, two_mj-two_ms, two_ms, -two_mj )
 		    * angularwf( l, (two_mj-two_ms)/2, costh, phi);			
 }
