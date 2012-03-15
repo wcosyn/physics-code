@@ -22,26 +22,26 @@ class AbstractFsiCTGridThick : public AbstractFsiGridThick, public AbstractFsiCT
 public:
   /*! Constructor
    * \param r_grid gridsize in r 
-   * \param th_grid gridsize in theta
+   * \param cth_grid gridsize in costheta
    * \param phi_grid gridsizein phi
    * \param pnuclthick pointer to an instance of MeanFieldNucleusThick
    * \param dir string that contains dir with all input
    */
-  AbstractFsiCTGridThick(const int r_grid, const int th_grid, const int phi_grid, MeanFieldNucleusThick *pnuclthick, 
+  AbstractFsiCTGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick *pnuclthick, 
 		         string dir);
   virtual ~AbstractFsiCTGridThick();/*!< Destructor */
   
   virtual void printFsi_src_ct_grid()=0; /*!< Prints the FSI+SRC+CT grid for a certain situation, pure virtual function!! */
 
-  /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,theta,phi) */
+  /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,costheta,phi) */
   complex<double> getFsiSrcCtGridFull_interpvec(const TVector3 &rvec);
-  /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,theta,phi) */
-  complex<double> getFsiSrcCtGridFull_interp3(const double r, const double theta, const double phi);
-  /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (theta,phi), r has been set previously */
-  complex<double> getFsiSrcCtGridFull_interp2(const double theta, const double phi);
+  /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,costheta,phi) */
+  complex<double> getFsiSrcCtGridFull_interp3(const double r, const double costheta, const double phi);
+  /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (costheta,phi), r has been set previously */
+  complex<double> getFsiSrcCtGridFull_interp2(const double costheta, const double phi);
   /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (phi), r&theta have been set previously */
   complex<double> getFsiSrcCtGridFull_interp1(const double phi);
-  /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously
+  /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,costheta,phi) that has been set previously
    ,pure virtual function!!*/
   virtual complex<double> getFsiSrcCtGridFull_interp()=0;
 

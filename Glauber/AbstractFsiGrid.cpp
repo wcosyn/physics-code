@@ -8,12 +8,12 @@ using namespace std;
 #include <constants.hpp>
 #include <Utilfunctions.hpp>
 
-AbstractFsiGrid::AbstractFsiGrid(int r_grid, int th_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
-filledgrid(0),filledallgrid(0),dir(homedir+"/grids/"),rgrid(r_grid),thgrid(th_grid),phigrid(phi_grid),allinplane(0),totalprotonout(0), totalneutronout(0),
+AbstractFsiGrid::AbstractFsiGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
+filledgrid(0),filledallgrid(0),dir(homedir+"/grids/"),rgrid(r_grid),cthgrid(cth_grid),phigrid(phi_grid),allinplane(0),totalprotonout(0), totalneutronout(0),
 protonknockout(0), neutronknockout(0),pnucleus(pnucl){
   
   invrstep=rgrid/pnucleus->getRange();
-  invthstep=thgrid/PI;
+  invcthstep=cthgrid/2.;
   invphistep=0.5*phigrid/PI;
   
   
@@ -41,8 +41,8 @@ int AbstractFsiGrid::getRgrid() const{
 }
 
 //get thgrid
-int AbstractFsiGrid::getThgrid() const{
-  return thgrid;
+int AbstractFsiGrid::getCthgrid() const{
+  return cthgrid;
 }
 
 //get phigrid
@@ -56,8 +56,8 @@ double AbstractFsiGrid::getInvRstep() const{
 }
 
 //get invthstep
-double AbstractFsiGrid::getInvThstep() const{
-  return invthstep;
+double AbstractFsiGrid::getInvCthstep() const{
+  return invcthstep;
 }
 
 //get invphistep
@@ -101,8 +101,8 @@ int AbstractFsiGrid::getRindex() const{
 }
 
 //get thindex
-int AbstractFsiGrid::getThindex() const{
-  return thindex;
+int AbstractFsiGrid::getCthindex() const{
+  return cthindex;
 }
 
 //get phiindex
@@ -258,14 +258,14 @@ void AbstractFsiGrid::setRinterp(const double r){
 }
 
 //set up interpolation help variables for theta
-void AbstractFsiGrid::setThinterp(const double theta){
-  thindex = int(floor(theta*getInvThstep()));
-  if(thindex==getThgrid()) thindex-=1;
-  t_interp = (theta*getInvThstep() - (thindex));  
+void AbstractFsiGrid::setCthinterp(const double costheta){
+  cthindex = int(floor((-costheta+1.)*getInvCthstep()));
+  if(cthindex==getCthgrid()) cthindex-=1;
+  t_interp = ((-costheta+1.)*getInvCthstep() - (cthindex));  
   comp_t_interp=1.-t_interp;
 }
 
-//set up interpolation help variables for theta
+//set up interpolation help variables for phi
 void AbstractFsiGrid::setPhiinterp(const double phi){
   phiindex = int(floor(phi*getInvPhistep()));
   if(phiindex==getPhigrid()) phiindex-=1;
@@ -275,19 +275,19 @@ void AbstractFsiGrid::setPhiinterp(const double phi){
 
 //interpolation functions
 complex<double> AbstractFsiGrid::getFsiGridFull_interpvec(const TVector3 &rvec){
-  return getFsiGridFull_interp3(rvec.Mag(),rvec.Theta(),rvec.Phi());
+  return getFsiGridFull_interp3(rvec.Mag(),rvec.CosTheta(),rvec.Phi());
 }
 
-complex<double> AbstractFsiGrid::getFsiGridFull_interp3(const double r, const double theta, const double phi){
+complex<double> AbstractFsiGrid::getFsiGridFull_interp3(const double r, const double costheta, const double phi){
   setRinterp(r);
-  setThinterp(theta);
+  setCthinterp(costheta);
   if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
   else setPhiinterp(phi);
   return getFsiGridFull_interp();
 }
 
-complex<double> AbstractFsiGrid::getFsiGridFull_interp2(const double theta, const double phi){
-  setThinterp(theta);
+complex<double> AbstractFsiGrid::getFsiGridFull_interp2(const double costheta, const double phi){
+  setCthinterp(costheta);
   if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
   else setPhiinterp(phi);
   return getFsiGridFull_interp();
@@ -302,14 +302,14 @@ complex<double> AbstractFsiGrid::getFsiGridFull_interp1(const double phi){
 
 //3d interpolation of array
 complex<double> AbstractFsiGrid::getInterp(complex<double> ***grid){
-  return getComp_u_interp()*(getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getThindex()][getPhiindex()]
-	+ getS_interp()*grid[getRindex()+1][getThindex()][getPhiindex()]) 
-	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getThindex()+1][getPhiindex()] 
-	+ getS_interp()*grid[getRindex()+1][getThindex()+1][getPhiindex()]))
-	+  getU_interp()*(getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getThindex()][getPhiindex()+1]
-	+ getS_interp()*grid[getRindex()+1][getThindex()][getPhiindex()+1]) 
-	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getThindex()+1][getPhiindex()+1]
-	+ getS_interp()*grid[getRindex()+1][getThindex()+1][getPhiindex()+1]));
+  return getComp_u_interp()*(getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()][getPhiindex()]
+	+ getS_interp()*grid[getRindex()+1][getCthindex()][getPhiindex()]) 
+	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()+1][getPhiindex()] 
+	+ getS_interp()*grid[getRindex()+1][getCthindex()+1][getPhiindex()]))
+	+  getU_interp()*(getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()][getPhiindex()+1]
+	+ getS_interp()*grid[getRindex()+1][getCthindex()][getPhiindex()+1]) 
+	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()+1][getPhiindex()+1]
+	+ getS_interp()*grid[getRindex()+1][getCthindex()+1][getPhiindex()+1]));
 }
 
 
@@ -323,7 +323,7 @@ void AbstractFsiGrid::setFilenames(string homedir){
     fsi_filename+=".Ptype"+to_string(particles[i].getParticletype())+".p"+to_string(int(particles[i].getP()/10))
 		  +".th"+to_string(int(particles[i].getTheta()*10))+".ph"+to_string(int(particles[i].getPhi()*10));
   }
-  fsi_filename+=".r"+to_string(getRgrid())+".th"+to_string(getThgrid())+".phi"+to_string(getPhigrid())+".dat";
+  fsi_filename+=".r"+to_string(getRgrid())+".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".dat";
 }
   
   

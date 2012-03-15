@@ -223,7 +223,7 @@ void Model::intJCosTheta(const double costheta, complex<double> *results, va_lis
   double r = va_arg(ap,double);
   double *pphiestimate = va_arg(ap,double*);
   double sintheta=sqrt(1.-costheta*costheta);
-  if(!pw) grid->setThinterp(acos(costheta));
+  if(!pw) grid->setCthinterp(costheta);
   rombergerN(this,&Model::intJPhi,0.,2.*PI,2,results,PREC,3,6,pphiestimate, pw,r, costheta, sintheta);
   return;
 }
@@ -233,7 +233,7 @@ void Model::intJCosTheta12(const double costheta, complex<double> *results, va_l
   double r = va_arg(ap,double);
   double *pphiestimate = va_arg(ap,double*);
   double sintheta=sqrt(1.-costheta*costheta);
-  if(!pw) grid->setThinterp(acos(costheta));
+  if(!pw) grid->setCthinterp(costheta);
   rombergerN(this,&Model::intJPhi12,0.,2.*PI,12,results,PREC,3,6,pphiestimate, pw,r, costheta, sintheta);
   return;
 }

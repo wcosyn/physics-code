@@ -9,9 +9,9 @@ using namespace std;
 #include <Utilfunctions.hpp>
 
 //constructor, calls abstractfsigrid's constructor
-GlauberGrid::GlauberGrid(const int r_grid, const int th_grid, const int phi_grid, MeanFieldNucleus *pnucl, string dir):
-AbstractFsiGrid(r_grid,th_grid,phi_grid,pnucl,dir),
-AbstractFsiCTGrid(r_grid,th_grid,phi_grid,pnucl,dir),fsi_grid(NULL),fsi_ct_grid(NULL),treshold(NULL){
+GlauberGrid::GlauberGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, string dir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,dir),
+AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,dir),fsi_grid(NULL),fsi_ct_grid(NULL),treshold(NULL){
 }
 
 //destructor
@@ -20,7 +20,7 @@ GlauberGrid::~GlauberGrid(){
     for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
       for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1: ((getPnucleus()->getJ_array()[i]+1)/2));j++){
 	for(int k=0;k<(getRgrid()+1);k++){
-	  for(int l=0;l<(getThgrid()+1);l++){
+	  for(int l=0;l<(getCthgrid()+1);l++){
 	    delete [] fsi_grid[i][j][k][l];
 	    delete [] fsi_ct_grid[i][j][k][l];
 	  }
@@ -39,7 +39,7 @@ GlauberGrid::~GlauberGrid(){
 
 }  
 
-//interpolation of the grid after r,th,phi have been set
+//interpolation of the grid after r,cth,phi have been set
 complex<double> GlauberGrid::getFsiGridFull_interp(){
   //sanity check to see that the right amount of knocked out nucleons end up in the final state!
 //   if((getTotalProtonOut()==getProtonKnockout())&&(getTotalNeutronOut()==getNeutronKnockout())){
@@ -78,13 +78,13 @@ void GlauberGrid::printFsi_grid(){
   for(int i=0; i<=getRgrid(); i++){
     double r = float(i)*getPnucleus()->getRange()/getRgrid();
     //if(r_hit==0.) r_hit=0.001;
-    for(int j=0;j<=getThgrid();j++){
-      double theta = PI*j/getThgrid();
+    for(int j=0;j<=getCthgrid();j++){
+      double costheta = -2.*j/getCthgrid()+1.;
       for(int k=0;k<=getPhigrid();k++){
 	double phi = (getAllinplane()?1.:2.)*PI*k/getPhigrid();
 	if(isnan(phi)) phi=0.;
-	complex<double> value=AbstractFsiCTGrid::getFsiGridFull_interp3(r,theta,phi);
-	cout << r << " " << theta*RADTODEGR << " " << phi*RADTODEGR << " " << real(value) << " " << imag(value) << endl;
+	complex<double> value=AbstractFsiCTGrid::getFsiGridFull_interp3(r,costheta,phi);
+	cout << r << " " << costheta << " " << phi*RADTODEGR << " " << real(value) << " " << imag(value) << endl;
       }
     }
   }
@@ -97,13 +97,13 @@ void GlauberGrid::printFsi_ct_grid(){
   for(int i=0; i<=getRgrid(); i++){
     double r = float(i)*getPnucleus()->getRange()/getRgrid();
     //if(r_hit==0.) r_hit=0.001;
-    for(int j=0;j<=getThgrid();j++){
-      double theta = PI*j/getThgrid();
+    for(int j=0;j<=getCthgrid();j++){
+      double costheta = -2.*j/getCthgrid()+1.;
       for(int k=0;k<=getPhigrid();k++){
 	double phi = (getAllinplane()?1.:2.)*PI*k/getPhigrid();
 	if(isnan(phi)) phi=0.;
-	complex<double> value=AbstractFsiCTGrid::getFsiCtGridFull_interp3(r,theta,phi);
-	cout << r << " " << theta*RADTODEGR << " " << phi*RADTODEGR << " " << real(value) << " " << imag(value) << endl;
+	complex<double> value=AbstractFsiCTGrid::getFsiCtGridFull_interp3(r,costheta,phi);
+	cout << r << " " << costheta << " " << phi*RADTODEGR << " " << real(value) << " " << imag(value) << endl;
       }
     }
   }
@@ -134,8 +134,8 @@ void GlauberGrid::constructAllGrids(){
       for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
 	fsi_grid[i][j]=new complex<double>**[getRgrid()+1];
 	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_grid[i][j][k]=new complex<double>*[getThgrid()+1];
-	  for(int l=0;l<(getThgrid()+1);l++){
+	  fsi_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
+	  for(int l=0;l<(getCthgrid()+1);l++){
 	    fsi_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
 	  }
 	}
@@ -156,8 +156,8 @@ void GlauberGrid::constructAllGrids(){
       for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
 	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
 	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_ct_grid[i][j][k]=new complex<double>*[getThgrid()+1];
-	  for(int l=0;l<(getThgrid()+1);l++){
+	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
+	  for(int l=0;l<(getCthgrid()+1);l++){
 	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
 	  }
 	}
@@ -171,8 +171,8 @@ void GlauberGrid::constructAllGrids(){
   //mem reservation for treshold array
   if(treshold==NULL){
     //cout << "Mem reservation for treshold array" << endl;
-    treshold = new int*[getThgrid()+1];
-    for(int i=0;i<=getThgrid();i++){
+    treshold = new int*[getCthgrid()+1];
+    for(int i=0;i<=getCthgrid();i++){
       treshold[i] = new int[getPhigrid()+1];
       for(int j=0;j<=getPhigrid();j++) treshold[i][j]=0;
     }
@@ -186,9 +186,10 @@ void GlauberGrid::constructAllGrids(){
   for(int i=0; i<=getRgrid(); i++){
     r_hit = float(i)*getPnucleus()->getRange()/getRgrid();
     //if(r_hit==0.) r_hit=0.001;
-    for(int j=0;j<=getThgrid();j++){
-      theta_hit = PI*j/getThgrid();
-      sincos(theta_hit,&sintheta_hit,&costheta_hit);
+    for(int j=0;j<=getCthgrid();j++){
+      costheta_hit = -2.*j/getCthgrid()+1.;
+      //sincos(theta_hit,&sintheta_hit,&costheta_hit);
+      sintheta_hit=sqrt(1.-costheta_hit*costheta_hit);
       for(int k=0;k<=getPhigrid();k++){
 	phi_hit = (getAllinplane()?1.:2.)*PI*k/getPhigrid();
 	if(isnan(phi_hit)) phi_hit=0.;
@@ -251,13 +252,13 @@ void GlauberGrid::constructAllGrids(){
 	  
 	  if(abs(fsi_ct_grid[getPnucleus()->getTotalLevels()][0][i][j][k])>0.99&&abs(fsi_grid[getPnucleus()->getTotalLevels()][0][i][j][k])>0.99){
 	    treshold[j][k]=1;
-	    if(j==0||j==getThgrid()){
+	    if(j==0||j==getCthgrid()){
 	      for(int ll=1;ll<=getPhigrid();ll++) treshold[j][ll]=1;
 	    }
 	  }
 	  //r=0 symmetry shortcut
 	  if(i==0){
-	    for(j=0;j<=getThgrid();j++){
+	    for(j=0;j<=getCthgrid();j++){
 	      for(k=0;k<=getPhigrid();k++){
 		for(int level=0;level<getPnucleus()->getTotalLevels();level++){
 		  for(int mm=0; mm<((getPnucleus()->getJ_array()[level]+1)/2);mm++){
@@ -274,7 +275,7 @@ void GlauberGrid::constructAllGrids(){
 	    }
 	  }
 	  //theta=0 or Pi symmetry shortcut
-	  else if(j==0||j==getThgrid()){
+	  else if(j==0||j==getCthgrid()){
 	    for(k=1;k<=getPhigrid();k++){
 	      for(int level=0;level<getPnucleus()->getTotalLevels();level++){
 		for(int mm=0; mm<((getPnucleus()->getJ_array()[level]+1)/2);mm++){
@@ -305,7 +306,7 @@ void GlauberGrid::constructAllGrids(){
     }
   }
   //mem cleanup
-  for(int i=0;i<=getThgrid();i++) delete [] treshold[i];
+  for(int i=0;i<=getCthgrid();i++) delete [] treshold[i];
   delete [] treshold;
   treshold=NULL;
 }
@@ -322,8 +323,8 @@ void GlauberGrid::constructCtGrid(){
       for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
 	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
 	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_ct_grid[i][j][k]=new complex<double>*[getThgrid()+1];
-	  for(int l=0;l<(getThgrid()+1);l++){
+	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
+	  for(int l=0;l<(getCthgrid()+1);l++){
 	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
 	  }
 	}
@@ -336,8 +337,8 @@ void GlauberGrid::constructCtGrid(){
   }    
   //mem reservation for treshold
   if(treshold==NULL){
-    treshold = new int*[getThgrid()+1];
-    for(int i=0;i<=getThgrid();i++){
+    treshold = new int*[getCthgrid()+1];
+    for(int i=0;i<=getCthgrid();i++){
       treshold[i] = new int[getPhigrid()+1];
       for(int j=0;j<=getPhigrid();j++) treshold[i][j]=0;
     }
@@ -350,9 +351,10 @@ void GlauberGrid::constructCtGrid(){
   for(int i=0; i<=getRgrid(); i++){
     r_hit = float(i)*getPnucleus()->getRange()/getRgrid();
     //if(r_hit==0.) r_hit=0.001;
-    for(int j=0;j<=getThgrid();j++){
-      theta_hit = PI*j/getThgrid();
-      sincos(theta_hit,&sintheta_hit,&costheta_hit);
+    for(int j=0;j<=getCthgrid();j++){
+      costheta_hit = -2.*j/getCthgrid()+1.;
+      //sincos(theta_hit,&sintheta_hit,&costheta_hit);
+      sintheta_hit = sqrt(1.-costheta_hit*costheta_hit);
       for(int k=0;k<=getPhigrid();k++){
 	phi_hit = (getAllinplane()?1.:2.)*PI*k/getPhigrid();
 	if(isnan(phi_hit)) phi_hit=0.;
@@ -403,13 +405,13 @@ void GlauberGrid::constructCtGrid(){
 	  }
 	  if(abs(fsi_ct_grid[getPnucleus()->getTotalLevels()][0][i][j][k])>0.99){
 	    treshold[j][k]=1;
-	    if(j==0||j==getThgrid()){
+	    if(j==0||j==getCthgrid()){
 	      for(int ll=1;ll<=getPhigrid();ll++) treshold[j][ll]=1;
 	    }
 	  }
 	  //r=0 symmetry shortcut
   	  if(i==0){
-	    for(j=0;j<=getThgrid();j++){
+	    for(j=0;j<=getCthgrid();j++){
 	      for(k=0;k<=getPhigrid();k++){
 		for(int level=0;level<getPnucleus()->getTotalLevels();level++){
 		  for(int mm=0; mm<((getPnucleus()->getJ_array()[level]+1)/2);mm++){
@@ -421,7 +423,7 @@ void GlauberGrid::constructCtGrid(){
 	    }
 	  }
 	  //theta=0 or Pi symmetry shortcut
-	  else if(j==0||j==getThgrid()){
+	  else if(j==0||j==getCthgrid()){
 	    for(k=1;k<=getPhigrid();k++){
 	      for(int level=0;level<getPnucleus()->getTotalLevels();level++){
 		for(int mm=0; mm<((getPnucleus()->getJ_array()[level]+1)/2);mm++){
@@ -446,7 +448,7 @@ void GlauberGrid::constructCtGrid(){
     }
   }
   
-  for(int i=0;i<=getThgrid();i++) delete [] treshold[i];
+  for(int i=0;i<=getCthgrid();i++) delete [] treshold[i];
   delete [] treshold;
   treshold=NULL;
 }
@@ -491,8 +493,8 @@ void GlauberGrid::readinFsiGrid(ifstream &infile){
       for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
 	fsi_grid[i][j]=new complex<double>**[getRgrid()+1];
 	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_grid[i][j][k]=new complex<double>*[getThgrid()+1];
-	  for(int l=0;l<(getThgrid()+1);l++){
+	  fsi_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
+	  for(int l=0;l<(getCthgrid()+1);l++){
 	    fsi_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
 	    for(int mm=0;mm<(getPhigrid()+1);mm++){
 	      infile.read(reinterpret_cast<char *>(&fsi_grid[i][j][k][l][mm]),sizeof(complex<double>));
@@ -518,8 +520,8 @@ void GlauberGrid::readinFsiCtGrid(ifstream &infile){
       for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
 	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
 	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_ct_grid[i][j][k]=new complex<double>*[getThgrid()+1];
-	  for(int l=0;l<(getThgrid()+1);l++){
+	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
+	  for(int l=0;l<(getCthgrid()+1);l++){
 	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
 	    for(int mm=0;mm<(getPhigrid()+1);mm++){
 	      infile.read(reinterpret_cast<char *>(&fsi_ct_grid[i][j][k][l][mm]),sizeof(complex<double>));
@@ -540,7 +542,7 @@ void GlauberGrid::writeoutFsiGrid(ofstream &outfile){
   for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
     for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
       for(int k=0;k<(getRgrid()+1);k++){
-	for(int l=0;l<(getThgrid()+1);l++){
+	for(int l=0;l<(getCthgrid()+1);l++){
 	  for(int mm=0;mm<(getPhigrid()+1);mm++){
 	    outfile.write(reinterpret_cast<char *>(&fsi_grid[i][j][k][l][mm]),sizeof(complex<double>));
 	  }
@@ -555,7 +557,7 @@ void GlauberGrid::writeoutFsiCtGrid(ofstream &outfile){
   for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
     for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
       for(int k=0;k<(getRgrid()+1);k++){
-	for(int l=0;l<(getThgrid()+1);l++){
+	for(int l=0;l<(getCthgrid()+1);l++){
 	  for(int mm=0;mm<(getPhigrid()+1);mm++){
 	    outfile.write(reinterpret_cast<char *>(&fsi_ct_grid[i][j][k][l][mm]),sizeof(complex<double>));
 	  }

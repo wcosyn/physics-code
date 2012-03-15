@@ -8,8 +8,8 @@ using namespace std;
 #include "constants.hpp"
 #include <Utilfunctions.hpp>
 
-AbstractFsiCTGrid::AbstractFsiCTGrid(int r_grid, int th_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
-AbstractFsiGrid(r_grid,th_grid,phi_grid,pnucl,homedir),filledctgrid(0){
+AbstractFsiCTGrid::AbstractFsiCTGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),filledctgrid(0){
 }  
   
 AbstractFsiCTGrid::~AbstractFsiCTGrid(){
@@ -24,19 +24,19 @@ const string AbstractFsiCTGrid::getFsi_Ct_Filename() const{
 
 //interpolation functions
 complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interpvec(const TVector3 &rvec){
-  return getFsiCtGridFull_interp3(rvec.Mag(),rvec.Theta(),rvec.Phi());
+  return getFsiCtGridFull_interp3(rvec.Mag(),rvec.CosTheta(),rvec.Phi());
 }
 
-complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interp3(const double r, const double theta, const double phi){
+complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interp3(const double r, const double costheta, const double phi){
   setRinterp(r);
-  setThinterp(theta);
+  setCthinterp(costheta);
   if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
   else setPhiinterp(phi);
   return getFsiCtGridFull_interp();
 }
 
-complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interp2(const double theta, const double phi){
-  setThinterp(theta);
+complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interp2(const double costheta, const double phi){
+  setCthinterp(costheta);
   if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
   else setPhiinterp(phi);
   return getFsiCtGridFull_interp();

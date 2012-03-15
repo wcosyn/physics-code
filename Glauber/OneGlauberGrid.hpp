@@ -17,13 +17,13 @@ class OneGlauberGrid : public GlauberGrid{
 public:
   /*! Constructor
    * \param r_grid gridsize in r 
-   * \param th_grid gridsize in theta
+   * \param cth_grid gridsize in costheta
    * \param pnucl pointer to an instance of MeanFieldNucleus
    * \param dir string that contains dir with all input
    */
-  OneGlauberGrid(const int r_grid, const int th_grid, MeanFieldNucleus *pnucl, string dir);
+  OneGlauberGrid(const int r_grid, const int cth_grid, MeanFieldNucleus *pnucl, string dir);
   virtual ~OneGlauberGrid();/*!< Destructor */
-  /*! 2d interpolation of a grid after a certain coordinate (r,theta) has been set! */
+  /*! 2d interpolation of a grid after a certain coordinate (r,costheta) has been set! */
   virtual complex<double> getInterp(complex<double> ***grid);  
   /*! add particle subject to isi/fsi, checks to see the vector only contains max one particle 
    *\param newparticle pointer to instance of FastParticle you want to add*/
@@ -33,13 +33,13 @@ public:
 private:
   /*! calculates the glauberphases for one gridpoint (both FSI and FSI+CT)
    * \param i grid index in r
-   * \param j grid index in theta
+   * \param j grid index in costheta
    * \param k grid index in phi, irrelevant here (always 0)
    */
   virtual void calcGlauberphasesBoth(const int i, const int j, const int k); 
   /*! calculates the glauberphases for one gridpoint (only FSI+CT)
    * \param i grid index in r
-   * \param j grid index in theta
+   * \param j grid index in costheta
    * \param k grid index in phi, irrelevant here (always 0)
    */
   virtual void calcGlauberphasesCt(const int i, const int j, const int k);

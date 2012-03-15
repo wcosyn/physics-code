@@ -8,9 +8,9 @@ using namespace std;
 #include <Utilfunctions.hpp>
 
 //constructor, calls glaubergrid's constructor
-OneGlauberGrid::OneGlauberGrid(const int r_grid, const int th_grid, MeanFieldNucleus *pnucl, string dir):
-AbstractFsiGrid(r_grid,th_grid,0,pnucl,dir),
-GlauberGrid(r_grid,th_grid,0,pnucl,dir){
+OneGlauberGrid::OneGlauberGrid(const int r_grid, const int cth_grid, MeanFieldNucleus *pnucl, string dir):
+AbstractFsiGrid(r_grid,cth_grid,0,pnucl,dir),
+GlauberGrid(r_grid,cth_grid,0,pnucl,dir){
 }
 
 OneGlauberGrid::~OneGlauberGrid(){
@@ -18,10 +18,10 @@ OneGlauberGrid::~OneGlauberGrid(){
 
 //2d interpolation of array
 complex<double> OneGlauberGrid::getInterp(complex<double> ***grid){
-  return (getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getThindex()][0]
-	+ getS_interp()*grid[getRindex()+1][getThindex()][0]) 
-	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getThindex()+1][0] 
-	+ getS_interp()*grid[getRindex()+1][getThindex()+1][0]));
+  return (getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()][0]
+	+ getS_interp()*grid[getRindex()+1][getCthindex()][0]) 
+	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()+1][0] 
+	+ getS_interp()*grid[getRindex()+1][getCthindex()+1][0]));
 }
 
 void OneGlauberGrid::addParticle(FastParticle& newparticle){

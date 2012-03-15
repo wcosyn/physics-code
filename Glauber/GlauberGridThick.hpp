@@ -21,12 +21,12 @@ class GlauberGridThick : public AbstractFsiCTGridThick{
 public:
   /*! Constructor
    * \param r_grid gridsize in r 
-   * \param th_grid gridsize in theta
+   * \param cth_grid gridsize in costheta
    * \param phi_grid gridsizein phi
    * \param pnuclthick pointer to an instance of MeanFieldNucleusThick
    * \param dir string that contains dir with all input
    */
-  GlauberGridThick(const int r_grid, const int th_grid, const int phi_grid, MeanFieldNucleusThick *pnuclthick, 
+  GlauberGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick *pnuclthick, 
 		   string dir);/*!< Destructor */
   virtual ~GlauberGridThick();
   virtual complex<double> getFsiGridFull_interp(); /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
@@ -56,13 +56,13 @@ private:
   virtual void constructCtGrid(); /*!< construct only the fsi(+src)+ct grids */
   /*! calculates the glauberphases for one gridpoint (both FSI and FSI+CT)
    * \param i grid index in r
-   * \param j grid index in theta
+   * \param j grid index in costheta
    * \param k grid index in phi
    */
   virtual void calcGlauberphasesBoth(const int i, const int j, const int k); 
   /*! calculates the glauberphases for one gridpoint (only FSI+CT)
    * \param i grid index in r
-   * \param j grid index in theta
+   * \param j grid index in costheta
    * \param k grid index in phi
    */
   virtual void calcGlauberphasesCt(const int i, const int j, const int k);
