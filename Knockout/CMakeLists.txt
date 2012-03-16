@@ -42,10 +42,10 @@ target_link_libraries(Knockout ${ROOT_LIBRARIES} ${GSL_LIBRARIES})
 set_target_properties(Knockout PROPERTIES ${Knockout_LIBRARY_PROPERTIES})
 target_link_libraries (Knockout MePhys Glauber)
 ############### build the library #####################
-add_library(KnockoutST STATIC ${Knockout_SRCS})
-target_link_libraries(KnockoutST)
-set_target_properties(KnockoutST PROPERTIES OUTPUT_NAME Knockout)
+# add_library(KnockoutST STATIC ${Knockout_SRCS})
+# target_link_libraries(KnockoutST)
+# set_target_properties(KnockoutST PROPERTIES OUTPUT_NAME Knockout)
 
 ############### install the library ###################
 install(TARGETS Knockout DESTINATION "${CMAKE_SOURCE_DIR}/lib")
-install(TARGETS KnockoutST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+# install(TARGETS KnockoutST DESTINATION "${CMAKE_SOURCE_DIR}/lib")

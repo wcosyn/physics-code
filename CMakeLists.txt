@@ -11,7 +11,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
 MESSAGE("c++ ${CMAKE_CXX_COMPILER}")
 MESSAGE("c ${CMAKE_C_COMPILER}")
-
+MESSAGE("Type ${CMAKE_BUILD_TYPE}")
 # Set name of our project to "Event". Has to be done
 # after check of cmake version since this is a new feature                  
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -119,7 +119,7 @@ if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
       # Select flags.
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -fPIC -g")
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -fPIC")
-      set(CMAKE_CXX_FLAGS_DEBUG          "-g -fPIC -O2 -fno-reorder-blocks -fno-schedule-insns -fno-inline")
+      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3 -fPIC -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fPIC -fno-inline -ftest-coverage -fprofile-arcs")
       set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3 -fPIC -g")
@@ -135,7 +135,7 @@ if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
       MESSAGE("--- Found Intel compiler collection")
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0 -fPIC -shared-intel -fp-model source -unroll -msse4.1 -pthread -ipo -xsse4.2 -parallel -g")
       set(CMAKE_CXX_FLAGS_RELEASE        "-O0 -fPIC -shared-intel -fp-model source -unroll -msse4.1 -pthread -ipo -xsse4.2 -parallel")
-      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O3 -xhost -fp-model source -ipo -unroll -pthread -fPIC -fno-reorder-blocks -fno-schedule-insns -fno-inline")
+      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0 -fno-reorder-blocks -fno-schedule-insns -fno-inline")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3 -fPIC -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fPIC -fno-inline -ftest-coverage -fprofile-arcs")
     endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
@@ -182,3 +182,5 @@ add_subdirectory(DIS)
 
 message(${CMAKE_CXX_FLAGS_RELEASE})
 message(${CMAKE_Fortran_FLAGS_RELEASE})
+message(${CMAKE_CXX_FLAGS_DEBUG})
+message(${CMAKE_Fortran_FLAGS_DEBUG})

@@ -24,7 +24,7 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/glaubertest
+EFILE   = 	../../bin/srcnorm
 
 #		Mathematical functions
 LIBS =	 	-lm  -lifcore
@@ -41,7 +41,7 @@ HDRS =
 # root headers
 
 #		Object files
-OBJS = 	        $(HDRS:.hpp=.o)  $(CPATH)/testglauber.o
+OBJS = 	        $(HDRS:.hpp=.o)  $(CPATH)/testSRCnorm.o
 
 #-------------------------------------------------------------------------
 

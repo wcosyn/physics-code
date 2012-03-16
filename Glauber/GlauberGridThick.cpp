@@ -393,7 +393,7 @@ void GlauberGridThick::constructCtGrid(){
 void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int k){
   complex<double>* results= new complex<double>[4];
   for(int proton=0;proton<2;proton++){
-    double src=getFsiCorrelator().getCorrGrid_interp(r_hit,acos(costheta_hit),proton);
+    double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
     double restimate=0.,thetaestimate=0.,phiestimate=0.;
     rombergerN(this, &GlauberGridThick::intGlauberR,0.,getPnucleusthick()->getRange(),4,results,PREC,3,8,&restimate,proton,&thetaestimate, &phiestimate); 
     fsi_grid[0][proton][i][j][k]=results[0];
@@ -412,7 +412,7 @@ void GlauberGridThick::calcGlauberphasesCt(const int i, const int j, const int k
     double restimate=0.,thetaestimate=0.,phiestimate=0.;
     rombergerN(this, &GlauberGridThick::intGlauberRCT,0.,getPnucleusthick()->getRange(),2,results,PREC,3,8,&restimate,proton,&thetaestimate, &phiestimate); 
     fsi_ct_grid[0][proton][i][j][k]=results[0];
-    fsi_ct_grid[1][proton][i][j][k]=results[1]*getFsiCorrelator().getCorrGrid_interp(r_hit,acos(costheta_hit),proton);
+    fsi_ct_grid[1][proton][i][j][k]=results[1]*getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
   }   
   delete[] results;
 }
@@ -519,7 +519,7 @@ void GlauberGridThick::intGlauberCosTheta(const double costheta, complex<double>
   double sintheta = sqrt(1.-costheta*costheta);
   rombergerN(this,&GlauberGridThick::intGlauberPhi,0.,2.*PI,4,results,PREC,3,5,pphiestimate,r,costheta,sintheta,proton);
   //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
-  double src=getFsiCorrelator().getCorrGrid_interp(acos(costheta),proton);
+  double src=getFsiCorrelator().getCorrGrid_interp(costheta,proton);
   results[1]*=src;
   results[3]*=src;
 }
@@ -576,7 +576,7 @@ void GlauberGridThick::intGlauberCosThetaCT(const double costheta, complex<doubl
   
   double sintheta = sqrt(1.-costheta*costheta);
   rombergerN(this,&GlauberGridThick::intGlauberPhiCT,0.,2.*PI,2,results,PREC,3,5,pphiestimate,r,costheta,sintheta,proton);
-  results[1]*=getFsiCorrelator().getCorrGrid_interp(acos(costheta),proton);
+  results[1]*=getFsiCorrelator().getCorrGrid_interp(costheta,proton);
 }
   
 void GlauberGridThick::intGlauberPhiCT(const double phi, complex<double>* results, va_list ap){

@@ -22,40 +22,40 @@ public:
   /*! Constructor
    * \param inputnucleus pointer to an instance of MeanFieldNucleusThick
    * \param rgrid gridsize in r 
-   * \param thgrid gridsize in theta
+   * \param cthgrid gridsize in costheta
    * \param dir string that contains dir with all input
    */
-  FsiCorrelator(MeanFieldNucleusThick *inputnucleus, const int rgrid, const int thgrid,
+  FsiCorrelator(MeanFieldNucleusThick *inputnucleus, const int rgrid, const int cthgrid,
     const string dir);
   ~FsiCorrelator();/*!< Destructor */
   
   const string getCorrFilename() const; /*!< returns filename for the gamma function grids */
   int getCorr_rgrid() const;/*!<  returns the gridsize in r*/
-  int getCorr_thgrid() const;/*!<  returns the gridsize in theta*/
+  int getCorr_cthgrid() const;/*!<  returns the gridsize in theta*/
   double getInvRstep() const;/*!<  returns the inverse of the stepsize of the grid in r*/
-  double getInvThstep() const;/*!<  returns the inverse of the stepsize of the grid in theta*/
+  double getInvCthstep() const;/*!<  returns the inverse of the stepsize of the grid in theta*/
   double getS_interp() const;/*!<  returns s, measure where the point for interpolation is between two indices in r*/
   double getT_interp() const;/*!<  returns t, measure where the point for interpolation is between two indices in theta*/
   double getComp_s_interp() const;/*!<  returns 1-s*/
   double getComp_t_interp() const;/*!<  returns 1-t*/
   int getRindex() const;/*!<  returns the index for r used in the 2d interpolation*/
-  int getThindex() const;/*!<  returns the index for theta used in the 2d interpolation*/
+  int getCthindex() const;/*!<  returns the index for theta used in the 2d interpolation*/
   void setRinterp(const double r);/*!< sets the rindex variable used in the 2d interpolation */
-  void setThinterp(double theta); /*!< sets the thindex variable used in the 2d interpolation */
+  void setCthinterp(double costheta); /*!< sets the thindex variable used in the 2d interpolation */
   double correlation(const double r) const; /*!< correlation function g(r) \param  r [fm] radial coordinate */
   
   /*!returns the value of the gamma grid for the total density at coordinate (r,theta) */
-  double getCorrGridFull_interp(const double r, const double theta);
+  double getCorrGridFull_interp(const double r, const double costheta);
   /*!returns the value of the gamma grid for the proton density at coordinate (r,theta) */
-  double getCorrGridProton_interp(const double r, const double theta);
+  double getCorrGridProton_interp(const double r, const double costheta);
   /*!returns the value of the gamma grid for the neutron density at coordinate (r,theta) */
-  double getCorrGridNeutron_interp(const double r, const double theta);
+  double getCorrGridNeutron_interp(const double r, const double costheta);
   /*!returns the value of the gamma grid for the total density at coordinate (theta), r has been set previously */
-  double getCorrGridFull_interp(const double theta);
+  double getCorrGridFull_interp(const double costheta);
   /*!returns the value of the gamma grid for the proton density at coordinate (theta), r has been set previously */
-  double getCorrGridProton_interp(const double theta);
+  double getCorrGridProton_interp(const double costheta);
   /*!returns the value of the gamma grid for the neutron density at coordinate (theta), r has been set previously */
-  double getCorrGridNeutron_interp(const double theta);
+  double getCorrGridNeutron_interp(const double costheta);
   /*!returns the value of the gamma grid for the total density at coordinate (r,theta) that has been set previously */
   double getCorrGridFull_interp() const;
   /*!returns the value of the gamma grid for the proton density at coordinate (r,theta) that has been set previously */
@@ -64,13 +64,13 @@ public:
   double getCorrGridNeutron_interp() const;
   /*!returns the value of the gamma grid for the proton or neutron density at coordinate (r,theta) 
    * \param r [fm] radial coordinate
-   * \param theta [rad] theta, spherical coordinates
+   * \param costheta [rad] theta, spherical coordinates
    * \param proton selects proton (1) or neutron (0) density */
-  double getCorrGrid_interp(const double r, const double theta, bool proton);
+  double getCorrGrid_interp(const double r, const double costheta, bool proton);
   /*!returns the value of the gamma grid for the proton or neutron density at coordinate (theta), r has been set previously
    * \param theta [rad] theta, spherical coordinates
    * \param proton selects proton (1) or neutron (0) density */
-  double getCorrGrid_interp(const double theta, bool proton);
+  double getCorrGrid_interp(const double costheta, bool proton);
   /*!returns the value of the gamma grid for the proton or neutron density at coordinate (theta), r has been set previously
    \param proton selects proton (1) or neutron (0) density */
   double getCorrGrid_interp(bool proton) const;
@@ -84,16 +84,16 @@ public:
 private:
   string corrfilename; /*!< filename for the gamma grids */
   int corr_rgrid; /*!<  the gridsize in r*/
-  int corr_thgrid; /*!<  the gridsize in theta*/
+  int corr_cthgrid; /*!<  the gridsize in theta*/
   int corr_phigrid; /*!<  the gridsize in phi, not really used but somehow needed (it ain't broken so I keep it for now*/
   double invrstep; /*!<  the inverse of the stepsize of the grid in r*/
-  double invthstep;/*!<  the inverse of the stepsize of the grid in theta*/
+  double invcthstep;/*!<  the inverse of the stepsize of the grid in theta*/
   double s_interp; /*!<  s, measure where the point for interpolation is between two indices in r*/
   double t_interp; /*!<  t, measure where the point for interpolation is between two indices in theta*/
   double comp_s_interp; /*!<  1-s*/
   double comp_t_interp; /*!<  1-s*/
   int rindex; /*!<  the index for r used in the 3d interpolation*/
-  int thindex; /*!<  the index for theta used in the 3d interpolation*/
+  int cthindex; /*!<  the index for theta used in the 3d interpolation*/
   double **corrgridfull; /*!< gamma grid for full density */
   double **corrgridproton; /*!< gamma grid for proton density*/
   double **corrgridneutron;  /*!< gamma grid for neutron density*/

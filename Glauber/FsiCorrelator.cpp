@@ -7,24 +7,24 @@
 #include <Utilfunctions.hpp>
 
 
-#define TOTALGRIDPNTS getCorr_rgrid()*getCorr_thgrid()
+#define TOTALGRIDPNTS (getCorr_rgrid()+1)*(getCorr_cthgrid()+1)
 
 //constructor
-FsiCorrelator::FsiCorrelator(MeanFieldNucleusThick *inputnucleus, const int rgrid, const int thgrid, const string dir):
-corr_rgrid(rgrid),corr_thgrid(thgrid),corr_phigrid(6),pnucleus(inputnucleus)
+FsiCorrelator::FsiCorrelator(MeanFieldNucleusThick *inputnucleus, const int rgrid, const int cthgrid, const string dir):
+corr_rgrid(rgrid),corr_cthgrid(cthgrid),corr_phigrid(6),pnucleus(inputnucleus)
 {
   cout << "Initializing Object for correlated glauber" << endl;
   //initialization
   invrstep=corr_rgrid/pnucleus->getRange();
-  invthstep=corr_thgrid/PI;
+  invcthstep=corr_cthgrid;
   setCorrFilename(dir);
-  corrgridfull=new double*[getCorr_rgrid()];
-  corrgridproton=new double*[getCorr_rgrid()];
-  corrgridneutron=new double*[getCorr_rgrid()];
-  for(int i=0;i<getCorr_rgrid();i++){
-    corrgridfull[i]=new double[getCorr_thgrid()];
-    corrgridproton[i]=new double[getCorr_thgrid()];
-    corrgridneutron[i]=new double[getCorr_thgrid()];
+  corrgridfull=new double*[getCorr_rgrid()+1];
+  corrgridproton=new double*[getCorr_rgrid()+1];
+  corrgridneutron=new double*[getCorr_rgrid()+1];
+  for(int i=0;i<=getCorr_rgrid();i++){
+    corrgridfull[i]=new double[getCorr_cthgrid()+1];
+    corrgridproton[i]=new double[getCorr_cthgrid()+1];
+    corrgridneutron[i]=new double[getCorr_cthgrid()+1];
   }
   functionmatrix=NULL;
   x=NULL;
@@ -32,8 +32,8 @@ corr_rgrid(rgrid),corr_thgrid(thgrid),corr_phigrid(6),pnucleus(inputnucleus)
   //check if object has been created sometime earlier and read it in
   if(infile.is_open()){
     cout << "Reading in correlation grids from memory: " << corrfilename << endl;
-    for(int i=0;i<corr_rgrid;i++){
-      for(int j=0;j<corr_thgrid;j++){
+    for(int i=0;i<=corr_rgrid;i++){
+      for(int j=0;j<=corr_cthgrid;j++){
 	infile.read(reinterpret_cast<char *>(&corrgridfull[i][j]),sizeof(double));
 	infile.read(reinterpret_cast<char *>(&corrgridproton[i][j]),sizeof(double));
 	infile.read(reinterpret_cast<char *>(&corrgridneutron[i][j]),sizeof(double));
@@ -52,8 +52,8 @@ corr_rgrid(rgrid),corr_thgrid(thgrid),corr_phigrid(6),pnucleus(inputnucleus)
     ofstream outfile(corrfilename.c_str(),ios::out|ios::binary);
     if(outfile.is_open()){
       cout << "Writing grids to file :" << corrfilename << endl;
-      for(int i=0;i<corr_rgrid;i++){
-	for(int j=0;j<corr_thgrid;j++){
+      for(int i=0;i<=corr_rgrid;i++){
+	for(int j=0;j<=corr_cthgrid;j++){
 	  outfile.write(reinterpret_cast<char *>(&corrgridfull[i][j]),sizeof(double));
 	  outfile.write(reinterpret_cast<char *>(&corrgridproton[i][j]),sizeof(double));
 	  outfile.write(reinterpret_cast<char *>(&corrgridneutron[i][j]),sizeof(double));
@@ -71,7 +71,7 @@ corr_rgrid(rgrid),corr_thgrid(thgrid),corr_phigrid(6),pnucleus(inputnucleus)
 //mem cleanup
 FsiCorrelator::~FsiCorrelator(){
   cout << "Cleaning up correlator class object" << endl;
-  for(int i=0;i<corr_rgrid;i++){
+  for(int i=0;i<=corr_rgrid;i++){
     delete []corrgridfull[i];
     delete []corrgridproton[i];
     delete []corrgridneutron[i];
@@ -92,8 +92,8 @@ int FsiCorrelator::getCorr_rgrid() const{
 }
 
 //get corr_thgrid
-int FsiCorrelator::getCorr_thgrid() const{
-  return corr_thgrid;
+int FsiCorrelator::getCorr_cthgrid() const{
+  return corr_cthgrid;
 }
 
 //get rstep
@@ -102,8 +102,8 @@ double FsiCorrelator::getInvRstep() const{
 }
 
 //get thstep
-double FsiCorrelator::getInvThstep() const{
-  return invthstep;
+double FsiCorrelator::getInvCthstep() const{
+  return invcthstep;
 }
 
 //get s_interp
@@ -132,8 +132,8 @@ int FsiCorrelator::getRindex() const{
 }
 
 //get thindex
-int FsiCorrelator::getThindex() const{
-  return thindex;
+int FsiCorrelator::getCthindex() const{
+  return cthindex;
 }
 
 //set up inteprolation help variables for r
@@ -143,96 +143,96 @@ void FsiCorrelator::setRinterp(const double r){
     exit(1);
   }
   rindex = int(floor(r*getInvRstep()));
-  if(rindex==getCorr_rgrid()) rindex-=2;
-  if(rindex==(getCorr_rgrid()-1)) rindex-=1;
+  if(rindex==getCorr_rgrid()) rindex-=1;
+  //if(rindex==(getCorr_rgrid()-1)) rindex-=1;
   s_interp = (r*getInvRstep() - (rindex));
   comp_s_interp=1.-s_interp;
 }
 
 //set up interpolation help variables for theta
-void FsiCorrelator::setThinterp(double theta){
-  if(theta>PI/2.) theta=PI-theta;
-  if(theta<0.) theta=0.;
-  thindex = int(floor(theta*getInvThstep()));
-  //if(thindex==getCorr_thgrid()) thindex-=1;
-  t_interp = (theta*getInvThstep() - (thindex));  
+void FsiCorrelator::setCthinterp(double costheta){
+  if(costheta<0.) costheta=-costheta;
+  if(abs(costheta)>1.) costheta=1.;
+  cthindex = int(floor(costheta*getInvCthstep()));
+  if(cthindex==getCorr_cthgrid()) cthindex-=1;
+  t_interp = (costheta*getInvCthstep() - (cthindex));  
   comp_t_interp=1.-t_interp;
 }
 
 //set r, theta and then get interpolation value of the grid
-double FsiCorrelator::getCorrGridFull_interp(const double r, const double theta){
+double FsiCorrelator::getCorrGridFull_interp(const double r, const double costheta){
   setRinterp(r); 
-  setThinterp(theta);
+  setCthinterp(costheta);
   return getCorrGridFull_interp();
 }
 
 //set r, theta and then get interpolation value of the grid
-double FsiCorrelator::getCorrGridProton_interp(const double r, const double theta){
+double FsiCorrelator::getCorrGridProton_interp(const double r, const double costheta){
   setRinterp(r); 
-  setThinterp(theta);
+  setCthinterp(costheta);
   return getCorrGridProton_interp();
 }
 
 
 //set r, theta and then get interpolation value of the grid
-double FsiCorrelator::getCorrGridNeutron_interp(const double r, const double theta){
+double FsiCorrelator::getCorrGridNeutron_interp(const double r, const double costheta){
   setRinterp(r); 
-  setThinterp(theta);
+  setCthinterp(costheta);
   return getCorrGridNeutron_interp();
 }
 
 //set theta and then get interpolation value of the grid
-double FsiCorrelator::getCorrGridFull_interp(const double theta){
-  setThinterp(theta);
+double FsiCorrelator::getCorrGridFull_interp(const double costheta){
+  setCthinterp(costheta);
   return getCorrGridFull_interp();
 }
 
 //set theta and then get interpolation value of the grid
-double FsiCorrelator::getCorrGridProton_interp(const double theta){
-  setThinterp(theta);
+double FsiCorrelator::getCorrGridProton_interp(const double costheta){
+  setCthinterp(costheta);
   return getCorrGridProton_interp();
 }
 
 
 //set theta and then get interpolation value of the grid
-double FsiCorrelator::getCorrGridNeutron_interp(const double theta){
-  setThinterp(theta);
+double FsiCorrelator::getCorrGridNeutron_interp(const double costheta){
+  setCthinterp(costheta);
   return getCorrGridNeutron_interp();
 }
 
-double FsiCorrelator::getCorrGrid_interp(const double r, const double theta, bool proton){
- return proton? getCorrGridProton_interp(r,theta) : getCorrGridNeutron_interp(r,theta);
+double FsiCorrelator::getCorrGrid_interp(const double r, const double costheta, bool proton){
+ return proton? getCorrGridProton_interp(r,costheta) : getCorrGridNeutron_interp(r,costheta);
 }
 
-double FsiCorrelator::getCorrGrid_interp(const double theta, bool proton){
- return proton? getCorrGridProton_interp(theta) : getCorrGridNeutron_interp(theta);
+double FsiCorrelator::getCorrGrid_interp(const double costheta, bool proton){
+ return proton? getCorrGridProton_interp(costheta) : getCorrGridNeutron_interp(costheta);
 }
 
 // get interpolation value of the grid
 double FsiCorrelator::getCorrGridFull_interp() const{
-  return comp_t_interp*(comp_s_interp*corrgridfull[rindex][thindex]
-	    + s_interp*corrgridfull[rindex+1][thindex])
-	    + t_interp*(comp_s_interp*corrgridfull[rindex][thindex+1]
-	    + s_interp*corrgridfull[rindex+1][thindex+1]);  
+  return comp_t_interp*(comp_s_interp*corrgridfull[rindex][cthindex]
+	    + s_interp*corrgridfull[rindex+1][cthindex])
+	    + t_interp*(comp_s_interp*corrgridfull[rindex][cthindex+1]
+	    + s_interp*corrgridfull[rindex+1][cthindex+1]);  
 }
 
 
 // get interpolation value of the grid
 double FsiCorrelator::getCorrGridProton_interp() const{
-  return comp_t_interp*(comp_s_interp*corrgridproton[rindex][thindex]
-	    + s_interp*corrgridproton[rindex+1][thindex])
-	    + t_interp*(comp_s_interp*corrgridproton[rindex][thindex+1]
-	    + s_interp*corrgridproton[rindex+1][thindex+1]);  
+  return comp_t_interp*(comp_s_interp*corrgridproton[rindex][cthindex]
+	    + s_interp*corrgridproton[rindex+1][cthindex])
+	    + t_interp*(comp_s_interp*corrgridproton[rindex][cthindex+1]
+	    + s_interp*corrgridproton[rindex+1][cthindex+1]);  
 }
 
 
 // get interpolation value of the grid
 double FsiCorrelator::getCorrGridNeutron_interp() const{
-//  cout << rindex << " " << thindex << " " << s_interp << " " << t_interp << endl;
-  return comp_t_interp*(comp_s_interp*corrgridneutron[rindex][thindex]
-	    + s_interp*corrgridneutron[rindex+1][thindex])
-	    + t_interp*(comp_s_interp*corrgridneutron[rindex][thindex+1]
-	    + s_interp*corrgridneutron[rindex+1][thindex+1]);  
+//  cout << rindex << " " << cthindex << " " << s_interp << " " << t_interp << endl;
+  return comp_t_interp*(comp_s_interp*corrgridneutron[rindex][cthindex]
+	    + s_interp*corrgridneutron[rindex+1][cthindex])
+	    + t_interp*(comp_s_interp*corrgridneutron[rindex][cthindex+1]
+	    + s_interp*corrgridneutron[rindex+1][cthindex+1]);  
 }
   
 double FsiCorrelator::getCorrGrid_interp(bool proton) const{
@@ -244,40 +244,40 @@ double FsiCorrelator::getCorrGrid_interp(bool proton) const{
   
 //set filename where the class object is stored or written to
 void FsiCorrelator::setCorrFilename(const string dir){
-  corrfilename=dir+"/input/CorrGrid."+pnucleus->getNucleusName()+".tot."+to_string(corr_rgrid)+"."+to_string(corr_thgrid)+".dat";  
+  corrfilename=dir+"/input/CorrGrid."+pnucleus->getNucleusName()+".tot."+to_string(corr_rgrid)+".c"+to_string(corr_cthgrid)+".dat";  
 }
 
 void FsiCorrelator::printCorrGridFull() const{
-  for(int i=0;i<corr_rgrid;i++){
-    for(int j=0;j<corr_thgrid;j++){
-      cout << pnucleus->getRange()*i/corr_rgrid << " " << 180.*j/corr_thgrid << " " << corrgridfull[i][j] << endl;
+  for(int i=0;i<=corr_rgrid;i++){
+    for(int j=0;j<=corr_cthgrid;j++){
+      cout << pnucleus->getRange()*i/corr_rgrid << " " << j/invcthstep << " " << corrgridfull[i][j] << endl;
     }
   }
   cout << endl << endl;
 }
   
 void FsiCorrelator::printCorrGridProton() const{
-  for(int i=0;i<corr_rgrid;i++){
-    for(int j=0;j<corr_thgrid;j++){
-      cout << pnucleus->getRange()*i/corr_rgrid << " " << 180.*j/corr_thgrid << " " << corrgridproton[i][j] << endl;
+  for(int i=0;i<=corr_rgrid;i++){
+    for(int j=0;j<=corr_cthgrid;j++){
+      cout << pnucleus->getRange()*i/corr_rgrid << " " << j/invcthstep << " " << corrgridproton[i][j] << endl;
     }
   }
   cout << endl << endl;
 }
   
 void FsiCorrelator::printCorrGridNeutron() const{
-  for(int i=0;i<corr_rgrid;i++){
-    for(int j=0;j<corr_thgrid;j++){
-      cout << pnucleus->getRange()*i/corr_rgrid << " " << 180.*j/corr_thgrid << " " << corrgridneutron[i][j] << endl;
+  for(int i=0;i<=corr_rgrid;i++){
+    for(int j=0;j<=corr_cthgrid;j++){
+      cout << pnucleus->getRange()*i/corr_rgrid << " " << j/invcthstep << " " << corrgridneutron[i][j] << endl;
     }
   }
   cout << endl << endl;
 }
   
 void FsiCorrelator::printCorrGridAll() const{
-  for(int i=0;i<corr_rgrid;i++){
-    for(int j=0;j<corr_thgrid;j++){
-      cout << pnucleus->getRange()*i/corr_rgrid << " " << 180.*j/corr_thgrid << " " << corrgridfull[i][j]
+  for(int i=0;i<=corr_rgrid;i++){
+    for(int j=0;j<=corr_cthgrid;j++){
+      cout << pnucleus->getRange()*i/corr_rgrid << " " << j/invcthstep << " " << corrgridfull[i][j]
       << " " << corrgridproton[i][j] << " " << corrgridneutron[i][j] << endl;
     }
   }
@@ -291,7 +291,7 @@ void FsiCorrelator::printCorrGridAll() const{
 void FsiCorrelator::constructCorrgrid(const double *density, double **corrgrid){
 
   cout << "Constructing correlation grid..." << endl;
-  functionmatrix = new double *[TOTALGRIDPNTS];//TOTALGRIDPNTS= getCorr_rgrid()*getCorr_thgrid()
+  functionmatrix = new double *[TOTALGRIDPNTS];//TOTALGRIDPNTS= (getCorr_rgrid()+1(*(getCorr_thgrid()+1)
   for(int i=0;i<TOTALGRIDPNTS;i++) functionmatrix[i] = new double[TOTALGRIDPNTS];
   cout << "Construct Matrix of the functions..." << endl;
   constructMatrixSet(density);
@@ -310,9 +310,9 @@ void FsiCorrelator::constructCorrgrid(const double *density, double **corrgrid){
   }
   else{
     for(int i=0;i<TOTALGRIDPNTS;i++){
-      int j = i%(corr_thgrid);
-      int ii = i/(corr_thgrid);
-      //cout << i << " " << ii << " " << j << " " << x[i] << endl;
+      int j = i%(corr_cthgrid+1);
+      int ii = i/(corr_cthgrid+1);
+//       cout << i << " " << ii << " " << j << " " << x[i] << endl;
       corrgrid[ii][j]=x[i];
     }
     cout << endl << endl;
@@ -328,24 +328,26 @@ void FsiCorrelator::constructCorrgrid(const double *density, double **corrgrid){
 
 void FsiCorrelator::constructMatrixSet(const double *density){
 
-  double VOLEL=pnucleus->getRange()/corr_rgrid*PI/corr_thgrid*PI/corr_phigrid; //phasespace
+  double VOLEL=pnucleus->getRange()/corr_rgrid/corr_cthgrid*PI/corr_phigrid; //phasespace
   //create grid, phi dependence is ignored as it is "very small"
-  for(int rindex1=0; rindex1<corr_rgrid; rindex1++){
+  for(int rindex1=0; rindex1<=corr_rgrid; rindex1++){
     double r1 = pnucleus->getRange()*rindex1/corr_rgrid;
-    for(int thetaindex1=0; thetaindex1<corr_thgrid; thetaindex1++){
-      double theta1 = PI*thetaindex1/corr_thgrid;
+    for(int cthetaindex1=0; cthetaindex1<=corr_cthgrid; cthetaindex1++){
+      double costheta1 = cthetaindex1/corr_cthgrid;
 /*      double costheta1 = cos(theta1);
       double sintheta1 = sin(theta1);*/
-      double costheta1,sintheta1;
-      sincos(theta1,&sintheta1,&costheta1);
-      int index1 = (rindex1)*(corr_thgrid)+thetaindex1;
-      for(int rindex2=0; rindex2<corr_rgrid; rindex2++){
+      //double costheta1,sintheta1;
+      //sincos(theta1,&sintheta1,&costheta1);
+      double sintheta1 = sqrt(1.-costheta1*costheta1);
+      int index1 = (rindex1)*(corr_cthgrid+1)+cthetaindex1;
+      for(int rindex2=0; rindex2<=corr_rgrid; rindex2++){
 	double r2 = pnucleus->getRange()*rindex2/corr_rgrid;
-	for(int thetaindex2=0; thetaindex2<corr_thgrid; thetaindex2++){
-	  double theta2 = PI*thetaindex2/corr_thgrid;
-	  double costheta2,sintheta2;
-	  sincos(theta2,&sintheta2,&costheta2);
-	  int index2 = (rindex2)*(corr_thgrid)+thetaindex2;	  
+	for(int cthetaindex2=0; cthetaindex2<=corr_cthgrid; cthetaindex2++){
+	  double costheta2 = cthetaindex2/corr_cthgrid;
+	  //double costheta2,sintheta2;
+	  //sincos(theta2,&sintheta2,&costheta2);
+	  double sintheta2 = sqrt(1.-costheta2*costheta2);
+	  int index2 = (rindex2)*(corr_cthgrid+1)+cthetaindex2;	  
 	  functionmatrix[index2][index1] = sintheta1*pnucleus->getDensity(r1,density)*VOLEL;
 	  double gsum = 0.;
 	  for(int phiindex1=0; phiindex1<2*corr_phigrid; phiindex1++){
@@ -357,6 +359,9 @@ void FsiCorrelator::constructMatrixSet(const double *density){
 	      double cosphi2, sinphi2;
 	      sincos(phi2,&sinphi2,&cosphi2);
 	      gsum +=correlation(normr(r1, costheta1, sintheta1, cosphi1, sinphi1, r2, costheta2, sintheta2, cosphi2, sinphi2));
+	      gsum +=correlation(normr(r1, -costheta1, sintheta1, cosphi1, sinphi1, r2, costheta2, sintheta2, cosphi2, sinphi2));
+	      gsum +=correlation(normr(r1, costheta1, sintheta1, cosphi1, sinphi1, r2, -costheta2, sintheta2, cosphi2, sinphi2));
+	      gsum +=correlation(normr(r1, -costheta1, sintheta1, cosphi1, sinphi1, r2, -costheta2, sintheta2, cosphi2, sinphi2));
 		//begin and endpoint trapezium integration coefficients
 		/*if(phiindex1==0) fillmatrix[index1][index2]/=2.;		
 		if(phiindex1==2.*PHIGRID) fillmatrix[index1][index2]/=2.;
@@ -508,7 +513,7 @@ void FsiCorrelator::ConstructJacobian(double **Jacobian){
 
 double FsiCorrelator::ReturnFunction(double *functionvalues){
   for(int i=0;i<TOTALGRIDPNTS;i++){
-    functionvalues[i]=-1.*2*corr_phigrid;
+    functionvalues[i]=-2.*2*corr_phigrid;
     for(int j=0;j<TOTALGRIDPNTS;j++){
       functionvalues[i]+=functionmatrix[i][j]*x[i]*x[j];
     }

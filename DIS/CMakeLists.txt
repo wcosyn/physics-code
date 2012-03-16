@@ -41,10 +41,10 @@ target_link_libraries(DIS ${ROOT_LIBRARIES} ${GSL_LIBRARIES})
 set_target_properties(DIS PROPERTIES ${DIS_LIBRARY_PROPERTIES})
 target_link_libraries (DIS MePhys Glauber)
 ############### build the library #####################
-add_library(DISST STATIC ${DIS_SRCS})
-target_link_libraries(DISST)
-set_target_properties(DISST PROPERTIES OUTPUT_NAME DIS)
+# add_library(DISST STATIC ${DIS_SRCS})
+# target_link_libraries(DISST)
+# set_target_properties(DISST PROPERTIES OUTPUT_NAME DIS)
 
 ############### install the library ###################
 install(TARGETS DIS DESTINATION "${CMAKE_SOURCE_DIR}/lib")
-install(TARGETS DISST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+# install(TARGETS DISST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
