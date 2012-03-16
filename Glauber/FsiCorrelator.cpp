@@ -16,7 +16,7 @@ corr_rgrid(rgrid),corr_cthgrid(cthgrid),corr_phigrid(6),pnucleus(inputnucleus)
   cout << "Initializing Object for correlated glauber" << endl;
   //initialization
   invrstep=corr_rgrid/pnucleus->getRange();
-  invcthstep=corr_cthgrid;
+  invcthstep=corr_cthgrid/2.;
   setCorrFilename(dir);
   corrgridfull=new double*[getCorr_rgrid()+1];
   corrgridproton=new double*[getCorr_rgrid()+1];
@@ -153,9 +153,9 @@ void FsiCorrelator::setRinterp(const double r){
 void FsiCorrelator::setCthinterp(double costheta){
   if(costheta<0.) costheta=-costheta;
   if(abs(costheta)>1.) costheta=1.;
-  cthindex = int(floor(costheta*getInvCthstep()));
+  cthindex = int(floor((1.-costheta)*getInvCthstep()));
   if(cthindex==getCorr_cthgrid()) cthindex-=1;
-  t_interp = (costheta*getInvCthstep() - (cthindex));  
+  t_interp = ((1.-costheta)*getInvCthstep() - (cthindex));  
   comp_t_interp=1.-t_interp;
 }
 
@@ -250,7 +250,7 @@ void FsiCorrelator::setCorrFilename(const string dir){
 void FsiCorrelator::printCorrGridFull() const{
   for(int i=0;i<=corr_rgrid;i++){
     for(int j=0;j<=corr_cthgrid;j++){
-      cout << pnucleus->getRange()*i/corr_rgrid << " " << j/invcthstep << " " << corrgridfull[i][j] << endl;
+      cout << pnucleus->getRange()*i/corr_rgrid << " " << 1.-j/invcthstep << " " << corrgridfull[i][j] << endl;
     }
   }
   cout << endl << endl;
@@ -259,7 +259,7 @@ void FsiCorrelator::printCorrGridFull() const{
 void FsiCorrelator::printCorrGridProton() const{
   for(int i=0;i<=corr_rgrid;i++){
     for(int j=0;j<=corr_cthgrid;j++){
-      cout << pnucleus->getRange()*i/corr_rgrid << " " << j/invcthstep << " " << corrgridproton[i][j] << endl;
+      cout << pnucleus->getRange()*i/corr_rgrid << " " << 1.-j/invcthstep << " " << corrgridproton[i][j] << endl;
     }
   }
   cout << endl << endl;
@@ -268,7 +268,7 @@ void FsiCorrelator::printCorrGridProton() const{
 void FsiCorrelator::printCorrGridNeutron() const{
   for(int i=0;i<=corr_rgrid;i++){
     for(int j=0;j<=corr_cthgrid;j++){
-      cout << pnucleus->getRange()*i/corr_rgrid << " " << j/invcthstep << " " << corrgridneutron[i][j] << endl;
+      cout << pnucleus->getRange()*i/corr_rgrid << " " << 1.-j/invcthstep << " " << corrgridneutron[i][j] << endl;
     }
   }
   cout << endl << endl;
@@ -277,7 +277,7 @@ void FsiCorrelator::printCorrGridNeutron() const{
 void FsiCorrelator::printCorrGridAll() const{
   for(int i=0;i<=corr_rgrid;i++){
     for(int j=0;j<=corr_cthgrid;j++){
-      cout << pnucleus->getRange()*i/corr_rgrid << " " << j/invcthstep << " " << corrgridfull[i][j]
+      cout << pnucleus->getRange()*i/corr_rgrid << " " << 1.-j/invcthstep << " " << corrgridfull[i][j]
       << " " << corrgridproton[i][j] << " " << corrgridneutron[i][j] << endl;
     }
   }
@@ -328,12 +328,12 @@ void FsiCorrelator::constructCorrgrid(const double *density, double **corrgrid){
 
 void FsiCorrelator::constructMatrixSet(const double *density){
 
-  double VOLEL=pnucleus->getRange()/corr_rgrid/corr_cthgrid*PI/corr_phigrid; //phasespace
+  double VOLEL=pnucleus->getRange()/corr_rgrid*2./corr_cthgrid*PI/corr_phigrid; //phasespace
   //create grid, phi dependence is ignored as it is "very small"
   for(int rindex1=0; rindex1<=corr_rgrid; rindex1++){
     double r1 = pnucleus->getRange()*rindex1/corr_rgrid;
     for(int cthetaindex1=0; cthetaindex1<=corr_cthgrid; cthetaindex1++){
-      double costheta1 = cthetaindex1/corr_cthgrid;
+      double costheta1 = 1.-2.*cthetaindex1/corr_cthgrid;
 /*      double costheta1 = cos(theta1);
       double sintheta1 = sin(theta1);*/
       //double costheta1,sintheta1;
@@ -343,7 +343,8 @@ void FsiCorrelator::constructMatrixSet(const double *density){
       for(int rindex2=0; rindex2<=corr_rgrid; rindex2++){
 	double r2 = pnucleus->getRange()*rindex2/corr_rgrid;
 	for(int cthetaindex2=0; cthetaindex2<=corr_cthgrid; cthetaindex2++){
-	  double costheta2 = cthetaindex2/corr_cthgrid;
+	  double costheta2 = 1.-2.*cthetaindex2/corr_cthgrid;
+// 	  cout << costheta1 << " " << costheta2 << endl;
 	  //double costheta2,sintheta2;
 	  //sincos(theta2,&sintheta2,&costheta2);
 	  double sintheta2 = sqrt(1.-costheta2*costheta2);
@@ -359,9 +360,9 @@ void FsiCorrelator::constructMatrixSet(const double *density){
 	      double cosphi2, sinphi2;
 	      sincos(phi2,&sinphi2,&cosphi2);
 	      gsum +=correlation(normr(r1, costheta1, sintheta1, cosphi1, sinphi1, r2, costheta2, sintheta2, cosphi2, sinphi2));
-	      gsum +=correlation(normr(r1, -costheta1, sintheta1, cosphi1, sinphi1, r2, costheta2, sintheta2, cosphi2, sinphi2));
-	      gsum +=correlation(normr(r1, costheta1, sintheta1, cosphi1, sinphi1, r2, -costheta2, sintheta2, cosphi2, sinphi2));
-	      gsum +=correlation(normr(r1, -costheta1, sintheta1, cosphi1, sinphi1, r2, -costheta2, sintheta2, cosphi2, sinphi2));
+// 	      gsum +=correlation(normr(r1, -costheta1, sintheta1, cosphi1, sinphi1, r2, costheta2, sintheta2, cosphi2, sinphi2));
+// 	      gsum +=correlation(normr(r1, costheta1, sintheta1, cosphi1, sinphi1, r2, -costheta2, sintheta2, cosphi2, sinphi2));
+// 	      gsum +=correlation(normr(r1, -costheta1, sintheta1, cosphi1, sinphi1, r2, -costheta2, sintheta2, cosphi2, sinphi2));
 		//begin and endpoint trapezium integration coefficients
 		/*if(phiindex1==0) fillmatrix[index1][index2]/=2.;		
 		if(phiindex1==2.*PHIGRID) fillmatrix[index1][index2]/=2.;
@@ -513,9 +514,12 @@ void FsiCorrelator::ConstructJacobian(double **Jacobian){
 
 double FsiCorrelator::ReturnFunction(double *functionvalues){
   for(int i=0;i<TOTALGRIDPNTS;i++){
-    functionvalues[i]=-2.*2*corr_phigrid;
+    functionvalues[i]=-/*2.**/2*corr_phigrid;
     for(int j=0;j<TOTALGRIDPNTS;j++){
-      functionvalues[i]+=functionmatrix[i][j]*x[i]*x[j];
+      double coeff = 1.;
+      if(j%(corr_cthgrid+1)==0||j%(corr_cthgrid+1)==corr_cthgrid) coeff*=0.5;
+      if(j/(corr_cthgrid+1)==0||j/(corr_cthgrid+1)==corr_rgrid) coeff*=0.5;
+      functionvalues[i]+=functionmatrix[i][j]*x[i]*x[j]*coeff;
     }
   }
   double f=0.0;

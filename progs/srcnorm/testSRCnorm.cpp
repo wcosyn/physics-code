@@ -22,7 +22,8 @@ int main(int argc, char *argv[])
   string homedir="/home/wim/Code/share";
 
   MeanFieldNucleusThick CarbonThick(1,HOMEDIR);
-  FsiCorrelator CarbonCorr(&CarbonThick,90,50,HOMEDIR);
+  FsiCorrelator CarbonCorr(&CarbonThick,20,20,HOMEDIR);
+  CarbonCorr.printCorrGridAll();
   //CarbonCorr.printCorrGridProton();
   
   for(int i=0;i<=15;i++){
