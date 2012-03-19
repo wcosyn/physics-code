@@ -2,6 +2,9 @@
 58618.92           // mass of Cu63
 57686.25           // mass of Ni62
 57690		   // mass of Cu62
+93275.47      //mass of 10Be
+9326.99       //mass of 10B
+9330.64       //mass of 10C
 8 9               // number of proton and neutron levels
 30.8 22.9 21.1 14.1 10.2 10.2 4.7 0 //exci proton
 32.6 24.7 22.9 15.9 12.0 12.0 6.5 1.8 0  //exci neutron

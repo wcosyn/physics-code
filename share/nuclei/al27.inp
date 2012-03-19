@@ -2,6 +2,9 @@
 25132.7  	    // mass of Al27
 24202.7 	    // mass of mg26
 24207		    // mass of Al26
+93275.47      //mass of 10Be
+9326.99       //mass of 10B
+9330.64       //mass of 10C
 4 4                 // number of proton and neutron levels
 23.2 11.8 7.6 0 //proton levels excitation energy
 23.2 11.8 7.6 0 //neutron levels excitation energy

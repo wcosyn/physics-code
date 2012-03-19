@@ -7,7 +7,7 @@
 #include <Utilfunctions.hpp>
 
 
-#define TOTALGRIDPNTS (getCorr_rgrid()+0)*(getCorr_cthgrid()+0)
+#define TOTALGRIDPNTS (getCorr_rgrid())*(getCorr_cthgrid())
 
 //constructor
 FsiCorrelator::FsiCorrelator(MeanFieldNucleusThick *inputnucleus, const int rgrid, const int cthgrid, const string dir):
@@ -18,13 +18,13 @@ corr_rgrid(rgrid),corr_cthgrid(cthgrid),corr_phigrid(6),pnucleus(inputnucleus)
   invrstep=corr_rgrid/pnucleus->getRange();
   invcthstep=corr_cthgrid/2.;
   setCorrFilename(dir);
-  corrgridfull=new double*[getCorr_rgrid()+0];
-  corrgridproton=new double*[getCorr_rgrid()+0];
-  corrgridneutron=new double*[getCorr_rgrid()+0];
+  corrgridfull=new double*[getCorr_rgrid()];
+  corrgridproton=new double*[getCorr_rgrid()];
+  corrgridneutron=new double*[getCorr_rgrid()];
   for(int i=0;i<getCorr_rgrid();i++){
-    corrgridfull[i]=new double[getCorr_cthgrid()+0];
-    corrgridproton[i]=new double[getCorr_cthgrid()+0];
-    corrgridneutron[i]=new double[getCorr_cthgrid()+0];
+    corrgridfull[i]=new double[getCorr_cthgrid()];
+    corrgridproton[i]=new double[getCorr_cthgrid()];
+    corrgridneutron[i]=new double[getCorr_cthgrid()];
   }
   functionmatrix=NULL;
   x=NULL;
@@ -311,8 +311,8 @@ void FsiCorrelator::constructCorrgrid(const double *density, double **corrgrid){
   }
   else{
     for(int i=0;i<TOTALGRIDPNTS;i++){
-      int j = i%(corr_cthgrid+0);
-      int ii = i/(corr_cthgrid+0);
+      int j = i%(corr_cthgrid);
+      int ii = i/(corr_cthgrid);
       //cout << i << " " << ii << " " << j << " " << x[i] << endl;
       corrgrid[ii][j]=x[i];
     }
@@ -341,7 +341,7 @@ void FsiCorrelator::constructMatrixSet(const double *density){
       double sintheta1 = sin(theta1);*/
 //       double costheta1,sintheta1;
 //       sincos(theta1,&sintheta1,&costheta1);
-      int index1 = (rindex1)*(corr_cthgrid+0)+thetaindex1;
+      int index1 = (rindex1)*(corr_cthgrid)+thetaindex1;
       for(int rindex2=0; rindex2<corr_rgrid; rindex2++){
 	double r2 = pnucleus->getRange()*rindex2/corr_rgrid;
 	for(int thetaindex2=0; thetaindex2<corr_cthgrid; thetaindex2++){
@@ -350,7 +350,7 @@ void FsiCorrelator::constructMatrixSet(const double *density){
 // 	  double theta2 = PI*thetaindex2/corr_thgrid;
 // 	  double costheta2,sintheta2;
 // 	  sincos(theta2,&sintheta2,&costheta2);
-	  int index2 = (rindex2)*(corr_cthgrid+0)+thetaindex2;	  
+	  int index2 = (rindex2)*(corr_cthgrid)+thetaindex2;	  
 	  functionmatrix[index2][index1] = pnucleus->getDensity(r1,density)*VOLEL;
 	  double gsum = 0.;
 	  for(int phiindex1=0; phiindex1<2*corr_phigrid; phiindex1++){
