@@ -10,7 +10,7 @@ using namespace std;
 
 AbstractFsiGridThick::AbstractFsiGridThick(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleusThick *pnucl, 
 					   string homedir):
-AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),pnucleusthick(pnucl),fsicorrelator(pnucl,90,50,homedir){
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),pnucleusthick(pnucl),fsicorrelator(pnucl,90,90,homedir){
   
   //fsicorrelator.printCorrGridAll();
 }  

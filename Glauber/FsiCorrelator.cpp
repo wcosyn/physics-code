@@ -151,10 +151,11 @@ void FsiCorrelator::setRinterp(const double r){
 
 //set up interpolation help variables for theta
 void FsiCorrelator::setCthinterp(double costheta){
-  if(costheta<0.) costheta=-costheta;
-  if(costheta>1.) costheta=1.;
+  //if(costheta<0.) costheta=-costheta;
+  //if(costheta>1.) costheta=1.;
   cthindex = int(floor((1.-costheta)*getInvCthstep()));
-  //if(thindex==getCorr_thgrid()) thindex-=1;
+  if(cthindex==getCorr_cthgrid()) cthindex-=2;
+  if(cthindex==(getCorr_cthgrid()-1)) cthindex-=1;
   t_interp = ((1.-costheta)*getInvCthstep() - (cthindex));  
   comp_t_interp=1.-t_interp;
 }
