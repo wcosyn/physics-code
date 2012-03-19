@@ -46,18 +46,18 @@ public:
   int getPLevels() const;/*!< Returns total number of proton shells */
   int getNLevels() const;/*!< Returns total number of neutron shells */
   int getTotalLevels() const; /*!< Returns total number of shells*/
-  const int* const getN_array() const; /*!< Returns array with all the n quantum numbers of each shell*/
-  const int* const getKappas() const; /*!< Returns array with all the kappa quantum numbers of each shell*/
-  const int* const getL_array() const; /*!< Returns array with all the l quantum numbers of each shell*/
-  const int* const getLbar_array() const; /*!< Returns array with all the l_bar quantum numbers of each shell*/
-  const int* const getJ_array() const; /*!< Returns array with all the j quantum numbers of each shell*/
+  const int* getN_array() const; /*!< Returns array with all the n quantum numbers of each shell*/
+  const int* getKappas() const; /*!< Returns array with all the kappa quantum numbers of each shell*/
+  const int* getL_array() const; /*!< Returns array with all the l quantum numbers of each shell*/
+  const int* getLbar_array() const; /*!< Returns array with all the l_bar quantum numbers of each shell*/
+  const int* getJ_array() const; /*!< Returns array with all the j quantum numbers of each shell*/
   double getMassA() const; /*!< Returns the nucleus mass*/
   double getMassA_min_proton() const; /*!< Returns the mass of the A-1(Z-1,N) nucleus*/
   double getMassA_min_neutron() const; /*!< Returns the mass of the A-1(Z,N-1) nucleus*/
   double getMassA_min_pp() const {return massA_min_pp;}; /*!< Returns the mass of the A-2(Z-2,N) nucleus*/
   double getMassA_min_pn() const {return massA_min_pn;}; /*!< Returns the mass of the A-2(Z-1,N-1) nucleus*/
   double getMassA_min_nn() const {return massA_min_nn;}; /*!< Returns the mass of the A-2(Z,N-2) nucleus*/
-  const double* const getExcitation() const; /*!< Returns an array with all the excitation energies of the shells*/
+  const double* getExcitation() const; /*!< Returns an array with all the excitation energies of the shells*/
   const string getInputfile() const; /*!< Returns a string with the location of the inputfile*/
   
   double getRange() const; /*!< Returns the range [fm] in r of the radial wave functions of the nucleons*/

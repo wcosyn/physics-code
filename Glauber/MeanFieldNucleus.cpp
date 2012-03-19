@@ -175,28 +175,28 @@ int MeanFieldNucleus::getTotalLevels() const{
   return totallevels;
 }
 //get n_array
-const int* const MeanFieldNucleus::getN_array() const{
+const int* MeanFieldNucleus::getN_array() const{
   return n_array;
 }
 
 
 //get pkappas
-const int* const MeanFieldNucleus::getKappas() const{
+const int* MeanFieldNucleus::getKappas() const{
   return kappas;
 }
 
 //get l_array
-const int* const MeanFieldNucleus::getL_array() const{
+const int* MeanFieldNucleus::getL_array() const{
   return l_array;
 }
 
 //get lbar_array
-const int* const MeanFieldNucleus::getLbar_array() const{
+const int* MeanFieldNucleus::getLbar_array() const{
   return lbar_array;
 }
 
 //get j_array
-const int* const MeanFieldNucleus::getJ_array() const{
+const int* MeanFieldNucleus::getJ_array() const{
   return j_array;
 }
 
@@ -216,7 +216,7 @@ double MeanFieldNucleus::getMassA_min_neutron() const{
 }
 
 //get excitation
-const double* const MeanFieldNucleus::getExcitation() const{
+const double* MeanFieldNucleus::getExcitation() const{
   return excitation;
 }
 

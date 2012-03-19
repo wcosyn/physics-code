@@ -54,10 +54,10 @@ public:
    *\return r*r*density(r)
    */  
   double getDensity(const double r, const double *density) const; //get total density for r
-  const double * const getProtonDensity() const; /*!< returns the proton density array */
-  const double * const getNeutronDensity() const; /*!< returns the neutron density array */
-  const double * const getTotalDensity() const; /*!< returns the total density array */
-  const double * const getDensity(int proton) const; /*!< returns the proton (1) or neutron (0) density array \param proton selects proton (1) or neutron(0) density*/
+  const double * getProtonDensity() const; /*!< returns the proton density array */
+  const double * getNeutronDensity() const; /*!< returns the neutron density array */
+  const double * getTotalDensity() const; /*!< returns the total density array */
+  const double * getDensity(int proton) const; /*!< returns the proton (1) or neutron (0) density array \param proton selects proton (1) or neutron(0) density*/
 
 private:
   double *protondensity; /*!< neutron density array*/

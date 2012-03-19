@@ -184,17 +184,17 @@ void LUsolve(double **a, double *b, int order){
 }
 
 
-void sincos(const double x, double * sin, double * cos){
-  if(fabs(x) < 1.E-03) {
-    *sin = x;
-    *cos = 1.0 - x*x/2.0;
-    return;
-  }
-  double s, c;
-  sincos(x/2., &s, &c);
-  *sin = 2.*s*c;
-  *cos = c*c - s*s;
-}
+// void sincos(const double x, double * sin, double * cos){
+//   if(fabs(x) < 1.E-03) {
+//     *sin = x;
+//     *cos = 1.0 - x*x/2.0;
+//     return;
+//   }
+//   double s, c;
+//   sincos(x/2., &s, &c);
+//   *sin = 2.*s*c;
+//   *cos = c*c - s*s;
+// }
 
 
 /////////////////////////////////

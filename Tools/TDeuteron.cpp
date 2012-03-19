@@ -862,8 +862,8 @@ double TDeuteron::Wavefunction::ClebschGordan(int two_j1,int two_m1,int two_j2,
 }
 
 //_____________________________________________________________________
-complex<double> TDeuteron::Wavefunction::DeuteronPState(const int deuteronPol, const int nucleon2Pol,
-						       const int nucleon1Pol, 
+complex<double> TDeuteron::Wavefunction::DeuteronPState(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
 						       const TVector3& p) const
 {
   // Calculate the state of a deuteron in momentum space. 
@@ -904,16 +904,16 @@ complex<double> TDeuteron::Wavefunction::DeuteronPState(const int deuteronPol, c
   return state;
 }
 //_____________________________________________________________________
-complex<double> TDeuteron::Wavefunction::DeuteronPState(const int deuteronPol, const int nucleon2Pol,
-						       const int nucleon1Pol, 
+complex<double> TDeuteron::Wavefunction::DeuteronPState(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
 						       const FourVector<double>& p1) const
 {
   // See TDeuteron::Wavefunction::DeuteronPState for more info.
   return DeuteronPState(deuteronPol,nucleon2Pol,nucleon1Pol,TVector3(p1[1],p1[2],p1[3]));    
 }
 //_____________________________________________________________________
-complex<double> TDeuteron::Wavefunction::DeuteronPState(const int deuteronPol, const int nucleon2Pol,
-						       const int nucleon1Pol, 
+complex<double> TDeuteron::Wavefunction::DeuteronPState(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
 						       const TLorentzVector& p1) const
 {
   // See TDeuteron::Wavefunction::DeuteronPState for more info.
@@ -949,8 +949,8 @@ complex<double> TDeuteron::Wavefunction::DeuteronPState(const int deuteronPol, c
 // }
 
 //_____________________________________________________________________
-complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(const int deuteronPol, const int nucleon2Pol,
-						       const int nucleon1Pol, 
+complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
 						       const TVector3& p) const
 {
   // Calculate the state of a deuteron in momentum space. 
@@ -999,16 +999,16 @@ complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(const int deuteronPol
   return -I*p.Z()/HBARC*state;
 }
 //_____________________________________________________________________
-complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(const int deuteronPol, const int nucleon2Pol,
-						       const int nucleon1Pol, 
+complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
 						       const FourVector<double>& p1) const
 {
   // See TDeuteron::Wavefunction::DeuteronPState for more info.
   return DeuteronPStateOff(deuteronPol,nucleon2Pol,nucleon1Pol,TVector3(p1[1],p1[2],p1[3]));    
 }
 //_____________________________________________________________________
-complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(const int deuteronPol, const int nucleon2Pol,
-						       const int nucleon1Pol, 
+complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
 						       const TLorentzVector& p1) const
 {
   // See TDeuteron::Wavefunction::DeuteronPState for more info.
@@ -1016,8 +1016,8 @@ complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(const int deuteronPol
 }
 
 //_____________________________________________________________________
-complex<double> TDeuteron::Wavefunction::DeuteronRState(const int deuteronPol, const int nucleon2Pol,
-						       const int nucleon1Pol, 
+complex<double> TDeuteron::Wavefunction::DeuteronRState(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
 						       const TVector3& r) const
 {
   // Calculate the state of a deuteron in coordinate space. 
@@ -1053,16 +1053,16 @@ complex<double> TDeuteron::Wavefunction::DeuteronRState(const int deuteronPol, c
   return state;
 }
 //_____________________________________________________________________
-complex<double> TDeuteron::Wavefunction::DeuteronRState(const int deuteronPol, const int nucleon2Pol,
-						       const int nucleon1Pol, 
+complex<double> TDeuteron::Wavefunction::DeuteronRState(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
 						       const FourVector<double>& r1) const
 {
   // See TDeuteron::Wavefunction::DeuteronRState for more info.
   return DeuteronRState(deuteronPol,nucleon2Pol,nucleon1Pol,TVector3(r1[1],r1[2],r1[3]));    
 }
 //_____________________________________________________________________
-complex<double> TDeuteron::Wavefunction::DeuteronRState(const int deuteronPol, const int nucleon2Pol,
-						       const int nucleon1Pol, 
+complex<double> TDeuteron::Wavefunction::DeuteronRState(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
 						       const TLorentzVector& r1) const
 {
   // See TDeuteron::Wavefunction::DeuteronRState for more info.

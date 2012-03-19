@@ -57,7 +57,7 @@ class TWavefunctionImplementation : public TObject
   virtual double GetWpoff1(const TVector3& p) const =0; // p in [MeV]
 
   // L=2 off-shell wave in momentum space (pure virtual)
-  virtual double GetWpoff2(const double pperp2) const =0; // p in [MeV]
+  virtual double GetWpoff2(double pperp2) const =0; // p in [MeV]
 
 
   virtual double Radial_p(int l, double p) const; // p in [MeV]

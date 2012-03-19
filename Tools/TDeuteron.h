@@ -82,23 +82,23 @@ class TDeuteron
 				      const FourVector<double>& pD) const;
     FourVector<GammaStructure> Vertex(const TLorentzVector& p2,
 				      const TLorentzVector& pD) const { return Vertex(ToFourVector(p2),ToFourVector(pD)); }
-    std::complex<double> DeuteronPState(const int deuteronPol, const int nucleon2Pol,
-					const int nucleon1Pol, 
+    std::complex<double> DeuteronPState(int deuteronPol, int nucleon2Pol,
+					int nucleon1Pol, 
 					const TVector3& p) const; 
-    std::complex<double> DeuteronPState(const int deuteronPol, const int nucleon2Pol,
-					const int nucleon1Pol, 
+    std::complex<double> DeuteronPState(int deuteronPol, int nucleon2Pol,
+					int nucleon1Pol, 
 					const FourVector<double>& p1) const; 
-    std::complex<double> DeuteronPState(const int deuteronPol, const int nucleon2Pol,
-					const int nucleon1Pol, 
+    std::complex<double> DeuteronPState(int deuteronPol, int nucleon2Pol,
+					int nucleon1Pol, 
 					const TLorentzVector& p1) const; 
-    std::complex<double> DeuteronPStateOff(const int deuteronPol, const int nucleon2Pol,
-					const int nucleon1Pol, 
+    std::complex<double> DeuteronPStateOff(int deuteronPol, int nucleon2Pol,
+					int nucleon1Pol, 
 					const TVector3& p) const; 
-    std::complex<double> DeuteronPStateOff(const int deuteronPol, const int nucleon2Pol,
-					const int nucleon1Pol, 
+    std::complex<double> DeuteronPStateOff(int deuteronPol, int nucleon2Pol,
+					int nucleon1Pol, 
 					const FourVector<double>& p1) const; 
-    std::complex<double> DeuteronPStateOff(const int deuteronPol, const int nucleon2Pol,
-					const int nucleon1Pol, 
+    std::complex<double> DeuteronPStateOff(int deuteronPol, int nucleon2Pol,
+					int nucleon1Pol, 
 					const TLorentzVector& p1) const; 
 //     std::complex<double> DeuteronPState(const TStrangePolarization& pol,
 // 				       const TSpinor::Polarization& pol1, 
@@ -109,14 +109,14 @@ class TDeuteron
 //     std::complex<double> DeuteronPState(const TStrangePolarization& pol,
 // 				       const TSpinor::Polarization& pol1, 
 // 				       const TLorentzVector& p1) const;
-    std::complex<double> DeuteronRState(const int deuteronPol, const int nucleon2Pol,
-					const int nucleon1Pol, 
+    std::complex<double> DeuteronRState(int deuteronPol, int nucleon2Pol,
+					int nucleon1Pol, 
 					const TVector3& r) const; 
-    std::complex<double> DeuteronRState(const int deuteronPol, const int nucleon2Pol,
-					const int nucleon1Pol, 
+    std::complex<double> DeuteronRState(int deuteronPol, int nucleon2Pol,
+					int nucleon1Pol, 
 					const FourVector<double>& r1) const; 
-    std::complex<double> DeuteronRState(const int deuteronPol, const int nucleon2Pol,
-					const int nucleon1Pol, 
+    std::complex<double> DeuteronRState(int deuteronPol, int nucleon2Pol,
+					int nucleon1Pol, 
 					const TLorentzVector& r1) const; 
 //     std::complex<double> DeuteronRState(const TStrangePolarization& pol,
 // 				       const TSpinor::Polarization& pol1, 

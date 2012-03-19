@@ -47,7 +47,7 @@ void LUsolve(double **a, double *b, int order);
  * \param sin pointer to sin value
  * \param cos pointer to cos value
  */
-void sincos(const double x, double * sin, double * cos);
+// void sincos(const double x, double * sin, double * cos);
 /*! performs a fit to data with a set of fitfunctions, also computes the chi squared of the fit
  * \param xarray data x array
  * \param yarray data y array

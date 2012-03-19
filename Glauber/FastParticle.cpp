@@ -172,7 +172,7 @@ double FastParticle::getHitbnorm() const{
   return hitbnorm;
 }
 
-const double* const FastParticle::getHitbvec() const{
+const double* FastParticle::getHitbvec() const{
   return hitb;
 }
 
