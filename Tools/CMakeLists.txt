@@ -118,10 +118,10 @@ target_link_libraries(MePhys)
 set_target_properties(MePhys PROPERTIES ${MePhys_LIBRARY_PROPERTIES})
 
 ############# build the library #####################
-# add_library(MePhysST STATIC ${MePhys_SRCS})
-# target_link_libraries(MePhysST)
-# set_target_properties(MePhysST PROPERTIES OUTPUT_NAME MePhys)
+add_library(MePhysST STATIC ${MePhys_SRCS})
+target_link_libraries(MePhysST)
+set_target_properties(MePhysST PROPERTIES OUTPUT_NAME MePhys)
 
 ############### install the library ###################
 install(TARGETS MePhys DESTINATION "${CMAKE_SOURCE_DIR}/lib")
-# install(TARGETS MePhysST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+install(TARGETS MePhysST DESTINATION "${CMAKE_SOURCE_DIR}/lib")

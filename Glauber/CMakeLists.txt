@@ -80,10 +80,10 @@ add_library(Glauber SHARED ${Glauber_SRCS})
 target_link_libraries(Glauber)
  set_target_properties(Glauber PROPERTIES ${Glauber_LIBRARY_PROPERTIES})
 ############## build the library #####################
-# add_library(GlauberST STATIC ${Glauber_SRCS})
-# target_link_libraries(GlauberST -Wl,-no-whole-archive)
-# set_target_properties(GlauberST PROPERTIES OUTPUT_NAME Glauber)
+add_library(GlauberST STATIC ${Glauber_SRCS})
+target_link_libraries(GlauberST -Wl,-no-whole-archive)
+set_target_properties(GlauberST PROPERTIES OUTPUT_NAME Glauber)
 
 ############### install the library ###################
 install(TARGETS Glauber DESTINATION "${CMAKE_SOURCE_DIR}/lib")
-# install(TARGETS GlauberST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+install(TARGETS GlauberST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
