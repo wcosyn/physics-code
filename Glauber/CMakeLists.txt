@@ -44,6 +44,10 @@ foreach(it ${Glauber_LINKDEF})
   set(Glauber_DICTIONARY ${Glauber_DICTIONARY} "${CMAKE_CURRENT_BINARY_DIR}/${bla}")
 endforeach()
 
+foreach(it ${Glauber_LINKDEF})
+  STRING(REGEX REPLACE "(^.*)LinkDef.h" "\\1Dictt.cpp" bla ${it})
+  set(Glauber_DICTIONARY_ST ${Glauber_DICTIONARY_ST} "${CMAKE_CURRENT_BINARY_DIR}/${bla}")
+endforeach()
 
 set(INCLUDE_DIRECTORIES
 ${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/Tools"
@@ -54,13 +58,16 @@ list(LENGTH Glauber_DICTIONARY len1)
 math(EXPR len2 "${len1} - 1")
 foreach(val RANGE ${len2})
   list(GET Glauber_DICTIONARY ${val} val1)
+  list(GET Glauber_DICTIONARY_ST ${val} val3)
   list(GET Glauber_LINKDEF ${val} val2)
   STRING(REGEX REPLACE "(^.*)LinkDef.h" "\\1.hpp" bla ${val2})
   ROOT_GENERATE_DICTIONARY("${bla}" "${val2}" "${val1}" "${INCLUDE_DIRECTORIES}")
+  ROOT_GENERATE_DICTIONARY("${bla}" "${val2}" "${val3}" "${INCLUDE_DIRECTORIES}")
 endforeach()
 
 # add the dictionary to the list of source files
-SET(Glauber_SRCS ${Glauber_SRCS} ${Glauber_DICTIONARY}) 
+SET(Glauber_SRCS_LI ${Glauber_SRCS} ${Glauber_DICTIONARY}) 
+SET(Glauber_SRCS_ST ${Glauber_SRCS} ${Glauber_DICTIONARY_ST}) 
 
 
 # Set the library version in the main CMakeLists.txt
@@ -76,11 +83,11 @@ SET(Glauber_LIBRARY_PROPERTIES ${Glauber_LIBRARY_PROPERTIES}
 
 
 ############### build the library #####################
-add_library(Glauber SHARED ${Glauber_SRCS})
+add_library(Glauber SHARED ${Glauber_SRCS_LI})
 target_link_libraries(Glauber)
  set_target_properties(Glauber PROPERTIES ${Glauber_LIBRARY_PROPERTIES})
 ############## build the library #####################
-add_library(GlauberST STATIC ${Glauber_SRCS})
+add_library(GlauberST STATIC ${Glauber_SRCS_ST})
 target_link_libraries(GlauberST -Wl,-no-whole-archive)
 set_target_properties(GlauberST PROPERTIES OUTPUT_NAME Glauber)
 

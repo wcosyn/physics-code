@@ -69,6 +69,11 @@ foreach(it ${MePhys_LINKDEF})
   set(MePhys_DICTIONARY ${MePhys_DICTIONARY} "${CMAKE_CURRENT_BINARY_DIR}/${bla}")
 endforeach()
 
+foreach(it ${MePhys_LINKDEF})
+  STRING(REGEX REPLACE "(^.*)LinkDef.h" "\\1Dictt.cpp" bla ${it})
+  set(MePhys_DICTIONARY_ST ${MePhys_DICTIONARY_ST} "${CMAKE_CURRENT_BINARY_DIR}/${bla}")
+endforeach()
+
 
 set(MePhys_FORT 
 alekhin.f
@@ -90,13 +95,16 @@ list(LENGTH MePhys_DICTIONARY len1)
 math(EXPR len2 "${len1} - 1")
 foreach(val RANGE ${len2})
   list(GET MePhys_DICTIONARY ${val} val1)
+  list(GET MePhys_DICTIONARY_ST ${val} val3)
   list(GET MePhys_LINKDEF ${val} val2)
   STRING(REGEX REPLACE "(^.*)LinkDef.h" "\\1.h" bla ${val2})
   ROOT_GENERATE_DICTIONARY("${bla}" "${val2}" "${val1}" "${INCLUDE_DIRECTORIES}")
+  ROOT_GENERATE_DICTIONARY("${bla}" "${val2}" "${val3}" "${INCLUDE_DIRECTORIES}")
 endforeach()
 
 # add the dictionary to the list of source files
-SET(MePhys_SRCS ${MePhys_SRCS} ${MePhys_DICTIONARY} ${MePhys_FORT}) 
+SET(MePhys_SRCS_LI ${MePhys_SRCS} ${MePhys_DICTIONARY} ${MePhys_FORT}) 
+SET(MePhys_SRCS_ST ${MePhys_SRCS} ${MePhys_DICTIONARY_ST} ${MePhys_FORT}) 
 
 
 # Set the library version in the main CMakeLists.txt
@@ -113,12 +121,12 @@ SET(MePhys_LIBRARY_PROPERTIES ${MePhys_LIBRARY_PROPERTIES}
 
 
 ############### build the library #####################
-add_library(MePhys SHARED ${MePhys_SRCS})
+add_library(MePhys SHARED ${MePhys_SRCS_LI})
 target_link_libraries(MePhys)
 set_target_properties(MePhys PROPERTIES ${MePhys_LIBRARY_PROPERTIES})
 
 ############# build the library #####################
-add_library(MePhysST STATIC ${MePhys_SRCS})
+add_library(MePhysST STATIC ${MePhys_SRCS_ST})
 target_link_libraries(MePhysST)
 set_target_properties(MePhysST PROPERTIES OUTPUT_NAME MePhys)
 
