@@ -56,6 +56,11 @@ name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR),x(xin),Q2(Q2in),Wsq(Wsqin
 
 
 void NuclStructure::getF_Alekhin(double &F1, double &F2){
+  if(x>1){
+    F1=0.;
+    F2=0.;
+    return;
+  }
   strcpy(dir_.homedir,dir.c_str());
   strcpy(dir_.a09file1,dir.c_str());
   strcpy(dir_.a09file2,dir.c_str());

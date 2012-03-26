@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
       TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
       double teller=0.,fsi1=0.,fsi2=0.,noemer=0.;
       for(int proton=0;proton<=1;++proton){
-	InclusiveCross Dinc(proton,"Alekhin",argv[4],*elec,atoi(argv[1]),atoi(argv[2]));
-	NuclStructure nucleon(proton, Q2, x, 0, "Alekhin");
+	InclusiveCross Dinc(proton,argv[5],argv[4],*elec,atoi(argv[1]),atoi(argv[2]));
+	NuclStructure nucleon(proton, Q2, x, 0, argv[5]);
 	teller+=Dinc.calc_F2Dinc(Q2,x);
 	double f1,f2;
   	Dinc.calc_F2DincFSI(f1,f2,Q2,x);
@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 	noemer+=nucleon.getF2();
       }
       cout << x << " " << teller/noemer << " " << (teller-fsi1)/noemer << " " << (teller-fsi2)/noemer << endl;
+      //cout << x << " " << teller << " " << noemer << " " << teller/noemer << endl;
     }
     
 }

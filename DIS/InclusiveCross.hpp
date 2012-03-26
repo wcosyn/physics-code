@@ -35,8 +35,8 @@ private:
   
   double przprime;
   double prz;
-  double Wxprime2;
-  double otherWx2;
+  double Wxprime2; //invariant mass of the X that is paired with the spectator that gets integrated first
+  double otherWx2; //invariant mass of the other X that depends on the first ps integration
   int offshellset;
 
   TDeuteron::Wavefunction *wf;
@@ -78,8 +78,8 @@ private:
   
   double przprime;
   double prz;
-  double Wxprime2;
-  double otherWx2;
+  double Wxprime2; //invariant mass of the X that is paired with the spectator that gets integrated first
+  double otherWx2; //invariant mass of the other X that depends on the first ps integration
   int offshellset;
 
   TDeuteron::Wavefunction *wf;
