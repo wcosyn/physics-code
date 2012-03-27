@@ -11,13 +11,13 @@ using namespace std;
 #include <NuclStructure.hpp>
 #include "InclusiveCross.hpp"
 
-// run ../bin/inclusive 1 3 5. paris
+// run ../bin/inclusive 1 3 5. paris Alekhin
 
 int main(int argc, char *argv[])
 {
     double Ein=5000.;  
     double Q2=atof(argv[3])*1.E06;
-    for(int i=1;i<20;i++){
+    for(int i=1;i<20;i++){      
       double x=0.05*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
