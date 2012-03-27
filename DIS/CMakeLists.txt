@@ -5,8 +5,10 @@ project(DIS)
 # fill list of header files 
 set(DIS_HEADERS_HPP 
 InclusiveCross.hpp
+InclusiveCrossRes.hpp
 DeuteronMomDistr.hpp
 DeuteronCross.hpp
+Resonance.hpp
 )
 
 foreach(it ${DIS_HEADERS_HPP})

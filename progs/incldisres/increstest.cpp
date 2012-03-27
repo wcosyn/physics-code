@@ -9,7 +9,8 @@ using namespace std;
 #include <TKinematics2to2.h>
 #include <TElectronKinematics.h>
 #include <NuclStructure.hpp>
-#include "InclusiveCross.hpp"
+#include <InclusiveCrossRes.hpp>
+#include <Resonance.hpp>
 
 //args are 
 //1. symm (-1 asymm delta 0 symm delta 1 no delta)
@@ -21,8 +22,9 @@ using namespace std;
 //7. sigma0 (mb)
 //8. sigma slope (mb/GeV)
 //9. etc resonance masses
+//last. t_choice
 
-// run ../../bin/inclusiveres 1 2 5. paris Alekhin 1.4 2.4
+// run ../../bin/inclusiveres 1 3 0 5. paris Alekhin 40. 0. 1.4 2.4
 
 int main(int argc, char *argv[])
 {
@@ -34,7 +36,7 @@ int main(int argc, char *argv[])
       TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
       double teller=0.,fsi1=0.,fsi2=0.,noemer=0.;
       for(int proton=0;proton<=1;++proton){
-	InclusiveCrossRes Dinc(proton,argv[6],argv[5],*elec,atoi(argv[1]),atoi(argv[2]),atoi(argv[3]));
+	InclusiveCrossRes Dinc(proton,argv[6],argv[5],*elec,atoi(argv[1]),atoi(argv[2]),atoi(argv[3]),atoi(argv[11]));
 	Resonance res1=Resonance(atof(argv[9])*1.E03,1./sqrt(2),atof(argv[7]), atof(argv[8]));
 	Resonance res2=Resonance(atof(argv[10])*1.E03,-1./sqrt(2),atof(argv[7]), atof(argv[8]));
 	//Resonance res3=Resonance(atof(argv[11])*1.E03,-1./sqrt(2),atof(argv[7]), atof(argv[8]));
