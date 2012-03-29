@@ -21,7 +21,7 @@ public:
   void calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double x);
   //void calc_F2DincFSI2(double &fsi1, double &fsi2, double Q2,double x);
   void addResonance(Resonance &res);   
-  vector<Resonance> getResonance_vec() const{return resonance_vec;}
+  vector<Resonance> & getResonance_vec() {return resonance_vec;}
   
 private:
   double massi;

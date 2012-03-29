@@ -17,10 +17,10 @@ int main(int argc, char *argv[])
 {
     double Ein=5000.;  
     double Q2=atof(argv[3])*1.E06;
+    TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
     for(int i=1;i<20;i++){      
       double x=0.05*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
-      TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
       double teller=0.,fsi1=0.,fsi2=0.,noemer=0.;
       for(int proton=0;proton<=1;++proton){
 	InclusiveCross Dinc(proton,argv[5],argv[4],*elec,atoi(argv[1]),atoi(argv[2]));
@@ -36,5 +36,5 @@ int main(int argc, char *argv[])
       cout << x << " " << teller/noemer << " " << (teller-fsi1)/noemer << " " << (teller-fsi2)/noemer << endl;
       //cout << x << " " << teller << " " << noemer << " " << teller/noemer << endl;
     }
-    
+    delete elec
 }

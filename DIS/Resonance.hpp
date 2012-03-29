@@ -22,6 +22,8 @@ public:
   double getMass() const{return mass;}
   complex<double> getCoeff() const{return coeff;}
   
+  void setCoeff(complex<double> coeff_in){coeff=coeff_in;}
+  
 private:
   double mass;
   double mass2;

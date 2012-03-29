@@ -102,7 +102,7 @@ void InclusiveCrossRes::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,dou
       double prestimate=0.,cosestimate=0.;
       rombergerN(this,&InclusiveCrossRes::int_pr_fsi,0.,1.e03,2,results,PREC,3,10,&prestimate, x, Q2, res1, res2, &cosestimate);
       double chi2 = sqrt(s*s-2.*s*(getResonance_vec()[res1].getMass2()+massr*massr)+pow(massr*massr-getResonance_vec()[res1].getMass2(),2.));
-      cout << res1 << " " << res2 << " " << results[0]*chi2 << " " << results[1]*chi2 << endl;
+//         cout << res1 << " " << res2 << " " << results[0]*chi2 << " " << results[1]*chi2 << endl;
       //cout << res1 << " " << res2 << " " << s*1.E-06 << " " << chi2*1.E-06 << endl;
       fsi1+=results[0]*2.*PI*2.*massi/MASSD*chi2;
       fsi2+=results[1]*2.*PI*2.*massi/MASSD*chi2;                

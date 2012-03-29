@@ -55,6 +55,9 @@ Resonance& Resonance::operator=(const Resonance& rhs)
 Resonance::~Resonance(){}
 
 double Resonance::getSigma(double Q2) const{
-    return (getSigma0()+getSigmaslope()*(getMass()-MASSP)/(1.E-03*Q2))/10*INVHBARC*INVHBARC;
+    return (getSigma0()+getSigmaslope()*((getMass()>2.4E03?2.4E03:getMass())-MASSP)/(1.E-03*Q2))/10*INVHBARC*INVHBARC;
 
 }
+
+
+
