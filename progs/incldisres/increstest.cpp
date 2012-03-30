@@ -30,18 +30,19 @@ int main(int argc, char *argv[])
 {
     double Ein=5000.;  
     double Q2=atof(argv[4])*1.E06;
+    int bla=40;
     TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
-    double teller[39], noemer[39], fsi1[39], fsi2[39];
+    double teller[bla-1], noemer[bla-1], fsi1[bla-1], fsi2[bla-1];
     Resonance res1=Resonance(atof(argv[9])*1.E03,1./sqrt(2),atof(argv[7]), atof(argv[8]));
     Resonance res2=Resonance(atof(argv[10])*1.E03,-1./sqrt(2),atof(argv[7]), atof(argv[8]));
-    double sigma1 = res1.getSigma(10.E06);
-    double sigma2 = res2.getSigma(10.E06);
-    double tttt=sqrt(sigma1*sigma1+sigma2*sigma2);
-    res1.setCoeff(sigma2/tttt);
-    res2.setCoeff(-sigma1/tttt);
+//     double sigma1 = res1.getSigma(10.E06);
+//     double sigma2 = res2.getSigma(10.E06);
+//     double tttt=sqrt(sigma1*sigma1+sigma2*sigma2);
+//     res1.setCoeff(sigma2/tttt);
+//     res2.setCoeff(-sigma1/tttt);
     
-    for(int i=1;i<40;i++){
-      double x=0.025*i;
+    for(int i=1;i<bla;i++){
+      double x=1./bla*i;
 //       cout << x << endl;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       teller[i-1]=0.,fsi1[i-1]=0.,fsi2[i-1]=0.,noemer[i-1]=0.;
