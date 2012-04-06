@@ -9,7 +9,8 @@ using namespace std;
 #include <TKinematics2to2.h>
 #include <TElectronKinematics.h>
 #include <NuclStructure.hpp>
-#include "InclusiveCross.hpp"
+#include <InclusiveCrossRes.hpp>
+#include <Resonance.hpp>
 
 //args are 
 //1. symm (-1 asymm delta 0 symm delta 1 no delta)
@@ -29,24 +30,24 @@ int main(int argc, char *argv[])
     double Ein=5000.;  
     double Q2=atof(argv[4])*1.E06;
     srand(atoi(argv[12]));
+    int bla=40;
     
     double alpha = float(rand())/RAND_MAX*sqrt(2./3.);
     double beta = 0.;
     if(rand()%2) beta = (-alpha+sqrt(2.-3.*alpha*alpha))/2.;
     else beta = (-alpha-sqrt(2.-3.*alpha*alpha))/2.;
     double gamma = -alpha-beta;
-    cout << alpha << " " << beta << " " << gamma << " " << alpha*alpha+beta*beta+gamma*gamma << endl;
-    
-    for(int i=6;i<20;i++){
-      double x=0.05*i;
+    cout << alpha << " " << beta << " " << gamma << " " << alpha*alpha+beta*beta+gamma*gamma << endl << endl;
+    Resonance res1=Resonance(atof(argv[9])*1.E03,alpha,atof(argv[7]), atof(argv[8]));
+    Resonance res2=Resonance(atof(argv[10])*1.E03,beta,atof(argv[7]), atof(argv[8]));
+    Resonance res3=Resonance(atof(argv[11])*1.E03,gamma,atof(argv[7]), atof(argv[8]));
+    for(int i=1;i<bla;i++){
+      double x=1./bla*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
       double teller=0.,fsi1=0.,fsi2=0.,noemer=0.;
       for(int proton=0;proton<=1;++proton){
-	InclusiveCrossRes Dinc(proton,argv[6],argv[5],*elec,atoi(argv[1]),atoi(argv[2]),atoi(argv[3]));
-	Resonance res1=Resonance(atof(argv[9])*1.E03,alpha,atof(argv[7]), atof(argv[8]));
-	Resonance res2=Resonance(atof(argv[10])*1.E03,beta,atof(argv[7]), atof(argv[8]));
-	Resonance res3=Resonance(atof(argv[11])*1.E03,gamma,atof(argv[7]), atof(argv[8]));
+	InclusiveCrossRes Dinc(proton,argv[6],argv[5],*elec,atoi(argv[1]),atoi(argv[2]),atoi(argv[3]),atoi(argv[13]));
 	Dinc.addResonance(res1);
 	Dinc.addResonance(res2);
 	Dinc.addResonance(res3);
@@ -60,7 +61,7 @@ int main(int argc, char *argv[])
 	noemer+=nucleon.getF2();
 	//cout << noemer << endl;
       }
-      cout << x << " " << teller/noemer << " " << (teller-fsi1)/noemer << " " << (teller-fsi2)/noemer << endl;
+      cout << x << " " << (Q2*(1./x-1.)+MASSP*MASSP)/1.E06 << " " <<  teller/noemer << " " << (teller-fsi1)/noemer << " " << (teller-fsi2)/noemer << endl;
     }
     
 }

@@ -239,8 +239,8 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
 //     cout << pkin1->GetS() << " " << pow(Er+sqrt(getResonance_vec()[res1].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pkin1->GetPklab()*pkin1->GetPklab()-2.*prz*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab() << " " <<
 //     pow(Erprime+sqrt(getResonance_vec()[res2].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pprime*pprime-2.*przprime*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab() << endl;
     if((Erprime>MASSD)
-      ||(pkin1->GetS()<pow(Er+sqrt(getResonance_vec()[res1].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pkin1->GetPklab()*pkin1->GetPklab()-2.*prz*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab())
-      ||(pkin1->GetS()<pow(Erprime+sqrt(getResonance_vec()[res2].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pprime*pprime-2.*przprime*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab())
+      ||(((pkin1->GetS()<pow(Er+sqrt(getResonance_vec()[res1].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pkin1->GetPklab()*pkin1->GetPklab()-2.*prz*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab())
+      ||(pkin1->GetS()<pow(Erprime+sqrt(getResonance_vec()[res2].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pprime*pprime-2.*przprime*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab()))&&kin_choice)
     ) 
       {results[0]=0.;}  //too high spectator momentum
     else{
@@ -292,8 +292,8 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
     if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
     Erprime=sqrt(massr*massr+pprime*pprime);
     if(Erprime>MASSD      
-      ||(pkin2->GetS()<pow(Er+sqrt(getResonance_vec()[res2].getMass2()+pkin2->GetKlab()*pkin2->GetKlab()+pkin2->GetPklab()*pkin2->GetPklab()-2.*prz*pkin2->GetKlab()),2.)-pkin2->GetKlab()*pkin2->GetKlab())
-      ||(pkin2->GetS()<pow(Erprime+sqrt(getResonance_vec()[res1].getMass2()+pkin2->GetKlab()*pkin2->GetKlab()+pprime*pprime-2.*przprime*pkin2->GetKlab()),2.)-pkin2->GetKlab()*pkin2->GetKlab())
+      ||(((pkin2->GetS()<pow(Er+sqrt(getResonance_vec()[res2].getMass2()+pkin2->GetKlab()*pkin2->GetKlab()+pkin2->GetPklab()*pkin2->GetPklab()-2.*prz*pkin2->GetKlab()),2.)-pkin2->GetKlab()*pkin2->GetKlab())
+      ||(pkin2->GetS()<pow(Erprime+sqrt(getResonance_vec()[res1].getMass2()+pkin2->GetKlab()*pkin2->GetKlab()+pprime*pprime-2.*przprime*pkin2->GetKlab()),2.)-pkin2->GetKlab()*pkin2->GetKlab()))&&kin_choice)
     )
       {results[1]=0.; return;}
     double t=0.;
@@ -350,8 +350,8 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
 //       pow(Erprime+sqrt(getResonance_vec()[res2].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pprime*pprime-2.*przprime*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab() 
 //        << " " << pkin1->GetPklab() << " " << pprime << endl;
       if(Erprime>MASSD      
-	||(pkin1->GetS()<pow(Er+sqrt(getResonance_vec()[res1].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pkin1->GetPklab()*pkin1->GetPklab()-2.*prz*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab())
-	||(pkin1->GetS()<pow(Erprime+sqrt(getResonance_vec()[res2].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pprime*pprime-2.*przprime*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab())
+	||(((pkin1->GetS()<pow(Er+sqrt(getResonance_vec()[res1].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pkin1->GetPklab()*pkin1->GetPklab()-2.*prz*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab())
+	||(pkin1->GetS()<pow(Erprime+sqrt(getResonance_vec()[res2].getMass2()+pkin1->GetKlab()*pkin1->GetKlab()+pprime*pprime-2.*przprime*pkin1->GetKlab()),2.)-pkin1->GetKlab()*pkin1->GetKlab()))&&kin_choice)
       )
 	{results[0]=0.;}
       else{
@@ -404,8 +404,8 @@ void InclusiveCrossRes::int_qphi(double qphi, double *results, va_list ap){
     if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
     double Erprime=sqrt(massr*massr+pprime*pprime);
     if(Erprime>MASSD      
-      ||(pkin2->GetS()<pow(Er+sqrt(getResonance_vec()[res2].getMass2()+pkin2->GetKlab()*pkin2->GetKlab()+pkin2->GetPklab()*pkin2->GetPklab()-2.*prz*pkin2->GetKlab()),2.)-pkin2->GetKlab()*pkin2->GetKlab())
-      ||(pkin2->GetS()<pow(Erprime+sqrt(getResonance_vec()[res1].getMass2()+pkin2->GetKlab()*pkin2->GetKlab()+pprime*pprime-2.*przprime*pkin2->GetKlab()),2.)-pkin2->GetKlab()*pkin2->GetKlab())
+      ||(((pkin2->GetS()<pow(Er+sqrt(getResonance_vec()[res2].getMass2()+pkin2->GetKlab()*pkin2->GetKlab()+pkin2->GetPklab()*pkin2->GetPklab()-2.*prz*pkin2->GetKlab()),2.)-pkin2->GetKlab()*pkin2->GetKlab())
+      ||(pkin2->GetS()<pow(Erprime+sqrt(getResonance_vec()[res1].getMass2()+pkin2->GetKlab()*pkin2->GetKlab()+pprime*pprime-2.*przprime*pkin2->GetKlab()),2.)-pkin2->GetKlab()*pkin2->GetKlab()))&&kin_choice)
     )
       {results[1]=0.; return;}
     double t=0.;
