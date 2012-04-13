@@ -57,7 +57,6 @@ sigma_decay_n(0.){
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSRHO;
-      double dummy;
       sigma_decay_n=sigma_decay_p=sigman+sigmap;
       break;
     default:
@@ -121,7 +120,6 @@ sigma_decay_n(0.){
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSRHO;
-      double dummy;
       sigma_decay_n=sigma_decay_p=sigman+sigmap;
       break;
     default:
@@ -280,12 +278,12 @@ double FastParticle::getEpsilon(bool proton) const{
 }
 
 //get sigma for a particle, make distinction between scatt w proton or neutron
-double FastParticle::getSigma(int level, MeanFieldNucleus *pnucleus) const{
+double FastParticle::getSigma_decay(int level, MeanFieldNucleus *pnucleus) const{
   return level<pnucleus->getPLevels()? getSigma_decay_p() : getSigma_decay_n();
 }
 
 //get sigma for a particle, make distinction between scatt w proton or neutron
-double FastParticle::getSigma_decay(int level, MeanFieldNucleus *pnucleus) const{
+double FastParticle::getSigma(int level, MeanFieldNucleus *pnucleus) const{
   return level<pnucleus->getPLevels()? getSigmap() : getSigman();
 }
 
