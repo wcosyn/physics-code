@@ -120,9 +120,9 @@ protected:
   double phi_hit;/*!< phi coordinate of the hard interaction point, what the grid depens on */
   double cosphi_hit;/*!< cos of phi coordinate of the hard interaction point, what the grid depens on */
   double sinphi_hit;/*!< sin of phi coordinate of the hard interaction point, what the grid depens on */
+  string fsi_filename; /*!< filename for regular fsi grid */
 
 private:
-  string fsi_filename; /*!< filename for regular fsi grid */
   string dir;  /*!< dir where all input/output is located */ 
   
   int rgrid; /*!<  the gridsize in r*/

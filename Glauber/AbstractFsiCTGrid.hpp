@@ -51,10 +51,10 @@ public:
 protected:
   virtual void setFilenames(string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
   bool filledctgrid; /*!< denotes if the ct grid has been filled */
+  string fsi_ct_filename; /*!< filename for fsi+ct grid */
 
   
 private:
-  string fsi_ct_filename; /*!< filename for fsi+ct grid */
 
   virtual void constructCtGrid()=0;  /*!< construct only the fsi+ct grids */
   virtual void readinFsiCtGrid(ifstream &infile)=0; /*!< read in only the fsi+ct grids */

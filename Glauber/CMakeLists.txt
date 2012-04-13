@@ -10,10 +10,14 @@ FsiCorrelator.hpp
 FastParticle.hpp
 AbstractFsiGrid.hpp
 AbstractFsiCTGrid.hpp
+AbstractFsiCTDecayGrid.hpp
 AbstractFsiGridThick.hpp
+AbstractFsiDecayGridThick.hpp
 AbstractFsiCTGridThick.hpp
+AbstractFsiCTDecayGridThick.hpp
 GlauberGrid.hpp
 GlauberGridThick.hpp
+GlauberDecayGridThick.hpp
 OneGlauberGrid.hpp
 TMFSpinor.hpp
 )

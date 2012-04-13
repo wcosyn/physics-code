@@ -22,6 +22,7 @@ using namespace std;
 #include <GlauberGrid.hpp>
 #include <OneGlauberGrid.hpp>
 #include <GlauberGridThick.hpp>
+#include <GlauberDecayGridThick.hpp>
 #include <TMFSpinor.hpp>
 
 int main(int argc, char *argv[])
@@ -30,58 +31,46 @@ int main(int argc, char *argv[])
   string homedir="/home/wim/Code/share";
 
   MeanFieldNucleusThick CarbonThick(1,homedir);
-  complex<double> wave[4];
-  CarbonThick.getWaveFunction(wave,0, -1, 2.,0.5,1.);
-  cout << wave[0] << " " << wave[1] << " " << wave[2] << " " << wave[3] << endl;
-  cout << TMFSpinor(CarbonThick,0,-1,2.,0.5,1.) << endl;
-  CarbonThick.getWaveFunction(wave,1, 1, 1.,0.5,1.);
-  cout << wave[0] << " " << wave[1] << " " << wave[2] << " " << wave[3] << endl;
-  cout << TMFSpinor(CarbonThick,1,1,1.,0.5,1.) << endl;
- // exit(1);
-  //FsiCorrelator CarbonCorr(&CarbonThick,90,90,homedir);
-  //FastParticle proton(0, 1, 1234,0.,0.,3.,0.,homedir);
-  FastParticle proton2(0, 0, 4878,0.,0.,8.,0.,homedir);
-  proton2.printParticle();
-  //FastParticle pion(2, 0, 1234,-1.,0.,3.,0.,homedir);
-//   OneGlauberGrid grid(60,18,&CarbonThick,homedir);
+//   complex<double> wave[4];
+//   CarbonThick.getWaveFunction(wave,0, -1, 2.,0.5,1.);
+//   cout << wave[0] << " " << wave[1] << " " << wave[2] << " " << wave[3] << endl;
+//   cout << TMFSpinor(CarbonThick,0,-1,2.,0.5,1.) << endl;
+//   CarbonThick.getWaveFunction(wave,1, 1, 1.,0.5,1.);
+//   cout << wave[0] << " " << wave[1] << " " << wave[2] << " " << wave[3] << endl;
+//   cout << TMFSpinor(CarbonThick,1,1,1.,0.5,1.) << endl;
+//   //FastParticle proton(0, 1, 1234,0.,0.,3.,0.,homedir);
+//   FastParticle proton2(0, 0, 4878,0.,0.,8.,0.,homedir);
+//   proton2.printParticle();
+//   GlauberGridThick gridthick(60,18,5,&CarbonThick,homedir);
+//   gridthick.addParticle(proton2);
+//   gridthick.printParticles();
+//   gridthick.fillGrids();
+//   gridthick.printFsi_src_ct_grid();
+//   GlauberGrid grid(60,18,5,&CarbonThick,homedir);
 //   grid.addParticle(proton2);
-  //grid.addParticle(&pion);
-//  grid.printParticles();
+//   grid.printParticles();
 //   grid.fillGrids();
-//   grid.addKnockout(0,0);
-//    grid.printFsi_grid();
-   GlauberGridThick gridthick(60,18,5,&CarbonThick,homedir);
-  gridthick.addParticle(proton2);
-   gridthick.printParticles();
+//   grid.printFsi_grid();
+//   OneGlauberGrid onegrid(60,18,&CarbonThick,homedir);
+//   onegrid.addParticle(proton2);
+//   onegrid.printParticles();
+//   onegrid.fillGrids();
+//   onegrid.printFsi_ct_grid();
+//   
+  FastParticle rho(4, 0, 2356,0.,0.,5.,145.,homedir);
+  GlauberDecayGridThick gridthick(60,18,5,&CarbonThick,homedir);  
+  gridthick.addParticle(rho);
+  gridthick.printParticles();
   gridthick.fillGrids();
-   gridthick.printFsi_src_ct_grid();
-  GlauberGrid grid(60,18,5,&CarbonThick,homedir);
-  grid.addParticle(proton2);
-   grid.printParticles();
-  grid.fillGrids();
-   grid.printFsi_grid();
-  OneGlauberGrid onegrid(60,18,&CarbonThick,homedir);
-  onegrid.addParticle(proton2);
-  onegrid.printParticles();
-  onegrid.fillGrids();
-  onegrid.printFsi_ct_grid();
+//   gridthick.printFsi_grid();
+//   gridthick.printFsi_src_grid();
+//   gridthick.printFsi_ct_grid();
+//   gridthick.printFsi_src_ct_grid();
+  gridthick.printFsi_decay_grid();
+  gridthick.printFsi_src_decay_grid();
+  gridthick.printFsi_ct_decay_grid();
+  gridthick.printFsi_src_ct_decay_grid();
   
-  
-  /*  MeanFieldNucleusThick CupperThick(6,homedir);
-  OneGlauberGrid grid3(60,18,&CupperThick,homedir);
-  FastParticle pion(2, 0, 2570,0.,0.,3.,0.,homedir);
-  grid3.addParticle(&pion);
-  grid3.printParticles();
-  grid3.fillGrids();
-*/
-  
-/*  GlauberGrid grid2(60,18,5,&CarbonThick,homedir);
-  FastParticle proton0(0, 0, 1453,0.,0.,2.21,0.,homedir);
-  FastParticle proton1(0, 0, 1453,-113.99*DEGRTORAD,0.,2.21,0.,homedir);
-  grid2.addParticle(&proton0);
-  grid2.addParticle(&proton1);
-  grid2.printParticles();
-  grid2.fillGrids();*/
   
   
   return 0;

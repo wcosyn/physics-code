@@ -139,6 +139,14 @@ public:
    */
   double getCT_decay_sigma(double zmom, int level, MeanFieldNucleus *pnucleus) const;
 
+  /*! for CT calc including decay, return ratio between sigma_eff and regular sigma
+   * \param zmom distance along path of outgoing particle
+   * \param level selects level in nucleus
+   * \param pnucleus pointer to a class instance of the nucleus 
+   * \return ratio
+   */
+  double getDecay_sigma(double zmom, int level, MeanFieldNucleus *pnucleus) const;
+
   double getHardScale() const; /*!< get hard scale associated with particle  */
   double getLc() const; /*!< get coherence length of particle (CT parameter)  */
   double getNkt_sq() const; /*!< [GeV^2] get <n_kt^2>, 0.35^2n^2 with n number of constituent quarks of particle  */
@@ -153,8 +161,10 @@ public:
    * \return (b-b')^2, relative to this momentum, with b' the hard interaction point b' coordinate
    */
   double getBdist(double r, double costheta, double sintheta, double cosphi, double sinphi, double zmom);
-
   
+  void setSigma(double sigma){ sigman=sigmap=sigma/10.; return;}
+
+    
 private:
   int particletype; /*!< which particle [0-4] = [proton, neutron, pi+, pi-,rho0] can be extended of course */
   

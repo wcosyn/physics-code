@@ -64,7 +64,7 @@ sigma_decay_n(0.){
       exit(1);
   }
   E = sqrt(mass*mass+p*p);
-  decay_dil = Gamma/sqrt(1.-p*p/E*E);
+  decay_dil = Gamma*sqrt(1.-p*p/(E*E));
   if(hard_scale<nkt_sq) cout << "Warning: hard scale is too low for color transparency effects for this particle, just so you know!" << endl;
   
 }
@@ -314,13 +314,18 @@ double FastParticle::getCTsigma(double z) const{
 }
 
 double FastParticle::getCT_decay_sigma(double z, int level, MeanFieldNucleus *pnucleus) const{
-  if((abs(z-getHitz()) > getLc())||(getHardScale() < getNkt_sq())) 
-    return exp(-getDecay_dil()*(z-getHitz())) 
-	+ getSigma_decay(level,pnucleus)/getSigma(level,pnucleus)*(1.-exp(-getDecay_dil()*(z-getHitz())));
+  if((abs(z-getHitz()) > getLc())||(getHardScale() < getNkt_sq()))
+    return getDecay_sigma(z,level,pnucleus);
   else 
     return abs(z-getHitz())/getLc() 
 			  + getNkt_sq()/getHardScale()*(1.-abs(z-getHitz()) / getLc());
 
+}
+    
+double FastParticle::getDecay_sigma(double z, int level, MeanFieldNucleus *pnucleus) const{
+    double a=exp(-getDecay_dil()*(z-getHitz())*INVHBARC);
+    return a + getSigma_decay(level,pnucleus)/getSigma(level,pnucleus)*(1.-a);
+  
 }
     
 double FastParticle::getHardScale() const{
@@ -352,6 +357,9 @@ void FastParticle::printParticle() const{
      break;
    case(3):
      cout << "pi-" << endl;
+     break;
+   case(4):
+     cout << "rho0" << endl;
      break;
    default:
      cerr << "Particletypeerror!!!" << endl;
