@@ -39,10 +39,10 @@ int main(int argc, char *argv[])
   cout << TMFSpinor(CarbonThick,1,1,1.,0.5,1.) << endl;
  // exit(1);
   //FsiCorrelator CarbonCorr(&CarbonThick,90,90,homedir);
-  //FastParticle proton(0, 1, 1234,0.,0.,3.,homedir);
-  FastParticle proton2(0, 0, 4878,0.,0.,8.,homedir);
+  //FastParticle proton(0, 1, 1234,0.,0.,3.,0.,homedir);
+  FastParticle proton2(0, 0, 4878,0.,0.,8.,0.,homedir);
   proton2.printParticle();
-  //FastParticle pion(2, 0, 1234,-1.,0.,3.,homedir);
+  //FastParticle pion(2, 0, 1234,-1.,0.,3.,0.,homedir);
 //   OneGlauberGrid grid(60,18,&CarbonThick,homedir);
 //   grid.addParticle(proton2);
   //grid.addParticle(&pion);
@@ -69,15 +69,15 @@ int main(int argc, char *argv[])
   
   /*  MeanFieldNucleusThick CupperThick(6,homedir);
   OneGlauberGrid grid3(60,18,&CupperThick,homedir);
-  FastParticle pion(2, 0, 2570,0.,0.,3.,homedir);
+  FastParticle pion(2, 0, 2570,0.,0.,3.,0.,homedir);
   grid3.addParticle(&pion);
   grid3.printParticles();
   grid3.fillGrids();
 */
   
 /*  GlauberGrid grid2(60,18,5,&CarbonThick,homedir);
-  FastParticle proton0(0, 0, 1453,0.,0.,2.21,homedir);
-  FastParticle proton1(0, 0, 1453,-113.99*DEGRTORAD,0.,2.21,homedir);
+  FastParticle proton0(0, 0, 1453,0.,0.,2.21,0.,homedir);
+  FastParticle proton1(0, 0, 1453,-113.99*DEGRTORAD,0.,2.21,0.,homedir);
   grid2.addParticle(&proton0);
   grid2.addParticle(&proton1);
   grid2.printParticles();

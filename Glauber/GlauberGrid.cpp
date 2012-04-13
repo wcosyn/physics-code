@@ -610,17 +610,11 @@ void GlauberGrid::intGlauberPhi(const double phi, complex<double>* results, va_l
     bool check=(zmom>getParticles()[it].getHitz());
     if(getParticles()[it].getIncoming()) check=!check;
     if(check){
-      complex<double> temp=getParticles()[it].getSigma(level,getPnucleus())
-			    *(1.-I*getParticles()[it].getEpsilon(level,getPnucleus()))
-			    /(4.*PI*getParticles()[it].getBetasq(level,getPnucleus()))
+      complex<double> temp=getParticles()[it].getScatterfront(level,getPnucleus())
 			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
 			          /(2.*getParticles()[it].getBetasq(level,getPnucleus())));
       results[0]*=1.-temp;
-      results[1]*=1.-temp*(((abs(zmom-getParticles()[it].getHitz()) > getParticles()[it].getLc())
-			    ||(getParticles()[it].getHardScale() < getParticles()[it].getNkt_sq()))? 
-			    1.:(abs(zmom-getParticles()[it].getHitz())/getParticles()[it].getLc() 
-			    + getParticles()[it].getNkt_sq()/getParticles()[it].getHardScale()*
-			    (1.-abs(zmom-getParticles()[it].getHitz()) / getParticles()[it].getLc())));
+      results[1]*=1.-temp*getParticles()[it].getCTsigma(zmom);
     }
   }
   
@@ -668,16 +662,10 @@ void GlauberGrid::intGlauberPhiCT(const double phi, complex<double>* result, va_
     bool check=(zmom>getParticles()[it].getHitz());
     if(getParticles()[it].getIncoming()) check=!check;
     if(check){
-      *result*=1.-getParticles()[it].getSigma(level,getPnucleus())
-			    *(1.-I*getParticles()[it].getEpsilon(level,getPnucleus()))
-			    /(4.*PI*getParticles()[it].getBetasq(level,getPnucleus()))
+      *result*=1.-getParticles()[it].getScatterfront(level,getPnucleus())
 			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
 			          /(2.*getParticles()[it].getBetasq(level,getPnucleus())))
-			    *(((abs(zmom-getParticles()[it].getHitz()) > getParticles()[it].getLc())
-			    ||(getParticles()[it].getHardScale() < getParticles()[it].getNkt_sq()))? 
-			    1.:(abs(zmom-getParticles()[it].getHitz())/getParticles()[it].getLc() 
-			    + getParticles()[it].getNkt_sq()/getParticles()[it].getHardScale()*
-			    (1.-abs(zmom-getParticles()[it].getHitz()) / getParticles()[it].getLc())));
+			    *getParticles()[it].getCTsigma(zmom);
     }
   }
   

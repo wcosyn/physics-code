@@ -59,8 +59,8 @@ complex<double> DoubleNModel::getMatrixEl(const TKinematics2to3 &tk, int spinout
     Jcontr2 = J2->getCC2(q)*polVectorMin;
   }
   else{ cerr << "invalid photon pol" << endl;  exit(1); }
-  FastParticle nucl1(particletype1, 0, pf1,tk.GetQsquared()/1.e06,homedir);
-  FastParticle nucl2(particletype2, 0, pf2,tk.GetQsquared()/1.e06,homedir);
+  FastParticle nucl1(particletype1, 0, pf1,tk.GetQsquared()/1.e06,0.,homedir);
+  FastParticle nucl2(particletype2, 0, pf2,tk.GetQsquared()/1.e06,0.,homedir);
   if(!pw){
     gridf1 = new GlauberGridThick(60,18,5,pnucl,homedir);
     gridf2 = new GlauberGridThick(60,18,5,pnucl,homedir);

@@ -12,6 +12,7 @@
 #define MASSN 939.56536 /*!< \def defines proton mass [MeV] */
 #define MASSP 938.27231 /*!< \def defines neutron mass [MeV] */
 #define MASSPI 139.57 /*!< \def defines charged pion mass [MeV] */
+#define MASSRHO 775.49 /*!< \def defines rho0 mass [MeV] */
 #define HBARC 197.327  /*!< \def defines hbar*c [MeV*fm] */
 #define ALPHA 0.00729735253 /*!< \def defines finestructure constant [] */
 #define I complex<double>(0.,1.) /*!< \def defines complex number I */

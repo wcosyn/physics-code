@@ -9,8 +9,15 @@ using namespace std;
 #include <Utilfunctions.hpp>
 
 FastParticle::FastParticle(const int type, const int inc, const double momentum,
-			   const double ptheta, const double pphi, const double hard_scale, const string dir)
-:particletype(type),incoming(inc), p(momentum),theta(ptheta),phi(pphi),hardscale(hard_scale){
+			   const double ptheta, const double pphi, const double hard_scale, const double Gamma, const string dir)
+:particletype(type),
+incoming(inc), 
+p(momentum),
+theta(ptheta),
+phi(pphi),
+hardscale(hard_scale),
+sigma_decay_p(0.),
+sigma_decay_n(0.){
   //cout << "Initializing FastParticle object: ";
   ex=sin(theta)*cos(phi);
   ey=sin(theta)*sin(phi);
@@ -21,35 +28,60 @@ FastParticle::FastParticle(const int type, const int inc, const double momentum,
       setGlauberParameters(sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
+      mass = MASSP;     
       break;
     case(1):
       //cout <<"neutron" << endl;
       setGlauberParameters(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
+      mass = MASSN;
       break;
     case(2):
       //cout <<"pi+" << endl;
       setPionGlauberData(sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
+      mass = MASSPI;
       break;
     case(3):
       //cout <<"pi-" << endl;
       setPionGlauberData(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
+      mass = MASSPI;
+      break;
+    case(4):
+      //cout <<"rho0" << endl;
+      setPionGlauberData(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+      nkt_sq=0.35*0.35*4;
+      lc=2*p*HBARC/0.7/1e06;
+      mass = MASSRHO;
+      double dummy;
+      sigma_decay_n=sigma_decay_p=sigman+sigmap;
       break;
     default:
       cerr << "Particle type is not yet supported!!: " << particletype << endl;
       exit(1);
   }
+  E = sqrt(mass*mass+p*p);
+  decay_dil = Gamma/sqrt(1.-p*p/E*E);
   if(hard_scale<nkt_sq) cout << "Warning: hard scale is too low for color transparency effects for this particle, just so you know!" << endl;
   
 }
 
-FastParticle::FastParticle(const int type, const int inc, const TVector3 &pvec, const double hard_scale, const string dir)
-:particletype(type),incoming(inc), p(pvec.Mag()),theta(pvec.Theta()),phi(pvec.Phi()),hardscale(hard_scale){
+
+
+FastParticle::FastParticle(const int type, const int inc, const TVector3 &pvec, 
+			   const double hard_scale, const double Gamma, const string dir)
+:particletype(type),
+incoming(inc), 
+p(pvec.Mag()),
+theta(pvec.Theta()),
+phi(pvec.Phi()),
+hardscale(hard_scale),
+sigma_decay_p(0.),
+sigma_decay_n(0.){
   //cout << "Initializing FastParticle object: ";
   ex=sin(theta)*cos(phi);
   ey=sin(theta)*sin(phi);
@@ -60,29 +92,44 @@ FastParticle::FastParticle(const int type, const int inc, const TVector3 &pvec, 
       setGlauberParameters(sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
+      mass = MASSP;     
       break;
     case(1):
       //cout <<"neutron" << endl;
       setGlauberParameters(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
+      mass = MASSN;
       break;
     case(2):
       //cout <<"pi+" << endl;
       setPionGlauberData(sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
+      mass = MASSPI;
       break;
     case(3):
       //cout <<"pi-" << endl;
       setPionGlauberData(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
+      mass = MASSPI;
+      break;
+    case(4):
+      //cout <<"rho0" << endl;
+      setPionGlauberData(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+      nkt_sq=0.35*0.35*4;
+      lc=2*p*HBARC/0.7/1e06;
+      mass = MASSRHO;
+      double dummy;
+      sigma_decay_n=sigma_decay_p=sigman+sigmap;
       break;
     default:
       cerr << "Particle type is not yet supported!!: " << particletype << endl;
       exit(1);
   }
+  E = sqrt(mass*mass+p*p);
+  decay_dil = Gamma/sqrt(1.-p*p/E*E);
   if(hard_scale<nkt_sq) cout << "Warning: hard scale is too low for color transparency effects for this particle, just so you know!" << endl;
   
 }
@@ -106,7 +153,12 @@ sigman(Copy.getSigman()),
 epsilonn(Copy.getEpsilonn()),
 hardscale(Copy.getHardScale()),
 nkt_sq(Copy.getNkt_sq()),
-lc(Copy.getLc())
+lc(Copy.getLc()),
+mass(Copy.getMass()),
+E(Copy.getE()),
+decay_dil(Copy.getDecay_dil()),
+sigma_decay_n(Copy.getSigma_decay_n()),
+sigma_decay_p(Copy.getSigma_decay_p())
 {
   for(int i=0;i<3;i++) hitb[i]=Copy.getHitbvec()[i];
 }
@@ -229,6 +281,11 @@ double FastParticle::getEpsilon(bool proton) const{
 
 //get sigma for a particle, make distinction between scatt w proton or neutron
 double FastParticle::getSigma(int level, MeanFieldNucleus *pnucleus) const{
+  return level<pnucleus->getPLevels()? getSigma_decay_p() : getSigma_decay_n();
+}
+
+//get sigma for a particle, make distinction between scatt w proton or neutron
+double FastParticle::getSigma_decay(int level, MeanFieldNucleus *pnucleus) const{
   return level<pnucleus->getPLevels()? getSigmap() : getSigman();
 }
 
@@ -243,8 +300,31 @@ double FastParticle::getBetasq(int level, MeanFieldNucleus *pnucleus) const{
 }
 
 
+complex<double> FastParticle::getScatterfront(int level, MeanFieldNucleus *pnucleus) const{
+  return getSigma(level,pnucleus)
+			  *(1.-I*getEpsilon(level,pnucleus))
+			  /(4.*PI*getBetasq(level,pnucleus));
+}
 
+double FastParticle::getCTsigma(double z) const{
+ return ((abs(z-getHitz()) > getLc())
+			  ||(getHardScale() < getNkt_sq()))? 
+			  1.:(abs(z-getHitz())/getLc() 
+			  + getNkt_sq()/getHardScale()*
+			  (1.-abs(z-getHitz()) / getLc())); 
+  
+}
 
+double FastParticle::getCT_decay_sigma(double z, int level, MeanFieldNucleus *pnucleus) const{
+  if((abs(z-getHitz()) > getLc())||(getHardScale() < getNkt_sq())) 
+    return exp(-getDecay_dil()*(z-getHitz())) 
+	+ getSigma_decay(level,pnucleus)/getSigma(level,pnucleus)*(1.-exp(-getDecay_dil()*(z-getHitz())));
+  else 
+    return abs(z-getHitz())/getLc() 
+			  + getNkt_sq()/getHardScale()*(1.-abs(z-getHitz()) / getLc());
+
+}
+    
 double FastParticle::getHardScale() const{
   return hardscale;
 }

@@ -93,7 +93,7 @@ complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonp
   shell=shellindex;
   mm=m;
   J= new NucleonEMOperator(tk.GetQsquared(),1,0);
-  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,homedir);
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(!pw){
     if(SRC) grid = new GlauberGridThick(60,18,5,pnucl,homedir);
     else grid = new OneGlauberGrid(60,18,pnucl,homedir);
@@ -150,7 +150,7 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   shell=shellindex;
   mm=m;
   J= new NucleonEMOperator(tk.GetQsquared(),1,0);
-  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,homedir);
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(!pw){
     if(SRC) grid = new GlauberGridThick(60,18,5,pnucl,homedir);
     else grid = new OneGlauberGrid(60,18,pnucl,homedir);

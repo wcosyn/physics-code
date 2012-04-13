@@ -29,17 +29,21 @@ public:
    * \param theta [rad] spherical coord, theta angle of momentum with the z-axis
    * \param phi [rad] spherical coord, phi angle of momentum
    * \param hard_scale [GeV^2] for CT calculations, the hard scale associated with the particle (like Q^2 or |t|, etc)
+   * \param Gamma [MeV] Decay width in rest frame (main branching assumed)
    * \param dir homedir where all input is located
    */
-  FastParticle(const int particletype, const int incoming, const double momentum, const double theta, const double phi, const double hard_scale, string dir);
+  FastParticle(const int particletype, const int incoming, const double momentum, const double theta, const double phi, 
+	       const double hard_scale, const double Gamma, string dir);
   /*! Constructor
    * \param particletype which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
    * \param incoming is it the beam hadron particle?
    * \param pvec [MeV] 3-vector with momentum
    * \param hard_scale [GeV^2] for CT calculations, the hard scale associated with the particle (like Q^2 or |t|, etc)
+   * \param Gamma [MeV] Decay width in rest frame (main branching assumed)
    * \param dir homedir where all input is located
    */
-  FastParticle(const int particletype, const int incoming, const TVector3 &pvec, const double hard_scale, string dir);
+  FastParticle(const int particletype, const int incoming, const TVector3 &pvec, 
+	       const double hard_scale, const double Gamma, string dir);
   /*! Copy Constructor
    * \param Copy copy
    */
@@ -84,12 +88,25 @@ public:
   double getSigma(bool proton) const;/*!< [fm^2] return sigma parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
   double getEpsilon(bool proton) const;/*!< [] return epsilon parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
   double getBetasq(bool proton) const;/*!< [fm^2] return beta^2 parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
+  double getMass() const{ return mass;}
+  double getE() const{return E;}
+  double getDecay_dil() const{return decay_dil;}
+  double getSigma_decay_p() const{ return sigma_decay_p;}
+  double getSigma_decay_n() const{ return sigma_decay_n;}
+  
+  
   /*! [fm^2] return sigma parameter for scattering with nucleon from specified level
    * \param level selects level in nucleus
    * \param pnucleus pointer to a class instance of the nucleus 
    * \return [fm^2] sigma parameter
    */
   double getSigma(int level, MeanFieldNucleus *pnucleus) const;
+  /*! [fm^2] return sigma parameter with decay products for scattering with nucleon from specified level
+   * \param level selects level in nucleus
+   * \param pnucleus pointer to a class instance of the nucleus 
+   * \return [fm^2] sigma parameter
+   */
+  double getSigma_decay(int level, MeanFieldNucleus *pnucleus) const;
   /*! [] return epsilon parameter for scattering with nucleon from specified level
    * \param level selects level in nucleus
    * \param pnucleus pointer to a class instance of the nucleus 
@@ -102,6 +119,25 @@ public:
    * \return [fm^2] sigma parameter
    */
   double getBetasq(int level, MeanFieldNucleus *pnucleus) const;
+  /*! [fm^2] return scattering parameter front factor (\sigma(1-I*eps)/(4\pi\beta^2)
+   * \param level selects level in nucleus
+   * \param pnucleus pointer to a class instance of the nucleus 
+   * \return [fm^2] frontfactor scattering
+   */
+  complex<double> getScatterfront(int level, MeanFieldNucleus *pnucleus) const;
+  /*! for CT calc, return ratio between sigma_eff and regular sigma
+   * \param zmom distance along path of outgoing particle
+   * \return ratio
+   */
+  double getCTsigma(double zmom) const;
+
+  /*! for CT calc including decay, return ratio between sigma_eff and regular sigma
+   * \param zmom distance along path of outgoing particle
+   * \param level selects level in nucleus
+   * \param pnucleus pointer to a class instance of the nucleus 
+   * \return ratio
+   */
+  double getCT_decay_sigma(double zmom, int level, MeanFieldNucleus *pnucleus) const;
 
   double getHardScale() const; /*!< get hard scale associated with particle  */
   double getLc() const; /*!< get coherence length of particle (CT parameter)  */
@@ -120,7 +156,7 @@ public:
 
   
 private:
-  int particletype; /*!< which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course */
+  int particletype; /*!< which particle [0-4] = [proton, neutron, pi+, pi-,rho0] can be extended of course */
   
   bool incoming;  /*!< incoming beam particle? */
   double p; /*!<[MeV] momentum */
@@ -141,6 +177,11 @@ private:
   double hardscale; /*!<  hard scale associated with particle */
   double nkt_sq; /*!< [GeV^2]  <n_kt^2>, 0.35^2n^2 with n number of constituent quarks of particle*/
   double lc; /*!<  coherence length of particle (CT parameter) */
+  double mass; /*!<  [MeV] mass */
+  double E; /*!<  [MeV] Energy */
+  double decay_dil; /*!<  [MeV] dilated decay width */
+  double sigma_decay_p; /*!<  [fm^2]  sigma parameter for decay products scattering with proton*/
+  double sigma_decay_n; /*!<  [fm^2]  sigma parameter for decay products scattering with neutron*/
   
   /*! Sets the glauber parameters for a nucleon fast particle
    * \param sigmap [fm^2]  sigma parameter for scattering with proton
