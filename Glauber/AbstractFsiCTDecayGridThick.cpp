@@ -15,6 +15,7 @@ AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,homedir),
 AbstractFsiDecayGridThick(r_grid,cth_grid,phi_grid,pnucl,homedir), 
 AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),
 AbstractFsiCTDecayGrid(r_grid,cth_grid,phi_grid,pnucl,homedir){
+  number_of_grids=8;
   
 }  
 

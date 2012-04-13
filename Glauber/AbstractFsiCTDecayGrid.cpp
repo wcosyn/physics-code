@@ -11,6 +11,7 @@ using namespace std;
 AbstractFsiCTDecayGrid::AbstractFsiCTDecayGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
 AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),
 AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,homedir){
+  number_of_grids=4;
 }  
   
 AbstractFsiCTDecayGrid::~AbstractFsiCTDecayGrid(){

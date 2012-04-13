@@ -81,7 +81,7 @@ public:
   int getProtonKnockout() const; /*!< get total protons that are knocked out from nucleus*/
   int getNeutronKnockout() const; /*!< get total neutrons that are knocked out from nucleus*/
 
-
+  int getNumber_of_grids() const{return number_of_grids;}
 
   virtual void printFsi_grid()=0;  /*!< Prints the FSI grid for a certain situation, pure virtual function!! */
 
@@ -102,6 +102,18 @@ public:
    ,pure virtual function!!*/
   virtual complex<double> getFsiGridFull_interp()=0;
 
+  //interpolation functions, one without arguments is a pure virtual function
+  /*!returns the value of the fsi grid for a certain situation at coordinate (r,costheta,phi) */
+  complex<double> getFsiGridN_interpvec(const int grid, const TVector3 &rvec); 
+  /*!returns the value of the fsi grid for a certain situation at coordinate (r,costheta,phi) */
+  complex<double> getFsiGridN_interp3(const int grid, const double r, const double costheta, const double phi); 
+  /*!returns the value of the fsi grid for a certain situation at coordinate (costheta,phi), r has been set previously */
+  complex<double> getFsiGridN_interp2(const int grid, const double costheta, const double phi);
+  /*!returns the value of the fsi grid for a certain situation at coordinate (phi), r&theta have been set previously */
+  complex<double> getFsiGridN_interp1(const int grid, const double phi);
+  /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously
+   ,pure virtual function!!*/
+  virtual complex<double> getFsiGridN_interp(const int grid)=0;
   /*! 3d interpolation of a grid after a certain coordinate (r,costheta,phi) has been set! */
   virtual complex<double> getInterp(complex<double> ***grid);  //3d interpolation of grid
   
@@ -121,7 +133,8 @@ protected:
   double cosphi_hit;/*!< cos of phi coordinate of the hard interaction point, what the grid depens on */
   double sinphi_hit;/*!< sin of phi coordinate of the hard interaction point, what the grid depens on */
   string fsi_filename; /*!< filename for regular fsi grid */
-
+  int number_of_grids; /*!<number of fsi grids */
+  
 private:
   string dir;  /*!< dir where all input/output is located */ 
   

@@ -13,7 +13,7 @@ AbstractFsiDecayGridThick::AbstractFsiDecayGridThick(int r_grid, int cth_grid, i
 AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),
 AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,homedir)
 {
-  
+  number_of_grids=4;
   //fsicorrelator.printCorrGridAll();
 }  
 

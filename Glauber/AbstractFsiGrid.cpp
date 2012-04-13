@@ -10,7 +10,7 @@ using namespace std;
 
 AbstractFsiGrid::AbstractFsiGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
 filledgrid(0),filledallgrid(0),dir(homedir+"/grids/"),rgrid(r_grid),cthgrid(cth_grid),phigrid(phi_grid),allinplane(0),totalprotonout(0), totalneutronout(0),
-protonknockout(0), neutronknockout(0),pnucleus(pnucl){
+protonknockout(0), neutronknockout(0),pnucleus(pnucl),number_of_grids(1){
   
   invrstep=rgrid/pnucleus->getRange();
   invcthstep=cthgrid/2.;
@@ -297,6 +297,33 @@ complex<double> AbstractFsiGrid::getFsiGridFull_interp1(const double phi){
   if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
   else setPhiinterp(phi);
   return getFsiGridFull_interp();
+}
+
+
+//interpolation functions
+complex<double> AbstractFsiGrid::getFsiGridN_interpvec(const int grid, const TVector3 &rvec){
+  return getFsiGridN_interp3(grid, rvec.Mag(),rvec.CosTheta(),rvec.Phi());
+}
+
+complex<double> AbstractFsiGrid::getFsiGridN_interp3(const int grid, const double r, const double costheta, const double phi){
+  setRinterp(r);
+  setCthinterp(costheta);
+  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
+  else setPhiinterp(phi);
+  return getFsiGridN_interp(grid);
+}
+
+complex<double> AbstractFsiGrid::getFsiGridN_interp2(const int grid, const double costheta, const double phi){
+  setCthinterp(costheta);
+  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
+  else setPhiinterp(phi);
+  return getFsiGridN_interp(grid);
+}
+
+complex<double> AbstractFsiGrid::getFsiGridN_interp1(const int grid, const double phi){
+  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
+  else setPhiinterp(phi);
+  return getFsiGridN_interp(grid);
 }
 
 

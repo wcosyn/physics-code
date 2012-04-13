@@ -71,6 +71,18 @@ complex<double> GlauberGrid::getFsiCtGridFull_interp(){
 //   }  
 }
 
+//interpolation of the grid after r,cth,phi have been set
+complex<double> GlauberGrid::getFsiGridN_interp(int grid){
+  if(grid<getNumber_of_grids()){
+    return (grid==0? getFsiGridFull_interp(): getFsiCtGridFull_interp());
+  }
+  else{
+    cerr << "grid number not supported!" << endl;
+    exit(1);
+  }
+}
+  
+
 
 void GlauberGrid::printFsi_grid(){
   cout << "Printing Glauberarray for " << getFsi_Filename() << endl;

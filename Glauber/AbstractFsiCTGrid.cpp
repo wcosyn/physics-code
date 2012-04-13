@@ -10,6 +10,7 @@ using namespace std;
 
 AbstractFsiCTGrid::AbstractFsiCTGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
 AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),filledctgrid(0){
+  number_of_grids=2;
 }  
   
 AbstractFsiCTGrid::~AbstractFsiCTGrid(){

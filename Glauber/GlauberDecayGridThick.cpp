@@ -91,6 +91,40 @@ complex<double> GlauberDecayGridThick::getFsiSrcCtDecayGridFull_interp(){
 	  *pow(getInterp(fsi_ct_grid[3][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
 }
 
+complex<double> GlauberDecayGridThick::getFsiGridN_interp(int grid){
+  switch(grid){
+    case(0):
+      return getFsiGridFull_interp();
+      break;
+    case(1):
+      return getFsiSrcGridFull_interp();
+      break;
+    case(2):
+      return getFsiDecayGridFull_interp();
+      break;
+    case(3):
+      return getFsiSrcDecayGridFull_interp();
+      break;
+    case(4):
+      return getFsiSrcGridFull_interp();
+      break;
+    case(5):
+      return getFsiSrcCtGridFull_interp();
+      break;
+    case(6):
+      return getFsiSrcDecayGridFull_interp();
+      break;
+    case(7):
+      return getFsiSrcCtDecayGridFull_interp();
+      break;
+    default:
+      cerr << "grid number not supported" << endl;
+      exit(1);
+  }
+}
+
+
+
 
 void GlauberDecayGridThick::printFsi_grid(){
   cout << "Printing Glauberarray for " << getFsi_Filename() << endl;

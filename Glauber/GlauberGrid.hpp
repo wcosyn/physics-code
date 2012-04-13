@@ -26,6 +26,7 @@ public:
   virtual ~GlauberGrid();/*!< Destructor */
   virtual complex<double> getFsiGridFull_interp();   /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   virtual complex<double> getFsiCtGridFull_interp(); /*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  virtual complex<double> getFsiGridN_interp(int grid); /*!returns the value of  fsi grid number grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   
   virtual void printFsi_grid();/*!< Prints the FSI grid for a certain situation*/
   virtual void printFsi_ct_grid(); /*!< Prints the FSI+CT grid for a certain situation */
