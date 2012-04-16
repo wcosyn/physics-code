@@ -123,7 +123,10 @@ void GlauberGrid::printFsi_ct_grid(){
   
 }
 
-
+virtual void GlauberGrid::print_grid(int gridindex){
+  if(gridindex==0) printFsi_grid();
+  else printFsi_ct_grid();
+}
 
 //set filenames, don't forget to add ending "/" to dir if necessary!!!
 void GlauberGrid::setFilenames(string dir){

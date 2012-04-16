@@ -48,6 +48,7 @@ public:
   virtual void printFsi_ct_decay_grid(); /*!< Prints the FSI+CT grid for a certain situation */
   virtual void printFsi_src_decay_grid();/*!< Prints the FSI+SRC grid for a certain situation*/
   virtual void printFsi_src_ct_decay_grid();/*!< Prints the FSI+SRC+CT grid for a certain situation*/
+  virtual void print_grid();/*!< Prints the FSI grid for a certain situation*/
 
   
 protected:

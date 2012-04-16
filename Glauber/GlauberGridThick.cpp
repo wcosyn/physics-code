@@ -85,6 +85,26 @@ complex<double> GlauberGridThick::getFsiGridN_interp(int grid){
 }
 
   
+void GlauberGridThick::print_grid(int grid){
+  switch(grid){
+    case(0):
+      return printFsi_grid();
+      break;
+    case(1):
+      return printFsi_src_grid();
+      break;
+    case(2):
+      return printFsi_ct_grid();
+      break;
+    case(3):
+      return printFsi_src_ct_grid();
+      break;
+    default:
+      cerr << "grid number not supported" << endl;
+      exit(1);
+  }
+}
+
 void GlauberGridThick::printFsi_grid(){
   cout << "Printing Glauberarray for " << getFsi_Filename() << endl;
   printKnockout();

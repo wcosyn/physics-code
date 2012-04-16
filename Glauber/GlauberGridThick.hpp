@@ -39,6 +39,7 @@ public:
   virtual void printFsi_ct_grid(); /*!< Prints the FSI+CT grid for a certain situation */
   virtual void printFsi_src_grid();/*!< Prints the FSI+SRC grid for a certain situation*/
   virtual void printFsi_src_ct_grid();/*!< Prints the FSI+SRC+CT grid for a certain situation*/
+  virtual void print_grid();/*!< Prints the FSI grid for a certain situation*/
 
   
 protected:

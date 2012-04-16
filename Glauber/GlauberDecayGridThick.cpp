@@ -124,6 +124,37 @@ complex<double> GlauberDecayGridThick::getFsiGridN_interp(int grid){
 }
 
 
+void GlauberDecayGridThick::print_grid(int grid){
+  switch(grid){
+    case(0):
+      return printFsi_grid();
+      break;
+    case(1):
+      return printFsi_src_grid();
+      break;
+    case(2):
+      return printFsi_decay_grid();
+      break;
+    case(3):
+      return printFsi_src_decay_grid();
+      break;
+    case(4):
+      return printFsi_ct_grid();
+      break;
+    case(5):
+      return printFsi_src_ct_grid();
+      break;
+    case(6):
+      return printFsi_ct_decay_grid();
+      break;
+    case(7):
+      return printFsi_src_ct_decay_grid();
+      break;
+    default:
+      cerr << "grid number not supported" << endl;
+      exit(1);
+  }
+}
 
 
 void GlauberDecayGridThick::printFsi_grid(){

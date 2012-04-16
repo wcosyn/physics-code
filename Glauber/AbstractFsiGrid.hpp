@@ -84,6 +84,7 @@ public:
   int getNumber_of_grids() const{return number_of_grids;}
 
   virtual void printFsi_grid()=0;  /*!< Prints the FSI grid for a certain situation, pure virtual function!! */
+  virtual void print_grid(int gridindex)=0;  /*!< Prints the FSI grid for a certain situation, pure virtual function!! */
 
   void setRinterp(const double r); /*!< sets the rindex variable used in the 3d interpolation */
   void setCthinterp(const double costheta); /*!< sets the thindex variable used in the 3d interpolation */

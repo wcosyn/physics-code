@@ -30,7 +30,7 @@ public:
   
   virtual void printFsi_grid();/*!< Prints the FSI grid for a certain situation*/
   virtual void printFsi_ct_grid(); /*!< Prints the FSI+CT grid for a certain situation */
-
+  virtual void print_grid(int gridindex);
   
 protected:
   complex<double> *****fsi_grid; /*!< grid that contains the fsi factor */
