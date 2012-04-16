@@ -248,7 +248,7 @@ int AbstractFsiGrid::getNeutronKnockout() const{
 //set up inteprolation help variables for r
 void AbstractFsiGrid::setRinterp(const double r){
   if(r>pnucleus->getRange()){
-    cerr << "r out of range in getWave_Rpart: " << r << endl;
+    cerr << "r out of range in : AbstractFsiGrid::setRinterp" << r << endl;
     exit(1);
   }
   rindex = int(floor(r*getInvRstep()));
@@ -329,14 +329,17 @@ complex<double> AbstractFsiGrid::getFsiGridN_interp1(const int grid, const doubl
 
 //3d interpolation of array
 complex<double> AbstractFsiGrid::getInterp(complex<double> ***grid){
-  return getComp_u_interp()*(getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()][getPhiindex()]
-	+ getS_interp()*grid[getRindex()+1][getCthindex()][getPhiindex()]) 
-	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()+1][getPhiindex()] 
-	+ getS_interp()*grid[getRindex()+1][getCthindex()+1][getPhiindex()]))
-	+  getU_interp()*(getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()][getPhiindex()+1]
-	+ getS_interp()*grid[getRindex()+1][getCthindex()][getPhiindex()+1]) 
-	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()+1][getPhiindex()+1]
-	+ getS_interp()*grid[getRindex()+1][getCthindex()+1][getPhiindex()+1]));
+//   return getComp_u_interp()*(getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()][getPhiindex()]
+// 	+ getS_interp()*grid[getRindex()+1][getCthindex()][getPhiindex()]) 
+// 	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()+1][getPhiindex()] 
+// 	+ getS_interp()*grid[getRindex()+1][getCthindex()+1][getPhiindex()]))
+// 	+  getU_interp()*(getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()][getPhiindex()+1]
+// 	+ getS_interp()*grid[getRindex()+1][getCthindex()][getPhiindex()+1]) 
+// 	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()+1][getPhiindex()+1]
+// 	+ getS_interp()*grid[getRindex()+1][getCthindex()+1][getPhiindex()+1]));
+  return Interp3d(grid, getS_interp(), getT_interp(), getU_interp(), 
+		  getComp_s_interp(), getComp_t_interp(), getComp_u_interp(), 
+		  getRindex(), getCthindex(), getPhiindex());
 }
 
 

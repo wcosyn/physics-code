@@ -20,6 +20,7 @@ GlauberGridThick.hpp
 GlauberDecayGridThick.hpp
 OneGlauberGrid.hpp
 TMFSpinor.hpp
+DistMomDistrGrid.hpp
 )
 
 foreach(it ${Glauber_HEADERS_HPP})

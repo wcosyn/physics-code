@@ -106,7 +106,7 @@ complex<double> GlauberDecayGridThick::getFsiGridN_interp(int grid){
       return getFsiSrcDecayGridFull_interp();
       break;
     case(4):
-      return getFsiSrcGridFull_interp();
+      return getFsiCtGridFull_interp();
       break;
     case(5):
       return getFsiSrcCtGridFull_interp();

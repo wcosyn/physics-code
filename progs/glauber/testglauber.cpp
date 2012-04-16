@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
   gridthick.printFsi_src_decay_grid();
   gridthick.printFsi_ct_decay_grid();
   gridthick.printFsi_src_ct_decay_grid();
-  
+  cout << gridthick.getNumber_of_grids() << endl;
   
   
   return 0;
