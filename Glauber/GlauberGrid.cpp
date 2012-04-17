@@ -123,7 +123,7 @@ void GlauberGrid::printFsi_ct_grid(){
   
 }
 
-virtual void GlauberGrid::print_grid(int gridindex){
+void GlauberGrid::print_grid(int gridindex){
   if(gridindex==0) printFsi_grid();
   else printFsi_ct_grid();
 }

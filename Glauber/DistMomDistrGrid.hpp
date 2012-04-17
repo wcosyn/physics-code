@@ -18,6 +18,7 @@ class AbstractFsiCTGrid;
 
 /*! \brief A class for a grid of a distorted momentum distribution
  * all momenta in MeV
+ * all momentum distributions in fm^3!!!!!!!!!!!!!!!
  */
 class DistMomDistrGrid{
 public:
@@ -57,7 +58,8 @@ public:
   int getPhiindex() const{return phiindex;}/*!<  returns the index for phi used in the 3d interpolation */
   AbstractFsiCTGrid *getPfsigrid() const{return pfsigrid;}/*!<  returns the pointer to the MeanFieldNucleus instance */
   
-  void printRho_grid(int gridindex);  /*!< Prints the rho grid for a certain situation */
+  void printRho_grid(int gridindex);  /*!< Prints the rho grid for a certain situation*/
+  void printRhopw_grid();  /*!< Prints the rho plane wave grid */
 
   void setPinterp(const double p); /*!< sets the rindex variable used in the 3d interpolation */
   void setCthinterp(const double costheta); /*!< sets the thindex variable used in the 3d interpolation */
@@ -74,6 +76,7 @@ public:
   double getRhoGridFull_interp1(int gridindex, const double phi);
   /*!returns the value of the fsi grid for a certain situation at coordinate (p,theta,phi) that has been set previously*/
   double getRhoGridFull_interp(int gridindex);
+  double getRhopwGridFull_interp(double p);
 
    
   
@@ -117,9 +120,11 @@ private:
   double sinphi_hit;/*!< sin of phi coordinate of the hard interaction point, what the grid depens on */
   Matrix<1,4> Upm_bar;
   
+  double *rhopwgrid;
   double ****rhogrid;
   double ****rhoctgrid;
     
+  void constructpwGrid(); /*!< construct all grids */
   void constructAllGrids(); /*!< construct all grids */
   void readinRhoGrid(ifstream &infile); /*!< read in all grids */
   void writeoutRhoGrid(ofstream &outfile); /*!< write out all grids */
@@ -167,6 +172,12 @@ private:
    */
   void intRhoPhiCT(const double phi, complex<double> *results, va_list ap);
   
+  /*! function that gets integrated over r, plane-wave thingy
+   * \param r [fm] radial coordinate
+   * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intRhoRpw(const double r, double *result, va_list ap);
 
   
   

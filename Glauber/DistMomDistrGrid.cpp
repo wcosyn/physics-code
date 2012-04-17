@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <gsl/gsl_sf_bessel.h>
 
 using namespace std;
 
@@ -25,6 +26,7 @@ pgrid(p_grid),
 cthgrid(cth_grid),
 phigrid(phi_grid),
 pfsigrid(pfsi_grid){
+  
   mass = getShellindex()<getPfsigrid()->getPnucleus()->getPLevels()? MASSP:MASSN;
   invpstep=pgrid/p_max;
   invcthstep=cthgrid/2.;
@@ -43,6 +45,8 @@ pfsigrid(pfsi_grid){
       }
     }
   }
+  rhopwgrid = new double[getPgrid()+1];
+  constructpwGrid();
   fillGrids();
   
   
@@ -66,7 +70,7 @@ DistMomDistrGrid::~DistMomDistrGrid(){
     delete [] rhogrid;
     delete [] rhoctgrid;
   }
-
+  delete [] rhopwgrid;
   
 }
 
@@ -131,7 +135,14 @@ double DistMomDistrGrid::getRhoGridFull_interp(int gridindex){
 
 
 
-
+double DistMomDistrGrid::getRhopwGridFull_interp(double p){
+  if(p>getPmax()){
+    cerr << "p out of range in : getRhopwGridFull" << p << endl;
+    exit(1);
+  }
+  return interpolate(rhopwgrid,p,1./getInvPstep(),getPindex()+1,0); 
+  
+}
 
 
 
@@ -148,10 +159,22 @@ void DistMomDistrGrid::setFilenames(string homedir){
     rho_filename.insert(found+1,addendum);
     rhoct_filename.insert(found+1,addendum);
   }
-  cout << rho_filename << endl << rhoct_filename << endl;
+  //cout << rho_filename << endl << rhoct_filename << endl;
 }
   
 
+void DistMomDistrGrid::printRhopw_grid(){
+  cout << "Printing plane-wave momentum array for " << endl;
+  double tot = 0.;
+  for(int i=0; i<=getPgrid(); i++){
+    double p = float(i)/getInvPstep();
+    cout << p << " " << getRhopwGridFull_interp(p) << endl;    
+    tot +=p*p*getRhopwGridFull_interp(p);
+  }
+  tot*=4.*PI/getInvPstep()*pow(INVHBARC,3.);
+  cout << "tot " << tot << endl;
+}
+  
 void DistMomDistrGrid::printRho_grid(int gridindex){
   cout << "Printing Distorted momentum array for " << getRho_Filename() << endl << "Gridindex " << gridindex << endl;
   for(int i=0; i<=getPgrid(); i++){
@@ -286,6 +309,21 @@ void DistMomDistrGrid::constructAllGrids(){
 }
 
 //calc both fsi and fsi+ct grid
+void DistMomDistrGrid::constructpwGrid(){
+  cout << "Constructing pw momentum distribution" << endl;
+  //fill the arrays!
+  for(int i=0; i<=getPgrid(); i++){
+    p_hit = float(i)/getInvPstep();
+    double restimate=0.;
+    double result;
+    rombergerN(this,&DistMomDistrGrid::intRhoRpw,0.,getPfsigrid()->getPnucleus()->getRange(),1,
+		       &result,1.E-07,3,10,&restimate);
+    rhopwgrid[i] = result*result*2.*getMass()/(sqrt(getMass()*getMass()+p_hit*p_hit)+getMass())*
+		    (getPfsigrid()->getPnucleus()->getJ_array()[getShellindex()]+1)/(4.*PI)*(2./PI);  //(2j+1)/(4pi)*(2/pi)
+  }
+}
+
+//calc both fsi and fsi+ct grid
 void DistMomDistrGrid::constructCtGrid(){
   //fill the arrays!
   for(int i=0; i<=getPgrid(); i++){
@@ -306,13 +344,13 @@ void DistMomDistrGrid::constructCtGrid(){
 	    FourVector<double> pf(sqrt(p_hit*p_hit+mass*mass),pvec_hit.X(),pvec_hit.Y(),pvec_hit.Z());
 	    if(ms) Upm_bar=TSpinor::Bar(TSpinor(pf,mass,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
 	    else Upm_bar=TSpinor::Bar(TSpinor(pf,mass,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity));
-	    complex<double> results[getPfsigrid()->getNumber_of_grids()];
+	    complex<double> results[getPfsigrid()->getNumber_of_grids()/2];
 	    double restimate=0.,thestimate=0.,phiestimate=0.;
 	    rombergerN(this,&DistMomDistrGrid::intRhoRCT,0.,getPfsigrid()->getPnucleus()->getRange(),getPfsigrid()->getNumber_of_grids()/2,
 		       results,PREC,3,7,&restimate,m,&thestimate, &phiestimate);
 	    for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
-	      rhoctgrid[l][i][j][k]+=norm(results[l+getPfsigrid()->getNumber_of_grids()/2]);
-// 	      cout << i << " " << j << " " << k << " " << ms << " " << m << " " << l << " " << norm(results[l+getPfsigrid()->getNumber_of_grids()/2]) << endl;
+	      rhoctgrid[l][i][j][k]+=norm(results[l]);
+//  	      cout << i << " " << j << " " << k << " " << ms << " " << m << " " << l << " " << norm(results[l]) << endl;
 	    }
 	  }
 	}
@@ -372,6 +410,11 @@ void DistMomDistrGrid::intRhoRCT(const double r, complex<double> *results, va_li
   return;
 }
 
+void DistMomDistrGrid::intRhoRpw(const double r, double *result, va_list ap){
+  
+  *result= r*getPfsigrid()->getPnucleus()->getWave_G(getShellindex(),r)
+	*gsl_sf_bessel_Jn(getPfsigrid()->getPnucleus()->getL_array()[getShellindex()],p_hit*r*INVHBARC);
+}
 void DistMomDistrGrid::intRhoCosTheta(const double costheta, complex<double> *results, va_list ap){
   
   int m = va_arg(ap,int);

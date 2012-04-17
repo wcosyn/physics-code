@@ -112,7 +112,7 @@ complex<double> GlauberDecayGridThick::getFsiGridN_interp(int grid){
       return getFsiSrcCtGridFull_interp();
       break;
     case(6):
-      return getFsiSrcDecayGridFull_interp();
+      return getFsiCtDecayGridFull_interp();
       break;
     case(7):
       return getFsiSrcCtDecayGridFull_interp();
@@ -730,7 +730,7 @@ void GlauberDecayGridThick::intGlauberPhi(const double phi, complex<double>* res
       results[0]*=1.-temp;
       results[2]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton,getPnucleusthick());
       results[4]*=1.-temp*getParticles()[it].getCTsigma(zmom);
-      results[6]*=1.-temp*getParticles()[it].getCT_decay_sigma(zmom,proton,getPnucleusthick());
+      results[6]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton,getPnucleusthick())*getParticles()[it].getCTsigma(zmom);
     }
   }
   double gr=getFsiCorrelator().correlation(normr(r,costheta,sintheta,cosphi,sinphi,r_hit,costheta_hit,sintheta_hit,cosphi_hit,sinphi_hit));
@@ -782,7 +782,7 @@ void GlauberDecayGridThick::intGlauberPhiCT(const double phi, complex<double>* r
 			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
 			          /(2.*getParticles()[it].getBetasq(proton,getPnucleusthick())));
       results[0]*=1.-temp*getParticles()[it].getCTsigma(zmom);
-      results[2]*=1.-temp*getParticles()[it].getCT_decay_sigma(zmom,proton,getPnucleusthick());
+      results[2]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton,getPnucleusthick())*getParticles()[it].getCTsigma(zmom);
     }
   }
   double gr=getFsiCorrelator().correlation(normr(r,costheta,sintheta,cosphi,sinphi,r_hit,costheta_hit,sintheta_hit,cosphi_hit,sinphi_hit));

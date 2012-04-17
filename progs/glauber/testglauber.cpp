@@ -62,15 +62,15 @@ int main(int argc, char *argv[])
   gridthick.addParticle(rho);
   gridthick.printParticles();
   gridthick.fillGrids();
-//   gridthick.printFsi_grid();
-//   gridthick.printFsi_src_grid();
-//   gridthick.printFsi_ct_grid();
-//   gridthick.printFsi_src_ct_grid();
+  gridthick.printFsi_grid();
+  gridthick.printFsi_src_grid();
+  gridthick.printFsi_ct_grid();
+  gridthick.printFsi_src_ct_grid();
   gridthick.printFsi_decay_grid();
   gridthick.printFsi_src_decay_grid();
   gridthick.printFsi_ct_decay_grid();
   gridthick.printFsi_src_ct_decay_grid();
-  cout << gridthick.getNumber_of_grids() << endl;
+//   cout << gridthick.getNumber_of_grids() << endl;
   
   
   return 0;
