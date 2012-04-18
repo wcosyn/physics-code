@@ -8,6 +8,7 @@ Model.hpp
 Cross.hpp
 DoubleNModel.hpp
 DoubleNCross.hpp
+RhoTCross.hpp
 )
 
 foreach(it ${Knockout_HEADERS_HPP})

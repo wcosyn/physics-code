@@ -7,6 +7,9 @@
 #ifndef UTILFUNCTIONS_H
 #define UTILFUNCTIONS_H
 
+
+#define SIGN(x) ((x>0)-(x<0))
+
 #include <cstdarg>
 #include <sstream>
 #include <complex>

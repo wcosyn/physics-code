@@ -205,6 +205,11 @@ double MeanFieldNucleus::getMassA() const{
   return massA;
 }
 
+
+double MeanFieldNucleus::getMassA_min_1(int level) const{
+  return level<getPLevels()?  getMassA_min_proton(): getMassA_min_neutron();
+}
+
 //get massA_min_proton
 double MeanFieldNucleus::getMassA_min_proton() const{
   return massA_min_proton;

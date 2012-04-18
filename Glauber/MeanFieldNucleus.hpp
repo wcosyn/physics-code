@@ -52,6 +52,7 @@ public:
   const int* getLbar_array() const; /*!< Returns array with all the l_bar quantum numbers of each shell*/
   const int* getJ_array() const; /*!< Returns array with all the j quantum numbers of each shell*/
   double getMassA() const; /*!< Returns the nucleus mass*/
+  double getMassA_min_1(int level) const; /*!< Returns the mass of A-1 (either Z-1 or N-1 depending on level)*/
   double getMassA_min_proton() const; /*!< Returns the mass of the A-1(Z-1,N) nucleus*/
   double getMassA_min_neutron() const; /*!< Returns the mass of the A-1(Z,N-1) nucleus*/
   double getMassA_min_pp() const {return massA_min_pp;}; /*!< Returns the mass of the A-2(Z-2,N) nucleus*/

@@ -28,7 +28,7 @@ public:
    * \param cth_grid gridsize in cos theta
    * \param phi_grid gridsizein phi
    * \param level shell level for the rho grid
-   * \param pfsigrid pointer to a fsi grid
+   * \param pfsigrid pointer to a fsi/ct grid
    * \param dir string that contains dir with all input
    */
   DistMomDistrGrid(int shellindex, const double max_p, const int p_grid, const int cth_grid, const int phi_grid,
