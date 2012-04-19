@@ -354,6 +354,7 @@ void AbstractFsiGrid::setFilenames(string homedir){
 		  +".th"+to_string(int(round(particles[i].getCosTheta()*10)))+".ph"+to_string(int(round(particles[i].getPhi()*10)));
   }
   fsi_filename+=".r"+to_string(getRgrid())+".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".dat";
+  //cout << fsi_filename << endl;
 }
   
   

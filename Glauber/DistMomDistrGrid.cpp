@@ -165,14 +165,14 @@ void DistMomDistrGrid::setFilenames(string homedir){
 
 void DistMomDistrGrid::printRhopw_grid(){
   cout << "Printing plane-wave momentum array for " << endl;
-  double tot = 0.;
+//   double tot = 0.;
   for(int i=0; i<=getPgrid(); i++){
     double p = float(i)/getInvPstep();
     cout << p << " " << getRhopwGridFull_interp(p) << endl;    
-    tot +=p*p*getRhopwGridFull_interp(p);
+//     tot +=p*p*getRhopwGridFull_interp(p);
   }
-  tot*=4.*PI/getInvPstep()*pow(INVHBARC,3.);
-  cout << "tot " << tot << endl;
+//   tot*=4.*PI/getInvPstep()*pow(INVHBARC,3.);
+//   cout << "tot " << tot << endl;
 }
   
 void DistMomDistrGrid::printRho_grid(int gridindex){
@@ -269,8 +269,8 @@ void DistMomDistrGrid::constructAllGrids(){
 	    for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
 	      rhogrid[l][i][j][k]+=norm(results[l]);
 	      rhoctgrid[l][i][j][k]+=norm(results[l+getPfsigrid()->getNumber_of_grids()/2]);
-	      if(l==0) cout << i << " " << j << " " << k << " " << m << " " << ms << " " << l << " " 
-	      << norm(results[l]) << " "<< norm(results[l+getPfsigrid()->getNumber_of_grids()/2]) << endl;
+// 	      if(l==0) cout << i << " " << j << " " << k << " " << m << " " << ms << " " << l << " " 
+// 	      << norm(results[l]) << " "<< norm(results[l+getPfsigrid()->getNumber_of_grids()/2]) << endl;
 
 	    }
 	  }
