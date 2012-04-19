@@ -3,7 +3,7 @@
 
 
 #include <MeanFieldNucleusThick.hpp>
-#include <TKinematics2to2.h>
+// #include <TKinematics2to2.h>
 #include <DistMomDistrGrid.hpp>
 #include <GlauberDecayGridThick.hpp>
 #include <FastParticle.hpp>
@@ -15,15 +15,15 @@ class RhoTCross{
 public:
   RhoTCross(const int nucleus, const double pmax, const string dir);
   ~RhoTCross();
-  void getCrosst(double *results, const double Q2, const double nu, const double t);
-  void getCrossz(double *results, const double Q2, const double nu, const double z);
+  void getCrosst(double *results, const double Ebeam, const double Q2, const double nu, const double t);
+  void getCrossz(double *results, const double Ebeam, const double Q2, const double nu, const double z);
 private:
   string homedir;  
   double pmax;
   MeanFieldNucleusThick nucleusthick;
   DistMomDistrGrid *pdistgrid;
   GlauberDecayGridThick *pfsigrid;
-  TKinematics2to2 *pkin;
+//   TKinematics2to2 *pkin;
   FastParticle *prho;
   /*! function that gets integrated over pm, all different fsi outputs
    * \param pm [MeV] radial coordinate
@@ -61,6 +61,11 @@ private:
    * \param ap variable parameter list
    */
   void intPhiz(const double phi, double *results, va_list ap);
+  
+  void getMomdistr(double *results, double prho, double thetarho, double t, int shell, 
+			    double pm, double pmcostheta, double pmphi);
+  double getfrontfactor(double nu, double qvec, double Erho, double prho, double pzrho, double pxrho,
+				 double s, double Q2, double mN, double t);
 };
 
 #endif

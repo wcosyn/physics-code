@@ -285,3 +285,33 @@ void intTest(double r, complex<double> *results, va_list ap){
 }
 
 
+complex<double> Interp3d(complex<double> ***grid, double s, double t, double u, 
+			  double comps, double compt, double compu, int sindex, int tindex, int uindex){
+  return complex<double>(compu*(compt*(comps*real(grid[sindex][tindex][uindex])
+	+ s*real(grid[sindex+1][tindex][uindex])) 
+	+ t*(comps*real(grid[sindex][tindex+1][uindex] )
+	+ s*real(grid[sindex+1][tindex+1][uindex])))
+	+  u*(compt*(comps*real(grid[sindex][tindex][uindex+1])
+	+ s*real(grid[sindex+1][tindex][uindex+1])) 
+	+ t*(comps*real(grid[sindex][tindex+1][uindex+1])
+	+ s*real(grid[sindex+1][tindex+1][uindex+1]))),
+	compu*(compt*(comps*imag(grid[sindex][tindex][uindex])
+	+ s*imag(grid[sindex+1][tindex][uindex])) 
+	+ t*(comps*imag(grid[sindex][tindex+1][uindex] )
+	+ s*imag(grid[sindex+1][tindex+1][uindex])))
+	+  u*(compt*(comps*imag(grid[sindex][tindex][uindex+1])
+	+ s*imag(grid[sindex+1][tindex][uindex+1])) 
+	+ t*(comps*imag(grid[sindex][tindex+1][uindex+1])
+	+ s*imag(grid[sindex+1][tindex+1][uindex+1]))));
+}
+double Interp3d(double ***grid, double s, double t, double u, 
+			  double comps, double compt, double compu, int sindex, int tindex, int uindex){
+  return compu*(compt*(comps*grid[sindex][tindex][uindex]
+	+ s*grid[sindex+1][tindex][uindex]) 
+	+ t*(comps*grid[sindex][tindex+1][uindex] 
+	+ s*grid[sindex+1][tindex+1][uindex]))
+	+  u*(compt*(comps*grid[sindex][tindex][uindex+1]
+	+ s*grid[sindex+1][tindex][uindex+1]) 
+	+ t*(comps*grid[sindex][tindex+1][uindex+1]
+	+ s*grid[sindex+1][tindex+1][uindex+1]));
+}

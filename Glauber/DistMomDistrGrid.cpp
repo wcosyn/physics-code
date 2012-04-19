@@ -254,8 +254,8 @@ void DistMomDistrGrid::constructAllGrids(){
 	sincos(phi_hit,&sinphi_hit,&cosphi_hit);
 	pvec_hit= TVector3(p_hit*sintheta_hit*cosphi_hit,p_hit*sintheta_hit*sinphi_hit,p_hit*costheta_hit);	
 	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++) rhogrid[l][i][j][k]=rhoctgrid[l][i][j][k]=0.;
-	for(int m=-getPfsigrid()->getPnucleus()->getJ_array()[shellindex];
-	    m<=getPfsigrid()->getPnucleus()->getJ_array()[shellindex];m+=2){
+	//symmetry for (-m,-ms)(m,ms), so only half needed, multiply everything by 2 in the end.
+	for(int m=1;m<=getPfsigrid()->getPnucleus()->getJ_array()[shellindex];m+=2){
 	  getPfsigrid()->clearKnockout();
 	  getPfsigrid()->addKnockout(getShellindex(),m);
 	  for(int ms=0;ms<=1;ms++){
@@ -269,15 +269,15 @@ void DistMomDistrGrid::constructAllGrids(){
 	    for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
 	      rhogrid[l][i][j][k]+=norm(results[l]);
 	      rhoctgrid[l][i][j][k]+=norm(results[l+getPfsigrid()->getNumber_of_grids()/2]);
-// 	      cout << i << " " << j << " " << k << " " << ms << " " << m << " " << l << " " 
-// 	      << norm(results[l]) << " "<< norm(results[l+getPfsigrid()->getNumber_of_grids()/2]) << endl;
+	      if(l==0) cout << i << " " << j << " " << k << " " << m << " " << ms << " " << l << " " 
+	      << norm(results[l]) << " "<< norm(results[l+getPfsigrid()->getNumber_of_grids()/2]) << endl;
 
 	    }
 	  }
 	}
 	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
-	  rhogrid[l][i][j][k]/=pow(2.*PI,3.);
-	  rhoctgrid[l][i][j][k]/=pow(2.*PI,3.);
+	  rhogrid[l][i][j][k]/=pow(2.*PI,3.)/2.;
+	  rhoctgrid[l][i][j][k]/=pow(2.*PI,3.)/2.;
 	}
 	//r=0 symmetry shortcut
 	if(i==0){

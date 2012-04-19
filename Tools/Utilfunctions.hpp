@@ -73,17 +73,21 @@ void freematrix(double **matrix, int n); /*!< free a n*? matrix on the heap*/
 
 /*! 3d interpolation of an array
  */
-template <class T> T Interp3d(T ***grid, double s, double t, double u, 
-			  double comps, double compt, double compu, int sindex, int tindex, int uindex){
-  return compu*(compt*(comps*grid[sindex][tindex][uindex]
-	+ s*grid[sindex+1][tindex][uindex]) 
-	+ t*(comps*grid[sindex][tindex+1][uindex] 
-	+ s*grid[sindex+1][tindex+1][uindex]))
-	+  u*(compt*(comps*grid[sindex][tindex][uindex+1]
-	+ s*grid[sindex+1][tindex][uindex+1]) 
-	+ t*(comps*grid[sindex][tindex+1][uindex+1]
-	+ s*grid[sindex+1][tindex+1][uindex+1]));
-}
+// template <class T> T Interp3d(T ***grid, double s, double t, double u, 
+// 			  double comps, double compt, double compu, int sindex, int tindex, int uindex){
+//   return compu*(compt*(comps*grid[sindex][tindex][uindex]
+// 	+ s*grid[sindex+1][tindex][uindex]) 
+// 	+ t*(comps*grid[sindex][tindex+1][uindex] 
+// 	+ s*grid[sindex+1][tindex+1][uindex]))
+// 	+  u*(compt*(comps*grid[sindex][tindex][uindex+1]
+// 	+ s*grid[sindex+1][tindex][uindex+1]) 
+// 	+ t*(comps*grid[sindex][tindex+1][uindex+1]
+// 	+ s*grid[sindex+1][tindex+1][uindex+1]));
+// }
+complex<double> Interp3d(complex<double> ***grid, double s, double t, double u, 
+			  double comps, double compt, double compu, int sindex, int tindex, int uindex);
+double Interp3d(double ***grid, double s, double t, double u, 
+			  double comps, double compt, double compu, int sindex, int tindex, int uindex);
 /*! template function for romberg integration of N functions (slightly different preferably) T f(x)
  * \tparam T template return type of the function you're integrating
  * \param function function you want to integrate, must return N values (through array)

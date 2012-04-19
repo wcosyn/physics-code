@@ -121,12 +121,12 @@ if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3 ")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
-      set(CMAKE_CXX_FLAGS_PROFILE        "-g3  -fno-inline -ftest-coverage -fprofile-arcs")
+      set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg -fPIC")
       set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g")
       set(CMAKE_C_FLAGS_RELEASE          "-O3 ")
       set(CMAKE_C_FLAGS_DEBUG            "-g -O3  -fno-reorder-blocks -fno-schedule-insns -fno-inline")
       set(CMAKE_C_FLAGS_DEBUGFULL        "-g3  -fno-inline -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common")
-      set(CMAKE_C_FLAGS_PROFILE          "-g3  -fno-inline -ftest-coverage -fprofile-arcs")
+      set(CMAKE_C_FLAGS_PROFILE          "-O0 -g  -pg -fPIC")
 
       
       
@@ -137,7 +137,7 @@ if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0 -fno-reorder-blocks -fno-schedule-insns -fno-inline")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
-      set(CMAKE_CXX_FLAGS_PROFILE        "-g3  -fno-inline -ftest-coverage -fprofile-arcs")
+      set(CMAKE_CXX_FLAGS_PROFILE        "-g -O0 -fno-reorder-blocks -fno-schedule-insns -fno-inline -prof_gen")
     endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
 
 

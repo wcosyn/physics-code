@@ -8,7 +8,6 @@ pmax(p_max),
 nucleusthick(nucleus,dir),
 pdistgrid(NULL),
 pfsigrid(NULL),
-pkin(NULL),
 prho(NULL){
 
   
@@ -19,14 +18,18 @@ RhoTCross::~RhoTCross(){
   
 }
 
-
-void RhoTCross::getCrosst(double *results, const double Q2, const double nu, const double t){
+//input in GeV!!!!
+void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, const double nu, const double t){
 
   double qvec = sqrt(Q2+nu*nu);
-  double pmestimate=0.,cthestimate=0.,phiestimate=0.;
-  rombergerN(this,&RhoTCross::intPmt,0.,pmax,NROFRES,
-	      results,PREC,3,7,&pmestimate,Q2,nu,qvec,t,&cthestimate, &phiestimate);
+  double fScatterAngle = 1. - Q2/2./Ebeam/(Ebeam-nu);
+  double epsilon = 1./(1.+2.*(1.+nu*nu/Q2)
+		     *((1.-fScatterAngle)/(1.+fScatterAngle)));
   
+  double pmestimate=0.,cthestimate=0.,phiestimate=0.;
+  rombergerN(this,&RhoTCross::intPmt,0.,pmax*1.-03,NROFRES,
+	      results,PREC,3,7,&pmestimate,Q2,nu,qvec,t,&cthestimate, &phiestimate);
+  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,3.)*Ebeam*Q2*(1.-epsilon));
   
 }
 
@@ -76,6 +79,9 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
   
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
+  
+  for(int i=0;i<NROFRES;i++) results[i]=0.;
+  
   //ALL IN GeV to avoid some numeric overflow almost zero shit!
   for(int i=0;i<nucleusthick.getTotalLevels();i++){
     double massi = nucleusthick.getMassA()-nucleusthick.getMassA_min_1(i)-nucleusthick.getExcitation()[i];
@@ -87,80 +93,107 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
     double Cz = qvec+pm*costheta;
     double Cy = pm*sintheta*sinphi;
     double Cx = pm*sintheta*cosphi;
-    double D = (C0*C0-Cz*Cz-Cx*Cx-Cy*Cy-mN*mN+MASSRHO*MASSRHO*1.E-06)/2.+C0*A/nu;
+    double s = C0*C0-Cz*Cz-Cx*Cx-Cy*Cy; //mandelstam 
+    double D = (s-mN*mN+MASSRHO*MASSRHO*1.E-06)/2.+C0*A/nu;
     double E = Cz-C0*qvec/nu;
     double a = E*E-Q2*Cx*Cx/(nu*nu);
     double b = 2.*(D*E+A*qvec*Cx*Cx/(nu*nu));
     double c = D*D-A*A*Cx*Cx/(nu*nu)+Cx*Cx*MASSRHO*MASSRHO*1.E-06;
     double discr = b*b-4.*a*c;
-    if(discr<0.){
-    }
-    else{
+    if(discr>-1.E-09){
       if(abs(discr)<1.E-09){
 	double pzrho=-b/(2.*a);
 	double Erho = (pzrho*qvec-A)/nu;
-	double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	if(isnan(pxrho)){
-	}
-	else{
-	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
-	  double costhetarho = pzrho/prho;
-	  double pnz = Cz-pzrho;
-	  double pnx = Cx-pxrho;
-	  double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	  double En = sqrt(mN*mN+pn*pn);
-	  double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	  if(Erho/nu>0.9) cout << "zero " << pm << " " << costheta << " " << phi << " " << i << " " <<  Erho << " " << costhetarho << " " << Erho/nu << " " << pn<< " " << t << " " << Erho+En << " " << C0 << endl;
+	double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	if(Erho/nu>0.9){
+	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
+	  if(!isnan(pxrho)){
+	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
+	    double costhetarho = pzrho/prho;
+  	  double pnz = Cz-pzrho;
+  	  double pnx = Cx-pxrho;
+  	  double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+  	  double En = sqrt(mN*mN+pn*pn);
+	  double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+	  double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+  	  if(Erho/nu>0.9) cout << "zero " << pm << " " << costheta << " " << phi << " " << i << " " <<  
+  	    Erho << " " << costhetarho << " " << Erho/nu << " " << pn<< " " << t << 
+  	    " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
+	    double intresults[NROFRES];
+	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);	  
+	    for(int dd=0;dd<NROFRES;dd++) results[i]+=intresults[i]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t)*prho;
+	  }
 	}
       }
       else{
-	int kak=0;
 	discr = sqrt(discr);
-	if(isnan(discr)) cout << "tralalal " << b*b-4.*a*c << endl;
 	double pzrho = (-b+discr)/(2.*a);
 	double Erho = (pzrho*qvec-A)/nu;
-	double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
-	  kak++;
-	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
-	  double costhetarho = pzrho/prho;
-	  double pnz = Cz-pzrho;
-	  double pnx = Cx-pxrho;
-	  double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	  double En = sqrt(mN*mN+pn*pn);
-	  double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	  if(Erho/nu>0.9) cout << "bla1 " << pm << " " << costheta << " " << phi << " " << i << " " <<  Erho << " " << costhetarho << " " << Erho/nu << " " << pn<< " " << t << " " << Erho+En << " " << C0 << endl;
+	double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	if(Erho/nu>0.9){
+	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
+	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
+	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
+	    double costhetarho = pzrho/prho;
+	    double pnz = Cz-pzrho;
+	    double pnx = Cx-pxrho;
+	    double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+	    double En = sqrt(mN*mN+pn*pn);
+	    double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+  	  if(Erho/nu>0.9) cout << "bla1 " << pm << " " << costheta << " " << phi << " " << i << " " <<  
+  	    Erho << " " << costhetarho << " " << Erho/nu << " " << pn<< " " << t <<  
+  	    " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
+	    
+	    double intresults[NROFRES];
+	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	    for(int dd=0;dd<NROFRES;dd++) results[i]+=intresults[i]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t)*prho;
+	  }
 	}
 	pzrho = (-b-discr)/(2.*a);
 	Erho = (pzrho*qvec-A)/nu;
-	pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
-	  kak++;
-	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
-	  double costhetarho = pzrho/prho;
-	  double pnz = Cz-pzrho;
-	  double pnx = Cx-pxrho;
-	  double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	  double En = sqrt(mN*mN+pn*pn);
-	  double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	  if(Erho/nu>0.9) cout << "bla2 " << pm << " " << costheta << " " << phi << " " << i << " " <<  Erho << " " << costhetarho << " " << Erho/nu << " " << pn<< " " << t << " " << Erho+En << " " << C0 << endl;
+	t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	if(Erho/nu>0.9){
+	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
+	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
+	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
+	    double costhetarho = pzrho/prho;
+	    double pnz = Cz-pzrho;
+	    double pnx = Cx-pxrho;
+	    double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+	    double En = sqrt(mN*mN+pn*pn);
+	    double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+  	  if(Erho/nu>0.9) cout << "bla2 " << pm << " " << costheta << " " << phi << " " << i << " " <<  
+  	    Erho << " " << costhetarho << " " << Erho/nu << " " << pn<< " " << t <<  
+  	    " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
+	    double intresults[NROFRES];	  
+	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	    for(int dd=0;dd<NROFRES;dd++) results[i]+=intresults[i]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t)*prho;
+	  }
 	}
       }    
     }
   }
-  for(int i=0;i<NROFRES;i++) results[i]=1.;
 }
 
-
-void RhoTCross::getCrossz(double *results, const double Q2, const double nu, const double z){
+//input in GeV!!!!
+void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2, const double nu, const double z){
 
   double qvec = sqrt(Q2+nu*nu);
+  double fScatterAngle = 1. - Q2/2./Ebeam/(Ebeam-nu);
+  double epsilon = 1./(1.+2.*(1.+nu*nu/Q2)
+		     *((1.-fScatterAngle)/(1.+fScatterAngle)));
+  
   double Erho=nu*z;
   double prho=sqrt(Erho*Erho-MASSRHO*MASSRHO*1.E-06);
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
-  rombergerN(this,&RhoTCross::intPmz,0.,pmax,NROFRES,
+  rombergerN(this,&RhoTCross::intPmz,0.,pmax*1.E-03,NROFRES,
 	      results,PREC,3,7,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
   
+  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,3.)*Ebeam*Q2*(1.-epsilon));
   
 }
 
@@ -211,7 +244,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
   
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
-  for(int i=0;i<NROFRES;i++) results[i]=1.;  
+  for(int i=0;i<NROFRES;i++) results[i]=0.;  
   
   for(int i=0;i<nucleusthick.getTotalLevels();i++){
     double massi = nucleusthick.getMassA()-nucleusthick.getMassA_min_1(i)-nucleusthick.getExcitation()[i];
@@ -222,6 +255,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
     double Cz = qvec+pm*costheta;
     double Cy = pm*sintheta*sinphi;
     double Cx = pm*sintheta*cosphi;
+    double s = C0*C0-Cz*Cz-Cx*Cx-Cy*Cy; //mandelstam 
     double En = C0-Erho;
     double pn = sqrt(En*En-massi*massi);
     
@@ -230,54 +264,99 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
     double b = -2.*A*Cz;
     double c = A*A-Cx*Cx*prho*prho;
     double discr = b*b-4.*a*c;
-    if(abs(discr)<1.E-09) {
-      double pzrho = -b/(2.*a);
-      if(prho>pzrho){
-	double pxrho = sqrt(prho*prho-pzrho*pzrho);      
+    if(discr>-1.E-09){
+      if(abs(discr)<1.E-09) {
+	double pzrho = -b/(2.*a);
 	double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	double costhetarho = pzrho/prho;
-	double pnz = Cz-pzrho;
-	double pnx = Cx-pxrho;
-	double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	if(t<-0.1&&t>-0.4) cout << "zero " << pm << " " << costheta << " " << phi << " " << i << " " <<  Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << pnn<< " " << pn  << " " << A-Cz*pzrho << " " << pxrho*Cx <<  endl;
+	if(prho>pzrho&&t<-0.1&&t>-0.4){
+	  double pxrho = sqrt(prho*prho-pzrho*pzrho);      
+	  double costhetarho = pzrho/prho;
+	  double pnz = Cz-pzrho;
+	  double pnx = Cx-pxrho;
+	  double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+	  double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+	  double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+	  if(t<-0.1&&t>-0.4) cout << "zero " << pm << " " << costheta << " " << phi << " " << i << " " <<  
+	    Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << pnn<< " " << pn  <<
+	    " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
+	  double intresults[NROFRES];
+	  getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	  for(int dd=0;dd<NROFRES;dd++) results[i]+=intresults[i]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t);
+	}
+      }
+      else{
+	discr = sqrt(discr);
+	double pzrho = (-b+discr)/(2.*a);
+	double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	if(pzrho<prho&&t<-0.1&&t>-0.4){
+	  double pxrho = sqrt(prho*prho-pzrho*pzrho);
+	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
+	    double costhetarho = pzrho/prho;
+	    double pnz = Cz-pzrho;
+	    double pnx = Cx-pxrho;
+	    double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+	    if(t<-0.1&&t>-0.4) cout << "bla1 " << pm << " " << costheta << " " << phi << " " << i << " " <<  
+	      Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << pnn<< " " << pn  << 
+	      " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
+	    double intresults[NROFRES];
+	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	    for(int dd=0;dd<NROFRES;dd++) results[i]+=intresults[i]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t);
+	  }
+	}
+	pzrho = (-b-discr)/(2.*a);
+	t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	if(pzrho<prho&&t<-0.1&&t>-0.4){
+	  double pxrho = sqrt(prho*prho-pzrho*pzrho);	  
+	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
+	    double costhetarho = pzrho/prho;
+	    double pnz = Cz-pzrho;
+	    double pnx = Cx-pxrho;
+	    double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+	    if(t<-0.1&&t>-0.4) cout << "bla2 " << pm << " " << costheta << " " << phi << " " << i << " " <<  
+	      Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << pnn<< " " << pn <<
+	      " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
+	    double intresults[NROFRES];
+	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	    for(int dd=0;dd<NROFRES;dd++) results[i]+=intresults[i]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t);
+	  }
+	}
       }
     }
-    else{
-      discr = sqrt(discr);
-      if(isnan(discr)) {
-	for(int i=0;i<NROFRES;i++) results[i]=1.;  
-	return;
-      }
-      double pzrho = (-b+discr)/(2.*a);
-      double pxrho = sqrt(prho*prho-pzrho*pzrho);
-      if(pzrho<prho){
-  //       if(isnan(pxrho)) cout << "tttttt " << pzrho << " " << prho << endl;
-	if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
-	  double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	  double costhetarho = pzrho/prho;
-	  double pnz = Cz-pzrho;
-	  double pnx = Cx-pxrho;
-	  double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	  if(t<-0.1&&t>-0.4) cout << "bla1 " << pm << " " << costheta << " " << phi << " " << i << " " <<  Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << pnn<< " " << pn  << " " << A-Cz*pzrho << " " << pxrho*Cx << endl;
-
-	}
-      }
-      pzrho = (-b-discr)/(2.*a);
-      pxrho = sqrt(prho*prho-pzrho*pzrho);
-      if(pzrho<prho){
-  // 	if(isnan(pxrho)) cout << "tttttt " << pzrho << " " << prho << endl;
-	if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
-	  double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	  double costhetarho = pzrho/prho;
-	  double pnz = Cz-pzrho;
-	  double pnx = Cx-pxrho;
-	  double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	   if(t<-0.1&&t>-0.4) cout << "bla2 " << pm << " " << costheta << " " << phi << " " << i << " " <<  Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << pnn<< " " << pn << " " << A-Cz*pzrho << " " << pxrho*Cx << endl;
-
-	}
-      }
-    }        
   }
   
 }
 
+//all energies in MeV please
+void RhoTCross::getMomdistr(double *results, double prho, double thetarho, double Q2, int shell, 
+			    double pm, double pmcostheta, double pmphi){
+  FastParticle rho(4, 0, prho,thetarho,0.,Q2,145.,homedir);
+  pfsigrid = new GlauberDecayGridThick(60,20,5,&nucleusthick,homedir);
+  pfsigrid->addParticle(rho);
+  pfsigrid->fillGrids();
+  pfsigrid->clearKnockout();
+  pdistgrid = new DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid,homedir);
+  for(int i=0;i<NROFRES-1;i++) results[i]+= pdistgrid->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
+  results[NROFRES-1] += pdistgrid->getRhopwGridFull_interp(pm);
+  
+  
+  delete pdistgrid;
+  delete pfsigrid;
+  
+}
+  
+  
+double RhoTCross::getfrontfactor(double nu, double qvec, double Erho, double prho, double pzrho, double pxrho,
+				 double s, double Q2, double mN, double t){
+  
+  double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+  double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+  
+  return massX*(s*s-2.*s*(mN*mN-Q2)+pow(mN*mN+Q2,2.))/(mN*mN*abs(EX+Erho*(1.-qvec*pzrho/prho/prho)))*exp(t*6.);
+  
+}
+
+  
