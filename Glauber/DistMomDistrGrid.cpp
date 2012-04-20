@@ -155,7 +155,8 @@ void DistMomDistrGrid::setFilenames(string homedir){
   found=rho_filename.rfind("/");
   if (found!=string::npos){
     string addendum = "Rhogrid.l"+to_string(getShellindex())+".p"+to_string(getPgrid())
-		    +".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".";
+		    +".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".pmax"+
+		    to_string(getPmax())+".";
     rho_filename.insert(found+1,addendum);
     rhoct_filename.insert(found+1,addendum);
   }

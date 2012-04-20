@@ -351,7 +351,8 @@ void AbstractFsiGrid::setFilenames(string homedir){
   for(size_t i=0;i<particles.size();i++){
     if(particles[i].getIncoming()) fsi_filename+=".inc";
     fsi_filename+=".Ptype"+to_string(particles[i].getParticletype())+".p"+to_string(int(particles[i].getP()/10))
-		  +".th"+to_string(int(round(particles[i].getCosTheta()*10)))+".ph"+to_string(int(round(particles[i].getPhi()*10)));
+		  +".th"+to_string(int(round(particles[i].getCosTheta()*10)))+".ph"+to_string(int(round(particles[i].getPhi()*10)))
+		 +".sigma"+to_string(int(round(particles[i].getSigmap()*10.)));
   }
   fsi_filename+=".r"+to_string(getRgrid())+".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".dat";
   //cout << fsi_filename << endl;
