@@ -56,6 +56,8 @@ int TMPI::fgRank = 0;
 
 //_____________________________________________________________________
 int TMPI::fgNproc = 1;
+MPI_Datatype TMPI::datatype = 0;
+
 
 //_____________________________________________________________________
 TMPI::TMPI(int* argc, char*** argv)
@@ -84,6 +86,13 @@ TMPI::TMPI(int* argc, char*** argv)
   MPI_Op_create(&CombineResults, true, &MPI_COMBINE_RESULTS); 
 
   fgMpiInitialized = true;
+  int count =2;
+  int lengths[2] = {NROFRES,1};
+  MPI_Aint offsets[2] = {0,NROFRES*sizeof(double)};
+  MPI_Datatype types[2] = {MPI_DOUBLE, MPI_INT};
+  MPI_Type_struct(count, lengths, offsets, types, &datatype);
+  MPI_Type_commit(&datatype);
+  //std::cout << datatype << std::endl;
 #endif
 }
 
@@ -173,7 +182,7 @@ void TMPI::SilenceSlaves(bool off)
 
 //_____________________________________________________________________
 void
-TMPI::GatherResults(int length, double *valueArray)
+TMPI::GatherResults(int length, double **valueArray)
 {
   // If a for loop is parallelized as follows:
   // for(int i=TMPI::Rank(); i<max; i += TMPI::NumberOfProcesses() ) { x[i]=...}
@@ -191,22 +200,26 @@ TMPI::GatherResults(int length, double *valueArray)
     ValueSave_t *valueSaveArray_in = new ValueSave_t[length];
     for(int i=0; i<length; ++i) {
       if( TMPI::Rank()==(i%NumberOfProcesses()) ) {
-	valueSaveArray_in[i].value = valueArray[i];
+	for(int j=0;j<NROFRES;j++){
+	  valueSaveArray_in[i].value[j] = valueArray[i][j];
+	}
 	valueSaveArray_in[i].save = 1;
       } else {
-	valueSaveArray_in[i].value = 0.;
+	for(int j=0;j<NROFRES;j++) valueSaveArray_in[i].value[j] = 0.;
 	valueSaveArray_in[i].save = 0;
       }
     }
     ValueSave_t *valueSaveArray_out = new ValueSave_t[length];
 
     MPI_Reduce( valueSaveArray_in, valueSaveArray_out, length, 
-		MPI_DOUBLE_INT, MPI_COMBINE_RESULTS, 
+		datatype, MPI_COMBINE_RESULTS, 
 		kMasterRank, MPI_COMM_WORLD);
   
     if( IsMaster() )
       for(int i=0; i<length; ++i)
-	valueArray[i] = valueSaveArray_out[i].value;
+	for(int j=0; j<NROFRES; j++) {
+	  valueArray[i][j] = valueSaveArray_out[i].value[j];
+	}
 
     delete[] valueSaveArray_in;
     delete[] valueSaveArray_out;
@@ -219,6 +232,7 @@ void
 TMPI::CombineResults(void* invec, void* inoutvec,
 		     int* len, MPI_Datatype* datatype)
 {
+    
   // This is our custom MPI operator that is used in the MPI_Reduce
   // call in TMPI::GatherResults(int,double*). Look at the documentation
   // of that function to understand what happens here.
@@ -227,7 +241,7 @@ TMPI::CombineResults(void* invec, void* inoutvec,
   for(int i=0; i<(*len); ++i) {
     if( ((ValueSave_t*)invec)[i].save ) {
       ((ValueSave_t*)inoutvec)[i].save = ((ValueSave_t*)invec)[i].save;
-      ((ValueSave_t*)inoutvec)[i].value = ((ValueSave_t*)invec)[i].value;
+      for(int j=0;j<NROFRES;j++) ((ValueSave_t*)inoutvec)[i].value[j] = ((ValueSave_t*)invec)[i].value[j];
     }
   }
 }

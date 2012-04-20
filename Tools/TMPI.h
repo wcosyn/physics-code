@@ -9,6 +9,9 @@
 
 #ifndef TMPI_H
 #define TMPI_H
+#define STRANGEDEUTERON_MPI
+
+#define NROFRES 9
 
 #if defined(STRANGEDEUTERON_MPI) && !defined(__MAKECINT__)
 #include <mpi.h>
@@ -32,7 +35,7 @@ class TMPI : public TObject /* FINAL */
  public:
   // Store results to be gathered in TMPI::GatherResults.
   typedef struct { 
-    double value;
+    double value[NROFRES];
     int    save; 
   } ValueSave_t;
 
@@ -50,7 +53,7 @@ class TMPI : public TObject /* FINAL */
   static std::ostream& Cerr();
   static void SilenceSlaves(bool=true);
 
-  static void GatherResults(int,double*);
+  static void GatherResults(int,double**);
       
  private:
   TMPI(const TMPI&);
@@ -64,7 +67,7 @@ class TMPI : public TObject /* FINAL */
   static bool fgMpiInitialized; // Has a TMPI object been created?
   static std::ofstream fgDevNull; // stream to /dev/null
   static MPI_Op MPI_COMBINE_RESULTS; // Our custom MPI operator
-
+  static MPI_Datatype datatype;
   ClassDef(TMPI,0); // Global object coordinating multi-process calculations
 
 }; // class TMPI

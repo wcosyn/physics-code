@@ -11,7 +11,7 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
- CC      = 	icpc
+ CC      = 	mpicxx
 # CC      = 	g++
 
 #		Flags
@@ -25,14 +25,15 @@ CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 
 #		Executable file
 EFILE   = 	../../bin/rhoct
+EFILEST   = 	../../bin/rhoctstatic
 
 #		Mathematical functions
-LIBS =	 	-lm  -lifcore
+LIBS =	 	-lm  -lifcore -lmpi
 WIMLIBS = -lMePhys -lGlauber -lKnockout
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L/home/wim/Code/lib
  INCLUDEDIRS =  -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber -I/home/wim/Code/Knockout
-STATICLIBS = /home/wim/Code/lib/libGlauber.a  /home/wim/Code/lib/libMephys.a /home/wim/Code/lib/libKnockout.a 
+STATICLIBS = /home/wim/Code/lib/libGlauber.a  /home/wim/Code/lib/libMePhys.a /home/wim/Code/lib/libKnockout.a 
 
 
 #		Header files
