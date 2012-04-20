@@ -28,9 +28,9 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 # Create a library called "libEvent" which includes the source files given in
 # the array .
 # The extension is already found.  Any number of sources could be listed here.
-
+set(MPI_DIR "/opt/openmpi/1.4_intel/include")
 set(INCLUDE_DIRECTORIES
-${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS}
+${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS} ${MPI_DIR}
 )
 
 include_directories( ${INCLUDE_DIRECTORIES})
