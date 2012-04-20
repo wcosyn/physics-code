@@ -17,7 +17,7 @@ AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),pnucleusthick(pnucl),fsi
 }  
 
 AbstractFsiGridThick::~AbstractFsiGridThick(){
-  cout << "Deleting FSI thickness object" << endl;
+  //cout << "Deleting FSI thickness object" << endl;
   
 }
 

@@ -304,6 +304,12 @@ complex<double> FastParticle::getScatterfront(int level, MeanFieldNucleus *pnucl
 			  /(4.*PI*getBetasq(level,pnucleus));
 }
 
+complex<double> FastParticle::getScatterfront(bool proton) const{
+  return getSigma(proton)
+			  *(1.-I*getEpsilon(proton))
+			  /(4.*PI*getBetasq(proton));
+}
+
 double FastParticle::getCTsigma(double z) const{
  return ((abs(z-getHitz()) > getLc())
 			  ||(getHardScale() < getNkt_sq()))? 
@@ -322,9 +328,23 @@ double FastParticle::getCT_decay_sigma(double z, int level, MeanFieldNucleus *pn
 
 }
     
+double FastParticle::getCT_decay_sigma(double z, bool proton) const{
+  if((abs(z-getHitz()) > getLc())||(getHardScale() < getNkt_sq()))
+    return getDecay_sigma(z,proton);
+  else 
+    return abs(z-getHitz())/getLc() 
+			  + getNkt_sq()/getHardScale()*(1.-abs(z-getHitz()) / getLc());
+
+}
 double FastParticle::getDecay_sigma(double z, int level, MeanFieldNucleus *pnucleus) const{
     double a=exp(-getDecay_dil()*(z-getHitz())*INVHBARC);
     return a + getSigma_decay(level,pnucleus)/getSigma(level,pnucleus)*(1.-a);
+  
+}
+    
+double FastParticle::getDecay_sigma(double z, bool proton) const{
+    double a=exp(-getDecay_dil()*(z-getHitz())*INVHBARC);
+    return a + getSigma_decay(proton)/getSigma(proton)*(1.-a);
   
 }
     

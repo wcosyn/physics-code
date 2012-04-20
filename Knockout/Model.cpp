@@ -158,6 +158,8 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
     grid->fillGrids();
     grid->clearKnockout();
     grid->addKnockout(shellindex,m);
+//     grid->printFsi_grid();
+//     if(SRC) dynamic_cast<AbstractFsiGridThick *>(grid)->printFsi_src_grid();
     
   }
   GammaStructure Jcontr0, Jcontrmin, Jcontrplus;

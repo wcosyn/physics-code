@@ -38,15 +38,16 @@ int main(int argc, char *argv[])
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);
   Cross obs(*elec,&Carbon,homedir);
   double crossp=obs.getDiffCross(kin, 0, 0, 0, 1, 0.);
-  double crosss=obs.getDiffCross(kin, 0, 0, 0, 0, 0.);
+//   double crosss=obs.getDiffCross(kin, 0, 0, 0, 0, 0.);
   double crosspsrc=obs.getDiffCross(kin, 1, 0, 0, 1, 0.);
-  double crosspct=obs.getDiffCross(kin, 0, 1, 0, 1, 0.);
-  double crosspsrcct=obs.getDiffCross(kin, 1, 1, 0, 1, 0.);
-  double crossppw=obs.getDiffCross(kin, 0, 0, 1, 1, 0.);
+//   double crosspct=obs.getDiffCross(kin, 0, 1, 0, 1, 0.);
+//   double crosspsrcct=obs.getDiffCross(kin, 1, 1, 0, 1, 0.);
+//   double crossppw=obs.getDiffCross(kin, 0, 0, 1, 1, 0.);
   double free=obs.getElCross(kin,0.)*HBARC*HBARC;
   cout << free/HBARC/HBARC << endl;
-  cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  crossp << " " << free << " " << crossp/free << endl;
-  cout << crossp << " " << crosss << " " << crosspsrc << " " << crosspct << " " << crosspsrcct << " " << crossppw << endl;
+  cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  
+      crossp << " " << crosspsrc << " " << free << " " << crossp/free << " " << crosspsrc/free << endl;
+//   cout << crossp << " " << crosss << " " << crosspsrc << " " << crosspct << " " << crosspsrcct << " " << crossppw << endl;
   //cout << obs.getElCross(kin,0.) << " " << obs.getElCross(kin,PI) <<endl;
 //   Model test(&Carbon,0,homedir);
 //   cout << test.getMatrixEl(kin,-1,0,0,-1,1,1) << endl;

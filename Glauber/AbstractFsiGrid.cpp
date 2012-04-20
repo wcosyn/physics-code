@@ -376,7 +376,7 @@ void AbstractFsiGrid::fillGrids(){
   ifstream infile(fsi_filename.c_str(),ios::in|ios::binary);
   //check if object has been created sometime earlier and read it in
   if(infile.is_open()){
-    cout << "Reading in FSI grid from memory: " << fsi_filename << endl;
+    //cout << "Reading in FSI grid from memory: " << fsi_filename << endl;
     readinFsiGrid(infile);
     filledgrid=1;
     infile.close();

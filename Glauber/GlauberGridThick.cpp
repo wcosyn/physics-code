@@ -42,26 +42,26 @@ GlauberGridThick::~GlauberGridThick(){
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberGridThick::getFsiGridFull_interp(){
-  return pow(getInterp(fsi_grid[0][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_grid[0][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_grid[0][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_grid[0][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberGridThick::getFsiCtGridFull_interp(){
-  return pow(getInterp(fsi_ct_grid[0][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_ct_grid[0][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_ct_grid[0][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_ct_grid[0][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberGridThick::getFsiSrcGridFull_interp(){
-  return pow(getInterp(fsi_grid[1][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_grid[1][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_grid[1][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_grid[1][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberGridThick::getFsiSrcCtGridFull_interp(){
-  return pow(getInterp(fsi_ct_grid[1][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_ct_grid[1][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_ct_grid[1][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_ct_grid[1][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
 
 complex<double> GlauberGridThick::getFsiGridN_interp(int grid){
@@ -440,8 +440,8 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
     fsi_grid[1][proton][i][j][k]=results[1]*src;
     fsi_ct_grid[0][proton][i][j][k]=results[2];
     fsi_ct_grid[1][proton][i][j][k]=results[3]*src;
-    
   }   
+  //exit(1);
   delete[] results;
 }
 
@@ -581,9 +581,9 @@ void GlauberGridThick::intGlauberPhi(const double phi, complex<double>* results,
     bool check=(zmom>getParticles()[it].getHitz());
     if(getParticles()[it].getIncoming()) check=!check;
     if(check){
-      complex<double> temp=getParticles()[it].getScatterfront(proton,getPnucleusthick())
+      complex<double> temp=getParticles()[it].getScatterfront(proton)
 			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
-			          /(2.*getParticles()[it].getBetasq(proton,getPnucleusthick())));
+			          /(2.*getParticles()[it].getBetasq(proton)));
       results[0]*=1.-temp;
       results[2]*=1.-temp*getParticles()[it].getCTsigma(zmom);
     }
@@ -629,9 +629,9 @@ void GlauberGridThick::intGlauberPhiCT(const double phi, complex<double>* result
     bool check=(zmom>getParticles()[it].getHitz());
     if(getParticles()[it].getIncoming()) check=!check;
     if(check){
-      results[0]*=1.-getParticles()[it].getScatterfront(proton,getPnucleusthick())
+      results[0]*=1.-getParticles()[it].getScatterfront(proton)
 			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
-			          /(2.*getParticles()[it].getBetasq(proton,getPnucleusthick())))
+			          /(2.*getParticles()[it].getBetasq(proton)))
 			    *getParticles()[it].getCTsigma(zmom);
     }
   }

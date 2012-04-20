@@ -44,51 +44,51 @@ GlauberDecayGridThick::~GlauberDecayGridThick(){
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiGridFull_interp(){
-  return pow(getInterp(fsi_grid[0][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_grid[0][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_grid[0][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_grid[0][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiCtGridFull_interp(){
-  return pow(getInterp(fsi_ct_grid[0][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_ct_grid[0][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_ct_grid[0][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_ct_grid[0][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiSrcGridFull_interp(){
-  return pow(getInterp(fsi_grid[1][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_grid[1][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_grid[1][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_grid[1][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiSrcCtGridFull_interp(){
-  return pow(getInterp(fsi_ct_grid[1][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_ct_grid[1][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_ct_grid[1][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_ct_grid[1][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
 
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiDecayGridFull_interp(){
-  return pow(getInterp(fsi_grid[2][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_grid[2][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_grid[2][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_grid[2][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiCtDecayGridFull_interp(){
-  return pow(getInterp(fsi_ct_grid[2][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_ct_grid[2][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_ct_grid[2][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_ct_grid[2][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiSrcDecayGridFull_interp(){
-  return pow(getInterp(fsi_grid[3][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_grid[3][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_grid[3][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_grid[3][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiSrcCtDecayGridFull_interp(){
-  return pow(getInterp(fsi_ct_grid[3][0]),getPnucleusthick()->getN()-getProtonKnockout())
-	  *pow(getInterp(fsi_ct_grid[3][1]),getPnucleusthick()->getZ()-getNeutronKnockout());
+  return pow(getInterp(fsi_ct_grid[3][0]),getPnucleusthick()->getN()-getNeutronKnockout())
+	  *pow(getInterp(fsi_ct_grid[3][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
 
 complex<double> GlauberDecayGridThick::getFsiGridN_interp(int grid){
@@ -724,9 +724,9 @@ void GlauberDecayGridThick::intGlauberPhi(const double phi, complex<double>* res
     bool check=(zmom>getParticles()[it].getHitz());
     if(getParticles()[it].getIncoming()) check=!check;
     if(check){
-      complex<double> temp=getParticles()[it].getScatterfront(proton,getPnucleusthick())
+      complex<double> temp=getParticles()[it].getScatterfront(proton)
 			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
-			          /(2.*getParticles()[it].getBetasq(proton,getPnucleusthick())));
+			          /(2.*getParticles()[it].getBetasq(proton)));
       results[0]*=1.-temp;
       results[2]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton,getPnucleusthick());
       results[4]*=1.-temp*getParticles()[it].getCTsigma(zmom);
@@ -778,11 +778,11 @@ void GlauberDecayGridThick::intGlauberPhiCT(const double phi, complex<double>* r
     bool check=(zmom>getParticles()[it].getHitz());
     if(getParticles()[it].getIncoming()) check=!check;
     if(check){
-      complex<double> temp=getParticles()[it].getScatterfront(proton,getPnucleusthick())
+      complex<double> temp=getParticles()[it].getScatterfront(proton)
 			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
 			          /(2.*getParticles()[it].getBetasq(proton,getPnucleusthick())));
       results[0]*=1.-temp*getParticles()[it].getCTsigma(zmom);
-      results[2]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton,getPnucleusthick())*getParticles()[it].getCTsigma(zmom);
+      results[2]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton)*getParticles()[it].getCTsigma(zmom);
     }
   }
   double gr=getFsiCorrelator().correlation(normr(r,costheta,sintheta,cosphi,sinphi,r_hit,costheta_hit,sintheta_hit,cosphi_hit,sinphi_hit));

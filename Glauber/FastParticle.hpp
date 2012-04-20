@@ -94,6 +94,7 @@ public:
   double getDecay_dil() const{return decay_dil;}
   double getSigma_decay_p() const{ return sigma_decay_p;}
   double getSigma_decay_n() const{ return sigma_decay_n;}
+  double getSigma_decay(bool proton) const{ return proton? sigma_decay_p : sigma_decay_n;}
   
   
   /*! [fm^2] return sigma parameter for scattering with nucleon from specified level
@@ -126,6 +127,11 @@ public:
    * \return [fm^2] frontfactor scattering
    */
   complex<double> getScatterfront(int level, MeanFieldNucleus *pnucleus) const;
+  /*! [fm^2] return scattering parameter front factor (\sigma(1-I*eps)/(4\pi\beta^2)
+   * \param proton scattering with proton (1) or neutron (0)
+   * \return [fm^2] frontfactor scattering
+   */
+  complex<double> getScatterfront(bool proton) const;
   /*! for CT calc, return ratio between sigma_eff and regular sigma
    * \param zmom distance along path of outgoing particle
    * \return ratio
@@ -142,11 +148,23 @@ public:
 
   /*! for CT calc including decay, return ratio between sigma_eff and regular sigma
    * \param zmom distance along path of outgoing particle
+   * \param proton scattering with proton (1) or neutron (0)
+   * \return ratio
+   */
+  double getCT_decay_sigma(double zmom, bool proton) const;
+  /*! for CT calc including decay, return ratio between sigma_eff and regular sigma
+   * \param zmom distance along path of outgoing particle
    * \param level selects level in nucleus
    * \param pnucleus pointer to a class instance of the nucleus 
    * \return ratio
    */
   double getDecay_sigma(double zmom, int level, MeanFieldNucleus *pnucleus) const;
+  /*! for CT calc including decay, return ratio between sigma_eff and regular sigma
+   * \param zmom distance along path of outgoing particle
+   * \param proton scattering with proton (1) or neutron (0)
+   * \return ratio
+   */
+  double getDecay_sigma(double zmom, bool proton) const;
 
   double getHardScale() const; /*!< get hard scale associated with particle  */
   double getLc() const; /*!< get coherence length of particle (CT parameter)  */

@@ -25,23 +25,23 @@ int main(int argc, char *argv[])
   CarbonCorr.printCorrGridAll();
   //CarbonCorr.printCorrGridProton();
   
-  for(int i=0;i<=15;i++){
-    double r=CarbonThick.getRange()/15.*i;
-    for(int j=0;j<=15;j++){
-      double theta=PI/15.*j;
-      double costheta,sintheta;
-      sincos(theta,&sintheta,&costheta);
-      for(int k=0;k<=6;k++){
-	double phi=2.*PI/6.*k;
-	double cosphi,sinphi;
-	sincos(phi,&sinphi,&cosphi);
-	double result;
-	double restimate=0.,thetaestimate=0.,phiestimate=0.;
-	rombergerN(intr,0.,CarbonThick.getRange(),1,&result,1.E-05,3,8,&restimate,r,costheta,sintheta,cosphi,sinphi,&CarbonThick,&CarbonCorr,&thetaestimate,&phiestimate);
-	cout << i << " " << j << " " << k << " " << CarbonCorr.getCorrGridProton_interp(r,costheta)*result << endl;
-      }
-    }
-  }
+//   for(int i=0;i<=15;i++){
+//     double r=CarbonThick.getRange()/15.*i;
+//     for(int j=0;j<=15;j++){
+//       double theta=PI/15.*j;
+//       double costheta,sintheta;
+//       sincos(theta,&sintheta,&costheta);
+//       for(int k=0;k<=6;k++){
+// 	double phi=2.*PI/6.*k;
+// 	double cosphi,sinphi;
+// 	sincos(phi,&sinphi,&cosphi);
+// 	double result;
+// 	double restimate=0.,thetaestimate=0.,phiestimate=0.;
+// 	rombergerN(intr,0.,CarbonThick.getRange(),1,&result,1.E-05,3,8,&restimate,r,costheta,sintheta,cosphi,sinphi,&CarbonThick,&CarbonCorr,&thetaestimate,&phiestimate);
+// 	cout << i << " " << j << " " << k << " " << CarbonCorr.getCorrGridProton_interp(r,costheta)*result << endl;
+//       }
+//     }
+//   }
  
   
   

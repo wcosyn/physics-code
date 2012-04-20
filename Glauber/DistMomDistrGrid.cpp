@@ -310,7 +310,7 @@ void DistMomDistrGrid::constructAllGrids(){
 
 //calc both fsi and fsi+ct grid
 void DistMomDistrGrid::constructpwGrid(){
-  cout << "Constructing pw momentum distribution" << endl;
+  //cout << "Constructing pw momentum distribution" << endl;
   //fill the arrays!
   for(int i=0; i<=getPgrid(); i++){
     p_hit = float(i)/getInvPstep();
@@ -478,7 +478,7 @@ void DistMomDistrGrid::fillGrids(){
   ifstream infile(rho_filename.c_str(),ios::in|ios::binary);
   //check if object has been created sometime earlier and read it in
   if(infile.is_open()){
-    cout << "Reading in FSI grid from memory: " << rho_filename << endl;
+    //cout << "Reading in FSI grid from memory: " << rho_filename << endl;
     readinRhoGrid(infile);
     filledgrid=1;
     infile.close();
@@ -510,7 +510,7 @@ void DistMomDistrGrid::fillGrids(){
   ifstream infile2(rhoct_filename.c_str(),ios::in|ios::binary);
   //check if object has been created sometime earlier and read it in
   if(infile2.is_open()){
-    cout << "Reading in FSI+CT grid from memory: " << rhoct_filename << endl;
+    //cout << "Reading in FSI+CT grid from memory: " << rhoct_filename << endl;
     readinRhoCtGrid(infile2);
     filledctgrid=1;
     infile2.close();

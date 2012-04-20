@@ -13,7 +13,7 @@
 FsiCorrelator::FsiCorrelator(MeanFieldNucleusThick *inputnucleus, const int rgrid, const int cthgrid, const string dir):
 corr_rgrid(rgrid),corr_cthgrid(cthgrid),corr_phigrid(6),pnucleus(inputnucleus)
 {
-  cout << "Initializing Object for correlated glauber" << endl;
+  //cout << "Initializing Object for correlated glauber" << endl;
   //initialization
   invrstep=corr_rgrid/pnucleus->getRange();
   invcthstep=corr_cthgrid/2.;
@@ -31,7 +31,7 @@ corr_rgrid(rgrid),corr_cthgrid(cthgrid),corr_phigrid(6),pnucleus(inputnucleus)
   ifstream infile(corrfilename.c_str(),ios::in|ios::binary);
   //check if object has been created sometime earlier and read it in
   if(infile.is_open()){
-    cout << "Reading in correlation grids from memory: " << corrfilename << endl;
+    //cout << "Reading in correlation grids from memory: " << corrfilename << endl;
     for(int i=0;i<corr_rgrid;i++){
       for(int j=0;j<corr_cthgrid;j++){
 	infile.read(reinterpret_cast<char *>(&corrgridfull[i][j]),sizeof(double));
@@ -70,7 +70,7 @@ corr_rgrid(rgrid),corr_cthgrid(cthgrid),corr_phigrid(6),pnucleus(inputnucleus)
 
 //mem cleanup
 FsiCorrelator::~FsiCorrelator(){
-  cout << "Cleaning up correlator class object" << endl;
+  //cout << "Cleaning up correlator class object" << endl;
   for(int i=0;i<corr_rgrid;i++){
     delete []corrgridfull[i];
     delete []corrgridproton[i];

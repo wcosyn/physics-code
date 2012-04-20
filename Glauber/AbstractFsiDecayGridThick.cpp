@@ -18,7 +18,7 @@ AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,homedir)
 }  
 
 AbstractFsiDecayGridThick::~AbstractFsiDecayGridThick(){
-  cout << "Deleting FSI thickness object" << endl;
+  //cout << "Deleting FSI thickness object" << endl;
   
 }
 
