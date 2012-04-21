@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
   double **results= new double*[n];
   for(int i=0;i<n;i++) results[i] = new double[NROFRES];
   for(int i=TMPI::Rank(); i<n; i += TMPI::NumberOfProcesses() ) {
+    cout << TMPI::Rank() << endl;
     for(int j=0;j<NROFRES;j++) {
       FastParticle rho(4, 0, 2000+i*100.+j*20.,0.,0.,5.,145.,homedir);
       OneGlauberGrid grid = OneGlauberGrid(60,18,&CarbonThick,homedir);
