@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     }
     else{
       double z = 0.9+k*0.03;
-      test.getCrosst(results[i],Ebeam,Q2,nu,z);
+      test.getCrossz(results[i],Ebeam,Q2,nu,z);
     }
   }
 
