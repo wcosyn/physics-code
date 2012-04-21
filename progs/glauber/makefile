@@ -11,7 +11,7 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
- CC      = 	icpc
+ CC      = 	mpicxx
 # CC      = 	g++
 
 #		Flags
