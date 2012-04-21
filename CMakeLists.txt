@@ -18,6 +18,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # Load some basic macros which are needed later on
 find_package(ROOT REQUIRED)
 find_package(GSL REQUIRED)
+find_package(MPI REQUIRED)
 #Check the compiler and set the compile and link flags
 # set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
@@ -30,7 +31,7 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 # The extension is already found.  Any number of sources could be listed here.
 set(MPI_DIR "/opt/openmpi/1.4_intel/include")
 set(INCLUDE_DIRECTORIES
-${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS} ${MPI_DIR}
+${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS} ${MPI_INCLUDE_PATH}
 )
 
 include_directories( ${INCLUDE_DIRECTORIES})
