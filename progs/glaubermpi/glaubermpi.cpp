@@ -32,7 +32,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
   
-  string homedir="/home/wim/Code/share";
+  string homedir=argv[1];
   TMPI mpi(&argc,&argv);
   int n=8;
   MeanFieldNucleusThick CarbonThick(1,homedir);

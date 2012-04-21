@@ -28,7 +28,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
   
-  string homedir="/home/wim/Code/share";
+  string homedir=argv[1];
 
   MeanFieldNucleusThick CarbonThick(1,homedir);
 //   complex<double> wave[4];
@@ -58,20 +58,20 @@ int main(int argc, char *argv[])
 //   onegrid.printFsi_ct_grid();
 //   
   FastParticle rho(4, 0, 2356,0.,0.,5.,145.,homedir);
-  GlauberDecayGridThick gridthick(60,18,5,&CarbonThick,homedir);  
-  gridthick.addParticle(rho);
-  gridthick.printParticles();
-  gridthick.fillGrids();
-  gridthick.printFsi_grid();
-  gridthick.printFsi_src_grid();
-  gridthick.printFsi_ct_grid();
-  gridthick.printFsi_src_ct_grid();
-  gridthick.printFsi_decay_grid();
-  gridthick.printFsi_src_decay_grid();
-  gridthick.printFsi_ct_decay_grid();
-  gridthick.printFsi_src_ct_decay_grid();
+//   GlauberDecayGridThick gridthick(60,18,5,&CarbonThick,homedir);  
+//   gridthick.addParticle(rho);
+//   gridthick.printParticles();
+//   gridthick.fillGrids();
+//   gridthick.printFsi_grid();
+//   gridthick.printFsi_src_grid();
+//   gridthick.printFsi_ct_grid();
+//   gridthick.printFsi_src_ct_grid();
+//   gridthick.printFsi_decay_grid();
+//   gridthick.printFsi_src_decay_grid();
+//   gridthick.printFsi_ct_decay_grid();
+//   gridthick.printFsi_src_ct_decay_grid();
 //   cout << gridthick.getNumber_of_grids() << endl;
   
-  
+  cout << "end" << endl;
   return 0;
 }
