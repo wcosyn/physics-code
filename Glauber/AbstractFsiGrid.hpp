@@ -67,6 +67,7 @@ public:
   /*! add particle subject to isi/fsi, checks to see that the vector contains max one incoming particle
    *\param newparticle pointer to instance of FastParticle you want to add*/
   virtual void addParticle(FastParticle &newparticle); 
+  void clearParticles(); /*!< Clear contents of isi/fsi particles vector*/
   void printParticles() const; /*!< Print contents of isi/fsi particles vector*/
   /*! add quantum numbers of particle that is knocked out from nucleus
    *\param level shellindex level

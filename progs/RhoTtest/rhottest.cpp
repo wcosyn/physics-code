@@ -31,8 +31,8 @@ int main(int argc, char *argv[])
   }
   TMPI::SilenceSlaves(false);
 
-  for(int i=0;i<n;i++) delete x[i];
-  delete x;
+  for(int i=0;i<n;i++) delete [] x[i];
+  delete [] x;
   
   
 //   string homedir="/home/wim/Code/share";

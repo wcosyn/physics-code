@@ -178,6 +178,15 @@ void AbstractFsiGrid::addParticle(FastParticle& newparticle){
 }
 
 //print the particles in the particles vector
+void AbstractFsiGrid::clearParticles(){
+ particles.clear();
+ totalprotonout=0;
+ totalneutronout=0;
+ return;
+}
+
+
+//print the particles in the particles vector
 void AbstractFsiGrid::printParticles() const{
   //cout << endl << endl << "Printing contents of particle vector in FSI grid" << endl;
   for(size_t i=0;i<particles.size();i++){
