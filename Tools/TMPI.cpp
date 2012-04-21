@@ -103,7 +103,7 @@ TMPI::~TMPI()
   //
   // A call to MPI_Finalize will be made. The user doesn't need to worry about this.
 #ifdef STRANGEDEUTERON_MPI
-cout << TMPI::Rank() << " finalize" << endl; 
+std::cout << TMPI::Rank() << " finalize" << std::endl; 
   MPI_Finalize();
 #endif
 }
