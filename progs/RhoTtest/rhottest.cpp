@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   double **results = new double*[n];  
   for(int i=0;i<n;i++) results[i] = new double[NROFRES];
 
-  RhoTCross test = RhoTCross(1,400,argv[6]);
+  RhoTCross test = RhoTCross(nucleus,400,argv[6]);
   
   for(int i=TMPI::Rank(); i<n; i += TMPI::NumberOfProcesses() ) {
     int j = i/4;
