@@ -340,10 +340,9 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
   pfsigrid->addParticle(rho);
   pfsigrid->fillGrids();
   pfsigrid->clearKnockout();
-  pdistgrid = new DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid,homedir);
+  pdistgrid = new DistMomDistrGrid(shell, pmax, 1,1,1,pfsigrid,homedir);
   for(int i=0;i<NROFRES-1;i++) results[i]+= pdistgrid->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
   results[NROFRES-1] += pdistgrid->getRhopwGridFull_interp(pm);
-  if(pm<200) cout << pm << " " << pmcostheta << " " << pmphi << " " << pdistgrid->getRhoGridFull_interp3(0, pm, pmcostheta, pmphi) << " " << pdistgrid->getRhoGridFull_interp3(1, pm, pmcostheta, pmphi) << endl;
   
   delete pdistgrid;
   delete pfsigrid;

@@ -35,7 +35,7 @@ public:
 		   AbstractFsiCTGrid *pfsigrid, string dir);
   ~DistMomDistrGrid(); /*!< Destructor */
   
-  bool getShellindex() const{return shellindex;} /*!< shell level */
+  int getShellindex() const{return shellindex;} /*!< shell level */
   const string getRho_Filename() const{return rho_filename;} /*!< returns filename for regular rho grid */
   const string getRhoCT_Filename() const{return rhoct_filename;} /*!< returns filename for rho+ct grid */
   const string getDir() const{return dir;}/*!< returns dir where all input/output is located */ 
