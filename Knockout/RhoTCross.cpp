@@ -10,12 +10,15 @@ pdistgrid(NULL),
 pfsigrid(NULL),
 prho(NULL){
 
-  
+  pfsigrid = new GlauberDecayGridThick*[nucleusthick.getTotalLevels()];
+  for(int i=0;i<nucleusthick.getTotalLevels();i++) pfsigrid[i] = new GlauberDecayGridThick(60,20,5,&nucleusthick,homedir);
   
 }
 
 RhoTCross::~RhoTCross(){
   
+  for(int i=0;i<nucleusthick.getTotalLevels();i++) delete pfsigrid[i];
+  delete [] pfsigrid;
 }
 
 //input in GeV!!!!
@@ -336,16 +339,16 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 void RhoTCross::getMomdistr(double *results, double prho, double thetarho, double Q2, int shell, 
 			    double pm, double pmcostheta, double pmphi){
   FastParticle rho(4, 0, prho,thetarho,0.,Q2,145.,homedir);
-  pfsigrid = new GlauberDecayGridThick(60,20,5,&nucleusthick,homedir);
-  pfsigrid->addParticle(rho);
-  pfsigrid->fillGrids();
-  pfsigrid->clearKnockout();
-  pdistgrid = new DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid,homedir);
+  pfsigrid[shell]->clearParticles();
+  pfsigrid[shell]->addParticle(rho);
+  pfsigrid[shell]->updateGrids();
+  pfsigrid[shell]->clearKnockout();
+  pdistgrid = new DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid[shell],homedir);
   for(int i=0;i<NROFRES-1;i++) results[i]+= pdistgrid->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
   results[NROFRES-1] += pdistgrid->getRhopwGridFull_interp(pm);
   
   delete pdistgrid;
-  delete pfsigrid;
+//   delete pfsigrid;
   
 }
   

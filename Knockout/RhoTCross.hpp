@@ -22,7 +22,7 @@ private:
   double pmax;
   MeanFieldNucleusThick nucleusthick;
   DistMomDistrGrid *pdistgrid;
-  GlauberDecayGridThick *pfsigrid;
+  GlauberDecayGridThick **pfsigrid;
 //   TKinematics2to2 *pkin;
   FastParticle *prho;
   /*! function that gets integrated over pm, all different fsi outputs
