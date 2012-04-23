@@ -57,28 +57,28 @@ int main(int argc, char *argv[])
 //   onegrid.fillGrids();
 //   onegrid.printFsi_ct_grid();
 //   
-//   FastParticle rho(4, 0, 2356,0.,0.,5.,145.,homedir);
-//   GlauberDecayGridThick gridthick(60,18,5,&CarbonThick,homedir);  
-//   gridthick.addParticle(rho);
-//   gridthick.printParticles();
-//   gridthick.fillGrids();
-//   gridthick.printFsi_grid();
-//   gridthick.printFsi_src_grid();
-//   gridthick.printFsi_ct_grid();
-//   gridthick.printFsi_src_ct_grid();
-//   gridthick.printFsi_decay_grid();
-//   gridthick.printFsi_src_decay_grid();
-//   gridthick.printFsi_ct_decay_grid();
-//   gridthick.printFsi_src_ct_decay_grid();
-//   cout << gridthick.getNumber_of_grids() << endl;
+  FastParticle rho(4, 0, 2356,0.,0.,5.,145.,homedir);
+  GlauberDecayGridThick gridthick(3,3,2,&CarbonThick,homedir);  
+  gridthick.addParticle(rho);
+  gridthick.printParticles();
+  gridthick.fillGrids();
+  gridthick.printFsi_grid();
+  gridthick.printFsi_src_grid();
+  gridthick.printFsi_ct_grid();
+  gridthick.printFsi_src_ct_grid();
+  gridthick.printFsi_decay_grid();
+  gridthick.printFsi_src_decay_grid();
+  gridthick.printFsi_ct_decay_grid();
+  gridthick.printFsi_src_ct_decay_grid();
+  cout << gridthick.getNumber_of_grids() << endl;
   
-  FastParticle pion(2, 0, 2356,0.,0.,5.,0.,homedir);
-  OneGlauberGrid grid(60,18,&CarbonThick,homedir);  
-  grid.addParticle(pion);
-  grid.printParticles();
-  grid.fillGrids();
-  grid.printFsi_grid();
-  grid.printFsi_ct_grid();
+//   FastParticle pion(2, 0, 2356,0.,0.,5.,0.,homedir);
+//   OneGlauberGrid grid(60,18,&CarbonThick,homedir);  
+//   grid.addParticle(pion);
+//   grid.printParticles();
+//   grid.fillGrids();
+//   grid.printFsi_grid();
+//   grid.printFsi_ct_grid();
   
   
   

@@ -15,6 +15,49 @@ AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,dir),
 AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,dir),
 AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,dir),
 AbstractFsiCTDecayGridThick(r_grid,cth_grid,phi_grid,pnucl,dir),fsi_grid(NULL),fsi_ct_grid(NULL),treshold(NULL){
+  
+  if(fsi_grid==NULL){
+    //cout << "Mem reservation for fsi_grid" << endl;
+    fsi_grid=new complex<double>****[4];
+    for(int i=0;i<4;i++){
+      fsi_grid[i]=new complex<double>***[2];
+      for(int j=0;j<2;j++){
+	fsi_grid[i][j]=new complex<double>**[getRgrid()+1];
+	for(int k=0;k<(getRgrid()+1);k++){
+	  fsi_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
+	  for(int l=0;l<(getCthgrid()+1);l++){
+	    fsi_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
+	  }
+	}
+      }
+    }
+  }
+  else{
+    cerr << "fsi_grid should not be initialized more than once!!!!" << endl;
+    exit(1);
+  }
+  //ct grid
+  if(fsi_ct_grid==NULL){
+    //cout << "Mem reservation for fsi_ct_grid" << endl;
+    fsi_ct_grid=new complex<double>****[4];
+    for(int i=0;i<4;i++){
+      fsi_ct_grid[i]=new complex<double>***[2];
+      for(int j=0;j<2;j++){
+	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
+	for(int k=0;k<(getRgrid()+1);k++){
+	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
+	  for(int l=0;l<(getCthgrid()+1);l++){
+	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
+	  }
+	}
+      }
+    }
+  }
+  else{
+    cerr << "fsi_ct_grid should not be initialized more than once!!!!" << endl;
+    exit(1);
+  }    
+
 }
 
 //destructor
@@ -323,47 +366,6 @@ void GlauberDecayGridThick::setFilenames(string dir){
 void GlauberDecayGridThick::constructAllGrids(){
   //mem reservation for the grids, index [shelllevel][mindex(postive only due to symmetry][rgrid][thgrid][phgrid]
   //fsi grid
-  if(fsi_grid==NULL){
-    //cout << "Mem reservation for fsi_grid" << endl;
-    fsi_grid=new complex<double>****[4];
-    for(int i=0;i<4;i++){
-      fsi_grid[i]=new complex<double>***[2];
-      for(int j=0;j<2;j++){
-	fsi_grid[i][j]=new complex<double>**[getRgrid()+1];
-	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
-	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
-	  }
-	}
-      }
-    }
-  }
-  else{
-    cerr << "fsi_grid should not be initialized more than once!!!!" << endl;
-    exit(1);
-  }
-  //ct grid
-  if(fsi_ct_grid==NULL){
-    //cout << "Mem reservation for fsi_ct_grid" << endl;
-    fsi_ct_grid=new complex<double>****[4];
-    for(int i=0;i<4;i++){
-      fsi_ct_grid[i]=new complex<double>***[2];
-      for(int j=0;j<2;j++){
-	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
-	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
-	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
-	  }
-	}
-      }
-    }
-  }
-  else{
-    cerr << "fsi_ct_grid should not be initialized more than once!!!!" << endl;
-    exit(1);
-  }    
   //mem reservation for treshold array
   if(treshold==NULL){
     //cout << "Mem reservation for treshold array" << endl;
@@ -460,27 +462,7 @@ void GlauberDecayGridThick::constructAllGrids(){
 
 //calc only ct grid
 void GlauberDecayGridThick::constructCtGrid(){
-  //ct grid
-  if(fsi_ct_grid==NULL){
-    cout << "Mem reservation for fsi_ct_grid" << endl;
-    fsi_ct_grid=new complex<double>****[4];
-    for(int i=0;i<4;i++){
-      fsi_ct_grid[i]=new complex<double>***[2];
-      for(int j=0;j<2;j++){
-	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
-	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
-	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
-	  }
-	}
-      }
-    }
-  }
-  else{
-    cerr << "fsi_ct_grid should not be initialized more than once!!!!" << endl;
-    exit(1);
-  }    
+
   //mem reservation for treshold array
   if(treshold==NULL){
     cout << "Mem reservation for treshold array" << endl;
@@ -588,9 +570,9 @@ void GlauberDecayGridThick::calcGlauberphasesBoth(const int i, const int j, cons
 void GlauberDecayGridThick::calcGlauberphasesCt(const int i, const int j, const int k){
   complex<double>* results= new complex<double>[4];
   for(int proton=0;proton<2;proton++){
+    double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
     double restimate=0.,thetaestimate=0.,phiestimate=0.;
     rombergerN(this, &GlauberDecayGridThick::intGlauberRCT,0.,getPnucleusthick()->getRange(),4,results,PREC,3,8,&restimate,proton,&thetaestimate, &phiestimate); 
-    double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
     fsi_ct_grid[0][proton][i][j][k]=results[0];
     fsi_ct_grid[1][proton][i][j][k]=results[1]*src;
     fsi_ct_grid[2][proton][i][j][k]=results[2];
@@ -603,16 +585,11 @@ void GlauberDecayGridThick::calcGlauberphasesCt(const int i, const int j, const 
 
 //readin fsi grid
 void GlauberDecayGridThick::readinFsiGrid(ifstream &infile){
-  if(fsi_grid==NULL){
-    fsi_grid=new complex<double>****[4];
+  if(fsi_grid!=NULL){
     for(int i=0;i<4;i++){
-      fsi_grid[i]=new complex<double>***[2];
       for(int j=0;j<2;j++){
-	fsi_grid[i][j]=new complex<double>**[getRgrid()+1];
 	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
 	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
 	    for(int mm=0;mm<(getPhigrid()+1);mm++){
 	      infile.read(reinterpret_cast<char *>(&fsi_grid[i][j][k][l][mm]),sizeof(complex<double>));
 	    }
@@ -622,23 +599,18 @@ void GlauberDecayGridThick::readinFsiGrid(ifstream &infile){
     }
   }
   else{
-    cerr << "fsi_grid should not be initialized more than once!!!!" << endl;
+    cerr << "fsi_grid not initialized!!!!" << endl;
     exit(1);
   }
 }
 
 //readin fsi+ct grid
 void GlauberDecayGridThick::readinFsiCtGrid(ifstream &infile){
-  if(fsi_ct_grid==NULL){
-    fsi_ct_grid=new complex<double>****[4];
+  if(fsi_ct_grid!=NULL){
     for(int i=0;i<4;i++){
-      fsi_ct_grid[i]=new complex<double>***[2];
       for(int j=0;j<2;j++){
-	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
 	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
 	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
 	    for(int mm=0;mm<(getPhigrid()+1);mm++){
 	      infile.read(reinterpret_cast<char *>(&fsi_ct_grid[i][j][k][l][mm]),sizeof(complex<double>));
 	    }
@@ -648,7 +620,7 @@ void GlauberDecayGridThick::readinFsiCtGrid(ifstream &infile){
     }  
   }
   else{
-    cerr << "fsi_ct_grid should not be initialized more than once!!!!" << endl;
+    cerr << "fsi_ct_grid not initialized!!!!" << endl;
     exit(1);
   }    
 }
@@ -687,9 +659,9 @@ void GlauberDecayGridThick::intGlauberR(const double r, complex<double> *results
   int proton = va_arg(ap,int);
   double *pthetaestimate = va_arg(ap,double*);
   double *pphiestimate = va_arg(ap,double*);
+  getFsiCorrelator().setRinterp(r);
   rombergerN(this,&GlauberDecayGridThick::intGlauberCosTheta,-1.,1.,8,results,PREC,3,8,pthetaestimate,r, proton,pphiestimate);
   double dens=getPnucleusthick()->getDensity(r,proton);
-  getFsiCorrelator().setRinterp(r);
   for(int i=0;i<8;i++) results[i]*=dens;
 }
 
@@ -699,9 +671,9 @@ void GlauberDecayGridThick::intGlauberCosTheta(const double costheta, complex<do
   double *pphiestimate = va_arg(ap,double*);  
   
   double sintheta = sqrt(1.-costheta*costheta);
+  double src=getFsiCorrelator().getCorrGrid_interp(costheta,proton);
   rombergerN(this,&GlauberDecayGridThick::intGlauberPhi,0.,2.*PI,8,results,PREC,3,5,pphiestimate,r,costheta,sintheta,proton);
   //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
-  double src=getFsiCorrelator().getCorrGrid_interp(costheta,proton);
   results[1]*=src;
   results[3]*=src;
   results[5]*=src;
@@ -728,9 +700,9 @@ void GlauberDecayGridThick::intGlauberPhi(const double phi, complex<double>* res
 			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
 			          /(2.*getParticles()[it].getBetasq(proton)));
       results[0]*=1.-temp;
-      results[2]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton,getPnucleusthick());
+      results[2]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton);
       results[4]*=1.-temp*getParticles()[it].getCTsigma(zmom);
-      results[6]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton,getPnucleusthick())*getParticles()[it].getCTsigma(zmom);
+      results[6]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton)*getParticles()[it].getCTsigma(zmom);
     }
   }
   double gr=getFsiCorrelator().correlation(normr(r,costheta,sintheta,cosphi,sinphi,r_hit,costheta_hit,sintheta_hit,cosphi_hit,sinphi_hit));
@@ -756,8 +728,8 @@ void GlauberDecayGridThick::intGlauberCosThetaCT(const double costheta, complex<
   double *pphiestimate = va_arg(ap,double*);  
   
   double sintheta = sqrt(1.-costheta*costheta);
-  rombergerN(this,&GlauberDecayGridThick::intGlauberPhiCT,0.,2.*PI,4,results,PREC,3,5,pphiestimate,r,costheta,sintheta,proton);
   double src=getFsiCorrelator().getCorrGrid_interp(costheta,proton);
+  rombergerN(this,&GlauberDecayGridThick::intGlauberPhiCT,0.,2.*PI,4,results,PREC,3,5,pphiestimate,r,costheta,sintheta,proton);
   results[1]*=src;
   results[3]*=src;
 }
@@ -780,7 +752,7 @@ void GlauberDecayGridThick::intGlauberPhiCT(const double phi, complex<double>* r
     if(check){
       complex<double> temp=getParticles()[it].getScatterfront(proton)
 			    *exp(-getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
-			          /(2.*getParticles()[it].getBetasq(proton,getPnucleusthick())));
+			          /(2.*getParticles()[it].getBetasq(proton)));
       results[0]*=1.-temp*getParticles()[it].getCTsigma(zmom);
       results[2]*=1.-temp*getParticles()[it].getDecay_sigma(zmom,proton)*getParticles()[it].getCTsigma(zmom);
     }
