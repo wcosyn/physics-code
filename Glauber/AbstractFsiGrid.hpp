@@ -121,6 +121,7 @@ public:
   
   
   virtual void fillGrids();  /*!< fills the fsi grids that are used for interpolation */
+  virtual void updateGrids();  /*!< updates the fsi grids that are used for interpolation */
   
   
 protected:

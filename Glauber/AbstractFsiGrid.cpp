@@ -139,7 +139,7 @@ bool AbstractFsiGrid::getAllinplane() const{
   
 //add particle to the particles vector
 void AbstractFsiGrid::addParticle(FastParticle& newparticle){
-  if(!filledgrid){
+//   if(!filledgrid){
     if (particles.empty()){
       particles.push_back(newparticle);
       if(newparticle.getParticletype()==0){
@@ -170,11 +170,11 @@ void AbstractFsiGrid::addParticle(FastParticle& newparticle){
       if(newparticle.getParticletype()==0) totalprotonout--;
       if(newparticle.getParticletype()==1) totalneutronout--;	    
     }
-  }
-  else{
-    cerr << "You shouldn't add more particles after filling the fsi grids!!!" << endl;
-    exit(1);
-  }
+//   }
+//   else{
+//     cerr << "You shouldn't add more particles after filling the fsi grids!!!" << endl;
+//     exit(1);
+//   }
 }
 
 //print the particles in the particles vector
@@ -405,5 +405,33 @@ void AbstractFsiGrid::fillGrids(){
       cerr << "could not open file for writing fsi grid output: " << fsi_filename << endl;
     }
   } 
+}
+  
+//fills the grids, uses pure virtual functions!!!!
+void AbstractFsiGrid::updateGrids(){
+  if(!filledgrid){
+    fillGrids();
+//     cout << "Grids still empty " << endl;
+  }
+  else{
+    for(size_t i=0;i<getParticles().size();i++){
+      allinplane=1;
+      if((getParticles()[i].getPhi()!=0.)&&(getParticles()[i].getPhi()!=PI)){      
+	allinplane=0;
+	break;
+      }
+    }
+    if(allinplane){
+      //cout <<"All particles lie in the phi=0 or phi=Pi plane, special case activated" << endl;
+      invphistep*=2.;
+    }
+    string old_fsi_filename=fsi_filename;
+    setFilenames(dir);
+    if(fsi_filename.compare(old_fsi_filename)){
+//       cout << "fsi grid not equal" << fsi_filename << endl << old_fsi_filename << endl;
+      fillGrids();      
+    }
+//     else cout << "fsi grid equal to the earlier one, doing nothing" << endl << fsi_filename << endl << old_fsi_filename << endl;
+  }
 }
   

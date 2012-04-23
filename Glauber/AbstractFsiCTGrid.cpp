@@ -106,4 +106,39 @@ void AbstractFsiCTGrid::fillGrids(){
     }
   }
 }
+
+//fills the grids, uses pure virtual functions!!!!
+void AbstractFsiCTGrid::updateGrids(){
+  string old_fsi_ct_filename = fsi_ct_filename;
+  AbstractFsiGrid::updateGrids();
+  setFilenames(getDir());
+  if(old_fsi_ct_filename.compare(fsi_ct_filename)){
+//     cout << "fsict grid not equal " << endl << fsi_ct_filename << endl << old_fsi_ct_filename << endl;
+    
+    ifstream infile2(fsi_ct_filename.c_str(),ios::in|ios::binary);
+    //check if object has been created sometime earlier and read it in
+    if(infile2.is_open()){
+     // cout << "Reading in FSI+CT grid from memory: " << fsi_ct_filename << endl;
+      readinFsiCtGrid(infile2);
+      filledctgrid=1;
+      infile2.close();
+    }
+    else{
+      cout << "Constructing FSI+CT grid" << endl;
+      constructCtGrid();
+      filledctgrid=1;
+      ofstream outfile(fsi_ct_filename.c_str(),ios::out|ios::binary);
+      if(outfile.is_open()){
+	//cout << "Writing out FSI+CT grid: " << fsi_ct_filename << endl;
+	writeoutFsiCtGrid(outfile);
+	outfile.close();
+	return;
+      }
+      else{
+	cerr << "could not open file for writing corrgrid output: " << fsi_ct_filename << endl;
+      }    
+    }
+  }
+//   else cout << "fsict grid equal to the earlier one, doing nothing" << endl << fsi_ct_filename << endl << old_fsi_ct_filename << endl;
   
+}

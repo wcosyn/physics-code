@@ -47,6 +47,7 @@ public:
   virtual complex<double> getFsiCtGridFull_interp()=0;
   
   virtual void fillGrids();  /*!< fills the fsi grids that are used for interpolation */
+  virtual void updateGrids();  /*!< updates the fsi grids that are used for interpolation */
 
 protected:
   virtual void setFilenames(string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 

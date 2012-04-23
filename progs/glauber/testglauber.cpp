@@ -57,20 +57,20 @@ int main(int argc, char *argv[])
 //   onegrid.fillGrids();
 //   onegrid.printFsi_ct_grid();
 //   
-  FastParticle rho(4, 0, 2356,0.,0.,5.,145.,homedir);
-  GlauberDecayGridThick gridthick(3,3,2,&CarbonThick,homedir);  
-  gridthick.addParticle(rho);
-  gridthick.printParticles();
-  gridthick.fillGrids();
-  gridthick.printFsi_grid();
-  gridthick.printFsi_src_grid();
-  gridthick.printFsi_ct_grid();
-  gridthick.printFsi_src_ct_grid();
-  gridthick.printFsi_decay_grid();
-  gridthick.printFsi_src_decay_grid();
-  gridthick.printFsi_ct_decay_grid();
-  gridthick.printFsi_src_ct_decay_grid();
-  cout << gridthick.getNumber_of_grids() << endl;
+//   FastParticle rho(4, 0, 2356,0.,0.,5.,145.,homedir);
+//   GlauberDecayGridThick gridthick(3,3,2,&CarbonThick,homedir);  
+//   gridthick.addParticle(rho);
+//   gridthick.printParticles();
+//   gridthick.fillGrids();
+//   gridthick.printFsi_grid();
+//   gridthick.printFsi_src_grid();
+//   gridthick.printFsi_ct_grid();
+//   gridthick.printFsi_src_ct_grid();
+//   gridthick.printFsi_decay_grid();
+//   gridthick.printFsi_src_decay_grid();
+//   gridthick.printFsi_ct_decay_grid();
+//   gridthick.printFsi_src_ct_decay_grid();
+//   cout << gridthick.getNumber_of_grids() << endl;
   
 //   FastParticle pion(2, 0, 2356,0.,0.,5.,0.,homedir);
 //   OneGlauberGrid grid(60,18,&CarbonThick,homedir);  
@@ -81,6 +81,22 @@ int main(int argc, char *argv[])
 //   grid.printFsi_ct_grid();
   
   
+  FastParticle rho(4, 0, 2356,0.,0.,5.,145.,homedir);
+  FastParticle rho2(4, 0, 2056,0.,0.,5.,145.,homedir);
+  FastParticle rho3(4, 0, 2356,0.,0.,3.,145.,homedir);
+  FastParticle rho4(4, 0, 2056,0.,0.,3.,145.,homedir);
+  GlauberDecayGridThick gridthick(3,3,2,&CarbonThick,homedir);  
+  gridthick.addParticle(rho);
+  gridthick.updateGrids();
+  gridthick.printFsi_ct_grid();
+  gridthick.clearParticles();
+  gridthick.addParticle(rho2);
+  gridthick.updateGrids();
+  gridthick.printFsi_ct_grid();
+  gridthick.clearParticles();
+  gridthick.addParticle(rho4);
+  gridthick.updateGrids();
+  gridthick.printFsi_ct_grid();
   
   return 0;
 }
