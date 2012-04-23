@@ -4,14 +4,13 @@
 using namespace std;
 
 #include <RhoTCross.hpp>
-//  #include <TMFSpinor.hpp>
-// #include <TMPI.h>
-// #include <stdio.h>
+#include <TMPI.h>
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {
 
-//   TMPI mpi(&argc,&argv);
+  TMPI mpi(&argc,&argv);
   int torz = atoi(argv[1]);
   int nucleus = atoi(argv[2]);
   double Q2 = atof(argv[3]);
@@ -25,8 +24,7 @@ int main(int argc, char *argv[])
 
   RhoTCross test = RhoTCross(nucleus,400,argv[6]);
   
-  //for(int i=TMPI::Rank(); i<n; i += TMPI::NumberOfProcesses() ) {
-    int i=0;
+  for(int i=TMPI::Rank(); i<n; i += TMPI::NumberOfProcesses() ) {
     int j = i/4;
     int k = i%4;
     double nu = nu_min + j*(nu_max-nu_min)/7.;
@@ -38,20 +36,20 @@ int main(int argc, char *argv[])
       double z = 0.9+k*0.03;
       test.getCrossz(results[i],Ebeam,Q2,nu,z);
     }
-  //}
+  }
 
-//   TMPI::GatherResults(n,results);
-// 
-//   TMPI::SilenceSlaves();
-//   for(int i=0; i<n; ++i){
-//     int j = i/4;
-//     int k = i%4;
-//     double nu = nu_min + j*(nu_max-nu_min)/7.;    
-//     cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
-//     for (int j=0;j<NROFRES;j++) cout << results[i][j] << " ";
-//     cout << endl;
-//   }
-//   TMPI::SilenceSlaves(false);
+  TMPI::GatherResults(n,results);
+
+  TMPI::SilenceSlaves();
+  for(int i=0; i<n; ++i){
+    int j = i/4;
+    int k = i%4;
+    double nu = nu_min + j*(nu_max-nu_min)/7.;    
+    cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
+    for (int j=0;j<NROFRES;j++) cout << results[i][j] << " ";
+    cout << endl;
+  }
+  TMPI::SilenceSlaves(false);
 
   for(int i=0;i<n;i++) delete [] results[i];
   delete [] results;

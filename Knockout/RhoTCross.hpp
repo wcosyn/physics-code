@@ -21,7 +21,7 @@ private:
   string homedir;  
   double pmax;
   MeanFieldNucleusThick nucleusthick;
-  DistMomDistrGrid *pdistgrid;
+  DistMomDistrGrid **pdistgrid;
   GlauberDecayGridThick **pfsigrid;
 //   TKinematics2to2 *pkin;
   FastParticle *prho;

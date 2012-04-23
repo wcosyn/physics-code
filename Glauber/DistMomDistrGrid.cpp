@@ -140,7 +140,7 @@ double DistMomDistrGrid::getRhopwGridFull_interp(double p){
     cerr << "p out of range in : getRhopwGridFull" << p << endl;
     exit(1);
   }
-  return interpolate(rhopwgrid,p,1./getInvPstep(),getPindex()+1,0); 
+  return interpolate(rhopwgrid,p,1./getInvPstep(),getPgrid()+1,0); 
   
 }
 
@@ -538,7 +538,7 @@ void DistMomDistrGrid::fillGrids(){
 void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell){
   if(!filledgrid){
   fillGrids();
-    cout << "Grids still empty " << endl;
+//     cout << "Grids still empty " << endl;
   }
   else{
     string old_rho_filename = rho_filename;
@@ -548,12 +548,12 @@ void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell){
     setFilenames(dir);
   
     if(rho_filename.compare(old_rho_filename)){
-      cout << "fsi grid not equal" << rho_filename << endl << old_rho_filename << endl;
+//       cout << "fsi grid not equal" << rho_filename << endl << old_rho_filename << endl;
       fillGrids();      
     }
-    else cout << "fsi grid equal to the earlier one, doing nothing" << endl << rho_filename << endl << old_rho_filename << endl;
+//     else cout << "fsi grid equal to the earlier one, doing nothing" << endl << rho_filename << endl << old_rho_filename << endl;
     if(old_rhoct_filename.compare(rhoct_filename)){
-    cout << "fsict grid not equal " << endl << rhoct_filename << endl << old_rhoct_filename << endl;
+//     cout << "fsict grid not equal " << endl << rhoct_filename << endl << old_rhoct_filename << endl;
     
       ifstream infile2(rhoct_filename.c_str(),ios::in|ios::binary);
       //check if object has been created sometime earlier and read it in
@@ -579,7 +579,7 @@ void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell){
 	}    
       }
     }
-  else cout << "fsict grid equal to the earlier one, doing nothing" << endl << rhoct_filename << endl << old_rhoct_filename << endl;
+//   else cout << "fsict grid equal to the earlier one, doing nothing" << endl << rhoct_filename << endl << old_rhoct_filename << endl;
 
   }
 }

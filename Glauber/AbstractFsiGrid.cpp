@@ -412,16 +412,16 @@ void AbstractFsiGrid::fillGrids(){
 void AbstractFsiGrid::updateGrids(){
   if(!filledgrid){
     fillGrids();
-    cout << "Grids still empty " << endl;
+//     cout << "Grids still empty " << endl;
   }
   else{
     string old_fsi_filename=fsi_filename;
     setFilenames(dir);
     if(fsi_filename.compare(old_fsi_filename)){
-      cout << "fsi grid not equal" << fsi_filename << endl << old_fsi_filename << endl;
+//       cout << "fsi grid not equal" << fsi_filename << endl << old_fsi_filename << endl;
       fillGrids();      
     }
-    else cout << "fsi grid equal to the earlier one, doing nothing" << endl << fsi_filename << endl << old_fsi_filename << endl;
+//     else cout << "fsi grid equal to the earlier one, doing nothing" << endl << fsi_filename << endl << old_fsi_filename << endl;
   }
 }
   

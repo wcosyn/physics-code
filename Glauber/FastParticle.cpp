@@ -66,12 +66,9 @@ sigma_decay_n(0.){
     case(4):
       //cout <<"rho0" << endl;
 //       setPionGlauberData(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
-      sigmap = interpolate(sigman_array,log10(p),0.01,151,250.);
-      beta2p = interpolate(beta2n_array,log10(p),0.01,151,250.);
-      epsilonp = interpolate(epsn_array,log10(p),0.01,151,250.);
-      sigman = interpolate(sigmap_array,log10(p),0.01,151,250.);
-      beta2n = interpolate(beta2p_array,log10(p),0.01,151,250.);
-      epsilonn = interpolate(epsp_array,log10(p),0.01,151,250.);
+      sigman=sigmap = (interpolate(sigman_array,log10(p),0.01,151,250.)+interpolate(sigmap_array,log10(p),0.01,151,250.))*0.5;
+      beta2n=beta2p = (interpolate(beta2n_array,log10(p),0.01,151,250.)+interpolate(beta2p_array,log10(p),0.01,151,250.))*0.5;
+      epsilonn = epsilonp = (interpolate(epsn_array,log10(p),0.01,151,250.)+interpolate(epsp_array,log10(p),0.01,151,250.))*0.5;
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSRHO;
@@ -147,12 +144,9 @@ sigma_decay_n(0.){
     case(4):
       //cout <<"rho0" << endl;
 //       setPionGlauberData(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
-      sigmap = interpolate(sigman_array,log10(p),0.01,151,250.);
-      beta2p = interpolate(beta2n_array,log10(p),0.01,151,250.);
-      epsilonp = interpolate(epsn_array,log10(p),0.01,151,250.);
-      sigman = interpolate(sigmap_array,log10(p),0.01,151,250.);
-      beta2n = interpolate(beta2p_array,log10(p),0.01,151,250.);
-      epsilonn = interpolate(epsp_array,log10(p),0.01,151,250.);
+      sigman=sigmap = (interpolate(sigman_array,log10(p),0.01,151,250.)+interpolate(sigmap_array,log10(p),0.01,151,250.))*0.5;
+      beta2n=beta2p = (interpolate(beta2n_array,log10(p),0.01,151,250.)+interpolate(beta2p_array,log10(p),0.01,151,250.))*0.5;
+      epsilonn = epsilonp = (interpolate(epsn_array,log10(p),0.01,151,250.)+interpolate(epsp_array,log10(p),0.01,151,250.))*0.5;
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSRHO;

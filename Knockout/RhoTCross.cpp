@@ -11,13 +11,20 @@ pfsigrid(NULL),
 prho(NULL){
 
   pfsigrid = new GlauberDecayGridThick*[nucleusthick.getTotalLevels()];
-  for(int i=0;i<nucleusthick.getTotalLevels();i++) pfsigrid[i] = new GlauberDecayGridThick(60,20,5,&nucleusthick,homedir);
-  
+  pdistgrid = new DistMomDistrGrid*[nucleusthick.getTotalLevels()];
+  for(int i=0;i<nucleusthick.getTotalLevels();i++){
+    pfsigrid[i] = new GlauberDecayGridThick(60,20,5,&nucleusthick,homedir);
+    pdistgrid[i] = new DistMomDistrGrid(i, pmax, 30,20,5,pfsigrid[i],homedir);
+  }
 }
 
 RhoTCross::~RhoTCross(){
   
-  for(int i=0;i<nucleusthick.getTotalLevels();i++) delete pfsigrid[i];
+  for(int i=0;i<nucleusthick.getTotalLevels();i++){
+    delete pdistgrid[i];
+    delete pfsigrid[i];
+  }
+  delete [] pdistgrid;
   delete [] pfsigrid;
 }
 
@@ -194,7 +201,7 @@ void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2,
   double prho=sqrt(Erho*Erho-MASSRHO*MASSRHO*1.E-06);
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
   rombergerN(this,&RhoTCross::intPmz,0.,pmax*1.E-03,NROFRES,
-	      results,PREC,1,1,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
+	      results,PREC,3,10,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
   
   for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,3.)*Ebeam*Q2*(1.-epsilon));
   
@@ -213,13 +220,13 @@ void RhoTCross::intPmz(const double pm, double *results, va_list ap){
     return;
   }
   rombergerN(this,&RhoTCross::intCosThetaz,-1.,1.,NROFRES,
-	    results,PREC,3,7,pcthestimate, pm, Q2,nu,qvec,Erho,prho,pphiestimate);
-  cout << pm << " " ;
-  for(int i=0;i<NROFRES;i++){
-    results[i]*=pm*pm;
-    cout << results[i] << " ";
-  }
- cout << endl;
+	    results,PREC,3,8,pcthestimate, pm, Q2,nu,qvec,Erho,prho,pphiestimate);
+//   cout << pm << " " ;
+//   for(int i=0;i<NROFRES;i++){
+//     results[i]*=pm*pm;
+//     cout << results[i] << " ";
+//   }
+//  cout << endl;
 }
 
 void RhoTCross::intCosThetaz(const double costheta, double *results, va_list ap){
@@ -233,7 +240,7 @@ void RhoTCross::intCosThetaz(const double costheta, double *results, va_list ap)
   
   double sintheta = sqrt(1.-costheta*costheta);
   rombergerN(this,&RhoTCross::intPhiz,0.,2.*PI,NROFRES,
-	    results,PREC,3,5,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,Erho,prho);
+	    results,PREC,3,8,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,Erho,prho);
  
 }
 
@@ -287,6 +294,10 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	  double intresults[NROFRES];
 	  getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
 	  for(int dd=0;dd<NROFRES;dd++) results[dd]+=intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t);
+// 	  	      cout << "1st ";
+// 	  for(int dd=0;dd<NROFRES;dd++) cout << intresults[dd] << " ";
+// 	     cout << endl;
+
 	}
       }
       else{
@@ -308,6 +319,9 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	    double intresults[NROFRES];
 	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
 	    for(int dd=0;dd<NROFRES;dd++) results[dd]+=intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t);
+// 	      cout << "2nd ";
+// 	  for(int dd=0;dd<NROFRES;dd++) cout << intresults[dd] << " ";
+// 	     cout << endl;
 	  }
 	}
 	pzrho = (-b-discr)/(2.*a);
@@ -327,12 +341,18 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	    double intresults[NROFRES];
 	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
 	    for(int dd=0;dd<NROFRES;dd++) results[dd]+=intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t);
+// 	      cout << "3rd ";
+// 	  for(int dd=0;dd<NROFRES;dd++) cout << intresults[dd] << " ";
+// 	     cout << endl;
+
 	  }
 	}
       }
     }
   }
-  
+//   cout << "end ";
+//   for(int dd=0;dd<NROFRES;dd++) cout << results[dd] << " ";
+//   cout << endl;
 }
 
 //all energies in MeV please
@@ -343,11 +363,11 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
   pfsigrid[shell]->addParticle(rho);
   pfsigrid[shell]->updateGrids();
   pfsigrid[shell]->clearKnockout();
-  pdistgrid = new DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid[shell],homedir);
-  for(int i=0;i<NROFRES-1;i++) results[i]+= pdistgrid->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
-  results[NROFRES-1] += pdistgrid->getRhopwGridFull_interp(pm);
+  pdistgrid[shell]->updateGrids(pfsigrid[shell],shell);
+  for(int i=0;i<NROFRES-1;i++) results[i]= pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
+  results[NROFRES-1] = pdistgrid[shell]->getRhopwGridFull_interp(pm);
   
-  delete pdistgrid;
+  //delete pdistgrid;
 //   delete pfsigrid;
   
 }
