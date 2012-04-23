@@ -25,6 +25,7 @@ CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 
 #		Executable file
 EFILE   = 	../../bin/glaubermpi
+EFILEST   = 	../../bin/glaubermpistatic
 
 #		Mathematical functions
 LIBS =	 	-lm  -lifcore
@@ -32,7 +33,7 @@ WIMLIBS = -lMePhys -lGlauber
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L/home/wim/Code/lib
  INCLUDEDIRS =  -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber 
-STATICLIBS = /home/wim/Code/lib/libGlauber.a  /home/wim/Code/lib/libMephys.a 
+STATICLIBS = /home/wim/Code/lib/libGlauber.a  /home/wim/Code/lib/libMePhys.a 
 
 
 #		Header files
@@ -56,10 +57,10 @@ clean:;		@rm -f $(OBJS) core*
 
 $(EFILE):	$(OBJS) $(HDRS)
 		@echo "Linking $(EFILE)..."
-		$(CC) $(CFLAGS) -o $(EFILE) $(MAIN1) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
+		$(CC) $(CFLAGS) -o $(EFILE) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
 $(EFILEST):	$(OBJS) $(HDRS) 
 		@echo "Linking $(EFILEST)..."
-		$(CC) $(CFLAGS) -o $(EFILEST) $(MAIN1) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
+		$(CC) $(CFLAGS) -o $(EFILEST) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
 
 
 # $(OBJS):	$(HDRS) $(HDRS2) $(DICTHDRS) $(INCHDRS)

@@ -6,7 +6,7 @@
 
 #include "MeanFieldNucleus.hpp"
 #include <Utilfunctions.hpp>
-#include "TDeuteron.h"
+#include <TDeuteron.h>
 
 //constructor
 MeanFieldNucleus::MeanFieldNucleus(const int nucleus, const string & dir){

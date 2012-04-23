@@ -89,7 +89,7 @@ SET(Glauber_LIBRARY_PROPERTIES ${Glauber_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(Glauber SHARED ${Glauber_SRCS_LI})
-target_link_libraries(Glauber)
+target_link_libraries(Glauber ${LIBRARIES})
  set_target_properties(Glauber PROPERTIES ${Glauber_LIBRARY_PROPERTIES})
 ############## build the library #####################
 add_library(GlauberST STATIC ${Glauber_SRCS_ST})

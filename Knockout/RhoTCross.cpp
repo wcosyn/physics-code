@@ -191,7 +191,7 @@ void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2,
   double prho=sqrt(Erho*Erho-MASSRHO*MASSRHO*1.E-06);
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
   rombergerN(this,&RhoTCross::intPmz,0.,pmax*1.E-03,NROFRES,
-	      results,PREC,3,7,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
+	      results,PREC,1,1,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
   
   for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,3.)*Ebeam*Q2*(1.-epsilon));
   

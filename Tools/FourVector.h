@@ -7,16 +7,16 @@
 
 */
 
+
+#ifndef FOURVECTOR_H
+#define FOURVECTOR_H
+
 #include <iostream>
 #include <cmath>
 #include "Matrix.h"
 #include "GammaStructure.h"
 #include <TLorentzVector.h>
 #include <TLorentzRotation.h>
-
-#ifndef FOURVECTOR_H
-#define FOURVECTOR_H
-
 
 //-------------------------------------------------------------------------
 //---- Certain classes and functions need to be pre-declared

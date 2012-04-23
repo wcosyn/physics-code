@@ -29,7 +29,6 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 # Create a library called "libEvent" which includes the source files given in
 # the array .
 # The extension is already found.  Any number of sources could be listed here.
-set(MPI_DIR "/opt/openmpi/1.4_intel/include")
 set(INCLUDE_DIRECTORIES
 ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS} ${MPI_INCLUDE_PATH}
 )
@@ -45,7 +44,8 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 
-
+set(LIBRARIES ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES} ${MPI_LIBRARIES})
+MESSAGE(${LIBRARIES})
 enable_language (Fortran)
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
@@ -65,12 +65,12 @@ if (hostname MATCHES accident OR hostname MATCHES talvin13)
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3 ")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g  -O0 -fno-reorder-blocks -fno-schedule-insns -fno-inline")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
-      set(CMAKE_CXX_FLAGS_PROFILE        "-g3  -fno-inline -ftest-coverage -fprofile-arcs")
+      set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg")
       set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g")
       set(CMAKE_C_FLAGS_RELEASE          "-O3 ")
       set(CMAKE_C_FLAGS_DEBUG            "-g -O3  -fno-reorder-blocks -fno-schedule-insns -fno-inline")
       set(CMAKE_C_FLAGS_DEBUGFULL        "-g3  -fno-inline -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common")
-      set(CMAKE_C_FLAGS_PROFILE          "-g3  -fno-inline -ftest-coverage -fprofile-arcs")
+      set(CMAKE_C_FLAGS_PROFILE          "-O0 -g  -pg")
 
       
       
@@ -107,9 +107,9 @@ if (hostname MATCHES accident OR hostname MATCHES talvin13)
 
 
 
-endif (hostname MATCHES accident) 
+endif (hostname MATCHES accident OR hostname MATCHES talvin13) 
 
-if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
+if (hostname MATCHES trillian)
    MESSAGE("--- Configuring for talvin13")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
@@ -122,12 +122,12 @@ if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3 ")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
-      set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg -fPIC")
+      set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg")
       set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g")
       set(CMAKE_C_FLAGS_RELEASE          "-O3 ")
       set(CMAKE_C_FLAGS_DEBUG            "-g -O3  -fno-reorder-blocks -fno-schedule-insns -fno-inline")
       set(CMAKE_C_FLAGS_DEBUGFULL        "-g3  -fno-inline -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common")
-      set(CMAKE_C_FLAGS_PROFILE          "-O0 -g  -pg -fPIC")
+      set(CMAKE_C_FLAGS_PROFILE          "-O0 -g  -pg")
 
       
       
@@ -165,7 +165,7 @@ if (hostname MATCHES talvin13 OR hostname MATCHES trillian)
 
 
 
-endif (hostname MATCHES talvin13 OR hostname MATCHES trillian) 
+endif (hostname MATCHES trillian) 
 
 
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR})

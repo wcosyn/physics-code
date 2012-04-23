@@ -39,12 +39,12 @@ SET(DIS_LIBRARY_PROPERTIES ${DIS_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(DIS SHARED ${DIS_SRCS})
-target_link_libraries(DIS ${ROOT_LIBRARIES} ${GSL_LIBRARIES})
+target_link_libraries(DIS ${LIBRARIES})
 set_target_properties(DIS PROPERTIES ${DIS_LIBRARY_PROPERTIES})
 target_link_libraries (DIS MePhys Glauber)
 ############### build the library #####################
 add_library(DISST STATIC ${DIS_SRCS})
-target_link_libraries(DISST)
+target_link_libraries(DISST -Wl,-no-whole-archive)
 set_target_properties(DISST PROPERTIES OUTPUT_NAME DIS)
 
 ############### install the library ###################

@@ -122,12 +122,12 @@ SET(MePhys_LIBRARY_PROPERTIES ${MePhys_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(MePhys SHARED ${MePhys_SRCS_LI})
-target_link_libraries(MePhys)
+target_link_libraries(MePhys ${LIBRARIES})
 set_target_properties(MePhys PROPERTIES ${MePhys_LIBRARY_PROPERTIES})
 
 ############# build the library #####################
 add_library(MePhysST STATIC ${MePhys_SRCS_ST})
-target_link_libraries(MePhysST)
+target_link_libraries(MePhysST -Wl,-no-whole-archive)
 set_target_properties(MePhysST PROPERTIES OUTPUT_NAME MePhys)
 
 ############### install the library ###################
