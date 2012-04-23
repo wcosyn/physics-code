@@ -113,7 +113,7 @@ void AbstractFsiCTGrid::updateGrids(){
   AbstractFsiGrid::updateGrids();
   setFilenames(getDir());
   if(old_fsi_ct_filename.compare(fsi_ct_filename)){
-//     cout << "fsict grid not equal " << endl << fsi_ct_filename << endl << old_fsi_ct_filename << endl;
+    cout << "fsict grid not equal " << endl << fsi_ct_filename << endl << old_fsi_ct_filename << endl;
     
     ifstream infile2(fsi_ct_filename.c_str(),ios::in|ios::binary);
     //check if object has been created sometime earlier and read it in
@@ -139,6 +139,6 @@ void AbstractFsiCTGrid::updateGrids(){
       }    
     }
   }
-//   else cout << "fsict grid equal to the earlier one, doing nothing" << endl << fsi_ct_filename << endl << old_fsi_ct_filename << endl;
+  else cout << "fsict grid equal to the earlier one, doing nothing" << endl << fsi_ct_filename << endl << old_fsi_ct_filename << endl;
   
 }

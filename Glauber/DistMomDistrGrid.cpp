@@ -47,7 +47,7 @@ pfsigrid(pfsi_grid){
   }
   rhopwgrid = new double[getPgrid()+1];
   constructpwGrid();
-  fillGrids();
+  //fillGrids();
   
   
 }  
@@ -533,3 +533,54 @@ void DistMomDistrGrid::fillGrids(){
   }
   
 }
+
+
+void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell){
+  if(!filledgrid){
+  fillGrids();
+    cout << "Grids still empty " << endl;
+  }
+  else{
+    string old_rho_filename = rho_filename;
+    string old_rhoct_filename = rhoct_filename;
+    pfsigrid = pfsi_grid;
+    shellindex=shell;
+    setFilenames(dir);
+  
+    if(rho_filename.compare(old_rho_filename)){
+      cout << "fsi grid not equal" << rho_filename << endl << old_rho_filename << endl;
+      fillGrids();      
+    }
+    else cout << "fsi grid equal to the earlier one, doing nothing" << endl << rho_filename << endl << old_rho_filename << endl;
+    if(old_rhoct_filename.compare(rhoct_filename)){
+    cout << "fsict grid not equal " << endl << rhoct_filename << endl << old_rhoct_filename << endl;
+    
+      ifstream infile2(rhoct_filename.c_str(),ios::in|ios::binary);
+      //check if object has been created sometime earlier and read it in
+      if(infile2.is_open()){
+      // cout << "Reading in FSI+CT grid from memory: " << fsi_ct_filename << endl;
+	readinRhoCtGrid(infile2);
+	filledctgrid=1;
+	infile2.close();
+      }
+      else{
+	cout << "Constructing FSI+CT grid" << endl;
+	constructCtGrid();
+	filledctgrid=1;
+	ofstream outfile(rhoct_filename.c_str(),ios::out|ios::binary);
+	if(outfile.is_open()){
+	  //cout << "Writing out FSI+CT grid: " << fsi_ct_filename << endl;
+	  writeoutRhoCtGrid(outfile);
+	  outfile.close();
+	  return;
+	}
+	else{
+	  cerr << "could not open file for writing corrgrid output: " << rhoct_filename << endl;
+	}    
+      }
+    }
+  else cout << "fsict grid equal to the earlier one, doing nothing" << endl << rhoct_filename << endl << old_rhoct_filename << endl;
+
+  }
+}
+ 

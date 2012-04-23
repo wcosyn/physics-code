@@ -81,6 +81,7 @@ public:
    
   
    void fillGrids();  /*!< fills the fsi grids that are used for interpolation */
+   void updateGrids(AbstractFsiCTGrid *, int);  /*!< fills the fsi grids that are used for interpolation */
   
   
   

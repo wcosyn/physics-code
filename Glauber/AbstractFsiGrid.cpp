@@ -371,6 +371,7 @@ void AbstractFsiGrid::setFilenames(string homedir){
   
 //fills the grids, uses pure virtual functions!!!!
 void AbstractFsiGrid::fillGrids(){
+  invphistep=0.5*phigrid/PI;
   for(size_t i=0;i<getParticles().size();i++){
     allinplane=1;
     if((getParticles()[i].getPhi()!=0.)&&(getParticles()[i].getPhi()!=PI)){      
@@ -411,27 +412,16 @@ void AbstractFsiGrid::fillGrids(){
 void AbstractFsiGrid::updateGrids(){
   if(!filledgrid){
     fillGrids();
-//     cout << "Grids still empty " << endl;
+    cout << "Grids still empty " << endl;
   }
   else{
-    for(size_t i=0;i<getParticles().size();i++){
-      allinplane=1;
-      if((getParticles()[i].getPhi()!=0.)&&(getParticles()[i].getPhi()!=PI)){      
-	allinplane=0;
-	break;
-      }
-    }
-    if(allinplane){
-      //cout <<"All particles lie in the phi=0 or phi=Pi plane, special case activated" << endl;
-      invphistep*=2.;
-    }
     string old_fsi_filename=fsi_filename;
     setFilenames(dir);
     if(fsi_filename.compare(old_fsi_filename)){
-//       cout << "fsi grid not equal" << fsi_filename << endl << old_fsi_filename << endl;
+      cout << "fsi grid not equal" << fsi_filename << endl << old_fsi_filename << endl;
       fillGrids();      
     }
-//     else cout << "fsi grid equal to the earlier one, doing nothing" << endl << fsi_filename << endl << old_fsi_filename << endl;
+    else cout << "fsi grid equal to the earlier one, doing nothing" << endl << fsi_filename << endl << old_fsi_filename << endl;
   }
 }
   

@@ -88,15 +88,18 @@ int main(int argc, char *argv[])
   GlauberDecayGridThick gridthick(3,3,2,&CarbonThick,homedir);  
   gridthick.addParticle(rho);
   gridthick.updateGrids();
-  gridthick.printFsi_ct_grid();
+//   gridthick.print_grid(0);
+//   gridthick.print_grid(1);
   gridthick.clearParticles();
   gridthick.addParticle(rho2);
   gridthick.updateGrids();
-  gridthick.printFsi_ct_grid();
-  gridthick.clearParticles();
-  gridthick.addParticle(rho4);
-  gridthick.updateGrids();
-  gridthick.printFsi_ct_grid();
+  gridthick.print_grid(0);
+  gridthick.print_grid(1);
+//   gridthick.printFsi_ct_grid();
+//   gridthick.clearParticles();
+//   gridthick.addParticle(rho4);
+//   gridthick.updateGrids();
+//   gridthick.printFsi_ct_grid();
   
   return 0;
 }
