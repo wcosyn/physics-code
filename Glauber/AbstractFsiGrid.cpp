@@ -364,7 +364,7 @@ void AbstractFsiGrid::setFilenames(string homedir){
 		 +".sigma"+to_string(int(round(particles[i].getSigmap()*10.)));
   }
   fsi_filename+=".r"+to_string(getRgrid())+".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".dat";
-  //cout << fsi_filename << endl;
+//   cout << fsi_filename << endl;
 }
   
   

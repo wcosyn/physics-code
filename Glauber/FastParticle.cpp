@@ -25,35 +25,53 @@ sigma_decay_n(0.){
   switch(particletype){
     case(0):
       //cout << "proton" << endl;
-      setGlauberParameters(sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
+      setGlauberParameters(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSP;     
       break;
     case(1):
       //cout <<"neutron" << endl;
-      setGlauberParameters(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
+      setGlauberParameters(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSN;
       break;
     case(2):
       //cout <<"pi+" << endl;
-      setPionGlauberData(sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
+//       setPionGlauberData(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
+      sigmap = interpolate(sigmap_array,log10(p),0.01,151,250.);
+      beta2p = interpolate(beta2p_array,log10(p),0.01,151,250.);
+      epsilonp = interpolate(epsp_array,log10(p),0.01,151,250.);
+      sigman = interpolate(sigman_array,log10(p),0.01,151,250.);
+      beta2n = interpolate(beta2n_array,log10(p),0.01,151,250.);
+      epsilonn = interpolate(epsn_array,log10(p),0.01,151,250.);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSPI;
       break;
     case(3):
       //cout <<"pi-" << endl;
-      setPionGlauberData(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+//       setPionGlauberData(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+      sigmap = interpolate(sigmap_array,log10(p),0.01,151,250.);
+      beta2p = interpolate(beta2p_array,log10(p),0.01,151,250.);
+      epsilonp = interpolate(epsp_array,log10(p),0.01,151,250.);
+      sigman = interpolate(sigman_array,log10(p),0.01,151,250.);
+      beta2n = interpolate(beta2n_array,log10(p),0.01,151,250.);
+      epsilonn = interpolate(epsn_array,log10(p),0.01,151,250.);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSPI;
       break;
     case(4):
       //cout <<"rho0" << endl;
-      setPionGlauberData(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+//       setPionGlauberData(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+      sigmap = interpolate(sigman_array,log10(p),0.01,151,250.);
+      beta2p = interpolate(beta2n_array,log10(p),0.01,151,250.);
+      epsilonp = interpolate(epsn_array,log10(p),0.01,151,250.);
+      sigman = interpolate(sigmap_array,log10(p),0.01,151,250.);
+      beta2n = interpolate(beta2p_array,log10(p),0.01,151,250.);
+      epsilonn = interpolate(epsp_array,log10(p),0.01,151,250.);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSRHO;
@@ -88,35 +106,53 @@ sigma_decay_n(0.){
   switch(particletype){
     case(0):
       //cout << "proton" << endl;
-      setGlauberParameters(sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
+      setGlauberParameters(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSP;     
       break;
     case(1):
       //cout <<"neutron" << endl;
-      setGlauberParameters(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
+      setGlauberParameters(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSN;
       break;
     case(2):
       //cout <<"pi+" << endl;
-      setPionGlauberData(sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
+//       setPionGlauberData(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
+      sigmap = interpolate(sigmap_array,log10(p),0.01,151,250.);
+      beta2p = interpolate(beta2p_array,log10(p),0.01,151,250.);
+      epsilonp = interpolate(epsp_array,log10(p),0.01,151,250.);
+      sigman = interpolate(sigman_array,log10(p),0.01,151,250.);
+      beta2n = interpolate(beta2n_array,log10(p),0.01,151,250.);
+      epsilonn = interpolate(epsn_array,log10(p),0.01,151,250.);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSPI;
       break;
     case(3):
       //cout <<"pi-" << endl;
-      setPionGlauberData(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+//       setPionGlauberData(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
+      sigmap = interpolate(sigmap_array,log10(p),0.01,151,250.);
+      beta2p = interpolate(beta2p_array,log10(p),0.01,151,250.);
+      epsilonp = interpolate(epsp_array,log10(p),0.01,151,250.);
+      sigman = interpolate(sigman_array,log10(p),0.01,151,250.);
+      beta2n = interpolate(beta2n_array,log10(p),0.01,151,250.);
+      epsilonn = interpolate(epsn_array,log10(p),0.01,151,250.);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSPI;
       break;
     case(4):
       //cout <<"rho0" << endl;
-      setPionGlauberData(sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+//       setPionGlauberData(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
+      sigmap = interpolate(sigman_array,log10(p),0.01,151,250.);
+      beta2p = interpolate(beta2n_array,log10(p),0.01,151,250.);
+      epsilonp = interpolate(epsn_array,log10(p),0.01,151,250.);
+      sigman = interpolate(sigmap_array,log10(p),0.01,151,250.);
+      beta2n = interpolate(beta2p_array,log10(p),0.01,151,250.);
+      epsilonn = interpolate(epsp_array,log10(p),0.01,151,250.);
       nkt_sq=0.35*0.35*4;
       lc=2*p*HBARC/0.7/1e06;
       mass = MASSRHO;
@@ -401,10 +437,10 @@ void FastParticle::printParticle() const{
 /////////////////////////////////////////////
 //calculate parameters for profile function//
 /////////////////////////////////////////////
-void FastParticle::setGlauberParameters(double &sigmapp, double &beta2pp, double &epspp, 
+void FastParticle::setGlauberParameters(double mom, double &sigmapp, double &beta2pp, double &epspp, 
 					double &sigmapn, double &beta2pn, double &epspn){
 
-  double p_gev = p/1000.;
+  double p_gev = mom/1000.;
   double sigmappel, sigmapnel;
 
   // sigmapp
@@ -477,9 +513,9 @@ void FastParticle::setGlauberParameters(double &sigmapp, double &beta2pp, double
 }
 
 
-void FastParticle::setPionGlauberData(double &sigmatotp, double &beta2p, double &epsp, 
+void FastParticle::setPionGlauberData(double mom, double &sigmatotp, double &beta2p, double &epsp, 
 		     double &sigmatotn, double &beta2n, double &epsn, const string dir){
-  double logp=log10(p/1000.);
+  double logp=log10(mom/1000.);
   double sigmaelp, sigmaeln;
   double betap2, betan2;
   //read in all the data
@@ -650,7 +686,7 @@ void FastParticle::setPionGlauberData(double &sigmatotp, double &beta2p, double 
     for(int i=0;i<41;i++) tempdata[i]=pow(10.,epsdata[0][0][i])*1000.;
     a=fitdata(tempdata,epsdata[0][1],epsdata[0][2],0,40,20,chi2);
     epsn=0.;
-    for(int i=0;i<20;i++) epsn+=a[i]*pow(p,i);
+    for(int i=0;i<20;i++) epsn+=a[i]*pow(mom,i);
     delete [] a;
     delete [] tempdata;
   }
