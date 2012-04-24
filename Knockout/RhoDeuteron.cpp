@@ -42,7 +42,7 @@ void RhoDeuteron::intPmt(const double pm, double *result, va_list ap){
   double EN = sqrt(MASS_N*MASS_N+pm*pm);
   rombergerN(this,&RhoDeuteron::intCosThetat,-1.,1.,2,
 	    result,PREC,3,7,pcthestimate, pm, Q2,nu,qvec,t,EN,pphiestimate);
-    for(int i=0;i<2;i++) result[i]*=pm*pm;
+    for(int i=0;i<2;i++) result[i]*=2.*pm*pm;
   
 }
 
@@ -56,7 +56,7 @@ void RhoDeuteron::intCosThetat(const double costheta, double *result, va_list ap
   double *pphiestimate = va_arg(ap,double*);
   
   double sintheta = sqrt(1.-costheta*costheta);
-  rombergerN(this,&RhoDeuteron::intPhit,0.,2.*PI,2,
+  rombergerN(this,&RhoDeuteron::intPhit,0.,PI,2,
 	    result,PREC,3,7,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,t,EN);
  
 }
@@ -178,7 +178,7 @@ void RhoDeuteron::getCrossz(double *result, const double Ebeam,  const double Q2
   double prho=sqrt(Erho*Erho-MASSRHO*MASSRHO*1.E-06);
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
   rombergerN(this,&RhoDeuteron::intPmz,0.,pmax*1.E-03,2,
-	      result,PREC,2,2,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
+	      result,PREC,3,7,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
   
   for(int i=0;i<2;i++) result[i]*=ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon));
   
@@ -198,9 +198,9 @@ void RhoDeuteron::intPmz(const double pm, double *result, va_list ap){
   }
   double EN = sqrt(MASS_N*MASS_N+pm*pm);
   rombergerN(this,&RhoDeuteron::intCosThetaz,-1.,1.,2,
-	    result,PREC,2,2,pcthestimate, pm, Q2,nu,qvec,Erho,prho,EN,pphiestimate);
+	    result,PREC,3,7,pcthestimate, pm, Q2,nu,qvec,Erho,prho,EN,pphiestimate);
   for(int i=0;i<2;i++){
-    result[i]*=pm*pm;
+    result[i]*=2.*pm*pm;  //2. because of symmetry
   }
   cout << pm << " " << result[0] << " " << result[1] << endl;
 
@@ -217,9 +217,9 @@ void RhoDeuteron::intCosThetaz(const double costheta, double *result, va_list ap
   double *pphiestimate = va_arg(ap,double*);
   
   double sintheta = sqrt(1.-costheta*costheta);
-  rombergerN(this,&RhoDeuteron::intPhiz,0.,2.*PI,2,
-	    result,PREC,2,2,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,Erho,prho,EN);
- 
+  rombergerN(this,&RhoDeuteron::intPhiz,0.,PI,2,
+	    result,PREC,3,7,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,Erho,prho,EN);
+
 }
 
 void RhoDeuteron::intPhiz(const double phi, double *result, va_list ap){
@@ -312,7 +312,7 @@ void RhoDeuteron::intPhiz(const double phi, double *result, va_list ap){
       }
     }
   }
-//   cout << pm << " " << discr << " end ";
+//   cout << pm << " " << costheta << " " << phi << " " << discr << " end ";
 //   for(int dd=0;dd<2;dd++) cout << result[dd] << " ";
 //   cout << endl;
 }
