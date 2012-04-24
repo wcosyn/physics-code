@@ -32,10 +32,10 @@ int main(int argc, char *argv[])
       test.getCrosst(results[i],Ebeam,Q2,nu,t);
     }
     else{
-      double z = 0.9+k*0.025;
+      double z = 0.9+k*0.03;
       cout << i << " " << j << " " << k << " " << nu << " " << z << endl;
       test.getCrossz(results[i],Ebeam,Q2,nu,z);
-    cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.025) << " " ;
+    cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
     for (int l=0;l<2;l++) cout << results[i][l] << " ";
     }
   }
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     int j = i/4;
     int k = i%4;
     double nu = nu_min + j*(nu_max-nu_min)/7.;    
-    cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.025) << " " ;
+    cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
     for (int l=0;l<2;l++) cout << results[i][l] << " ";
     cout << endl;
   }
