@@ -12,6 +12,54 @@ using namespace std;
 GlauberGrid::GlauberGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, string dir):
 AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,dir),
 AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,dir),fsi_grid(NULL),fsi_ct_grid(NULL),treshold(NULL){
+  
+    //mem reservation for the grids, index [shelllevel][mindex(postive only due to symmetry][rgrid][thgrid][phgrid]
+  //fsi grid
+  if(fsi_grid==NULL){
+    //cout << "Mem reservation for fsi_grid" << endl;
+    fsi_grid=new complex<double>****[getPnucleus()->getTotalLevels()+1];
+    for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
+      if(i==getPnucleus()->getTotalLevels()) fsi_grid[i]=new complex<double>***[1];
+      else fsi_grid[i]=new complex<double>***[(getPnucleus()->getJ_array()[i]+1)/2];
+      for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
+	fsi_grid[i][j]=new complex<double>**[getRgrid()+1];
+	for(int k=0;k<(getRgrid()+1);k++){
+	  fsi_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
+	  for(int l=0;l<(getCthgrid()+1);l++){
+	    fsi_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
+	  }
+	}
+      }
+    }
+  }
+  else{
+    cerr << "fsi_grid should not be initialized more than once!!!!" << endl;
+    exit(1);
+  }
+  //ct grid
+  if(fsi_ct_grid==NULL){
+    //cout << "Mem reservation for fsi_ct_grid" << endl;
+    fsi_ct_grid=new complex<double>****[getPnucleus()->getTotalLevels()+1];
+    for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
+      if(i==getPnucleus()->getTotalLevels()) fsi_ct_grid[i]=new complex<double>***[1];
+      else fsi_ct_grid[i]=new complex<double>***[(getPnucleus()->getJ_array()[i]+1)/2];
+      for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
+	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
+	for(int k=0;k<(getRgrid()+1);k++){
+	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
+	  for(int l=0;l<(getCthgrid()+1);l++){
+	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
+	  }
+	}
+      }
+    }  
+  }
+  else{
+    cerr << "fsi_ct_grid should not be initialized more than once!!!!" << endl;
+    exit(1);
+  }    
+
+  
 }
 
 //destructor
@@ -138,51 +186,6 @@ void GlauberGrid::setFilenames(string dir){
 
 //calc both fsi and fsi+ct grid
 void GlauberGrid::constructAllGrids(){
-  //mem reservation for the grids, index [shelllevel][mindex(postive only due to symmetry][rgrid][thgrid][phgrid]
-  //fsi grid
-  if(fsi_grid==NULL){
-    //cout << "Mem reservation for fsi_grid" << endl;
-    fsi_grid=new complex<double>****[getPnucleus()->getTotalLevels()+1];
-    for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
-      if(i==getPnucleus()->getTotalLevels()) fsi_grid[i]=new complex<double>***[1];
-      else fsi_grid[i]=new complex<double>***[(getPnucleus()->getJ_array()[i]+1)/2];
-      for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
-	fsi_grid[i][j]=new complex<double>**[getRgrid()+1];
-	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
-	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
-	  }
-	}
-      }
-    }
-  }
-  else{
-    cerr << "fsi_grid should not be initialized more than once!!!!" << endl;
-    exit(1);
-  }
-  //ct grid
-  if(fsi_ct_grid==NULL){
-    //cout << "Mem reservation for fsi_ct_grid" << endl;
-    fsi_ct_grid=new complex<double>****[getPnucleus()->getTotalLevels()+1];
-    for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
-      if(i==getPnucleus()->getTotalLevels()) fsi_ct_grid[i]=new complex<double>***[1];
-      else fsi_ct_grid[i]=new complex<double>***[(getPnucleus()->getJ_array()[i]+1)/2];
-      for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
-	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
-	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
-	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
-	  }
-	}
-      }
-    }  
-  }
-  else{
-    cerr << "fsi_ct_grid should not be initialized more than once!!!!" << endl;
-    exit(1);
-  }    
   //mem reservation for treshold array
   if(treshold==NULL){
     //cout << "Mem reservation for treshold array" << endl;
@@ -329,27 +332,6 @@ void GlauberGrid::constructAllGrids(){
 
 //calc only ct grid
 void GlauberGrid::constructCtGrid(){
-  //mem reservation for grid
-  if(fsi_ct_grid==NULL){
-    fsi_ct_grid=new complex<double>****[getPnucleus()->getTotalLevels()+1];
-    for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
-      if(i==getPnucleus()->getTotalLevels()) fsi_ct_grid[i]=new complex<double>***[1];
-      else fsi_ct_grid[i]=new complex<double>***[(getPnucleus()->getJ_array()[i]+1)/2];
-      for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
-	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
-	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
-	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
-	  }
-	}
-      }
-    }  
-  }
-  else{
-    cerr << "fsi_ct_grid should not be initialized more than once!!!!" << endl;
-    exit(1);
-  }    
   //mem reservation for treshold
   if(treshold==NULL){
     treshold = new int*[getCthgrid()+1];
@@ -500,17 +482,11 @@ void GlauberGrid::calcGlauberphasesCt(const int i, const int j, const int k){
 
 //readin fsi grid
 void GlauberGrid::readinFsiGrid(ifstream &infile){
-  if(fsi_grid==NULL){
-    fsi_grid=new complex<double>****[getPnucleus()->getTotalLevels()+1];
+  if(fsi_grid!=NULL){
     for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
-      if(i==getPnucleus()->getTotalLevels()) fsi_grid[i]=new complex<double>***[1];
-      else fsi_grid[i]=new complex<double>***[(getPnucleus()->getJ_array()[i]+1)/2];
       for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
-	fsi_grid[i][j]=new complex<double>**[getRgrid()+1];
 	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
 	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
 	    for(int mm=0;mm<(getPhigrid()+1);mm++){
 	      infile.read(reinterpret_cast<char *>(&fsi_grid[i][j][k][l][mm]),sizeof(complex<double>));
 	    }
@@ -520,24 +496,18 @@ void GlauberGrid::readinFsiGrid(ifstream &infile){
     }
   }
   else{
-    cerr << "fsi_grid should not be initialized more than once!!!!" << endl;
+    cerr << "fsi_grid not initialized!!!!" << endl;
     exit(1);
   }
 }
 
 //readin fsi+ct grid
 void GlauberGrid::readinFsiCtGrid(ifstream &infile){
-  if(fsi_ct_grid==NULL){
-    fsi_ct_grid=new complex<double>****[getPnucleus()->getTotalLevels()+1];
+  if(fsi_ct_grid!=NULL){
     for(int i=0;i<(getPnucleus()->getTotalLevels()+1);i++){
-      if(i==getPnucleus()->getTotalLevels()) fsi_ct_grid[i]=new complex<double>***[1];
-      else fsi_ct_grid[i]=new complex<double>***[(getPnucleus()->getJ_array()[i]+1)/2];
       for(int j=0;j<(i==getPnucleus()->getTotalLevels()? 1:((getPnucleus()->getJ_array()[i]+1)/2));j++){
-	fsi_ct_grid[i][j]=new complex<double>**[getRgrid()+1];
 	for(int k=0;k<(getRgrid()+1);k++){
-	  fsi_ct_grid[i][j][k]=new complex<double>*[getCthgrid()+1];
 	  for(int l=0;l<(getCthgrid()+1);l++){
-	    fsi_ct_grid[i][j][k][l]=new complex<double>[getPhigrid()+1];
 	    for(int mm=0;mm<(getPhigrid()+1);mm++){
 	      infile.read(reinterpret_cast<char *>(&fsi_ct_grid[i][j][k][l][mm]),sizeof(complex<double>));
 	    }
@@ -547,7 +517,7 @@ void GlauberGrid::readinFsiCtGrid(ifstream &infile){
     }  
   }
   else{
-    cerr << "fsi_ct_grid should not be initialized more than once!!!!" << endl;
+    cerr << "fsi_ct_grid not initialized!!!!" << endl;
     exit(1);
   }    
 }
