@@ -35,6 +35,8 @@ int main(int argc, char *argv[])
       double z = 0.9+k*0.025;
       cout << i << " " << j << " " << k << " " << nu << " " << z << endl;
       test.getCrossz(results[i],Ebeam,Q2,nu,z);
+    cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.025) << " " ;
+    for (int l=0;l<2;l++) cout << results[i][l] << " ";
     }
   }
 

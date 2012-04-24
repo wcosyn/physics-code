@@ -202,7 +202,7 @@ void RhoDeuteron::intPmz(const double pm, double *result, va_list ap){
   for(int i=0;i<2;i++){
     result[i]*=2.*pm*pm;  //2. because of symmetry
   }
-  cout << nu << " " << Erho/nu << " " << pm << " " << result[0] << " " << result[1] << endl;
+//   cout << nu << " " << Erho/nu << " " << pm << " " << result[0] << " " << result[1] << endl;
 
 }
 
