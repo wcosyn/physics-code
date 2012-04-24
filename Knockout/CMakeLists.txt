@@ -4,11 +4,13 @@ project(Knockout)
 
 # fill list of header files 
 set(Knockout_HEADERS_HPP 
+DeuteronMomDistr.hpp
 Model.hpp
 Cross.hpp
 DoubleNModel.hpp
 DoubleNCross.hpp
 RhoTCross.hpp
+RhoDeuteron.hpp
 )
 
 foreach(it ${Knockout_HEADERS_HPP})

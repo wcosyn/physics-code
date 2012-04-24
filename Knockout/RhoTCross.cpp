@@ -7,8 +7,7 @@ homedir(dir),
 pmax(p_max),
 nucleusthick(nucleus,dir),
 pdistgrid(NULL),
-pfsigrid(NULL),
-prho(NULL){
+pfsigrid(NULL){
 
   pfsigrid = new GlauberDecayGridThick*[nucleusthick.getTotalLevels()];
   pdistgrid = new DistMomDistrGrid*[nucleusthick.getTotalLevels()];
@@ -29,6 +28,7 @@ RhoTCross::~RhoTCross(){
 }
 
 //input in GeV!!!!
+//cross section is obtained in units fm^3 GeV^4.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
 void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, const double nu, const double t){
 
   double qvec = sqrt(Q2+nu*nu);
@@ -39,7 +39,7 @@ void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, 
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
   rombergerN(this,&RhoTCross::intPmt,0.,pmax*1.-03,NROFRES,
 	      results,PREC,3,7,&pmestimate,Q2,nu,qvec,t,&cthestimate, &phiestimate);
-  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,3.)*Ebeam*Q2*(1.-epsilon));
+  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon));
   
 }
 
@@ -114,18 +114,18 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
       if(abs(discr)<1.E-09){
 	double pzrho=-b/(2.*a);
 	double Erho = (pzrho*qvec-A)/nu;
-	double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
 	if(Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
 	  if(!isnan(pxrho)){
 	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 	    double costhetarho = pzrho/prho;
-  	  double pnz = Cz-pzrho;
-  	  double pnx = Cx-pxrho;
-  	  double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-  	  double En = sqrt(mN*mN+pn*pn);
-	  double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
-	  double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+// 	double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+//   	  double pnz = Cz-pzrho;
+//   	  double pnx = Cx-pxrho;
+//   	  double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+//   	  double En = sqrt(mN*mN+pn*pn);
+// 	  double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+// 	  double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
 //   	  if(Erho/nu>0.9) cout << "zero " << pm << " " << costheta << " " << phi << " " << i << " " <<  
 //   	    Erho << " " << costhetarho << " " << Erho/nu << " " << pn<< " " << t << 
 //   	    " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
@@ -145,13 +145,13 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
 	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 	    double costhetarho = pzrho/prho;
-	    double pnz = Cz-pzrho;
-	    double pnx = Cx-pxrho;
-	    double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	    double En = sqrt(mN*mN+pn*pn);
-	    double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
-	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+// 	    double pnz = Cz-pzrho;
+// 	    double pnx = Cx-pxrho;
+// 	    double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+// 	    double En = sqrt(mN*mN+pn*pn);
+// 	    double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+// 	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+// 	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
 //   	  if(Erho/nu>0.9) cout << "bla1 " << pm << " " << costheta << " " << phi << " " << i << " " <<  
 //   	    Erho << " " << costhetarho << " " << Erho/nu << " " << pn<< " " << t <<  
 //   	    " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
@@ -169,13 +169,13 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
 	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 	    double costhetarho = pzrho/prho;
-	    double pnz = Cz-pzrho;
-	    double pnx = Cx-pxrho;
-	    double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	    double En = sqrt(mN*mN+pn*pn);
-	    double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
-	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+// 	    double pnz = Cz-pzrho;
+// 	    double pnx = Cx-pxrho;
+// 	    double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+// 	    double En = sqrt(mN*mN+pn*pn);
+// 	    double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+// 	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+// 	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
 //   	  if(Erho/nu>0.9) cout << "bla2 " << pm << " " << costheta << " " << phi << " " << i << " " <<  
 //   	    Erho << " " << costhetarho << " " << Erho/nu << " " << pn<< " " << t <<  
 //   	    " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
@@ -190,6 +190,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 }
 
 //input in GeV!!!!
+//cross section is obtained in units fm^3 GeV^4.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
 void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2, const double nu, const double z){
 
   double qvec = sqrt(Q2+nu*nu);
@@ -203,7 +204,7 @@ void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2,
   rombergerN(this,&RhoTCross::intPmz,0.,pmax*1.E-03,NROFRES,
 	      results,PREC,3,10,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
   
-  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,3.)*Ebeam*Q2*(1.-epsilon));
+  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon));
   
 }
 
@@ -221,12 +222,9 @@ void RhoTCross::intPmz(const double pm, double *results, va_list ap){
   }
   rombergerN(this,&RhoTCross::intCosThetaz,-1.,1.,NROFRES,
 	    results,PREC,3,8,pcthestimate, pm, Q2,nu,qvec,Erho,prho,pphiestimate);
-//   cout << pm << " " ;
-//   for(int i=0;i<NROFRES;i++){
-//     results[i]*=pm*pm;
-//     cout << results[i] << " ";
-//   }
-//  cout << endl;
+  for(int i=0;i<NROFRES;i++){
+    results[i]*=pm*pm;
+  }
 }
 
 void RhoTCross::intCosThetaz(const double costheta, double *results, va_list ap){
@@ -283,11 +281,11 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	if(prho>pzrho&&t<-0.1&&t>-0.4){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);      
 	  double costhetarho = pzrho/prho;
-	  double pnz = Cz-pzrho;
-	  double pnx = Cx-pxrho;
-	  double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	  double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
-	  double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+// 	  double pnz = Cz-pzrho;
+// 	  double pnx = Cx-pxrho;
+// 	  double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+// 	  double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+// 	  double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
 // 	  if(t<-0.1&&t>-0.4) cout << "zero " << pm << " " << costheta << " " << phi << " " << i << " " <<  
 // 	    Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << pnn<< " " << pn  <<
 // 	    " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
@@ -308,11 +306,11 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);
 	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
 	    double costhetarho = pzrho/prho;
-	    double pnz = Cz-pzrho;
-	    double pnx = Cx-pxrho;
-	    double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
-	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+// 	    double pnz = Cz-pzrho;
+// 	    double pnx = Cx-pxrho;
+// 	    double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+// 	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+// 	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
 // 	    if(t<-0.1&&t>-0.4) cout << "bla1 " << pm << " " << costheta << " " << phi << " " << i << " " <<  
 // 	      Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << pnn<< " " << pn  << 
 // 	      " " << massX - nucleusthick.getMassA()*1.E-03 << endl;
@@ -330,11 +328,11 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);	  
 	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
 	    double costhetarho = pzrho/prho;
-	    double pnz = Cz-pzrho;
-	    double pnx = Cx-pxrho;
-	    double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
-	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
-	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
+// 	    double pnz = Cz-pzrho;
+// 	    double pnx = Cx-pxrho;
+// 	    double pnn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
+// 	    double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
+// 	    double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
 // 	    if(t<-0.1&&t>-0.4) cout << "bla2 " << pm << " " << costheta << " " << phi << " " << i << " " <<  
 // 	      Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << pnn<< " " << pn <<
 // 	      " " << massX - nucleusthick.getMassA()*1.E-03 << endl;

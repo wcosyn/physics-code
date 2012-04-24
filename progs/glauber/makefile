@@ -21,7 +21,7 @@ STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
 WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
+CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG)  $(GPFLAG) #$(STATIC)
 
 #		Executable file
 EFILE   = 	../../bin/glaubertest

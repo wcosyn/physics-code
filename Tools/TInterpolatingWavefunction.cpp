@@ -29,6 +29,7 @@
 
 #include "TInterpolatingWavefunction.h"
 #include <iostream>
+#include <TDeuteron.h>
 
 using std::cout; using std::cerr; using std::endl;
 using std::map; using std::pair;
@@ -785,4 +786,41 @@ void TInterpolatingWavefunction::Streamer(TBuffer &R__b)
       }
       R__b.SetByteCount(R__c, kTRUE);
    }
+}
+
+
+std::complex<double> TInterpolatingWavefunction::DeuteronPState(int deuteronPol, int nucleon2Pol,
+						       int nucleon1Pol, 
+						       const TVector3& p) const
+{
+  // Calculate the state of a deuteron in momentum space. 
+  // deuteronPol is the deuteron polarization (times two)
+  // nucleon1pol fixes the polarization of the first nucleon (the one that interacts with the photon). (times two)
+  //nucleon2pol fixes spectator nucleon polarization (times two)
+  
+  // The Dnp vertex matrix element is
+  // BEGIN_LATEX
+  // #frac{1}{2E_{1}} #bar{u}(p_{2},m_{2})u(#dot{p}_{1},m_{1})#Gamma_{#mu}#phi^{#mu}_{D}(m_{D})
+  // = #sum_{L} u_{L}(|#vec{p}_{1}|) #sum_{m_{L},m_{S}} <Lm_{L}Sm_{S}|1m_{D}><#frac{1}{2}m_{1}#frac{1}{2} m_{2}|1m_{S}> Y_{Lm_{L}}(#hat{p}_{1})
+  // END_LATEX
+  // with BEGIN_LATEX #dot{p}_{1} = ( #sqrt{#vec{p}_{1}^{2}+M_{1}^{2}},#vec{p}_{1}) END_LATEX the on-shell 4-momentum of particle 1.
+  // The labelling particle 1 and 2 is arbitrary in the non-relativistic case (You can do the math).
+
+  
+  std::complex<double> state=0.;
+// L=2, mL=mD-mS, S=1, mS=m1+m2
+  for(int mS=-1; mS<=1; ++mS)
+    state -=
+      TDeuteron::Wavefunction::ClebschGordan(4,deuteronPol-mS*2,2,mS*2,2,deuteronPol)
+      *TDeuteron::Wavefunction::ClebschGordan(1,nucleon1Pol,1,nucleon2Pol,2,mS*2)
+      *TDeuteron::Wavefunction::SphericalHarmonicCos(2,deuteronPol/2-mS,p.CosTheta(),p.Phi());
+  state*=GetWp(p.Mag());
+  // L=0, mL=0, S=1, mS=mD
+  state += 
+    TDeuteron::Wavefunction::ClebschGordan(0,0,2,deuteronPol,2,deuteronPol)
+    *TDeuteron::Wavefunction::ClebschGordan(1,nucleon1Pol,1,nucleon2Pol,2,deuteronPol)
+    *TDeuteron::Wavefunction::SphericalHarmonicCos(0,0,p.CosTheta(),p.Phi())
+    *GetUp(p.Mag());
+
+  return state;
 }

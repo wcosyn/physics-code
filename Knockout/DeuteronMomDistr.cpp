@@ -1,5 +1,6 @@
 #include "DeuteronMomDistr.hpp"
 
+#define MASS_N (MASSP+MASSN)*0.5
 
 #include <cmath>
 #include <Utilfunctions.hpp>
@@ -15,13 +16,48 @@ massi(mass),
 massr(massi==MASSP? MASSN:MASSP),
 przprime(-9999.),
 offshellset(offshells){
-  wf = TDeuteron::Wavefunction::CreateWavefunction(name);
+  TDeuteron::Wavefunction *wfref = TDeuteron::Wavefunction::CreateWavefunction(name);
+  for(int i=0;i<=1000.;i++){
+    wf.AddUp(i,wfref->GetUp(i));
+    wf.AddWp(i,wfref->GetWp(i));
+  }
   
+    
+  delete wfref;
+}
+
+//for simple case
+DeuteronMomDistr::DeuteronMomDistr(string name):
+sigma(0.),
+beta(0.),
+epsilon(0.),
+betaoff(0.),
+lambda(0.),
+massi(MASS_N),
+massr(MASS_N),
+przprime(-9999.),
+offshellset(3){
+TDeuteron::Wavefunction *wfref = TDeuteron::Wavefunction::CreateWavefunction(name);
+  for(int i=0;i<=1000.;i++){
+    wf.AddUp(i,wfref->GetUp(i));
+    wf.AddWp(i,wfref->GetWp(i));
+  }
+  
+    
+  delete wfref;  
 }
 
 
 DeuteronMomDistr::~DeuteronMomDistr(){
- delete wf; 
+
+}
+
+//input in [mb],[GeV-2],[]
+void DeuteronMomDistr::setScatter(double sigmain, double betain, double epsin){
+ sigma=sigmain*0.1*INVHBARC*INVHBARC;
+ beta=betain*1.E-06;
+ epsilon=epsin;
+ return; 
 }
 
 
@@ -41,6 +77,21 @@ double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin, double phi) const{
   //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
   pwtotal*=2./3.;
   return pwtotal*MASSD/(2.*(MASSD-sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass())));
+}
+
+
+double DeuteronMomDistr::getMomDistrpw(TVector3 &pvec) const{
+  double pwtotal=0.;
+  for(int M=-2;M<=2;M+=2){
+    for(int spinr=-1;spinr<=1;spinr+=2){
+      complex<double> wave=wf->DeuteronPState(M, -1, spinr, pvec);
+								    
+      pwtotal+=norm(wave);
+    }
+  }
+  //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
+  pwtotal*=2./3.;
+  return pwtotal*MASSD/(2.*(MASSD-sqrt(pvec.Mag2()+massr*massr)));
 }
 
 
@@ -105,7 +156,6 @@ void DeuteronMomDistr::totdens_qphi(const double qphi, complex<double>* result, 
   double costhetaprime,sinthetaprime,cosphiprime,sinphiprime; 
   sincos(thetaprime,&sinthetaprime,&costhetaprime);
   sincos(phiprime,&sinphiprime,&cosphiprime);
-  
   double chi=sqrt(pkin->GetS()*pkin->GetS()-2.*pkin->GetS()*(Wxprime2+massr*massr)+pow(massr*massr-Wxprime2,2.));
   double offshellness=0.;
   if(offshellset==0){
@@ -152,3 +202,81 @@ void DeuteronMomDistr::get_przprime(double pt2, double Er, TKinematics2to2 *pkin
 complex<double> DeuteronMomDistr::scatter(double t){
   return sigma*(I+epsilon)*exp(beta*t/2.); 
 }
+
+//all in MeV!
+double DeuteronMomDistr::getMomDistrfsi(TVector3 &pvec, double nu, double qvec, double s, double massother){
+  double fsitotal=0.;
+  double Er=sqrt(pvec.Mag2()+massr*massr);
+  for(int M=-2;M<=2;M+=2){
+    for(int spinr=-1;spinr<=1;spinr+=2){
+      complex<double> wave=wf->DeuteronPState(M, -1, spinr, pvec);
+      complex<double> result;
+      double qestimate=0.,thestimate=0.;
+      rombergerN(this,&DeuteronMomDistr::totdens_qt_simple,0.,1.E03,1,&result,PREC,3,7,&qestimate, 
+				  &pvec, M,spinr, Er,nu,qvec,s,massother, &thestimate);
+      wave+=I/(32.*PI*PI*qvec*sqrt(Er))*result/sqrt(MASSD/(2.*(MASSD-Er)));
+
+      fsitotal+=norm(wave);
+    }
+  }
+  //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
+  fsitotal*=2./3.;
+  return fsitotal*MASSD/(2.*(MASSD-Er));
+}
+
+
+void DeuteronMomDistr::totdens_qt_simple(const double qt, complex<double>* result, va_list ap){
+  
+  TVector3 *p_pvec = va_arg(ap,TVector3*);
+  int M = va_arg(ap,int);
+  int spinr = va_arg(ap,int);
+  double Er = va_arg(ap,double);
+  double nu = va_arg(ap,double);
+  double qvec = va_arg(ap,double);
+  double s = va_arg(ap,double);
+  double massother = va_arg(ap,double);
+  double *pthestimate = va_arg(ap,double*);
+  
+
+  rombergerN(this,&DeuteronMomDistr::totdens_qphi_simple,0.,2*PI,1,result,PREC,3,7,
+	      pthestimate,p_pvec,qt,M,spinr,Er,nu,qvec,massother);
+  *result*=qt;
+  
+}
+
+void DeuteronMomDistr::totdens_qphi_simple(const double qphi, complex<double>* result, va_list ap){
+  
+  TVector3 *p_pvec = va_arg(ap,TVector3*);
+  double qt = va_arg(ap,double);
+  int M = va_arg(ap,int);
+  int spinr = va_arg(ap,int);
+  double Er = va_arg(ap,double);
+  double nu = va_arg(ap,double);
+  double qvec = va_arg(ap,double);
+  double s = va_arg(ap,double);
+  double massother = va_arg(ap,double);
+  
+  double prt=p_pvec->Mag()*sqrt(1.-p_pvec->CosTheta()*p_pvec->CosTheta()); //pr'_t
+  double pt2=prt*prt+qt*qt-2.*prt*qt*cos(qphi-p_pvec->Phi()); //perp mom of initial spectator
+
+  przprime = p_pvec->Z()-(nu+MASSD)/qvec*(Er-sqrt(massr*massr+pt2));
+  double pprime = sqrt(pt2+przprime*przprime);
+  double thetaprime=acos(przprime/pprime);
+  double phiprime=atan2(prt*sin(p_pvec->Phi())-qt*sin(qphi),prt*cos(p_pvec->Phi())-qt*cos(qphi));
+  double Erprime=sqrt(massr*massr+pprime*pprime);
+  if(Erprime>MASSD){
+    *result=0.;
+    return;
+  }
+  double t=(Er-Erprime)*(Er-Erprime)-(p_pvec->Z()-przprime)*(p_pvec->Z()-przprime)-qt*qt;
+  double costhetaprime,sinthetaprime,cosphiprime,sinphiprime; 
+  sincos(thetaprime,&sinthetaprime,&costhetaprime);
+  sincos(phiprime,&sinphiprime,&cosphiprime);
+  
+  double chi=sqrt(s*s-2.*s*(massother*massother+massr*massr)+pow(massr*massr-massother*massother,2.));
+  TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
+  *result = chi*scatter(t)*(wf->DeuteronPState(M, -1, spinr, vecprime))
+	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime));
+  
+}
+

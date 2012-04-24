@@ -393,7 +393,7 @@ void AbstractFsiGrid::fillGrids(){
     infile.close();
   }
   else{
-    cout << "Constructing all grids" << endl;
+//     cout << "Constructing all grids" << endl;
     constructAllGrids();
     filledgrid=filledallgrid=1;
     ofstream outfile(fsi_filename.c_str(),ios::out|ios::binary);

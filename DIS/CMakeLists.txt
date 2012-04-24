@@ -6,7 +6,6 @@ project(DIS)
 set(DIS_HEADERS_HPP 
 InclusiveCross.hpp
 InclusiveCrossRes.hpp
-DeuteronMomDistr.hpp
 DeuteronCross.hpp
 Resonance.hpp
 )
@@ -19,7 +18,7 @@ endforeach()
 
 set(INCLUDE_DIRECTORIES
 ${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/Tools" "${CMAKE_SOURCE_DIR}/Glauber"
-)
+"${CMAKE_SOURCE_DIR}/Knockout")
 include_directories( ${INCLUDE_DIRECTORIES})
 
 
@@ -41,7 +40,7 @@ SET(DIS_LIBRARY_PROPERTIES ${DIS_LIBRARY_PROPERTIES}
 add_library(DIS SHARED ${DIS_SRCS})
 target_link_libraries(DIS ${LIBRARIES})
 set_target_properties(DIS PROPERTIES ${DIS_LIBRARY_PROPERTIES})
-target_link_libraries (DIS MePhys Glauber)
+target_link_libraries (DIS MePhys Glauber Knockout)
 ############### build the library #####################
 add_library(DISST STATIC ${DIS_SRCS})
 target_link_libraries(DISST -Wl,-no-whole-archive)

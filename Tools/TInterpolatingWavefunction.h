@@ -13,6 +13,7 @@
 
 #include <map>
 #include "TWavefunctionImplementation.h"
+#include <complex>
 
 class TInterpolatingWavefunction : public TWavefunctionImplementation
 {
@@ -67,7 +68,7 @@ class TInterpolatingWavefunction : public TWavefunctionImplementation
   virtual double GetUpoff(const TVector3& p) const; // p in [MeV]
   virtual double GetWpoff1(const TVector3& p) const; // p in [MeV]
   virtual double GetWpoff2(double pperp2) const; // p in [MeV]
-
+  virtual std::complex<double> DeuteronPState(int deuteronPol, int nucleon2Pol,int nucleon1Pol, const TVector3& p) const;
  protected:
   double Interpolate(std::map<double,double>* list, double q) const;
 

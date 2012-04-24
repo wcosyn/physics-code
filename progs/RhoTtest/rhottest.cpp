@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     int k = i%4;
     double nu = nu_min + j*(nu_max-nu_min)/7.;    
     cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
-    for (int j=0;j<NROFRES;j++) cout << results[i][j] << " ";
+    for (int l=0;l<NROFRES;l++) cout << results[i][l] << " ";
     cout << endl;
   }
   TMPI::SilenceSlaves(false);
