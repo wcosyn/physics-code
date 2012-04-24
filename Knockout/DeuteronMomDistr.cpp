@@ -16,14 +16,13 @@ massi(mass),
 massr(massi==MASSP? MASSN:MASSP),
 przprime(-9999.),
 offshellset(offshells){
-  TDeuteron::Wavefunction *wfref = TDeuteron::Wavefunction::CreateWavefunction(name);
-  for(int i=0;i<=1000.;i++){
+  wfref = TDeuteron::Wavefunction::CreateWavefunction(name);
+  for(int i=0;i<=1000;i++){
     wf.AddUp(i,wfref->GetUp(i));
     wf.AddWp(i,wfref->GetWp(i));
   }
   
     
-  delete wfref;
 }
 
 //for simple case
@@ -37,19 +36,18 @@ massi(MASS_N),
 massr(MASS_N),
 przprime(-9999.),
 offshellset(3){
-TDeuteron::Wavefunction *wfref = TDeuteron::Wavefunction::CreateWavefunction(name);
-  for(int i=0;i<=1000.;i++){
+  wfref = TDeuteron::Wavefunction::CreateWavefunction(name);
+  for(int i=0;i<=2000.;i++){
     wf.AddUp(i,wfref->GetUp(i));
     wf.AddWp(i,wfref->GetWp(i));
   }
   
     
-  delete wfref;  
 }
 
 
 DeuteronMomDistr::~DeuteronMomDistr(){
-
+  delete wfref;
 }
 
 //input in [mb],[GeV-2],[]
@@ -67,7 +65,7 @@ double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin, double phi) const{
   double sintheta=sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
   for(int M=-2;M<=2;M+=2){
     for(int spinr=-1;spinr<=1;spinr+=2){
-      complex<double> wave=wf->DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta*cos(phi),
+      complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta*cos(phi),
 								     kin.GetPklab()*sintheta*sin(phi),
 								     kin.GetPklab()*kin.GetCosthklab()));
 								    
@@ -84,8 +82,7 @@ double DeuteronMomDistr::getMomDistrpw(TVector3 &pvec) const{
   double pwtotal=0.;
   for(int M=-2;M<=2;M+=2){
     for(int spinr=-1;spinr<=1;spinr+=2){
-      complex<double> wave=wf->DeuteronPState(M, -1, spinr, pvec);
-								    
+      complex<double> wave=wf.DeuteronPState(M, -1, spinr, pvec);
       pwtotal+=norm(wave);
     }
   }
@@ -101,7 +98,7 @@ double DeuteronMomDistr::getMomDistrfsi(TKinematics2to2 &kin, double phi){
   double Er=sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass());
   for(int M=-2;M<=2;M+=2){
     for(int spinr=-1;spinr<=1;spinr+=2){
-      complex<double> wave=wf->DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta*cos(phi),
+      complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta*cos(phi),
 								    kin.GetPklab()*sintheta*sin(phi),
 								    kin.GetPklab()*kin.GetCosthklab()));
       complex<double> result;
@@ -170,8 +167,8 @@ void DeuteronMomDistr::totdens_qphi(const double qphi, complex<double>* result, 
   if(offshellset==3) offshellness=0.;
   if(offshellset==4) offshellness=1.;
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
-  *result = chi*scatter(t)*(wf->DeuteronPState(M, -1, spinr, vecprime)
- 	 +(offshellness*wf->DeuteronPStateOff(M, -1, spinr, vecprime)))
+  *result = chi*scatter(t)*(wf.DeuteronPState(M, -1, spinr, vecprime)
+ 	 +(offshellness*wfref->DeuteronPStateOff(M, -1, spinr, vecprime)))
 	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime));
   
 }
@@ -209,7 +206,7 @@ double DeuteronMomDistr::getMomDistrfsi(TVector3 &pvec, double nu, double qvec, 
   double Er=sqrt(pvec.Mag2()+massr*massr);
   for(int M=-2;M<=2;M+=2){
     for(int spinr=-1;spinr<=1;spinr+=2){
-      complex<double> wave=wf->DeuteronPState(M, -1, spinr, pvec);
+      complex<double> wave=wf.DeuteronPState(M, -1, spinr, pvec);
       complex<double> result;
       double qestimate=0.,thestimate=0.;
       rombergerN(this,&DeuteronMomDistr::totdens_qt_simple,0.,1.E03,1,&result,PREC,3,7,&qestimate, 
@@ -275,7 +272,7 @@ void DeuteronMomDistr::totdens_qphi_simple(const double qphi, complex<double>* r
   
   double chi=sqrt(s*s-2.*s*(massother*massother+massr*massr)+pow(massr*massr-massother*massother,2.));
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
-  *result = chi*scatter(t)*(wf->DeuteronPState(M, -1, spinr, vecprime))
+  *result = chi*scatter(t)*(wf.DeuteronPState(M, -1, spinr, vecprime))
 	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime));
   
 }

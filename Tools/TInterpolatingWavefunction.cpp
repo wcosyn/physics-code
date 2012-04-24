@@ -515,14 +515,14 @@ double TInterpolatingWavefunction::Interpolate(map<double,double>* list,
   if( v2==list->end() ) {
     --v2; // move iterator one back
     if( v2->first!=q ) {
-      cerr << "WARNING in TInterpolatingWavefunction::Interpolate(map*,double): "
+      cerr << q << " WARNING in TInterpolatingWavefunction::Interpolate(map*,double): "
 	   << "requested point outside range of tabulated values.\n";
       return 0;
     }
   }
   
   if( v2==list->begin() ) {
-    cerr << "WARNING in TInterpolatingWavefunction::Interpolate(map*,double): "
+    cerr << q << " WARNING in TInterpolatingWavefunction::Interpolate(map*,double): "
 	 << "requested point outside range of tabulated values.\n";
     return 0;
   }

@@ -20,7 +20,7 @@ public:
   double getMomDistrfsi(TVector3 &pvec, double nu, double qvec, double s, double massother);
   void setScatter(double sigmain, double betain, double epsin);
 private:
-//   TDeuteron::Wavefunction *wf;
+   TDeuteron::Wavefunction *wfref;
   TInterpolatingWavefunction wf;
   double sigma;  //MeV-2
   double beta;  //MeV-2
