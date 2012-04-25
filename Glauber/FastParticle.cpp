@@ -854,3 +854,37 @@ double FastParticle::getBdist(double r, double costheta, double sintheta, double
 	 +pow(getHitbvec()[1]-r*sintheta*sinphi+zmom*getEy(),2.)
 	 +pow(getHitbvec()[2]-r*costheta+zmom*getEz(),2.);
 }
+
+void FastParticle::interpPionGlauberData(int particletype, double mom, double &sigmap, double &beta2p, double &epsilonp, 
+		     double &sigman, double &beta2n, double &epsilonn){
+  switch(particletype){
+  case(2):
+    //cout <<"pi+" << endl;
+    sigmap = interpolate(sigmap_array,log10(mom),0.01,151,250.);
+    beta2p = interpolate(beta2p_array,log10(mom),0.01,151,250.);
+    epsilonp = interpolate(epsp_array,log10(mom),0.01,151,250.);
+    sigman = interpolate(sigman_array,log10(mom),0.01,151,250.);
+    beta2n = interpolate(beta2n_array,log10(mom),0.01,151,250.);
+    epsilonn = interpolate(epsn_array,log10(mom),0.01,151,250.);
+    break;
+  case(3):
+    //cout <<"pi-" << endl;
+    sigmap = interpolate(sigmap_array,log10(mom),0.01,151,250.);
+    beta2p = interpolate(beta2p_array,log10(mom),0.01,151,250.);
+    epsilonp = interpolate(epsp_array,log10(mom),0.01,151,250.);
+    sigman = interpolate(sigman_array,log10(mom),0.01,151,250.);
+    beta2n = interpolate(beta2n_array,log10(mom),0.01,151,250.);
+    epsilonn = interpolate(epsn_array,log10(mom),0.01,151,250.);
+    break;
+  case(4):
+    //cout <<"rho0" << endl;
+    sigman=sigmap = (interpolate(sigman_array,log10(mom),0.01,151,250.)+interpolate(sigmap_array,log10(mom),0.01,151,250.))*0.5;
+    beta2n=beta2p = (interpolate(beta2n_array,log10(mom),0.01,151,250.)+interpolate(beta2p_array,log10(mom),0.01,151,250.))*0.5;
+    epsilonn = epsilonp = (interpolate(epsn_array,log10(mom),0.01,151,250.)+interpolate(epsp_array,log10(mom),0.01,151,250.))*0.5;
+    break;
+  default:
+    cerr << "Particle type is not yet supported!!: " << particletype << endl;
+    exit(1);
+  }
+  return;
+}

@@ -98,7 +98,6 @@ complex<double> DeuteronMomDistr::getMomDistrpwcoh(TVector3 &pvec,TVector3 &pvec
     for(int spins=-1;spins<=1;spins+=2){
       
     complex<double> wave= wf.DeuteronPState(M, spins, spinr, pvec)*conj(wf.DeuteronPState(M2,spins,spinr,pvec));
-    //cout << M << " " << M2 << " " << spinr << " " << spins << " " << wave << endl;
     total+=wave;
     }
   }
@@ -224,7 +223,7 @@ double DeuteronMomDistr::getMomDistrfsi(TVector3 &pvec, double nu, double qvec, 
       complex<double> wave=wf.DeuteronPState(M, -1, spinr, pvec);
       complex<double> result;
       double qestimate=0.,thestimate=0.;
-      rombergerN(this,&DeuteronMomDistr::totdens_qt_simple,0.,1.E03,1,&result,PREC,3,7,&qestimate, 
+      rombergerN(this,&DeuteronMomDistr::totdens_qt_simple,0.,1.E03,1,&result,PREC,3,6,&qestimate, 
 				  &pvec, M,spinr, Er,nu,qvec,s,massother, &thestimate);
       wave+=I/(32.*PI*PI*qvec*sqrt(Er))*result/sqrt(MASSD/(2.*(MASSD-Er)));
 
@@ -250,7 +249,7 @@ void DeuteronMomDistr::totdens_qt_simple(const double qt, complex<double>* resul
   double *pthestimate = va_arg(ap,double*);
   
 
-  rombergerN(this,&DeuteronMomDistr::totdens_qphi_simple,0.,2*PI,1,result,PREC,3,7,
+  rombergerN(this,&DeuteronMomDistr::totdens_qphi_simple,0.,2*PI,1,result,PREC,3,5,
 	      pthestimate,p_pvec,qt,M,spinr,Er,nu,qvec,massother);
   *result*=qt;
   

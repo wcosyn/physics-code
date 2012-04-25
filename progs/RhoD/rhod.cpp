@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
   double **results = new double*[n];  
   for(int i=0;i<n;i++) results[i] = new double[NROFRES];
 
-  RhoDeuteron test = RhoDeuteron("paris",400,argv[5]);
+  RhoDeuteron test = RhoDeuteron("paris",400);
   
   for(int i=TMPI::Rank(); i<n; i += TMPI::NumberOfProcesses() ) {
     int j = i/4;
@@ -31,12 +31,15 @@ int main(int argc, char *argv[])
     double nu = nu_min + j*(nu_max-nu_min)/7.;
     if(torz){
       double t = -0.1 + k*(-0.1);
-      test.getCrosst_coh(results[i],Ebeam,Q2,nu,t);
+      test.getCrosst(results[i],Ebeam,Q2,nu,t);
+      test.getCrosst_coh(&results[i][2],Ebeam,Q2,nu,t);
     }
     else{
       double z = 0.9+k*0.03;
 //       cout << i << " " << j << " " << k << " " << nu << " " << z << endl;
-      test.getCrossz_coh(results[i],Ebeam,Q2,nu,z);
+      test.getCrossz(results[i],Ebeam,Q2,nu,z);
+      test.getCrossz_coh(&results[i][2],Ebeam,Q2,nu,z);
+//       cout << i << " " << results[i][0] << " " << results[i][2] << endl;
 //     cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
 //     for (int l=0;l<2;l++) cout << results[i][l] << " ";
 //     cout << endl;
@@ -51,7 +54,7 @@ int main(int argc, char *argv[])
     int k = i%4;
     double nu = nu_min + j*(nu_max-nu_min)/7.;    
     cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
-    for (int l=0;l<2;l++) cout << results[i][l] << " ";
+    for (int l=0;l<3;l++) cout << results[i][l] << " ";
     cout << endl;
   }
   TMPI::SilenceSlaves(false);

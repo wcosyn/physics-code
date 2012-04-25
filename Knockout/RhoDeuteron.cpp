@@ -3,9 +3,8 @@
 #include <FastParticle.hpp>
 #define MASS_N (MASSP+MASSN)*0.5E-03
 
-RhoDeuteron::RhoDeuteron(const string name, const double p_max, const string dir):
+RhoDeuteron::RhoDeuteron(const string name, const double p_max):
 pmax(p_max),
-homedir(dir),
 deuteron(name){
 
 }
@@ -202,7 +201,7 @@ void RhoDeuteron::intPmz(const double pm, double *result, va_list ap){
   for(int i=0;i<2;i++){
     result[i]*=2.*pm*pm;  //2. because of symmetry
   }
-  cout << pm << " " << result[0] << " " << result[1] << endl;
+  //cout << pm << " " << result[0] << " " << result[1] << endl;
 
 }
 
@@ -323,10 +322,10 @@ void RhoDeuteron::getMomdistr(double *results, double Erho, double prho, double 
   
   double s = MASS_N*MASS_N*1.E06+MASSRHO*MASSRHO+2.*Erho*sqrt(MASS_N*MASS_N*1.E06+pmvec.Mag2())-2.*(pzrho*pmvec.Z()+pxrho*pmvec.X());
   double sigmap, beta2p, epsp, sigman, beta2n, epsn;
-  FastParticle::setPionGlauberData(prho,sigmap,beta2p,epsp,sigman,beta2n,epsn,homedir);
-  deuteron.setScatter(0.5*10.*(sigmap+sigman),0.5*(beta2n+beta2p)*INVHBARC*INVHBARC*1.E06,0.5*(epsn+epsp));//careful with units!
-  /*results[1] = */results[0] = deuteron.getMomDistrpw(pmvec)*pow(HBARC,3.);
-  results[1] = deuteron.getMomDistrfsi(pmvec, nu, qvec, s, MASSRHO)*pow(HBARC,3.);
+  FastParticle::interpPionGlauberData(4,prho,sigmap,beta2p,epsp,sigman,beta2n,epsn);
+  deuteron.setScatter(10.*sigmap,beta2p*INVHBARC*INVHBARC*1.E06,epsp);//careful with units!
+  results[1] = results[0] = deuteron.getMomDistrpw(pmvec)*pow(HBARC,3.);
+//   results[1] = deuteron.getMomDistrfsi(pmvec, nu, qvec, s, MASSRHO)*pow(HBARC,3.);
   //cout << pmvec.Mag() << " " << nu << " " << qvec << " " << s << " " << results[0] << " " << results[1] << endl;
 }  
   
@@ -372,7 +371,7 @@ void RhoDeuteron::getCrosst_coh(double *result, const double Ebeam, const double
       TVector3 pDvec = TVector3(pDx*1.E-03,0.,pDx*1.E-03);
       *result = calcCross_coh(pDvec)
 		*ALPHA*(Ebeam-nu)*prho*ss*exp(6*t)/(pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon)*MASSD*1.E-03*abs(ED+Erho*(1-qvec*pzrho/prho/prho)));
-      cout << nu << " " << t << " " << *result << endl;
+//       cout << nu << " " << t << " " << *result << endl;
     }
   }
   else *result=0.;
@@ -399,7 +398,7 @@ void RhoDeuteron::getCrossz_coh(double *result, const double Ebeam,  const doubl
 //     cout << t << " " << pD*pD << " " << pxrho*pxrho+(qvec-pzrho)*(qvec-pzrho) << " " << pzrho/prho << endl;
     *result = calcCross_coh(pDvec)
     *ALPHA*(Ebeam-nu)*prho*ss*exp(6*t)/(pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon)*MASSD*1.E-03*abs(ED+Erho*(1-qvec*pzrho/prho/prho)));    
-    cout << nu << " " << z << " " << *result << endl;
+//     cout << nu << " " << z << " " << *result << endl;
   }
   else *result=0.;
 }
@@ -407,6 +406,7 @@ void RhoDeuteron::getCrossz_coh(double *result, const double Ebeam,  const doubl
 double RhoDeuteron::calcCross_coh(TVector3 &pDvec){
   double result=0.;
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
+  //because of symmetry between sd and -sd for both incoming and outgoing deuteron we can simplify the summation
   complex<double> intresult;
   rombergerN(this,&RhoDeuteron::intPmcoh,0.,pmax,1,
 	  &intresult,PREC,3,7,&pmestimate,&pDvec,-2,-2,&cthestimate, &phiestimate);

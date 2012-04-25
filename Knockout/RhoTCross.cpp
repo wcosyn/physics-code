@@ -39,7 +39,7 @@ void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, 
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
   rombergerN(this,&RhoTCross::intPmt,0.,pmax*1.-03,NROFRES,
 	      results,PREC,3,7,&pmestimate,Q2,nu,qvec,t,&cthestimate, &phiestimate);
-  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon));
+  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon))/nucleusthick.getA();
   
 }
 
@@ -204,7 +204,7 @@ void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2,
   rombergerN(this,&RhoTCross::intPmz,0.,pmax*1.E-03,NROFRES,
 	      results,PREC,3,10,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
   
-  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon));
+  for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon))/nucleusthick.getA();
   
 }
 
@@ -356,14 +356,14 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 //all energies in MeV please
 void RhoTCross::getMomdistr(double *results, double prho, double thetarho, double Q2, int shell, 
 			    double pm, double pmcostheta, double pmphi){
-  FastParticle rho(4, 0, prho,thetarho,0.,Q2,145.,homedir);
-  pfsigrid[shell]->clearParticles();
-  pfsigrid[shell]->addParticle(rho);
-  pfsigrid[shell]->updateGrids();
-  pfsigrid[shell]->clearKnockout();
-  pdistgrid[shell]->updateGrids(pfsigrid[shell],shell);
-  for(int i=0;i<NROFRES-1;i++) results[i]= pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
+//   FastParticle rho(4, 0, prho,thetarho,0.,Q2,145.,homedir);
+//   pfsigrid[shell]->clearParticles();
+//   pfsigrid[shell]->addParticle(rho);
+//   pfsigrid[shell]->updateGrids();
+//   pfsigrid[shell]->clearKnockout();
+//   pdistgrid[shell]->updateGrids(pfsigrid[shell],shell);
   results[NROFRES-1] = pdistgrid[shell]->getRhopwGridFull_interp(pm);
+  for(int i=0;i<NROFRES-1;i++) results[i]= results[NROFRES-1];//pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
   
   //delete pdistgrid;
 //   delete pfsigrid;

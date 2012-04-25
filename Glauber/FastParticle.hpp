@@ -204,6 +204,7 @@ public:
    * \param dir string that contains the dir where all input is located
    */
   static void setPionGlauberData(double mom, double &sigmap, double &beta2p, double &epsp, double &sigman, double &beta2n, double &epsn, string dir);
+  static void interpPionGlauberData(int particletype, double mom, double &sigmap, double &beta2p, double &epsp, double &sigman, double &beta2n, double &epsn);
     
 private:
   int particletype; /*!< which particle [0-4] = [proton, neutron, pi+, pi-,rho0] can be extended of course */
