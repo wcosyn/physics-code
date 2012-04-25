@@ -356,14 +356,14 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 //all energies in MeV please
 void RhoTCross::getMomdistr(double *results, double prho, double thetarho, double Q2, int shell, 
 			    double pm, double pmcostheta, double pmphi){
-//   FastParticle rho(4, 0, prho,thetarho,0.,Q2,145.,homedir);
-//   pfsigrid[shell]->clearParticles();
-//   pfsigrid[shell]->addParticle(rho);
-//   pfsigrid[shell]->updateGrids();
-//   pfsigrid[shell]->clearKnockout();
-//   pdistgrid[shell]->updateGrids(pfsigrid[shell],shell);
+  FastParticle rho(4, 0, prho,thetarho,0.,Q2,145.,homedir);
+  pfsigrid[shell]->clearParticles();
+  pfsigrid[shell]->addParticle(rho);
+  pfsigrid[shell]->updateGrids();
+  pfsigrid[shell]->clearKnockout();
+  pdistgrid[shell]->updateGrids(pfsigrid[shell],shell);
+  for(int i=0;i<NROFRES-1;i++) results[i]= pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
   results[NROFRES-1] = pdistgrid[shell]->getRhopwGridFull_interp(pm);
-  for(int i=0;i<NROFRES-1;i++) results[i]= results[NROFRES-1];//pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
   
   //delete pdistgrid;
 //   delete pfsigrid;
