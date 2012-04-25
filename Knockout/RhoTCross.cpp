@@ -37,7 +37,7 @@ void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, 
 		     *((1.-fScatterAngle)/(1.+fScatterAngle)));
   
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
-  rombergerN(this,&RhoTCross::intPmt,0.,pmax*1.-03,NROFRES,
+  rombergerN(this,&RhoTCross::intPmt,0.,pmax*1.E-03,NROFRES,
 	      results,PREC,3,7,&pmestimate,Q2,nu,qvec,t,&cthestimate, &phiestimate);
   for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon))/nucleusthick.getA();
   
@@ -362,8 +362,8 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
   pfsigrid[shell]->updateGrids();
   pfsigrid[shell]->clearKnockout();
   pdistgrid[shell]->updateGrids(pfsigrid[shell],shell);
-  for(int i=0;i<NROFRES-1;i++) results[i]= pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
   results[NROFRES-1] = pdistgrid[shell]->getRhopwGridFull_interp(pm);
+  for(int i=0;i<NROFRES-1;i++) results[i]= pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
   
   //delete pdistgrid;
 //   delete pfsigrid;

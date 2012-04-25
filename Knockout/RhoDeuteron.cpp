@@ -103,7 +103,7 @@ void RhoDeuteron::intPhit(const double phi, double *result, va_list ap){
 	double pnx = Cx-pxrho;
 // 	double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
 	double En = sqrt(MASS_N*MASS_N+pnx*pnx+pnz*pnz+Cy*Cy);	
-//   	  /*if(Erho/nu>0.9)*/ cout << "zero " << pm << " " << costheta << " " << phi << " " << 
+//   	   cout << "zero " << pm << " " << costheta << " " << phi << " " << 
 //   	    Erho << " " << costhetarho << " " << Erho/nu << " " << tt << 
 //   	    " " << C0 << " " << En+Erho << endl;
 // 	  *result +=getMomdistr(prho*1.E03,acos(costhetarho),Q2,pm*1.E03,costheta,phi);	  
@@ -129,7 +129,7 @@ void RhoDeuteron::intPhit(const double phi, double *result, va_list ap){
 // 	  double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
 	double En = sqrt(MASS_N*MASS_N+pnx*pnx+pnz*pnz+Cy*Cy);	
 	  
-//  	  /*if(Erho/nu>0.9)*/ cout << "2nd " << pm << " " << costheta << " " << phi << " " << 
+//  	  cout << "2nd " << pm << " " << costheta << " " << phi << " " << 
 //   	    Erho << " " << costhetarho << " " << Erho/nu << " " << tt << 
 //   	    " " << C0 << " " << En+Erho << endl;
 	  
@@ -150,7 +150,7 @@ void RhoDeuteron::intPhit(const double phi, double *result, va_list ap){
 	  double pnx = Cx-pxrho;
 // 	  double pn = sqrt(pnx*pnx+pnz*pnz+Cy*Cy);
 	double En = sqrt(MASS_N*MASS_N+pnx*pnx+pnz*pnz+Cy*Cy);	
-//  	  /*if(Erho/nu>0.9)*/ cout << "3rd " << pm << " " << costheta << " " << phi << " " <<  
+//  	   cout << "3rd " << pm << " " << costheta << " " << phi << " " <<  
 //   	    Erho << " " << costhetarho << " " << Erho/nu << " " << tt << 
 //   	    " " << C0 << " " << En+Erho << endl;
 	  
@@ -260,7 +260,7 @@ void RhoDeuteron::intPhiz(const double phi, double *result, va_list ap){
 // 	double pnz = Cz-pzrho;
 // 	double pnx = Cx-pxrho;
 // 	double Enn = sqrt(MASS_N*MASS_N+pnx*pnx+pnz*pnz+Cy*Cy);
-// 	/*if(t<-0.1&&t>-0.4)*/ cout << "zero " << pm << " " << costheta << " " << phi << " " <<
+// 	 cout << "zero " << pm << " " << costheta << " " << phi << " " <<
 // 	  Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << En<< " " << Enn  << endl;
 // 	  *result +=getMomdistr(prho*1.E03,acos(costhetarho),Q2,pm*1.E03,costheta,phi);	  
 // 		    *getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En);
@@ -281,7 +281,7 @@ void RhoDeuteron::intPhiz(const double phi, double *result, va_list ap){
 // 	  double pnz = Cz-pzrho;
 // 	  double pnx = Cx-pxrho;
 // 	  double Enn = sqrt(MASS_N*MASS_N+pnx*pnx+pnz*pnz+Cy*Cy);
-// 	  /*if(t<-0.1&&t>-0.4)*/ cout << "2nd " << pm << " " << costheta << " " << phi << " " <<  
+// 	   cout << "2nd " << pm << " " << costheta << " " << phi << " " <<  
 // 	    Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << En<< " " << Enn  << endl;
 // 	  *result +=getMomdistr(prho*1.E03,acos(costhetarho),Q2,pm*1.E03,costheta,phi);	  
 // 		    *getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En);
@@ -299,7 +299,7 @@ void RhoDeuteron::intPhiz(const double phi, double *result, va_list ap){
 // 	  double pnz = Cz-pzrho;
 // 	  double pnx = Cx-pxrho;
 // 	  double Enn = sqrt(MASS_N*MASS_N+pnx*pnx+pnz*pnz+Cy*Cy);
-// 	 /* if(t<-0.1&&t>-0.4)*/ cout << "2nd " << pm << " " << costheta << " " << phi << " " << 
+// 	  cout << "2nd " << pm << " " << costheta << " " << phi << " " << 
 // 	    Erho << " " << costhetarho << " " << Erho/nu << " " << t << " " << En<< " " << Enn  << endl;
 // 	  *result +=getMomdistr(prho*1.E03,acos(costhetarho),Q2,pm*1.E03,costheta,phi);	  
 // 		    *getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En);
@@ -311,9 +311,6 @@ void RhoDeuteron::intPhiz(const double phi, double *result, va_list ap){
       }
     }
   }
-//   cout << pm << " " << costheta << " " << phi << " " << discr << " end ";
-//   for(int dd=0;dd<2;dd++) cout << result[dd] << " ";
-//   cout << endl;
 }
 
 //all energies in MeV please
