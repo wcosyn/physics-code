@@ -16,6 +16,7 @@ public:
   ~DeuteronMomDistr();
   double getMomDistrpw(TKinematics2to2 &kin, double phi) const;
   double getMomDistrpw(TVector3 &pvec) const;  
+  complex<double> getMomDistrpwcoh(TVector3 &pvec,TVector3 &pvec2,int M, int M2) const;
   double getMomDistrfsi(TKinematics2to2 &kin, double phi);
   double getMomDistrfsi(TVector3 &pvec, double nu, double qvec, double s, double massother);
   void setScatter(double sigmain, double betain, double epsin);

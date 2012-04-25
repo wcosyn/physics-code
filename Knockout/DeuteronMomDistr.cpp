@@ -92,6 +92,21 @@ double DeuteronMomDistr::getMomDistrpw(TVector3 &pvec) const{
 }
 
 
+complex<double> DeuteronMomDistr::getMomDistrpwcoh(TVector3 &pvec,TVector3 &pvec2,int M, int M2) const{
+  complex<double> total=0.;
+  for(int spinr=-1;spinr<=1;spinr+=2){
+    for(int spins=-1;spins<=1;spins+=2){
+      
+    complex<double> wave= wf.DeuteronPState(M, spins, spinr, pvec)*conj(wf.DeuteronPState(M2,spins,spinr,pvec));
+    //cout << M << " " << M2 << " " << spinr << " " << spins << " " << wave << endl;
+    total+=wave;
+    }
+  }
+  //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
+  return total*MASSD/(2.*sqrt((MASSD-sqrt(pvec.Mag2()+massr*massr))*(MASSD-sqrt(pvec2.Mag2()+massr*massr))));
+}
+
+
 double DeuteronMomDistr::getMomDistrfsi(TKinematics2to2 &kin, double phi){
   double fsitotal=0.;
   double sintheta=sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
