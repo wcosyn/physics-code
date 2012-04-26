@@ -9,6 +9,7 @@
 
 # Check if cmake has the required version
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+project(mycode CXX Fortran)
 MESSAGE("c++ ${CMAKE_CXX_COMPILER}")
 MESSAGE("c ${CMAKE_C_COMPILER}")
 MESSAGE("Type ${CMAKE_BUILD_TYPE}")
@@ -19,6 +20,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(ROOT REQUIRED)
 find_package(GSL REQUIRED)
 find_package(MPI REQUIRED)
+find_package(Fortran REQUIRED)
 #Check the compiler and set the compile and link flags
 # set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
@@ -44,7 +46,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 
-set(LIBRARIES ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES} ${MPI_LIBRARIES})
+set(LIBRARIES ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES} ${MPI_LIBRARIES} ${Fortran_LIBRARIES})
 MESSAGE(${LIBRARIES})
 enable_language (Fortran)
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
