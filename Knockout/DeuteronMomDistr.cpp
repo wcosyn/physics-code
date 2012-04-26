@@ -272,7 +272,8 @@ void DeuteronMomDistr::totdens_qphi_simple(const double qphi, complex<double>* r
 
   przprime = p_pvec->Z()-(nu+MASSD)/qvec*(Er-sqrt(massr*massr+pt2));
   double pprime = sqrt(pt2+przprime*przprime);
-  double thetaprime=acos(przprime/pprime);
+  double thetaprime= acos(przprime/pprime);
+  if(isnan(thetaprime)) thetaprime=SIGN(przprime);
   double phiprime=atan2(prt*sin(p_pvec->Phi())-qt*sin(qphi),prt*cos(p_pvec->Phi())-qt*cos(qphi));
   double Erprime=sqrt(massr*massr+pprime*pprime);
   if(Erprime>MASSD){
