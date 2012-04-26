@@ -40,9 +40,9 @@ int main(int argc, char *argv[])
       test.getCrossz(results[i],Ebeam,Q2,nu,z);
       test.getCrossz_coh(&results[i][2],Ebeam,Q2,nu,z);
 //       cout << i << " " << results[i][0] << " " << results[i][2] << endl;
-//     cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
-//     for (int l=0;l<2;l++) cout << results[i][l] << " ";
-//     cout << endl;
+    cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
+    for (int l=0;l<3;l++) cout << results[i][l] << " ";
+    cout << endl;
     }
   }
 
