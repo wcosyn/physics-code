@@ -31,9 +31,9 @@ EFILEST   = 	../../bin/glauberteststatic
 LIBS =	 	-lm  -lifcore
 WIMLIBS = -lMePhys -lGlauber 
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L/home/wim/Code/lib
- INCLUDEDIRS =  -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber 
-STATICLIBS = /home/wim/Code/lib/libGlauber.a  /home/wim/Code/lib/libMePhys.a 
+ LIBDIRS = -L ~/Code/lib
+ INCLUDEDIRS =  -I ~/Code/Tools  -I ~/Code/Glauber 
+STATICLIBS = ~/Code/lib/libGlauber.a  ~/Code/lib/libMePhys.a 
 
 
 #		Header files

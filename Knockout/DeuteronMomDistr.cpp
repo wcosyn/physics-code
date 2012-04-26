@@ -283,9 +283,9 @@ void DeuteronMomDistr::totdens_qphi_simple(const double qphi, complex<double>* r
   double costhetaprime,sinthetaprime,cosphiprime,sinphiprime; 
   sincos(thetaprime,&sinthetaprime,&costhetaprime);
   sincos(phiprime,&sinphiprime,&cosphiprime);
-  
   double chi=sqrt(s*s-2.*s*(massother*massother+massr*massr)+pow(massr*massr-massother*massother,2.));
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
+  if(isnan(vecprime.Mag())) cout << pt2 << " " << przprime << " " << pprime << " " << thetaprime << " " << phiprime << " " << Erprime << endl;
   *result = chi*scatter(t)*(wf.DeuteronPState(M, -1, spinr, vecprime))
 	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime));
   

@@ -31,9 +31,9 @@ EFILEST   = 	../../bin/rhoctstatic
 LIBS =	 	-lm  -lifcore
 WIMLIBS = -lKnockout -lGlauber -lMePhys
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L/home/wim/Code/lib
- INCLUDEDIRS =  -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber -I/home/wim/Code/Knockout
-STATICLIBS =  /home/wim/Code/lib/libKnockout.a /home/wim/Code/lib/libGlauber.a  /home/wim/Code/lib/libMePhys.a 
+ LIBDIRS = -L ~/Code/lib
+ INCLUDEDIRS =  -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout
+STATICLIBS =   ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a 
 
 
 #		Header files
