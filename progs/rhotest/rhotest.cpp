@@ -31,19 +31,34 @@ int main(int argc, char *argv[])
   
   string homedir="/home/wim/Code/share";
 
-  MeanFieldNucleusThick CarbonThick(1,homedir);
-  FastParticle rho(4, 0, 2710,0.,0.,1.4,145.,homedir);
-  GlauberDecayGridThick gridthick(10,10,3,&CarbonThick,homedir);  
+  MeanFieldNucleusThick CarbonThick(3,homedir);
+  FastParticle rho(4, 0, 2220,0.,0.,1.1,145.,homedir);
+  GlauberDecayGridThick gridthick(60,20,5,&CarbonThick,homedir);  
   gridthick.addParticle(rho);
   //gridthick.printParticles();
   gridthick.updateGrids();
 //   gridthick.print_grid(0);
 //   gridthick.print_grid(1);
   //   cout << gridthick.getNumber_of_grids() << endl;
-   DistMomDistrGrid Momgrid(0, 400., 2,1,1,&gridthick,homedir);
+   DistMomDistrGrid Momgrid(9, 400., 30,20,5,&gridthick,homedir);
    Momgrid.printRhopw_grid();
    Momgrid.fillGrids();
    cout << endl << endl;
+   Momgrid.printRho_grid(0);
+   
+//   MeanFieldNucleusThick CarbonThick(1,homedir);
+//   FastParticle rho(4, 0, 2710,0.,0.,1.4,145.,homedir);
+//   GlauberDecayGridThick gridthick(10,10,3,&CarbonThick,homedir);  
+//   gridthick.addParticle(rho);
+//   //gridthick.printParticles();
+//   gridthick.updateGrids();
+// //   gridthick.print_grid(0);
+// //   gridthick.print_grid(1);
+//   //   cout << gridthick.getNumber_of_grids() << endl;
+//    DistMomDistrGrid Momgrid(0, 400., 2,1,1,&gridthick,homedir);
+//    Momgrid.printRhopw_grid();
+//    Momgrid.fillGrids();
+//    cout << endl << endl;
 
 //    MeanFieldNucleusThick CarbonThick(1,homedir);
 //   FastParticle rho(4, 0, 2010,0.,0.,1.4,145.,homedir);

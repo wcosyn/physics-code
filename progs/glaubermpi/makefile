@@ -16,7 +16,7 @@ CPATH 	=	.
 
 #		Flags
 # OPTFLAG	=	-O3 -fPIC
-OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
+OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg

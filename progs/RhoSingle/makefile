@@ -11,12 +11,12 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
-  CC      = 	mpicxx
+  CC      = 	icpc
 #  CC      = 	g++
 
 #		Flags
 #  OPTFLAG	=	-O3 -fPIC
- OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX
+ OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
@@ -24,8 +24,8 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG)  $(DBGFLAG)  $(GPFLAG) #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/rhoct
-EFILEST   = 	../../bin/rhoctstatic
+EFILE   = 	../../bin/rhosingle
+EFILEST   = 	../../bin/rhosinglestatic
 
 #		Mathematical functions
 LIBS =	 	-lm  
@@ -42,7 +42,7 @@ HDRS =
 # root headers
 
 #		Object files
-OBJS = 	        $(HDRS:.hpp=.o)  $(CPATH)/rhottest.o
+OBJS = 	        $(HDRS:.hpp=.o)  $(CPATH)/rhosingle.o
 
 #-------------------------------------------------------------------------
 
