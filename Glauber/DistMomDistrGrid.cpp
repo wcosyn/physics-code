@@ -160,7 +160,7 @@ void DistMomDistrGrid::setFilenames(string homedir){
     rho_filename.insert(found+1,addendum);
     rhoct_filename.insert(found+1,addendum);
   }
-  //cout << rho_filename << endl << rhoct_filename << endl;
+//   cout << rho_filename << endl << rhoct_filename << endl;
 }
   
 

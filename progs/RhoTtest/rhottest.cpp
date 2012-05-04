@@ -36,12 +36,13 @@ int main(int argc, char *argv[])
       double z = 0.9+k*0.03;
       test.getCrossz(results[i],Ebeam,Q2,nu,z);
     }
-    cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
-    for (int l=0;l<NROFRES;l++) cout << results[i][l] << " ";
-    cout << endl;
+//     cout << Q2 << " "  << nu << " " << (torz? -0.1 + k*(-0.1) :  0.9+k*0.03) << " " ;
+//     for (int l=0;l<NROFRES;l++) cout << results[i][l] << " ";
+//     cout << endl;
   }
 
   TMPI::GatherResults(n,results);
+//     cout << endl;
 
   TMPI::SilenceSlaves();
   for(int i=0; i<n; ++i){

@@ -30,21 +30,21 @@ int main(int argc, char *argv[])
 {
   
   string homedir="/home/wim/Code/share";
-
-  MeanFieldNucleusThick CarbonThick(3,homedir);
-  FastParticle rho(4, 0, 2220,0.,0.,1.1,145.,homedir);
-  GlauberDecayGridThick gridthick(60,20,5,&CarbonThick,homedir);  
-  gridthick.addParticle(rho);
-  //gridthick.printParticles();
-  gridthick.updateGrids();
-//   gridthick.print_grid(0);
-//   gridthick.print_grid(1);
-  //   cout << gridthick.getNumber_of_grids() << endl;
-   DistMomDistrGrid Momgrid(9, 400., 30,20,5,&gridthick,homedir);
-   Momgrid.printRhopw_grid();
-   Momgrid.fillGrids();
-   cout << endl << endl;
-   Momgrid.printRho_grid(0);
+// 
+//   MeanFieldNucleusThick CarbonThick(3,homedir);
+//   FastParticle rho(4, 0, 2220,0.,0.,1.1,145.,homedir);
+//   GlauberDecayGridThick gridthick(60,20,5,&CarbonThick,homedir);  
+//   gridthick.addParticle(rho);
+//   //gridthick.printParticles();
+//   gridthick.updateGrids();
+// //   gridthick.print_grid(0);
+// //   gridthick.print_grid(1);
+//   //   cout << gridthick.getNumber_of_grids() << endl;
+//    DistMomDistrGrid Momgrid(9, 400., 30,20,5,&gridthick,homedir);
+//    Momgrid.printRhopw_grid();
+//    Momgrid.fillGrids();
+//    cout << endl << endl;
+//    Momgrid.printRho_grid(0);
    
 //   MeanFieldNucleusThick CarbonThick(1,homedir);
 //   FastParticle rho(4, 0, 2710,0.,0.,1.4,145.,homedir);
@@ -87,5 +87,33 @@ int main(int argc, char *argv[])
 //    Momgrid.printRho_grid(0);
 //    Momgrid.printRho_grid(4);  
    
+  MeanFieldNucleusThick FeThick(3,homedir);
+  FastParticle rho(4, 0, 2340,0.,0.,1.0,145.,homedir);
+  GlauberDecayGridThick gridthick(60,20,5,&FeThick,homedir);  
+  gridthick.addParticle(rho);
+  //gridthick.printParticles();
+  gridthick.updateGrids();
+//   gridthick.print_grid(0);
+//   gridthick.print_grid(1);
+  //   cout << gridthick.getNumber_of_grids() << endl;
+   DistMomDistrGrid** pdistgrid = new DistMomDistrGrid*[FeThick.getTotalLevels()];
+   for(int i=0;i<FeThick.getTotalLevels();i++){
+     pdistgrid[i] = new DistMomDistrGrid(i, 400., 30,20,5,&gridthick,homedir);
+   }
+   for(int i=0;i<=400;i+=10){
+     double p=i;
+     double tot =0.,totpw=0.;
+     cout << p << " "; 
+     for(int shell=0;shell<FeThick.getTotalLevels();shell++){
+         pdistgrid[shell]->updateGrids(&gridthick,shell);
+	 double pw = pdistgrid[shell]->getRhopwGridFull_interp(p);
+	 double fsi = pdistgrid[shell]->getRhoGridFull_interp3(0, p, 1., 0.);
+	 tot+=fsi;
+	 totpw+=pw;
+	 cout << fsi << " " << pw << " " << fsi/pw << " ";
+     }
+     cout << tot/totpw << endl;
+   }
+  
    return 0;
 }

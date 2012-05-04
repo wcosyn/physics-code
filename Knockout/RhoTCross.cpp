@@ -278,7 +278,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
       if(abs(discr)<1.E-09) {
 	double pzrho = -b/(2.*a);
 	double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	if(prho>pzrho&&t<-0.1&&t>-0.4){
+	if(prho>pzrho/*&&t<-0.1&&t>-0.4*/){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);      
 	  double costhetarho = pzrho/prho;
 // 	  double pnz = Cz-pzrho;
@@ -302,7 +302,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	discr = sqrt(discr);
 	double pzrho = (-b+discr)/(2.*a);
 	double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	if(pzrho<prho&&t<-0.1&&t>-0.4){
+	if(pzrho<prho/*&&t<-0.1&&t>-0.4*/){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);
 	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
 	    double costhetarho = pzrho/prho;
@@ -324,7 +324,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	}
 	pzrho = (-b-discr)/(2.*a);
 	t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-	if(pzrho<prho&&t<-0.1&&t>-0.4){
+	if(pzrho<prho/*&&t<-0.1&&t>-0.4*/){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);	  
 	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
 	    double costhetarho = pzrho/prho;
@@ -364,10 +364,7 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
   pdistgrid[shell]->updateGrids(pfsigrid[shell],shell);
   results[NROFRES-1] = pdistgrid[shell]->getRhopwGridFull_interp(pm);
   for(int i=0;i<NROFRES-1;i++) results[i]= pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
-  
-  //delete pdistgrid;
-//   delete pfsigrid;
-  
+    
 }
   
   
