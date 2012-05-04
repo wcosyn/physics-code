@@ -15,7 +15,7 @@
 
 class RhoDeuteron{
 public:
-  RhoDeuteron(const string wavefunction, const double p_max);
+  RhoDeuteron(const string wavefunction, const double p_max, const bool no_cuts);
   ~RhoDeuteron();
   void getCrosst(double *results, const double Ebeam, const double Q2, const double nu, const double t);
   void getCrossz(double *results, const double Ebeam, const double Q2, const double nu, const double z);
@@ -23,6 +23,7 @@ public:
   void getCrossz_coh(double *results, const double Ebeam, const double Q2, const double nu, const double z);
 private:
   double pmax;
+  bool nocuts;
   DeuteronMomDistr deuteron;
   void totdens_qt(const double qt, complex<double>* result, va_list ap);
   void totdens_qphi(const double qphi, complex<double>* result, va_list ap);

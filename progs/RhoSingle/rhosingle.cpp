@@ -13,13 +13,14 @@ int main(int argc, char *argv[])
   double Q2 = atof(argv[3]);
   double nu_min = atof(argv[4]);
   double nu_max = atof(argv[5]);
+  int nocuts = atoi(argv[6]);
   double Ebeam = 5.014;
-  int j = atoi(argv[6]);
-  int k = atoi(argv[7]);
+  int j = atoi(argv[7]);
+  int k = atoi(argv[8]);
   
   double *results = new double[NROFRES];
 
-  RhoTCross test = RhoTCross(nucleus,400,argv[8]);
+  RhoTCross test = RhoTCross(nucleus,400,argv[9],nocuts);
   
   double nu = nu_min + j*(nu_max-nu_min)/7.;
   if(torz){

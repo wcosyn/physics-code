@@ -414,7 +414,7 @@ void DistMomDistrGrid::intRhoRCT(const double r, complex<double> *results, va_li
 void DistMomDistrGrid::intRhoRpw(const double r, double *result, va_list ap){
   
   *result= r*getPfsigrid()->getPnucleus()->getWave_G(getShellindex(),r)
-	*gsl_sf_bessel_Jn(getPfsigrid()->getPnucleus()->getL_array()[getShellindex()],p_hit*r*INVHBARC);
+	*gsl_sf_bessel_jl(getPfsigrid()->getPnucleus()->getL_array()[getShellindex()],p_hit*r*INVHBARC);
 }
 void DistMomDistrGrid::intRhoCosTheta(const double costheta, complex<double> *results, va_list ap){
   

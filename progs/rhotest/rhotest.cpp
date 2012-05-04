@@ -103,14 +103,14 @@ int main(int argc, char *argv[])
    for(int i=0;i<=400;i+=10){
      double p=i;
      double tot =0.,totpw=0.;
-     cout << p << " "; 
+//      cout << p << " "; 
      for(int shell=0;shell<FeThick.getTotalLevels();shell++){
          pdistgrid[shell]->updateGrids(&gridthick,shell);
 	 double pw = pdistgrid[shell]->getRhopwGridFull_interp(p);
 	 double fsi = pdistgrid[shell]->getRhoGridFull_interp3(0, p, 1., 0.);
 	 tot+=fsi;
 	 totpw+=pw;
-	 cout << fsi << " " << pw << " " << fsi/pw << " ";
+// 	 cout << fsi << " " << pw << " " << fsi/pw << " ";
      }
      cout << tot/totpw << endl;
    }
