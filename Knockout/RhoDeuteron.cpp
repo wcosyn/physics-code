@@ -297,8 +297,8 @@ void RhoDeuteron::getMomdistr(double *results, double Erho, double prho, double 
   double sigmap, beta2p, epsp, sigman, beta2n, epsn;
   FastParticle::interpPionGlauberData(4,prho,sigmap,beta2p,epsp,sigman,beta2n,epsn);
   deuteron.setScatter(10.*sigmap,beta2p*INVHBARC*INVHBARC*1.E06,epsp);//careful with units!
-  /*results[1] =*/ results[0] = deuteron.getMomDistrpw(pmvec);
-  results[1] = deuteron.getMomDistrfsi(pmvec, nu, qvec, s, MASSRHO);
+  results[1] = results[0] = deuteron.getMomDistrpw(pmvec);
+  //results[1] = deuteron.getMomDistrfsi(pmvec, nu, qvec, s, MASSRHO);
 }  
   
   
