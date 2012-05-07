@@ -17,7 +17,8 @@ theta(ptheta),
 phi(pphi),
 hardscale(hard_scale),
 sigma_decay_p(0.),
-sigma_decay_n(0.){
+sigma_decay_n(0.),
+userset(0){
   //cout << "Initializing FastParticle object: ";
   ex=sin(theta)*cos(phi);
   ey=sin(theta)*sin(phi);
@@ -95,7 +96,8 @@ theta(pvec.Theta()),
 phi(pvec.Phi()),
 hardscale(hard_scale),
 sigma_decay_p(0.),
-sigma_decay_n(0.){
+sigma_decay_n(0.),
+userset(0){
   //cout << "Initializing FastParticle object: ";
   ex=sin(theta)*cos(phi);
   ey=sin(theta)*sin(phi);
@@ -186,7 +188,8 @@ mass(Copy.getMass()),
 E(Copy.getE()),
 decay_dil(Copy.getDecay_dil()),
 sigma_decay_n(Copy.getSigma_decay_n()),
-sigma_decay_p(Copy.getSigma_decay_p())
+sigma_decay_p(Copy.getSigma_decay_p()),
+userset(Copy.userset)
 {
   for(int i=0;i<3;i++) hitb[i]=Copy.getHitbvec()[i];
 }
@@ -888,3 +891,12 @@ void FastParticle::interpPionGlauberData(int particletype, double mom, double &s
   }
   return;
 }
+
+
+void FastParticle::setScatter(double sigma, double beta, double eps){
+  setSigma(sigma);
+  beta2n=beta2p=beta*pow(HBARC/1000.,2.);
+  epsilonn=epsilonp=eps;
+  userset=1;
+}
+  

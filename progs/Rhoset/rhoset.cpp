@@ -17,13 +17,14 @@ int main(int argc, char *argv[])
   double nu_min = atof(argv[4]);
   double nu_max = atof(argv[5]);
   int nocuts = atoi(argv[6]);
+  double usersigma = atof(argv[7]);
   double Ebeam = 5.014;
   
   int n=32; // number of calculations
   double **results = new double*[n];  
   for(int i=0;i<n;i++) results[i] = new double[NROFRES];
 
-  RhoTCross test = RhoTCross(nucleus,400,argv[7],nocuts,0,0.);
+  RhoTCross test = RhoTCross(nucleus,400,argv[8],nocuts,1,usersigma);
   
   for(int i=TMPI::Rank(); i<n; i += TMPI::NumberOfProcesses() ) {
     int j = i/4;

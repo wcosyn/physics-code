@@ -356,15 +356,26 @@ complex<double> AbstractFsiGrid::getInterp(complex<double> ***grid){
 
 //set filenames
 void AbstractFsiGrid::setFilenames(string homedir){
+  for(size_t i=0;i<particles.size();i++){
+    if(particles[i].getUserset()){
+      homedir.insert(homedir.find_last_of("/")-5,"fix");
+      break;
+    }
+  }
   fsi_filename=homedir+pnucleus->getNucleusName();
   for(size_t i=0;i<particles.size();i++){
     if(particles[i].getIncoming()) fsi_filename+=".inc";
-    fsi_filename+=".Ptype"+to_string(particles[i].getParticletype())+".p"+to_string(int(particles[i].getP()/10))
+    if(particles[i].getUserset()) fsi_filename+=".Ptype"+to_string(particles[i].getParticletype())
+		  +".th"+to_string(int(round(particles[i].getCosTheta()*10)))+".ph"+to_string(int(round(particles[i].getPhi()*10)))
+		 +".sigma"+to_string(int(round(particles[i].getSigmap()*10.)))
+		 +".beta"+to_string(int(round(particles[i].getBeta2p()*100.)))
+		 +".eps"+to_string(int(round(particles[i].getEpsilonp()*100.)));
+    else fsi_filename+=".Ptype"+to_string(particles[i].getParticletype())+".p"+to_string(int(particles[i].getP()/10))
 		  +".th"+to_string(int(round(particles[i].getCosTheta()*10)))+".ph"+to_string(int(round(particles[i].getPhi()*10)))
 		 +".sigma"+to_string(int(round(particles[i].getSigmap()*10.)));
   }
   fsi_filename+=".r"+to_string(getRgrid())+".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".dat";
-//    cout << fsi_filename << endl;
+//     cout << fsi_filename << endl;
 }
   
   

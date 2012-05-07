@@ -13,7 +13,8 @@
 
 class RhoTCross{
 public:
-  RhoTCross(const int nucleus, const double pmax, const string dir, const bool no_cuts);
+  RhoTCross(const int nucleus, const double pmax, const string dir, const bool no_cuts, 
+	    const bool userset, const double usersigma);
   ~RhoTCross();
   void getCrosst(double *results, const double Ebeam, const double Q2, const double nu, const double t);
   void getCrossz(double *results, const double Ebeam, const double Q2, const double nu, const double z);
@@ -23,6 +24,8 @@ private:
   string homedir;  
   double pmax;
   bool nocuts;
+  bool userset;
+  double usersigma;
   MeanFieldNucleusThick nucleusthick;
   DistMomDistrGrid **pdistgrid;
   GlauberDecayGridThick **pfsigrid;

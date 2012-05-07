@@ -2,10 +2,14 @@
 #include <Utilfunctions.hpp>
 
 
-RhoTCross::RhoTCross(const int nucleus, const double p_max, const string dir, const bool no_cuts):
+RhoTCross::RhoTCross(const int nucleus, const double p_max, const string dir, const bool no_cuts,
+  const bool user_set, const double user_sigma
+):
 homedir(dir),
 pmax(p_max),
 nocuts(no_cuts),
+userset(user_set),
+usersigma(user_sigma),
 nucleusthick(nucleus,dir),
 pdistgrid(NULL),
 pfsigrid(NULL){
@@ -58,7 +62,7 @@ void RhoTCross::intPmt(const double pm, double *results, va_list ap){
   }
 
   rombergerN(this,&RhoTCross::intCosThetat,-1.,1.,NROFRES,
-	    results,PREC,3,7,pcthestimate, pm, Q2,nu,qvec,t,pphiestimate);
+	    results,PREC,3,10,pcthestimate, pm, Q2,nu,qvec,t,pphiestimate);
   for(int i=0;i<NROFRES;i++){
     results[i]*=pm*pm;
   }
@@ -75,7 +79,7 @@ void RhoTCross::intCosThetat(const double costheta, double *results, va_list ap)
   
   double sintheta = sqrt(1.-costheta*costheta);
   rombergerN(this,&RhoTCross::intPhit,0.,2.*PI,NROFRES,
-	    results,PREC,3,5,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,t);
+	    results,PREC,3,10,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,t);
  
 }
 
@@ -311,6 +315,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 void RhoTCross::getMomdistr(double *results, double prho, double thetarho, double Q2, int shell, 
 			    double pm, double pmcostheta, double pmphi){
   FastParticle rho(4, 0, prho,thetarho,0.,Q2,145.,homedir);
+  if(userset) rho.setScatter(usersigma,6.,-0.2);
   pfsigrid[shell]->clearParticles();
   pfsigrid[shell]->addParticle(rho);
   pfsigrid[shell]->updateGrids();

@@ -182,7 +182,14 @@ public:
   double getBdist(double r, double costheta, double sintheta, double cosphi, double sinphi, double zmom);
   
   void setSigma(double sigma){ sigman=sigmap=sigma/10.; return;}
-
+  /*! sets the scatter parameters
+   * \param sigma [mb] tot cross section
+   * \param beta [GeV^2] slope param
+   * \param eps [] real to imag ratio
+   * \return (b-b')^2, relative to this momentum, with b' the hard interaction point b' coordinate
+   */
+  void setScatter(double sigma, double beta, double eps);
+  bool getUserset()const{return userset;}
   /*! Sets the glauber parameters for a nucleon fast particle
    * \param mom [MeV]  particle momentum
    * \param sigmap [fm^2]  sigma parameter for scattering with proton
@@ -233,7 +240,7 @@ private:
   double decay_dil; /*!<  [MeV] dilated decay width */
   double sigma_decay_p; /*!<  [fm^2]  sigma parameter for decay products scattering with proton*/
   double sigma_decay_n; /*!<  [fm^2]  sigma parameter for decay products scattering with neutron*/
-  
+  bool userset; /*!<  if user has set scatt parameters */
 
   
 };
