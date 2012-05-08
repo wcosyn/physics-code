@@ -7,7 +7,6 @@ RhoDeuteron::RhoDeuteron(const string name, const double p_max,const bool no_cut
 pmax(p_max),
 nocuts(no_cuts),
 deuteron(name){
-
 }
 
 RhoDeuteron::~RhoDeuteron(){
@@ -173,7 +172,6 @@ void RhoDeuteron::getCrossz(double *result, const double Ebeam,  const double Q2
   double fScatterAngle = 1. - Q2/2./Ebeam/(Ebeam-nu);
   double epsilon = 1./(1.+2.*(1.+nu*nu/Q2)
 		     *((1.-fScatterAngle)/(1.+fScatterAngle)));
-  
   double Erho=nu*z;
   double prho=sqrt(Erho*Erho-MASSRHO*MASSRHO*1.E-06);
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
@@ -202,7 +200,6 @@ void RhoDeuteron::intPmz(const double pm, double *result, va_list ap){
   for(int i=0;i<2;i++){
     result[i]*=2.*pm*pm;  //2. because of symmetry
   }
-  //cout << pm << " " << result[0] << " " << result[1] << endl;
 
 }
 
