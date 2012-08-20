@@ -136,6 +136,8 @@ complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonp
 void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellindex, int m, int CT, int pw){
 
   double costheta=tk.GetCosthYlab();
+  if(costheta>1.) costheta=1.;
+  if(costheta<-1.) costheta=-1.;
   double sintheta=sqrt(1.-costheta*costheta);
   static FourVector<complex<double> > polVectorPlus(0.,
 						    -1./sqrt(2.)*costheta,
@@ -177,6 +179,8 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   barcontractminup = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontrmin;
   barcontractplusdown = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontrplus;
   barcontractplusup = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontrplus;
+  
+  
   complex<double> results[12];
   double restimate=0.,thestimate=0.,phiestimate=0.;
   rombergerN(this,&Model::intJR12,0.,pnucl->getRange(),12,results,PREC,3,8,&restimate,pw,&thestimate, &phiestimate);
@@ -283,7 +287,6 @@ void Model::intJPhi12(const double phi, complex<double> *results, va_list ap){
     if(SRC){
       complex<double> src=dynamic_cast<AbstractFsiGridThick *>(grid)->getFsiSrcGridFull_interp1(phi);
       complex<double> srcct=dynamic_cast<AbstractFsiCTGridThick *>(grid)->getFsiSrcCtGridFull_interp1(phi);
-      
       for(int i=0;i<6;i++){
 	results[2*i]*=src;
 	results[2*i+1]*=srcct;

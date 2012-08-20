@@ -1,0 +1,14 @@
+../../bin/Ortransp 1  1.004 2015 32.5 >> C.out
+../../bin/Ortransp 1  3.06 3188 47.7 >> C.out
+../../bin/Ortransp 1  5.00 4212 53.4 >> C.out
+../../bin/Ortransp 1  6.77 5120 56.6 >> C.out
+../../bin/Ortransp 1  0.6 2445 20.5 >> C.out
+../../bin/Ortransp 1  1.3 2445 32.0 >> C.out
+../../bin/Ortransp 1  1.8 3245 28.6 >> C.out
+../../bin/Ortransp 1  3.3 3245 50.0 >> C.out
+../../bin/Ortransp 1  0.64 2445 20.5 >> C.out
+../../bin/Ortransp 1  0.64 845 78.5 >> C.out
+../../bin/Ortransp 1  1.8 3245 28.6 >> C.out
+../../bin/Ortransp 1  1.83 1645 80 >> C.out
+../../bin/Ortransp 1  1.28 2445 32 >> C.out
+../../bin/Ortransp 1  3.25 3245 50 >> C.out

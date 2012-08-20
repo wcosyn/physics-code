@@ -81,7 +81,7 @@ userset(0){
   }
   E = sqrt(mass*mass+p*p);
   decay_dil = Gamma*sqrt(1.-p*p/(E*E));
-  if(hard_scale<nkt_sq) cout << "Warning: hard scale is too low for color transparency effects for this particle, just so you know!" << endl;
+  //if(hard_scale<nkt_sq) cout << "Warning: hard scale is too low for color transparency effects for this particle, just so you know!" << endl;
   
 }
 
@@ -160,7 +160,7 @@ userset(0){
   }
   E = sqrt(mass*mass+p*p);
   decay_dil = Gamma/sqrt(1.-p*p/E*E);
-  if(hard_scale<nkt_sq) cout << "Warning: hard scale is too low for color transparency effects for this particle, just so you know!" << endl;
+  //if(hard_scale<nkt_sq) cout << "Warning: hard scale is too low for color transparency effects for this particle, just so you know!" << endl;
   
 }
 

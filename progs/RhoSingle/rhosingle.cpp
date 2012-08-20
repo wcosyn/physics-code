@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
   
   double *results = new double[NROFRES];
 
-  RhoTCross test = RhoTCross(nucleus,400,argv[9],nocuts);
+  RhoTCross test = RhoTCross(nucleus,400,argv[9],nocuts,0,0.);
   
   double nu = nu_min + j*(nu_max-nu_min)/7.;
   if(torz){
