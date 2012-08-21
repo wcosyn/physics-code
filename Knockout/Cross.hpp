@@ -10,7 +10,7 @@ class Cross{
 public:
   Cross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucl, string dir);
   ~Cross();
-  double getDiffCross(TKinematics2to2 &kin, int SRC, int CT, int pw, int shellindex, double phi);
+  double getDiffCross(TKinematics2to2 &kin, int thick, int SRC, int CT, int pw, int shellindex, double phi);
   double getElCross(TKinematics2to2 &kin, double phi);
 private:
   string homedir;

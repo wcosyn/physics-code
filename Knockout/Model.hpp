@@ -15,7 +15,7 @@ using namespace std;
 
 class Model{
 public:
-  Model(MeanFieldNucleusThick *pnucleus, int setSRC, string dir);
+  Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, string dir);
   ~Model();
   void setSRC(int setSRC) {SRC=setSRC;}
   complex<double> getMatrixEl(TKinematics2to2 &tk,int spinout, int photonpol, int shellindex, int m, int CT, int pw);
@@ -24,6 +24,7 @@ public:
   
 private:
   int SRC;
+  int thick;
   AbstractFsiCTGrid *grid;
   MeanFieldNucleusThick *pnucl;
   NucleonEMOperator *J;

@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
   TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",atof(argv[1]),atof(argv[2]),atof(argv[3]));
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);
   Cross obs(*elec,&Carbon,homedir);
-  double crossp=obs.getDiffCross(kin, 0, 0, 0, 1, 0.);
+  double crossp=obs.getDiffCross(kin, 0, 0, 0, 0, 1, 0.);
 //   double crosss=obs.getDiffCross(kin, 0, 0, 0, 0, 0.);
-  double crosspsrc=obs.getDiffCross(kin, 1, 0, 0, 1, 0.);
+  double crosspsrc=obs.getDiffCross(kin, 0, 1, 0, 0, 1, 0.);
 //   double crosspct=obs.getDiffCross(kin, 0, 1, 0, 1, 0.);
 //   double crosspsrcct=obs.getDiffCross(kin, 1, 1, 0, 1, 0.);
 //   double crossppw=obs.getDiffCross(kin, 0, 0, 1, 1, 0.);

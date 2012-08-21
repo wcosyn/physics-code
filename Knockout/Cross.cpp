@@ -16,7 +16,7 @@ double Cross::getElCross(TKinematics2to2 &kin, double phi){
   double Q2overkk=Q2/qvec/qvec;
   double tan2=electron.GetTan2HalfAngle(kin);
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.;
-  reacmodel=new Model(pnucl,0,homedir);
+  reacmodel=new Model(pnucl,0,0,homedir);
 /*  kinfactors[0]=pow(Q2overkk,2.);
   kinfactors[1]=tan2+Q2overkk/2.;
   kinfactors[2]=sqrt(Q2overkk+tan2)*Q2overkk*cos(phi);
@@ -51,7 +51,7 @@ double Cross::getElCross(TKinematics2to2 &kin, double phi){
 }
 
 
-double Cross::getDiffCross(TKinematics2to2 &kin, int SRC, int CT, int pw, int shellindex, double phi){
+double Cross::getDiffCross(TKinematics2to2 &kin, int thick, int SRC, int CT, int pw, int shellindex, double phi){
   double Q2=kin.GetQsquared();
   double qvec=kin.GetKlab();
   double Q2overkk=Q2/qvec/qvec;
@@ -60,7 +60,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int SRC, int CT, int pw, int sh
       /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
 	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()));
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.;
-  reacmodel=new Model(pnucl,SRC,homedir);
+  reacmodel=new Model(pnucl,SRC,thick,homedir);
   kinfactors[0]=pow(Q2overkk,2.);
   kinfactors[1]=tan2+Q2overkk/2.;
   kinfactors[2]=-Q2overkk/2.;
