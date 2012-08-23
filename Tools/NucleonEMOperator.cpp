@@ -50,6 +50,23 @@ FourVector<GammaStructure> NucleonEMOperator::getCC3(FourVector<double> q, FourV
   return getF1()/(2.*(proton?MASSP:MASSN))*(pi+pf)*Id + getGM()/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q)); 
 }
 
+FourVector<GammaStructure> NucleonEMOperator::getCC(int current, FourVector<double> q, 
+						    FourVector<double> pi, FourVector<double> pf){
+  switch(current){
+    case(1):
+      return getCC1(pi,pf);
+      break;
+    case(2):
+      return getCC2(q);
+      break;
+    case(3):
+      return getCC3(q,pi,pf);
+      break;
+    default:
+      cerr << "Current operator not supported " << current << endl;
+      exit(1);
+  }
+}
 
 
 

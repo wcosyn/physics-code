@@ -18,9 +18,9 @@ public:
   Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, string dir);
   ~Model();
   void setSRC(int setSRC) {SRC=setSRC;}
-  complex<double> getMatrixEl(TKinematics2to2 &tk,int spinout, int photonpol, int shellindex, int m, int CT, int pw);
-  void getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> &results, int shellindex, int m, int CT, int pw);
-  complex<double> getFreeMatrixEl(TKinematics2to2 &tk, int spinin, int spinout, int photonpol);
+  complex<double> getMatrixEl(TKinematics2to2 &tk,int spinout, int photonpol, int shellindex, int m, int CT, int pw, int current);
+  void getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> &results, int shellindex, int m, int CT, int pw, int current);
+  complex<double> getFreeMatrixEl(TKinematics2to2 &tk, int current, int spinin, int spinout, int photonpol);
   
 private:
   int SRC;

@@ -21,6 +21,7 @@ public:
   FourVector<GammaStructure> getCC1(FourVector<double> pi, FourVector<double> pf);
   FourVector<GammaStructure> getCC2(FourVector<double> q);
   FourVector<GammaStructure> getCC3(FourVector<double> q, FourVector<double> pi, FourVector<double> pf);
+  FourVector<GammaStructure> getCC(int current, FourVector<double> q, FourVector<double> pi, FourVector<double> pf);
   static const FourVector<GammaStructure> gamma_mu;
   static const GammaStructure Id;
   

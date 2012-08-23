@@ -19,7 +19,7 @@ Model::~Model(){
 }
 
 
-complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int spinin, int spinout, int photonpol){
+complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spinin, int spinout, int photonpol){
   double costheta=tk.GetCosthYlab();
   double sintheta=sqrt(1.-costheta*costheta);
   static FourVector<complex<double> > polVectorPlus(0.,
@@ -43,9 +43,9 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int spinin, int spin
   FourVector<double> Pin(Ein,pf[1],0.,pf[3]-q[3]); 
   J= new NucleonEMOperator(tk.GetQsquared(),1,0);
   GammaStructure Jcontr;
-  if(photonpol==0)  Jcontr = J->getCC2(q)*polVector0;
-  else if(photonpol==-1) Jcontr= J->getCC2(q)*polVectorMin;
-  else if(photonpol==1) Jcontr=J->getCC2(q)*polVectorPlus;
+  if(photonpol==0)  Jcontr = J->getCC(current, q, Pin, pf)*polVector0;
+  else if(photonpol==-1) Jcontr= J->getCC(current, q, Pin, pf)*polVectorMin;
+  else if(photonpol==1) Jcontr=J->getCC(current, q, Pin, pf)*polVectorPlus;
 /*  if(photonpol==0)  Jcontr = J.getCC3(q,Pin,pf)*polVector0;
   else if(photonpol==-1) Jcontr= J.getCC3(q,Pin,pf)*polVectorMin;
   else if(photonpol==1) Jcontr=J.getCC3(q,Pin,pf)*polVectorPlus;*/
@@ -73,7 +73,8 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int spinin, int spin
   
 }
 
-complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonpol, int shellindex, int m, int CT, int pw){
+complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonpol, int shellindex, 
+				   int m, int CT, int pw, int current){
 
   double costheta=tk.GetCosthYlab();
   double sintheta=sqrt(1.-costheta*costheta);
@@ -107,16 +108,16 @@ complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonp
   GammaStructure Jcontr;
   FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
   FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
-  /* FourVector<double> pi=pf-q;
-  pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);*/
+  FourVector<double> pi=pf-q;
+  pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);
   pm=TVector3(-q[1],0.,pf[3]-q[3]);
-  if(photonpol==0)  Jcontr = J->getCC2(q)*polVector0;
+  if(photonpol==0)  Jcontr = J->getCC(current, q, pi, pf)*polVector0;
   /* else if(photonpol==1)  Jcontr = J.getCC2(q)*polVectorX;
   else if(photonpol==2)  Jcontr = J.getCC2(q)*polVectorY;
   else if(photonpol==3)  Jcontr = J.getCC2(q)*polVectorZ;*/
-  else if(photonpol==-1) Jcontr= J->getCC2(q)*polVectorMin;
-  else if(photonpol==1) Jcontr=J->getCC2(q)*polVectorPlus;
-  else if(photonpol==2) Jcontr=J->getCC2(q)*polVectorX;
+  else if(photonpol==-1) Jcontr= J->getCC(current, q, pi, pf)*polVectorMin;
+  else if(photonpol==1) Jcontr=J->getCC(current, q, pi, pf)*polVectorPlus;
+//   else if(photonpol==2) Jcontr=J->getCC(current, q, pi, pf)*polVectorX;
   else{ cerr << "invalid photon pol" << endl;  exit(1); }
   if(spinout==-1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr;
   else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
@@ -133,7 +134,8 @@ complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonp
 }
 
 
-void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellindex, int m, int CT, int pw){
+void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellindex, 
+			int m, int CT, int pw, int current){
 
   double costheta=tk.GetCosthYlab();
   if(costheta>1.) costheta=1.;
@@ -167,12 +169,12 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   GammaStructure Jcontr0, Jcontrmin, Jcontrplus;
   FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
   FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
-  /* FourVector<double> pi=pf-q;
-  pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);*/
+  FourVector<double> pi=pf-q;
+  pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);
   pm=TVector3(-q[1],0.,pf[3]-q[3]);
-  Jcontr0 = J->getCC2(q)*polVector0;
-  Jcontrmin= J->getCC2(q)*polVectorMin;
-  Jcontrplus=J->getCC2(q)*polVectorPlus;
+  Jcontr0 = J->getCC(current, q, pi, pf)*polVector0;
+  Jcontrmin= J->getCC(current, q, pi, pf)*polVectorMin;
+  Jcontrplus=J->getCC(current, q, pi, pf)*polVectorPlus;
   barcontract0down = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr0;
   barcontract0up = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr0;
   barcontractmindown = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontrmin;

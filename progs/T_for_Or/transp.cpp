@@ -31,12 +31,13 @@ void intcosth(const double costh, double *results, va_list ap);
 int main(int argc, char *argv[])
 {
   
-  string homedir=argv[6];
+  string homedir=argv[7];
   double Q2=atof(argv[2])*1.E06;
   double Ein=atof(argv[3]);
   double thetae=atof(argv[4])*DEGRTORAD;
   double omega=Ein-Q2/(4.*Ein*pow(sin(thetae/2.),2.));
   int thick=atoi(argv[5]);
+  int current=atoi(argv[6]);
   //cout << Ein-omega << endl;
   
   MeanFieldNucleusThick Nucleus(atoi(argv[1]),homedir);
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
   for(int shell=0;shell<Nucleus.getPLevels();shell++){
     double results[5];
     double pestimate=0.;
-    rombergerN(intPm,0.,300.,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell,thick);
+    rombergerN(intPm,0.,300.,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, thick,current);
     for(int j=0;j<5;j++) total[j]+=results[j];
     
     cout << Q2/1.E06 << " " << Ein << " " << shell << " " << results[0]/results[4] << " " << 
@@ -72,6 +73,7 @@ void intPm(const double pm, double *results, va_list ap){
   double omega = va_arg(ap,double);
   int shell = va_arg(ap,int);
   int thick = va_arg(ap,int);
+  int current = va_arg(ap,int);
   if(pm<1.e-02){
     for(int i=0;i<5;i++) results[i]=0.;
     return;
@@ -80,12 +82,11 @@ void intPm(const double pm, double *results, va_list ap){
   TKinematics2to2 kin("","",pnucleus->getMassA(),
 		      pnucleus->getMassA_min_proton()+pnucleus->getExcitation()[shell],
 		      MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
-  
-  results[0]=pm*pm*p_obs->getDiffCross(kin, thick, 0, 0, 0, shell, 0.);
-  results[1]=pm*pm*p_obs->getDiffCross(kin, thick, 1, 0, 0, shell, 0.);
-  results[2]=pm*pm*p_obs->getDiffCross(kin, thick, 0, 1, 0, shell, 0.);
-  results[3]=pm*pm*p_obs->getDiffCross(kin, thick, 1, 1, 0, shell, 0.);
-  results[4]=pm*pm*p_obs->getDiffCross(kin, thick, 0, 0, 1, shell, 0.);
+  results[0]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 0, 0, 0, shell, 0.);
+  results[1]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 1, 0, 0, shell, 0.);
+  results[2]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 0, 1, 0, shell, 0.);
+  results[3]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 1, 1, 0, shell, 0.);
+  results[4]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 0, 0, 1, shell, 0.);
   //cout << pm << " " << results[0] << " " << results[1] << " " << results[4] << endl;
   return;
 }

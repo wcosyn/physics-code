@@ -10,7 +10,7 @@ Cross::~Cross(){
   
 }
 
-double Cross::getElCross(TKinematics2to2 &kin, double phi){
+double Cross::getElCross(TKinematics2to2 &kin, int current, double phi){
   double Q2=kin.GetQsquared();
   double qvec=kin.GetKlab();
   double Q2overkk=Q2/qvec/qvec;
@@ -29,9 +29,9 @@ double Cross::getElCross(TKinematics2to2 &kin, double phi){
   for(int i=0;i<6;i++) response[i]=0.;
   for(int spinin=-1;spinin<=1;spinin+=2){
     for(int spinout=-1;spinout<=1;spinout+=2){
-      complex<double> jmin=reacmodel->getFreeMatrixEl(kin,spinin,spinout,-1);
-      complex<double> j0=reacmodel->getFreeMatrixEl(kin,spinin,spinout,0);
-      complex<double> jplus=reacmodel->getFreeMatrixEl(kin,spinin,spinout,1);
+      complex<double> jmin=reacmodel->getFreeMatrixEl(kin,current, spinin,spinout,-1);
+      complex<double> j0=reacmodel->getFreeMatrixEl(kin,current, spinin,spinout,0);
+      complex<double> jplus=reacmodel->getFreeMatrixEl(kin,current, spinin,spinout,1);
 //       cout << jmin << " " << j0 << " " << jplus << endl;
       response[0]+=norm(j0);
       response[1]+=norm(jmin)+norm(jplus);
@@ -51,7 +51,7 @@ double Cross::getElCross(TKinematics2to2 &kin, double phi){
 }
 
 
-double Cross::getDiffCross(TKinematics2to2 &kin, int thick, int SRC, int CT, int pw, int shellindex, double phi){
+double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, double phi){
   double Q2=kin.GetQsquared();
   double qvec=kin.GetKlab();
   double Q2overkk=Q2/qvec/qvec;
@@ -72,7 +72,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int thick, int SRC, int CT, int
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
 //     for(int spin=-1;spin<=1;spin+=2){
       Matrix<2,3> J;
-      reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw);
+      reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current);
 /*      complex<double> jmin=reacmodel->getMatrixEl(kin,spin,-1,shellindex,m,CT,pw);
       complex<double> j0=reacmodel->getMatrixEl(kin,spin,0,shellindex,m,CT,pw);
       complex<double> jplus=reacmodel->getMatrixEl(kin,spin,1,shellindex,m,CT,pw);
