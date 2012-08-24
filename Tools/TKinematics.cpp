@@ -1,7 +1,19 @@
 /*
  * TKinematics.cpp
  *
- * Author:         Pieter Vancraeyveld (pieter.vancraeyveld@UGent.be)
+ * \author Pieter Vancraeyveld <pieter.vancraeyveld@ugent.be>
+ * \author Tom Vrancx <tom.vrancx@ugent.be>
+ 
+ * \copyright
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details at
+ * http://www.gnu.org/copyleft/gpl.html
  *
  */
 
@@ -33,7 +45,7 @@
 //   (11)  ===>   K- + p  ->  g  + L0                                               //
 //   (12)  ===>   K- + p  ->  g  + S0                                               //
 //
-// The user needs to specify 3 variables to unambiguously fix the kinematics.
+// The user needs to specify 2, 3 or 4 variables to unambiguously fix the kinematics.
 // Obviously, he/she needs to make sure the variabels of choice are independent.
 // More info can be found in SetFormat(const char*).
 //                                                                                  //
@@ -44,59 +56,182 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
+#include <TString.h>
+#include <TObjArray.h>
+#include <TObjString.h>
 #include "TKinematics.h"
 // #include <numtoa.h>
+#include <vector>
+#include <cassert>
 
 using std::sqrt;
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::vector;
+
+/*!
+ * \class TKinematics
+ *
+ * A TKinematics object represents a series of kinematic points for
+ * photon or electron induced production of 2 particles off a nucleon.
+ *
+ * See http://rprmodel.ugent.be/api/TKinematics.html.
+ *
+ * \author Pieter Vancraeyveld <pieter.vancraeyveld@ugent.be>
+ * \author Tom Vrancx <tom.vrancx@ugent.be>
+ * 
+ */
 
 ClassImp(TKinematics)
 
 //_____________________________________________________________________
 TKinematics::TKinematics(TRootIOCtor* rio)
-: TNamed::TNamed(),fFormat(0),fIsospin(1),fMp(0.0),fMk(0.0),
-  fMy(0.0),fWlab(0.0),fWcm(0.0),fKlab(0.0),fKcm(0.0),fPk(0.0),fCosthkcm(0.0),
-  fCosthklab(0.),fPYlab(0.),fCosthYlab(0.),
-  fQsquared(0.0),fXb(0.0), fW(0.0),fS(0.0),fT(0.0),fU(0.0),fIsPhysical(false), 
-  fNrOfPhysicals(-1),
-  fVar(0),fIsVar(0),fLowerLimit(0),fUpperLimit(0),fStepSize(0),
-  fNumberOfSteps(0),fStep(0)
+: TNamed::TNamed()
+  ,fFormat(0)
+  ,fIsospin(1)
+  ,fNVars(0)
+  ,fMp(0.0)
+  ,fMk(0.0)
+  ,fMy(0.0)
+  ,fWlab(0.0)
+  ,fWcm(0.0)
+  ,fKlab(0.0)
+  ,fKcm(0.0)
+  ,fPk(0.0)
+  ,fCosthkcm(0.0), fCosthklab(0.),fPYlab(0.),fCosthYlab(0.)
+  ,fQsquared(0.0)
+  ,fXb(0.0)
+  ,fW(0.0)
+  ,fS(0.0)
+  ,fT(0.0)
+  ,fU(0.0)
+  ,fPhi(0)
+  ,fPhiMin(0)
+  ,fIsPhysical(false)
+  ,fNrOfPhysicals(-1)
+  ,fVar()
+  ,fEVar(0)
+  ,fAVar(0)
+  ,fIsVar()
+  ,fLowerLimit()
+  ,fUpperLimit()
+  ,fStepSize()
+  ,fNumberOfSteps()
+  ,fStepVar()
 {
   // ROOT I/O Constructor
 
   // This constructor leaves the object in an inconsistent state. 
   // After calling the default constructor you should make sure to at 
-  // least call ReadFormatString() and SetIsospin(int)!
+  // least call SetFormat() and SetIsospin(int)!
   // Failing to do this will result in a serious ERROR when attempting to
   // TKinematics::Write() the object.
+}
 
-  // Initialize kinematic variables
-  fIsVar = new bool[3];
-  fLowerLimit = new double[3];
-  fUpperLimit = new double[3];
-  fStepSize = new double[3];
-  fNumberOfSteps = new int[3];
+//_____________________________________________________________________
+TKinematics::TKinematics(const char* name, const char* title,
+			 int isospin, const char *format, 
+			 double var1, double var2)
+  : TNamed::TNamed(name,title)
+  ,fFormat(0)
+  ,fIsospin(isospin)
+  ,fNVars(2)
+  ,fMp(0.0)
+  ,fMk(0.0)
+  ,fMy(0.0)
+  ,fWlab(0.0)
+  ,fWcm(0.0)
+  ,fKlab(0.0)
+  ,fKcm(0.0)
+  ,fPk(0.0)
+  ,fPklab(0.0)
+  ,fCosthkcm(0.0), fCosthklab(0.),fPYlab(0.),fCosthYlab(0.)
+  ,fQsquared(0.0)
+  ,fXb(0.0)
+  ,fW(0.0)
+  ,fS(0.0)
+  ,fT(0.0)
+  ,fU(0.0)
+  ,fPhi(0)
+  ,fPhiMin(0)
+  ,fIsPhysical(false)
+  ,fNrOfPhysicals(-1)
+  ,fVar()
+  ,fEVar(0)
+  ,fAVar(0)
+  ,fIsVar()
+  ,fLowerLimit()
+  ,fUpperLimit()
+  ,fStepSize()
+  ,fNumberOfSteps()
+  ,fStepVar()
+{
+  // Constructor
+  //
+  // The user needs to specify 
+  // * the isospin channel (see SetIsospin(int) for more info).
+  // * 2 independent variables with the 'format' string. See SetFormat(const char*)
+  //   for info about what constitutes a valid format string.
+  // * the initial values (var1-2) of the independent variables in the same order as listed
+  //  in the format string.
+  //
+  // The variables Q^2 and phi will be set to zero.
 
-  // Assume the independent variables to be constant
-  for(int i=0; i<3; ++i) {
-    fIsVar[i] = false;
-    fLowerLimit[i] = 0.0;
-    fUpperLimit[i] = 0.0;
-    fStepSize[i] = 0.0;
-    fNumberOfSteps[i] = 1;
+  ChangeIsospinChannel(isospin);
+
+  ReadFormatString(format);
+  if( fNVars != 2 ) {
+    cerr << "ERROR in TKinematics::TKinematics(const char*,const char*,int,const char*,"
+	 << "double,double): "
+	 << "Constructor requires 2 independent variables in format string." << endl;
+    assert( fNVars==2 );
   }
+
+  *fVar[0] = var1;
+  *fVar[1] = var2;
+  UpdateKinematics();
+
+  InitializeArrays();
 }
 
 //_____________________________________________________________________
 TKinematics::TKinematics(const char* name, const char* title,
 			 int isospin, const char *format, 
 			 double var1, double var2, double var3)
-  : TNamed::TNamed(name,title),fFormat(0),fIsospin(isospin),fMp(0.0),fMk(0.0),
-    fMy(0.0),fWlab(0.0),fWcm(0.0),fKlab(0.0),fKcm(0.0),fPk(0.0),fPklab(0.0),fCosthkcm(0.0),
-    fCosthklab(0.),fPYlab(0.),fCosthYlab(0.),
-    fQsquared(0.0),fXb(0.0), fW(0.0),fS(0.0),fT(0.0),fU(0.0),fIsPhysical(false), 
-    fNrOfPhysicals(-1),
-    fVar(0),fIsVar(0),fLowerLimit(0),fUpperLimit(0),fStepSize(0),
-    fNumberOfSteps(0),fStep(0)
+  : TNamed::TNamed(name,title)
+  ,fFormat(0)
+  ,fIsospin(isospin)
+  ,fNVars(3)
+  ,fMp(0.0)
+  ,fMk(0.0)
+  ,fMy(0.0)
+  ,fWlab(0.0)
+  ,fWcm(0.0)
+  ,fKlab(0.0)
+  ,fKcm(0.0)
+  ,fPk(0.0)
+  ,fPklab(0.0)
+  ,fCosthkcm(0.0), fCosthklab(0.),fPYlab(0.),fCosthYlab(0.)
+  ,fQsquared(0.0)
+  ,fXb(0.0)
+  ,fW(0.0)
+  ,fS(0.0)
+  ,fT(0.0)
+  ,fU(0.0)
+  ,fPhi(0)
+  ,fPhiMin(0)
+  ,fIsPhysical(false)
+  ,fNrOfPhysicals(-1)
+  ,fVar()
+  ,fEVar(0)
+  ,fAVar(0)
+  ,fIsVar()
+  ,fLowerLimit()
+  ,fUpperLimit()
+  ,fStepSize()
+  ,fNumberOfSteps()
+  ,fStepVar()
 {
   // Constructor
   //
@@ -106,64 +241,165 @@ TKinematics::TKinematics(const char* name, const char* title,
   //   for info about what constitutes a valid format string.
   // * the initial values (var1-3) of the independent variables in the same order as listed
   //  in the format string.
+  //
+  // The unspecified variable Q^2 and/or phi will be set to zero.
 
   ChangeIsospinChannel(isospin);
 
   ReadFormatString(format);
+  if( fNVars != 3 ) {
+    cerr << "ERROR in TKinematics::TKinematics(const char*,const char*,int,const char*,"
+	 << "double,double,double): "
+	 << "Constructor requires 3 independent variables in format string." << endl;
+    assert( fNVars==3 );
+  }
+
   *fVar[0] = var1;
   *fVar[1] = var2;
   *fVar[2] = var3;
   UpdateKinematics();
 
-  // Initialize kinematic variables
-  fIsVar = new bool[3];
-  fLowerLimit = new double[3];
-  fUpperLimit = new double[3];
-  fStepSize = new double[3];
-  fNumberOfSteps = new int[3];
-  
-  // Assume the independent variables to be constant
-  for(int i=0; i<3; ++i) {
-    fIsVar[i] = false;
-    fLowerLimit[i] = *fVar[i];
-    fUpperLimit[i] = *fVar[i];
-    fStepSize[i] = 0.0;
-    fNumberOfSteps[i] = 1;
+  InitializeArrays();
+}
+
+//_____________________________________________________________________
+TKinematics::TKinematics(const char* name, const char* title,
+			 int isospin, const char *format, 
+			 double var1, double var2, double var3, double var4)
+  : TNamed::TNamed(name,title)
+  ,fFormat(0)
+  ,fIsospin(isospin)
+  ,fNVars(4)
+  ,fMp(0.0)
+  ,fMk(0.0)
+  ,fMy(0.0)
+  ,fWlab(0.0)
+  ,fWcm(0.0)
+  ,fKlab(0.0)
+  ,fKcm(0.0)
+  ,fPk(0.0)
+  ,fPklab(0.0)
+  ,fCosthkcm(0.0)
+  ,fQsquared(0.0)
+  ,fXb(0.0)
+  ,fW(0.0)
+  ,fS(0.0)
+  ,fT(0.0)
+  ,fU(0.0)
+  ,fPhi(0)
+  ,fPhiMin(0)
+  ,fIsPhysical(false)
+  ,fNrOfPhysicals(-1)
+  ,fVar()
+  ,fEVar(0)
+  ,fAVar(0)
+  ,fIsVar()
+  ,fLowerLimit()
+  ,fUpperLimit()
+  ,fStepSize()
+  ,fNumberOfSteps()
+  ,fStepVar()
+{
+  // Constructor
+  //
+  // The user needs to specify 
+  // * the isospin channel (see SetIsospin(int) for more info).
+  // * the 4 independent variables with the 'format' string. See SetFormat(const char*)
+  //   for info about what constitutes a valid format string.
+  // * the initial values (var1-4) of the independent variables in the same order as listed
+  //  in the format string.
+
+  ChangeIsospinChannel(isospin);
+
+  ReadFormatString(format);
+  if( fNVars != 4 ) {
+    cerr << "ERROR in TKinematics::TKinematics(const char*,const char*,int,const char*,"
+	 << "double,double,double,double): "
+	 << "Constructor requires 4 independent variables in format string." << endl;
+    assert( fNVars==4 );
   }
+
+  *fVar[0] = var1;
+  *fVar[1] = var2;
+  *fVar[2] = var3;
+  *fVar[3] = var4;
+  UpdateKinematics();
+
+  InitializeArrays();
 }
 
 //_____________________________________________________________________
 TKinematics::TKinematics(const TKinematics& toCopy)
-  : TNamed(toCopy),fFormat(0),fIsospin(toCopy.fIsospin),
-    fMp(toCopy.fMp),fMk(toCopy.fMk),fMy(toCopy.fMy),
-    fWlab(toCopy.fWlab),fWcm(toCopy.fWcm),fKlab(toCopy.fKlab),
-    fKcm(toCopy.fKcm),fPk(toCopy.fPk),fPklab(toCopy.fPklab),fCosthkcm(toCopy.fCosthkcm),
-    fCosthklab(toCopy.fCosthklab),fPYlab(toCopy.fPYlab),fCosthYlab(toCopy.fCosthYlab),
-    fQsquared(toCopy.fQsquared), fXb(toCopy.fXb), fW(toCopy.fW),fS(toCopy.fS),
-    fT(toCopy.fT),fU(toCopy.fU),fIsPhysical(toCopy.fIsPhysical),
-    fNrOfPhysicals(toCopy.fNrOfPhysicals),
-    fVar(0),fIsVar(0),fLowerLimit(0),fUpperLimit(0),fStepSize(0),
-    fNumberOfSteps(0),fStep(toCopy.fStep)
+  : TNamed(toCopy)
+  ,fFormat(0)
+  ,fIsospin(toCopy.fIsospin)
+  ,fNVars(toCopy.fNVars)
+  ,fMp(toCopy.fMp)
+  ,fMk(toCopy.fMk)
+  ,fMy(toCopy.fMy)
+  ,fWlab(toCopy.fWlab)
+  ,fWcm(toCopy.fWcm)
+  ,fKlab(toCopy.fKlab)
+  ,fKcm(toCopy.fKcm)
+  ,fPk(toCopy.fPk)
+  ,fPklab(toCopy.fPklab)
+  ,fCosthkcm(toCopy.fCosthkcm),fCosthklab(toCopy.fCosthklab),fPYlab(toCopy.fPYlab),fCosthYlab(toCopy.fCosthYlab)
+  ,fQsquared(toCopy.fQsquared)
+  ,fXb(toCopy.fXb)
+  ,fW(toCopy.fW)
+  ,fS(toCopy.fS)
+  ,fT(toCopy.fT)
+  ,fU(toCopy.fU)
+  ,fPhi(toCopy.fPhi)
+  ,fPhiMin(toCopy.fPhiMin)
+  ,fIsPhysical(toCopy.fIsPhysical)
+  ,fNrOfPhysicals(toCopy.fNrOfPhysicals)
+  ,fVar()
+  ,fEVar(0)
+  ,fAVar(0)
+  ,fIsVar(toCopy.fIsVar)
+  ,fLowerLimit(toCopy.fLowerLimit)
+  ,fUpperLimit(toCopy.fUpperLimit)
+  ,fStepSize(toCopy.fStepSize)
+  ,fNumberOfSteps(toCopy.fNumberOfSteps)
+  ,fStepVar(toCopy.fStepVar)
 {
   // Copy constructor
   if(toCopy.fFormat) // when toCopy.fFormat is non-NULL
     ReadFormatString(toCopy.fFormat);
+}
 
-  if(toCopy.fIsVar) { // when kinematic variables have been initialized
-    fIsVar = new bool[3];
-    fLowerLimit = new double[3];
-    fUpperLimit = new double[3];
-    fStepSize = new double[3];
-    fNumberOfSteps = new int[3];
+//_____________________________________________________________________
+void TKinematics::InitializeArrays()
+{
+  // Resize all vector members to fNVars and 
+  // assume the independent variables to be constant.
 
-    for(int i=0; i<3; ++i) {
-      fIsVar[i] = toCopy.fIsVar[i];
-      fLowerLimit[i] = toCopy.fLowerLimit[i];
-      fUpperLimit[i] = toCopy.fUpperLimit[i];
-      fStepSize[i] = toCopy.fStepSize[i];
-      fNumberOfSteps[i] = toCopy.fNumberOfSteps[i];
+  fIsVar.resize(fNVars);
+  fLowerLimit.resize(fNVars);
+  fUpperLimit.resize(fNVars);
+  fStepSize.resize(fNVars);
+  fNumberOfSteps.resize(fNVars);
+  fStepVar.resize(fNVars);
+
+  for(int i=0; i<fNVars; ++i)
+    {
+      fIsVar[i] = false;
+      fLowerLimit[i] = fUpperLimit[i] = *fVar[i];
+      fStepSize[i] = 0.0;
+      fNumberOfSteps[i] = 1;
+      fStepVar[i] = 0;
     }
-  }
+}
+
+//_____________________________________________________________________
+TKinematics* TKinematics::Clone(const char *newname) const
+{
+  // Virtual copy constructor
+  // If newname is specified, this will be the name of the new object.
+  TKinematics *clone = new TKinematics(*this);
+  if (newname && std::strlen(newname)) clone->SetName(newname);
+  return clone;
 }
 
 //_____________________________________________________________________
@@ -171,12 +407,6 @@ TKinematics::~TKinematics()
 {
   // Destructor
   delete[] fFormat;
-  delete[] fVar;
-  delete[] fIsVar;
-  delete[] fLowerLimit;
-  delete[] fUpperLimit;
-  delete[] fStepSize;
-  delete[] fNumberOfSteps;
 }
 
 //_____________________________________________________________________
@@ -188,6 +418,7 @@ TKinematics& TKinematics::operator=(const TKinematics& toCopy)
     TNamed::operator=(toCopy);
     
     fIsospin = toCopy.fIsospin;
+    fNVars = toCopy.fNVars;
     fMp = toCopy.fMp;
     fMk = toCopy.fMk;
     fMy = toCopy.fMy;
@@ -206,32 +437,18 @@ TKinematics& TKinematics::operator=(const TKinematics& toCopy)
     fS = toCopy.fS;
     fT = toCopy.fT;
     fU = toCopy.fU;
+    fPhi = toCopy.fPhi;
+    fPhiMin = toCopy.fPhiMin;
     fIsPhysical = toCopy.fIsPhysical;
     fNrOfPhysicals = toCopy.fNrOfPhysicals;
-    fStep = toCopy.fStep;
 
-    if(toCopy.fIsVar) {
-      if( !fIsVar) fIsVar = new bool[3];
-      if( !fLowerLimit) fLowerLimit = new double[3];
-      if( !fUpperLimit) fUpperLimit = new double[3];
-      if( !fStepSize) fStepSize = new double[3];
-      if( !fNumberOfSteps) fNumberOfSteps = new int[3];
-      
-      for(int i=0; i<3; ++i) {
-	fIsVar[i] = toCopy.fIsVar[i];
-	fLowerLimit[i] = toCopy.fLowerLimit[i];
-	fUpperLimit[i] = toCopy.fUpperLimit[i];
-	fStepSize[i] = toCopy.fStepSize[i];
-	fNumberOfSteps[i] = toCopy.fNumberOfSteps[i];
-      }
-    }
-    else {
-      if( fIsVar) { delete[] fIsVar; fIsVar = 0; }
-      if( fLowerLimit) { delete[] fLowerLimit; fLowerLimit = 0; }
-      if( fUpperLimit) { delete[] fUpperLimit; fUpperLimit = 0; }
-      if( fStepSize) { delete[] fStepSize; fStepSize = 0; }
-      if( fNumberOfSteps) { delete[] fNumberOfSteps; fNumberOfSteps = 0; }
-    }
+    fIsVar = toCopy.fIsVar;
+    fLowerLimit = toCopy.fLowerLimit;
+    fUpperLimit = toCopy.fUpperLimit;
+    fStepSize = toCopy.fStepSize;
+    fNumberOfSteps = toCopy.fNumberOfSteps;
+    fStepVar = toCopy.fStepVar;
+  
   }
   
   return *this;
@@ -258,10 +475,10 @@ void TKinematics::SetIsospin(int isospin)
 
   if( ((isospin==11 || isospin==12) && fIsospin<11) ||
       (isospin<11 && (fIsospin==11 || fIsospin==12)) ) {
-    std::cerr << "WARNING in TKinematics::SetIsospin(int): "
-	      << "Format string for current isospin channel "
-	      << fIsospin << " can't work for requested isospin channel "
-	      << isospin << ". Ignoring request!\n";
+    cerr << "WARNING in TKinematics::SetIsospin(int): "
+	 << "Format string for current isospin channel "
+	 << fIsospin << " can't work for requested isospin channel "
+	 << isospin << ". Ignoring request!\n";
     return;
   }
   
@@ -356,8 +573,8 @@ void TKinematics::ChangeIsospinChannel(int isospin)
       fMy = M_S0;
       break;
     default:
-      std::cerr << "ERROR in TKinematics::ChangeIsospinChannel(int):\n"
-		<< "Isospin channel " << isospin << " is not implemented!\n";
+      cerr << "ERROR in TKinematics::ChangeIsospinChannel(int):\n"
+	   << "Isospin channel " << isospin << " is not implemented!\n";
       break;
     }  
   
@@ -368,194 +585,245 @@ void TKinematics::ChangeIsospinChannel(int isospin)
 //_____________________________________________________________________
 void TKinematics::SetFormat(const char* format)
 {
-/* Begin_Html
-  The user needs to specify 3 variables to unambiguously fix the kinematics. Obviously,
-  he/she needs to make sure the variables of choice are independent.
-  TKinematics needs:
-  <ul>
-  <li> 1 energy variable
-  <li> 1 angular variable
-  <li> Q<sup>2</sup>
-  </ul>
-  <p>
-  The 3 independent variables are set by providing a ':' separated list of variables.
-  <p>
-  Below is a list of the 'code names' of variables:
-  <table>
-  <tr><td>Q<sup>2</sup></td><td><tt>qsquared</tt></td></tr>
-  <tr><td>photon energy (LAB)</sub></td><td><tt>wlab</tt></td></tr>
-  <tr><td>photon momentum (LAB)</td><td><tt>klab</tt></td></tr>
-  <tr><td>photon energy (CM)</td><td><tt>wcm</tt></td></tr>
-  <tr><td>photon momentum (CM)</td><td><tt>kcm</tt></td></tr>
-  <tr><td>kaon momentum (LAB)</td><td><tt>pklab</tt></td></tr>
-  <tr><td>kaon momentum (CM)</td><td><tt>pk</tt> or <tt>pkcm</tt></td></tr>
-  <tr><td>kaon scattering angle (CM)</td><td><tt>costhkcm</tt></td></tr>
-  <tr><td>invariant mass</td><td><tt>w</tt></td></tr>
-  <tr><td>Mandelstam s</td><td><tt>s</tt></td></tr>
-  <tr><td>Mandelstam t</td><td><tt>t</tt></td></tr>
-  <tr><td>Mandelstam u</td><td><tt>u</tt></td></tr>
-  <tr><td>Bjorken x</td><td><tt>xb</tt></td></tr>
-  </table>
-  End_Html */
+  /* Begin_Html
+     The user needs to specify 2, 3 or 4 variables to unambiguously fix the kinematics.
+     Obviously, he/she needs to make sure the variables of choice are independent.
+     TKinematics needs:
+     <ul>
+     <li> 1 energy variable
+     <li> 1 angular variable
+     <li> photon's virtuality Q<sup>2</sup> <i>(optional)</i>
+     <li> Angle &Phi; between lepton and reaction plane <i>(optional)</i>
+     </ul>
+     <p>
+     The 2, 3 or 4 independent variables are set by providing a ':' separated list of variables.
+     In case Q<sup>2</sup> and/or &Phi; are not listed as independent variables, they are set to
+     zero.
+     <p>
+     Below is a list of the 'code names' of variables:
+     <table>
+     <tr><td>Q<sup>2</sup></td><td><tt>qsquared</tt></td></tr>
+     <tr><td>&Phi;</td><td><tt>phi</tt></td></tr>
+     <tr><td>photon energy (LAB)</sub></td><td><tt>wlab</tt></td></tr>
+     <tr><td>photon momentum (LAB)</td><td><tt>klab</tt></td></tr>
+     <tr><td>photon energy (CM)</td><td><tt>wcm</tt></td></tr>
+     <tr><td>photon momentum (CM)</td><td><tt>kcm</tt></td></tr>
+     <tr><td>kaon momentum (LAB)</td><td><tt>pklab</tt></td></tr>
+     <tr><td>kaon momentum (CM)</td><td><tt>pk</tt> or <tt>pkcm</tt></td></tr>
+     <tr><td>kaon scattering angle (CM)</td><td><tt>costhkcm</tt></td></tr>
+     <tr><td>invariant mass</td><td><tt>w</tt></td></tr>
+     <tr><td>Mandelstam s</td><td><tt>s</tt></td></tr>
+     <tr><td>Mandelstam t</td><td><tt>t</tt></td></tr>
+     <tr><td>Mandelstam u</td><td><tt>u</tt></td></tr>
+     <tr><td>Bjorken x</td><td><tt>xb</tt></td></tr>
+     </table>
+     <p>
+     Attention! Calling this function will fix the kinematics in its current
+     state. All variables will be fixed.
+     End_Html */
 
   if(!IsFixed()) {
-    std::cout << "INFO in TKinematics::SetFormat(const char*): "
-	      << "Fixing all variables.\n";
-    for(int i=0; i<3; ++i)
+    cout << "INFO in TKinematics::SetFormat(const char*): "
+	 << "Fixing all variables.\n";
+    for(int i=0; i<fNVars; ++i)
       FixVariable(i+1);
   }
 
   ReadFormatString(format);
   
-  // Finally, set the correct upper and lower limits
-  for(int i=0; i<3; ++i) {
-    fLowerLimit[i] = *fVar[i];
-    fUpperLimit[i] = *fVar[i];
-  }
+  // Finally, we reset all the arrays
+  InitializeArrays();
 }
 
 //_____________________________________________________________________
-void TKinematics::ReadFormatString(const char* format)
+void TKinematics::ReadFormatString(const TString format)
 {
   // Process the format string
+  //
+  // The number of independent variables can change. It is advised
+  // to re-initialize the member arrays.
+  //
+  // In case Q^2 and/or phi are not listed as independent variables, 
+  // they are set to zero.
 
   // Store format in TKinematics::fFormat
   // Read TKinematics::fFormat and let fVar[] point
-  // to the 3 independent kinematical points as specified
+  // to the 2, 3 or 4 independent kinematical points as specified
   // by the user.
   // Check that the choosen variables make sense.
 
+  // Tokenize the format string
+  TObjArray *listOfTokens = format.Tokenize(":");
+  fNVars = listOfTokens->GetEntries();
+
+  // and check the number of variables
+  if( (fNVars<2) && (fNVars>4) ) {
+    cerr << "ERROR in TKinematics::ReadFormatString(const TString):\n"
+	 << "Format string should provide 2, 3 or 4 independent variables: "
+	 << "\"var1:var2[:var3[:var4]]\""  << "\"\n";
+    assert( (fNVars>=2) && (fNVars<=4) );
+  }
 
   // allocate memory for fFormat and fVar
   if(!fFormat) fFormat = new char[100];
-  if(!fVar)    fVar    = new double*[3];
+  fVar.resize( fNVars );
 
   // Put format string in member and in temporary *char.
   std::strcpy(fFormat,format);
-  char tmpchar[100]; std::strcpy(tmpchar,format);
-
-  // Tokenize format string
+  
+  // Loop over all tokens
   // and determine independent kinematic variables
-  char* token; int nrOfTokens =0;
-  int qsqCount=0, energyCount=0, angleCount=0; // count type of variables
+  int qsqCount=0, energyCount=0, angleCount=0, phiCount=0; // count type of variables
 
-  token = std::strtok(tmpchar,":"); // read first token
-  while( token != NULL  &&  nrOfTokens < 3 ) 
+  for(int itoken=0; itoken<fNVars; ++itoken)
     {
-      if( !std::strcmp(token,"wlab") ) {
-	fVar[nrOfTokens] = fEVar = &fWlab;
+      TString token = dynamic_cast<TObjString*>(listOfTokens->At(itoken))->GetString();
+
+      if( !token.CompareTo("wlab",TString::kIgnoreCase) ) {
+	fVar[itoken] = fEVar = &fWlab;
 	++energyCount;
       }
-      else if( !std::strcmp(token,"costhkcm") ) {
-	fVar[nrOfTokens] = fAVar = &fCosthkcm;
+      else if( !token.CompareTo("costhkcm",TString::kIgnoreCase) ) {
+	fVar[itoken] = fAVar = &fCosthkcm;
 	++angleCount;
       }
-      else if( !std::strcmp(token,"qsquared") ) {
-	fVar[nrOfTokens] = &fQsquared;
+      else if( !token.CompareTo("qsquared",TString::kIgnoreCase) ) {
+	fVar[itoken] = &fQsquared;
 	++qsqCount;
       }
-      else if( !std::strcmp(token,"w") ) {
-	fVar[nrOfTokens] = fEVar = &fW;
+      else if( !token.CompareTo("w",TString::kIgnoreCase) ) {
+	fVar[itoken] = fEVar = &fW;
 	++energyCount;
       }
-      else if( !std::strcmp(token,"s") ) {
-	fVar[nrOfTokens] = fEVar = &fS;
+      else if( !token.CompareTo("s",TString::kIgnoreCase) ) {
+	fVar[itoken] = fEVar = &fS;
 	++energyCount;
       }
-      else if( !std::strcmp(token,"t") ) {
-	fVar[nrOfTokens] = fAVar = &fT;
+      else if( !token.CompareTo("t",TString::kIgnoreCase) ) {
+	fVar[itoken] = fAVar = &fT;
 	++angleCount;
       }
-      else if( !std::strcmp(token,"wcm") ) {
-	fVar[nrOfTokens] = fEVar = &fWcm;
+      else if( !token.CompareTo("wcm",TString::kIgnoreCase) ) {
+	fVar[itoken] = fEVar = &fWcm;
 	++energyCount;
       }
-      else if( !std::strcmp(token,"klab") ) {
-	fVar[nrOfTokens] = fEVar = &fKlab;
+      else if( !token.CompareTo("klab",TString::kIgnoreCase) ) {
+	fVar[itoken] = fEVar = &fKlab;
 	++energyCount;
       }
-      else if( !std::strcmp(token,"kcm") ) {
-	fVar[nrOfTokens] = fEVar = &fKcm;
+      else if( !token.CompareTo("kcm",TString::kIgnoreCase) ) {
+	fVar[itoken] = fEVar = &fKcm;
 	++energyCount;
       }
-      else if( !std::strcmp(token,"pk") ) {
-	fVar[nrOfTokens] = fEVar = &fPk;
+      else if( !token.CompareTo("pk",TString::kIgnoreCase) ) {
+	fVar[itoken] = fEVar = &fPk;
 	++energyCount;
       }
-      else if( !std::strcmp(token,"pkcm") ) {
-	fVar[nrOfTokens] = fEVar = &fPk;
+      else if( !token.CompareTo("pkcm",TString::kIgnoreCase) ) {
+	fVar[itoken] = fEVar = &fPk;
 	++energyCount;
       }
-      else if( !std::strcmp(token,"pklab") ) {
-	fVar[nrOfTokens] = fAVar = &fPklab;
+      else if( !token.CompareTo("pklab",TString::kIgnoreCase) ) {
+	//hacked by me, coz I use pklab as an angle variable!!!
+	fVar[itoken] = fAVar = &fPklab;
 	++angleCount;
       }
-      else if( !std::strcmp(token,"u") ) {
-	fVar[nrOfTokens] = fAVar = &fU;
+      else if( !token.CompareTo("u",TString::kIgnoreCase) ) {
+	fVar[itoken] = fAVar = &fU;
 	++angleCount;
       }
-      else if( !std::strcmp(token,"xb") ) {
-	fVar[nrOfTokens] = fEVar = &fXb;
+      else if( !token.CompareTo("xb",TString::kIgnoreCase) ) {
+	fVar[itoken] = fEVar = &fXb;
 	++energyCount;
+      }
+      else if( !token.CompareTo("phi",TString::kIgnoreCase) ) {
+	fVar[itoken] = &fPhi;
+	++phiCount;
       }
       else {
-	fVar[nrOfTokens] = NULL;
-	std::cerr << "ERROR in  TKinematics::ReadFormatString(const char*):\n"
-		  << "Kinematic variable \"" << token << "\" unknown!\n";
+	fVar[itoken] = NULL;
+	cerr << "ERROR in  TKinematics::ReadFormatString(const TString):\n"
+	     << "Kinematic variable \"" << token << "\" unknown!\n";
 	exit(1);
       }
-      nrOfTokens++;
-      token = strtok(NULL,":"); // read next token
-    }  // end tokenization
+    }  // end loop over tokens
 
-  if( nrOfTokens < 3 ) {
-    std::cerr << "ERROR in TKinematics::ReadFormatString(const char*):\n"
-	      << "Format string should provide 3 independent variables: "
-	      << "\"var1:var2:var3\"\n";
-    exit(1);
-  }
+  // Get rid of the list of tokens
+  delete listOfTokens;
 
   // Check whether the user provided a meaningful format string
-  if( qsqCount != 1 ) {
-    std::cerr << "ERROR in TKinematics::ReadFormatString(const char*):\n"
-	      << "Q^2 needs to be one of 3 independent kinematic variables.\n";
+  // First the optional arguments: Q^2 and phi (set them to zero when necessary)
+  if( fNVars == 3 ) {
+    if( qsqCount != 1 ) {
+      if( phiCount != 1 ) {
+	cerr << "ERROR in TKinematics::ReadFormatString(const TString):\n"
+	     << "The angle phi or Q^2 need to be one of the 3 independent kinematic variables!\n";
+	exit(1);
+      }
+      else {
+	fQsquared = 0.;
+      }
+    }
+    else {
+      if( phiCount == 1 ) {
+	cerr << "ERROR in TKinematics::ReadFormatString(const TString):\n"
+	     << "The angle phi and Q^2 cannot simultaneously be one of the 3 independent kinematic variables!\n";
+	exit(1);
+      }
+      else {
+	fPhi = 0.;
+      }
+    }
+  }
+  else if( fNVars == 4 && qsqCount != 1 && phiCount != 1 ) {
+    cerr << "ERROR in TKinematics::ReadFormatString(const TString):\n"
+	 << "The angle phi and Q^2 need to be one of the 4 independent kinematic variables!\n";
     exit(1);
   }
+  else {
+    fQsquared = fPhi = 0.;
+  }
+
+  // Check for 1 and only 1 energy variable
   if( energyCount == 0 ) {
-    std::cerr << "ERROR in TKinematics::ReadFormatString(const char*):\n"
-	      << "wlab/wcm/klab/kcm/pk/pklab/w/s/xb needs to be one of 3 "
-	      << "independent kinematic variables.\n";
+    cerr << "ERROR in TKinematics::ReadFormatString(const TString):\n"
+	 << "wlab/wcm/klab/kcm/pk/pklab/w/s/xb needs to be one of " << fNVars
+	 << " independent kinematic variables.\n";
     exit(1); }
   else if( energyCount != 1 ) {
-    std::cerr << "ERROR in TKinematics::ReadFormatString(const char*):\n"
-	      << "Only one of following kinematic variables can be independent: "
-	      << "wlab/wcm/klab/kcm/pk/pklab/w/s/xb.\n";
+    cerr << "ERROR in TKinematics::ReadFormatString(const TString):\n"
+	 << "Only one of following kinematic variables can be independent: "
+	 << "wlab/wcm/klab/kcm/pk/pklab/w/s/xb.\n";
     exit(1);
   }
+
+  // Check for 1 and only 1 angular variable
   if( angleCount == 0 ) {
-    std::cerr << "ERROR in TKinematics::ReadFormatString(const char*):\n"
-	      << "costhkcm/t/u needs to be one of 3 "
-	      << "independent kinematic variables.\n";
+    cerr << "ERROR in TKinematics::ReadFormatString(const TString):\n"
+	 << "costhkcm/t/u needs to be one of " << fNVars
+	 << " independent kinematic variables.\n";
     exit(1); }
   else if( angleCount != 1 ) {
-    std::cerr << "ERROR in TKinematics::ReadFormatString(const char*):\n"
-	      << "Only one of following kinematic variables can be independent: "
-	      << "costhkcm/t/u.\n";
+    cerr << "ERROR in TKinematics::ReadFormatString(const TString):\n"
+	 << "Only one of following kinematic variables can be independent: "
+	 << "costhkcm/t/u.\n";
     exit(1);
   }
+
+  // Some variables are not possible for certain isospin channels
   if( fIsospin == 11 || fIsospin == 12 ) {
     if( fEVar==&fKlab || fEVar==&fWlab || fEVar==&fXb ) {
-      std::cerr << "ERROR in  TKinematics::ReadFormatString(const char*):\n"
-		<< "Kinematic variable wlab/klab/xb is not allowed "
-		<< "as independent variable in radiative capture kinematics!\n";
+      cerr << "ERROR in  TKinematics::ReadFormatString(const TString):\n"
+	   << "Kinematic variable wlab/klab/xb is not allowed "
+	   << "as independent variable in radiative capture kinematics!\n";
       exit(1);
     }
   }
   else {
     if( fEVar==&fPk || fEVar==&fPklab ) {
-      std::cerr << "ERROR in  TKinematics::ReadFormatString(const char*):\n"
-		<< "Kinematic variable pk/pkcm/pklab is not allowed "
-		<< "as independent variable in EM meson production!\n";
+      cerr << "ERROR in  TKinematics::ReadFormatString(const TString):\n"
+	   << "Kinematic variable pk/pkcm/pklab is not allowed "
+	   << "as independent variable in EM meson production!\n";
       exit(1);
     }
   }
@@ -568,15 +836,15 @@ TString TKinematics::GetVarName(int varNumber) const
   // as specified in the format string.
 
   // First we do some checks
-  if( varNumber<1 || varNumber>3 ) {
-    std::cerr << "ERROR in TKinematics::GetVarName(int):\n"
-	      << "Index out-of-bounds!\n";
+  if( varNumber<1 || varNumber>fNVars ) {
+    cerr << "ERROR in TKinematics::GetVarName(int):\n"
+	 << "Index out-of-bounds!\n";
     return TString();
   }
 
-  if( !fVar ) {
-    std::cerr << "ERROR in TKinematics::GetVarName(int):\n"
-	      << "Independent kinematic variables have not been initialized!\n";
+  if( fVar.size()==0 ) {
+    cerr << "ERROR in TKinematics::GetVarName(int):\n"
+	 << "Independent kinematic variables have not been initialized!\n";
     return TString();
   }
 
@@ -609,10 +877,12 @@ TString TKinematics::GetVarName(int varNumber) const
     varName = "u";
   else if( fVar[varNumber-1] == &fXb )
     varName = "xb";
+  else if( fVar[varNumber-1] == &fPhi )
+    varName = "phi";
   else {
-    std::cerr << "Error in TKinematics::GetVarName(int):\n"
-	      << "TKinematics::fVar[" << varNumber-1 << "] "
-	      << "points to unknown variable.\n";
+    cerr << "Error in TKinematics::GetVarName(int):\n"
+	 << "TKinematics::fVar[" << varNumber-1 << "] "
+	 << "points to unknown variable.\n";
   }
 
   return varName;
@@ -626,17 +896,17 @@ void TKinematics::SetVar(int varNumber, double value)
   // This function can't be called when a range has been given to
   // this variable.
 
-  if( varNumber<1 || varNumber>3 )
-    std::cerr << "ERROR in TKinematics::SetVar(int,double): "
-	      << "Index out-of-bounds!\n";
+  if( varNumber<1 || varNumber>fNVars )
+    cerr << "ERROR in TKinematics::SetVar(int,double): "
+	 << "Index out-of-bounds!\n";
 
-  else if( !fVar )
-    std::cerr << "ERROR in TKinematics::SetVar(int,double): "
-	      << "Independent kinematic variables have not been initialized!\n";
+  else if( fVar.size()==0 )
+    cerr << "ERROR in TKinematics::SetVar(int,double): "
+	 << "Independent kinematic variables have not been initialized!\n";
     
   else if( fIsVar[varNumber-1] )
-    std::cerr << "ERROR in TKinematics::SetVar(int,double): "
-	      << "This method can not be used because the variable is not fixed.\n";
+    cerr << "ERROR in TKinematics::SetVar(int,double): "
+	 << "This method can not be used because the variable is not fixed.\n";
 
   else {
     fLowerLimit[varNumber-1] = value;
@@ -647,26 +917,114 @@ void TKinematics::SetVar(int varNumber, double value)
 }
 
 //_____________________________________________________________________
+void TKinematics::SetPhiLimits(double phiMin, double phiMax)
+{
+  // Set fPhi = phiMax and fPhiMin = fMin, and fix the variable fPhi
+
+  if(phiMin == phiMax)
+    cerr << "ERROR in TKinematics::SetPhiLimits(double,double): "
+	 << "Upper and lower limit for phi are the same.\n";
+
+  else if(phiMin > phiMax)
+    cerr << "ERROR in TKinematics::SetPhiLimits(double,double): "
+	 << "phiMax has to be larger than phiMin.\n";
+
+  else
+    {
+      int i = 1;
+      while(i <= fNVars && GetVarName(i) != "phi")
+	i++;
+
+      if(i != fNVars + 1)
+	{
+	  SetVar(i,phiMax);
+	  FixVariable(i);
+	}
+      else
+	fPhi = phiMax;
+      
+      fPhiMin = phiMin;
+    }
+}
+
+//_____________________________________________________________________
 double TKinematics::GetVar(int varNumber) const
 {
   // Returns the current value of the 'varNumber'th independent
   // variable as specified in the format string.
 
   // First we do some checks
-  if( varNumber<1 || varNumber>3 ) {
-    std::cerr << "ERROR in TKinematics::GetVar(int):\n"
-	      << "Index out-of-bounds!\n";
+  if( varNumber<1 || varNumber>fNVars ) {
+    cerr << "ERROR in TKinematics::GetVar(int):\n"
+	 << "Index out-of-bounds!\n";
     return -1e16;
   }
 
-  if( !fVar ) {
-    std::cerr << "ERROR in TKinematics::GetVar(int):\n"
-	      << "Independent kinematic variables have not been initialized!\n";
+  if( fVar.size()==0 ) {
+    cerr << "ERROR in TKinematics::GetVar(int):\n"
+	 << "Independent kinematic variables have not been initialized!\n";
     return -1e16;
   }
 
   return *fVar[varNumber-1];
   
+}
+
+//_____________________________________________________________________
+double TKinematics::GetTMin() const
+{
+  // Returns the minimum value of -t.
+
+  return fMk*fMk - fQsquared -2.0*fWcm*sqrt(fPk*fPk+fMk*fMk) + 2.0*fPk*fKcm;
+}
+
+//_____________________________________________________________________
+template <typename T>
+void TKinematics::Streamer(TBuffer &R__b, vector<T>& vector, Version_t R__v)
+{
+  // Stream an object of type vector<>.
+
+  UInt_t R__s, R__c;
+  if (R__b.IsReading()) {
+    // No need to check different versions.
+    // They are always written to file in the same way.
+    vector.clear();
+    vector.resize(fNVars);
+    T *tmp = new T[fNVars];
+    R__b.ReadFastArray(tmp,fNVars);
+    vector.assign( tmp , tmp+fNVars );
+    delete[] tmp;
+  }
+  else { // writing
+    // We exploit the fact that vectors are continuous in memory
+    R__b.WriteFastArray(&vector[0],fNVars);
+  }
+}
+
+//_____________________________________________________________________
+template <>
+void TKinematics::Streamer<bool>(TBuffer &R__b, vector<bool>& vector, Version_t R__v)
+{
+  // Stream an object of type vector<bool>.
+
+  // A template specialization is needed for bools, because the implementation
+  // of vector<bool> is not what you would expect.
+  UInt_t R__s, R__c;
+  if (R__b.IsReading()) {
+    vector.clear();
+    vector.resize(fNVars);
+    bool *tmp = new bool[fNVars];
+    if (R__v < 5) {
+      R__b.ReadFastArray(tmp,fNVars);
+    } else {
+      for(int i=0; i<fNVars; ++i) R__b >> tmp[i];
+    }
+    vector.assign( tmp , tmp+fNVars );
+    delete[] tmp;
+  }
+  else { // writing
+    for(int i=0; i<fNVars; ++i) R__b << vector[i];
+  }
 }
 
 //______________________________________________________________________________
@@ -688,6 +1046,8 @@ void TKinematics::Streamer(TBuffer &R__b)
     char *tempFormat = new char[100]; // Added by PVC
     R__b.ReadFastArray(tempFormat,100); // Added by PVC
     R__b >> fIsospin;
+    if (R__v > 4 ) R__b >> fNVars; // added in version 5
+    else fNVars = 3;
     R__b >> fMp;
     R__b >> fMk;
     R__b >> fMy;
@@ -705,25 +1065,35 @@ void TKinematics::Streamer(TBuffer &R__b)
     R__b >> fS;
     R__b >> fT;
     R__b >> fU;
+    if( R__v > 4) { // added in version 5
+      R__b >> fPhi;
+      R__b >> fPhiMin;
+    } else 
+      fPhi = fPhiMin = 0.;
     R__b >> fIsPhysical;
     if(R__v<3) fNrOfPhysicals = -1; // added version 3
     else R__b >> fNrOfPhysicals;
-    delete [] fIsVar;
-    fIsVar = new bool[3];
-    R__b.ReadFastArray(fIsVar,3);
-    delete [] fLowerLimit;
-    fLowerLimit = new double[3];
-    R__b.ReadFastArray(fLowerLimit,3);
-    delete [] fUpperLimit;
-    fUpperLimit = new double[3];
-    R__b.ReadFastArray(fUpperLimit,3);
-    delete [] fStepSize;
-    fStepSize = new double[3];
-    R__b.ReadFastArray(fStepSize,3);
-    delete [] fNumberOfSteps;
-    fNumberOfSteps = new int[3];
-    R__b.ReadFastArray(fNumberOfSteps,3);
-    R__b >> fStep;
+    Streamer(R__b, fIsVar, R__v);
+    Streamer(R__b, fLowerLimit, R__v);
+    Streamer(R__b, fUpperLimit, R__v);
+    Streamer(R__b, fStepSize, R__v);
+    Streamer(R__b, fNumberOfSteps, R__v);
+    if( R__v > 4 ) Streamer(R__b, fStepVar, R__v);
+    else {
+      // Prior to version 5, we store fStep (a single integer).
+      // This variable represented to total step
+      int step;
+      R__b >> step;
+      
+      // Prepare the vector
+      fStepVar.clear();
+      fStepVar.resize(3);
+      
+      // Calculate the individual steps
+      fStepVar[2] = step / (fNumberOfSteps[1]*fNumberOfSteps[0]);
+      fStepVar[1] = (step % (fNumberOfSteps[1]*fNumberOfSteps[0]))/ fNumberOfSteps[0];
+      fStepVar[0] = ((step % (fNumberOfSteps[1]*fNumberOfSteps[0])) % fNumberOfSteps[0]);
+    }
     R__b.CheckByteCount(R__s, R__c, TKinematics::IsA());
     ReadFormatString(tempFormat); // Added by PVC
     delete[] tempFormat; // Added by PVC
@@ -733,6 +1103,7 @@ void TKinematics::Streamer(TBuffer &R__b)
     TNamed::Streamer(R__b);
     R__b.WriteFastArray(fFormat,100);
     R__b << fIsospin;
+    R__b << fNVars;
     R__b << fMp;
     R__b << fMk;
     R__b << fMy;
@@ -749,37 +1120,39 @@ void TKinematics::Streamer(TBuffer &R__b)
     R__b << fS;
     R__b << fT;
     R__b << fU;
+    R__b << fPhi;
+    R__b << fPhiMin;
     R__b << fIsPhysical;
     R__b << fNrOfPhysicals;
-    R__b.WriteFastArray(fIsVar,3);
-    R__b.WriteFastArray(fLowerLimit,3);
-    R__b.WriteFastArray(fUpperLimit,3);
-    R__b.WriteFastArray(fStepSize,3);
-    R__b.WriteFastArray(fNumberOfSteps,3);
-    R__b << fStep;
+    Streamer(R__b, fIsVar, R__c);
+    Streamer(R__b, fLowerLimit, R__c);
+    Streamer(R__b, fUpperLimit, R__c);
+    Streamer(R__b, fStepSize, R__c);
+    Streamer(R__b, fNumberOfSteps, R__c);
+    Streamer(R__b, fStepVar, R__c);
     R__b.SetByteCount(R__c, kTRUE);
   }
 }
 
 //_____________________________________________________________________
 void TKinematics::SetVarRange(int varNumber, double lowerLimit,
-			       double upperLimit, int numberOfSteps)
+			      double upperLimit, int numberOfSteps)
 {
   // Give independent variable number 'varNumber' a range in the 
   // interval [lowerLimit,upperLimit].
 
   // First we do some checks
-  if( varNumber<1 || varNumber>3 )
-    std::cerr << "ERROR in TKinematics::SetVarRange(int,double,double,int):\n"
-	      << "Index out-of-bounds!\n";
+  if( varNumber<1 || varNumber>fNVars )
+    cerr << "ERROR in TKinematics::SetVarRange(int,double,double,int):\n"
+	 << "Index out-of-bounds!\n";
 
-  else if( !fVar ) 
-    std::cerr << "ERROR in TKinematics::SetVarRange(int,double,double,int)\n"
-	      << "Independent kinematic variables have not been initialized!\n";
+  else if( fVar.size()==0 ) 
+    cerr << "ERROR in TKinematics::SetVarRange(int,double,double,int)\n"
+	 << "Independent kinematic variables have not been initialized!\n";
 
   else if( numberOfSteps<2 )
-    std::cerr << "ERROR in TKinematics::SetVarRange(int,double,double,int)\n"
-	      << "Number of steps need to be >=2.\n";
+    cerr << "ERROR in TKinematics::SetVarRange(int,double,double,int)\n"
+	 << "Number of steps need to be >=2.\n";
 
   else {
     fIsVar[varNumber-1] = true;
@@ -808,20 +1181,15 @@ void TKinematics::FixVariable(int varNumber)
   // Unset the range of variable number 'varNumber'. Set it to its current value.
 
   // First we do some checks
-  if( varNumber<1 || varNumber>3 )
-    std::cerr << "ERROR in TKinematics::FixVariable(int):\n"
-	      << "Index out-of-bounds!\n";
+  if( varNumber<1 || varNumber>fNVars )
+    cerr << "ERROR in TKinematics::FixVariable(int):\n"
+	 << "Index out-of-bounds!\n";
 
-  else if( !fVar ) 
-    std::cerr << "ERROR in TKinematics::FixVariable(int)\n"
-	      << "Independent kinematic variables have not been initialized!\n";
+  else if( fVar.size()==0 ) 
+    cerr << "ERROR in TKinematics::FixVariable(int)\n"
+	 << "Independent kinematic variables have not been initialized!\n";
 
   else if( fIsVar[varNumber-1] ) {
-    // Determine current step
-    int step1 = GetStep(1);
-    int step2 = GetStep(2);
-    int step3 = GetStep(3);
-
     fIsVar[varNumber-1] = false;
     
     // Reset all variables
@@ -829,14 +1197,10 @@ void TKinematics::FixVariable(int varNumber)
     fUpperLimit[varNumber-1] = *fVar[varNumber-1];
     fStepSize[varNumber-1] = 0.0;
     fNumberOfSteps[varNumber-1] = 1;
-
+    
     // Go to first step
-    switch(varNumber) {
-    case 1: GoTo(0,step2,step3); break;
-    case 2: GoTo(step1,0,step3); break;
-    case 3: GoTo(step1,step2,0); break;
-    }
-
+    fStepVar[varNumber-1] = 0;
+    
     // Number of physical points may change
     fNrOfPhysicals = -1;
   }
@@ -846,7 +1210,7 @@ void TKinematics::FixVariable(int varNumber)
 void TKinematics::FixVariables()
 {
   // Calls FixVariable(int) on all variables
-  for(int var=1; var<=3; ++var)
+  for(int var=1; var<=fNVars; ++var)
     FixVariable(var);
 }
 
@@ -856,83 +1220,135 @@ void TKinematics::GoTo(int totalStep)
   //  Proceed to the 'totalStep'th point in the grid of independent variables.
 
   // Total number of steps
-  int totNrOfSteps = 1;
-  for(int i=0; i<3; ++i)
-    totNrOfSteps *= fNumberOfSteps[i];
+  int totNrOfSteps = GetNumberOfSteps();
 
   // First we do some checks
   if( totalStep<0 || totalStep>=totNrOfSteps )
-    std::cerr << "ERROR in TKinematics::GoTo(int):\n"
-	      << "Invalid step. Should be in range [0,"
-	      << totNrOfSteps-1 << "].\n";
+    cerr << "ERROR in TKinematics::GoTo(int):\n"
+	 << "Invalid step. Should be in range [0,"
+	 << totNrOfSteps-1 << "].\n";
 
-  else if( !fVar ) 
-    std::cerr << "ERROR in TKinematics::GoTo(int)\n"
-	      << "Independent kinematic variables have not been initialized!\n";
+  else if( fVar.size()==0 ) 
+    cerr << "ERROR in TKinematics::GoTo(int)\n"
+	 << "Independent kinematic variables have not been initialized!\n";
 
-  else {
-    fStep = totalStep;
-    
-    // Determine step per variable
-    int stepVar[3];
-    stepVar[2] = totalStep / (fNumberOfSteps[1]*fNumberOfSteps[0]);
-    stepVar[1] = (totalStep % (fNumberOfSteps[1]*fNumberOfSteps[0]))/ fNumberOfSteps[0];
-    stepVar[0] = ((totalStep % (fNumberOfSteps[1]*fNumberOfSteps[0])) % fNumberOfSteps[0]);
+  else {  
+    int prodN;
+    for(int i = fNVars - 1; i >= 0; i--)
+      {
+	prodN = GetNumberOfSteps()/fNumberOfSteps[fNVars - 1];
+	fStepVar[i] = totalStep;
+	for(int j = fNVars - 1; j > i; j--)
+	  {
+	    fStepVar[i] -= fStepVar[j]*prodN;
+	    prodN = prodN/fNumberOfSteps[j - 1];
+	  }
+	fStepVar[i] = fStepVar[i]/prodN;
+      }
 
     // Set variables
-    for(int i=0; i<3; ++i)
-      *fVar[i] = fLowerLimit[i] + stepVar[i] * fStepSize[i];
+    for(int i=0; i<fNVars; ++i)
+      *fVar[i] = fLowerLimit[i] + fStepVar[i] * fStepSize[i];
 
     UpdateKinematics();
   }
+}
+
+//_____________________________________________________________________
+void TKinematics::GoTo(int* steps)
+{
+  // Proceed to point in the grid of independent variables specified by the
+  // arguments. The i'th argument fixes the position in the grid of the 'i'th variable.
+  //
+  // CAUTION: It is assumed that the size of the steps array equals fNVars.
+
+
+  bool updateSteps = true;
+  int i = 0;
+  
+  if( fVar.size()==0 )
+    {
+      cerr << "ERROR in TKinematics::GoTo(int[]):\n"
+	   << "Independent kinematic variables have not been initialized!\n";
+      updateSteps = false;
+    }
+ 
+  while(updateSteps && i < fNVars)
+    {
+      if(steps[i] < 0 || steps[i] >= fNumberOfSteps[i])
+	{
+	  cerr << "ERROR in TKinematics::GoTo(int[]):\n"
+	       << "Invalid \"" << GetVarName(i + 1) << "\" step. "
+	       << "Should be in range [0," << fNumberOfSteps[i] - 1 << "].\n";
+	  updateSteps = false;
+	}
+      i++;
+    }
+
+  if(updateSteps)
+    {
+      for(int i = 0; i < fNVars; i++) {
+	fStepVar[i] = steps[i];
+	*fVar[i] = fLowerLimit[i] + fStepVar[i] * fStepSize[i];
+      }
+      UpdateKinematics();
+    }
+}
+
+//_____________________________________________________________________
+void TKinematics::GoTo(int stepVar1, int stepVar2)
+{
+  // Proceed to point in the grid of independent variables specified by the
+  // arguments. The i'th argument fixes the position in the grid of the 'i'th variable.
+  if( fNVars != 2 ) {
+    cerr << "ERROR in TKinematics::GoTo(int,int): "
+	 << "Method only valid in case of 2 independent variables." << endl;
+    assert( fNVars == 2 );
+  }
+
+  int list[] = {stepVar1,stepVar2};
+  GoTo( list );
 }
 
 //_____________________________________________________________________
 void TKinematics::GoTo(int stepVar1, int stepVar2, int stepVar3)
 {
   // Proceed to point in the grid of independent variables specified by the
-  // arguments.
-  // Each stepVari fixes the position in the grid of the 'i'th variable.
-
-  // First we do some checks
-  if( stepVar1<0 || stepVar1>=fNumberOfSteps[0] )
-    std::cerr << "ERROR in TKinematics::GoTo(int,int,int):\n"
-	      << "Invalid \"" << GetVarName(1) << "\" step. "
-	      << "Should be in range [0," << fNumberOfSteps[0]-1 << "].\n";
-
-  else if( stepVar2<0 || stepVar2>=fNumberOfSteps[1] )
-    std::cerr << "ERROR in TKinematics::GoTo(int,int,int):\n"
-	      << "Invalid \"" << GetVarName(2) << "\" step. "
-	      << "Should be in range [0," << fNumberOfSteps[1]-1 << "].\n";
-
-  else if( stepVar3<0 || stepVar3>=fNumberOfSteps[2] )
-    std::cerr << "ERROR in TKinematics::GoTo(int,int,int):\n"
-	      << "Invalid \"" << GetVarName(3) << "\" step. "
-	      << "Should be in range [0," << fNumberOfSteps[2]-1 << "].\n";
-
-  else if( !fVar ) 
-    std::cerr << "ERROR in TKinematics::GoTo(int,int,int)\n"
-	      << "Independent kinematic variables have not been initialized!\n";
-
-  else {
-    fStep = stepVar1 
-      + stepVar2 * fNumberOfSteps[0]
-      + stepVar3 * fNumberOfSteps[0] * fNumberOfSteps[1];
-    
-    // Set variables
-    *fVar[0] = fLowerLimit[0] + stepVar1 * fStepSize[0];
-    *fVar[1] = fLowerLimit[1] + stepVar2 * fStepSize[1];
-    *fVar[2] = fLowerLimit[2] + stepVar3 * fStepSize[2];
-
-    UpdateKinematics();
+  // arguments. The i'th argument fixes the position in the grid of the 'i'th variable.
+  if( fNVars != 3 ) {
+    cerr << "ERROR in TKinematics::GoTo(int,int,int): "
+	 << "Method only valid in case of 3 independent variables." << endl;
+    assert( fNVars == 3 );
   }
+
+  int list[] = {stepVar1,stepVar2,stepVar3};
+  GoTo( list );
+}
+
+//_____________________________________________________________________
+void TKinematics::GoTo(int stepVar1, int stepVar2, int stepVar3, int stepVar4)
+{
+  // Proceed to point in the grid of independent variables specified by the
+  // arguments. The i'th argument fixes the position in the grid of the 'i'th variable.
+  if( fNVars != 4 ) {
+    cerr << "ERROR in TKinematics::GoTo(int,int,int,int): "
+	 << "Method only valid in case of 4 independent variables." << endl;
+    assert( fNVars == 4 );
+  }
+
+  int list[] = {stepVar1,stepVar2,stepVar3,stepVar4};
+  GoTo( list );
 }
 
 //_____________________________________________________________________
 bool TKinematics::IsFixed() const
 {
   // Check whether any of the independent variables has been given a range.
-  return !fIsVar[0] && !fIsVar[1] && !fIsVar[2];
+  for(int i = 0; i < fNVars; i++)
+    if(fIsVar[i])
+      return false;
+
+  return true;
 }
 
 //_____________________________________________________________________
@@ -941,9 +1357,9 @@ bool TKinematics::IsFixed(int varNumber) const
   //  Check whether the 'varNumber'th variable has been given a range.
 
   // First we do some checks
-  if( varNumber<1 || varNumber>3 ) {
-    std::cerr << "ERROR in TKinematics::IsFixed(int):\n"
-	      << "Index out-of-bounds!\n";
+  if( varNumber<1 || varNumber>fNVars ) {
+    cerr << "ERROR in TKinematics::IsFixed(int):\n"
+	 << "Index out-of-bounds!\n";
     return true;
   }
 
@@ -956,14 +1372,12 @@ int TKinematics::Next()
   // Proceed to the next step in the grid of independent variables.
   // Return value is zero when the end of the grid is reached.
 
-  // Total number of steps
-  int totNrOfSteps = 1;
-  for(int i=0; i<3; ++i) totNrOfSteps *= fNumberOfSteps[i];
+  int step = GetStep();
 
   // Check whether we are at the end of the grid.
-  if( fStep == (totNrOfSteps-1) ) return 0;
+  if( step == (GetNumberOfSteps()-1) ) return 0;
 
-  GoTo(++fStep);
+  GoTo(++step);
   return 1;
 }
 
@@ -971,7 +1385,12 @@ int TKinematics::Next()
 int TKinematics::GetNumberOfSteps() const
 {
   // Number of points in the grid of independent variables
-  return fNumberOfSteps[0] * fNumberOfSteps[1] * fNumberOfSteps[2];
+  int NSteps = 1;
+
+  for(int i = 0; i < fNVars; i++)
+    NSteps *= fNumberOfSteps[i];
+
+  return NSteps;
 }
 
 //_____________________________________________________________________
@@ -999,9 +1418,9 @@ int TKinematics::GetNumberOfSteps(int varNumber) const
   // variable as specified in the format string.
 
   // First we do some checks
-  if( varNumber<1 || varNumber>3 ) {
-    std::cerr << "ERROR in TKinematics::GetNumberOfSteps(int):\n"
-	      << "Index out-of-bounds!\n";
+  if( varNumber<1 || varNumber>fNVars ) {
+    cerr << "ERROR in TKinematics::GetNumberOfSteps(int):\n"
+	 << "Index out-of-bounds!\n";
     return 0;
   }
 
@@ -1015,9 +1434,9 @@ double TKinematics::GetStepSize(int varNumber) const
   // the 'varNumber'th independent variable as specified in the format string.
 
   // First we do some checks
-  if( varNumber<1 || varNumber>3 ) {
-    std::cerr << "ERROR in TKinematics::GetStepSize(int):\n"
-	      << "Index out-of-bounds!\n";
+  if( varNumber<1 || varNumber>fNVars ) {
+    cerr << "ERROR in TKinematics::GetStepSize(int):\n"
+	 << "Index out-of-bounds!\n";
     return 0;
   }
 
@@ -1030,27 +1449,34 @@ int TKinematics::GetStep(int varNumber) const
   // Return the current position in the grid of the 'varNumber'th 
   // independent variable as specified in the format string.
 
-  switch( varNumber ) 
-    {
-    case 1:
-      return ((fStep % (fNumberOfSteps[1]*fNumberOfSteps[0])) % fNumberOfSteps[0]);
-      break;
-
-    case 2:
-      return (fStep % (fNumberOfSteps[1]*fNumberOfSteps[0]))/ fNumberOfSteps[0];
-      break;
-
-    case 3:
-      return fStep / (fNumberOfSteps[1]*fNumberOfSteps[0]);
-      break;
-      
-    default:
-      std::cerr << "ERROR in TKinematics::GetStep(int):\n"
-		<< "Index out-of-bounds!\n";
-    }
-
+  if( varNumber<1 || varNumber>fNVars)
+    cerr << "ERROR in TKinematics::GetStep(int):\n"
+	 << "Index out-of-bounds!\n";
+  else 
+    return fStepVar[varNumber-1];
+  
   return -1;
 }
+
+//_____________________________________________________________________
+int TKinematics::GetStep() const
+{
+  // Return the current position in the grid of the 'varNumber'th 
+  // independent variable as specified in the format string.
+
+  int 
+    step = 0,
+    prodN = 1;
+
+  for(int i = 0; i < fNVars; i++)
+    {
+      step += fStepVar[i]*prodN;
+      prodN *= fNumberOfSteps[i];
+    }
+
+  return step;
+}
+
 
 //_____________________________________________________________________
 double TKinematics::EnergyConservation(double pk)
@@ -1075,8 +1501,8 @@ void TKinematics::UpdateKinematics()
 
     // photon should be real!
     if( fQsquared!=0.0 ) {
-      std::cerr << "ERROR in TKinematics::UpdateKinematics(): "
-		<< "In radiative capture, the emitted photon is real!\n";
+      cerr << "ERROR in TKinematics::UpdateKinematics(): "
+	   << "In radiative capture, the emitted photon is real!\n";
       exit(1);
     }
 
@@ -1223,32 +1649,15 @@ void TKinematics::UpdateKinematics()
     }
 
     // Determine pk
-    // pk can be found by solving the implicit TKinematics::EnergyConservation()
-    // equation. We use the bisection method, which looks for a solution in the
-    // interval [lowerBound=0.0,upperBound=fW].
-    double lowerBound=0.0, upperBound=fW;
-  
-    // First we need to make sure that the function changes sign in this region.
-    if( EnergyConservation(lowerBound) > 0.0 || EnergyConservation(upperBound) < 0.0 ) {
-      fPk = -1.0;
-      fIsPhysical = false;
+    double ek = (fW + (fMk*fMk-fMy*fMy)/fW)/2.;
+
+    if( ek>fMk ) {
+      fIsPhysical = true;
+      fPk = sqrt(ek*ek-fMk*fMk);
     }
     else {
-      double delta = upperBound - lowerBound;
-      while( delta > 0.00001 ) {
-	if( EnergyConservation(lowerBound+delta/2.0) > 0.0 )
-	  upperBound = lowerBound + delta/2.0;
-	else
-	  lowerBound += delta/2.0;
-
-	delta = upperBound - lowerBound;
-      }
-
-      fPk = lowerBound + delta/2.0;
-      if( fPk < 0.0 )
-	fIsPhysical = false;
-      else
-	fIsPhysical = true;
+      fIsPhysical = false;
+      fPk = -1.;
     }
 
     if(fAVar == &fPklab){
@@ -1257,7 +1666,8 @@ void TKinematics::UpdateKinematics()
       fCosthklab = (fPYlab*fPYlab-fPklab*fPklab-fKlab*fKlab)/(-2.*fPklab*fKlab);
       fT = -fQsquared+fMk*fMk-2.*fWlab*sqrt(fPklab*fPklab+fMk*fMk) + 2.*fPklab*fKlab*fCosthklab;
       fU = -fQsquared+fMy*fMy-2.*fWlab*sqrt(fPYlab*fPYlab+fMy*fMy) + 2.*fPYlab*fKlab*fCosthYlab;
-      fCosthkcm = fT-(fMk*fMk - fQsquared -2.0*fWcm*sqrt(fPk*fPk+fMk*fMk));
+      fCosthkcm = (fT-(fMk*fMk - fQsquared -2.0*fWcm*sqrt(fPk*fPk+fMk*fMk)))/ 2.0 / fPk / fKcm;
+      
     }
     else{
       // Determine the angular variables
@@ -1278,6 +1688,9 @@ void TKinematics::UpdateKinematics()
     
       // Determine kaon momentum in LAB frame by boosting know kaon cm energy to lab
       fPklab = sqrt(pow(((fWlab+fMp)*sqrt(fPk*fPk+fMk*fMk)+fKlab*fPk*fCosthkcm)/fW,2)-fMk*fMk);
+      fPYlab = sqrt(pow(fWlab+fMp-sqrt(fMk*fMk+fPklab*fPklab),2.)-fMy*fMy);
+      fCosthYlab = (fPklab*fPklab-fPYlab*fPYlab-fKlab*fKlab)/(-2.*fPYlab*fKlab);
+      fCosthklab = (fPYlab*fPYlab-fPklab*fPklab-fKlab*fKlab)/(-2.*fPklab*fKlab);
     }
     if( std::fabs(fCosthkcm) <= 1.0 )
       fIsPhysical = true && fIsPhysical;
@@ -1348,9 +1761,12 @@ double* TKinematics::GetVarArray(const TString& variable) const
   else if( !std::strcmp(variable,"xb") ) {
     ptrToVarGetter = &TKinematics::GetXb;
   }
+  else if( !std::strcmp(variable,"phi") ) {
+    ptrToVarGetter = &TKinematics::GetPhi;
+  }
   else {
-    std::cerr << "ERROR in  TKinematics::GetVarArray(TString): "
-	      << "Kinematic variable \"" << variable << "\" unknown!\n";
+    cerr << "ERROR in  TKinematics::GetVarArray(TString): "
+	 << "Kinematic variable \"" << variable << "\" unknown!\n";
     exit(1);
   }
 
@@ -1422,9 +1838,12 @@ double*  TKinematics::GetPhysicalVarArray(const TString& variable) const
   else if( !std::strcmp(variable,"xb") ) {
     ptrToVarGetter = &TKinematics::GetXb;
   }
+  else if( !std::strcmp(variable,"phi") ) {
+    ptrToVarGetter = &TKinematics::GetPhi;
+  }
   else {
-    std::cerr << "ERROR in  TKinematics::GetVarArray(TString): "
-	      << "Kinematic variable \"" << variable << "\" unknown!\n";
+    cerr << "ERROR in  TKinematics::GetVarArray(TString): "
+	 << "Kinematic variable \"" << variable << "\" unknown!\n";
     exit(1);
   }
 
@@ -1448,7 +1867,7 @@ int TKinematics::GetNumberOfVariables() const
 {
   // Determine how many variables are not fixed
   int nrOfVar = 0;
-  for(int var=1; var<=3; ++var)
+  for(int var=1; var<=fNVars; ++var)
     if( !IsFixed(var) ) ++nrOfVar;
 
   return nrOfVar;
@@ -1458,45 +1877,46 @@ int TKinematics::GetNumberOfVariables() const
 void TKinematics::Print(Option_t* option) const
 {
   // Print info about the object and the current kinematics.
-  std::cout << GetName() << ": " << GetTitle()
-	    << "\n****************************************************\n"
-	    << "Point " << (fIsPhysical ? "on " : "out of ") << "physical plane\n\n"
-	    << "Q^2   =\t" << std::setw(12) << fQsquared
-	    << "\nw_lab =\t" << std::setw(12) << fWlab
-	    << "\t\tk_lab =\t" << std::setw(12) << fKlab
-	    << "\nw_cm  =\t" << std::setw(12) << fWcm
-	    << "\t\tk_cm  =\t" << std::setw(12) << fKcm
-	    << "\nW     =\t" << std::setw(12) << fW
-	    << "\t\tp_K   =\t" << std::setw(12) << fPk
-	    << "\ns     =\t" << std::setw(12) << fS
-	    << "\t\tu     =\t" << std::setw(12) << fU
-	    << "\ncos   =\t" << std::setw(12) << fCosthkcm
-	    << "\t\tt     =\t" << std::setw(12) << fT
-	    << "\n****************************************************\n";
+  cout << GetName() << ": " << GetTitle()
+       << "\n****************************************************\n"
+       << "Point " << (fIsPhysical ? "on " : "out of ") << "physical plane\n\n"
+       << "Q^2   =\t" << std::setw(12) << fQsquared            
+       << "\t\tw_lab =\t" << std::setw(12) << fWlab
+       << "\nW     =\t" << std::setw(12) << fW
+       << "\t\tw_cm  =\t" << std::setw(12) << fWcm
+       << "\ncos   =\t" << std::setw(12) << fCosthkcm
+       << "\t\tk_lab =\t" << std::setw(12) << fKlab
+       << "\ns     =\t" << std::setw(12) << fS
+       << "\t\tk_cm  =\t" << std::setw(12) << fKcm
+       << "\nt     =\t" << std::setw(12) << fT
+       << "\t\tp_K   =\t" << std::setw(12) << fPk
+       << "\nu     =\t" << std::setw(12) << fU
+       << "\t\tphi   =\t" << std::setw(12) << fPhi
+       << "\n****************************************************\n";
 }
 
 //_____________________________________________________________________
 int TKinematics::VariableInfo() const
 {
   // Print info about the range that has been given to the variables.
-  std::cout << GetName() << ": " << GetTitle()
-	    << "\n****************************************************\n";
+  cout << GetName() << ": " << GetTitle()
+       << "\n****************************************************\n";
 
-  for(int var=0; var<3; ++var) {
-    std::cout << var+1 << ": " << GetVarName(var+1) << " is ";
+  for(int var=0; var<fNVars; ++var) {
+    cout << var+1 << ": " << GetVarName(var+1) << " is ";
 
     if( fIsVar[var] )
-      std::cout << "variable.\n"
-		<< "   Range:\t\t" << fLowerLimit[var] << " <-> "
-		<< fUpperLimit[var]
-		<< "\n   Number of steps:\t" << fNumberOfSteps[var]
-		<< "\n   Current step:\t" << GetStep(var+1) << "\n";
+      cout << "variable.\n"
+	   << "   Range:\t\t" << fLowerLimit[var] << " <-> "
+	   << fUpperLimit[var]
+	   << "\n   Number of steps:\t" << fNumberOfSteps[var]
+	   << "\n   Current step:\t" << GetStep(var+1) << "\n";
 
     else
-      std::cout << "fixed.\n";
+      cout << "fixed.\n";
   }
   
-  std::cout << "****************************************************\n";
+  cout << "****************************************************\n";
 
   return GetNumberOfVariables();
 }
@@ -1512,15 +1932,15 @@ bool TKinematics::operator==(const TKinematics& rhs) const
 
   // Each kinematic point is fixed by the isospin channel, 
   // the Mandelstam variables s and t and Q^2
-  float key1[4] = {GetIsospin(), GetS(), GetT(), GetQsquared()};
-  float key2[4] = {rhs.GetIsospin(), rhs.GetS(), rhs.GetT(), rhs.GetQsquared()};
+  double key1[5] = {GetIsospin()*1., GetS(), GetT(), GetQsquared(), GetPhi()};
+  double key2[5] = {rhs.GetIsospin()*1., rhs.GetS(), rhs.GetT(), rhs.GetQsquared(), rhs.GetPhi()};
 
   // We create a hash key using the function in the cachetools folder
-  char hash1[sizeof(float)*4*2 + 1];
-  char hash2[sizeof(float)*4*2 + 1];
+  char hash1[sizeof(double)*5*2 + 1];
+  char hash2[sizeof(double)*5*2 + 1];
 
-  //floatstochar(4, key1, hash1);
-  //floatstochar(4, key2, hash2);
+  //doublestochar(5, key1, hash1);
+  //doublestochar(5, key2, hash2);
 
   return !std::strcmp(hash1,hash2);
 }
@@ -1528,9 +1948,9 @@ bool TKinematics::operator==(const TKinematics& rhs) const
 //_____________________________________________________________________
 void TKinematics::Help()
 {
-  std::cout << "You seek help, young Padawan?\n"
-	    << "1) Open emacs\n"
-	    << "2) type Alt+x\n"
-	    << "3) type doctor\n"
-	    << "4) press return\n";
+  cout << "You seek help, young Padawan?\n"
+       << "1) Open emacs\n"
+       << "2) type Alt+x\n"
+       << "3) type doctor\n"
+       << "4) press return\n";
 }

@@ -32,6 +32,8 @@
 #include <TBuffer.h>
 // #include <Structures.h>
 #include "constants.hpp"
+#include <vector>
+class TString;
 
 
 class TKinematics : public TNamed
@@ -40,8 +42,15 @@ class TKinematics : public TNamed
   TKinematics(TRootIOCtor*); // ROOT I/0 constructor
   TKinematics(const char *name,const char *title,
 	      int isospin,const char *formatString,
+	      double var1,double var2);
+  TKinematics(const char *name,const char *title,
+	      int isospin,const char *formatString,
 	      double var1,double var2,double var3);
+  TKinematics(const char *name,const char *title,
+	      int isospin,const char *formatString,
+	      double var1,double var2,double var3,double var4);
   TKinematics(const TKinematics&);
+  virtual TKinematics* Clone(const char *newname ="") const;
   virtual ~TKinematics();
   TKinematics& operator=(const TKinematics&);
   bool          operator==(const TKinematics&) const;
@@ -51,7 +60,10 @@ class TKinematics : public TNamed
   void          FixVariables();
   int           Next();
   void          GoTo(int totalStep);
-  void          GoTo(int stepVar1,int stepVar2,int stepVar3);
+  void          GoTo(int* steps);
+  void          GoTo(int stepVar1, int stepVar2);
+  void          GoTo(int stepVar1, int stepVar2, int stepVar3);
+  void          GoTo(int stepVar1, int stepVar2, int stepVar3, int stepVar4);
   virtual void  Print(Option_t* option="") const;
   int           VariableInfo() const;
   static void   Help();
@@ -59,6 +71,7 @@ class TKinematics : public TNamed
   void          SetIsospin(int isospin);
   void          SetFormat(const char *formatString);
   void          SetVar(int varNum,double value);
+  void          SetPhiLimits(double phiMin, double phiMax);
 
   int           GetIsospin() const     { return fIsospin; }
   const char   *GetFormat() const      { return fFormat; }
@@ -80,9 +93,13 @@ class TKinematics : public TNamed
   double        GetW() const           { return fW; }
   double        GetS() const           { return fS; }
   double        GetT() const           { return fT; }
+  double        GetTMin() const;
   double        GetU() const           { return fU; }
   double        GetXb() const          { return fXb; }
+  double        GetPhi() const         { return fPhi; }
+  double        GetPhiMin() const      { return fPhiMin; }
   bool          IsPhysical() const     { return fIsPhysical; }
+  int           GetNumberOfIndependentVariables() const { return fNVars; }
   double        GetVar(int) const;
   double       *GetVarArray(const TString& varName) const; // user owns the double*
   double       *GetPhysicalVarArray(const TString& varName) const; // user owns the double*
@@ -93,7 +110,7 @@ class TKinematics : public TNamed
   int           GetNumberOfVariables() const;
   double        GetStepSize(int varNumber) const;
   int           GetStep(int varNumber) const;
-  int           GetStep() const        { return fStep; }
+  int           GetStep() const;
   bool          IsFixed() const;
   bool          IsFixed(int varNumber) const;
 
@@ -107,14 +124,17 @@ class TKinematics : public TNamed
     double      Underflow() const { return STRANGEUFLOW; }
 
  private:
-  void          ReadFormatString(const char*);
+  void          InitializeArrays();
+  void          ReadFormatString(const TString);
   void          ChangeIsospinChannel(int);
   double        EnergyConservation(double);
+  template <typename T> void Streamer(TBuffer&, std::vector<T>&, Version_t);
   
   // Data Members
   // ------------
   char    *fFormat;        //[100] Format string
   int      fIsospin;       // isospin channel [1-6]
+  int      fNVars;         // number of independent variables
   double   fMp;            // nucleon mass
   double   fMk;            // meson mass
   double   fMy;            // hyperon mass
@@ -136,22 +156,25 @@ class TKinematics : public TNamed
   double   fS;             // s (Mandelstam variable)
   double   fT;             // t (Mandelstam variable)
   double   fU;             // u (Mandelstam variable)
+  double   fPhi, fPhiMin;  // angle between the lepton plane and the hadron plane;
+                           // fPhiMin is to be used only when the virtual photon cross
+                           // is integrated over phi ("diff_int" observable)
   bool     fIsPhysical;    // Does kinematic point lie in physical plane
   mutable 
     int    fNrOfPhysicals; // Number of physical points (-1 when not determined)
 
   // 3 independent variables
-  double **fVar;           //! pointer to independent kinematic variable
-  double  *fEVar;          //! points to independent energy variable
-  double  *fAVar;          //! points to independent angular variable
-  bool    *fIsVar;         //[3] is non-constant kinematic variable?
-  double  *fLowerLimit;    //[3] Lower limit non-constant kinematic variable
-  double  *fUpperLimit;    //[3] Upper limit non-constant kinematic variable
-  double  *fStepSize;      //[3] Step size non-constant kinematic variable
-  int     *fNumberOfSteps; //[3] Number of steps non-constant kinematic variable
-  int      fStep;          // Step counter (0 or higher)
+  std::vector<double*> fVar;           //! pointer to independent kinematic variables
+  double              *fEVar;          //! points to independent energy variable
+  double              *fAVar;          //! points to independent angular variable
+  std::vector<bool>    fIsVar;         // is non-constant kinematic variable?
+  std::vector<double>  fLowerLimit;    // Lower limit non-constant kinematic variable
+  std::vector<double>  fUpperLimit;    // Upper limit non-constant kinematic variable
+  std::vector<double>  fStepSize;      // Step size non-constant kinematic variable
+  std::vector<int>     fNumberOfSteps; // Number of steps non-constant kinematic variable
+  std::vector<int>     fStepVar;       // Step counter for each variable
 
-  ClassDef(TKinematics,4)  // Kinematics for g N -> K Y
+  ClassDef(TKinematics,5)  // Kinematics for g N -> K Y
 };
 
 

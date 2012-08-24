@@ -24,7 +24,7 @@ using namespace std;
 
 void intPm(const double pm, double *results, va_list ap);
 void intcosth(const double costh, double *results, va_list ap);
-
+void getBound(double &high, double &low, MeanFieldNucleusThick *pnucleus, double Q2, double omega, int shell);
 
 
 //run ./transp [nucleon] [Q2,GeV^2] [Ein, MeV] [thetae, degr] [thickness] [sharedir]
@@ -45,27 +45,30 @@ int main(int argc, char *argv[])
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(atof(argv[3]));
   Cross obs(*elec,&Nucleus,homedir);
 
+  
   double total[5];
   for(int i=0;i<5;i++) total[i]=0.;
   
   for(int shell=0;shell<Nucleus.getPLevels();shell++){
+    double low=-1.,high=1.;
+    getBound(high,low,&Nucleus,Q2,omega,shell);
     double results[5];
     double pestimate=0.;
-    rombergerN(intPm,0.,300.,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, thick,current);
+    rombergerN(intPm,-1.,low,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, thick,current);
     for(int j=0;j<5;j++) total[j]+=results[j];
     
     cout << Q2/1.E06 << " " << Ein << " " << shell << " " << results[0]/results[4] << " " << 
 	    results[1]/results[4] << " " << results[2]/results[4] << " " << results[3]/results[4] << endl;
   }
   cout << endl;
-    cout << Q2/1.E06 << " " << total[0]/total[4] << " " << 
+    cout << Q2/1.E06 << " " << Ein << " " << total[0]/total[4] << " " << 
 	    total[1]/total[4] << " " << total[2]/total[4] << " " << total[3]/total[4] << endl;
   
   delete elec;
   return 0;
 }
 
-void intPm(const double pm, double *results, va_list ap){
+void intPm(const double costhcm, double *results, va_list ap){
   Cross* p_obs = va_arg(ap,Cross*);
   TElectronKinematics* elec = va_arg(ap,TElectronKinematics*);
   MeanFieldNucleusThick* pnucleus = va_arg(ap,MeanFieldNucleusThick*);
@@ -74,20 +77,37 @@ void intPm(const double pm, double *results, va_list ap){
   int shell = va_arg(ap,int);
   int thick = va_arg(ap,int);
   int current = va_arg(ap,int);
-  if(pm<1.e-02){
-    for(int i=0;i<5;i++) results[i]=0.;
-    return;
-  }
+//   if(pm<1.e-02){
+//     for(int i=0;i<5;i++) results[i]=0.;
+//     return;
+//   }
   
   TKinematics2to2 kin("","",pnucleus->getMassA(),
 		      pnucleus->getMassA_min_proton()+pnucleus->getExcitation()[shell],
-		      MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
+		      MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhcm);
+  double pm=kin.GetPklab();
+  if(!kin.IsPhysical()){
+    for(int i=0;i<5;i++) results[i]=0.;
+    return;
+  }
+//   kin.Print();
   results[0]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 0, 0, 0, shell, 0.);
   results[1]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 1, 0, 0, shell, 0.);
   results[2]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 0, 1, 0, shell, 0.);
   results[3]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 1, 1, 0, shell, 0.);
   results[4]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 0, 0, 1, shell, 0.);
-  //cout << pm << " " << results[0] << " " << results[1] << " " << results[4] << endl;
+//   cout << pm << " " << kin.IsPhysical() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetCosthYlab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " " << kin.GetCosthklab() <<" " << results[0] << " " << results[1] << " " << results[4] << endl;
   return;
+}
+
+void getBound(double &high, double &low, MeanFieldNucleusThick *pnucleus, double Q2, double omega, int shell){
+  TKinematics2to2 kin("","",pnucleus->getMassA(),
+		      pnucleus->getMassA_min_proton()+pnucleus->getExcitation()[shell],
+		      MASSP,"qsquared:wlab:costhkcm",Q2,omega,(high+low)/2.);
+  double pm=kin.GetPklab();
+  if(pm<300.) low=(high+low)/2.;
+  else high=(high+low)/2.;
+  if((high-low)<1.E-04) { return;}
+  else getBound(high,low,pnucleus,Q2,omega,shell);  
 }
 
