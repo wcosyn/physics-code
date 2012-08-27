@@ -1,8 +1,9 @@
 /*! \file FsiCorrelator.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of class FsiCorrelator
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 
 #ifndef FSICORRELATOR_H
@@ -68,7 +69,7 @@ public:
    * \param proton selects proton (1) or neutron (0) density */
   double getCorrGrid_interp(const double r, const double costheta, bool proton);
   /*!returns the value of the gamma grid for the proton or neutron density at coordinate (theta), r has been set previously
-   * \param theta [rad] theta, spherical coordinates
+   * \param costheta cos(theta) spherical
    * \param proton selects proton (1) or neutron (0) density */
   double getCorrGrid_interp(const double costheta, bool proton);
   /*!returns the value of the gamma grid for the proton or neutron density at coordinate (theta), r has been set previously
@@ -116,5 +117,5 @@ private:
   void lnsrch(double *xold, double functionold, double *grad, double *step, double *functionnew,
 	    double stpmax, int *check, double *functionvalues);/*!< linesearch minimalizer */
 };
-
+/** @} */
 #endif

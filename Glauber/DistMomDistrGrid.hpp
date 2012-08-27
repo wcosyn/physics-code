@@ -1,8 +1,9 @@
 /*! \file DistMomDistrGrid.hpp 
- * \brief Contains declaration oft class DistMomDistrGrid
+ * \addtogroup Glauber
+ * \brief Contains declaration of the class DistMomDistrGrid
  * \author Wim Cosyn
  * \date 16/04/2012
- * 
+ * @{
  */
 
 #ifndef DISTMOMDISTRGRID_H
@@ -23,11 +24,12 @@ class AbstractFsiCTGrid;
 class DistMomDistrGrid{
 public:
   /*! Constructor
+   * \param shellindex shell index of the nucleus you want the mom distribution for. 
+   * Starts from first proton shell, neutron shells follow
    * \param max_p maximum size of p (in MeV)
    * \param p_grid gridsize in p
    * \param cth_grid gridsize in cos theta
    * \param phi_grid gridsizein phi
-   * \param level shell level for the rho grid
    * \param pfsigrid pointer to a fsi/ct grid
    * \param dir string that contains dir with all input
    */
@@ -66,22 +68,22 @@ public:
   void setPhiinterp(const double phi); /*!< sets the phiindex variable used in the 3d interpolation */
   
   //interpolation functions, one without arguments is a pure virtual function
-  /*!returns the value of the fsi grid for a certain situation at coordinate (p,costheta,phi) */
+  /*!returns the value of the momentum distribution for a certain situation at coordinate (p,costheta,phi) */
   double getRhoGridFull_interpvec(int gridindex, const TVector3 &pvec); 
-  /*!returns the value of the fsi grid for a certain situation at coordinate (p,costheta,phi) */
+  /*!returns the value of the momentum distribution for a certain situation at coordinate (p,costheta,phi) */
   double getRhoGridFull_interp3(int gridindex, const double p, const double costheta, const double phi); 
-  /*!returns the value of the fsi grid for a certain situation at coordinate (costheta,phi), p has been set previously */
+  /*!returns the value of the momentum distribution for a certain situation at coordinate (costheta,phi), p has been set previously */
   double getRhoGridFull_interp2(int gridindex, const double costheta, const double phi);
-  /*!returns the value of the fsi grid for a certain situation at coordinate (phi), p&theta have been set previously */
+  /*!returns the value of the momentum distribution for a certain situation at coordinate (phi), p&theta have been set previously */
   double getRhoGridFull_interp1(int gridindex, const double phi);
-  /*!returns the value of the fsi grid for a certain situation at coordinate (p,theta,phi) that has been set previously*/
+  /*!returns the value of the momentum distribution for a certain situation at coordinate (p,theta,phi) that has been set previously*/
   double getRhoGridFull_interp(int gridindex);
   double getRhopwGridFull_interp(double p);
 
    
   
-   void fillGrids();  /*!< fills the fsi grids that are used for interpolation */
-   void updateGrids(AbstractFsiCTGrid *, int);  /*!< fills the fsi grids that are used for interpolation */
+   void fillGrids();  /*!< fills the momentum distribution grids that are used for interpolation */
+   void updateGrids(AbstractFsiCTGrid *, int);  /*!< updates the momentum distribution grids that are used for interpolation */
   
   
   
@@ -112,18 +114,18 @@ private:
   bool filledgrid; /*!< denotes if the grid has been filled */
   bool filledctgrid; /*!< denotes if the ct grid has been filled */
   bool filledallgrid; /*!< denotes if allthe (possible) grids have been filled */
-  TVector3 pvec_hit;
-  double p_hit;  /*!< p coordinate of the hard interaction point, what the grid depens on */
-  double costheta_hit;/*!< cos of theta coordinate of the hard interaction point, what the grid depens on */
-  double sintheta_hit;/*!< sin of theta coordinate of the hard interaction point, what the grid depens on */
-  double phi_hit;/*!< phi coordinate of the hard interaction point, what the grid depens on */
-  double cosphi_hit;/*!< cos of phi coordinate of the hard interaction point, what the grid depens on */
-  double sinphi_hit;/*!< sin of phi coordinate of the hard interaction point, what the grid depens on */
-  Matrix<1,4> Upm_bar;
+  TVector3 pvec_hit; /*!< coordinate where the mom distribution is calculated */
+  double p_hit;  /*!< p coordinate of the momentum vector point, what the grid depens on */
+  double costheta_hit;/*!< cos of theta coordinate of the momentum vector point, what the grid depens on */
+  double sintheta_hit;/*!< sin of theta coordinate of the momentum vector point, what the grid depens on */
+  double phi_hit;/*!< phi coordinate of the momentum vector point, what the grid depens on */
+  double cosphi_hit;/*!< cos of phi coordinate of the momentum vector point, what the grid depens on */
+  double sinphi_hit;/*!< sin of phi coordinate of the momentum vector point, what the grid depens on */
+  Matrix<1,4> Upm_bar; /*!< holds a spinor that gest contracted with a nucleon MF spinor */
   
-  double *rhopwgrid;
-  double ****rhogrid;
-  double ****rhoctgrid;
+  double *rhopwgrid; /*!< plane-wave momentum distribution grid. only depends on norm of p */
+  double ****rhogrid; /*!< non-ct momentum distribution grid */
+  double ****rhoctgrid; /*!< ct momentum distribution grid */
     
   void constructpwGrid(); /*!< construct all grids */
   void constructAllGrids(); /*!< construct all grids */
@@ -175,7 +177,7 @@ private:
   
   /*! function that gets integrated over r, plane-wave thingy
    * \param r [fm] radial coordinate
-   * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
+   * \param result result: contains plane wave result
    * \param ap variable parameter list
    */
   void intRhoRpw(const double r, double *result, va_list ap);
@@ -184,5 +186,5 @@ private:
   
   
 };
-
+/** @} */
 #endif

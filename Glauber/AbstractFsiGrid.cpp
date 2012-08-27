@@ -23,123 +23,9 @@ AbstractFsiGrid::~AbstractFsiGrid(){
   //cout << "Deleting FSI object" << endl;
   
 }
-
-//get corrfilename
-const string AbstractFsiGrid::getFsi_Filename() const{
-  return fsi_filename;
-}
-
-
-//get dir
-const string AbstractFsiGrid::getDir() const{
-  return dir;
-}
-
-//get rgrid
-int AbstractFsiGrid::getRgrid() const{
-  return rgrid;
-}
-
-//get thgrid
-int AbstractFsiGrid::getCthgrid() const{
-  return cthgrid;
-}
-
-//get phigrid
-int AbstractFsiGrid::getPhigrid() const{
-  return phigrid;
-}
-
-//get invrstep
-double AbstractFsiGrid::getInvRstep() const{
-  return invrstep;
-}
-
-//get invthstep
-double AbstractFsiGrid::getInvCthstep() const{
-  return invcthstep;
-}
-
-//get invphistep
-double AbstractFsiGrid::getInvPhistep() const{
-  return invphistep;
-}
-
-//get s_interp
-double AbstractFsiGrid::getS_interp() const{
-  return s_interp;
-}
-
-//get t_interp
-double AbstractFsiGrid::getT_interp() const{
-  return t_interp;
-}
-
-//get u_interp
-double AbstractFsiGrid::getU_interp() const{
-  return u_interp;
-}
-
-//get comp_s_interp
-double AbstractFsiGrid::getComp_s_interp() const{
-  return comp_s_interp;
-}
-
-//get comp_t_interp
-double AbstractFsiGrid::getComp_t_interp() const{
-  return comp_t_interp;
-}
-
-//get comp_u_interp
-double AbstractFsiGrid::getComp_u_interp() const{
-  return comp_u_interp;
-}
-
-//get rindex
-int AbstractFsiGrid::getRindex() const{
-  return rindex;
-}
-
-//get thindex
-int AbstractFsiGrid::getCthindex() const{
-  return cthindex;
-}
-
-//get phiindex
-int AbstractFsiGrid::getPhiindex() const{
-  return phiindex;
-}
-
-//get pnucleus
-MeanFieldNucleus *AbstractFsiGrid::getPnucleus() const{
-  return pnucleus;
-}
-
-//made explicitly inline
-//get particles vector
-// vector<FastParticle*> AbstractFsiGrid::getParticles() const{
-//  return particles; 
-// }
-
-//get knockoutlevels vector
-vector<int> AbstractFsiGrid::getKnockoutLevels() const{
-  return knockoutlevels;
-}
-
-//get knockoutm vector
-vector<int> AbstractFsiGrid::getKnockoutM() const{
-  return knockoutm;
-}
-
-//get allinpline
-bool AbstractFsiGrid::getAllinplane() const{
-  return allinplane;
-}
-
   
 //add particle to the particles vector
 void AbstractFsiGrid::addParticle(FastParticle& newparticle){
-//   if(!filledgrid){
     if (particles.empty()){
       particles.push_back(newparticle);
       if(newparticle.getParticletype()==0){
@@ -170,11 +56,6 @@ void AbstractFsiGrid::addParticle(FastParticle& newparticle){
       if(newparticle.getParticletype()==0) totalprotonout--;
       if(newparticle.getParticletype()==1) totalneutronout--;	    
     }
-//   }
-//   else{
-//     cerr << "You shouldn't add more particles after filling the fsi grids!!!" << endl;
-//     exit(1);
-//   }
 }
 
 //print the particles in the particles vector
@@ -236,23 +117,6 @@ void AbstractFsiGrid::printKnockout() const{
   }
 }
 
-int AbstractFsiGrid::getTotalProtonOut() const{
-  return totalprotonout;
-}
-
-int AbstractFsiGrid::getTotalNeutronOut() const{
-  return totalneutronout;
-}
-
-int AbstractFsiGrid::getProtonKnockout() const{
-  return protonknockout;
-}
-
-int AbstractFsiGrid::getNeutronKnockout() const{
-  return neutronknockout;
-}
-
-
 
 //set up inteprolation help variables for r
 void AbstractFsiGrid::setRinterp(const double r){
@@ -261,7 +125,7 @@ void AbstractFsiGrid::setRinterp(const double r){
     exit(1);
   }
   rindex = int(floor(r*getInvRstep()));
-  if(rindex==getRgrid()) rindex-=1;
+  if(rindex==getRgrid()) rindex-=1; //take care at high end
   s_interp = (r*getInvRstep() - (rindex));
   comp_s_interp=1.-s_interp;
 }
@@ -346,6 +210,8 @@ complex<double> AbstractFsiGrid::getInterp(complex<double> ***grid){
 // 	+ getS_interp()*grid[getRindex()+1][getCthindex()][getPhiindex()+1]) 
 // 	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()+1][getPhiindex()+1]
 // 	+ getS_interp()*grid[getRindex()+1][getCthindex()+1][getPhiindex()+1]));
+
+//way faster with doubles!
   return Interp3d(grid, getS_interp(), getT_interp(), getU_interp(), 
 		  getComp_s_interp(), getComp_t_interp(), getComp_u_interp(), 
 		  getRindex(), getCthindex(), getPhiindex());
@@ -357,12 +223,14 @@ complex<double> AbstractFsiGrid::getInterp(complex<double> ***grid){
 //set filenames
 void AbstractFsiGrid::setFilenames(string homedir){
   for(size_t i=0;i<particles.size();i++){
+    //check if scatt parameters were set by user
     if(particles[i].getUserset()){
       homedir.insert(homedir.find_last_of("/")-5,"fix");
       break;
     }
   }
   fsi_filename=homedir+pnucleus->getNucleusName();
+  //add all particle properties
   for(size_t i=0;i<particles.size();i++){
     if(particles[i].getIncoming()) fsi_filename+=".inc";
     if(particles[i].getUserset()) fsi_filename+=".Ptype"+to_string(particles[i].getParticletype())
@@ -392,6 +260,7 @@ void AbstractFsiGrid::fillGrids(){
   }
   if(allinplane){
     //cout <<"All particles lie in the phi=0 or phi=Pi plane, special case activated" << endl;
+    //exploit symmetry in phi
     invphistep*=2.;
   }
   setFilenames(dir);

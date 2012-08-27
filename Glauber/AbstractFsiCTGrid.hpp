@@ -1,8 +1,9 @@
 /*! \file AbstractFsiCTGrid.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of abstract class AbstractFsiCTGrid
  * \author Wim Cosyn
  * \date 18/08/2011
- * 
+ * @{
  */
 
 #ifndef ABSTRACTFSICTGRID_H
@@ -57,9 +58,9 @@ protected:
   
 private:
 
-  virtual void constructCtGrid()=0;  /*!< construct only the fsi+ct grids */
-  virtual void readinFsiCtGrid(ifstream &infile)=0; /*!< read in only the fsi+ct grids */
-  virtual void writeoutFsiCtGrid(ofstream &outfile)=0; /*!< write out only the fsi+ct grids */
+  virtual void constructCtGrid()=0;  /*!< construct only the fsi+ct grids, pure virtual! */
+  virtual void readinFsiCtGrid(ifstream &infile)=0; /*!< read in only the fsi+ct grids, pure virtual! */
+  virtual void writeoutFsiCtGrid(ofstream &outfile)=0; /*!< write out only the fsi+ct grids, pure virtual! */
 };
-
+/** @} */
 #endif

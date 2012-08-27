@@ -1,8 +1,9 @@
 /*! \file AbstractFsiDecayGridThick.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of abstract class AbstractFsiDecayGridThick
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 
 #ifndef ABSTRACTFSIDECAYGRIDTHICK_H
@@ -14,7 +15,7 @@
 #include "MeanFieldNucleusThick.hpp"
 #include "FsiCorrelator.hpp"
 
-/*! \brief An abstract class for a ISI/FSI grid using thickness approximation
+/*! \brief An abstract class for a ISI/FSI grid using thickness approximation and including decay properties 
  * 
  * Contains all necessary functions to operate a general fsi grid. Has a pointer to a nucleus for which the fsi grid is.  
  * A vector contains all the particles that undergo ISI or FSI.  Has interpolation and print functions for the grid.
@@ -22,7 +23,7 @@
  * Typically an object that is inherited from this class is operated as follows.<BR>
  * 1. Initialize object with constructor AbstractFsiGrid()<BR>
  * 2. Add all particles subject to ISI/FSI with addParticle() <BR>
- * 3. Call fillGrids() <BR>
+ * 3. Call fillGrids() or updateGrids() <BR>
  * 4. Interpolate grid for a certain point or print the grid or whatever...
  * 
  * 
@@ -71,10 +72,10 @@ public:
   virtual complex<double> getFsiDecayGridFull_interp()=0;
 
 protected:
-   /*!< set filenames of the grids, includes "Thick" prefix
+   /*!< set filenames of the grids, includes "Thick" & "Decay" prefix
     * \param dir dir where all input/output is located */ 
   virtual void setFilenames(string dir); 
   
 };
-
+/** @} */
 #endif

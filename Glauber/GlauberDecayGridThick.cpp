@@ -397,7 +397,7 @@ void GlauberDecayGridThick::constructAllGrids(){
 	    getParticles()[it].setHitcoord(r_hit, costheta_hit,sintheta_hit, cosphi_hit, sinphi_hit);
 	  }
 	  calcGlauberphasesBoth(i,j,k);
-		  	  
+	  //treshold check
 	  if(abs(pow(fsi_ct_grid[0][0][i][j][k],getPnucleusthick()->getN())*pow(fsi_ct_grid[0][1][i][j][k],getPnucleusthick()->getZ()))>0.99
 		  &&abs(pow(fsi_ct_grid[1][0][i][j][k],getPnucleusthick()->getN())*pow(fsi_ct_grid[1][1][i][j][k],getPnucleusthick()->getZ()))>0.99
 		  &&abs(pow(fsi_ct_grid[2][0][i][j][k],getPnucleusthick()->getN())*pow(fsi_ct_grid[2][1][i][j][k],getPnucleusthick()->getZ()))>0.99

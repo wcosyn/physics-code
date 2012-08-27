@@ -137,19 +137,3 @@ double MeanFieldNucleusThick::getDensity(const double r, const double *density) 
 }
 
 
-const double * MeanFieldNucleusThick::getProtonDensity() const{ //get proton density array
-  return protondensity;
-}
-
-
-const double * MeanFieldNucleusThick::getNeutronDensity() const{ //get neutron density array
-  return neutrondensity;
-}
-
-const double * MeanFieldNucleusThick::getTotalDensity() const{ //get total density array
-  return totaldensity;
-}
-
-const double * MeanFieldNucleusThick::getDensity(int proton) const{ //get total density array
-  return proton? protondensity:neutrondensity;
-}

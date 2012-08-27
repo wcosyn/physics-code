@@ -1,8 +1,9 @@
 /*! \file AbstractFsiGridThick.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of abstract class AbstractFsiGridThick
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 
 #ifndef ABSTRACTFSIGRIDTHICK_H
@@ -69,5 +70,5 @@ private:
   MeanFieldNucleusThick *pnucleusthick;/*!<  the pointer to the MeanFieldNucleusThick instance */
   FsiCorrelator fsicorrelator;/*!<  the pointer to the FsiCorrelator instance */
 };
-
+/** @} */
 #endif

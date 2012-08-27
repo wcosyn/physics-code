@@ -41,6 +41,7 @@ userset(0){
     case(2):
       //cout <<"pi+" << endl;
 //       setPionGlauberData(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
+//interpolating static arrays is waaaay faster of course.
       sigmap = interpolate(sigmap_array,log10(p),0.01,151,250.);
       beta2p = interpolate(beta2p_array,log10(p),0.01,151,250.);
       epsilonp = interpolate(epsp_array,log10(p),0.01,151,250.);
@@ -214,51 +215,6 @@ FastParticle::~FastParticle(){
   //cout << "Deleting Particle object..." << endl;
 }
 
-//getters
-int FastParticle::getParticletype() const{
-  return particletype;
-}
-
-bool FastParticle::getIncoming() const{
-  return incoming;
-}
-
-double FastParticle::getP() const{
-  return p;
-}
-
-double FastParticle::getTheta() const{
-  return theta;
-}
-
-double FastParticle::getPhi() const{
-  return phi;
-}
-
-double FastParticle::getEx() const{
-  return ex;
-}
-
-double FastParticle::getEy() const{
-  return ey;
-}
-
-double FastParticle::getEz() const{
-  return ez;
-}
-
-double FastParticle::getHitz() const{
-  return hitz;
-}
-
-double FastParticle::getHitbnorm() const{
-  return hitbnorm;
-}
-
-const double* FastParticle::getHitbvec() const{
-  return hitb;
-}
-
 //set coord of hard interaction point 
 void FastParticle::setHitcoord(double r, double costheta, double sintheta, double cosphi, double sinphi){
   hitz=r*costheta*getEz()+r*sintheta*cosphi*getEx()+r*sintheta*sinphi*getEy();
@@ -273,42 +229,6 @@ void FastParticle::setHitcoord(double r, double costheta, double sintheta, doubl
 double  FastParticle::calcZ(double r, double costheta, double sintheta, double cosphi, double sinphi){
   return r*costheta*getEz()+r*sintheta*cosphi*getEx()+r*sintheta*sinphi*getEy();
 }  
-
-double FastParticle::getSigmap() const{
-  return sigmap;
-}
-
-double FastParticle::getBeta2p() const{
-  return beta2p;
-}
-
-double FastParticle::getEpsilonp() const{
-  return epsilonp;
-}
-
-double FastParticle::getSigman() const{
-  return sigman;
-}
-
-double FastParticle::getBeta2n() const{
-  return beta2n;
-}
-
-double FastParticle::getEpsilonn() const{
-  return epsilonn;
-}
-
-double FastParticle::getSigma(bool proton) const{
-  return proton? sigmap:sigman;
-}
-
-double FastParticle::getBetasq(bool proton) const{
-  return proton? beta2p:beta2n;
-}
-
-double FastParticle::getEpsilon(bool proton) const{
-  return proton? epsilonp:epsilonn;
-}
 
 //get sigma for a particle, make distinction between scatt w proton or neutron
 double FastParticle::getSigma_decay(int level, MeanFieldNucleus *pnucleus) const{
@@ -381,17 +301,6 @@ double FastParticle::getDecay_sigma(double z, bool proton) const{
   
 }
     
-double FastParticle::getHardScale() const{
-  return hardscale;
-}
-
-double FastParticle::getLc() const{
-  return lc;
-}
-  
-double FastParticle::getNkt_sq() const{
-  return nkt_sq;
-}
 
 
 

@@ -45,7 +45,7 @@ complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interp2(const double costhet
 
 
 complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interp1(const double phi){
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
+  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);  //exploit symmetry
   else setPhiinterp(phi);
   return getFsiCtGridFull_interp();
 }
@@ -67,7 +67,9 @@ void AbstractFsiCTGrid::fillGrids(){
   AbstractFsiGrid::fillGrids();
   setFilenames(getDir());
   if(filledallgrid){
+    //ct grid was filled while constructing RMSGA grid
     filledctgrid=1;
+    //write to file
     ofstream outfile2(fsi_ct_filename.c_str(),ios::out|ios::binary);
     if(outfile2.is_open()){
       //cout << "Writing out FSI+CT grid: " << fsi_ct_filename << endl;
@@ -79,7 +81,7 @@ void AbstractFsiCTGrid::fillGrids(){
       cerr << "could not open file for writing FSICT grid output: " << fsi_ct_filename << endl;
     }
   }
-  
+  //grid is still empty
   else{
     ifstream infile2(fsi_ct_filename.c_str(),ios::in|ios::binary);
     //check if object has been created sometime earlier and read it in
@@ -89,10 +91,12 @@ void AbstractFsiCTGrid::fillGrids(){
       filledctgrid=1;
       infile2.close();
     }
+    //we have to calc the grid
     else{
       cout << "Constructing FSI+CT grid" << endl;
       constructCtGrid();
       filledctgrid=1;
+      //write it out now too
       ofstream outfile(fsi_ct_filename.c_str(),ios::out|ios::binary);
       if(outfile.is_open()){
 	//cout << "Writing out FSI+CT grid: " << fsi_ct_filename << endl;
@@ -107,14 +111,14 @@ void AbstractFsiCTGrid::fillGrids(){
   }
 }
 
-//fills the grids, uses pure virtual functions!!!!
+//updates the grids, uses pure virtual functions!!!!
 void AbstractFsiCTGrid::updateGrids(){
   string old_fsi_ct_filename = fsi_ct_filename;
   AbstractFsiGrid::updateGrids();
   setFilenames(getDir());
+  //check is something is different so we needto update the grids
   if(old_fsi_ct_filename.compare(fsi_ct_filename)){
 //     cout << "fsict grid not equal " << endl << fsi_ct_filename << endl << old_fsi_ct_filename << endl;
-    
     ifstream infile2(fsi_ct_filename.c_str(),ios::in|ios::binary);
     //check if object has been created sometime earlier and read it in
     if(infile2.is_open()){

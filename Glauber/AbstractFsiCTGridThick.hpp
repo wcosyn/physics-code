@@ -1,8 +1,9 @@
 /*! \file AbstractFsiCTGridThick.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of abstract class AbstractFsiCTGridThick
  * \author Wim Cosyn
  * \date 18/08/2011
- * 
+ * @{
  */
 
 #ifndef ABSTRACTFSICTGRIDTHICK_H
@@ -15,7 +16,7 @@
 #include "MeanFieldNucleusThick.hpp"
 #include "FsiCorrelator.hpp"
 
-/*! \brief An abstract class for a ISI/FSI grid using thickness approximation, including a CT grid
+/*! \brief An abstract class for a ISI/FSI grid using thickness approximation, including a CT grid and SRC grids
  */
 class AbstractFsiCTGridThick : public AbstractFsiGridThick, public AbstractFsiCTGrid{
   
@@ -51,5 +52,5 @@ public:
   virtual void setFilenames(string dir); 
 
 };
-
+/** @} */
 #endif  

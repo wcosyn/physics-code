@@ -1,8 +1,9 @@
 /*! \file FastParticle.hpp 
+ * \addtogroup Glauber
  * \brief Contains FastParticle class declaration
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 
 #ifndef FASTPARTICLE_H
@@ -51,18 +52,18 @@ public:
   ~FastParticle(); /*!< Destructor */
   FastParticle& operator=(const FastParticle&);/*!< assignment overloading */
 
-  int getParticletype() const; /*!< get type of particle */
-  bool getIncoming() const;/*!<  get if the particle is a beam particle */
-  double getP() const;/*!< [MeV] get momentum */
-  double getTheta() const;/*!< [rad] get theta angle of momentum */
+  int getParticletype() const{ return particletype;} /*!< get type of particle */
+  bool getIncoming() const {return incoming;}/*!<  get if the particle is a beam particle */
+  double getP() const {return p;}/*!< [MeV] get momentum */
+  double getTheta() const {return theta;}/*!< [rad] get theta angle of momentum */
   double getCosTheta() const{return cos(theta);}/*!< [] get cos theta angle of momentum */
-  double getPhi() const;/*!<  [rad] get phi angle of momentum */
-  double getEx() const;/*!<  get x-component of momentum direction */
-  double getEy() const;/*!< get y-component of momentum direction  */
-  double getEz() const;/*!<  get z-component of momentum direction */
-  double getHitz() const;/*!<  get z coord relative to this momentum of the hard interaction coordinate */
-  double getHitbnorm() const;/*!< get norm of b coord relative to this momentum of the hard interaction coordinate */
-  const double* getHitbvec() const;/*!<  get b vector in regular coord system for hard interaction coord*/
+  double getPhi() const {return phi;}/*!<  [rad] get phi angle of momentum */
+  double getEx() const {return ex;}/*!<  get x-component of momentum direction */
+  double getEy() const {return ey;}/*!< get y-component of momentum direction  */
+  double getEz() const {return ez;}/*!<  get z-component of momentum direction */
+  double getHitz() const {return hitz;}/*!<  get z coord relative to this momentum of the hard interaction coordinate */
+  double getHitbnorm() const {return hitbnorm;}/*!< get norm of b coord relative to this momentum of the hard interaction coordinate */
+  const double* getHitbvec() const {return hitb;}/*!<  get b vector in regular coord system for hard interaction coord*/
   /*! Set (b,z) coordinates of the hard interaction point relative to this particle
    * \param r [fm] r coord of hard interaction point, spherical
    * \param costheta cos(theta) coord of hard interaction point, spherical
@@ -80,20 +81,26 @@ public:
    * \return z(r), relative to this momentum
    */
   double calcZ(double r, double costheta, double sintheta, double cosphi, double sinphi);
-  double getSigmap() const; /*!< [fm^2] return sigma parameter for scattering with proton */
-  double getBeta2p() const;  /*!< [fm^2] return beta^2 parameter for scattering with proton */
-  double getEpsilonp() const;  /*!< [] return epsilon parameter for scattering with proton */
-  double getSigman() const; /*!< [fm^2] return sigma parameter for scattering with neutron */
-  double getBeta2n() const;  /*!< [fm^2] return beta^2 parameter for scattering with neutron */
-  double getEpsilonn() const; /*!< [] return epsilon parameter for scattering with neutron */
-  double getSigma(bool proton) const;/*!< [fm^2] return sigma parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
-  double getEpsilon(bool proton) const;/*!< [] return epsilon parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
-  double getBetasq(bool proton) const;/*!< [fm^2] return beta^2 parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
-  double getMass() const{ return mass;}
-  double getE() const{return E;}
-  double getDecay_dil() const{return decay_dil;}
+  double getSigmap() const {return sigmap;} /*!< [fm^2] return sigma parameter for scattering with proton */
+  double getBeta2p() const {return beta2p;}  /*!< [fm^2] return beta^2 parameter for scattering with proton */
+  double getEpsilonp() const {return epsilonp;}  /*!< [] return epsilon parameter for scattering with proton */
+  double getSigman() const {return sigman;} /*!< [fm^2] return sigma parameter for scattering with neutron */
+  double getBeta2n() const {return beta2n;}  /*!< [fm^2] return beta^2 parameter for scattering with neutron */
+  double getEpsilonn() const {return epsilonn;} /*!< [] return epsilon parameter for scattering with neutron */
+  /*! [fm^2] return sigma parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
+  double getSigma(bool proton) const{return proton? sigmap:sigman;}
+  /*! [] return epsilon parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
+  double getEpsilon(bool proton) const {return proton? beta2p:beta2n;}
+  /*! [fm^2] return beta^2 parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
+  double getBetasq(bool proton) const { return proton? epsilonp:epsilonn;}
+  double getMass() const{ return mass;} /*!< [MeV] return mass */
+  double getE() const{return E;} /*!< [MeV] on-shell energy*/
+  double getDecay_dil() const{return decay_dil;} /*!< [MeV] return time dilatation factor */
+  /*! [fm^2] return sigma parameter corrected for decaying particle for scattering with proton */
   double getSigma_decay_p() const{ return sigma_decay_p;}
+  /*! [fm^2] return sigma parameter corrected for decaying particle for scattering with neutron */
   double getSigma_decay_n() const{ return sigma_decay_n;}
+  /*! [fm^2] return sigma (corrected for decay) parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
   double getSigma_decay(bool proton) const{ return proton? sigma_decay_p : sigma_decay_n;}
   
   
@@ -121,13 +128,13 @@ public:
    * \return [fm^2] sigma parameter
    */
   double getBetasq(int level, MeanFieldNucleus *pnucleus) const;
-  /*! [fm^2] return scattering parameter front factor (\sigma(1-I*eps)/(4\pi\beta^2)
+  /*! [fm^2] return scattering parameter front factor (\f$\frac{\sigma(1-I\epsilon)}{4\pi\beta^2}\f$)
    * \param level selects level in nucleus
    * \param pnucleus pointer to a class instance of the nucleus 
    * \return [fm^2] frontfactor scattering
    */
   complex<double> getScatterfront(int level, MeanFieldNucleus *pnucleus) const;
-  /*! [fm^2] return scattering parameter front factor (\sigma(1-I*eps)/(4\pi\beta^2)
+  /*! [fm^2] return scattering parameter front factor (\f$\frac{\sigma(1-I\epsilon)}{4\pi\beta^2}\f$)
    * \param proton scattering with proton (1) or neutron (0)
    * \return [fm^2] frontfactor scattering
    */
@@ -166,9 +173,9 @@ public:
    */
   double getDecay_sigma(double zmom, bool proton) const;
 
-  double getHardScale() const; /*!< get hard scale associated with particle  */
-  double getLc() const; /*!< get coherence length of particle (CT parameter)  */
-  double getNkt_sq() const; /*!< [GeV^2] get <n_kt^2>, 0.35^2n^2 with n number of constituent quarks of particle  */
+  double getHardScale() const {return hardscale;} /*!< get hard scale associated with particle  */
+  double getLc() const {return lc;} /*!< get coherence length of particle (CT parameter)  */
+  double getNkt_sq() const {return nkt_sq;} /*!< [GeV^2] get <n_kt^2>, 0.35^2n^2 with n number of constituent quarks of particle  */
   void printParticle() const; /*!< Prints relevant information for the particle  */
   /*! used to calc (b-b')^2 for the glauberphase in the ref frame of this particle
    * \param r [fm] r coord , spherical
@@ -181,15 +188,17 @@ public:
    */
   double getBdist(double r, double costheta, double sintheta, double cosphi, double sinphi, double zmom);
   
+  /*! sets the scatter sigma_tot parameter
+   * \param sigma [mb] tot cross section
+   */
   void setSigma(double sigma){ sigman=sigmap=sigma/10.; return;}
   /*! sets the scatter parameters
    * \param sigma [mb] tot cross section
    * \param beta [GeV^2] slope param
    * \param eps [] real to imag ratio
-   * \return (b-b')^2, relative to this momentum, with b' the hard interaction point b' coordinate
    */
   void setScatter(double sigma, double beta, double eps);
-  bool getUserset()const{return userset;}
+  bool getUserset() const{return userset;} /*!< returns if user set the scattering parameters */
   /*! Sets the glauber parameters for a nucleon fast particle
    * \param mom [MeV]  particle momentum
    * \param sigmap [fm^2]  sigma parameter for scattering with proton
@@ -210,8 +219,20 @@ public:
    * \param epsn []  epsilon parameter for scattering with neutron
    * \param dir string that contains the dir where all input is located
    */
-  static void setPionGlauberData(double mom, double &sigmap, double &beta2p, double &epsp, double &sigman, double &beta2n, double &epsn, string dir);
-  static void interpPionGlauberData(int particletype, double mom, double &sigmap, double &beta2p, double &epsp, double &sigman, double &beta2n, double &epsn);
+  static void setPionGlauberData(double mom, double &sigmap, double &beta2p, 
+				 double &epsp, double &sigman, double &beta2n, double &epsn, string dir);
+  /*! Sets the glauber parameters for a pion fast particle through interpolation of static arrays
+   * \param particletype which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
+   * \param mom [MeV]  particle momentum
+   * \param sigmap [fm^2]  sigma parameter for scattering with proton
+   * \param beta2p [fm^2]  beta^2 parameter for scattering with proton
+   * \param epsp []  epsilon parameter for scattering with proton
+   * \param sigman [fm^2]  sigma parameter for scattering with neutron
+   * \param beta2n [fm^2]  beta^2 parameter for scattering with neutron
+   * \param epsn []  epsilon parameter for scattering with neutron
+   */
+  static void interpPionGlauberData(int particletype, double mom, double &sigmap, 
+				    double &beta2p, double &epsp, double &sigman, double &beta2n, double &epsn);
     
 private:
   int particletype; /*!< which particle [0-4] = [proton, neutron, pi+, pi-,rho0] can be extended of course */
@@ -350,5 +371,5 @@ static double epsn_array[] = { 0.220782, 0.39322, 0.489897, 0.528353, 0.524508, 
 
 
 
-
+/** @} */
 #endif

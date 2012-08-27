@@ -1,8 +1,9 @@
 /*! \file GlauberDecayGridThick.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of class GlauberDecayGridThick
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 
 #ifndef GLAUBERDECAYGRIDTHICK_H
@@ -12,10 +13,21 @@
 
 #include "AbstractFsiCTDecayGridThick.hpp"
 
-/*! \brief An class for a Glauber ISI/FSI grid using thickness approximation,implements AbstractFsiCTDecayGridThick
+/*! \brief A class for a Glauber ISI/FSI grid using thickness approximation and including decay of fast particles,implements AbstractFsiCTDecayGridThick
  * 
- * Four grids are actually calculated.  fsi_grid contains both the regular fsi grid as well as the grid that includes SRC.  
- * Same thing for the fsi_ct_grid
+ * Eight grids are actually calculated.  fsi_grid contains both the regular fsi grid as well as the grid that includes SRC.
+ * Plus a one that includes Decay properties as well for each of those two.  
+ * Same thing for the fsi_ct_grid. <BR>
+ * 
+ * Every function that takes a \param grid argument: <BR>
+ * 0: RMSGA <BR>
+ * 1: RMSGA+SRC <BR>
+ * 2: RMSGA+Decay <BR>
+ * 3: RMSGA+SRC+Decay <BR>
+ * 4: RMSGA+CT <BR>
+ * 5: RMSGA++CT+SRC <BR>
+ * 6: RMSGA+CT+Decay <BR>
+ * 7: RMSGA+CT+SRC+Decay aka "The works" <BR> 
  */
 class GlauberDecayGridThick : public AbstractFsiCTDecayGridThick{
 public:
@@ -38,7 +50,16 @@ public:
   virtual complex<double> getFsiCtDecayGridFull_interp();/*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   virtual complex<double> getFsiSrcDecayGridFull_interp(); /*!returns the value of the fsi+src grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   virtual complex<double> getFsiSrcCtDecayGridFull_interp();/*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
-  virtual complex<double> getFsiGridN_interp(int grid); /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously
+   * \param grid 0: RMSGA <BR>
+  * 1: RMSGA+SRC <BR>
+  * 2: RMSGA+DECAY <BR>
+  * 3: RMSGA+SRC+DECAY <BR>
+  * 4: RMSGA+CT <BR>
+  * 5: RMSGA++CT+SRC <BR>
+  * 6: RMSGA+CT+DECAY <BR>
+  * 7: RMSGA+CT+SRC+DECAY AKA "THE WORKS" <BR> */
+  virtual complex<double> getFsiGridN_interp(int grid); 
 
   virtual void printFsi_grid();/*!< Prints the FSI grid for a certain situation*/
   virtual void printFsi_ct_grid(); /*!< Prints the FSI+CT grid for a certain situation */
@@ -48,7 +69,16 @@ public:
   virtual void printFsi_ct_decay_grid(); /*!< Prints the FSI+CT grid for a certain situation */
   virtual void printFsi_src_decay_grid();/*!< Prints the FSI+SRC grid for a certain situation*/
   virtual void printFsi_src_ct_decay_grid();/*!< Prints the FSI+SRC+CT grid for a certain situation*/
-  virtual void print_grid(int grid);/*!< Prints the FSI grid for a certain situation*/
+  /*! Prints the FSI grid for a certain situation
+  * \param grid 0: RMSGA <BR>
+  * 1: RMSGA+SRC <BR>
+  * 2: RMSGA+DECAY <BR>
+  * 3: RMSGA+SRC+DECAY <BR>
+  * 4: RMSGA+CT <BR>
+  * 5: RMSGA++CT+SRC <BR>
+  * 6: RMSGA+CT+DECAY <BR>
+  * 7: RMSGA+CT+SRC+DECAY AKA "THE WORKS" <BR> */
+  virtual void print_grid(int grid);
 
   
 protected:
@@ -121,5 +151,5 @@ private:
   
 
 };
-
+/** @} */
 #endif

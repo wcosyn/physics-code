@@ -91,11 +91,11 @@ void intPm(const double costhcm, double *results, va_list ap){
     return;
   }
 //   kin.Print();
-  results[0]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 0, 0, 0, shell, 0.);
-  results[1]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 1, 0, 0, shell, 0.);
-  results[2]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 0, 1, 0, shell, 0.);
-  results[3]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 1, 1, 0, shell, 0.);
-  results[4]=pm*pm*p_obs->getDiffCross(kin,  current, thick, 0, 0, 1, shell, 0.);
+  results[0]=p_obs->getDiffCross(kin,  current, thick, 0, 0, 0, shell, 0.);
+  results[1]=p_obs->getDiffCross(kin,  current, thick, 1, 0, 0, shell, 0.);
+  results[2]=p_obs->getDiffCross(kin,  current, thick, 0, 1, 0, shell, 0.);
+  results[3]=p_obs->getDiffCross(kin,  current, thick, 1, 1, 0, shell, 0.);
+  results[4]=p_obs->getDiffCross(kin,  current, thick, 0, 0, 1, shell, 0.);
 //   cout << pm << " " << kin.IsPhysical() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetCosthYlab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " " << kin.GetCosthklab() <<" " << results[0] << " " << results[1] << " " << results[4] << endl;
   return;
 }

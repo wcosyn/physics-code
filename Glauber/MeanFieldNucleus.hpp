@@ -1,8 +1,9 @@
 /*! \file MeanFieldNucleus.hpp 
+ * \addtogroup Glauber
  * \brief Contains MeanFieldNucleus class declaration
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 
 
@@ -35,39 +36,41 @@ public:
   
   ~MeanFieldNucleus();/*!< Destructor */
   
-  const string getNucleusName() const; /*!< Returns a string with the name of the nucleus, f.i. "C" */
-  int getA() const; /*!<  Returns the total number of nucleons */
-  int getZ() const; /*!< Returns the total number of protons*/
-  bool getOnlyOneProton() const; /*!< Returns bool that denotes if the final proton shell has an unpair number of protons*/
-  int getFinalMProton() const;/*!< For not closed final proton shell, returns the m to which it is filled (arbitrary somewhat)*/
-  bool getOnlyOneNeutron() const; /*!< Returns bool that denotes if the final proton shell has an unpair number of neutron*/
-  int getFinalMNeutron() const; /*!< For not closed final neutron shell, returns the m to which it is filled (arbitrary somewhat)*/
-  int getN() const;/*!< Returns the total number of neutrons*/
-  int getPLevels() const;/*!< Returns total number of proton shells */
-  int getNLevels() const;/*!< Returns total number of neutron shells */
-  int getTotalLevels() const; /*!< Returns total number of shells*/
-  const int* getN_array() const; /*!< Returns array with all the n quantum numbers of each shell*/
-  const int* getKappas() const; /*!< Returns array with all the kappa quantum numbers of each shell*/
-  const int* getL_array() const; /*!< Returns array with all the l quantum numbers of each shell*/
-  const int* getLbar_array() const; /*!< Returns array with all the l_bar quantum numbers of each shell*/
-  const int* getJ_array() const; /*!< Returns array with all the j quantum numbers of each shell*/
-  double getMassA() const; /*!< Returns the nucleus mass*/
-  double getMassA_min_1(int level) const; /*!< Returns the mass of A-1 (either Z-1 or N-1 depending on level)*/
-  double getMassA_min_proton() const; /*!< Returns the mass of the A-1(Z-1,N) nucleus*/
-  double getMassA_min_neutron() const; /*!< Returns the mass of the A-1(Z,N-1) nucleus*/
+  const string getNucleusName() const {return nucleusname;} /*!< Returns a string with the name of the nucleus, f.i. "C" */
+  int getA() const {return A;} /*!<  Returns the total number of nucleons */
+  int getZ() const {return Z;} /*!< Returns the total number of protons*/
+  bool getOnlyOneProton() const {return onlyoneproton;} /*!< Returns bool that denotes if the final proton shell has an unpair number of protons*/
+  int getFinalMProton() const { return finalmproton;}/*!< For not closed final proton shell, returns the m to which it is filled (arbitrary somewhat)*/
+  bool getOnlyOneNeutron() const {return onlyoneneutron;} /*!< Returns bool that denotes if the final proton shell has an unpair number of neutron*/
+  int getFinalMNeutron() const {return finalmneutron;} /*!< For not closed final neutron shell, returns the m to which it is filled (arbitrary somewhat)*/
+  int getN() const {return N;}/*!< Returns the total number of neutrons*/
+  int getPLevels() const { return plevels;}/*!< Returns total number of proton shells */
+  int getNLevels() const {return nlevels;}/*!< Returns total number of neutron shells */
+  int getTotalLevels() const {return totallevels;} /*!< Returns total number of shells*/
+  const int* getN_array() const {return n_array;} /*!< Returns array with all the n quantum numbers of each shell*/
+  const int* getKappas() const {return kappas;} /*!< Returns array with all the kappa quantum numbers of each shell*/
+  const int* getL_array() const {return l_array;} /*!< Returns array with all the l quantum numbers of each shell*/
+  const int* getLbar_array() const {return lbar_array;} /*!< Returns array with all the l_bar quantum numbers of each shell*/
+  const int* getJ_array() const {return j_array;} /*!< Returns array with all the j quantum numbers of each shell*/
+  double getMassA() const {return massA;} /*!< Returns the nucleus mass*/
+  /*! Returns the mass of A-1 (either Z-1 or N-1 depending on level)
+   * \param level shell level of minus 1 particle */
+  double getMassA_min_1(int level) const {return level<getPLevels()?  getMassA_min_proton(): getMassA_min_neutron();} 
+  double getMassA_min_proton() const {return massA_min_proton;} /*!< Returns the mass of the A-1(Z-1,N) nucleus*/
+  double getMassA_min_neutron() const {return massA_min_neutron;} /*!< Returns the mass of the A-1(Z,N-1) nucleus*/
   double getMassA_min_pp() const {return massA_min_pp;}; /*!< Returns the mass of the A-2(Z-2,N) nucleus*/
   double getMassA_min_pn() const {return massA_min_pn;}; /*!< Returns the mass of the A-2(Z-1,N-1) nucleus*/
   double getMassA_min_nn() const {return massA_min_nn;}; /*!< Returns the mass of the A-2(Z,N-2) nucleus*/
-  const double* getExcitation() const; /*!< Returns an array with all the excitation energies of the shells*/
-  const string getInputfile() const; /*!< Returns a string with the location of the inputfile*/
+  const double* getExcitation() const {return excitation;} /*!< Returns an array with all the excitation energies of the shells*/
+  const string getInputfile() const {return inputfile;} /*!< Returns a string with the location of the inputfile*/
   
-  double getRange() const; /*!< Returns the range [fm] in r of the radial wave functions of the nucleons*/
-  double getWF_r_step() const; /*!< Returns stepsize of the grid for the radial wave functions*/
-  int getWF_r_lines() const; /*!< Returns the grid size of the radial wave functions grid*/
-  double** getF() const; /*!< Returns the grids for F(r) */
-  double** getG() const; /*!< Returns the grids for G(r) */
-  double*** getYkappa() const; /*!< Returns the grids for Y_kappa^2 */
-  double*** getYminkappa() const; /*!< Returns the grids for Y_{-kappa}^2 */
+  double getRange() const {return range;} /*!< Returns the range [fm] in r of the radial wave functions of the nucleons*/
+  double getWF_r_step() const {return wf_r_step;} /*!< Returns stepsize of the grid for the radial wave functions*/
+  int getWF_r_lines() const {return wf_r_lines;} /*!< Returns the grid size of the radial wave functions grid*/
+  double** getF() const {return F;} /*!< Returns the grids for F(r) */
+  double** getG() const {return G;} /*!< Returns the grids for G(r) */
+  double*** getYkappa() const {return Ykappa;} /*!< Returns the grids for Y_kappa^2 */
+  double*** getYminkappa() const {return Yminkappa;} /*!< Returns the grids for Y_{-kappa}^2 */
   
   /*! Computes the Dirac spinor of at (r,costheta,phi) for the nucleon from shell shellindex and orbital quantum number m
    * \param wave Dirac spinor of bound nucleon is stored here
@@ -82,13 +85,13 @@ public:
   /*! Returns value of F(r) for shellindex
    * \param shellindex shell of the nucleon
    * \param r [fm] coordinate r, spherical
-   * \return F[shellindex](r)
+   * \return [fm-{3/2}] F[shellindex](r)
    */
   double getWave_F(const int shellindex, const double r) const;
   /*! Returns value of B(r) for shellindex
    * \param shellindex shell of the nucleon
    * \param r [fm] coordinate r, spherical
-   * \return B[shellindex](r)
+   * \return [fm-{3/2}] G[shellindex](r) 
    */
   double getWave_G(const int shellindex, const double r) const;
   /*! Returns value of Y^2_kappa(r) for shellindex
@@ -122,7 +125,7 @@ public:
   
   
 private:
-  string nucleusname;
+  string nucleusname; /*!< name of the nucleus*/
   int A; /*!< Total nucleons*/
   int Z; /*!< Protons*/
   int N; /*!< Neutrons*/
@@ -161,7 +164,7 @@ private:
   /*! Set the string containing the name of the nucleus
    * \param nucleus an integer denoting which nucleus [0-7] =[He,C,O,Fe,Pb,Al,Cu,Au]
    */
-  void setNucleusName(const int nucleus);
+  void setNucleusName(const int nucleus); /*!< set the stirng with the name of the nucleus */
   
   double **F; /*!< Array with grid for F(r) of every shell*/
   double **G; /*!< Array with grid for G(r) of every shell*/
@@ -180,4 +183,5 @@ private:
   void constructThetaArray(); /*!< Construct the Y_kappa and Y_{-kappa} grids */
   
 };
+/** @} */
 #endif

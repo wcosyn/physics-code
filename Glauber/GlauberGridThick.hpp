@@ -1,8 +1,9 @@
 /*! \file GlauberGridThick.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of class GlauberGridThick
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 
 #ifndef GLAUBERGRIDTHICK_H
@@ -33,13 +34,25 @@ public:
   virtual complex<double> getFsiCtGridFull_interp();/*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   virtual complex<double> getFsiSrcGridFull_interp(); /*!returns the value of the fsi+src grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   virtual complex<double> getFsiSrcCtGridFull_interp();/*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
-  virtual complex<double> getFsiGridN_interp(int grid); /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously
+   * \param grid 0: RMSGA <BR>
+  * 1: RMSGA+SRC <BR>
+  * 2: RMSGA+CT <BR>
+  * 3: RMSGA+CT+SRC <BR>
+  */
+  virtual complex<double> getFsiGridN_interp(int grid); 
 
   virtual void printFsi_grid();/*!< Prints the FSI grid for a certain situation*/
   virtual void printFsi_ct_grid(); /*!< Prints the FSI+CT grid for a certain situation */
   virtual void printFsi_src_grid();/*!< Prints the FSI+SRC grid for a certain situation*/
   virtual void printFsi_src_ct_grid();/*!< Prints the FSI+SRC+CT grid for a certain situation*/
-  virtual void print_grid(int grid);/*!< Prints the FSI grid for a certain situation*/
+ /*! Prints the FSI grid for a certain situation
+   * \param grid 0: RMSGA <BR>
+  * 1: RMSGA+SRC <BR>
+  * 2: RMSGA+CT <BR>
+  * 3: RMSGA+CT+SRC <BR>
+  */
+  virtual void print_grid(int grid);
 
   
 protected:
@@ -112,5 +125,5 @@ private:
   
 
 };
-
+/** @} */
 #endif

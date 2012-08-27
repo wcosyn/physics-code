@@ -1,8 +1,9 @@
 /*! \file AbstractFsiCTDecayGrid.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of abstract class AbstractFsiCTDecayGrid
  * \author Wim Cosyn
  * \date 18/08/2011
- * 
+ * @{
  */
 
 #ifndef ABSTRACTFSICTDECAYGRID_H
@@ -63,5 +64,5 @@ protected:
 
   
 };
-
+/** @} */
 #endif

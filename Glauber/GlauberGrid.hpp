@@ -1,8 +1,9 @@
 /*! \file GlauberGrid.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of class GlauberGrid
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 #ifndef GLAUBERGRID_H
 #define GLAUBERGRID_H
@@ -12,6 +13,10 @@
 #include "AbstractFsiCTGrid.hpp"
 
 /*! \brief A class for a RMSGA ISI/FSI grid, implementing the abstract AbstractFsiCTGrid class
+
+* Every function that takes a \param grid argument: <BR>
+ * 0: RMSGA <BR>
+ * 1: RMSGA+CT <BR>
  */
 class GlauberGrid : public AbstractFsiCTGrid{
 public:
@@ -26,10 +31,18 @@ public:
   virtual ~GlauberGrid();/*!< Destructor */
   virtual complex<double> getFsiGridFull_interp();   /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   virtual complex<double> getFsiCtGridFull_interp(); /*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
-  virtual complex<double> getFsiGridN_interp(int grid); /*!returns the value of  fsi grid number grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously
+   * \param grid 0: RMSGA <BR>
+  * 1: RMSGA+CT <BR>
+  */
+  virtual complex<double> getFsiGridN_interp(int grid); 
   
   virtual void printFsi_grid();/*!< Prints the FSI grid for a certain situation*/
   virtual void printFsi_ct_grid(); /*!< Prints the FSI+CT grid for a certain situation */
+  /*! Prints a grid grid for a certain situation 
+   * \param gridindex 0: RMSGA <BR>
+  * 1: RMSGA+CT <BR>
+  */  
   virtual void print_grid(int gridindex);
   
 protected:
@@ -40,7 +53,7 @@ protected:
   
 private:
 
-/*!< set filenames of the grids, includes "Gl" prefix 
+/*! set filenames of the grids, includes "Gl" prefix 
    *\param dir dir where all input/output is located */ 
   virtual void setFilenames(string dir);  
 
@@ -103,5 +116,5 @@ private:
   
 
 };
-
+/** @} */
 #endif

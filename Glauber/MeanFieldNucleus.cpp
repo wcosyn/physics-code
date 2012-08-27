@@ -124,111 +124,8 @@ MeanFieldNucleus::~MeanFieldNucleus(){
   
 }
 
-//get A
-int MeanFieldNucleus::getA() const{
-  return A;
-}
-
-//get Z
-int MeanFieldNucleus::getZ() const{
-  return Z;
-}
-
-//get N
-int MeanFieldNucleus::getN() const{
-  return N;
-}
-
-//return onlyoneproton
-bool MeanFieldNucleus::getOnlyOneProton() const{
-  return onlyoneproton;
-}
-
-//return finalmproton
-int MeanFieldNucleus::getFinalMProton() const{
-  return finalmproton;
-}
-
-//return onlyoneneutron
-bool MeanFieldNucleus::getOnlyOneNeutron() const{
-  return onlyoneneutron;
-}
-
-//return finalmneutron
-int MeanFieldNucleus::getFinalMNeutron() const{
-  return finalmneutron;
-}
 
 
-//get plevels
-int MeanFieldNucleus::getPLevels() const{
-  return plevels;
-}
-
-//get nlevels
-int MeanFieldNucleus::getNLevels() const{
-  return nlevels;
-}
-
-//get nlevels
-int MeanFieldNucleus::getTotalLevels() const{
-  return totallevels;
-}
-//get n_array
-const int* MeanFieldNucleus::getN_array() const{
-  return n_array;
-}
-
-
-//get pkappas
-const int* MeanFieldNucleus::getKappas() const{
-  return kappas;
-}
-
-//get l_array
-const int* MeanFieldNucleus::getL_array() const{
-  return l_array;
-}
-
-//get lbar_array
-const int* MeanFieldNucleus::getLbar_array() const{
-  return lbar_array;
-}
-
-//get j_array
-const int* MeanFieldNucleus::getJ_array() const{
-  return j_array;
-}
-
-//get massA
-double MeanFieldNucleus::getMassA() const{
-  return massA;
-}
-
-
-double MeanFieldNucleus::getMassA_min_1(int level) const{
-  return level<getPLevels()?  getMassA_min_proton(): getMassA_min_neutron();
-}
-
-//get massA_min_proton
-double MeanFieldNucleus::getMassA_min_proton() const{
-  return massA_min_proton;
-}
-
-//get massA_min_neutron
-double MeanFieldNucleus::getMassA_min_neutron() const{
-  return massA_min_neutron;
-}
-
-//get excitation
-const double* MeanFieldNucleus::getExcitation() const{
-  return excitation;
-}
-
-//get inputfile
-const string MeanFieldNucleus::getInputfile() const{
-  return inputfile;
-}
 
 //set inputfile location
 void MeanFieldNucleus::setInputfile(const int nucleus, const string &dir){
@@ -330,47 +227,7 @@ void MeanFieldNucleus::setNucleusName(const int nucleus){
   }
 }
 
-const string MeanFieldNucleus::getNucleusName()const{
-  return nucleusname;
-}
 
-
-//get range parameter
-double MeanFieldNucleus::getRange() const{
-  return range;
-}
-
-//get wf_r_step
-double MeanFieldNucleus::getWF_r_step() const{
-  return wf_r_step;
-}
-
-//get wf_r_lines
-int MeanFieldNucleus::getWF_r_lines() const{
-  return wf_r_lines;
-}
-
-//get F
-double** MeanFieldNucleus::getF() const{
-  return F;
-}
-
-//get G
-double** MeanFieldNucleus::getG() const{
-  return G;
-}
-
-//get Ykappa
-double*** MeanFieldNucleus::getYkappa() const{
-  return Ykappa;
-}
-
-//get Yminkappa
-double*** MeanFieldNucleus::getYminkappa() const{
-  return Yminkappa;
-}
-
-//read in F & G grids
 void MeanFieldNucleus::readRgrids(const int nucleus, const string &dir){
   if(F!=NULL||G!=NULL){
      cerr << "Warning: F & G already initialized!!" << endl << "skipping initialization..." << endl;

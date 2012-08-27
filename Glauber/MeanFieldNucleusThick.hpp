@@ -1,8 +1,9 @@
 /*! \file MeanFieldNucleusThick.hpp 
+ * \addtogroup Glauber
  * \brief Contains MeanFieldNucleusThick class declaration
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 
 #ifndef MEANFIELDNUCLEUSTHICK_H
@@ -54,10 +55,10 @@ public:
    *\return r*r*density(r)
    */  
   double getDensity(const double r, const double *density) const; //get total density for r
-  const double * getProtonDensity() const; /*!< returns the proton density array */
-  const double * getNeutronDensity() const; /*!< returns the neutron density array */
-  const double * getTotalDensity() const; /*!< returns the total density array */
-  const double * getDensity(int proton) const; /*!< returns the proton (1) or neutron (0) density array \param proton selects proton (1) or neutron(0) density*/
+  const double * getProtonDensity() const {return protondensity;} /*!< returns the proton density array */
+  const double * getNeutronDensity() const {return neutrondensity;} /*!< returns the neutron density array */
+  const double * getTotalDensity() const {return totaldensity;} /*!< returns the total density array */
+  const double * getDensity(int proton) const {  return proton? protondensity:neutrondensity;} /*!< returns the proton (1) or neutron (0) density array \param proton selects proton (1) or neutron(0) density*/
 
 private:
   double *protondensity; /*!< neutron density array*/
@@ -67,5 +68,5 @@ private:
   
   
 };
-
+/** @} */
 #endif

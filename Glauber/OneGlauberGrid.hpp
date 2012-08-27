@@ -1,8 +1,9 @@
 /*! \file OneGlauberGrid.hpp 
+ * \addtogroup Glauber
  * \brief Contains declaration of class GlauberGrid
  * \author Wim Cosyn
  * \date 16/08/2011
- * 
+ * @{
  */
 #ifndef ONEGLAUBERGRID_H
 #define ONEGLAUBERGRID_H
@@ -12,7 +13,17 @@
 #include "GlauberGrid.hpp"
 
 /*! \brief A class for a RMSGA ISI/FSI grid with one particle, exploiting the symmetry
+ * 
+ * The only ejected particle is oriented along the z-axis.  So care has to be taken when integrating back over 
+ * an axis system where z is along q for instance!!! <BR>
+ * 
+ * The symmetry means we can seperate two integrations, greatly speeding up the calculation
+ * 
+* Every function that takes a \param grid argument: <BR>
+ * 0: RMSGA <BR>
+ * 1: RMSGA+CT <BR>
  */
+
 class OneGlauberGrid : public GlauberGrid{
 public:
   /*! Constructor
@@ -80,5 +91,5 @@ private:
   void intGlauberZCT(const double z, double *results, va_list ap);
   
 };
-
+/** @} */
 #endif
