@@ -138,8 +138,8 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
 			int m, int CT, int pw, int current){
 
   double costheta=tk.GetCosthYlab();
-//   if(costheta>1.) costheta=1.;
-//   if(costheta<-1.) costheta=-1.;
+  if(costheta>1.) costheta=1.;
+  if(costheta<-1.) costheta=-1.;
   double sintheta=sqrt(1.-costheta*costheta);
   static FourVector<complex<double> > polVectorPlus(0.,
 						    -1./sqrt(2.)*costheta,
