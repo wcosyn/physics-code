@@ -1,8 +1,8 @@
 /*! \file TMFSpinor.hpp 
- * \addtogroup Glauber
  * \brief Contains declaration of class TMFSpinor
  * \author Wim Cosyn
  * \date 24/08/2012
+ * \addtogroup Glauber
  * @{
  */
 #ifndef TMFSPINOR_H

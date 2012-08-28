@@ -1,8 +1,8 @@
 /*! \file AbstractFsiCTGridThick.hpp 
- * \addtogroup Glauber
  * \brief Contains declaration of abstract class AbstractFsiCTGridThick
  * \author Wim Cosyn
  * \date 18/08/2011
+ * \addtogroup Glauber
  * @{
  */
 
@@ -35,7 +35,7 @@ public:
    * \param cth_grid gridsize in costheta
    * \param phi_grid gridsizein phi
    * \param pnuclthick pointer to an instance of MeanFieldNucleusThick
-   * \param dir string that contains dir with all input
+   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   AbstractFsiCTGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick *pnuclthick, 
 		         string dir);

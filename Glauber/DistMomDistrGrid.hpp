@@ -1,8 +1,8 @@
 /*! \file DistMomDistrGrid.hpp 
- * \addtogroup Glauber
  * \brief Contains declaration of the class DistMomDistrGrid
  * \author Wim Cosyn
  * \date 16/04/2012
+ * \addtogroup Glauber
  * @{
  */
 
@@ -31,7 +31,7 @@ public:
    * \param cth_grid gridsize in cos theta
    * \param phi_grid gridsizein phi
    * \param pfsigrid pointer to a fsi/ct grid
-   * \param dir string that contains dir with all input
+   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   DistMomDistrGrid(int shellindex, const double max_p, const int p_grid, const int cth_grid, const int phi_grid,
 		   AbstractFsiCTGrid *pfsigrid, string dir);

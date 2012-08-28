@@ -20,6 +20,10 @@ Model::~Model(){
 
 
 complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spinin, int spinout, int photonpol){
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
   double costheta=tk.GetCosthYlab();
   double sintheta=sqrt(1.-costheta*costheta);
   static FourVector<complex<double> > polVectorPlus(0.,
@@ -38,6 +42,8 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
   double Ein = sqrt(pin*pin+tk.GetHyperonMass()*tk.GetHyperonMass());
 /*  double wbar = Eout-Ein;
   double Q2bar = qvec*qvec-wbar*wbar;*/
+
+  //Frame has z-axis along q!!!
   FourVector<double> q(tk.GetWlab(),0.,0.,qvec);
   FourVector<double> pf(Eout,pout*sintheta,0.,pout*costheta);
   FourVector<double> Pin(Ein,pf[1],0.,pf[3]-q[3]); 
@@ -46,7 +52,8 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
   if(photonpol==0)  Jcontr = J->getCC(current, q, Pin, pf)*polVector0;
   else if(photonpol==-1) Jcontr= J->getCC(current, q, Pin, pf)*polVectorMin;
   else if(photonpol==1) Jcontr=J->getCC(current, q, Pin, pf)*polVectorPlus;
-/*  if(photonpol==0)  Jcontr = J.getCC3(q,Pin,pf)*polVector0;
+
+  /*  if(photonpol==0)  Jcontr = J.getCC3(q,Pin,pf)*polVector0;
   else if(photonpol==-1) Jcontr= J.getCC3(q,Pin,pf)*polVectorMin;
   else if(photonpol==1) Jcontr=J.getCC3(q,Pin,pf)*polVectorPlus;*/
 /*  if(photonpol==0) Jcontr = J.getCC1(Pin,pf)*polVector0;
@@ -54,6 +61,7 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
   else if(photonpol==1) Jcontr=J.getCC1(Pin,pf)*polVectorPlus;*/
    
   delete J;
+  //contract everything
   if(spinout==-1){
     if(spinin==-1) return TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr*
 		      TSpinor(Pin,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity);
@@ -76,8 +84,13 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
 complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonpol, int shellindex, 
 				   int m, int CT, int pw, int current){
 
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
   double costheta=tk.GetCosthYlab();
   double sintheta=sqrt(1.-costheta*costheta);
+  //careful!! we compute in a frame with p_f along z-axis, so have to rotate the photon polarization 4-vectors!
   static FourVector<complex<double> > polVectorPlus(0.,
 						    -1./sqrt(2.)*costheta,
 						    complex<double>(0.,-1./sqrt(2.)),
@@ -137,10 +150,15 @@ complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonp
 void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellindex, 
 			int m, int CT, int pw, int current){
 
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
   double costheta=tk.GetCosthYlab();
   if(costheta>1.) costheta=1.;
   if(costheta<-1.) costheta=-1.;
   double sintheta=sqrt(1.-costheta*costheta);
+  //careful!! we compute in a frame with p_f along z-axis, so have to rotate the photon polarization 4-vectors!
   static FourVector<complex<double> > polVectorPlus(0.,
 						    -1./sqrt(2.)*costheta,
 						    complex<double>(0.,-1./sqrt(2.)),
@@ -161,11 +179,9 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
     grid->addParticle(proton);
     grid->fillGrids();
     grid->clearKnockout();
-    grid->addKnockout(shellindex,m);
-//     grid->printFsi_grid();
-//     if(SRC) dynamic_cast<AbstractFsiGridThick *>(grid)->printFsi_src_grid();
-    
+    grid->addKnockout(shellindex,m);    
   }
+  
   GammaStructure Jcontr0, Jcontrmin, Jcontrplus;
   FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
   FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
@@ -209,6 +225,7 @@ void Model::intJR(const double r, complex<double> *results, va_list ap){
 
   if(!pw) grid->setRinterp(r);
   rombergerN(this,&Model::intJCosTheta,-1.,1.,2,results,PREC,3,7,pthetaestimate, pw, r, pphiestimate);
+  //MFSpinor already contains a *r!!!
   results[0]*=r;
   results[1]*=r;
   return;
@@ -221,6 +238,7 @@ void Model::intJR12(const double r, complex<double> *results, va_list ap){
 
   if(!pw) grid->setRinterp(r);
   rombergerN(this,&Model::intJCosTheta12,-1.,1.,12,results,PREC,3,6,pthetaestimate, pw, r, pphiestimate);
+  //MFSpinor already contains a *r!!!
   for(int i=0;i<12;i++) results[i]*=r;
   return;
 }

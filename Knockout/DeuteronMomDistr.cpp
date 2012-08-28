@@ -7,11 +7,11 @@
 
 DeuteronMomDistr::DeuteronMomDistr(string name, double mass, int offshells, double sigmain, double betain, double epsilonin,
   double betaoffin, double lambdain):
-sigma(sigmain/10.*INVHBARC*INVHBARC),
-beta(betain*1.E-06),
+sigma(sigmain/10.*INVHBARC*INVHBARC),  //to MeV^-2
+beta(betain*1.E-06), // to MeV^-2
 epsilon(epsilonin),
-betaoff(betaoffin*1.E-06),
-lambda(lambdain*1.E+06),
+betaoff(betaoffin*1.E-06),// to MeV^-2
+lambda(lambdain*1.E+06), // to MeV^2
 massi(mass),
 massr(massi==MASSP? MASSN:MASSP),
 przprime(-9999.),
@@ -52,21 +52,21 @@ DeuteronMomDistr::~DeuteronMomDistr(){
 
 //input in [mb],[GeV-2],[]
 void DeuteronMomDistr::setScatter(double sigmain, double betain, double epsin){
- sigma=sigmain*0.1*INVHBARC*INVHBARC;
- beta=betain*1.E-06;
+ sigma=sigmain*0.1*INVHBARC*INVHBARC;// to MeV^-2
+ beta=betain*1.E-06;// to MeV^-2
  epsilon=epsin;
  return; 
 }
 
 
-double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin, double phi) const{
+double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin) const{
+  //kaon translates to spectator nucleon
   double pwtotal=0.;
-  phi=PI/5.;
   double sintheta=sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
   for(int M=-2;M<=2;M+=2){
     for(int spinr=-1;spinr<=1;spinr+=2){
-      complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta*cos(phi),
-								     kin.GetPklab()*sintheta*sin(phi),
+      complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta,
+								     0.,
 								     kin.GetPklab()*kin.GetCosthklab()));
 								    
       pwtotal+=norm(wave);
@@ -74,6 +74,7 @@ double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin, double phi) const{
   }
   //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
   pwtotal*=2./3.;
+  //relativistic normalization
   return pwtotal*MASSD/(2.*(MASSD-sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass())));
 }
 
@@ -107,11 +108,13 @@ complex<double> DeuteronMomDistr::getMomDistrpwcoh(TVector3 &pvec,TVector3 &pvec
 
 
 double DeuteronMomDistr::getMomDistrfsi(TKinematics2to2 &kin, double phi){
+  //kaon translates to spectator nucleon
   double fsitotal=0.;
   double sintheta=sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
   double Er=sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass());
   for(int M=-2;M<=2;M+=2){
     for(int spinr=-1;spinr<=1;spinr+=2){
+      //plane-wave part
       complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta*cos(phi),
 								    kin.GetPklab()*sintheta*sin(phi),
 								    kin.GetPklab()*kin.GetCosthklab()));
@@ -215,6 +218,7 @@ complex<double> DeuteronMomDistr::scatter(double t){
 }
 
 //all in MeV!
+//quasi-elastic fsi
 double DeuteronMomDistr::getMomDistrfsi(TVector3 &pvec, double nu, double qvec, double s, double massother){
   double fsitotal=0.;
   double Er=sqrt(pvec.Mag2()+massr*massr);

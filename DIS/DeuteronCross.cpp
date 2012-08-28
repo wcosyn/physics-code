@@ -22,7 +22,7 @@ double DeuteronCross::getavgCross(TKinematics2to2 &kin,int pw, double Einoff){
   double x=kin.GetQsquared()/(2.*massi*kin.GetWlab());
   double front=(4.*PI*ALPHA*ALPHA)/(x*kin.GetQsquared()*kin.GetQsquared())
 		*(1-y-(x*x*y*y*massi*massi)/kin.GetQsquared());
-  double dens=pw?momdistr.getMomDistrpw(kin,0.):momdistr.getMomDistrfsi(kin,0.);
+  double dens=pw?momdistr.getMomDistrpw(kin):momdistr.getMomDistrfsi(kin,0.);
   double Dstrucs=structure.getavgStructure(kin,Einoff);
   return front*dens*Dstrucs*sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass())*HBARC*HBARC*1.E19;
   

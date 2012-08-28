@@ -13,7 +13,7 @@ RhoDeuteron::~RhoDeuteron(){
 }
 
 //input in GeV!!!!
-//cross section is obtained in units fm^3 GeV^4.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
+//cross section is obtained in units GeV.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
 void RhoDeuteron::getCrosst(double *result, const double Ebeam, const double Q2, const double nu, const double t){
 
   double qvec = sqrt(Q2+nu*nu);
@@ -165,7 +165,7 @@ void RhoDeuteron::intPhit(const double phi, double *result, va_list ap){
 }
 
 //input in GeV!!!!
-//cross section is obtained in units fm^3 GeV^4.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
+//cross section is obtained in units GeV.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
 void RhoDeuteron::getCrossz(double *result, const double Ebeam,  const double Q2, const double nu, const double z){
 
   double qvec = sqrt(Q2+nu*nu);
@@ -178,7 +178,7 @@ void RhoDeuteron::getCrossz(double *result, const double Ebeam,  const double Q2
   rombergerN(this,&RhoDeuteron::intPmz,0.,pmax*1.E-03,2,
 	      result,PREC,3,7,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
   
-  for(int i=0;i<2;i++) result[i]*=ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon))*1.E09;
+  for(int i=0;i<2;i++) result[i]*=ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon)*MASSD*1.E-03)*1.E09;
   
 }
 
@@ -198,7 +198,7 @@ void RhoDeuteron::intPmz(const double pm, double *result, va_list ap){
   rombergerN(this,&RhoDeuteron::intCosThetaz,-1.,1.,2,
 	    result,PREC,3,7,pcthestimate, pm, Q2,nu,qvec,Erho,prho,EN,pphiestimate);
   for(int i=0;i<2;i++){
-    result[i]*=2.*pm*pm;  //2. because of symmetry
+    result[i]*=2.*pm*pm;  //2. because of symmetry in phi
   }
 
 }
@@ -307,7 +307,7 @@ double RhoDeuteron::getfrontfactor(double qvec, double Erho, double prho, double
 }
 
 //  input in GeV!!!!
-//cross section is obtained in units fm^3 GeV^4.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
+//cross section is obtained in units GeV.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
 void RhoDeuteron::getCrosst_coh(double *result, const double Ebeam, const double Q2, const double nu, const double t){
 
   double qvec = sqrt(Q2+nu*nu);

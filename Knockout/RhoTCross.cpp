@@ -33,7 +33,7 @@ RhoTCross::~RhoTCross(){
 }
 
 //input in GeV!!!!
-//cross section is obtained in units fm^3 GeV^4.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
+//cross section is obtained in units GeV.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
 void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, const double nu, const double t){
 
   double qvec = sqrt(Q2+nu*nu);
@@ -103,6 +103,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
     massi*=1.E-03;
     double mN = i<nucleusthick.getPLevels()? MASSP:MASSN;
     mN*=1.E-03;
+    //determine kinematics
     double A = (t+Q2-MASSRHO*MASSRHO*1.E-06)*0.5;
     double C0 = nu+massi;
     double Cz = qvec+pm*costheta;
@@ -116,9 +117,11 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
     double c = D*D-A*A*Cx*Cx/(nu*nu)+Cx*Cx*MASSRHO*MASSRHO*1.E-06;
     double discr = b*b-4.*a*c;
     if(discr>-1.E-09){
+      //zero discriminant
       if(abs(discr)<1.E-09){
 	double pzrho=-b/(2.*a);
 	double Erho = (pzrho*qvec-A)/nu;
+	//check cuts
 	if(nocuts||Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
 	  if(!isnan(pxrho)){
@@ -127,6 +130,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	    double intresults[NROFRES];
 	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);	  
 	    double front=1.;
+	    //correct for not completely full shells
 	    if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
 	    if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
 	    for(int dd=0;dd<NROFRES;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t)*prho;
@@ -138,6 +142,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	double pzrho = (-b+discr)/(2.*a);
 	double Erho = (pzrho*qvec-A)/nu;
 	double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	//check cuts
 	if(nocuts||Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
 	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
@@ -147,6 +152,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	    double intresults[NROFRES];
 	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
 	    double front=1.;
+	    //correct for not completely full shells
 	    if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
 	    if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
 	    for(int dd=0;dd<NROFRES;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t)*prho;
@@ -155,6 +161,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	pzrho = (-b-discr)/(2.*a);
 	Erho = (pzrho*qvec-A)/nu;
 	t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	//check cuts
 	if(nocuts||Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
 	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
@@ -163,6 +170,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	    double intresults[NROFRES];	  
 	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
 	    double front=1.;
+	    //correct for not completely full shells
 	    if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
 	    if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
 	    for(int dd=0;dd<NROFRES;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t)*prho;
@@ -174,7 +182,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 }
 
 //input in GeV!!!!
-//cross section is obtained in units fm^3 GeV^4.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
+//cross section is obtained in units GeV.  dsigma/dt(t=0) is unspecified in the formula (dimensions energy^-4).
 void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2, const double nu, const double z){
 
   double qvec = sqrt(Q2+nu*nu);
@@ -241,6 +249,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
   for(int i=0;i<NROFRES;i++) results[i]=0.;  
   
   for(int i=0;i<nucleusthick.getTotalLevels();i++){
+    //offshell initial energy
     double massi = nucleusthick.getMassA()-nucleusthick.getMassA_min_1(i)-nucleusthick.getExcitation()[i];
     massi*=1.E-03;
     double mN = i<nucleusthick.getPLevels()? MASSP:MASSN;
@@ -262,12 +271,14 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
       if(abs(discr)<1.E-09) {
 	double pzrho = -b/(2.*a);
 	double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	//check cuts
 	if(prho>pzrho&&(nocuts||(t<-0.1&&t>-0.4))){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);      
 	  double costhetarho = pzrho/prho;
 	  double intresults[NROFRES];
 	  getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
 	  double front=1.;
+	  //correct for not completely full shells
 	  if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
 	  if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
 	  for(int dd=0;dd<NROFRES;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t);
@@ -278,6 +289,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	discr = sqrt(discr);
 	double pzrho = (-b+discr)/(2.*a);
 	double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	//check cuts
 	if(pzrho<prho&&(nocuts||(t<-0.1&&t>-0.4))){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);
 	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
@@ -285,6 +297,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	    double intresults[NROFRES];
 	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
 	    double front=1.;
+	    //correct for not completely full shells
 	    if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
 	    if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
 
@@ -293,6 +306,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	}
 	pzrho = (-b-discr)/(2.*a);
 	t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
+	//check cuts
 	if(pzrho<prho&&(nocuts||(t<-0.1&&t>-0.4))){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);	  
 	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
@@ -300,6 +314,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	    double intresults[NROFRES];
 	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
 	    double front=1.;
+	    //correct for not completely full shells
 	    if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
 	    if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
 	    for(int dd=0;dd<NROFRES;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t);
@@ -320,8 +335,11 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
   pfsigrid[shell]->addParticle(rho);
   pfsigrid[shell]->updateGrids();
   pfsigrid[shell]->clearKnockout();
+  //update the grid if necessary
   pdistgrid[shell]->updateGrids(pfsigrid[shell],shell);
+  //plane-wave
   results[NROFRES-1] = pdistgrid[shell]->getRhopwGridFull_interp(pm);
+  //fsi
   for(int i=0;i<NROFRES-1;i++) results[i]= pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
     
 }
@@ -329,10 +347,10 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
   
 double RhoTCross::getfrontfactor(double nu, double qvec, double Erho, double prho, double pzrho, double pxrho,
 				 double s, double Q2, double mN, double t){
-  
+  //X is residual nucleus system
   double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
   double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
-  
+  //elementary rho production cross section parametrized as exponential e^{beta*t}
   return massX*(s*s-2.*s*(mN*mN-Q2)+pow(mN*mN+Q2,2.))/(mN*mN*abs(EX+Erho*(1.-qvec*pzrho/prho/prho)))*exp(t*6.);
   
 }

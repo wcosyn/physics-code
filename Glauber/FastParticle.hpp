@@ -1,8 +1,8 @@
 /*! \file FastParticle.hpp 
- * \addtogroup Glauber
  * \brief Contains FastParticle class declaration
  * \author Wim Cosyn
  * \date 16/08/2011
+ * \addtogroup Glauber
  * @{
  */
 

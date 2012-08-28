@@ -1,8 +1,8 @@
 /*! \file GlauberGrid.hpp 
- * \addtogroup Glauber
  * \brief Contains declaration of class GlauberGrid
  * \author Wim Cosyn
  * \date 16/08/2011
+ * \addtogroup Glauber
  * @{
  */
 #ifndef GLAUBERGRID_H
@@ -32,7 +32,7 @@ public:
    * \param cth_grid gridsize in costheta
    * \param phi_grid gridsizein phi
    * \param pnucl pointer to an instance of MeanFieldNucleus
-   * \param dir string that contains dir with all input
+   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   GlauberGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, string dir);
   virtual ~GlauberGrid();/*!< Destructor */

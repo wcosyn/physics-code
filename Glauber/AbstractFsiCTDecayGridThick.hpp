@@ -1,8 +1,8 @@
 /*! \file AbstractFsiCTDecayGridThick.hpp 
- * \addtogroup Glauber
  * \brief Contains declaration of abstract class AbstractFsiCTDecayGridThick
  * \author Wim Cosyn
  * \date 18/08/2011
+ * \addtogroup Glauber
  * @{
  */
 

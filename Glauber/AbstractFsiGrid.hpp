@@ -67,7 +67,7 @@ public:
    * \param cth_grid gridsize in cos theta
    * \param phi_grid gridsizein phi
    * \param pnucl pointer to an instance of MeanFieldNucleus
-   * \param dir string that contains dir with all input
+   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   AbstractFsiGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, string dir);
   virtual ~AbstractFsiGrid(); /*!< Destructor */

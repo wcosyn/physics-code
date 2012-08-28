@@ -1,8 +1,8 @@
 /*! \file FsiCorrelator.hpp 
- * \addtogroup Glauber
  * \brief Contains declaration of class FsiCorrelator
  * \author Wim Cosyn
  * \date 16/08/2011
+ * \addtogroup Glauber
  * @{
  */
 
@@ -24,7 +24,7 @@ public:
    * \param inputnucleus pointer to an instance of MeanFieldNucleusThick
    * \param rgrid gridsize in r 
    * \param cthgrid gridsize in costheta
-   * \param dir string that contains dir with all input
+   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   FsiCorrelator(MeanFieldNucleusThick *inputnucleus, const int rgrid, const int cthgrid,
     const string dir);

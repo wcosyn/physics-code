@@ -217,30 +217,30 @@ complex<double> DoubleNModel::MC_helper(const double r1, const double costheta1,
   complex<double> glf1r1, glf1r2, glf2r1, glf2r2;
   if(getSRC()){
     if(getCT()){
-      glf1r1=getGridf1()->getFsiSrcCtGridFull_interp3(r1,acos(costheta1),phi1);
-      glf1r2=getGridf1()->getFsiSrcCtGridFull_interp3(r2,acos(costheta2),phi2);
-      glf2r1=getGridf2()->getFsiSrcCtGridFull_interp3(r1,acos(costheta1),phi1);
-      glf2r2=getGridf2()->getFsiSrcCtGridFull_interp3(r2,acos(costheta2),phi2);      
+      glf1r1=getGridf1()->getFsiSrcCtGridFull_interp3(r1,costheta1,phi1);
+      glf1r2=getGridf1()->getFsiSrcCtGridFull_interp3(r2,costheta2,phi2);
+      glf2r1=getGridf2()->getFsiSrcCtGridFull_interp3(r1,costheta1,phi1);
+      glf2r2=getGridf2()->getFsiSrcCtGridFull_interp3(r2,costheta2,phi2);      
     }
     else{
-      glf1r1=getGridf1()->getFsiSrcGridFull_interp3(r1,acos(costheta1),phi1);
-      glf1r2=getGridf1()->getFsiSrcGridFull_interp3(r2,acos(costheta2),phi2);
-      glf2r1=getGridf2()->getFsiSrcGridFull_interp3(r1,acos(costheta1),phi1);
-      glf2r2=getGridf2()->getFsiSrcGridFull_interp3(r2,acos(costheta2),phi2);      
+      glf1r1=getGridf1()->getFsiSrcGridFull_interp3(r1,costheta1,phi1);
+      glf1r2=getGridf1()->getFsiSrcGridFull_interp3(r2,costheta2,phi2);
+      glf2r1=getGridf2()->getFsiSrcGridFull_interp3(r1,costheta1,phi1);
+      glf2r2=getGridf2()->getFsiSrcGridFull_interp3(r2,costheta2,phi2);      
     }
   }
   else{
     if(getCT()){
-      glf1r1=getGridf1()->getFsiCtGridFull_interp3(r1,acos(costheta1),phi1);
-      glf1r2=getGridf1()->getFsiCtGridFull_interp3(r2,acos(costheta2),phi2);
-      glf2r1=getGridf2()->getFsiCtGridFull_interp3(r1,acos(costheta1),phi1);
-      glf2r2=getGridf2()->getFsiCtGridFull_interp3(r2,acos(costheta2),phi2);      
+      glf1r1=getGridf1()->getFsiCtGridFull_interp3(r1,costheta1,phi1);
+      glf1r2=getGridf1()->getFsiCtGridFull_interp3(r2,costheta2,phi2);
+      glf2r1=getGridf2()->getFsiCtGridFull_interp3(r1,costheta1,phi1);
+      glf2r2=getGridf2()->getFsiCtGridFull_interp3(r2,costheta2,phi2);      
     }
     else{
-      glf1r1=getGridf1()->getFsiGridFull_interp3(r1,acos(costheta1),phi1);
-      glf1r2=getGridf1()->getFsiGridFull_interp3(r2,acos(costheta2),phi2);
-      glf2r1=getGridf2()->getFsiGridFull_interp3(r1,acos(costheta1),phi1);
-      glf2r2=getGridf2()->getFsiGridFull_interp3(r2,acos(costheta2),phi2);      
+      glf1r1=getGridf1()->getFsiGridFull_interp3(r1,costheta1,phi1);
+      glf1r2=getGridf1()->getFsiGridFull_interp3(r2,costheta2,phi2);
+      glf2r1=getGridf2()->getFsiGridFull_interp3(r1,costheta1,phi1);
+      glf2r2=getGridf2()->getFsiGridFull_interp3(r2,costheta2,phi2);      
     }    
   }
   

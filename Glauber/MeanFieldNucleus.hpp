@@ -1,8 +1,8 @@
 /*! \file MeanFieldNucleus.hpp 
- * \addtogroup Glauber
  * \brief Contains MeanFieldNucleus class declaration
  * \author Wim Cosyn
  * \date 16/08/2011
+ * \addtogroup Glauber
  * @{
  */
 
