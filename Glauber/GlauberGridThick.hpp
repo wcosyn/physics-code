@@ -17,6 +17,19 @@
  * 
  * Four grids are actually calculated.  fsi_grid contains both the regular fsi grid as well as the grid that includes SRC.  
  * Same thing for the fsi_ct_grid
+ * 
+ * Typically an object that is an instance from this class is operated as follows.<BR>
+ * 1. Initialize object with constructor GlauberGridThick()<BR>
+ * 2. Add all particles subject to ISI/FSI with addParticle() <BR>
+ * 3. Call fillGrids() or updateGrids() <BR>
+ * 4. Add particles that are knocked out from nucleus <BR>
+ * 5. Interpolate grid for a certain point or print the grid or whatever...<BR>
+ * 
+ * Every function that takes a \param grid argument: <BR>
+ * 0: RMSGA <BR>
+ * 1: RMSGA+SRC <BR>
+ * 2: RMSGA+CT <BR>
+ * 3: RMSGA+SRC+CT <BR>
  */
 class GlauberGridThick : public AbstractFsiCTGridThick{
 public:

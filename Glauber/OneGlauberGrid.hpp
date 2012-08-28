@@ -19,7 +19,14 @@
  * 
  * The symmetry means we can seperate two integrations, greatly speeding up the calculation
  * 
-* Every function that takes a \param grid argument: <BR>
+ * Typically an object that is an instance from this class is operated as follows.<BR>
+ * 1. Initialize object with constructor OneGlauberGrid()<BR>
+ * 2. Add all particles subject to ISI/FSI with addParticle() <BR>
+ * 3. Call fillGrids() or updateGrids() <BR>
+ * 4. Add particles that are knocked out from nucleus <BR>
+ * 5. Interpolate grid for a certain point or print the grid or whatever... <BR>
+ * 
+ * Every function that takes a \param grid argument: <BR>
  * 0: RMSGA <BR>
  * 1: RMSGA+CT <BR>
  */

@@ -17,6 +17,15 @@
 #include "FsiCorrelator.hpp"
 
 /*! \brief An abstract class for a ISI/FSI grid using thickness approximation, including a CT grid and SRC grids
+ * 
+ * Typically an object that is inherited from this class is operated as follows.<BR>
+ * 1. Initialize object with constructor AbstractFsiCTGridThick()<BR>
+ * 2. Add all particles subject to ISI/FSI with addParticle() <BR>
+ * 3. Call fillGrids() or updateGrids() <BR>
+ * 4. Add particles that are knocked out from nucleus <BR>
+ * 5. Interpolate grid for a certain point or print the grid or whatever...<BR>
+ * 
+
  */
 class AbstractFsiCTGridThick : public AbstractFsiGridThick, public AbstractFsiCTGrid{
   

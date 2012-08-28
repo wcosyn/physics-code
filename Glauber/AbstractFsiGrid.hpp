@@ -6,14 +6,22 @@
  * 
  * \details 
  * - It contains classes for a mean field nucleus, a mean field nucleus with densities (used in thickness calculations). <BR>
+ * [MeanFieldNucleus, MeanFieldNucleusThick] <BR>
  * - A class for correlated FSI calculations containing all the needed functions and a grid for the gamma functions. <BR>
+ * [FsiCorrelator]<BR>
  * - Six abstract classes (one for a general FSI grid, one that adds a CT grid, one for a general thickness FSI grid and 
- * one that adds a thickness CT grid, one with decay and CT, and with with thickness CT Decay). <BR>
+ * one that adds a thickness CT grid, one with thickness and decay , and with with thickness CT Decay). <BR>
+ * [AbstractFsiGrid, AbstractFsiCTGrid, AbstractFsiGridThick, AbstractFsiCTGridThick, AbstractFsiCTDecayGridThick]<BR>
  * - Three glauber classes : one without thickness, two with (also adds SRC to the ISI/FSI, one adds decay properties for ejected particles). <BR>
+ * [GlauberGrid, GlauberGridThick, GlauberDecayGridThick] <BR>
  * - A special class for the glauber grid of one particle, exploiting the symmetry along the z-axis (no phi dependence).  <BR>
+ * [OneGlauberGrid] <BR>
  * - A class for spinors that represent the MF wave function of a nucleon in a certain nucleus at a coordinate. <BR>
- * - A class that includes all properties of certain "ejected" particles (scattering parameters, kinetics, etc).
- * - A class that stores grids for distorted momentum distributions
+ * [TMFSpinor] <BR>
+ * - A class that includes all properties of certain "ejected" particles (scattering parameters, kinetics, etc). <BR>
+ * [FastParticle] <BR>
+ * - A class that stores grids for distorted momentum distributions <BR>
+ * [DistMomDistrGrid] <BR>
 */
 
 
@@ -48,7 +56,7 @@
  * 2. Add all particles subject to ISI/FSI with addParticle() <BR>
  * 3. Call fillGrids() or updateGrids() <BR>
  * 4. Add particles that are knocked out from nucleus <BR>
- * 5. Interpolate grid for a certain point or print the grid or whatever...
+ * 5. Interpolate grid for a certain point or print the grid or whatever...<BR>
  * 
  * 
  */

@@ -21,6 +21,7 @@ find_package(ROOT REQUIRED)
 find_package(GSL REQUIRED)
 find_package(MPI REQUIRED)
 find_package(Fortran REQUIRED)
+find_package(Doxygen REQUIRED)
 #Check the compiler and set the compile and link flags
 # set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
@@ -47,7 +48,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 
 set(LIBRARIES ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES} ${MPI_LIBRARIES} ${Fortran_LIBRARIES})
-MESSAGE(${LIBRARIES})
+# MESSAGE(${LIBRARIES})
 enable_language (Fortran)
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
@@ -241,7 +242,14 @@ add_subdirectory(Glauber)
 add_subdirectory(Knockout)
 add_subdirectory(DIS)
 
-message(${CMAKE_CXX_FLAGS_RELEASE})
-message(${CMAKE_Fortran_FLAGS_RELEASE})
-message(${CMAKE_CXX_FLAGS_DEBUG})
-message(${CMAKE_Fortran_FLAGS_DEBUG})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)
+add_custom_target(doc ALL
+COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+SOURCES ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+COMMENT "Generating API documentation with Doxygen" VERBATIM
+)
+
+# message(${CMAKE_CXX_FLAGS_RELEASE})
+# message(${CMAKE_Fortran_FLAGS_RELEASE})
+# message(${CMAKE_CXX_FLAGS_DEBUG})
+# message(${CMAKE_Fortran_FLAGS_DEBUG})
