@@ -8,7 +8,7 @@
 #define CONST_H
 
 #define PI 3.14159265 /*!< \def defines constant pi */
-#define PREC 1e-03 /*!< \def defines precision of the integrations */
+#define PREC 1e-04 /*!< \def defines precision of the integrations */
 #define MASSN 939.56536 /*!< \def defines proton mass [MeV] */
 #define MASSP 938.27231 /*!< \def defines neutron mass [MeV] */
 #define MASSPI 139.57 /*!< \def defines charged pion mass [MeV] */

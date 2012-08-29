@@ -8,7 +8,7 @@ mass(m),
 mass2(m*m),
 sigma0(s0),
 sigmaslope(slope),
-beta(betain*1.E-06),
+beta(betain*1.E-06), //units conversion from GeV^-2 to MeV^-2
 epsilon(epsilonin),
 betaoff(betaoffin*1.E-06),
 lambda(lambdain*1.E+06),
