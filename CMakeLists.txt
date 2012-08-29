@@ -21,7 +21,7 @@ find_package(ROOT REQUIRED)
 find_package(GSL REQUIRED)
 find_package(MPI REQUIRED)
 find_package(Fortran REQUIRED)
-find_package(Doxygen REQUIRED)
+find_package(Doxygen)
 #Check the compiler and set the compile and link flags
 # set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
@@ -242,12 +242,14 @@ add_subdirectory(Glauber)
 add_subdirectory(Knockout)
 add_subdirectory(DIS)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)
-add_custom_target(doc
-COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-SOURCES ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-COMMENT "Generating API documentation with Doxygen" VERBATIM
-)
+if(DOXYGEN_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)
+  add_custom_target(doc
+  COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+  SOURCES ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+  COMMENT "Generating API documentation with Doxygen" VERBATIM
+  )
+endif()
 
 # message(${CMAKE_CXX_FLAGS_RELEASE})
 # message(${CMAKE_Fortran_FLAGS_RELEASE})
