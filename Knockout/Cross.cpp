@@ -2,8 +2,8 @@
 
 #include <cmath>
 
-Cross::Cross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucleus, string dir)
-:homedir(dir),electron(elec),pnucl(pnucleus),reacmodel(NULL){
+Cross::Cross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucleus, double precision, string dir)
+:homedir(dir),electron(elec),pnucl(pnucleus),reacmodel(NULL), prec(precision){
   
 }
 Cross::~Cross(){
@@ -16,7 +16,7 @@ double Cross::getElCross(TKinematics2to2 &kin, int current, double phi){
   double Q2overkk=Q2/qvec/qvec;
   double tan2=electron.GetTan2HalfAngle(kin);
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.;
-  reacmodel=new Model(pnucl,0,0,homedir);
+  reacmodel=new Model(pnucl,0,0,getPrec(),homedir);
 
   //electron kinematic factors
   kinfactors[0]=pow(Q2overkk,2.);
@@ -64,7 +64,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
       /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
 	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()));
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.;
-  reacmodel=new Model(pnucl,SRC,thick,homedir);
+  reacmodel=new Model(pnucl,SRC,thick,prec,homedir);
   
   kinfactors[0]=pow(Q2overkk,2.);
   kinfactors[1]=tan2+Q2overkk/2.;

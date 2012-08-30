@@ -40,17 +40,17 @@ public:
 	Newcoef( int n1, int l1, int two_j1, int two_mj1, int two_t1, int n2, int l2, int two_j2, int two_mj2, int two_t2, RecMosh* mosh, 
 		   int N, int Lambda, int mLambda, int n, int l, int S, int j, int mj, int T, int MT, int two_ms1, int two_ms2);
 	// Return the calculate coefficients 
-	double getCoef() { return coeff;};
-	int getN() {return N;};
-	int getL() {return L;};
-	int getML() {return ML;};
-	int getn() { return n;};
-	int getl() {return l;};
-	int getS() { return S;};
-	int getj() { return j;};
-	int getmj() {return mj;};
-	int getT() {return T;};
-	int getMT() {return MT;};
+	double getCoef() { return coeff;}
+	int getN() {return N;}
+	int getL() {return L;}
+	int getML() {return ML;}
+	int getn() { return n;}
+	int getl() {return l;}
+	int getS() { return S;}
+	int getj() { return j;}
+	int getmj() {return mj;}
+	int getT() {return T;}
+	int getMT() {return MT;}
 
 };
 

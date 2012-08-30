@@ -40,9 +40,10 @@ public:
     /*! Constructor
    * \param elec contains all the electron kinematics
    * \param pnucl pointer to a MF nucleus instance
+   * \param prec precision you want in the integrations
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
-  Cross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucl, string dir);
+  Cross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucl, double prec, string dir);
   ~Cross(); /*!< Destructor */
   /*! Computes the differential \f$ A(e,e'N)\f$ cross section for certain kinematics and a certain shell of the nucleus
    * \param kin contains the hadron kinematics
@@ -64,8 +65,10 @@ public:
    * \return differential cross section [dimensionless]
    */  
   double getElCross(TKinematics2to2 &kin, int current, double phi);
+  double getPrec() const{return prec;} /*!< precision of the integrations */
 private:
   string homedir; /*!< Contains dir with all input */
+  double prec; /*!< precision you want in the integrations */
   TElectronKinematics electron; /*!< electron kinematics */
   MeanFieldNucleusThick *pnucl; /*!< pointer to nucleus */
   double kinfactors[6]; /*!< electron kinematic factors, get multiplied with response functions */

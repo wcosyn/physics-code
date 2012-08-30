@@ -58,9 +58,9 @@ public:
   double getMassA_min_1(int level) const {return level<getPLevels()?  getMassA_min_proton(): getMassA_min_neutron();} 
   double getMassA_min_proton() const {return massA_min_proton;} /*!< Returns the mass of the A-1(Z-1,N) nucleus*/
   double getMassA_min_neutron() const {return massA_min_neutron;} /*!< Returns the mass of the A-1(Z,N-1) nucleus*/
-  double getMassA_min_pp() const {return massA_min_pp;}; /*!< Returns the mass of the A-2(Z-2,N) nucleus*/
-  double getMassA_min_pn() const {return massA_min_pn;}; /*!< Returns the mass of the A-2(Z-1,N-1) nucleus*/
-  double getMassA_min_nn() const {return massA_min_nn;}; /*!< Returns the mass of the A-2(Z,N-2) nucleus*/
+  double getMassA_min_pp() const {return massA_min_pp;} /*!< Returns the mass of the A-2(Z-2,N) nucleus*/
+  double getMassA_min_pn() const {return massA_min_pn;} /*!< Returns the mass of the A-2(Z-1,N-1) nucleus*/
+  double getMassA_min_nn() const {return massA_min_nn;} /*!< Returns the mass of the A-2(Z,N-2) nucleus*/
   const double* getExcitation() const {return excitation;} /*!< Returns an array with all the excitation energies of the shells*/
   const string getInputfile() const {return inputfile;} /*!< Returns a string with the location of the inputfile*/
   

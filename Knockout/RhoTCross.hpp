@@ -29,9 +29,10 @@ public:
    * \param no_cuts apply the experimental cuts in t or z or not 
    * \param userset do we want to set sigma ourselves?
    * \param usersigma [mb] user chosen value of sigma_tot rho-nucleon scattering
+   * \param precision precision you want in the integrations
    */
   RhoTCross(const int nucleus, const double pmax, const string dir, const bool no_cuts, 
-	    const bool userset, const double usersigma);
+	    const bool userset, const double usersigma, const double precision);
   ~RhoTCross(); /*!<Destructor */
   /*! Calculate cross section integrated over z at fixed t
    * \param results [GeV] all the different computed cross sections
@@ -65,13 +66,15 @@ public:
    * \param z [] E_rho/nu
    */
   void getCrossz_coh(double *results, const double Ebeam, const double Q2, const double nu, const double z);
-
+  double getPrec() const{return prec;} /*!< returns the precision */
+  
 private:
   string homedir; /*!< share dir where all input is located */
   double pmax; /*!< maximum p_miss in integrations*/
   bool nocuts; /*!< experimental cuts in t or z applied? */
   bool userset; /*!< has sigma parameter been set by user?*/
   double usersigma; /*!< value of user set sigma_rho*/
+  double prec; /*!< precision in the integrations */
   MeanFieldNucleusThick nucleusthick; /*!< nucleus instance */
   DistMomDistrGrid **pdistgrid; /*!< array of distorted momentum distribution grid, one for each shell level */
   GlauberDecayGridThick **pfsigrid; /*!< array of Glauber FSI grid, one for each shell level */

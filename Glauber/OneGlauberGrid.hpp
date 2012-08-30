@@ -37,9 +37,10 @@ public:
    * \param r_grid gridsize in r 
    * \param cth_grid gridsize in costheta
    * \param pnucl pointer to an instance of MeanFieldNucleus
+   * \param prec precision you want in the integrations
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
-  OneGlauberGrid(const int r_grid, const int cth_grid, MeanFieldNucleus *pnucl, string dir);
+  OneGlauberGrid(const int r_grid, const int cth_grid, MeanFieldNucleus *pnucl, double prec, string dir);
   virtual ~OneGlauberGrid();/*!< Destructor */
   /*! 2d interpolation of a grid after a certain coordinate (r,costheta) has been set! */
   virtual complex<double> getInterp(complex<double> ***grid);  

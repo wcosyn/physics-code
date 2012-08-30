@@ -9,8 +9,8 @@
 
 
 
-Model::Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, string dir)
-:SRC(setSRC), thick(setthick), pnucl(pnucleus), homedir(dir){
+Model::Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double precision, string dir)
+:SRC(setSRC), thick(setthick), pnucl(pnucleus), prec(precision), homedir(dir){
 }
 
 
@@ -109,8 +109,8 @@ complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonp
   J= new NucleonEMOperator(tk.GetQsquared(),1,0);
   FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(!pw){
-    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,homedir);
-    else grid = new OneGlauberGrid(60,18,pnucl,homedir);
+    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,getPrec(),homedir);
+    else grid = new OneGlauberGrid(60,18,pnucl,getPrec(),homedir);
     grid->addParticle(proton);
     grid->fillGrids();
     grid->clearKnockout();
@@ -138,7 +138,7 @@ complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonp
   
   complex<double> results[2];
   double restimate=0.,thestimate=0.,phiestimate=0.;
-  rombergerN(this,&Model::intJR,0.,pnucl->getRange(),2,results,PREC,3,7,&restimate,pw,&thestimate, &phiestimate);
+  rombergerN(this,&Model::intJR,0.,pnucl->getRange(),2,results,getPrec(),3,8,&restimate,pw,&thestimate, &phiestimate);
   if(!pw) delete grid;
   complex<double> result;
   delete J;
@@ -174,8 +174,8 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   J= new NucleonEMOperator(tk.GetQsquared(),1,0);
   FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(!pw){
-    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,homedir);
-    else grid = new OneGlauberGrid(60,18,pnucl,homedir);
+    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,getPrec(),homedir);
+    else grid = new OneGlauberGrid(60,18,pnucl,getPrec(),homedir);
     grid->addParticle(proton);
     grid->fillGrids();
     grid->clearKnockout();
@@ -201,7 +201,7 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   
   complex<double> results[12];
   double restimate=0.,thestimate=0.,phiestimate=0.;
-  rombergerN(this,&Model::intJR12,0.,pnucl->getRange(),12,results,PREC,3,8,&restimate,pw,&thestimate, &phiestimate);
+  rombergerN(this,&Model::intJR12,0.,pnucl->getRange(),12,results,getPrec(),3,8,&restimate,pw,&thestimate, &phiestimate);
   if(!pw) delete grid;
   complex<double> result;
   if(CT){
@@ -224,7 +224,7 @@ void Model::intJR(const double r, complex<double> *results, va_list ap){
   double *pphiestimate = va_arg(ap,double*);
 
   if(!pw) grid->setRinterp(r);
-  rombergerN(this,&Model::intJCosTheta,-1.,1.,2,results,PREC,3,7,pthetaestimate, pw, r, pphiestimate);
+  rombergerN(this,&Model::intJCosTheta,-1.,1.,2,results,getPrec(),3,8,pthetaestimate, pw, r, pphiestimate);
   //MFSpinor already contains a *r!!!
   results[0]*=r;
   results[1]*=r;
@@ -237,7 +237,7 @@ void Model::intJR12(const double r, complex<double> *results, va_list ap){
   double *pphiestimate = va_arg(ap,double*);
 
   if(!pw) grid->setRinterp(r);
-  rombergerN(this,&Model::intJCosTheta12,-1.,1.,12,results,PREC,3,6,pthetaestimate, pw, r, pphiestimate);
+  rombergerN(this,&Model::intJCosTheta12,-1.,1.,12,results,getPrec(),3,8,pthetaestimate, pw, r, pphiestimate);
   //MFSpinor already contains a *r!!!
   for(int i=0;i<12;i++) results[i]*=r;
   return;
@@ -250,7 +250,7 @@ void Model::intJCosTheta(const double costheta, complex<double> *results, va_lis
   double *pphiestimate = va_arg(ap,double*);
   double sintheta=sqrt(1.-costheta*costheta);
   if(!pw) grid->setCthinterp(costheta);
-  rombergerN(this,&Model::intJPhi,0.,2.*PI,2,results,PREC,3,6,pphiestimate, pw,r, costheta, sintheta);
+  rombergerN(this,&Model::intJPhi,0.,2.*PI,2,results,getPrec(),3,8,pphiestimate, pw,r, costheta, sintheta);
   return;
 }
 void Model::intJCosTheta12(const double costheta, complex<double> *results, va_list ap){
@@ -260,7 +260,7 @@ void Model::intJCosTheta12(const double costheta, complex<double> *results, va_l
   double *pphiestimate = va_arg(ap,double*);
   double sintheta=sqrt(1.-costheta*costheta);
   if(!pw) grid->setCthinterp(costheta);
-  rombergerN(this,&Model::intJPhi12,0.,2.*PI,12,results,PREC,3,6,pphiestimate, pw,r, costheta, sintheta);
+  rombergerN(this,&Model::intJPhi12,0.,2.*PI,12,results,getPrec(),3,8,pphiestimate, pw,r, costheta, sintheta);
   return;
 }
 

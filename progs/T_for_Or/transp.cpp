@@ -31,19 +31,20 @@ void getBound(double &high, double &low, MeanFieldNucleusThick *pnucleus, double
 int main(int argc, char *argv[])
 {
   
-  string homedir=argv[7];
+  string homedir=argv[8];
   double Q2=atof(argv[2])*1.E06;
   double Ein=atof(argv[3]);
   double thetae=atof(argv[4])*DEGRTORAD;
   double omega=Ein-Q2/(4.*Ein*pow(sin(thetae/2.),2.));
   int thick=atoi(argv[5]);
   int current=atoi(argv[6]);
+  double prec=atof(argv[7]);
   //cout << Ein-omega << endl;
   
   MeanFieldNucleusThick Nucleus(atoi(argv[1]),homedir);
   //TKinematics2to2 kin("","",.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",atof(argv[1]),atof(argv[2]),atof(argv[3]));
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(atof(argv[3]));
-  Cross obs(*elec,&Nucleus,homedir);
+  Cross obs(*elec,&Nucleus,prec,homedir);
 
   
   double total[5];
@@ -96,7 +97,7 @@ void intPm(const double costhcm, double *results, va_list ap){
   results[2]=p_obs->getDiffCross(kin,  current, thick, 0, 1, 0, shell, 0.);
   results[3]=p_obs->getDiffCross(kin,  current, thick, 1, 1, 0, shell, 0.);
   results[4]=p_obs->getDiffCross(kin,  current, thick, 0, 0, 1, shell, 0.);
-  //cout << pm << " " << kin.IsPhysical() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetCosthYlab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " " << kin.GetCosthklab() <<" " << results[0] << " " << results[1] << " " << results[4] << endl;
+  cout << pm << " " << kin.IsPhysical() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetCosthYlab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " " << kin.GetCosthklab() <<" " << results[0] << " " << results[1] << " " << results[4] << endl;
   return;
 }
 

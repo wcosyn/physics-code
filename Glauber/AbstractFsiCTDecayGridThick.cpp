@@ -9,12 +9,12 @@ using namespace std;
 #include <Utilfunctions.hpp>
 
 AbstractFsiCTDecayGridThick::AbstractFsiCTDecayGridThick(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleusThick *pnucl, 
-					      string homedir):
-AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),
-AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,homedir), 
-AbstractFsiDecayGridThick(r_grid,cth_grid,phi_grid,pnucl,homedir), 
-AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),
-AbstractFsiCTDecayGrid(r_grid,cth_grid,phi_grid,pnucl,homedir){
+					      double prec, string homedir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,homedir),
+AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,prec,homedir), 
+AbstractFsiDecayGridThick(r_grid,cth_grid,phi_grid,pnucl,prec,homedir), 
+AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,prec,homedir),
+AbstractFsiCTDecayGrid(r_grid,cth_grid,phi_grid,pnucl,prec,homedir){
   number_of_grids=8;
   
 }  

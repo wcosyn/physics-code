@@ -1,4 +1,4 @@
-/*! \defgroup Knockout libDIS: Library that contains all classes related to DIS processes
+/*! \defgroup DIS libDIS: Library that contains all classes related to DIS processes
  * \author Wim Cosyn
  * \date 29/08/2012
  * \brief This code implements classes to compute DIS cross sections on deuteron
@@ -40,7 +40,7 @@ public:
    * \param coeff coefficient with which the resonance gets weighted in the DIS amplitude
    * \param sigma0 [mb] base value of sigma0
    * \param sigmaslope [GeV] slope with which sigma varies in function of Q^2
-   * \param betin [GeV^-2] slope parameter
+   * \param betain [GeV^-2] slope parameter
    * \param epsilonin real part of scattering amplitude
    * \param betaoffin [GeV^-2] off-shell beta parameter
    * \param lambdain [GeV^2] lambda cutoff off-shell parameter
@@ -50,7 +50,7 @@ public:
   Resonance(const Resonance &copy); /*!< Copy Constructor */
   Resonance& operator=(const Resonance&); /*!< copy assignment */
   ~Resonance(); /*!< Destructor */
-  /*!< Gives you sigma as a function of Q^2 (inferred from semi-inclusive DIS deuteron fits)
+  /*! Gives you sigma as a function of Q^2 (inferred from semi-inclusive DIS deuteron fits)
    * increases with W but levels off for W>2.4 GeV
    * \f$ \sigma(Q^2) = \sigma_0 + \sigma_{slope} *(M-M_p)/Q^2\f$
    * \param Q2 [MeV^2] Q^2
@@ -81,4 +81,6 @@ private:
   complex<double> coeff; /*!< coefficient with which the resonance gets weighted in the DIS amplitude */  
   
 };
+
+/*! @} */
 #endif

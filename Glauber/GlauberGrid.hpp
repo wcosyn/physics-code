@@ -32,9 +32,10 @@ public:
    * \param cth_grid gridsize in costheta
    * \param phi_grid gridsizein phi
    * \param pnucl pointer to an instance of MeanFieldNucleus
+   * \param prec precision you want in the integrations
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
-  GlauberGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, string dir);
+  GlauberGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, double prec, string dir);
   virtual ~GlauberGrid();/*!< Destructor */
   virtual complex<double> getFsiGridFull_interp();   /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   virtual complex<double> getFsiCtGridFull_interp(); /*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/

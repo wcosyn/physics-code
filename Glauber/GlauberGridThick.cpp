@@ -10,9 +10,10 @@ using namespace std;
 
 //constructor, calls abstractfsigrid's constructor
 GlauberGridThick::GlauberGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick *pnucl,
-				   string dir):
-AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,dir),
-AbstractFsiCTGridThick(r_grid,cth_grid,phi_grid,pnucl,dir),fsi_grid(NULL),fsi_ct_grid(NULL),treshold(NULL){
+				    double prec, string dir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,dir),
+AbstractFsiCTGridThick(r_grid,cth_grid,phi_grid,pnucl,prec,dir),
+fsi_grid(NULL),fsi_ct_grid(NULL),treshold(NULL){
     //mem reservation for the grids, index [shelllevel][mindex(postive only due to symmetry][rgrid][thgrid][phgrid]
   //fsi grid
   if(fsi_grid==NULL){

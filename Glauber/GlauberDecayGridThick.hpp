@@ -45,10 +45,11 @@ public:
    * \param cth_grid gridsize in costheta
    * \param phi_grid gridsizein phi
    * \param pnuclthick pointer to an instance of MeanFieldNucleusThick
+   * \param prec precision you want in the integrations
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   GlauberDecayGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick *pnuclthick, 
-		   string dir);
+		   double prec, string dir);
   /*!< Destructor */
   virtual ~GlauberDecayGridThick();
   virtual complex<double> getFsiGridFull_interp(); /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/

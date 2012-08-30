@@ -2,8 +2,8 @@
 
 #include <cmath>
 
- DoubleNCross::DoubleNCross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucleus, string dir)
-:homedir(dir),electron(elec),pnucl(pnucleus),reacmodel(NULL){
+ DoubleNCross::DoubleNCross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucleus, double precision, string dir)
+:homedir(dir),electron(elec),pnucl(pnucleus),reacmodel(NULL),prec(precision){
   
 }
  DoubleNCross::~DoubleNCross(){
@@ -24,7 +24,7 @@ double DoubleNCross::getDiffCross(const TKinematics2to3 &kin, bool SRC, bool CT,
 //       /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
 // 	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()));
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.; 
-  reacmodel=new DoubleNModel(pnucl,pw,SRC,CT, corr, particletype1, particletype2, homedir);
+  reacmodel=new DoubleNModel(pnucl,pw,SRC,CT, corr, particletype1, particletype2, getPrec(),homedir);
   kinfactors[0]=pow(Q2overkk,2.);
   kinfactors[1]=tan2+Q2overkk/2.;
   kinfactors[2]=-Q2overkk/2.;

@@ -9,9 +9,11 @@ using namespace std;
 #include <Utilfunctions.hpp>
 
 //constructor, calls abstractfsigrid's constructor
-GlauberGrid::GlauberGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, string dir):
-AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,dir),
-AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,dir),fsi_grid(NULL),fsi_ct_grid(NULL),treshold(NULL){
+GlauberGrid::GlauberGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, 
+			 double prec, string dir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,dir),
+AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,prec,dir),
+fsi_grid(NULL),fsi_ct_grid(NULL),treshold(NULL){
   
     //mem reservation for the grids, index [shelllevel][mindex(postive only due to symmetry][rgrid][thgrid][phgrid]
   //fsi grid

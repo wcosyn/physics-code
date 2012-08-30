@@ -8,9 +8,9 @@ using namespace std;
 #include <Utilfunctions.hpp>
 
 //constructor, calls glaubergrid's constructor
-OneGlauberGrid::OneGlauberGrid(const int r_grid, const int cth_grid, MeanFieldNucleus *pnucl, string dir):
-AbstractFsiGrid(r_grid,cth_grid,0,pnucl,dir),
-GlauberGrid(r_grid,cth_grid,0,pnucl,dir){
+OneGlauberGrid::OneGlauberGrid(const int r_grid, const int cth_grid, MeanFieldNucleus *pnucl, double prec, string dir):
+AbstractFsiGrid(r_grid,cth_grid,0,pnucl,prec,dir),
+GlauberGrid(r_grid,cth_grid,0,pnucl,prec,dir){
 }
 
 OneGlauberGrid::~OneGlauberGrid(){

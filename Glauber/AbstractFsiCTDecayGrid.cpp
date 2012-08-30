@@ -8,9 +8,10 @@ using namespace std;
 #include "constants.hpp"
 #include <Utilfunctions.hpp>
 
-AbstractFsiCTDecayGrid::AbstractFsiCTDecayGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
-AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),
-AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,homedir){
+AbstractFsiCTDecayGrid::AbstractFsiCTDecayGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, 
+					       double prec, string homedir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,homedir),
+AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,prec,homedir){
   number_of_grids=4;
 }  
   

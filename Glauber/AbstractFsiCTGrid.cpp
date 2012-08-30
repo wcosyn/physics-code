@@ -8,8 +8,9 @@ using namespace std;
 #include "constants.hpp"
 #include <Utilfunctions.hpp>
 
-AbstractFsiCTGrid::AbstractFsiCTGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
-AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,homedir),filledctgrid(0){
+AbstractFsiCTGrid::AbstractFsiCTGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, 
+				     double prec, string homedir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,homedir),filledctgrid(0){
   number_of_grids=2;
 }  
   

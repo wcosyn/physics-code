@@ -34,10 +34,11 @@ public:
    * \param cth_grid gridsize in costheta
    * \param phi_grid gridsizein phi
    * \param pnuclthick pointer to an instance of MeanFieldNucleusThick
+   * \param prec precision you want in the integrations
    * \param dir string that contains dir with all input
    */
   AbstractFsiCTDecayGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick *pnuclthick, 
-		         string dir);
+		         double prec, string dir);
   virtual ~AbstractFsiCTDecayGridThick();/*!< Destructor */
   
   virtual void printFsi_src_ct_grid()=0; /*!< Prints the FSI+SRC+CT grid for a certain situation, pure virtual function!! */

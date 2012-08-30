@@ -3,7 +3,7 @@
 
 
 RhoTCross::RhoTCross(const int nucleus, const double p_max, const string dir, const bool no_cuts,
-  const bool user_set, const double user_sigma
+  const bool user_set, const double user_sigma, const double precision
 ):
 homedir(dir),
 pmax(p_max),
@@ -12,13 +12,14 @@ userset(user_set),
 usersigma(user_sigma),
 nucleusthick(nucleus,dir),
 pdistgrid(NULL),
-pfsigrid(NULL){
+pfsigrid(NULL),
+prec(precision){
 
   pfsigrid = new GlauberDecayGridThick*[nucleusthick.getTotalLevels()];
   pdistgrid = new DistMomDistrGrid*[nucleusthick.getTotalLevels()];
   for(int i=0;i<nucleusthick.getTotalLevels();i++){
-    pfsigrid[i] = new GlauberDecayGridThick(60,20,5,&nucleusthick,homedir);
-    pdistgrid[i] = new DistMomDistrGrid(i, pmax, 30,20,5,pfsigrid[i],homedir);
+    pfsigrid[i] = new GlauberDecayGridThick(60,20,5,&nucleusthick,getPrec(),homedir);
+    pdistgrid[i] = new DistMomDistrGrid(i, pmax, 30,20,5,pfsigrid[i],getPrec(),homedir);
   }
 }
 
@@ -43,7 +44,7 @@ void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, 
   
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
   rombergerN(this,&RhoTCross::intPmt,0.,pmax*1.E-03,NROFRES,
-	      results,PREC,3,7,&pmestimate,Q2,nu,qvec,t,&cthestimate, &phiestimate);
+	      results,getPrec(),3,7,&pmestimate,Q2,nu,qvec,t,&cthestimate, &phiestimate);
   for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon))*pow(INVHBARC*1.E03,3.)/nucleusthick.getA();
   
 }
@@ -62,7 +63,7 @@ void RhoTCross::intPmt(const double pm, double *results, va_list ap){
   }
 
   rombergerN(this,&RhoTCross::intCosThetat,-1.,1.,NROFRES,
-	    results,PREC,3,10,pcthestimate, pm, Q2,nu,qvec,t,pphiestimate);
+	    results,getPrec(),3,10,pcthestimate, pm, Q2,nu,qvec,t,pphiestimate);
   for(int i=0;i<NROFRES;i++){
     results[i]*=pm*pm;
   }
@@ -79,7 +80,7 @@ void RhoTCross::intCosThetat(const double costheta, double *results, va_list ap)
   
   double sintheta = sqrt(1.-costheta*costheta);
   rombergerN(this,&RhoTCross::intPhit,0.,2.*PI,NROFRES,
-	    results,PREC,3,10,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,t);
+	    results,getPrec(),3,10,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,t);
  
 }
 
@@ -194,7 +195,7 @@ void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2,
   double prho=sqrt(Erho*Erho-MASSRHO*MASSRHO*1.E-06);
   double pmestimate=0.,cthestimate=0.,phiestimate=0.;
   rombergerN(this,&RhoTCross::intPmz,0.,pmax*1.E-03,NROFRES,
-	      results,PREC,3,10,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
+	      results,getPrec(),3,10,&pmestimate,Q2,nu,qvec,Erho,prho,&cthestimate, &phiestimate);
   
   for(int i=0;i<NROFRES;i++) results[i]*= ALPHA*(Ebeam-nu)*prho/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon))*pow(INVHBARC*1.E03,3.)/nucleusthick.getA();
   
@@ -213,7 +214,7 @@ void RhoTCross::intPmz(const double pm, double *results, va_list ap){
     return;
   }
   rombergerN(this,&RhoTCross::intCosThetaz,-1.,1.,NROFRES,
-	    results,PREC,3,8,pcthestimate, pm, Q2,nu,qvec,Erho,prho,pphiestimate);
+	    results,getPrec(),3,8,pcthestimate, pm, Q2,nu,qvec,Erho,prho,pphiestimate);
   for(int i=0;i<NROFRES;i++){
     results[i]*=pm*pm;
   }
@@ -230,7 +231,7 @@ void RhoTCross::intCosThetaz(const double costheta, double *results, va_list ap)
   
   double sintheta = sqrt(1.-costheta*costheta);
   rombergerN(this,&RhoTCross::intPhiz,0.,2.*PI,NROFRES,
-	    results,PREC,3,8,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,Erho,prho);
+	    results,getPrec(),3,8,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,Erho,prho);
  
 }
 

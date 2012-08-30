@@ -34,10 +34,11 @@ public:
    * \param setcorr do you want to use correlated wave functions (from Maarten's code)
    * \param particletype1 type of first ejected nucleon
    * \param particletype2 type of second ejected nucleon
+   * \param prec precision you want in the integrations
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   DoubleNModel(MeanFieldNucleusThick *pnucleus, bool setpw, bool setSRC, bool setCT, bool setcorr,
-	       int particletype1, int particletype2, string dir);
+	       int particletype1, int particletype2, double prec, string dir);
   ~DoubleNModel();  /*!< Destructor */
   void setSRC(int set_SRC) {SRC=set_SRC;}
   /*! compute matrix element 
@@ -64,24 +65,24 @@ public:
    * \return matrix element in r-space [fm^-3]
    */
   complex<double> MC_helper(const double r1, const double costheta1, const double phi1, const double r2, const double costheta2, const double phi2) const;  
-  bool getPW() const {return pw;};
-  bool getSRC() const {return SRC;};
-  bool getCT() const {return CT;};
-  bool getCorr() const {return corr;};
-  complex<double> getJ1contrup() const {return J1contrup;};
-  complex<double> getJ1contrdown() const {return J1contrdown;};
-  complex<double> getJ2contrup() const {return J2contrup;};
-  complex<double> getJ2contrdown() const {return J2contrdown;};
-  Pair * getPair1up() const {return pair1up;};
-  Pair * getPair1down() const {return pair1down;};
-  Pair * getPair2up() const {return pair2up;};
-  Pair * getPair2down() const {return pair2down;};
-  GlauberGridThick * getGridf1() const {return gridf1;};
-  GlauberGridThick * getGridf2() const {return gridf2;};
-  TVector3 getPf1() const {return pf1;};
-  TVector3 getPf2() const {return pf2;};
-  TVector3 getQvec3() const {return qvec3;};
-  
+  bool getPW() const {return pw;}
+  bool getSRC() const {return SRC;}
+  bool getCT() const {return CT;}
+  bool getCorr() const {return corr;}
+  complex<double> getJ1contrup() const {return J1contrup;}
+  complex<double> getJ1contrdown() const {return J1contrdown;}
+  complex<double> getJ2contrup() const {return J2contrup;}
+  complex<double> getJ2contrdown() const {return J2contrdown;}
+  Pair * getPair1up() const {return pair1up;}
+  Pair * getPair1down() const {return pair1down;}
+  Pair * getPair2up() const {return pair2up;}
+  Pair * getPair2down() const {return pair2down;}
+  GlauberGridThick * getGridf1() const {return gridf1;}
+  GlauberGridThick * getGridf2() const {return gridf2;}
+  TVector3 getPf1() const {return pf1;}
+  TVector3 getPf2() const {return pf2;}
+  TVector3 getQvec3() const {return qvec3;}
+  double getPrec() const {return prec;}
   
   
 private:
@@ -91,6 +92,7 @@ private:
   bool corr;  /*!< use correlated wave functions*/
   int particletype1; /*!< particletype of first nucleon*/
   int particletype2; /*!< particletype of second nucleon */
+  double prec; /*!< precision in the integrations */
   MeanFieldNucleusThick *pnucl; /*!< pointer to nucleus */
   NucleonEMOperator *J1; /*!< nucleon FF for interaction with nucleon 1*/
   NucleonEMOperator *J2; /*!< nucleon FF for interaction with nucleon2*/
