@@ -15,7 +15,7 @@ using namespace std;
 #include "TMFSpinor.hpp"
 
 DistMomDistrGrid::DistMomDistrGrid(int shell, const double p_max, const int p_grid, const int cth_grid, const int phi_grid,
-				   AbstractFsiCTGrid *pfsi_grid, string homedir):
+				   AbstractFsiCTGrid *pfsi_grid, double precision, string homedir):
 shellindex(shell),
 pmax(p_max),
 filledgrid(0),
@@ -25,7 +25,8 @@ dir(homedir+"/grids/"),
 pgrid(p_grid),
 cthgrid(cth_grid),
 phigrid(phi_grid),
-pfsigrid(pfsi_grid){
+pfsigrid(pfsi_grid),
+prec(precision){
   
   mass = getShellindex()<getPfsigrid()->getPnucleus()->getPLevels()? MASSP:MASSN;
   invpstep=pgrid/p_max;
@@ -156,7 +157,7 @@ void DistMomDistrGrid::setFilenames(string homedir){
   if (found!=string::npos){
     string addendum = "Rhogrid.l"+to_string(getShellindex())+".p"+to_string(getPgrid())
 		    +".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".pmax"+
-		    to_string(getPmax())+".";
+		    to_string(getPmax())+".Prec"+to_string(getPrec()*1.E05)+".";
     rho_filename.insert(found+1,addendum);
     rhoct_filename.insert(found+1,addendum);
   }
@@ -266,7 +267,7 @@ void DistMomDistrGrid::constructAllGrids(){
 	    complex<double> results[getPfsigrid()->getNumber_of_grids()];
 	    double restimate=0.,thestimate=0.,phiestimate=0.;
 	    rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),getPfsigrid()->getNumber_of_grids(),
-		       results,PREC,3,7,&restimate,m,&thestimate, &phiestimate);
+		       results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
 	    for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
 	      rhogrid[l][i][j][k]+=norm(results[l]);
 	      rhoctgrid[l][i][j][k]+=norm(results[l+getPfsigrid()->getNumber_of_grids()/2]);
@@ -348,7 +349,7 @@ void DistMomDistrGrid::constructCtGrid(){
 	    complex<double> results[getPfsigrid()->getNumber_of_grids()/2];
 	    double restimate=0.,thestimate=0.,phiestimate=0.;
 	    rombergerN(this,&DistMomDistrGrid::intRhoRCT,0.,getPfsigrid()->getPnucleus()->getRange(),getPfsigrid()->getNumber_of_grids()/2,
-		       results,PREC,3,7,&restimate,m,&thestimate, &phiestimate);
+		       results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
 	    for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
 	      rhoctgrid[l][i][j][k]+=norm(results[l]);
 //  	      cout << i << " " << j << " " << k << " " << ms << " " << m << " " << l << " " << norm(results[l]) << endl;
@@ -393,7 +394,7 @@ void DistMomDistrGrid::intRhoR(const double r, complex<double> *results, va_list
 
   getPfsigrid()->setRinterp(r);
   rombergerN(this,&DistMomDistrGrid::intRhoCosTheta,-1.,1.,getPfsigrid()->getNumber_of_grids(),
-	     results,PREC,3,6,pthetaestimate, m, r, pphiestimate);
+	     results,getPrec(),3,6,pthetaestimate, m, r, pphiestimate);
   for(int i=0;i<getPfsigrid()->getNumber_of_grids();i++) results[i]*=r;
   return;
 }
@@ -406,7 +407,7 @@ void DistMomDistrGrid::intRhoRCT(const double r, complex<double> *results, va_li
 
   getPfsigrid()->setRinterp(r);
   rombergerN(this,&DistMomDistrGrid::intRhoCosThetaCT,-1.,1.,getPfsigrid()->getNumber_of_grids()/2,
-	     results,PREC,3,6,pthetaestimate, m, r, pphiestimate);
+	     results,getPrec(),3,6,pthetaestimate, m, r, pphiestimate);
   for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++) results[i]*=r;
   return;
 }
@@ -424,7 +425,7 @@ void DistMomDistrGrid::intRhoCosTheta(const double costheta, complex<double> *re
   double sintheta=sqrt(1.-costheta*costheta);
   getPfsigrid()->setCthinterp(costheta);
   rombergerN(this,&DistMomDistrGrid::intRhoPhi,0.,2.*PI,getPfsigrid()->getNumber_of_grids(),
-	     results,PREC,3,6,pphiestimate, m, r, costheta, sintheta);
+	     results,getPrec(),3,6,pphiestimate, m, r, costheta, sintheta);
   return;
 }
 
@@ -436,7 +437,7 @@ void DistMomDistrGrid::intRhoCosThetaCT(const double costheta, complex<double> *
   double sintheta=sqrt(1.-costheta*costheta);
   getPfsigrid()->setCthinterp(costheta);
   rombergerN(this,&DistMomDistrGrid::intRhoPhiCT,0.,2.*PI,getPfsigrid()->getNumber_of_grids()/2,
-	     results,PREC,3,6,pphiestimate, m, r, costheta, sintheta);
+	     results,getPrec(),3,6,pphiestimate, m, r, costheta, sintheta);
   return;
 }
 

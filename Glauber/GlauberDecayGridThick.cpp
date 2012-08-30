@@ -553,7 +553,7 @@ void GlauberDecayGridThick::calcGlauberphasesBoth(const int i, const int j, cons
   for(int proton=0;proton<2;proton++){
     double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
     double restimate=0.,thetaestimate=0.,phiestimate=0.;
-    rombergerN(this, &GlauberDecayGridThick::intGlauberR,0.,getPnucleusthick()->getRange(),8,results,PREC,3,8,&restimate,proton,&thetaestimate, &phiestimate); 
+    rombergerN(this, &GlauberDecayGridThick::intGlauberR,0.,getPnucleusthick()->getRange(),8,results,getPrec(),3,8,&restimate,proton,&thetaestimate, &phiestimate); 
     fsi_grid[0][proton][i][j][k]=results[0];
     fsi_grid[1][proton][i][j][k]=results[1]*src;
     fsi_grid[2][proton][i][j][k]=results[2];
@@ -572,7 +572,7 @@ void GlauberDecayGridThick::calcGlauberphasesCt(const int i, const int j, const 
   for(int proton=0;proton<2;proton++){
     double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
     double restimate=0.,thetaestimate=0.,phiestimate=0.;
-    rombergerN(this, &GlauberDecayGridThick::intGlauberRCT,0.,getPnucleusthick()->getRange(),4,results,PREC,3,8,&restimate,proton,&thetaestimate, &phiestimate); 
+    rombergerN(this, &GlauberDecayGridThick::intGlauberRCT,0.,getPnucleusthick()->getRange(),4,results,getPrec(),3,8,&restimate,proton,&thetaestimate, &phiestimate); 
     fsi_ct_grid[0][proton][i][j][k]=results[0];
     fsi_ct_grid[1][proton][i][j][k]=results[1]*src;
     fsi_ct_grid[2][proton][i][j][k]=results[2];
@@ -660,7 +660,7 @@ void GlauberDecayGridThick::intGlauberR(const double r, complex<double> *results
   double *pthetaestimate = va_arg(ap,double*);
   double *pphiestimate = va_arg(ap,double*);
   getFsiCorrelator().setRinterp(r);
-  rombergerN(this,&GlauberDecayGridThick::intGlauberCosTheta,-1.,1.,8,results,PREC,3,8,pthetaestimate,r, proton,pphiestimate);
+  rombergerN(this,&GlauberDecayGridThick::intGlauberCosTheta,-1.,1.,8,results,getPrec(),3,8,pthetaestimate,r, proton,pphiestimate);
   double dens=getPnucleusthick()->getDensity(r,proton);
   for(int i=0;i<8;i++) results[i]*=dens;
 }
@@ -672,7 +672,7 @@ void GlauberDecayGridThick::intGlauberCosTheta(const double costheta, complex<do
   
   double sintheta = sqrt(1.-costheta*costheta);
   double src=getFsiCorrelator().getCorrGrid_interp(costheta,proton);
-  rombergerN(this,&GlauberDecayGridThick::intGlauberPhi,0.,2.*PI,8,results,PREC,3,5,pphiestimate,r,costheta,sintheta,proton);
+  rombergerN(this,&GlauberDecayGridThick::intGlauberPhi,0.,2.*PI,8,results,getPrec(),3,5,pphiestimate,r,costheta,sintheta,proton);
   //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
   results[1]*=src;
   results[3]*=src;
@@ -717,7 +717,7 @@ void GlauberDecayGridThick::intGlauberRCT(const double r, complex<double> *resul
   double *pthetaestimate = va_arg(ap,double*);
   double *pphiestimate = va_arg(ap,double*);
   getFsiCorrelator().setRinterp(r);
-  rombergerN(this,&GlauberDecayGridThick::intGlauberCosThetaCT,-1.,1.,4,results,PREC,3,8,pthetaestimate,r, proton,pphiestimate);
+  rombergerN(this,&GlauberDecayGridThick::intGlauberCosThetaCT,-1.,1.,4,results,getPrec(),3,8,pthetaestimate,r, proton,pphiestimate);
   double dens=getPnucleusthick()->getDensity(r,proton);
   for(int i=0;i<4;i++) results[i]*=dens;
 }
@@ -729,7 +729,7 @@ void GlauberDecayGridThick::intGlauberCosThetaCT(const double costheta, complex<
   
   double sintheta = sqrt(1.-costheta*costheta);
   double src=getFsiCorrelator().getCorrGrid_interp(costheta,proton);
-  rombergerN(this,&GlauberDecayGridThick::intGlauberPhiCT,0.,2.*PI,4,results,PREC,3,5,pphiestimate,r,costheta,sintheta,proton);
+  rombergerN(this,&GlauberDecayGridThick::intGlauberPhiCT,0.,2.*PI,4,results,getPrec(),3,5,pphiestimate,r,costheta,sintheta,proton);
   results[1]*=src;
   results[3]*=src;
 }

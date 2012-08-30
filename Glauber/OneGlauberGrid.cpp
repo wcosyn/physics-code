@@ -53,7 +53,7 @@ void OneGlauberGrid::calcGlauberphasesBoth(const int i, const int j, const int k
   for(int level=0;level<getPnucleus()->getTotalLevels();level++){
     for(int mm=0; mm<((getPnucleus()->getJ_array()[level]+1)/2);mm++){
       double restimate=0.,thetaestimate=0.,phiestimate=0.;
-      rombergerN(this, &OneGlauberGrid::intGlauberB,1.e-06,getPnucleus()->getRange()-PREC,2,results,PREC,3,8,&restimate,level,
+      rombergerN(this, &OneGlauberGrid::intGlauberB,1.e-06,getPnucleus()->getRange()-getPrec(),2,results,getPrec(),3,8,&restimate,level,
 		 mm,&thetaestimate, &phiestimate); 
       fsi_grid[level][mm][i][j][k]=1.-getParticles()[0].getScatterfront(level,getPnucleus())*results[0];
       fsi_ct_grid[level][mm][i][j][k]=1.-getParticles()[0].getScatterfront(level,getPnucleus())*results[1];
@@ -69,7 +69,7 @@ void OneGlauberGrid::calcGlauberphasesCt(const int i, const int j, const int k){
     for(int mm=0; mm<((getPnucleus()->getJ_array()[level]+1)/2);mm++){
       double restimate=0.,thetaestimate=0.,phiestimate=0.;
       //2*mm+1 = m quantum number in [1/2...j] (times two)
-      rombergerN(this, &OneGlauberGrid::intGlauberBCT,1.e-06,getPnucleus()->getRange(),1,&result,PREC,3,8,&restimate,level,
+      rombergerN(this, &OneGlauberGrid::intGlauberBCT,1.e-06,getPnucleus()->getRange(),1,&result,getPrec(),3,8,&restimate,level,
 		 mm,&thetaestimate, &phiestimate); 
       fsi_ct_grid[level][mm][i][j][k]=1.-getParticles()[0].getScatterfront(level,getPnucleus())*result;
     }
@@ -95,8 +95,8 @@ void OneGlauberGrid::intGlauberB(const double b, double *results, va_list ap){
   }
   
   double phiint=0;
-  rombergerN(this,&OneGlauberGrid::intGlauberPhi,0.,PI/2.,1,&phiint,PREC,3,8,pphiestimate,b,level);
-  rombergerN(this,&OneGlauberGrid::intGlauberZ,bottom+1.E-08,ceiling-1.E-08,2,results,PREC,3,8,pthetaestimate,b, level,m);
+  rombergerN(this,&OneGlauberGrid::intGlauberPhi,0.,PI/2.,1,&phiint,getPrec(),3,8,pphiestimate,b,level);
+  rombergerN(this,&OneGlauberGrid::intGlauberZ,bottom+1.E-08,ceiling-1.E-08,2,results,getPrec(),3,8,pthetaestimate,b, level,m);
   phiint*=4.*b*exp(-power(b-getParticles()[0].getHitbnorm(),2.)
 			      /(2.*getParticles()[0].getBetasq(level,getPnucleus())));
   results[0]*=phiint;
@@ -148,8 +148,8 @@ void OneGlauberGrid::intGlauberBCT(const double b, double *result, va_list ap){
   }
   
   double phiint=0;
-  rombergerN(this,&OneGlauberGrid::intGlauberPhi,0.,PI/2.,1,&phiint,PREC,3,8,pphiestimate,b,level);
-  rombergerN(this,&OneGlauberGrid::intGlauberZ,bottom+1.E-08,ceiling-1.E-08,1,result,PREC,3,8,pthetaestimate,b, level,m);
+  rombergerN(this,&OneGlauberGrid::intGlauberPhi,0.,PI/2.,1,&phiint,getPrec(),3,8,pphiestimate,b,level);
+  rombergerN(this,&OneGlauberGrid::intGlauberZ,bottom+1.E-08,ceiling-1.E-08,1,result,getPrec(),3,8,pthetaestimate,b, level,m);
   phiint*=4.*b*exp(-power(b-getParticles()[0].getHitbnorm(),2.)
 			      /(2.*getParticles()[0].getBetasq(level,getPnucleus())));
   *result*=phiint;

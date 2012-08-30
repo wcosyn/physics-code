@@ -8,9 +8,11 @@ using namespace std;
 #include <constants.hpp>
 #include <Utilfunctions.hpp>
 
-AbstractFsiGrid::AbstractFsiGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, string homedir):
-filledgrid(0),filledallgrid(0),dir(homedir+"/grids/"),rgrid(r_grid),cthgrid(cth_grid),phigrid(phi_grid),allinplane(0),totalprotonout(0), totalneutronout(0),
-protonknockout(0), neutronknockout(0),pnucleus(pnucl),number_of_grids(1){
+AbstractFsiGrid::AbstractFsiGrid(int r_grid, int cth_grid, int phi_grid, 
+				 MeanFieldNucleus *pnucl, double precision, string homedir):
+filledgrid(0),filledallgrid(0),dir(homedir+"/grids/"),rgrid(r_grid),cthgrid(cth_grid),
+phigrid(phi_grid),allinplane(0),totalprotonout(0), totalneutronout(0),
+protonknockout(0), neutronknockout(0),pnucleus(pnucl),number_of_grids(1),prec(precision){
   
   invrstep=rgrid/pnucleus->getRange();
   invcthstep=cthgrid/2.;
@@ -242,7 +244,8 @@ void AbstractFsiGrid::setFilenames(string homedir){
 		  +".th"+to_string(int(round(particles[i].getCosTheta()*10)))+".ph"+to_string(int(round(particles[i].getPhi()*10)))
 		 +".sigma"+to_string(int(round(particles[i].getSigmap()*10.)));
   }
-  fsi_filename+=".r"+to_string(getRgrid())+".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".dat";
+  fsi_filename+=".r"+to_string(getRgrid())+".cth"+to_string(getCthgrid())
+		+".phi"+to_string(getPhigrid())+".prec"+to_string(getPrec()*1.E05)+".dat";
 //     cout << fsi_filename << endl;
 }
   

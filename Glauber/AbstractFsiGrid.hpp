@@ -67,9 +67,10 @@ public:
    * \param cth_grid gridsize in cos theta
    * \param phi_grid gridsizein phi
    * \param pnucl pointer to an instance of MeanFieldNucleus
+   * \param prec the precision you want in the integrations
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
-  AbstractFsiGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, string dir);
+  AbstractFsiGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, double prec, string dir);
   virtual ~AbstractFsiGrid(); /*!< Destructor */
   
   const string getFsi_Filename() const{ return fsi_filename;} /*!< returns filename for regular fsi grid */
@@ -94,7 +95,8 @@ public:
   vector<int> getKnockoutLevels() const {return knockoutlevels;}/*!< returns the vector with all the shell index values of knocked out nucleons */
   vector<int> getKnockoutM() const {return knockoutm;}/*!<  returns the vector with all the m values of knocked out nucleons */
   bool getAllinplane() const {return allinplane;}/*!<  returns 1 if all the isi/fsi particles lie in the x-z plane */
-
+  double getPrec() const {return prec;}/*!< returns the integration precision */
+  
   /*! add particle subject to isi/fsi, checks to see that the vector contains max one incoming particle
    *\param newparticle pointer to instance of FastParticle you want to add*/
   virtual void addParticle(FastParticle &newparticle); 
@@ -191,6 +193,7 @@ private:
   int cthindex; ;/*!<  the index for theta used in the 3d interpolation*/
   int phiindex; /*!<  the index for phi used in the 3d interpolation */
   bool allinplane; /*!<  1 if all the isi/fsi particles lie in the x-z plane, can be used to exploit symmetry in phi */
+  double prec; /*!< integration precision */
   
   int totalprotonout; /*!<  total protons subject to fsi/isi (isi counts negative)*/
   int totalneutronout;  /*!<  total neutrons subject to fsi/isi (isi counts negative)*/

@@ -31,10 +31,11 @@ public:
    * \param cth_grid gridsize in cos theta
    * \param phi_grid gridsizein phi
    * \param pfsigrid pointer to a fsi/ct grid
+   * \param prec precision you want in the integrations
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   DistMomDistrGrid(int shellindex, const double max_p, const int p_grid, const int cth_grid, const int phi_grid,
-		   AbstractFsiCTGrid *pfsigrid, string dir);
+		   AbstractFsiCTGrid *pfsigrid, double prec, string dir);
   ~DistMomDistrGrid(); /*!< Destructor */
   
   int getShellindex() const{return shellindex;} /*!< shell level */
@@ -59,6 +60,7 @@ public:
   int getCthindex() const{return cthindex;}/*!<  returns the index for theta used in the 3d interpolation*/
   int getPhiindex() const{return phiindex;}/*!<  returns the index for phi used in the 3d interpolation */
   AbstractFsiCTGrid *getPfsigrid() const{return pfsigrid;}/*!<  returns the pointer to the MeanFieldNucleus instance */
+  double getPrec() const{return prec;} /*!< returns the precision in the integrations */
   
   void printRho_grid(int gridindex);  /*!< Prints the rho grid for a certain situation*/
   void printRhopw_grid();  /*!< Prints the rho plane wave grid */
@@ -122,6 +124,7 @@ private:
   double cosphi_hit;/*!< cos of phi coordinate of the momentum vector point, what the grid depens on */
   double sinphi_hit;/*!< sin of phi coordinate of the momentum vector point, what the grid depens on */
   Matrix<1,4> Upm_bar; /*!< holds a spinor that gest contracted with a nucleon MF spinor */
+  double prec; /*!< precision in the integrations */
   
   double *rhopwgrid; /*!< plane-wave momentum distribution grid. only depends on norm of p */
   double ****rhogrid; /*!< non-ct momentum distribution grid */
