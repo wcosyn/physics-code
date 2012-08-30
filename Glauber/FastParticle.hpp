@@ -90,9 +90,9 @@ public:
   /*! [fm^2] return sigma parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
   double getSigma(bool proton) const{return proton? sigmap:sigman;}
   /*! [] return epsilon parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
-  double getEpsilon(bool proton) const {return proton? beta2p:beta2n;}
+  double getEpsilon(bool proton) const {return proton? epsilonp:epsilonn;}
   /*! [fm^2] return beta^2 parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
-  double getBetasq(bool proton) const { return proton? epsilonp:epsilonn;}
+  double getBetasq(bool proton) const {return proton? beta2p:beta2n; }
   double getMass() const{ return mass;} /*!< [MeV] return mass */
   double getE() const{return E;} /*!< [MeV] on-shell energy*/
   double getDecay_dil() const{return decay_dil;} /*!< [MeV] return time dilatation factor */
