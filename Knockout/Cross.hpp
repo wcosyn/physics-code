@@ -42,8 +42,11 @@ public:
    * \param pnucl pointer to a MF nucleus instance
    * \param prec precision you want in the integrations
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param user_sigma does the user want to introduce a (anti)screening on sigma
+   * \param sigmascreening [%] how much do you want to change the sigma value
    */
-  Cross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucl, double prec, string dir);
+  Cross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucl, 
+	double prec, string dir, bool user_sigma, double sigmascreening=0.);
   ~Cross(); /*!< Destructor */
   /*! Computes the differential \f$ A(e,e'N)\f$ cross section for certain kinematics and a certain shell of the nucleus
    * \param kin contains the hadron kinematics
@@ -66,6 +69,8 @@ public:
    */  
   double getElCross(TKinematics2to2 &kin, int current, double phi);
   double getPrec() const{return prec;} /*!< precision of the integrations */
+  double getSigmascreening() const{return sigmascreening;} /*!< [%] screening of sigma */
+  bool getUsersigma() const{return usersigma;} /*!< has the user set sigma? */
 private:
   string homedir; /*!< Contains dir with all input */
   double prec; /*!< precision you want in the integrations */
@@ -75,6 +80,8 @@ private:
   double response[6]; /*!< response functions, from the hadronic tensor */
   double frontfactor; /*!< kinematical front factor */
   double mott; /*!< mott cross section */
+  bool usersigma;
+  double sigmascreening;
   Model *reacmodel; /*!< class object that computes the amplitudes */
 
 };

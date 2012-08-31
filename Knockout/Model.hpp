@@ -31,8 +31,11 @@ public:
    * \param setthick do you want thickness in your Glauber?
    * \param prec precision you want in the integrations
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param user_sigma does the user want to change sigma?
+   * \param sigma_screening [%] screening change of sigma
    */
-  Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double prec, string dir);
+  Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double prec, string dir, 
+	bool user_sigma, double sigma_screening=0.);
   ~Model(); /*!< Destructor */
   void setSRC(int setSRC) {SRC=setSRC;} /*!< sets SRC in the Glauber FSI */
   /*! Computes an amplitude \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu \phi^{D}_{\alpha}(\vec{p}_m,m) \f$  <BR>
@@ -72,6 +75,8 @@ public:
    */
   complex<double> getFreeMatrixEl(TKinematics2to2 &tk, int current, int spinin, int spinout, int photonpol);
   double getPrec() const{return prec;} /*!< returns precision in the integrations */
+  bool getUsersigma() const{return usersigma;} /*!< returns 1 if user has changed sigma with some screening */
+  double getSigmascreening() const{return sigmascreening;} /*!< [%] returns screening change to sigma */
   
 private:
   int SRC; /*!< SRC or not */
@@ -89,6 +94,9 @@ private:
   Matrix<1,4> barcontractplusdown; /*!< intermediate contraction of bar spinor with 4*4 current  */
   TVector3 pm; /*!< missing momentum */
   string homedir; /*!< contains the share dir with all input */
+  bool usersigma; /*!< has the user set some screening to sigma */
+  double sigmascreening; /*!< [%] screening effect to sigma */
+  
   int shell; /*!< what shell has the ejected nucleon */
   int mm; /*!< \f$ m_j \f$ quantum number of ejected nucleon */
     /*! function that gets integrated over r, integral over r of matrix element

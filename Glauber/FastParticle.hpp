@@ -191,7 +191,11 @@ public:
   /*! sets the scatter sigma_tot parameter
    * \param sigma [mb] tot cross section
    */
-  void setSigma(double sigma){ sigman=sigmap=sigma/10.; return;}
+  void setSigma(double sigma){ sigman=sigmap=sigma/10.; userset=1; return;}
+  /*! sets a screening for the sigma parameters
+   * \param screening [%] amount of screening (can be anti-screening too of course!)
+   */
+  void setScreening(double screening){ sigman*=screening; sigmap*=screening; userset=1; return;}
   /*! sets the scatter parameters
    * \param sigma [mb] tot cross section
    * \param beta [GeV^2] slope param

@@ -31,7 +31,7 @@ void getBound(double &high, double &low, MeanFieldNucleusThick *pnucleus, double
 int main(int argc, char *argv[])
 {
   
-  string homedir=argv[8];
+  string homedir=argv[10];
   double Q2=atof(argv[2])*1.E06;
   double Ein=atof(argv[3]);
   double thetae=atof(argv[4])*DEGRTORAD;
@@ -39,12 +39,14 @@ int main(int argc, char *argv[])
   int thick=atoi(argv[5]);
   int current=atoi(argv[6]);
   double prec=atof(argv[7]);
+  bool userset=atoi(argv[8]);
+  double screening=atof(argv[9]);
   //cout << Ein-omega << endl;
   
   MeanFieldNucleusThick Nucleus(atoi(argv[1]),homedir);
   //TKinematics2to2 kin("","",.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",atof(argv[1]),atof(argv[2]),atof(argv[3]));
-  TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(atof(argv[3]));
-  Cross obs(*elec,&Nucleus,prec,homedir);
+  TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
+  Cross obs(*elec,&Nucleus,prec,homedir, userset, screening);
 
   
   double total[5];
@@ -55,7 +57,8 @@ int main(int argc, char *argv[])
     getBound(high,low,&Nucleus,Q2,omega,shell);
     double results[5];
     double pestimate=0.;
-    rombergerN(intPm,-1.,low,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, thick,current);
+    rombergerN(intPm,-1.,low,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, 
+	       thick,current);
     for(int j=0;j<5;j++) total[j]+=results[j];
     
     cout << Q2/1.E06 << " " << Ein << " " << shell << " " << results[0]/results[4] << " " << 
