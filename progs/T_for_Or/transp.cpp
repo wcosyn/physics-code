@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
   double total[5];
   for(int i=0;i<5;i++) total[i]=0.;
   
-  for(int shell=0;shell<Nucleus.getPLevels();shell++){
+  for(int shell=0;shell</*Nucleus.getPLevels()*/1;shell++){
     double low=-1.,high=1.;
     getBound(high,low,&Nucleus,Q2,omega,shell);
     double results[5];

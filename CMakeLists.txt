@@ -68,12 +68,12 @@ if (hostname MATCHES accident OR hostname MATCHES talvin13)
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3 ")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
-      set(CMAKE_CXX_FLAGS_PROFILE        "-O3 -pg -fno-inline")
+      set(CMAKE_CXX_FLAGS_PROFILE        "-O3 -pg ")
       set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g")
       set(CMAKE_C_FLAGS_RELEASE          "-O3 ")
       set(CMAKE_C_FLAGS_DEBUG            "-g")
       set(CMAKE_C_FLAGS_DEBUGFULL        "-g3  -fno-inline -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common")
-      set(CMAKE_C_FLAGS_PROFILE          "-O3  -pg -fno-inline")
+      set(CMAKE_C_FLAGS_PROFILE          "-O3  -pg ")
 
       
       
@@ -84,7 +84,7 @@ if (hostname MATCHES accident OR hostname MATCHES talvin13)
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
-      set(CMAKE_CXX_FLAGS_PROFILE        "-pg -O3  -fno-inline -ftest-coverage -fprofile-arcs")
+      set(CMAKE_CXX_FLAGS_PROFILE        "-p -O3  -no-ipo")
     endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
 
   if (Fortran_COMPILER_NAME STREQUAL "gfortran")
