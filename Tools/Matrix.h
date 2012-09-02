@@ -460,11 +460,18 @@ Matrix<K1,L2> operator*(const Matrix<K1,L1>& left, const Matrix<K2,L2>& right)
   }
   
   Matrix<K1,L2> product;
+//   double realpart[K1][L2];
+//   double imagpart[K1][L2];
   for(int i=0; i<K1; i++)
-    for(int j=0; j<L2; j++)
-      for(int x=0; x<K2; x++)
-	product.m[i*L2+j] += (left.m[i*L1+x]*right.m[x*L2+j]);
-  
+    for(int j=0; j<L2; j++){
+//       realpart[i][j]=0.; imagpart[i][j]=0.;
+      for(int x=0; x<K2; x++){
+ 	product.m[i*L2+j] += (left.m[i*L1+x]*right.m[x*L2+j]);
+// 	 realpart[i][j] += real(left.m[i*L1+x])*real(right.m[x*L2+j])-imag(left.m[i*L1+x])*imag(right.m[x*L2+j]);
+// 	 imagpart[i][j]+=    real(left.m[i*L1+x])*imag(right.m[x*L2+j])+imag(left.m[i*L1+x])*real(right.m[x*L2+j]);
+      }
+//       product.m[i*L2+j]=std::complex<double>(realpart[i][j],imagpart[i][j]);
+    }
   return product;
 }
 

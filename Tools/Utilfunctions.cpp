@@ -26,8 +26,8 @@ double interpolate(const double *array, double r, double rstep,int lines, int of
 
   if(index==lines-1) index--; // if index is at the end of the array.
   if(index<0) index=0;
-
-  return ((r-rstep*(index+1+offset))*array[index] + (rstep*(index+offset)-r)*array[index+1]) / -rstep;
+  double a = (r-rstep*(index+1+offset))/-rstep;
+  return a*array[index] + (1.-a)*array[index+1];
 }
 
 ///////////////////////////////////

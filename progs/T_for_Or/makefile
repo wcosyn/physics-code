@@ -16,13 +16,14 @@ CPATH 	=	.
 
 #		Flags
 # OPTFLAG	=	-O3 -fPIC
-OPTFLAG	=	-O3 -parallel -no-ipo #-fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
+OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
+# OPTFLAG		= 	 -O3 -march=native -mtune=native
 
 STATIC  =	--static
 DBGFLAG	=	-g
-GPFLAG  = 	-p
+GPFLAG  = 	-pg
 WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG)  $(GPFLAG)   #$(DBGFLAG) #$(STATIC)
+CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(GPFLAG)   #$(DBGFLAG) #$(STATIC)
 
 #		Executable file
 EFILE   = 	../../bin/Ortransp

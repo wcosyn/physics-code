@@ -18,10 +18,16 @@ OneGlauberGrid::~OneGlauberGrid(){
 
 //2d interpolation of array
 complex<double> OneGlauberGrid::getInterp(complex<double> ***grid){
-  return (getComp_t_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()][0]
-	+ getS_interp()*grid[getRindex()+1][getCthindex()][0]) 
-	+ getT_interp()*(getComp_s_interp()*grid[getRindex()][getCthindex()+1][0] 
-	+ getS_interp()*grid[getRindex()+1][getCthindex()+1][0]));
+  return (
+    complex<double>(getComp_t_interp()*(getComp_s_interp()*real(grid[getRindex()][getCthindex()][0])
+	+ getS_interp()*real(grid[getRindex()+1][getCthindex()][0]))
+	+ getT_interp()*(getComp_s_interp()*real(grid[getRindex()][getCthindex()+1][0])
+	+ getS_interp()*real(grid[getRindex()+1][getCthindex()+1][0])),
+	getComp_t_interp()*(getComp_s_interp()*imag(grid[getRindex()][getCthindex()][0])
+	+ getS_interp()*imag(grid[getRindex()+1][getCthindex()][0])) 
+	+ getT_interp()*(getComp_s_interp()*imag(grid[getRindex()][getCthindex()+1][0])
+	+ getS_interp()*imag(grid[getRindex()+1][getCthindex()+1][0]))
+ 		  ));
 }
 
 void OneGlauberGrid::addParticle(FastParticle& newparticle){
