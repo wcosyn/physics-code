@@ -280,7 +280,7 @@ template <class T, class F> void rombergerN(F* object, void (F::*function)(doubl
        return;
      }
      double dummy = 0.;
-     for(int i=0;i<N;i++) dummy +=abs(DN2[i][n]);
+     for(int i=0;i<N;i++) if(dummy<abs(DN2[i][n])) dummy=abs(DN2[i][n]);
      if(dummy <(*estimate)*1e-05){
        for(int i=0;i<N;i++){
 	 results[i] = DN2[i][n];
