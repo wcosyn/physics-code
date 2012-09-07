@@ -30,13 +30,20 @@ using namespace std;
 //run ./onenucl [Q2 [MeV^2]] [omega] [missing momentum]
 int main(int argc, char *argv[])
 {
+  double Q2=atof(argv[1]);
+  double omega=atof(argv[2]);
+  double pm=atof(argv[3]);
+  bool screening=atoi(argv[4]);
+  double scr=atof(argv[5]);
+  int nucleon=atoi(argv[6]);
+  
   
   string homedir="/home/wim/Code/share";
 
-  MeanFieldNucleusThick Carbon(1,homedir);
-  TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",atof(argv[1]),atof(argv[2]),atof(argv[3]));
+  MeanFieldNucleusThick Carbon(nucleon,homedir);
+  TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);
-  Cross obs(*elec,&Carbon,homedir);
+  Cross obs(*elec,&Carbon,1.E-03,homedir,screening,scr);
   double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 0, 1, 0.);
 //   double crosss=obs.getDiffCross(kin, 0, 0, 0, 0, 0.);
   double crosspsrc=obs.getDiffCross(kin, 2, 0, 1, 0, 0, 1, 0.);

@@ -3,7 +3,7 @@
 
 
 RhoTCross::RhoTCross(const int nucleus, const double p_max, const string dir, const bool no_cuts,
-  const bool user_set, const double user_sigma, const double precision
+  const bool user_set, const double user_sigma, const double precision, const int integr
 ):
 homedir(dir),
 pmax(p_max),
@@ -13,13 +13,14 @@ usersigma(user_sigma),
 nucleusthick(nucleus,dir),
 pdistgrid(NULL),
 pfsigrid(NULL),
-prec(precision){
+prec(precision),
+integrator(integr){
 
   pfsigrid = new GlauberDecayGridThick*[nucleusthick.getTotalLevels()];
   pdistgrid = new DistMomDistrGrid*[nucleusthick.getTotalLevels()];
   for(int i=0;i<nucleusthick.getTotalLevels();i++){
-    pfsigrid[i] = new GlauberDecayGridThick(60,20,5,&nucleusthick,getPrec(),homedir);
-    pdistgrid[i] = new DistMomDistrGrid(i, pmax, 30,20,5,pfsigrid[i],getPrec(),homedir);
+    pfsigrid[i] = new GlauberDecayGridThick(60,20,5,&nucleusthick,prec,integrator,homedir);
+    pdistgrid[i] = new DistMomDistrGrid(i, pmax, 30,20,5,pfsigrid[i],prec,integrator,homedir);
   }
 }
 

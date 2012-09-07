@@ -9,9 +9,9 @@
 
 
 
-Model::Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double precision, string dir,
+Model::Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double precision, int integr, string dir,
 	      bool user_sigma, double sigma_screening)
-:SRC(setSRC), thick(setthick), pnucl(pnucleus), prec(precision), homedir(dir),
+:SRC(setSRC), thick(setthick), pnucl(pnucleus), prec(precision), integrator(integr), homedir(dir),
 usersigma(user_sigma), sigmascreening(sigma_screening){
 }
 
@@ -112,8 +112,8 @@ complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonp
   FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   if(!pw){
-    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,getPrec(),homedir);
-    else grid = new OneGlauberGrid(60,18,pnucl,getPrec(),homedir);
+    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,prec,integrator,homedir);
+    else grid = new OneGlauberGrid(60,18,pnucl,prec,integrator,homedir);
     grid->addParticle(proton);
     grid->fillGrids();
     grid->clearKnockout();
@@ -178,8 +178,8 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   if(!pw){
-    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,getPrec(),homedir);
-    else grid = new OneGlauberGrid(60,18,pnucl,getPrec(),homedir);
+    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,prec,integrator,homedir);
+    else grid = new OneGlauberGrid(60,18,pnucl,prec,integrator,homedir);
     grid->addParticle(proton);
     grid->fillGrids();
     grid->clearKnockout();

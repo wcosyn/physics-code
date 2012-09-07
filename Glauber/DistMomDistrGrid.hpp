@@ -32,10 +32,11 @@ public:
    * \param phi_grid gridsizein phi
    * \param pfsigrid pointer to a fsi/ct grid
    * \param prec precision you want in the integrations
+   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   DistMomDistrGrid(int shellindex, const double max_p, const int p_grid, const int cth_grid, const int phi_grid,
-		   AbstractFsiCTGrid *pfsigrid, double prec, string dir);
+		   AbstractFsiCTGrid *pfsigrid, const double prec, const int integrator, string dir);
   ~DistMomDistrGrid(); /*!< Destructor */
   
   int getShellindex() const{return shellindex;} /*!< shell level */
@@ -125,6 +126,7 @@ private:
   double sinphi_hit;/*!< sin of phi coordinate of the momentum vector point, what the grid depens on */
   Matrix<1,4> Upm_bar; /*!< holds a spinor that gest contracted with a nucleon MF spinor */
   double prec; /*!< precision in the integrations */
+  int integrator; /*!<choice of integrator */
   
   double *rhopwgrid; /*!< plane-wave momentum distribution grid. only depends on norm of p */
   double ****rhogrid; /*!< non-ct momentum distribution grid */

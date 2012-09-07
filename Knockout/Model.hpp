@@ -30,11 +30,12 @@ public:
    * \param setSRC do you want SRC in your FSI?
    * \param setthick do you want thickness in your Glauber?
    * \param prec precision you want in the integrations
+   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    * \param user_sigma does the user want to change sigma?
    * \param sigma_screening [%] screening change of sigma
    */
-  Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double prec, string dir, 
+  Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double prec, int integrator, string dir, 
 	bool user_sigma, double sigma_screening=0.);
   ~Model(); /*!< Destructor */
   void setSRC(int setSRC) {SRC=setSRC;} /*!< sets SRC in the Glauber FSI */
@@ -82,6 +83,7 @@ private:
   int SRC; /*!< SRC or not */
   int thick; /*!< thickness or not */
   double prec; /*!< precision in the integrations */
+  int integrator; /*!< choice of integrator */
   AbstractFsiCTGrid *grid; /*!< pointer to Glauber Grid */
   MeanFieldNucleusThick *pnucl; /*!<  pointer to nucleus */
   NucleonEMOperator *J; /*!<  pointer to nucleon formfactor instance */

@@ -35,10 +35,11 @@ public:
    * \param phi_grid gridsizein phi
    * \param pnucl pointer to an instance of MeanFieldNucleus
    * \param prec precision you want in the integrations
+   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   AbstractFsiCTDecayGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, 
-			 double prec, string dir);
+			 double prec, int integrator, string dir);
   virtual ~AbstractFsiCTDecayGrid(); /*!< Destructor */
 
   virtual void printFsi_decay_grid()=0; /*!< Prints the FSI+decay grid for a certain situation, pure virtual function!! */

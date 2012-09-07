@@ -68,9 +68,11 @@ public:
    * \param phi_grid gridsizein phi
    * \param pnucl pointer to an instance of MeanFieldNucleus
    * \param prec the precision you want in the integrations
+   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
-  AbstractFsiGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, double prec, string dir);
+  AbstractFsiGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, 
+		  double prec, int integrator, string dir);
   virtual ~AbstractFsiGrid(); /*!< Destructor */
   
   const string getFsi_Filename() const{ return fsi_filename;} /*!< returns filename for regular fsi grid */
@@ -96,6 +98,7 @@ public:
   vector<int> getKnockoutM() const {return knockoutm;}/*!<  returns the vector with all the m values of knocked out nucleons */
   bool getAllinplane() const {return allinplane;}/*!<  returns 1 if all the isi/fsi particles lie in the x-z plane */
   double getPrec() const {return prec;}/*!< returns the integration precision */
+  int getIntegrator() const{return integrator;} /*!< returns the integrator type */
   
   /*! add particle subject to isi/fsi, checks to see that the vector contains max one incoming particle
    *\param newparticle pointer to instance of FastParticle you want to add*/
@@ -159,6 +162,12 @@ public:
    we don't have to fill the grids or compute them again and the situation remains as before.*/
   virtual void updateGrids();  
   
+  double getR_hit() const{return r_hit;}
+  double getCostheta_hit() const{return costheta_hit;}
+  double getSintheta_hit() const{return sintheta_hit;}
+  double getPhi_hit() const{return phi_hit;}
+  double getCosphi_hit() const{return cosphi_hit;}
+  double getSinphi_hit() const{return sinphi_hit;}
   
 protected:
   virtual void setFilenames(string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
@@ -173,6 +182,8 @@ protected:
   double sinphi_hit;/*!< sin of phi coordinate of the hard interaction point, what the grid depens on */
   string fsi_filename; /*!< filename for regular fsi grid */
   int number_of_grids; /*!<number of fsi grids */
+  double prec; /*!< integration precision */
+  int integrator; /*!< https://www.facebook.com/*/
   
 private:
   string dir;  /*!< dir where all input/output is located */ 
@@ -193,7 +204,6 @@ private:
   int cthindex; ;/*!<  the index for theta used in the 3d interpolation*/
   int phiindex; /*!<  the index for phi used in the 3d interpolation */
   bool allinplane; /*!<  1 if all the isi/fsi particles lie in the x-z plane, can be used to exploit symmetry in phi */
-  double prec; /*!< integration precision */
   
   int totalprotonout; /*!<  total protons subject to fsi/isi (isi counts negative)*/
   int totalneutronout;  /*!<  total neutrons subject to fsi/isi (isi counts negative)*/

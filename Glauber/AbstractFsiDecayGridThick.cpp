@@ -9,9 +9,9 @@ using namespace std;
 #include <Utilfunctions.hpp>
 
 AbstractFsiDecayGridThick::AbstractFsiDecayGridThick(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleusThick *pnucl, 
-					   double prec, string homedir):
-AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,homedir),
-AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,prec,homedir)
+					   double prec, int integrator, string homedir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,integrator, homedir),
+AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,prec,integrator, homedir)
 {
   number_of_grids=4;
 }  

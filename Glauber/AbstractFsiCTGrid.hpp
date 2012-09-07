@@ -34,10 +34,11 @@ public:
    * \param phi_grid gridsizein phi
    * \param pnucl pointer to an instance of MeanFieldNucleus
    * \param prec you want in the integration
+   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   AbstractFsiCTGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, 
-		    double prec, string dir);
+		    double prec, int integrator, string dir);
   virtual ~AbstractFsiCTGrid(); /*!< Destructor */
 
   const string getFsi_Ct_Filename() const;/*!< returns filename for regular fsi+ct grid */

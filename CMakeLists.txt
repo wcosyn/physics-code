@@ -237,6 +237,7 @@ ENDIF(XIAR)
 MARK_AS_ADVANCED(XIAR)
 
 
+add_subdirectory(Integrator)
 add_subdirectory(Tools)
 add_subdirectory(Glauber)
 add_subdirectory(Knockout)

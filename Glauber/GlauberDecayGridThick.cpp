@@ -10,11 +10,11 @@ using namespace std;
 
 //constructor, calls abstractfsigrid's constructor
 GlauberDecayGridThick::GlauberDecayGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick *pnucl,
-				   double prec, string dir):
-AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,dir),
-AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,prec,dir),
-AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,prec,dir),
-AbstractFsiCTDecayGridThick(r_grid,cth_grid,phi_grid,pnucl,prec,dir),
+				   double prec, int integrator, string dir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,integrator,dir),
+AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,prec,integrator,dir),
+AbstractFsiGridThick(r_grid,cth_grid,phi_grid,pnucl,prec,integrator,dir),
+AbstractFsiCTDecayGridThick(r_grid,cth_grid,phi_grid,pnucl,prec,integrator,dir),
 fsi_grid(NULL),fsi_ct_grid(NULL),treshold(NULL){
   
   if(fsi_grid==NULL){

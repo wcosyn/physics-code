@@ -15,7 +15,7 @@ using namespace std;
 #include "TMFSpinor.hpp"
 
 DistMomDistrGrid::DistMomDistrGrid(int shell, const double p_max, const int p_grid, const int cth_grid, const int phi_grid,
-				   AbstractFsiCTGrid *pfsi_grid, double precision, string homedir):
+				   AbstractFsiCTGrid *pfsi_grid, const double precision, const int integr, string homedir):
 shellindex(shell),
 pmax(p_max),
 filledgrid(0),
@@ -26,7 +26,8 @@ pgrid(p_grid),
 cthgrid(cth_grid),
 phigrid(phi_grid),
 pfsigrid(pfsi_grid),
-prec(precision){
+prec(precision),
+integrator(integr){
   
   mass = getShellindex()<getPfsigrid()->getPnucleus()->getPLevels()? MASSP:MASSN;
   invpstep=pgrid/p_max;

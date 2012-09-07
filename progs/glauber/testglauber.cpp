@@ -30,6 +30,20 @@ int main(int argc, char *argv[])
   
   string homedir=argv[1];
 
+//   MeanFieldNucleusThick PbThick(4,homedir);
+//   FastParticle proton2(0, 0, 2000.,0.,0.,3.,0.,homedir);
+//   GlauberGridThick onegrid(60,18,5,&PbThick,1.E-03,homedir);
+//   onegrid.addParticle(proton2);
+//   onegrid.updateGrids();
+//   onegrid.printFsi_grid();
+//   proton2.setScreening(1.03);
+//   onegrid.clearParticles();
+//   onegrid.addParticle(proton2);
+//   onegrid.updateGrids();
+//   onegrid.printFsi_grid();
+  
+  
+  
   MeanFieldNucleusThick CarbonThick(1,homedir);
   complex<double> wave[4];
   CarbonThick.getWaveFunction(wave,0, -1, 2.,0.5,1.);
@@ -56,7 +70,11 @@ int main(int argc, char *argv[])
   onegrid.printParticles();
   onegrid.updateGrids();
   onegrid.printFsi_ct_grid();
-//   
+
+  
+  
+  
+  //   
 //   FastParticle rho(4, 0, 2356,0.,0.,5.,145.,homedir);
 //   GlauberDecayGridThick gridthick(3,3,2,&CarbonThick,homedir);  
 //   gridthick.addParticle(rho);

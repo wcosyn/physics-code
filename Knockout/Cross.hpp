@@ -41,12 +41,13 @@ public:
    * \param elec contains all the electron kinematics
    * \param pnucl pointer to a MF nucleus instance
    * \param prec precision you want in the integrations
+   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    * \param user_sigma does the user want to introduce a (anti)screening on sigma
    * \param sigmascreening [%] how much do you want to change the sigma value
    */
   Cross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucl, 
-	double prec, string dir, bool user_sigma, double sigmascreening=0.);
+	double prec, int integrator, string dir, bool user_sigma, double sigmascreening=0.);
   ~Cross(); /*!< Destructor */
   /*! Computes the differential \f$ A(e,e'N)\f$ cross section for certain kinematics and a certain shell of the nucleus
    * \param kin contains the hadron kinematics
@@ -74,6 +75,7 @@ public:
 private:
   string homedir; /*!< Contains dir with all input */
   double prec; /*!< precision you want in the integrations */
+  double integrator; /*!< choice of integrator */
   TElectronKinematics electron; /*!< electron kinematics */
   MeanFieldNucleusThick *pnucl; /*!< pointer to nucleus */
   double kinfactors[6]; /*!< electron kinematic factors, get multiplied with response functions */

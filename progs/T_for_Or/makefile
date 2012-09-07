@@ -21,7 +21,7 @@ OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 
 
 STATIC  =	--static
 DBGFLAG	=	-g
-GPFLAG  = 	-pg
+GPFLAG  = 	-p
 WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(GPFLAG)   #$(DBGFLAG) #$(STATIC)
 

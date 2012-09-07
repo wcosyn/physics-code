@@ -35,10 +35,11 @@ public:
    * \param particletype1 type of first ejected nucleon
    * \param particletype2 type of second ejected nucleon
    * \param prec precision you want in the integrations
+   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   DoubleNModel(MeanFieldNucleusThick *pnucleus, bool setpw, bool setSRC, bool setCT, bool setcorr,
-	       int particletype1, int particletype2, double prec, string dir);
+	       int particletype1, int particletype2, double prec, int integrator, string dir);
   ~DoubleNModel();  /*!< Destructor */
   void setSRC(int set_SRC) {SRC=set_SRC;}
   /*! compute matrix element 
@@ -93,6 +94,7 @@ private:
   int particletype1; /*!< particletype of first nucleon*/
   int particletype2; /*!< particletype of second nucleon */
   double prec; /*!< precision in the integrations */
+  int integrator; /*!< choice of integrator */
   MeanFieldNucleusThick *pnucl; /*!< pointer to nucleus */
   NucleonEMOperator *J1; /*!< nucleon FF for interaction with nucleon 1*/
   NucleonEMOperator *J2; /*!< nucleon FF for interaction with nucleon2*/

@@ -56,7 +56,7 @@ public:
   bool getIncoming() const {return incoming;}/*!<  get if the particle is a beam particle */
   double getP() const {return p;}/*!< [MeV] get momentum */
   double getTheta() const {return theta;}/*!< [rad] get theta angle of momentum */
-  double getCosTheta() const{return cos(theta);}/*!< [] get cos theta angle of momentum */
+  double getCosTheta() const{return costheta;}/*!< [] get cos theta angle of momentum */
   double getPhi() const {return phi;}/*!<  [rad] get phi angle of momentum */
   double getEx() const {return ex;}/*!<  get x-component of momentum direction */
   double getEy() const {return ey;}/*!< get y-component of momentum direction  */
@@ -244,6 +244,7 @@ private:
   bool incoming;  /*!< incoming beam particle? */
   double p; /*!<[MeV] momentum */
   double theta; /*!< [rad]  theta angle of momentum*/
+  double costheta; /*!< []  cos(theta) angle of momentum*/
   double phi; /*!< [rad]  phi angle of momentum*/
   double ex;  /*!<  x-component of momentum direction*/
   double ey; /*!<  y-component of momentum direction*/

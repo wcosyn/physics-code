@@ -9,8 +9,8 @@ using namespace std;
 #include <Utilfunctions.hpp>
 
 AbstractFsiCTGrid::AbstractFsiCTGrid(int r_grid, int cth_grid, int phi_grid, MeanFieldNucleus *pnucl, 
-				     double prec, string homedir):
-AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,homedir),filledctgrid(0){
+				     double prec, int integrator, string homedir):
+AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,integrator,homedir),filledctgrid(0){
   number_of_grids=2;
 }  
   

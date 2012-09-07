@@ -39,11 +39,12 @@ public:
    * \param phi_grid gridsizein phi
    * \param pnuclthick pointer to an instance of MeanFieldNucleusThick
    * \param prec precision you want in the integrations
+   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   GlauberGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick *pnuclthick, 
-		   double prec, string dir);/*!< Destructor */
-  virtual ~GlauberGridThick();
+		   double prec, int integrator, string dir);
+  virtual ~GlauberGridThick();/*!< Destructor */
   virtual complex<double> getFsiGridFull_interp(); /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   virtual complex<double> getFsiCtGridFull_interp();/*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   virtual complex<double> getFsiSrcGridFull_interp(); /*!returns the value of the fsi+src grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
@@ -136,8 +137,19 @@ private:
    * \param ap variable parameter list
    */
   void intGlauberPhiCT(const double phi, complex<double> *results, va_list ap);
-  
+  double error;
 
 };
+struct pointHelp{
+  GlauberGridThick* grid;
+  int proton;   
+  int count;
+};
+
+
+void adapt_int_all(unsigned ndim, const double *x, void *fdata,
+       unsigned fdim, double *fval);
+
+
 /** @} */
 #endif
