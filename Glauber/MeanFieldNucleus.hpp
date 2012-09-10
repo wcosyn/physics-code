@@ -16,7 +16,6 @@
 #define GRIDP 201 /*!< \def defines number of gridpoints for the Y_kappa grids*/
 
 
-using namespace std;
 
 #include "constants.hpp"
 
@@ -30,13 +29,13 @@ class MeanFieldNucleus{
 public:
   /*! \brief Constructor
    * \param nucleus an integer denoting which nucleus [0-7] =[He,C,O,Fe,Pb,Al,Cu,Au]
-   * \param dir string containing the dir were all input is located
+   * \param dir std::string containing the dir were all input is located
    */
-  MeanFieldNucleus(const int nucleus = 0, const string & dir = ".");
+  MeanFieldNucleus(const int nucleus = 0, const std::string & dir = ".");
   
   ~MeanFieldNucleus();/*!< Destructor */
   
-  const string getNucleusName() const {return nucleusname;} /*!< Returns a string with the name of the nucleus, f.i. "C" */
+  const std::string getNucleusName() const {return nucleusname;} /*!< Returns a std::string with the name of the nucleus, f.i. "C" */
   int getA() const {return A;} /*!<  Returns the total number of nucleons */
   int getZ() const {return Z;} /*!< Returns the total number of protons*/
   bool getOnlyOneProton() const {return onlyoneproton;} /*!< Returns bool that denotes if the final proton shell has an unpair number of protons*/
@@ -62,7 +61,7 @@ public:
   double getMassA_min_pn() const {return massA_min_pn;} /*!< Returns the mass of the A-2(Z-1,N-1) nucleus*/
   double getMassA_min_nn() const {return massA_min_nn;} /*!< Returns the mass of the A-2(Z,N-2) nucleus*/
   const double* getExcitation() const {return excitation;} /*!< Returns an array with all the excitation energies of the shells*/
-  const string getInputfile() const {return inputfile;} /*!< Returns a string with the location of the inputfile*/
+  const std::string getInputfile() const {return inputfile;} /*!< Returns a std::string with the location of the inputfile*/
   
   double getRange() const {return range;} /*!< Returns the range [fm] in r of the radial wave functions of the nucleons*/
   double getWF_r_step() const {return wf_r_step;} /*!< Returns stepsize of the grid for the radial wave functions*/
@@ -80,7 +79,7 @@ public:
    * \param costheta cos{theta} of the coordinate, spherical
    * \param phi [rad] phi coordinate, spherical
    */
-  void getWaveFunction(complex<double> *wave, const int shellindex, const int m, 
+  void getWaveFunction(std::complex<double> *wave, const int shellindex, const int m, 
 		  const double r, const double costheta, const double phi) const;
   /*! Returns value of F(r) for shellindex
    * \param shellindex shell of the nucleon
@@ -114,7 +113,7 @@ public:
    * \param phi [rad] phi coordinate, spherical
    * \return exp(I*0.5*phi*double(m-spin)); 
    */  
-  complex<double> getWave_Phipart(const int m, const int spin, const double phi) const; 
+  std::complex<double> getWave_Phipart(const int m, const int spin, const double phi) const; 
   /*! Calculates the spherical harmonic Y_lm(x)
    * \param l orbital quantum number
    * \param m l_z
@@ -125,7 +124,7 @@ public:
   
   
 private:
-  string nucleusname; /*!< name of the nucleus*/
+  std::string nucleusname; /*!< name of the nucleus*/
   int A; /*!< Total nucleons*/
   int Z; /*!< Protons*/
   int N; /*!< Neutrons*/
@@ -148,20 +147,20 @@ private:
   double massA_min_pn; /*!< mass of A-2(Z-1)*/
   double massA_min_nn; /*!< mass of A-2(Z)*/
   double *excitation; /*!< array with excitation energy of every shell*/
-  string inputfile; /*!< inputfile for the nucleus*/
-  string rgridfile;/*!< file location of the radial wave funtions*/
+  std::string inputfile; /*!< inputfile for the nucleus*/
+  std::string rgridfile;/*!< file location of the radial wave funtions*/
 
   /*! Set the inputfile for the nucleus
    * \param nucleus an integer denoting which nucleus [0-7] =[He,C,O,Fe,Pb,Al,Cu,Au]
-   * \param dir string containing the dir were all input is located
+   * \param dir std::string containing the dir were all input is located
    */
-  void setInputfile(const int nucleus, const string &dir);//set inputfile
+  void setInputfile(const int nucleus, const std::string &dir);//set inputfile
   /*! Set the inputfile for the radial wave function grids
    * \param nucleus an integer denoting which nucleus [0-7] =[He,C,O,Fe,Pb,Al,Cu,Au]
-   * \param dir string containing the dir were all input is located
+   * \param dir std::string containing the dir were all input is located
    */
-  void setRgridfile(const int nucleus, const string &dir);//set rgridfilefile
-  /*! Set the string containing the name of the nucleus
+  void setRgridfile(const int nucleus, const std::string &dir);//set rgridfilefile
+  /*! Set the std::string containing the name of the nucleus
    * \param nucleus an integer denoting which nucleus [0-7] =[He,C,O,Fe,Pb,Al,Cu,Au]
    */
   void setNucleusName(const int nucleus); /*!< set the stirng with the name of the nucleus */
@@ -174,9 +173,9 @@ private:
   
   /*! Read in the grids for F(r) and G(r) from file
    * \param nucleus an integer denoting which nucleus [0-7] =[He,C,O,Fe,Pb,Al,Cu,Au]
-   * \param dir string containing the dir were all input is located
+   * \param dir std::string containing the dir were all input is located
    */
-  void readRgrids(const int nucleus, const string &dir); 
+  void readRgrids(const int nucleus, const std::string &dir); 
 
   double ***Ykappa; /*!< Array with grid for Y_kappa(costheta) for every shell and m (only positive!!!,[0->1/2,1->3/2,etc]) */
   double ***Yminkappa; /*!< Array with grid for Y_{-kappa(costheta)} for every shell and m (only positive!!!,[0->1/2,1->3/2,etc]) */

@@ -9,6 +9,9 @@
 #ifndef GLAUBERGRIDTHICK_H
 #define GLAUBERGRIDTHICK_H
 
+#include <numint/numint.hpp>
+
+
 #include <cstdarg>
 
 #include "AbstractFsiCTGridThick.hpp"
@@ -40,22 +43,22 @@ public:
    * \param pnuclthick pointer to an instance of MeanFieldNucleusThick
    * \param prec precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
-   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   GlauberGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick *pnuclthick, 
-		   double prec, int integrator, string dir);
+		   double prec, int integrator, std::string dir);
   virtual ~GlauberGridThick();/*!< Destructor */
-  virtual complex<double> getFsiGridFull_interp(); /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
-  virtual complex<double> getFsiCtGridFull_interp();/*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
-  virtual complex<double> getFsiSrcGridFull_interp(); /*!returns the value of the fsi+src grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
-  virtual complex<double> getFsiSrcCtGridFull_interp();/*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  virtual std::complex<double> getFsiGridFull_interp(); /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  virtual std::complex<double> getFsiCtGridFull_interp();/*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  virtual std::complex<double> getFsiSrcGridFull_interp(); /*!returns the value of the fsi+src grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  virtual std::complex<double> getFsiSrcCtGridFull_interp();/*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously
    * \param grid 0: RMSGA <BR>
   * 1: RMSGA+SRC <BR>
   * 2: RMSGA+CT <BR>
   * 3: RMSGA+CT+SRC <BR>
   */
-  virtual complex<double> getFsiGridN_interp(int grid); 
+  virtual std::complex<double> getFsiGridN_interp(int grid); 
 
   virtual void printFsi_grid();/*!< Prints the FSI grid for a certain situation*/
   virtual void printFsi_ct_grid(); /*!< Prints the FSI+CT grid for a certain situation */
@@ -71,15 +74,15 @@ public:
 
   
 protected:
-  complex<double> *****fsi_grid; /*!< grid that contains the fsi factor, also has the fsi+src grid */
-  complex<double> *****fsi_ct_grid; /*!< grid that contains the fsi+ct factor, also has the fsi+src+ct grid */
+  std::complex<double> *****fsi_grid; /*!< grid that contains the fsi factor, also has the fsi+src grid */
+  std::complex<double> *****fsi_ct_grid; /*!< grid that contains the fsi+ct factor, also has the fsi+src+ct grid */
   int ** treshold; /*!< array that checks if calculated glauberphases are close to one, then doesn't compute them for larger r, to save computing time*/
   
   
 private:
 
   
-  virtual void setFilenames(string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
+  virtual void setFilenames(std::string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
 
   
   virtual void constructAllGrids(); /*!< construct both the fsi(+src) and the fsi(+src)+ct grids */
@@ -106,49 +109,89 @@ private:
    * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberR(const double r, complex<double> *results, va_list ap);
+  void intGlauberR(const double r, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over cos(theta), both fsi(+src) and fsi(+src)+ct grid output
    * \param costheta [] cos of theta coordinate
    * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberCosTheta(const double costheta, complex<double> *results, va_list ap);
+  void intGlauberCosTheta(const double costheta, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over phi, both fsi(+src) and fsi(+src)+ct grid output
    * \param phi [rad] phi coordinate
    * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberPhi(const double phi, complex<double> *results, va_list ap);
+  void intGlauberPhi(const double phi, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over r, only fsi(+src)+ct grid output
    * \param r [fm] radial coordinate
    * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberRCT(const double r, complex<double> *results, va_list ap);
+  void intGlauberb_bound(const double b, double *results, va_list ap);
+  /*! function that gets integrated over cos(theta), both fsi(+src) and fsi(+src)+ct grid output
+   * \param costheta [] cos of theta coordinate
+   * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intGlauberz_bound(const double z, double *results, va_list ap);
+  /*! function that gets integrated over phi, both fsi(+src) and fsi(+src)+ct grid output
+   * \param phi [rad] phi coordinate
+   * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intGlauberPhi_bound(const double phi, double *results, va_list ap);
+  /*! function that gets integrated over r, only fsi(+src)+ct grid output
+   * \param r [fm] radial coordinate
+   * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intGlauberRCT(const double r, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over cos(theta), only fsi(+src)+ct grid output
    * \param costheta [] cos of theta coordinate
    * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberCosThetaCT(const double costheta, complex<double> *results, va_list ap);
+  void intGlauberCosThetaCT(const double costheta, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over phi, only fsi(+src)+ct grid output
    * \param phi [rad] phi coordinate
    * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberPhiCT(const double phi, complex<double> *results, va_list ap);
+  void intGlauberPhiCT(const double phi, std::complex<double> *results, va_list ap);
   double error;
 
 };
-struct pointHelp{
-  GlauberGridThick* grid;
-  int proton;   
-  int count;
+// struct pointHelp{
+//   GlauberGridThick* grid;
+//   int proton;   
+//   int count;
+// };
+
+struct Ftor_all {
+
+  static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+    Ftor_all &p = * (Ftor_all *) param;
+    p.f(ret,x[0],x[1],x[2],*p.grid,p.proton);
+  }
+  GlauberGridThick *grid;
+  int proton;
+  void (*f)(numint::vector_z &, double x, double y, double z, GlauberGridThick &, int proton);
+};
+struct Ftor_bound {
+
+  static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
+    Ftor_bound &p = * (Ftor_bound *) param;
+    p.f(ret,x[0],x[1],x[2],*p.grid,p.proton);
+  }
+  GlauberGridThick *grid;
+  int proton;
+  void (*f)(numint::vector_d &, double x, double y, double z, GlauberGridThick &, int proton);
 };
 
-
-void adapt_int_all(unsigned ndim, const double *x, void *fdata,
-       unsigned fdim, double *fval);
+// void adapt_int_all(unsigned ndim, const double *x, void *fdata,
+//        unsigned fdim, double *fval);
+void klaas_int_all(numint::vector_z &, double x, double y, double z, GlauberGridThick &, int proton);
+void klaas_int_bound(numint::vector_d &, double x, double y, double z, GlauberGridThick &, int proton);
 
 
 /** @} */

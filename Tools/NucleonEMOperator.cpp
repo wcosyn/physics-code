@@ -1,4 +1,5 @@
 #include "NucleonEMOperator.hpp"
+using namespace std;
 
 const FourVector<GammaStructure> NucleonEMOperator::gamma_mu=FourVector<GammaStructure>(GammaStructure(0.,0.,1.),GammaStructure(0.,0.,0.,1.),
 				      GammaStructure(0.,0.,0.,0.,1.),GammaStructure(0.,0.,0.,0.,0.,1.));

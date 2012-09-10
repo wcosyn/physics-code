@@ -23,10 +23,10 @@ int main(int argc, char *argv[])
 
   MeanFieldNucleusThick CarbonThick(nucleus,homedir);
   FastParticle proton2(0, 0, 4878,0.,0.,8.,0.,homedir);
-  proton2.printParticle();
-  GlauberGridThick gridthick(10,9,5,&CarbonThick,prec,integr,homedir);
+//   proton2.printParticle();
+  GlauberGridThick gridthick(60,18,5,&CarbonThick,prec,integr,homedir);
   gridthick.addParticle(proton2);
-  gridthick.printParticles();
+//   gridthick.printParticles();
   gridthick.updateGrids();
   gridthick.printFsi_src_ct_grid();
   

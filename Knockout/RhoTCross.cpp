@@ -1,6 +1,7 @@
 #include "RhoTCross.hpp"
 #include <Utilfunctions.hpp>
 
+using namespace std;
 
 RhoTCross::RhoTCross(const int nucleus, const double p_max, const string dir, const bool no_cuts,
   const bool user_set, const double user_sigma, const double precision, const int integr

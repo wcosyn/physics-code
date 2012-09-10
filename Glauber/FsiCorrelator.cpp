@@ -5,7 +5,7 @@
 
 #include "FsiCorrelator.hpp"
 #include <Utilfunctions.hpp>
-
+using namespace std;
 
 #define TOTALGRIDPNTS (getCorr_rgrid())*(getCorr_cthgrid())
 

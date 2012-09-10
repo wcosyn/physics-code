@@ -452,7 +452,7 @@ void DistMomDistrGrid::intRhoPhi(const double phi, complex<double> *results, va_
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   TMFSpinor wave(*getPfsigrid()->getPnucleus(),getShellindex(),m,r,costheta,phi);
-  complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I)
+  complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
 			  *(Upm_bar*wave);  
 
   for(int i=0;i<getPfsigrid()->getNumber_of_grids();i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i,phi);
@@ -468,7 +468,7 @@ void DistMomDistrGrid::intRhoPhiCT(const double phi, complex<double> *results, v
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   TMFSpinor wave(*getPfsigrid()->getPnucleus(),getShellindex(),m,r,costheta,phi);
-  complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I)
+  complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
 			  *(Upm_bar*wave);  
 
   for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i+getPfsigrid()->getNumber_of_grids()/2,phi);

@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+using namespace std;
+
  DoubleNCross::DoubleNCross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucleus, 
 			    double precision, int integr, string dir)
 :homedir(dir),electron(elec),pnucl(pnucleus),reacmodel(NULL),prec(precision),integrator(integr){

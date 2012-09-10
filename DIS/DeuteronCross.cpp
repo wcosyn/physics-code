@@ -1,5 +1,7 @@
 #include "DeuteronCross.hpp"
 
+using namespace std;
+
 DeuteronCross::DeuteronCross(TElectronKinematics elec, string name, bool proton, string strucname,
 			     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset):
 massi(proton? MASSP:MASSN),

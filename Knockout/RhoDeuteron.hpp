@@ -28,7 +28,7 @@ public:
    * \param p_max [MeV] maximum missing momentum in integrations 
    * \param no_cuts apply the experimental cuts in t or z or not 
    */
-  RhoDeuteron(const string wavefunction, const double p_max, const bool no_cuts);
+  RhoDeuteron(const std::string wavefunction, const double p_max, const bool no_cuts);
   ~RhoDeuteron(); /*!< Destructor */
   /*! Calculate cross section integrated over z at fixed t
    * \param results [fm^3GeV^4] all the different computed cross sections
@@ -115,19 +115,19 @@ private:
    * \param results  result: contains the cross section 
    * \param ap variable parameter list
    */
-  void intPmcoh(const double pm, complex<double> *results, va_list ap);
+  void intPmcoh(const double pm, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over cos(theta), all different fsi outputs, coherent cross section
    * \param costheta [] cos of theta coordinate
    * \param results  result: contains the cross section 
    * \param ap variable parameter list
    */
-  void intCosThetacoh(const double costheta, complex<double> *results, va_list ap);
+  void intCosThetacoh(const double costheta, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over phi, all different fsi outputs, coherent cross section
    * \param phi [rad] phi coordinate
    * \param results  result: contains the cross section 
    * \param ap variable parameter list
    */
-  void intPhicoh(const double phi, complex<double> *results, va_list ap);
+  void intPhicoh(const double phi, std::complex<double> *results, va_list ap);
   /*!Calculates an array of momentum distributions for all different FSI situations
    * \param results [MeV^-3] distorted momentum distributions
    * \param Erho [MeV] rho energy

@@ -5,12 +5,11 @@
 #include "TElectronKinematics.h"
 #include <string>
 
-using namespace std;
 
 class DeuteronStructure{
 
 public:
-  DeuteronStructure(TElectronKinematics &el, int proton, string name);
+  DeuteronStructure(TElectronKinematics &el, int proton, std::string name);
   void getStructureFunctions(TKinematics2to2 &kin, double &FL, double &FT, double &FTT, double &FTL, double Einoff) const;
   double getStructure(TKinematics2to2 &kin, double phi, double Einoff) const;
   double getavgStructure(TKinematics2to2 &kin, double Einoff) const;
@@ -19,7 +18,7 @@ public:
 private:
   TElectronKinematics electron;
   int proton;
-  string name;
+  std::string name;
   double massi; 
 };
 

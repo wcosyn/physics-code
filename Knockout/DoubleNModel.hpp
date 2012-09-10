@@ -21,7 +21,6 @@
 #include <string>
 #include <cstdarg>
 
-using namespace std;
 
 /*! \brief A class used to compute A(e,e'NN) amplitudes, with possibility to include SRC in the wave funtions */
 class DoubleNModel{
@@ -36,10 +35,10 @@ public:
    * \param particletype2 type of second ejected nucleon
    * \param prec precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
-   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   DoubleNModel(MeanFieldNucleusThick *pnucleus, bool setpw, bool setSRC, bool setCT, bool setcorr,
-	       int particletype1, int particletype2, double prec, int integrator, string dir);
+	       int particletype1, int particletype2, double prec, int integrator, std::string dir);
   ~DoubleNModel();  /*!< Destructor */
   void setSRC(int set_SRC) {SRC=set_SRC;}
   /*! compute matrix element 
@@ -53,7 +52,7 @@ public:
    * \param m2 m_j of second ejected nucleon (times TWO!!!)
    * \return matrix element [fm^3]
    */
-  complex<double> getMatrixEl(const TKinematics2to3 &tk,int spin1, int spin2, int photonpol, 
+  std::complex<double> getMatrixEl(const TKinematics2to3 &tk,int spin1, int spin2, int photonpol, 
 			      int shellindex1, int shellindex2, int m1, int m2);
   
   /*! helper function for the MC integration, returns the function that gets integrated matrix element in r space
@@ -65,15 +64,15 @@ public:
    * \param phi2
    * \return matrix element in r-space [fm^-3]
    */
-  complex<double> MC_helper(const double r1, const double costheta1, const double phi1, const double r2, const double costheta2, const double phi2) const;  
+  std::complex<double> MC_helper(const double r1, const double costheta1, const double phi1, const double r2, const double costheta2, const double phi2) const;  
   bool getPW() const {return pw;}
   bool getSRC() const {return SRC;}
   bool getCT() const {return CT;}
   bool getCorr() const {return corr;}
-  complex<double> getJ1contrup() const {return J1contrup;}
-  complex<double> getJ1contrdown() const {return J1contrdown;}
-  complex<double> getJ2contrup() const {return J2contrup;}
-  complex<double> getJ2contrdown() const {return J2contrdown;}
+  std::complex<double> getJ1contrup() const {return J1contrup;}
+  std::complex<double> getJ1contrdown() const {return J1contrdown;}
+  std::complex<double> getJ2contrup() const {return J2contrup;}
+  std::complex<double> getJ2contrdown() const {return J2contrdown;}
   Pair * getPair1up() const {return pair1up;}
   Pair * getPair1down() const {return pair1down;}
   Pair * getPair2up() const {return pair2up;}
@@ -108,10 +107,10 @@ private:
   TVector3 pf1; /*!< final nucleon1 momentum*/
   TVector3 pf2; /*!< final nucleon2 momentum */
   TVector3 qvec3; /*!< virtual photon momentum */
-  complex<double> J1contrup; /*!< intermediate contraction of spinor with current 4*4 operator*/
-  complex<double> J1contrdown;/*!< intermediate contraction of spinor with current 4*4 operator*/
-  complex<double> J2contrup;/*!< intermediate contraction of spinor with current 4*4 operator*/
-  complex<double> J2contrdown;/*!< intermediate contraction of spinor with current 4*4 operator*/
+  std::complex<double> J1contrup; /*!< intermediate contraction of spinor with current 4*4 operator*/
+  std::complex<double> J1contrdown;/*!< intermediate contraction of spinor with current 4*4 operator*/
+  std::complex<double> J2contrup;/*!< intermediate contraction of spinor with current 4*4 operator*/
+  std::complex<double> J2contrdown;/*!< intermediate contraction of spinor with current 4*4 operator*/
   
   Pair *pair1up; /*!< Pair wave function for photon interacting with nucleon 1, intermediate spin up*/
   Pair *pair1down;/*!< Pair wave function for photon interacting with nucleon 1, intermediate spin down*/
@@ -120,7 +119,7 @@ private:
   
   GlauberGridThick *gridf1; /*!< pointer to glaubergrid for first fast nucleon */
   GlauberGridThick *gridf2; /*!< pointer to glaubergrid for second fast nucleon */
-  string homedir; /*!< share dir where all input is located */
+  std::string homedir; /*!< share dir where all input is located */
   
   
 

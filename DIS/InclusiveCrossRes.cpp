@@ -2,6 +2,7 @@
 #include "Resonance.hpp"
 #include <Utilfunctions.hpp>
 
+using namespace std;
 
 InclusiveCrossRes::InclusiveCrossRes(bool proton, string strucname, string wavename, 
 				     TElectronKinematics &elec, int sym, int offshell, bool fixpropp, int k_c)
@@ -520,7 +521,7 @@ complex<double> InclusiveCrossRes::scatter(double t, double Q2, size_t res1, siz
   double sigma = (getResonance_vec()[res1].getSigma(Q2)+getResonance_vec()[res2].getSigma(Q2))/2.;
   double beta = (getResonance_vec()[res1].getBeta()+getResonance_vec()[res2].getBeta())/2.;
   double epsilon = (getResonance_vec()[res1].getEpsilon()+getResonance_vec()[res2].getEpsilon())/2.;
-  return getResonance_vec()[res1].getCoeff()*conj(getResonance_vec()[res2].getCoeff())*sigma*(I+epsilon)*exp(beta*t/2.); 
+  return getResonance_vec()[res1].getCoeff()*conj(getResonance_vec()[res2].getCoeff())*sigma*(I_UNIT+epsilon)*exp(beta*t/2.); 
 }
 
 

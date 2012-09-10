@@ -80,40 +80,40 @@ inline bool convergence (const std::vector<T> &r, const std::vector<T> &s,
 
 /// simple axpy-like function
 template<typename T>
-inline void axpy(T ALPHA, const T &X, T &Y) { Y += ALPHA*X; }
+inline void axpy(T alpha, const T &X, T &Y) { Y += alpha*X; }
 /// simple axpy-like function
 template<typename T>
-inline void axpy(T ALPHA, const std::complex<T> &X, std::complex<T> &Y) { Y += ALPHA*X; }
+inline void axpy(T alpha, const std::complex<T> &X, std::complex<T> &Y) { Y += alpha*X; }
 /// simple axpy-like function
 template<typename T>
-inline void axpy(T ALPHA, const std::vector<T> &X, std::vector<T> &Y) {
+inline void axpy(T alpha, const std::vector<T> &X, std::vector<T> &Y) {
   for (unsigned i = 0; i < X.size(); ++i)
-    Y[i] += ALPHA * X[i];
+    Y[i] += alpha * X[i];
 }
 template<typename T>
-inline void axpy(T ALPHA, const std::vector<std::complex<T> > &X,
+inline void axpy(T alpha, const std::vector<std::complex<T> > &X,
                  std::vector<std::complex<T> > &Y) {
   for (unsigned i = 0; i < X.size(); ++i)
-    Y[i] += ALPHA * X[i];
+    Y[i] += alpha * X[i];
 }
 
 /// simple scal-like function
 template<typename T>
-inline void scal(T ALPHA, T &X) { X *= ALPHA; }
+inline void scal(T alpha, T &X) { X *= alpha; }
 /// simple scal-like function
 template<typename T>
-inline void scal(T ALPHA, std::complex<T> &X) { X *= ALPHA; }
+inline void scal(T alpha, std::complex<T> &X) { X *= alpha; }
 /// simple scal-like function
 template<typename T>
-inline void scal(T ALPHA, std::vector<T> &X) {
+inline void scal(T alpha, std::vector<T> &X) {
   for (unsigned i = 0; i < X.size(); ++i)
-    X[i] *= ALPHA;
+    X[i] *= alpha;
 }
 /// simple scal-like function
 template<typename T>
-inline void scal(T ALPHA, std::vector<std::complex<T> > &X) {
+inline void scal(T alpha, std::vector<std::complex<T> > &X) {
   for (unsigned i = 0; i < X.size(); ++i)
-    X[i] *= ALPHA;
+    X[i] *= alpha;
 }
 
 /// simple swap

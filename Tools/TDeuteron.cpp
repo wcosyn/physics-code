@@ -996,7 +996,7 @@ complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(int deuteronPol, int 
       
   //cout << GetUpoff(p)*p.Z()/HBARC*sqrt(1.E09) << " " << GetWpoff1(p)*p.Z()/HBARC*sqrt(1.E09)  << " " << GetWpoff1(p)*p.Z()/HBARC*sqrt(1.E09)
       
-  return -I*p.Z()/HBARC*state;
+  return -I_UNIT*p.Z()/HBARC*state;
 }
 //_____________________________________________________________________
 complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(int deuteronPol, int nucleon2Pol,

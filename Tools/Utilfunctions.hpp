@@ -84,7 +84,7 @@ void freematrix(double **matrix, int n); /*!< free a n*? matrix on the heap*/
 // 	+ t*(comps*grid[sindex][tindex+1][uindex+1]
 // 	+ s*grid[sindex+1][tindex+1][uindex+1]));
 // }
-complex<double> Interp3d(complex<double> ***grid, double s, double t, double u, 
+std::complex<double> Interp3d(std::complex<double> ***grid, double s, double t, double u, 
 			  double comps, double compt, double compu, int sindex, int tindex, int uindex);
 double Interp3d(double ***grid, double s, double t, double u, 
 			  double comps, double compt, double compu, int sindex, int tindex, int uindex);
@@ -155,7 +155,7 @@ template <class T> void rombergerN(void (*function)(double, T*,  va_list), doubl
     if (n >= min) {
       double deviation=0.;
       for(int i=0;i<N;i++) {
-	dev[i] = (DN2[i][n] == complex<double>(0.,0.)) ? 0. : abs((DN2[i][n]-DN1[i][n-1]))/abs(DN2[i][n]);
+	dev[i] = (DN2[i][n] == std::complex<double>(0.,0.)) ? 0. : abs((DN2[i][n]-DN1[i][n-1]))/abs(DN2[i][n]);
 	if(dev[i]>deviation) deviation=dev[i];
       }
      if (((deviation < acc ) ) || ((abs(DN2[0][n]-DN1[0][n-1]) <acc*1e-07 ))) {
@@ -266,7 +266,7 @@ template <class T, class F> void rombergerN(F* object, void (F::*function)(doubl
     if (n >= min) {
       double deviation=0.;
       for(int i=0;i<N;i++) {
-	dev[i] = (DN2[i][n] == complex<double>(0.,0.)) ? 0. : abs((DN2[i][n]-DN1[i][n-1]))/abs(DN2[i][n]);
+	dev[i] = (DN2[i][n] == std::complex<double>(0.,0.)) ? 0. : abs((DN2[i][n]-DN1[i][n-1]))/abs(DN2[i][n]);
 	if(dev[i]>deviation) deviation=dev[i];
       }
      if (((deviation < acc ) ) || ((abs(DN2[0][n]-DN1[0][n-1]) <acc*1e-07 ))) {

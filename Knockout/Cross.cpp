@@ -1,6 +1,7 @@
 #include "Cross.hpp"
 
 #include <cmath>
+using namespace std;
 
 Cross::Cross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucleus, double precision, int integr,
 	     string dir, bool user_sigma, double sigma_screening)

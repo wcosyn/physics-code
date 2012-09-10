@@ -306,10 +306,10 @@ inline T dot(const array<T,N> &x, const array<T,N> &y) {
   return t;
 }
 
-template <class T, unsigned I, unsigned J>
-inline array<T,I*J> KroneckerProduct(const array<T,I> &x, const array<T,J> &y) {
-  array<T,I*J> t;
-  for (typename array<T,I>::size_type i = 0; i < I; ++i)
+template <class T, unsigned N, unsigned J>
+inline array<T,N*J> KroneckerProduct(const array<T,N> &x, const array<T,J> &y) {
+  array<T,N*J> t;
+  for (typename array<T,N>::size_type i = 0; i < N; ++i)
     for (typename array<T,J>::size_type j = 0; j < J; ++j)
       t(i*J+j) = x(i) * y(j);
   return t;
@@ -320,7 +320,7 @@ inline void split(const array<T,2*N> &x, array<T,N> &y1, array<T,N> &y2) {
   for (typename array<T,N>::size_type i = 0; i < N; ++i) {
     y1[i] = x[i]; y2[i] = x[i+N];
   }
-};
+}
 
 }
 

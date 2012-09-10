@@ -113,8 +113,9 @@ enum {
   ENOPROGJ = 28,  /* jacobian evaluations are not improving the solution */
   ETOLF    = 29,  /* cannot reach the specified tolerance in F */
   ETOLX    = 30,  /* cannot reach the specified tolerance in X */
-  ETOLG    = 31,  /* cannot reach the specified tolerance in gradient */
-  EOF      = 32   /* end of file */
+  ETOLG    = 31, /* cannot reach the specified tolerance in gradient */
+  ENDOFFILE   = 32 /* end of file */  
+//   
 } ;
 
 

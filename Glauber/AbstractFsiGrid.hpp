@@ -72,11 +72,11 @@ public:
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    */
   AbstractFsiGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, 
-		  double prec, int integrator, string dir);
+		  double prec, int integrator, std::string dir);
   virtual ~AbstractFsiGrid(); /*!< Destructor */
   
-  const string getFsi_Filename() const{ return fsi_filename;} /*!< returns filename for regular fsi grid */
-  const string getDir() const{ return dir;}/*!< returns dir where all input/output is located */ 
+  const std::string getFsi_Filename() const{ return fsi_filename;} /*!< returns filename for regular fsi grid */
+  const std::string getDir() const{ return dir;}/*!< returns dir where all input/output is located */ 
   int getRgrid() const { return rgrid;}/*!<  returns the gridsize in r*/
   int getCthgrid() const { return cthgrid;}/*!<  returns the gridsize in theta*/
   int getPhigrid() const {return phigrid;}/*!<  returns the gridsize in phi*/
@@ -93,9 +93,9 @@ public:
   int getCthindex() const {return cthindex;}/*!<  returns the index for theta used in the 3d interpolation*/
   int getPhiindex() const {return phiindex;}/*!<  returns the index for phi used in the 3d interpolation */
   MeanFieldNucleus *getPnucleus() const {return pnucleus;}/*!<  returns the pointer to the MeanFieldNucleus instance */
-  vector<FastParticle> & getParticles() {return particles;}/*!<  returns the vector with all particles subject to isi/fsi */
-  vector<int> getKnockoutLevels() const {return knockoutlevels;}/*!< returns the vector with all the shell index values of knocked out nucleons */
-  vector<int> getKnockoutM() const {return knockoutm;}/*!<  returns the vector with all the m values of knocked out nucleons */
+  std::vector<FastParticle> & getParticles() {return particles;}/*!<  returns the vector with all particles subject to isi/fsi */
+  std::vector<int> getKnockoutLevels() const {return knockoutlevels;}/*!< returns the vector with all the shell index values of knocked out nucleons */
+  std::vector<int> getKnockoutM() const {return knockoutm;}/*!<  returns the vector with all the m values of knocked out nucleons */
   bool getAllinplane() const {return allinplane;}/*!<  returns 1 if all the isi/fsi particles lie in the x-z plane */
   double getPrec() const {return prec;}/*!< returns the integration precision */
   int getIntegrator() const{return integrator;} /*!< returns the integrator type */
@@ -129,31 +129,31 @@ public:
   
   //interpolation functions, one without arguments is a pure virtual function
   /*!returns the value of the fsi grid for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiGridFull_interpvec(const TVector3 &rvec); 
+  std::complex<double> getFsiGridFull_interpvec(const TVector3 &rvec); 
   /*!returns the value of the fsi grid for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiGridFull_interp3(const double r, const double costheta, const double phi); 
+  std::complex<double> getFsiGridFull_interp3(const double r, const double costheta, const double phi); 
   /*!returns the value of the fsi grid for a certain situation at coordinate (costheta,phi), r has been set previously */
-  complex<double> getFsiGridFull_interp2(const double costheta, const double phi);
+  std::complex<double> getFsiGridFull_interp2(const double costheta, const double phi);
   /*!returns the value of the fsi grid for a certain situation at coordinate (phi), r&theta have been set previously */
-  complex<double> getFsiGridFull_interp1(const double phi);
+  std::complex<double> getFsiGridFull_interp1(const double phi);
   /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously
    ,pure virtual function!!*/
-  virtual complex<double> getFsiGridFull_interp()=0;
+  virtual std::complex<double> getFsiGridFull_interp()=0;
 
   //interpolation functions, one without arguments is a pure virtual function
   /*!returns the value of a grid of choice for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiGridN_interpvec(const int grid, const TVector3 &rvec); 
+  std::complex<double> getFsiGridN_interpvec(const int grid, const TVector3 &rvec); 
   /*!returns the value of a grid of choice for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiGridN_interp3(const int grid, const double r, const double costheta, const double phi); 
+  std::complex<double> getFsiGridN_interp3(const int grid, const double r, const double costheta, const double phi); 
   /*!returns the value of a grid of choice for a certain situation at coordinate (costheta,phi), r has been set previously */
-  complex<double> getFsiGridN_interp2(const int grid, const double costheta, const double phi);
+  std::complex<double> getFsiGridN_interp2(const int grid, const double costheta, const double phi);
   /*!returns the value of a grid of choice for a certain situation at coordinate (phi), r&theta have been set previously */
-  complex<double> getFsiGridN_interp1(const int grid, const double phi);
+  std::complex<double> getFsiGridN_interp1(const int grid, const double phi);
   /*!returns the value of a grid of choice for a certain situation at coordinate (r,theta,phi) that has been set previously
    ,pure virtual function!!*/
-  virtual complex<double> getFsiGridN_interp(const int grid)=0;
+  virtual std::complex<double> getFsiGridN_interp(const int grid)=0;
   /*! 3d interpolation of a grid after a certain coordinate (r,costheta,phi) has been set! */
-  virtual complex<double> getInterp(complex<double> ***grid);  //3d interpolation of grid
+  virtual std::complex<double> getInterp(std::complex<double> ***grid);  //3d interpolation of grid
   
   
   virtual void fillGrids();  /*!< fills the fsi grids that are used for interpolation */
@@ -170,7 +170,7 @@ public:
   double getSinphi_hit() const{return sinphi_hit;}
   
 protected:
-  virtual void setFilenames(string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
+  virtual void setFilenames(std::string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
   bool filledgrid; /*!< denotes if the grid has been filled */
   bool filledallgrid; /*!< denotes if allthe (possible) grids have been filled */
   double r_hit;  /*!< r coordinate of the hard interaction point, what the grid depens on */
@@ -180,13 +180,13 @@ protected:
   double phi_hit;/*!< phi coordinate of the hard interaction point, what the grid depens on */
   double cosphi_hit;/*!< cos of phi coordinate of the hard interaction point, what the grid depens on */
   double sinphi_hit;/*!< sin of phi coordinate of the hard interaction point, what the grid depens on */
-  string fsi_filename; /*!< filename for regular fsi grid */
+  std::string fsi_filename; /*!< filename for regular fsi grid */
   int number_of_grids; /*!<number of fsi grids */
   double prec; /*!< integration precision */
   int integrator; /*!< https://www.facebook.com/*/
   
 private:
-  string dir;  /*!< dir where all input/output is located */ 
+  std::string dir;  /*!< dir where all input/output is located */ 
   
   int rgrid; /*!<  the gridsize in r*/
   int cthgrid; /*!<  the gridsize in theta*/
@@ -210,9 +210,9 @@ private:
   int protonknockout;  /*!<  total protons that are knocked out from nucleus*/
   int neutronknockout; /*!<  total neutrons that are knocked out from nucleus*/
     
-  vector<FastParticle> particles; /*!<  the vector with all particles subject to isi/fsi */
-  vector<int> knockoutlevels; /*!< the vector with all the shell index values of knocked out nucleons */
-  vector<int> knockoutm; /*!<  the vector with all the m values of knocked out nucleons */
+  std::vector<FastParticle> particles; /*!<  the vector with all particles subject to isi/fsi */
+  std::vector<int> knockoutlevels; /*!< the vector with all the shell index values of knocked out nucleons */
+  std::vector<int> knockoutm; /*!<  the vector with all the m values of knocked out nucleons */
   
   //pure virtual functions!!!
   virtual void constructAllGrids()=0; /*!< construct all grids */

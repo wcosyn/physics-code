@@ -11,7 +11,6 @@
 
 #include <string>
 
-using namespace std;
 
 #include <constants.hpp>
 #include "MeanFieldNucleus.hpp"
@@ -32,9 +31,9 @@ class MeanFieldNucleusThick : public MeanFieldNucleus{
 public:
   /*! Constructor
    * \param nucleus an integer denoting which nucleus [0-7] =[He,C,O,Fe,Pb,Al,Cu,Au]
-   * \param dir string containing the dir were all input is located
+   * \param dir std::string containing the dir were all input is located
    */
-  MeanFieldNucleusThick(const int nucleus = 0, const string & dir = "."); 
+  MeanFieldNucleusThick(const int nucleus = 0, const std::string & dir = "."); 
   
   ~MeanFieldNucleusThick(); /*!< Destructor */
   //ALL DENSITIES ARE TIMES R^2 ALREADY!!!!!!!!!!!!

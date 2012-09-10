@@ -51,8 +51,7 @@ template<typename T, unsigned N>
 inline void _cube_romb_step(const mdfunction<T,N> &f, cube_romb_work<T,N> &WORK, T &s, unsigned n,
                             unsigned j, bool periodic) {
 
-  std::cout << "START STEP " << j << " " << n << std::endl;
-
+  
   T &sum = WORK.sum;
   T &t   = WORK.t;
   numint::array<double,N> &a = WORK.a;

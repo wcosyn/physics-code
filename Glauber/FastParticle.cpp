@@ -8,6 +8,8 @@ using namespace std;
 #include <constants.hpp>
 #include <Utilfunctions.hpp>
 
+using namespace std;
+
 FastParticle::FastParticle(const int type, const int inc, const double momentum,
 			   const double ptheta, const double pphi, const double hard_scale, const double Gamma, const string dir)
 :particletype(type),
@@ -256,13 +258,13 @@ double FastParticle::getBetasq(int level, MeanFieldNucleus *pnucleus) const{
 
 complex<double> FastParticle::getScatterfront(int level, MeanFieldNucleus *pnucleus) const{
   return getSigma(level,pnucleus)
-			  *(1.-I*getEpsilon(level,pnucleus))
+			  *(1.-I_UNIT*getEpsilon(level,pnucleus))
 			  /(4.*PI*getBetasq(level,pnucleus));
 }
 
 complex<double> FastParticle::getScatterfront(bool proton) const{
   return getSigma(proton)
-			  *(1.-I*getEpsilon(proton))
+			  *(1.-I_UNIT*getEpsilon(proton))
 			  /(4.*PI*getBetasq(proton));
 }
 

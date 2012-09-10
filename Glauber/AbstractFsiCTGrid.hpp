@@ -35,35 +35,35 @@ public:
    * \param pnucl pointer to an instance of MeanFieldNucleus
    * \param prec you want in the integration
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
-   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   AbstractFsiCTGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, 
-		    double prec, int integrator, string dir);
+		    double prec, int integrator, std::string dir);
   virtual ~AbstractFsiCTGrid(); /*!< Destructor */
 
-  const string getFsi_Ct_Filename() const;/*!< returns filename for regular fsi+ct grid */
+  const std::string getFsi_Ct_Filename() const;/*!< returns filename for regular fsi+ct grid */
 
   virtual void printFsi_ct_grid()=0; /*!< Prints the FSI+CT grid for a certain situation, pure virtual function!! */
 
   /*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiCtGridFull_interpvec(const TVector3 &rvec);
+  std::complex<double> getFsiCtGridFull_interpvec(const TVector3 &rvec);
   /*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiCtGridFull_interp3(const double r, const double costheta, const double phi);
+  std::complex<double> getFsiCtGridFull_interp3(const double r, const double costheta, const double phi);
   /*!returns the value of the fsi+ct grid for a certain situation at coordinate (costheta,phi), r has been set previously */
-  complex<double> getFsiCtGridFull_interp2(const double costheta, const double phi);
+  std::complex<double> getFsiCtGridFull_interp2(const double costheta, const double phi);
   /*!returns the value of the fsi+ct grid for a certain situation at coordinate (phi), r&theta have been set previously */
-  complex<double> getFsiCtGridFull_interp1(const double phi);
+  std::complex<double> getFsiCtGridFull_interp1(const double phi);
   /*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously
    ,pure virtual function!!*/
-  virtual complex<double> getFsiCtGridFull_interp()=0;
+  virtual std::complex<double> getFsiCtGridFull_interp()=0;
   
   virtual void fillGrids();  /*!< fills the fsi grids that are used for interpolation */
   virtual void updateGrids();  /*!< updates the fsi grids that are used for interpolation */
 
 protected:
-  virtual void setFilenames(string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
+  virtual void setFilenames(std::string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
   bool filledctgrid; /*!< denotes if the ct grid has been filled */
-  string fsi_ct_filename; /*!< filename for fsi+ct grid */
+  std::string fsi_ct_filename; /*!< filename for fsi+ct grid */
 
   
 private:

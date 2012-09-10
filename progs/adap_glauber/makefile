@@ -11,17 +11,17 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
-#   CC      = 	icpc
- CC      = 	g++
+  CC      = 	icpc
+#  CC      = 	g++
 
 #		Flags
 # OPTFLAG	=	-O3 -fPIC
-# OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
+OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
 WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG)  $(DBGFLAG)#$(GPFLAG)  #  #$(STATIC)
+CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(GPFLAG) #$(DBGFLAG)  #$(STATIC)
 
 #		Executable file
 EFILE   = 	../../bin/adaptest

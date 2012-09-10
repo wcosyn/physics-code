@@ -24,13 +24,13 @@ public:
    * \param inputnucleus pointer to an instance of MeanFieldNucleusThick
    * \param rgrid gridsize in r 
    * \param cthgrid gridsize in costheta
-   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   FsiCorrelator(MeanFieldNucleusThick *inputnucleus, const int rgrid, const int cthgrid,
-    const string dir);
+    const std::string dir);
   ~FsiCorrelator();/*!< Destructor */
   
-  const string getCorrFilename() const; /*!< returns filename for the gamma function grids */
+  const std::string getCorrFilename() const; /*!< returns filename for the gamma function grids */
   int getCorr_rgrid() const;/*!<  returns the gridsize in r*/
   int getCorr_cthgrid() const;/*!<  returns the gridsize in theta*/
   double getInvRstep() const;/*!<  returns the inverse of the stepsize of the grid in r*/
@@ -83,7 +83,7 @@ public:
   void printCorrGridAll() const;/*!< Print the gamma grid for the total,proton and neutron density */
   
 private:
-  string corrfilename; /*!< filename for the gamma grids */
+  std::string corrfilename; /*!< filename for the gamma grids */
   int corr_rgrid; /*!<  the gridsize in r*/
   int corr_cthgrid; /*!<  the gridsize in theta*/
   int corr_phigrid; /*!<  the gridsize in phi, not really used but somehow needed (it ain't broken so I keep it for now*/
@@ -102,7 +102,7 @@ private:
   double *x; /*!< grid that helps to construct corr grid*/
   
   MeanFieldNucleusThick *pnucleus; /*!<  the pointer to the MeanFieldNucleusThick instance */
-  void setCorrFilename(const string dir); /*!< set the filename of the gamma grids */
+  void setCorrFilename(const std::string dir); /*!< set the filename of the gamma grids */
   /*! Constructs the gamma grid for one of the densities 
    * \param density pointer to the density
    * \param corrgrid array with the gamma grid that will be filled

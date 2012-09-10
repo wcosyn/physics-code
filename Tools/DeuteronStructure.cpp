@@ -7,6 +7,7 @@
 #include <cstdarg>
 #include <cstdlib>
 
+using namespace std;
 
 
 DeuteronStructure::DeuteronStructure(TElectronKinematics &el, int pr, string nm)

@@ -14,7 +14,6 @@
 #include <TKinematics2to2.h>
 #include <TInterpolatingWavefunction.h>
 
-using namespace std;
 
 /*! \brief Has methods to compute a ton of deuteron momentum distributions (distorted too) */
 class DeuteronMomDistr{
@@ -35,11 +34,11 @@ public:
    * \param betaoff [GeV\f$^-2 \f$] eikonal parameter, off-shell slope parameter of particle in final-state with spectator
    * \param lambda [GeV\f$^2 \f$] cutoff parameter for off-shell part
    */
-  DeuteronMomDistr(string name, double massi, int offshell, double sigma, double beta, double epsilon, double betaoff, double lambda);
+  DeuteronMomDistr(std::string name, double massi, int offshell, double sigma, double beta, double epsilon, double betaoff, double lambda);
     /*! Constructor
    * \param name Deuteron wave function name, see TDeuteron
    */
-  DeuteronMomDistr(string name);
+  DeuteronMomDistr(std::string name);
   ~DeuteronMomDistr(); /*!<Destructor */
   /*! Computes plane-wave momentum distribution, does not depend on phi
    * \param kin contains the hadron kinematics
@@ -58,7 +57,7 @@ public:
    * \param M2 other deuteron polarization (-1,0,1)
    * \return plane-wave momentum distribution [MeV^-3]
    */
-  complex<double> getMomDistrpwcoh(TVector3 &pvec,TVector3 &pvec2,int M, int M2) const;
+  std::complex<double> getMomDistrpwcoh(TVector3 &pvec,TVector3 &pvec2,int M, int M2) const;
   /*! Computes distorted momentum distribution for DIS production off deuteron
    * \param kin contains the hadron kinematics
    * \param phi angle between hadron and electron scattering plane
@@ -106,25 +105,25 @@ private:
    * \param result result: contains fsi part of DIS distorted momentum distribution
    * \param ap variable parameter list
    */
-  void totdens_qt(const double qt, complex<double>* result, va_list ap);
+  void totdens_qt(const double qt, std::complex<double>* result, va_list ap);
    /*! function that gets integrated over q_phi (perpendicular to photon momentum)
    * \param qphi [] azimuthal angle of momentum transfer in fsi perpendicular to photon momentum 
    * \param result result: contains fsi part of DIS distorted momentum distribution
    * \param ap variable parameter list
    */
-  void totdens_qphi(const double qphi, complex<double>* result, va_list ap);
+  void totdens_qphi(const double qphi, std::complex<double>* result, va_list ap);
   /*! function that gets integrated over q_t (perpendicular to photon momentum)
    * \param qt [MeV] momentum transfer component perpendicular to photon momentum 
    * \param result result: contains fsi part of quasi-elastic momentum distribution
    * \param ap variable parameter list
    */
-  void totdens_qt_simple(const double qt, complex<double>* result, va_list ap);
+  void totdens_qt_simple(const double qt, std::complex<double>* result, va_list ap);
    /*! function that gets integrated over q_phi (perpendicular to photon momentum)
    * \param qphi [] azimuthal angle of momentum transfer in fsi perpendicular to photon momentum 
    * \param result result: contains fsi part of QE distorted momentum distribution
    * \param ap variable parameter list
    */
-  void totdens_qphi_simple(const double qphi, complex<double>* result, va_list ap);
+  void totdens_qphi_simple(const double qphi, std::complex<double>* result, va_list ap);
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass
    * \param pt [MeV] final transverse spectator momentum
@@ -136,7 +135,7 @@ private:
    * \param t [MeV^2] momentum transfer squared
    * \return \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
    */
-  complex<double> scatter(double t);
+  std::complex<double> scatter(double t);
   
 };
 /** @} */

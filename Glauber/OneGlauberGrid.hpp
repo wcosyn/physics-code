@@ -39,13 +39,13 @@ public:
    * \param pnucl pointer to an instance of MeanFieldNucleus
    * \param prec precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
-   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   OneGlauberGrid(const int r_grid, const int cth_grid, MeanFieldNucleus *pnucl, 
-		 double prec, int integrator, string dir);
+		 double prec, int integrator, std::string dir);
   virtual ~OneGlauberGrid();/*!< Destructor */
   /*! 2d interpolation of a grid after a certain coordinate (r,costheta) has been set! */
-  virtual complex<double> getInterp(complex<double> ***grid);  
+  virtual std::complex<double> getInterp(std::complex<double> ***grid);  
   /*! add particle subject to isi/fsi, checks to see the vector only contains max one particle 
    *\param newparticle pointer to instance of FastParticle you want to add*/
   virtual void addParticle(FastParticle& newparticle);
@@ -66,7 +66,7 @@ private:
   virtual void calcGlauberphasesCt(const int i, const int j, const int k);
    /*! set filenames of the grids, includes "One" prefix 
     *\param dir dir where all input/output is located */ 
-  virtual void setFilenames(string dir);
+  virtual void setFilenames(std::string dir);
   
   
   /*! function that gets integrated over b, both fsi and fsi+ct grid output

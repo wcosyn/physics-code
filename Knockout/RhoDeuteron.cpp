@@ -3,6 +3,9 @@
 #include <FastParticle.hpp>
 #define MASS_N (MASSP+MASSN)*0.5E-03
 
+using namespace std;
+
+
 RhoDeuteron::RhoDeuteron(const string name, const double p_max,const bool no_cuts):
 pmax(p_max),
 nocuts(no_cuts),

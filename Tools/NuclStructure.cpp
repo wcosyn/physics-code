@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <cstring>
 
+using namespace std;
+
 extern"C"{
     void f1f2in09_(double *Z, double *A, double *QSQ, double *Wsq, double *F1, double *F2, double *rc);
 }

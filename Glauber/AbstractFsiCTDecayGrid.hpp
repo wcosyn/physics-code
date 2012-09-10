@@ -36,41 +36,41 @@ public:
    * \param pnucl pointer to an instance of MeanFieldNucleus
    * \param prec precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
-   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   AbstractFsiCTDecayGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, 
-			 double prec, int integrator, string dir);
+			 double prec, int integrator, std::string dir);
   virtual ~AbstractFsiCTDecayGrid(); /*!< Destructor */
 
   virtual void printFsi_decay_grid()=0; /*!< Prints the FSI+decay grid for a certain situation, pure virtual function!! */
   virtual void printFsi_ct_decay_grid()=0; /*!< Prints the FSI+ct+decay grid for a certain situation, pure virtual function!! */
 
   /*!returns the value of the fsi+ct+decay grid for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiCtDecayGridFull_interpvec(const TVector3 &rvec);
+  std::complex<double> getFsiCtDecayGridFull_interpvec(const TVector3 &rvec);
   /*!returns the value of the fsi+ct+decay grid for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiCtDecayGridFull_interp3(const double r, const double costheta, const double phi);
+  std::complex<double> getFsiCtDecayGridFull_interp3(const double r, const double costheta, const double phi);
   /*!returns the value of the fsi+ct+decay grid for a certain situation at coordinate (costheta,phi), r has been set previously */
-  complex<double> getFsiCtDecayGridFull_interp2(const double costheta, const double phi);
+  std::complex<double> getFsiCtDecayGridFull_interp2(const double costheta, const double phi);
   /*!returns the value of the fsi+ct+decay grid for a certain situation at coordinate (phi), r&theta have been set previously */
-  complex<double> getFsiCtDecayGridFull_interp1(const double phi);
+  std::complex<double> getFsiCtDecayGridFull_interp1(const double phi);
   /*!returns the value of the fsi+ct+decay grid for a certain situation at coordinate (r,theta,phi) that has been set previously
    ,pure virtual function!!*/
-  virtual complex<double> getFsiCtDecayGridFull_interp()=0;
+  virtual std::complex<double> getFsiCtDecayGridFull_interp()=0;
   
   /*!returns the value of the fsi+decay grid for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiDecayGridFull_interpvec(const TVector3 &rvec);
+  std::complex<double> getFsiDecayGridFull_interpvec(const TVector3 &rvec);
   /*!returns the value of the fsi+decay grid for a certain situation at coordinate (r,costheta,phi) */
-  complex<double> getFsiDecayGridFull_interp3(const double r, const double costheta, const double phi);
+  std::complex<double> getFsiDecayGridFull_interp3(const double r, const double costheta, const double phi);
   /*!returns the value of the fsi+decay grid for a certain situation at coordinate (costheta,phi), r has been set previously */
-  complex<double> getFsiDecayGridFull_interp2(const double costheta, const double phi);
+  std::complex<double> getFsiDecayGridFull_interp2(const double costheta, const double phi);
   /*!returns the value of the fsi+decay grid for a certain situation at coordinate (phi), r&theta have been set previously */
-  complex<double> getFsiDecayGridFull_interp1(const double phi);
+  std::complex<double> getFsiDecayGridFull_interp1(const double phi);
   /*!returns the value of the fsi+decay grid for a certain situation at coordinate (r,theta,phi) that has been set previously
    ,pure virtual function!!*/
-  virtual complex<double> getFsiDecayGridFull_interp()=0;
+  virtual std::complex<double> getFsiDecayGridFull_interp()=0;
 
 protected:
-  virtual void setFilenames(string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
+  virtual void setFilenames(std::string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
 
 
   

@@ -10,6 +10,7 @@
 #include <gsl/gsl_monte_miser.h>
 #include <gsl/gsl_monte_vegas.h>
 
+using namespace std;
 
 
 
@@ -250,11 +251,11 @@ complex<double> DoubleNModel::MC_helper(const double r1, const double costheta1,
   
   return ((getJ1contrup()*getPair1up()->getwf(getCorr(),r1,costheta1,phi1,r2,costheta2,phi2)+
 		getJ1contrdown()*getPair1down()->getwf(getCorr(),r1,costheta1,phi1,r2,costheta2,phi2))
-	       * exp(-I*((getPf1()-getQvec3())*r1vec+getPf2()*r2vec)*INVHBARC)
+	       * exp(-I_UNIT*((getPf1()-getQvec3())*r1vec+getPf2()*r2vec)*INVHBARC)
 		* glf1r1*glf2r2
 	- (getJ2contrup()*getPair2up()->getwf(getCorr(),r2,costheta2,phi2,r1,costheta1,phi1)+
 		getJ2contrdown()*getPair2down()->getwf(getCorr(),r2,costheta2,phi2,r1,costheta1,phi1))
-	       * exp(-I*((getPf2()-getQvec3())*r1vec+getPf1()*r2vec)*INVHBARC)
+	       * exp(-I_UNIT*((getPf2()-getQvec3())*r1vec+getPf1()*r2vec)*INVHBARC)
 		* glf1r2*glf2r1)*r1*r1*r2*r2;
   
   

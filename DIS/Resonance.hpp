@@ -30,7 +30,6 @@
 #define RESONANCE_HPP
 
 #include <complex>
-using namespace std;
 
 /*! \brief A class for a certain resonance with scattering parameters and others */
 class Resonance{
@@ -45,7 +44,7 @@ public:
    * \param betaoffin [GeV^-2] off-shell beta parameter
    * \param lambdain [GeV^2] lambda cutoff off-shell parameter
    */
-  Resonance(double m, complex<double> coeff, double sigma0=40., double sigmaslope=0.,
+  Resonance(double m, std::complex<double> coeff, double sigma0=40., double sigmaslope=0.,
 	    double betain=6.,double epsilonin=-0.5,double betaoffin=8., double lambdain=1.2);
   Resonance(const Resonance &copy); /*!< Copy Constructor */
   Resonance& operator=(const Resonance&); /*!< copy assignment */
@@ -65,9 +64,9 @@ public:
   double getLambda() const{return lambda;}
   double getMass2() const{return mass2;} /*!< [MeV^2] returns mass squared */
   double getMass() const{return mass;}
-  complex<double> getCoeff() const{return coeff;}
+  std::complex<double> getCoeff() const{return coeff;}
   
-  void setCoeff(complex<double> coeff_in){coeff=coeff_in;} /*!< change the coefficient for the DIS amplitude */
+  void setCoeff(std::complex<double> coeff_in){coeff=coeff_in;} /*!< change the coefficient for the DIS amplitude */
   
 private:
   double mass; /*!< mass [MeV]*/
@@ -78,7 +77,7 @@ private:
   double betaoff; /*!< [MeV^-2] off-shell beta parameter*/
   double epsilon; /*!<  real part of scattering amplitude*/
   double lambda; /*!< [MeV^2] lambda cutoff off-shell parameter*/
-  complex<double> coeff; /*!< coefficient with which the resonance gets weighted in the DIS amplitude */  
+  std::complex<double> coeff; /*!< coefficient with which the resonance gets weighted in the DIS amplitude */  
   
 };
 

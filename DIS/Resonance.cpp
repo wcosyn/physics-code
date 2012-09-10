@@ -1,6 +1,7 @@
 #include "Resonance.hpp"
 #include <constants.hpp>
 
+using namespace std;
 
 Resonance::Resonance(double m, complex<double> coefficient, double s0, double slope,
 		     double betain,double epsilonin,double betaoffin, double lambdain): 

@@ -33,16 +33,16 @@ public:
    * \param pfsigrid pointer to a fsi/ct grid
    * \param prec precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
-   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   DistMomDistrGrid(int shellindex, const double max_p, const int p_grid, const int cth_grid, const int phi_grid,
-		   AbstractFsiCTGrid *pfsigrid, const double prec, const int integrator, string dir);
+		   AbstractFsiCTGrid *pfsigrid, const double prec, const int integrator, std::string dir);
   ~DistMomDistrGrid(); /*!< Destructor */
   
   int getShellindex() const{return shellindex;} /*!< shell level */
-  const string getRho_Filename() const{return rho_filename;} /*!< returns filename for regular rho grid */
-  const string getRhoCT_Filename() const{return rhoct_filename;} /*!< returns filename for rho+ct grid */
-  const string getDir() const{return dir;}/*!< returns dir where all input/output is located */ 
+  const std::string getRho_Filename() const{return rho_filename;} /*!< returns filename for regular rho grid */
+  const std::string getRhoCT_Filename() const{return rhoct_filename;} /*!< returns filename for rho+ct grid */
+  const std::string getDir() const{return dir;}/*!< returns dir where all input/output is located */ 
   int getPgrid() const{return pgrid;}/*!<  returns the gridsize in r*/
   int getCthgrid() const{return cthgrid;}/*!<  returns the gridsize in theta*/
   int getPhigrid() const{return phigrid;}/*!<  returns the gridsize in phi*/
@@ -92,9 +92,9 @@ public:
   
 private:
   int shellindex; /*!< shell level */
-  string rho_filename; /*!< filename for regular rho grid */
-  string rhoct_filename; /*!< filename for rho+ct grid */
-  string dir;  /*!< dir where all input/output is located */ 
+  std::string rho_filename; /*!< filename for regular rho grid */
+  std::string rhoct_filename; /*!< filename for rho+ct grid */
+  std::string dir;  /*!< dir where all input/output is located */ 
   double mass; /*!< mass interacting nucleon */ 
   double pmax; /*!< max size of p (MeV) */ 
   int level;  /*!< shell index level */ 
@@ -113,7 +113,7 @@ private:
   int pindex; /*!<  the index for r used in the 3d interpolation*/
   int cthindex; ;/*!<  the index for theta used in the 3d interpolation*/
   int phiindex; /*!<  the index for phi used in the 3d interpolation */
-  void setFilenames(string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
+  void setFilenames(std::string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
   bool filledgrid; /*!< denotes if the grid has been filled */
   bool filledctgrid; /*!< denotes if the ct grid has been filled */
   bool filledallgrid; /*!< denotes if allthe (possible) grids have been filled */
@@ -148,37 +148,37 @@ private:
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intRhoR(const double r, complex<double> *results, va_list ap);
+  void intRhoR(const double r, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over cos(theta), both fsi and fsi+ct grid output
    * \param costheta [] cos of theta coordinate
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intRhoCosTheta(const double costheta, complex<double> *results, va_list ap);
+  void intRhoCosTheta(const double costheta, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over phi, both fsi and fsi+ct grid output
    * \param phi [rad] phi coordinate
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intRhoPhi(const double phi, complex<double> *results, va_list ap);
+  void intRhoPhi(const double phi, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over r, only fsi+ct grid output
    * \param r [fm] radial coordinate
    * \param results result: contains the glauberphases (fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intRhoRCT(const double r, complex<double> *results, va_list ap);
+  void intRhoRCT(const double r, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over cos(theta), only fsi+ct grid output
    * \param costheta [] cos of theta coordinate
    * \param results result: contains the glauberphases (fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intRhoCosThetaCT(const double costheta, complex<double> *results, va_list ap);
+  void intRhoCosThetaCT(const double costheta, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over phi, only fsi+ct grid output
    * \param phi [rad] phi coordinate
    * \param results result: contains the glauberphases (fsi+Ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intRhoPhiCT(const double phi, complex<double> *results, va_list ap);
+  void intRhoPhiCT(const double phi, std::complex<double> *results, va_list ap);
   
   /*! function that gets integrated over r, plane-wave thingy
    * \param r [fm] radial coordinate

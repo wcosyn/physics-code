@@ -6,14 +6,13 @@
 #include <DeuteronStructure.hpp>
 #include <TDeuteron.h>
 
-using namespace std;
 
 
 
 class InclusiveCross{
   
 public:
-  InclusiveCross(bool proton, string strucname, string wavename, TElectronKinematics &elec, int symm, int offshell, 
+  InclusiveCross(bool proton, std::string strucname, std::string wavename, TElectronKinematics &elec, int symm, int offshell, 
 		 double sigmain=40.,double betain=8., double epsilonin=-0.5, double betaoffin=8., double lambdain=1.2);
   ~InclusiveCross();
   double calc_F2Dinc(double Q2,double x);
@@ -48,7 +47,7 @@ private:
   void int_qt(double qt, double *results, va_list ap);
   void int_qphi(double qphi, double *results, va_list ap); 
   void get_prz(double pt, double Er, TKinematics2to2 *pkin, int first);
-  complex<double> scatter(double t);
+  std::complex<double> scatter(double t);
 
 //   void int_pperp_fsi(double pperp, double *result, va_list ap);
 //   void int_qt_bis(double qt, double *results, va_list ap);

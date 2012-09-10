@@ -11,7 +11,7 @@
 class DeuteronCross{
   
 public:
-  DeuteronCross(TElectronKinematics elec, string name, bool proton, string strucname,
+  DeuteronCross(TElectronKinematics elec, std::string name, bool proton, std::string strucname,
     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset);
   ~DeuteronCross();
   double getavgCross(TKinematics2to2 &kin, int pw, double Einoff);

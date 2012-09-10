@@ -5,7 +5,7 @@
 #include <TMFSpinor.hpp>
 #include <Utilfunctions.hpp>
 
-
+using namespace std;
 
 
 
@@ -277,7 +277,8 @@ void Model::intJPhi(const double phi, complex<double> *results, va_list ap){
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   
-  results[1]=results[0]= barcontract*TMFSpinor(*pnucl,shell,mm,r,costheta,phi)*exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I);
+  results[1]=results[0]= barcontract*TMFSpinor(*pnucl,shell,mm,r,costheta,phi)*
+    exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT);
    if(!pw){
     if(SRC){
       results[0]*=dynamic_cast<AbstractFsiGridThick *>(grid)->getFsiSrcGridFull_interp1(phi);
@@ -300,7 +301,7 @@ void Model::intJPhi12(const double phi, complex<double> *results, va_list ap){
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   TMFSpinor wave(*pnucl,shell,mm,r,costheta,phi);
-  complex<double> exp_pr=exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I);
+  complex<double> exp_pr=exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT);
   results[1]=results[0]= barcontract0down*wave*exp_pr;
   results[2]=results[3]= barcontractmindown*wave*exp_pr;
   results[4]=results[5]= barcontractplusdown*wave*exp_pr;

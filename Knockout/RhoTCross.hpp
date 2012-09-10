@@ -32,7 +32,7 @@ public:
    * \param precision precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    */
-  RhoTCross(const int nucleus, const double pmax, const string dir, const bool no_cuts, 
+  RhoTCross(const int nucleus, const double pmax, const std::string dir, const bool no_cuts, 
 	    const bool userset, const double usersigma, const double precision, const int integrator);
   ~RhoTCross(); /*!<Destructor */
   /*! Calculate cross section integrated over z at fixed t
@@ -70,7 +70,7 @@ public:
   double getPrec() const{return prec;} /*!< returns the precision */
   
 private:
-  string homedir; /*!< share dir where all input is located */
+  std::string homedir; /*!< share dir where all input is located */
   double pmax; /*!< maximum p_miss in integrations*/
   bool nocuts; /*!< experimental cuts in t or z applied? */
   bool userset; /*!< has sigma parameter been set by user?*/

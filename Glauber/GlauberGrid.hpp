@@ -34,18 +34,18 @@ public:
    * \param pnucl pointer to an instance of MeanFieldNucleus
    * \param prec precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
-   * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   GlauberGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus *pnucl, 
-	      double prec, int integrator, string dir);
+	      double prec, int integrator, std::string dir);
   virtual ~GlauberGrid();/*!< Destructor */
-  virtual complex<double> getFsiGridFull_interp();   /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
-  virtual complex<double> getFsiCtGridFull_interp(); /*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  virtual std::complex<double> getFsiGridFull_interp();   /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
+  virtual std::complex<double> getFsiCtGridFull_interp(); /*!returns the value of the fsi+ct grid for a certain situation at coordinate (r,theta,phi) that has been set previously*/
   /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously
    * \param grid 0: RMSGA <BR>
   * 1: RMSGA+CT <BR>
   */
-  virtual complex<double> getFsiGridN_interp(int grid); 
+  virtual std::complex<double> getFsiGridN_interp(int grid); 
   
   virtual void printFsi_grid();/*!< Prints the FSI grid for a certain situation*/
   virtual void printFsi_ct_grid(); /*!< Prints the FSI+CT grid for a certain situation */
@@ -56,8 +56,8 @@ public:
   virtual void print_grid(int gridindex);
   
 protected:
-  complex<double> *****fsi_grid; /*!< grid that contains the fsi factor */
-  complex<double> *****fsi_ct_grid; /*!< grid that contains the fsi+ct factor*/
+  std::complex<double> *****fsi_grid; /*!< grid that contains the fsi factor */
+  std::complex<double> *****fsi_ct_grid; /*!< grid that contains the fsi+ct factor*/
   int ** treshold; /*!< array that checks if calculated glauberphases are close to one, then doesn't compute them for larger r, to save computing time*/
     
   
@@ -65,7 +65,7 @@ private:
 
 /*! set filenames of the grids, includes "Gl" prefix 
    *\param dir dir where all input/output is located */ 
-  virtual void setFilenames(string dir);  
+  virtual void setFilenames(std::string dir);  
 
   
   virtual void constructAllGrids(); /*!< construct both the fsi and the fsi+ct grids */
@@ -92,37 +92,37 @@ private:
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberR(const double r, complex<double> *results, va_list ap);
+  void intGlauberR(const double r, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over cos(theta), both fsi and fsi+ct grid output
    * \param costheta [] cos of theta coordinate
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberCosTheta(const double costheta, complex<double> *results, va_list ap);
+  void intGlauberCosTheta(const double costheta, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over phi, both fsi and fsi+ct grid output
    * \param phi [rad] phi coordinate
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberPhi(const double phi, complex<double> *results, va_list ap);
+  void intGlauberPhi(const double phi, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over r, only fsi+ct grid output
    * \param r [fm] radial coordinate
    * \param results result: contains the glauberphases (fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberRCT(const double r, complex<double> *results, va_list ap);
+  void intGlauberRCT(const double r, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over cos(theta), only fsi+ct grid output
    * \param costheta [] cos of theta coordinate
    * \param results result: contains the glauberphases (fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberCosThetaCT(const double costheta, complex<double> *results, va_list ap);
+  void intGlauberCosThetaCT(const double costheta, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over phi, only fsi+ct grid output
    * \param phi [rad] phi coordinate
    * \param results result: contains the glauberphases (fsi+Ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberPhiCT(const double phi, complex<double> *results, va_list ap);
+  void intGlauberPhiCT(const double phi, std::complex<double> *results, va_list ap);
   
 
 };

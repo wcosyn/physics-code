@@ -2,12 +2,11 @@
 #define NUCLEONEMOPERATOR_HPP
 
 #include <iostream>
-#include <complex>
+// #include <complex>
 #include "constants.hpp"
 #include "FourVector.h"
 #include "GammaStructure.h"
 
-using namespace std;
 
 class NucleonEMOperator{
 public:

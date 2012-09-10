@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <Utilfunctions.hpp>
+using namespace std;
 
 DeuteronMomDistr::DeuteronMomDistr(string name, double mass, int offshells, double sigmain, double betain, double epsilonin,
   double betaoffin, double lambdain):
@@ -122,7 +123,7 @@ double DeuteronMomDistr::getMomDistrfsi(TKinematics2to2 &kin, double phi){
       double qestimate=0.,thestimate=0.;
       rombergerN(this,&DeuteronMomDistr::totdens_qt,0.,1.E03,1,&result,PREC,3,10,&qestimate, 
 				  &kin,M,spinr, Er,phi,&thestimate);
-      wave+=I/(32.*PI*PI*kin.GetKlab()*sqrt(Er))*result/sqrt(MASSD/(2.*(MASSD-Er)));
+      wave+=I_UNIT/(32.*PI*PI*kin.GetKlab()*sqrt(Er))*result/sqrt(MASSD/(2.*(MASSD-Er)));
 
       fsitotal+=norm(wave);
     }
@@ -214,7 +215,7 @@ void DeuteronMomDistr::get_przprime(double pt2, double Er, TKinematics2to2 *pkin
 }
 
 complex<double> DeuteronMomDistr::scatter(double t){
-  return sigma*(I+epsilon)*exp(beta*t/2.); 
+  return sigma*(I_UNIT+epsilon)*exp(beta*t/2.); 
 }
 
 //all in MeV!
@@ -229,7 +230,7 @@ double DeuteronMomDistr::getMomDistrfsi(TVector3 &pvec, double nu, double qvec, 
       double qestimate=0.,thestimate=0.;
       rombergerN(this,&DeuteronMomDistr::totdens_qt_simple,0.,1.E03,1,&result,PREC,3,6,&qestimate, 
 				  &pvec, M,spinr, Er,nu,qvec,s,massother, &thestimate);
-      wave+=I/(32.*PI*PI*qvec*sqrt(Er))*result/sqrt(MASSD/(2.*(MASSD-Er)));
+      wave+=I_UNIT/(32.*PI*PI*qvec*sqrt(Er))*result/sqrt(MASSD/(2.*(MASSD-Er)));
 
       fsitotal+=norm(wave);
     }

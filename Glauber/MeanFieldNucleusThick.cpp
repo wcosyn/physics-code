@@ -5,6 +5,8 @@
 #include "MeanFieldNucleusThick.hpp"
 #include <Utilfunctions.hpp>
 
+using namespace std;
+
 //constructor
 MeanFieldNucleusThick::MeanFieldNucleusThick(const int nucleus, const string & dir)
  : MeanFieldNucleus(nucleus,dir) {

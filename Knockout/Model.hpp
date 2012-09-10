@@ -20,7 +20,6 @@
 #include <string>
 #include <cstdarg>
 
-using namespace std;
 
 /*! \brief A class Model, used to compute A(e,e'N) amplitudes */
 class Model{
@@ -35,7 +34,7 @@ public:
    * \param user_sigma does the user want to change sigma?
    * \param sigma_screening [%] screening change of sigma
    */
-  Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double prec, int integrator, string dir, 
+  Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double prec, int integrator, std::string dir, 
 	bool user_sigma, double sigma_screening=0.);
   ~Model(); /*!< Destructor */
   void setSRC(int setSRC) {SRC=setSRC;} /*!< sets SRC in the Glauber FSI */
@@ -51,7 +50,7 @@ public:
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \return matrix element in [ fm \f$^{3/2}\f$]
    */
-  complex<double> getMatrixEl(TKinematics2to2 &tk,int spinout, int photonpol, int shellindex, int m, int CT, int pw, int current);
+  std::complex<double> getMatrixEl(TKinematics2to2 &tk,int spinout, int photonpol, int shellindex, int m, int CT, int pw, int current);
   /*! Computes amplitudes \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu \phi^{D}_{\alpha}(\vec{p}_m,m) \f$
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) <BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
@@ -74,7 +73,7 @@ public:
    * \param photonpol polarization of the photon (-1,0 or +1)
    * \return [dimensionless] off-shell amplitude
    */
-  complex<double> getFreeMatrixEl(TKinematics2to2 &tk, int current, int spinin, int spinout, int photonpol);
+  std::complex<double> getFreeMatrixEl(TKinematics2to2 &tk, int current, int spinin, int spinout, int photonpol);
   double getPrec() const{return prec;} /*!< returns precision in the integrations */
   bool getUsersigma() const{return usersigma;} /*!< returns 1 if user has changed sigma with some screening */
   double getSigmascreening() const{return sigmascreening;} /*!< [%] returns screening change to sigma */
@@ -95,7 +94,7 @@ private:
   Matrix<1,4> barcontractmindown; /*!< intermediate contraction of bar spinor with 4*4 current  */
   Matrix<1,4> barcontractplusdown; /*!< intermediate contraction of bar spinor with 4*4 current  */
   TVector3 pm; /*!< missing momentum */
-  string homedir; /*!< contains the share dir with all input */
+  std::string homedir; /*!< contains the share dir with all input */
   bool usersigma; /*!< has the user set some screening to sigma */
   double sigmascreening; /*!< [%] screening effect to sigma */
   
@@ -106,40 +105,40 @@ private:
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intJR(const double r, complex<double> *results, va_list ap);
+  void intJR(const double r, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over cos(theta), integral of matrix element
    * \param costheta [] cos of theta coordinate
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intJCosTheta(const double costheta, complex<double> *results, va_list ap);
+  void intJCosTheta(const double costheta, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over phi, integral of matrix element
    * \param phi [rad] phi coordinate
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intJPhi(const double phi, complex<double> *results, va_list ap);
+  void intJPhi(const double phi, std::complex<double> *results, va_list ap);
     /*! function that gets integrated over r, computes 12 different amplitudes:
      * 3 photon polarizations, 2 final nucleon helicities, including and excluding CT
    * \param r [fm] radial coordinate
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intJR12(const double r, complex<double> *results, va_list ap);
+  void intJR12(const double r, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over cos(theta), computes 12 different amplitudes:
      * 3 photon polarizations, 2 final nucleon helicities, including and excluding CT
    * \param costheta [] cos of theta coordinate
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intJCosTheta12(const double costheta, complex<double> *results, va_list ap);
+  void intJCosTheta12(const double costheta, std::complex<double> *results, va_list ap);
   /*! function that gets integrated over phi,computes 12 different amplitudes:
      * 3 photon polarizations, 2 final nucleon helicities, including and excluding CT
    * \param phi [rad] phi coordinate
    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intJPhi12(const double phi, complex<double> *results, va_list ap);
+  void intJPhi12(const double phi, std::complex<double> *results, va_list ap);
   
   
 

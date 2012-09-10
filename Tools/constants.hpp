@@ -7,7 +7,7 @@
 #ifndef CONST_H
 #define CONST_H
 
-#define PI 3.14159265 /*!< \def defines constant pi */
+#define PI 3.1415926535897932385 /*!< \def defines constant pi */
 #define PREC 1e-04 /*!< \def defines precision of the integrations */
 #define MASSN 939.56536 /*!< \def defines proton mass [MeV] */
 #define MASSP 938.27231 /*!< \def defines neutron mass [MeV] */
@@ -15,7 +15,7 @@
 #define MASSRHO 775.49 /*!< \def defines rho0 mass [MeV] */
 #define HBARC 197.327  /*!< \def defines hbar*c [MeV*fm] */
 #define ALPHA 0.00729735253 /*!< \def defines finestructure constant [] */
-#define I complex<double>(0.,1.) /*!< \def defines complex number I */
+#define I_UNIT complex<double>(0.,1.) /*!< \def defines complex number I */
 #define INVHBARC 0.00506770453255 /*!< \def defines (hbar*c)^-1 [(MeV*fm)^-1] */
 #define MUP 2.79 /*!< \def defines proton anomalous magnetic moment */
 #define DEGRTORAD 0.0174532925 /*!< \def defines Pi/180 */

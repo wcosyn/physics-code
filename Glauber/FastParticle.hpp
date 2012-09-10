@@ -34,7 +34,7 @@ public:
    * \param dir homedir where all input is located
    */
   FastParticle(const int particletype, const int incoming, const double momentum, const double theta, const double phi, 
-	       const double hard_scale, const double Gamma, string dir);
+	       const double hard_scale, const double Gamma, std::string dir);
   /*! Constructor
    * \param particletype which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
    * \param incoming is it the beam hadron particle?
@@ -44,7 +44,7 @@ public:
    * \param dir homedir where all input is located
    */
   FastParticle(const int particletype, const int incoming, const TVector3 &pvec, 
-	       const double hard_scale, const double Gamma, string dir);
+	       const double hard_scale, const double Gamma, std::string dir);
   /*! Copy Constructor
    * \param Copy copy
    */
@@ -133,12 +133,12 @@ public:
    * \param pnucleus pointer to a class instance of the nucleus 
    * \return [fm^2] frontfactor scattering
    */
-  complex<double> getScatterfront(int level, MeanFieldNucleus *pnucleus) const;
+  std::complex<double> getScatterfront(int level, MeanFieldNucleus *pnucleus) const;
   /*! [fm^2] return scattering parameter front factor (\f$\frac{\sigma(1-I\epsilon)}{4\pi\beta^2}\f$)
    * \param proton scattering with proton (1) or neutron (0)
    * \return [fm^2] frontfactor scattering
    */
-  complex<double> getScatterfront(bool proton) const;
+  std::complex<double> getScatterfront(bool proton) const;
   /*! for CT calc, return ratio between sigma_eff and regular sigma
    * \param zmom distance along path of outgoing particle
    * \return ratio
@@ -221,10 +221,10 @@ public:
    * \param sigman [fm^2]  sigma parameter for scattering with neutron
    * \param beta2n [fm^2]  beta^2 parameter for scattering with neutron
    * \param epsn []  epsilon parameter for scattering with neutron
-   * \param dir string that contains the dir where all input is located
+   * \param dir std::string that contains the dir where all input is located
    */
   static void setPionGlauberData(double mom, double &sigmap, double &beta2p, 
-				 double &epsp, double &sigman, double &beta2n, double &epsn, string dir);
+				 double &epsp, double &sigman, double &beta2n, double &epsn, std::string dir);
   /*! Sets the glauber parameters for a pion fast particle through interpolation of static arrays
    * \param particletype which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
    * \param mom [MeV]  particle momentum

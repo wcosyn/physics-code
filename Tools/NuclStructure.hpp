@@ -3,13 +3,12 @@
 
 #include <string>
 
-using namespace std;
 
 class NuclStructure{
   
 public:
-  NuclStructure(bool proton, double var1, double var2, int switchvar, string name);
-  NuclStructure(bool proton, double Q2in, double xin, double Wsqin, string name);
+  NuclStructure(bool proton, double var1, double var2, int switchvar, std::string name);
+  NuclStructure(bool proton, double Q2in, double xin, double Wsqin, std::string name);
   void getF_Alekhin(double &F1, double &F2);
   double getF1_Alekhin();
   double getF2_Alekhin();
@@ -22,14 +21,14 @@ public:
   void getF(double &F1, double &F2);
   double getF1();
   double getF2();
-  const string getName() const{return name;}
+  const std::string getName() const{return name;}
   
   
 private:
-  string name;
+  std::string name;
   bool proton;
   double mass;
-  string dir;
+  std::string dir;
   double x;
   double Q2;
   double Wsq;

@@ -1,6 +1,8 @@
 #include "InclusiveCross.hpp"
 #include <Utilfunctions.hpp>
 
+using namespace std;
+
 InclusiveCross::InclusiveCross(bool proton, string strucname, string wavename, TElectronKinematics &elec, int sym, int offshell, 
 		double sigmain,double betain, double epsilonin, double betaoffin, double lambdain)
 :sigma(sigmain/10.*INVHBARC*INVHBARC),
@@ -299,7 +301,7 @@ void InclusiveCross::get_prz(double pt2, double Er, TKinematics2to2 *pkin, int f
 }
 
 complex<double> InclusiveCross::scatter(double t){
-  return sigma*(I+epsilon)*exp(beta*t/2.); 
+  return sigma*(I_UNIT+epsilon)*exp(beta*t/2.); 
 }
 
 /*

@@ -22,11 +22,11 @@ TMFSpinor::TMFSpinor(const MeanFieldNucleus &nucleus, int shellindex, int m, dou
 
   double Gr=nucleus.getWave_G(shellindex,r);
   double Fr=nucleus.getWave_F(shellindex,r);
-  complex<double> spinup=exp(I*0.5*phi*double(m-1));
-  complex<double> spindown=exp(I*0.5*phi*double(m+1));
-  (*fComponent)(0,0)=I*Gr*spinup*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m-1,1,1, nucleus.getJ_array()[shellindex],m)*
+  complex<double> spinup=exp(I_UNIT*0.5*phi*double(m-1));
+  complex<double> spindown=exp(I_UNIT*0.5*phi*double(m+1));
+  (*fComponent)(0,0)=I_UNIT*Gr*spinup*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m-1,1,1, nucleus.getJ_array()[shellindex],m)*
 		      nucleus.Spher_Harm(nucleus.getL_array()[shellindex], (m-1)/2, costheta);
-  (*fComponent)(1,0)=I*Gr*spindown*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m+1,1,-1, nucleus.getJ_array()[shellindex],m)*
+  (*fComponent)(1,0)=I_UNIT*Gr*spindown*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m+1,1,-1, nucleus.getJ_array()[shellindex],m)*
 		      nucleus.Spher_Harm(nucleus.getL_array()[shellindex], (m+1)/2, costheta);
   (*fComponent)(2,0)=-Fr*spinup*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getLbar_array()[shellindex],m-1,1,1, nucleus.getJ_array()[shellindex],m)*
 		      nucleus.Spher_Harm(nucleus.getLbar_array()[shellindex], (m-1)/2, costheta);
@@ -38,11 +38,11 @@ TMFSpinor::TMFSpinor(const MeanFieldNucleus &nucleus, int shellindex, int m, dou
 
 TMFSpinor::TMFSpinor(const MeanFieldNucleus &nucleus, int shellindex, int m, double Gr, double Fr, double costheta, double phi)
 : TObject(), fComponent(new Matrix<4,1>){
-  complex<double> spinup=exp(I*0.5*phi*double(m-1));
-  complex<double> spindown=exp(I*0.5*phi*double(m+1));
-  (*fComponent)(0,0)=I*Gr*spinup*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m-1,1,1, nucleus.getJ_array()[shellindex],m)*
+  complex<double> spinup=exp(I_UNIT*0.5*phi*double(m-1));
+  complex<double> spindown=exp(I_UNIT*0.5*phi*double(m+1));
+  (*fComponent)(0,0)=I_UNIT*Gr*spinup*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m-1,1,1, nucleus.getJ_array()[shellindex],m)*
 		      nucleus.Spher_Harm(nucleus.getL_array()[shellindex], (m-1)/2, costheta);
-  (*fComponent)(1,0)=I*Gr*spindown*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m+1,1,-1, nucleus.getJ_array()[shellindex],m)*
+  (*fComponent)(1,0)=I_UNIT*Gr*spindown*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m+1,1,-1, nucleus.getJ_array()[shellindex],m)*
 		      nucleus.Spher_Harm(nucleus.getL_array()[shellindex], (m+1)/2, costheta);
   (*fComponent)(2,0)=-Fr*spinup*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getLbar_array()[shellindex],m-1,1,1, nucleus.getJ_array()[shellindex],m)*
 		      nucleus.Spher_Harm(nucleus.getLbar_array()[shellindex], (m-1)/2, costheta);
@@ -54,10 +54,10 @@ TMFSpinor::TMFSpinor(const MeanFieldNucleus &nucleus, int shellindex, int m, dou
 
 TMFSpinor::TMFSpinor(const MeanFieldNucleus &nucleus, int shellindex, int m, double Gr, double Fr, const double *Spher_harm, double phi)
 : TObject(), fComponent(new Matrix<4,1>){
-  complex<double> spinup=exp(I*0.5*phi*double(m-1));
-  complex<double> spindown=exp(I*0.5*phi*double(m+1));
-  (*fComponent)(0,0)=I*Gr*spinup*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m-1,1,1, nucleus.getJ_array()[shellindex],m)*Spher_harm[0];
-  (*fComponent)(1,0)=I*Gr*spindown*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m+1,1,-1, nucleus.getJ_array()[shellindex],m)*Spher_harm[1];
+  complex<double> spinup=exp(I_UNIT*0.5*phi*double(m-1));
+  complex<double> spindown=exp(I_UNIT*0.5*phi*double(m+1));
+  (*fComponent)(0,0)=I_UNIT*Gr*spinup*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m-1,1,1, nucleus.getJ_array()[shellindex],m)*Spher_harm[0];
+  (*fComponent)(1,0)=I_UNIT*Gr*spindown*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getL_array()[shellindex],m+1,1,-1, nucleus.getJ_array()[shellindex],m)*Spher_harm[1];
   (*fComponent)(2,0)=-Fr*spinup*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getLbar_array()[shellindex],m-1,1,1, nucleus.getJ_array()[shellindex],m)*Spher_harm[2];
   (*fComponent)(3,0)=-Fr*spindown*TDeuteron::Wavefunction::ClebschGordan(2*nucleus.getLbar_array()[shellindex],m+1,1,-1, nucleus.getJ_array()[shellindex],m)*Spher_harm[3];
   
@@ -68,11 +68,11 @@ TMFSpinor::TMFSpinor(const MeanFieldNucleus &nucleus, int shellindex, int m, dou
 
   double Gr=nucleus.getWave_G(shellindex,r);
   double Fr=nucleus.getWave_F(shellindex,r);
-  complex<double> spinup=exp(I*0.5*phi*double(m-1));
-  complex<double> spindown=exp(I*0.5*phi*double(m+1));
-  (*fComponent)(0,0)=I*Gr*spinup*CG(0,0)*
+  complex<double> spinup=exp(I_UNIT*0.5*phi*double(m-1));
+  complex<double> spindown=exp(I_UNIT*0.5*phi*double(m+1));
+  (*fComponent)(0,0)=I_UNIT*Gr*spinup*CG(0,0)*
 		      nucleus.Spher_Harm(nucleus.getL_array()[shellindex], (m-1)/2, costheta);
-  (*fComponent)(1,0)=I*Gr*spindown*CG(1,0)*
+  (*fComponent)(1,0)=I_UNIT*Gr*spindown*CG(1,0)*
 		      nucleus.Spher_Harm(nucleus.getL_array()[shellindex], (m+1)/2, costheta);
   (*fComponent)(2,0)=-Fr*spinup*CG(2,0)*
 		      nucleus.Spher_Harm(nucleus.getLbar_array()[shellindex], (m-1)/2, costheta);
@@ -84,11 +84,11 @@ TMFSpinor::TMFSpinor(const MeanFieldNucleus &nucleus, int shellindex, int m, dou
 
 TMFSpinor::TMFSpinor(const MeanFieldNucleus &nucleus, int shellindex, int m, double Gr, double Fr, double costheta, double phi, Matrix<4,1> CG)
 : TObject(), fComponent(new Matrix<4,1>){
-  complex<double> spinup=exp(I*0.5*phi*double(m-1));
-  complex<double> spindown=exp(I*0.5*phi*double(m+1));
-  (*fComponent)(0,0)=I*Gr*spinup*CG(0,0)*
+  complex<double> spinup=exp(I_UNIT*0.5*phi*double(m-1));
+  complex<double> spindown=exp(I_UNIT*0.5*phi*double(m+1));
+  (*fComponent)(0,0)=I_UNIT*Gr*spinup*CG(0,0)*
 		      nucleus.Spher_Harm(nucleus.getL_array()[shellindex], (m-1)/2, costheta);
-  (*fComponent)(1,0)=I*Gr*spindown*CG(1,0)*
+  (*fComponent)(1,0)=I_UNIT*Gr*spindown*CG(1,0)*
 		      nucleus.Spher_Harm(nucleus.getL_array()[shellindex], (m+1)/2, costheta);
   (*fComponent)(2,0)=-Fr*spinup*CG(2,0)*
 		      nucleus.Spher_Harm(nucleus.getLbar_array()[shellindex], (m-1)/2, costheta);
@@ -99,10 +99,10 @@ TMFSpinor::TMFSpinor(const MeanFieldNucleus &nucleus, int shellindex, int m, dou
 
 TMFSpinor::TMFSpinor(double Gr, double Fr, int m, const double *Spher_harm, double phi, Matrix<4,1> CG)
 : TObject(), fComponent(new Matrix<4,1>){
-  complex<double> spinup=exp(I*0.5*phi*double(m-1));
-  complex<double> spindown=exp(I*0.5*phi*double(m+1));
-  (*fComponent)(0,0)=I*Gr*spinup*Spher_harm[0]*CG(0,0);
-  (*fComponent)(1,0)=I*Gr*spindown*Spher_harm[1]*CG(1,0);
+  complex<double> spinup=exp(I_UNIT*0.5*phi*double(m-1));
+  complex<double> spindown=exp(I_UNIT*0.5*phi*double(m+1));
+  (*fComponent)(0,0)=I_UNIT*Gr*spinup*Spher_harm[0]*CG(0,0);
+  (*fComponent)(1,0)=I_UNIT*Gr*spindown*Spher_harm[1]*CG(1,0);
   (*fComponent)(0,0)=-Fr*spinup*Spher_harm[2]*CG(2,0);
   (*fComponent)(1,0)=-Fr*spindown*Spher_harm[3]*CG(3,0);
 }
