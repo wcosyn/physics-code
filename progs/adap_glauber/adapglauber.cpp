@@ -22,12 +22,13 @@ int main(int argc, char *argv[])
   string homedir=argv[4];
 
   MeanFieldNucleusThick CarbonThick(nucleus,homedir);
-  FastParticle proton2(0, 0, 4878,0.,0.,8.,0.,homedir);
+  FastParticle proton2(0, 0, 4878,2.,0.,8.,0.,homedir);
 //   proton2.printParticle();
-  GlauberGridThick gridthick(60,18,5,&CarbonThick,prec,integr,homedir);
+  GlauberGridThick gridthick(3,3,3,&CarbonThick,prec,integr,homedir);
   gridthick.addParticle(proton2);
 //   gridthick.printParticles();
   gridthick.updateGrids();
+  gridthick.printFsi_ct_grid();
   gridthick.printFsi_src_ct_grid();
   
 }
