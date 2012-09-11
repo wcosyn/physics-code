@@ -449,14 +449,14 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
 	numint::array<double,3> lower = {{1.E-06,getParticles()[0].getHitz(),0.}};
 	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),getPnucleusthick()->getRange(),2.*PI}};
 	
-	Ftor_bound F;
+	GlauberGridThick::Ftor_bound F;
 	F.grid = this;
 	F.proton = proton;
 	numint::mdfunction<numint::vector_d,3> mdf;
 	mdf.func = &Ftor_bound::exec;
 	mdf.param = &F;
 	vector<double> ret(4,0.);
-	F.f=klaas_int_bound;
+	F.f=GlauberGridThick::klaas_int_bound;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	fsi_grid[0][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*ret[0];
@@ -468,14 +468,14 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
 	numint::array<double,3> lower = {{0.,-1.,0.}};
 	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),1.,2.*PI}};
 	
-	Ftor_all F;
+	GlauberGridThick::Ftor_all F;
 	F.grid = this;
 	F.proton = proton;
 	numint::mdfunction<numint::vector_z,3> mdf;
 	mdf.func = &Ftor_all::exec;
 	mdf.param = &F;
 	vector<complex<double> > ret(4,0.);
-	F.f=klaas_int_all;
+	F.f=GlauberGridThick::klaas_int_all;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	fsi_grid[0][proton][i][j][k]=ret[0];
@@ -532,14 +532,14 @@ void GlauberGridThick::calcGlauberphasesCt(const int i, const int j, const int k
 	numint::array<double,3> lower = {{1.E-06,getParticles()[0].getHitz(),0.}};
 	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),getPnucleusthick()->getRange(),2.*PI}};
 	
-	Ftor_bound F;
+	GlauberGridThick::Ftor_bound F;
 	F.grid = this;
 	F.proton = proton;
 	numint::mdfunction<numint::vector_d,3> mdf;
 	mdf.func = &Ftor_bound::exec;
 	mdf.param = &F;
 	vector<double> ret(2,0.);
-	F.f=klaas_int_bound_ct;
+	F.f=GlauberGridThick::klaas_int_bound_ct;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	fsi_ct_grid[0][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*ret[0];
@@ -549,14 +549,14 @@ void GlauberGridThick::calcGlauberphasesCt(const int i, const int j, const int k
 	numint::array<double,3> lower = {{0.,-1.,0.}};
 	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),1.,2.*PI}};
 	
-	Ftor_all F;
+	GlauberGridThick::Ftor_all F;
 	F.grid = this;
 	F.proton = proton;
 	numint::mdfunction<numint::vector_z,3> mdf;
 	mdf.func = &Ftor_all::exec;
 	mdf.param = &F;
 	vector<complex<double> > ret(2,0.);
-	F.f=klaas_int_all_ct;
+	F.f=GlauberGridThick::klaas_int_all_ct;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	fsi_ct_grid[0][proton][i][j][k]=ret[0];

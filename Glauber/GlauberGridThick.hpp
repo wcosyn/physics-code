@@ -71,6 +71,28 @@ public:
   * 3: RMSGA+CT+SRC <BR>
   */
   virtual void print_grid(int grid);
+  
+  /*! struct that is used for integrators (dirty ones)*/
+  struct Ftor_all {
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+      Ftor_all &p = * (Ftor_all *) param;
+      p.f(ret,x[0],x[1],x[2],*p.grid,p.proton);
+    }
+    GlauberGridThick *grid; /*!< pointer to the grid where the integration is performed */
+    int proton; /*!< proton glauberphase or not */
+    /*! integrandum 
+    * \param res results
+    * \param x first integration variable
+    * \param y second integration variable
+    * \param z third integration variable
+    * \param grid the grid instance
+    * \param proton proton glauberphase or not
+    */
+    void (*f)(numint::vector_z & res, double x, double y, double z, GlauberGridThick & grid, int proton);
+  };
+
+
 
   
 protected:
@@ -177,6 +199,35 @@ private:
    */
   void intGlauberPhi_bound_ct(const double phi, double *results, va_list ap);
   double error;
+  /*! struct that is used for integrators (clean ones)*/
+  struct Ftor_bound {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
+      Ftor_bound &p = * (Ftor_bound *) param;
+      p.f(ret,x[0],x[1],x[2],*p.grid,p.proton);
+    }
+    GlauberGridThick *grid;/*!< pointer to the grid where the integration is performed */
+    int proton;/*!< proton glauberphase or not */
+    /*! integrandum 
+    * \param res results
+    * \param x first integration variable
+    * \param y second integration variable
+    * \param z third integration variable
+    * \param grid the grid instance
+    * \param proton proton glauberphase or not
+    */
+    void (*f)(numint::vector_d &, double x, double y, double z, GlauberGridThick &, int proton);
+  };
+
+  /*! integrandum function  (dirty ones)*/
+  static void klaas_int_all(numint::vector_z & ret, double r, double costheta, double phi, GlauberGridThick & grid, int proton);
+  /*! integrandum function (clean ones)*/
+  static void klaas_int_bound(numint::vector_d &, double b, double z, double phi, GlauberGridThick & grid, int proton);
+  /*! integrandum function  (dirty ones), only CT*/
+  static void klaas_int_all_ct(numint::vector_z & ret, double r, double costheta, double phi, GlauberGridThick & grid, int proton);
+  /*! integrandum function (clean ones), only CT*/
+  static void klaas_int_bound_ct(numint::vector_d &, double b, double z, double phi, GlauberGridThick & grid, int proton);
 
 };
 // struct pointHelp{
@@ -184,56 +235,6 @@ private:
 //   int proton;   
 //   int count;
 // };
-/*! struct that is used for integrators (dirty ones)*/
-struct Ftor_all {
-  /*! integrandum function */
-  static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
-    Ftor_all &p = * (Ftor_all *) param;
-    p.f(ret,x[0],x[1],x[2],*p.grid,p.proton);
-  }
-  GlauberGridThick *grid; /*!< pointer to the grid where the integration is performed */
-  int proton; /*!< proton glauberphase or not */
-  /*! integrandum 
-   * \param res results
-   * \param x first integration variable
-   * \param y second integration variable
-   * \param z third integration variable
-   * \param grid the grid instance
-   * \param proton proton glauberphase or not
-   */
-  void (*f)(numint::vector_z & res, double x, double y, double z, GlauberGridThick & grid, int proton);
-};
-
-/*! struct that is used for integrators (clean ones)*/
-struct Ftor_bound {
-
-  /*! integrandum function */
-  static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
-    Ftor_bound &p = * (Ftor_bound *) param;
-    p.f(ret,x[0],x[1],x[2],*p.grid,p.proton);
-  }
-  GlauberGridThick *grid;/*!< pointer to the grid where the integration is performed */
-  int proton;/*!< proton glauberphase or not */
-  /*! integrandum 
-   * \param res results
-   * \param x first integration variable
-   * \param y second integration variable
-   * \param z third integration variable
-   * \param grid the grid instance
-   * \param proton proton glauberphase or not
-   */
-  void (*f)(numint::vector_d &, double x, double y, double z, GlauberGridThick &, int proton);
-};
-
-/*! integrandum function  (dirty ones)*/
-void klaas_int_all(numint::vector_z & ret, double r, double costheta, double phi, GlauberGridThick & grid, int proton);
-/*! integrandum function (clean ones)*/
-void klaas_int_bound(numint::vector_d &, double b, double z, double phi, GlauberGridThick & grid, int proton);
-/*! integrandum function  (dirty ones), only CT*/
-void klaas_int_all_ct(numint::vector_z & ret, double r, double costheta, double phi, GlauberGridThick & grid, int proton);
-/*! integrandum function (clean ones), only CT*/
-void klaas_int_bound_ct(numint::vector_d &, double b, double z, double phi, GlauberGridThick & grid, int proton);
-
 
 /** @} */
 #endif
