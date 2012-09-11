@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
   MeanFieldNucleusThick Carbon(nucleon,homedir);
   TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);
-  Cross obs(*elec,&Carbon,1.E-03,homedir,screening,scr);
+  Cross obs(*elec,&Carbon,1.E-03,0,homedir,screening,scr);
   double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 0, 1, 0.);
 //   double crosss=obs.getDiffCross(kin, 0, 0, 0, 0, 0.);
   double crosspsrc=obs.getDiffCross(kin, 2, 0, 1, 0, 0, 1, 0.);

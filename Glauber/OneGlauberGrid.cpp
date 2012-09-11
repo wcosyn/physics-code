@@ -228,7 +228,7 @@ void OneGlauberGrid::intGlauberZCT(const double z, double *result, va_list ap){
   
 }
 
-void klaas_one_bound(numint::vector_d & results, double b, double z, double phi, OneGlauberGrid & grid, 
+void OneGlauberGrid::klaas_one_bound(numint::vector_d & results, double b, double z, double phi, OneGlauberGrid & grid, 
 		   int level, int m){
   //double sintheta=sqrt(1.-costheta*costheta);
   results=numint::vector_d(2,0.);
@@ -249,7 +249,7 @@ void klaas_one_bound(numint::vector_d & results, double b, double z, double phi,
   
 }
 
-void klaas_one_bound_ct(numint::vector_d & results, double b, double z, double phi, OneGlauberGrid & grid, 
+void OneGlauberGrid::klaas_one_bound_ct(numint::vector_d & results, double b, double z, double phi, OneGlauberGrid & grid, 
 		   int level, int m){
   //double sintheta=sqrt(1.-costheta*costheta);
   results=numint::vector_d(1,0.);

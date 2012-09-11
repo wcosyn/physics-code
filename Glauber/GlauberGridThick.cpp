@@ -456,7 +456,7 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
 	mdf.func = &Ftor_bound::exec;
 	mdf.param = &F;
 	vector<double> ret(4,0.);
-	F.f=GlauberGridThick::klaas_int_bound;
+	F.f=klaas_int_bound;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	fsi_grid[0][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*ret[0];
@@ -475,7 +475,7 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
 	mdf.func = &Ftor_all::exec;
 	mdf.param = &F;
 	vector<complex<double> > ret(4,0.);
-	F.f=GlauberGridThick::klaas_int_all;
+	F.f=klaas_int_all;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	fsi_grid[0][proton][i][j][k]=ret[0];
@@ -752,7 +752,7 @@ void GlauberGridThick::intGlauberPhiCT(const double phi, complex<double>* result
 }
 
 	 	 
-void klaas_int_all(numint::vector_z & results, double r, double costheta, double phi, GlauberGridThick & grid, int proton){
+void GlauberGridThick::klaas_int_all(numint::vector_z & results, double r, double costheta, double phi, GlauberGridThick & grid, int proton){
   double sintheta=sqrt(1.-costheta*costheta);
   
   double cosphi, sinphi;
@@ -786,7 +786,7 @@ void klaas_int_all(numint::vector_z & results, double r, double costheta, double
   return;
   
 }
-void klaas_int_bound(numint::vector_d & results, double b, double z, double phi, GlauberGridThick & grid, int proton){
+void GlauberGridThick::klaas_int_bound(numint::vector_d & results, double b, double z, double phi, GlauberGridThick & grid, int proton){
   //double sintheta=sqrt(1.-costheta*costheta);
   results=numint::vector_d(4,0.);
   double r=sqrt(b*b+z*z);
@@ -810,7 +810,7 @@ void klaas_int_bound(numint::vector_d & results, double b, double z, double phi,
   
 }
 
-void klaas_int_all_ct(numint::vector_z & results, double r, double costheta, double phi, GlauberGridThick & grid, int proton){
+void GlauberGridThick::klaas_int_all_ct(numint::vector_z & results, double r, double costheta, double phi, GlauberGridThick & grid, int proton){
   double sintheta=sqrt(1.-costheta*costheta);
   
   double cosphi, sinphi;
@@ -841,7 +841,7 @@ void klaas_int_all_ct(numint::vector_z & results, double r, double costheta, dou
   return;
   
 }
-void klaas_int_bound_ct(numint::vector_d & results, double b, double z, double phi, GlauberGridThick & grid, int proton){
+void GlauberGridThick::klaas_int_bound_ct(numint::vector_d & results, double b, double z, double phi, GlauberGridThick & grid, int proton){
   //double sintheta=sqrt(1.-costheta*costheta);
   results=numint::vector_d(2,0.);
   double r=sqrt(b*b+z*z);

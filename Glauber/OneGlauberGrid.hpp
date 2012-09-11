@@ -123,11 +123,11 @@ private:
     */
     void (*f)(numint::vector_d &, double x, double y, double z, OneGlauberGrid &, int level, int mm);
   };
-
   /*! integrandum function (clean ones)*/
   static void klaas_one_bound(numint::vector_d &, double b, double z, double phi, OneGlauberGrid & grid, int level, int mm);
   /*! integrandum function (clean ones), only CT*/
   static void klaas_one_bound_ct(numint::vector_d &, double b, double z, double phi, OneGlauberGrid & grid, int level, int mm);
+
 };
 
 // 
