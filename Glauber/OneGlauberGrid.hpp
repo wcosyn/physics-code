@@ -11,6 +11,7 @@
 #include <cstdarg>
 
 #include "GlauberGrid.hpp"
+#include <numint/numint.hpp>
 
 /*! \brief A class for a RMSGA ISI/FSI grid with one particle, exploiting the symmetry
  * 
@@ -101,5 +102,37 @@ private:
   void intGlauberZCT(const double z, double *results, va_list ap);
   
 };
+
+/*! struct that is used for integrators (clean ones)*/
+struct Ftor_one {
+
+  /*! integrandum function */
+  static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
+    Ftor_one &p = * (Ftor_one *) param;
+    p.f(ret,x[0],x[1],x[2],*p.grid,p.level,p.mm);
+  }
+  OneGlauberGrid *grid;/*!< pointer to the grid where the integration is performed */
+  int level;/*!< knockout level */
+  int mm; /*!< index in m_j */
+  /*! integrandum 
+   * \param res results
+   * \param x first integration variable
+   * \param y second integration variable
+   * \param z third integration variable
+   * \param grid the grid instance
+   * \param level knockout level
+   * \param mm index in m_j
+   */
+  void (*f)(numint::vector_d &, double x, double y, double z, OneGlauberGrid &, int level, int mm);
+};
+
+/*! integrandum function (clean ones)*/
+void klaas_one_bound(numint::vector_d &, double b, double z, double phi, OneGlauberGrid & grid, int level, int mm);
+/*! integrandum function (clean ones), only CT*/
+void klaas_one_bound_ct(numint::vector_d &, double b, double z, double phi, OneGlauberGrid & grid, int level, int mm);
+// 
+
+
+
 /** @} */
 #endif
