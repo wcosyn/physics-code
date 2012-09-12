@@ -36,25 +36,33 @@ int main(int argc, char *argv[])
   bool screening=atoi(argv[4]);
   double scr=atof(argv[5]);
   int nucleon=atoi(argv[6]);
-  
+  double prec=atof(argv[7]);
+  int integrator=atoi(argv[8]);
   
   string homedir="/home/wim/Code/share";
 
   MeanFieldNucleusThick Carbon(nucleon,homedir);
   TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);
-  Cross obs(*elec,&Carbon,1.E-03,0,homedir,screening,scr);
-  double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 0, 1, 0.);
-//   double crosss=obs.getDiffCross(kin, 0, 0, 0, 0, 0.);
-  double crosspsrc=obs.getDiffCross(kin, 2, 0, 1, 0, 0, 1, 0.);
-//   double crosspct=obs.getDiffCross(kin, 0, 1, 0, 1, 0.);
-//   double crosspsrcct=obs.getDiffCross(kin, 1, 1, 0, 1, 0.);
-//   double crossppw=obs.getDiffCross(kin, 0, 0, 1, 1, 0.);
+  Cross obs(*elec,&Carbon,prec,integrator,homedir,screening,scr);
   double free=obs.getElCross(kin,2,0.)*HBARC*HBARC;
-//   cout << free/HBARC/HBARC << endl;
+  vector<double> cross;
+
+  obs.getAllDiffCross(cross,kin,2,1,0.);
+  cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  
+      cross[0] << " " << cross[1] << " " << free << " " << cross[0]/free << " " << cross[1]/free << endl;
+  exit(1);
+  double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 0, 1, 0.);
+// //   double crosss=obs.getDiffCross(kin, 0, 0, 0, 0, 0.);
+  double crosspsrc=obs.getDiffCross(kin, 2, 0, 1, 0, 0, 1, 0.);
+// //   double crosspct=obs.getDiffCross(kin, 0, 1, 0, 1, 0.);
+// //   double crosspsrcct=obs.getDiffCross(kin, 1, 1, 0, 1, 0.);
+// //   double crossppw=obs.getDiffCross(kin, 0, 0, 1, 1, 0.);
+// //   cout << free/HBARC/HBARC << endl;
   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  
       crossp << " " << crosspsrc << " " << free << " " << crossp/free << " " << crosspsrc/free << endl;
-//   cout << crossp << " " << crosss << " " << crosspsrc << " " << crosspct << " " << crosspsrcct << " " << crossppw << endl;
+
+      //   cout << crossp << " " << crosss << " " << crosspsrc << " " << crosspct << " " << crosspsrcct << " " << crossppw << endl;
   //cout << obs.getElCross(kin,0.) << " " << obs.getElCross(kin,PI) <<endl;
 //   Model test(&Carbon,0,homedir);
 //   cout << test.getMatrixEl(kin,-1,0,0,-1,1,1) << endl;

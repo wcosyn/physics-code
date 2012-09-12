@@ -91,6 +91,7 @@ GlauberGrid::~GlauberGrid(){
 
 //interpolation of the grid after r,cth,phi have been set
 complex<double> GlauberGrid::getFsiGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   //sanity check to see that the right amount of knocked out nucleons end up in the final state!
 //   if((getTotalProtonOut()==getProtonKnockout())&&(getTotalNeutronOut()==getNeutronKnockout())){
     complex<double> result = getInterp(fsi_grid[getPnucleus()->getTotalLevels()][0]);
@@ -107,6 +108,7 @@ complex<double> GlauberGrid::getFsiGridFull_interp(){
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberGrid::getFsiCtGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   //sanity check to see that the right amount of knocked out nucleons end up in the final state!
 //   if((getTotalProtonOut()==getProtonKnockout())&&(getTotalNeutronOut()==getNeutronKnockout())){
     complex<double> result = getInterp(fsi_ct_grid[getPnucleus()->getTotalLevels()][0]);

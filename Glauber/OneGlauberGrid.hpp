@@ -121,7 +121,7 @@ private:
     * \param level knockout level
     * \param mm index in m_j
     */
-    void (*f)(numint::vector_d &, double x, double y, double z, OneGlauberGrid &, int level, int mm);
+    void (*f)(numint::vector_d & res, double x, double y, double z, OneGlauberGrid & grid, int level, int mm);
   };
   /*! integrandum function (clean ones)*/
   static void klaas_one_bound(numint::vector_d &, double b, double z, double phi, OneGlauberGrid & grid, int level, int mm);

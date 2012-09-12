@@ -1,6 +1,4 @@
 #include "Model.hpp"
-#include <GlauberGridThick.hpp>
-#include <OneGlauberGrid.hpp>
 #include <TSpinor.h>
 #include <TMFSpinor.hpp>
 #include <Utilfunctions.hpp>
@@ -9,10 +7,12 @@ using namespace std;
 
 
 
-Model::Model(MeanFieldNucleusThick *pnucleus, int setSRC, int setthick, double precision, int integr, string dir,
+Model::Model(MeanFieldNucleusThick *pnucleus, double precision, int integr, string dir,
 	      bool user_sigma, double sigma_screening)
-:SRC(setSRC), thick(setthick), pnucl(pnucleus), prec(precision), integrator(integr), homedir(dir),
-usersigma(user_sigma), sigmascreening(sigma_screening){
+:pnucl(pnucleus), prec(1.E-03), integrator(1), homedir(dir),
+usersigma(user_sigma), sigmascreening(sigma_screening),
+gridthick(GlauberGridThick(60,18,5,pnucleus,precision,integr,dir)),
+onegrid(OneGlauberGrid(60,18,pnucleus,precision,integr,dir)){
 }
 
 
@@ -83,75 +83,76 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
   
 }
 
-complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonpol, int shellindex, 
-				   int m, int CT, int pw, int current){
-
-  //to translate the 2to2kinematics language to our particles:
-  //p is A
-  //hyperon Y is fast final nucleon
-  //kaon is residual A-1 nucleus
-  double costheta=tk.GetCosthYlab();
-  double sintheta=sqrt(1.-costheta*costheta);
-  //careful!! we compute in a frame with p_f along z-axis, so have to rotate the photon polarization 4-vectors!
-  static FourVector<complex<double> > polVectorPlus(0.,
-						    -1./sqrt(2.)*costheta,
-						    complex<double>(0.,-1./sqrt(2.)),
-						 -1/sqrt(2.)*sintheta);
-  static FourVector<complex<double> > polVectorMin(0.,
-						   1./sqrt(2.)*costheta,
-						   complex<double>(0.,-1./sqrt(2.)),
-						   1./sqrt(2.)*sintheta);
-  static FourVector<complex<double> > polVector0(1.,0.,0.,0.);
-  static FourVector<complex<double> > polVectorX(0.,costheta,0.,sintheta);
-  static FourVector<complex<double> > polVectorY(0.,0.,1.,0.);
-  static FourVector<complex<double> > polVectorZ(0.,-sintheta,0.,costheta);
-  
-  shell=shellindex;
-  mm=m;
-  J= new NucleonEMOperator(tk.GetQsquared(),1,0);
-  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
-  if(getUsersigma()) proton.setScreening(getSigmascreening());
-  if(!pw){
-    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,prec,integrator,homedir);
-    else grid = new OneGlauberGrid(60,18,pnucl,prec,integrator,homedir);
-    grid->addParticle(proton);
-    grid->fillGrids();
-    grid->clearKnockout();
-    grid->addKnockout(shellindex,m);
-    
-  }
- 
-  GammaStructure Jcontr;
-  FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
-  FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
-  FourVector<double> pi=pf-q;
-  pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);
-  pm=TVector3(-q[1],0.,pf[3]-q[3]);
-  if(photonpol==0)  Jcontr = J->getCC(current, q, pi, pf)*polVector0;
-  /* else if(photonpol==1)  Jcontr = J.getCC2(q)*polVectorX;
-  else if(photonpol==2)  Jcontr = J.getCC2(q)*polVectorY;
-  else if(photonpol==3)  Jcontr = J.getCC2(q)*polVectorZ;*/
-  else if(photonpol==-1) Jcontr= J->getCC(current, q, pi, pf)*polVectorMin;
-  else if(photonpol==1) Jcontr=J->getCC(current, q, pi, pf)*polVectorPlus;
-//   else if(photonpol==2) Jcontr=J->getCC(current, q, pi, pf)*polVectorX;
-  else{ cerr << "invalid photon pol" << endl;  exit(1); }
-  if(spinout==-1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr;
-  else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
-  else{ cerr << "invalid nucl pol" << endl;  exit(1); }
-  
-  complex<double> results[2];
-  double restimate=0.,thestimate=0.,phiestimate=0.;
-  rombergerN(this,&Model::intJR,0.,pnucl->getRange(),2,results,getPrec(),3,8,&restimate,pw,&thestimate, &phiestimate);
-  if(!pw) delete grid;
-  complex<double> result;
-  delete J;
-  if(CT) return results[1];
-  else return results[0];
-}
+// complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonpol, int shellindex, 
+// 				   int m, int CT, int pw, int current, int SRC, int thick){
+// 
+//   //to translate the 2to2kinematics language to our particles:
+//   //p is A
+//   //hyperon Y is fast final nucleon
+//   //kaon is residual A-1 nucleus
+//   double costheta=tk.GetCosthYlab();
+//   double sintheta=sqrt(1.-costheta*costheta);
+//   //careful!! we compute in a frame with p_f along z-axis, so have to rotate the photon polarization 4-vectors!
+//   static FourVector<complex<double> > polVectorPlus(0.,
+// 						    -1./sqrt(2.)*costheta,
+// 						    complex<double>(0.,-1./sqrt(2.)),
+// 						 -1/sqrt(2.)*sintheta);
+//   static FourVector<complex<double> > polVectorMin(0.,
+// 						   1./sqrt(2.)*costheta,
+// 						   complex<double>(0.,-1./sqrt(2.)),
+// 						   1./sqrt(2.)*sintheta);
+//   static FourVector<complex<double> > polVector0(1.,0.,0.,0.);
+//   static FourVector<complex<double> > polVectorX(0.,costheta,0.,sintheta);
+//   static FourVector<complex<double> > polVectorY(0.,0.,1.,0.);
+//   static FourVector<complex<double> > polVectorZ(0.,-sintheta,0.,costheta);
+//   
+//   shell=shellindex;
+//   mm=m;
+//   J= new NucleonEMOperator(tk.GetQsquared(),1,0);
+//   FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+//   if(getUsersigma()) proton.setScreening(getSigmascreening());
+//   if(!pw){
+//     if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,prec,integrator,homedir);
+//     else grid = new OneGlauberGrid(60,18,pnucl,prec,integrator,homedir);
+//     grid->clearParticles();
+//     grid->addParticle(proton);
+//     grid->updateGrids();
+//     grid->clearKnockout();
+//     grid->addKnockout(shellindex,m);
+//     
+//   }
+//  
+//   GammaStructure Jcontr;
+//   FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
+//   FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
+//   FourVector<double> pi=pf-q;
+//   pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);
+//   pm=TVector3(-q[1],0.,pf[3]-q[3]);
+//   if(photonpol==0)  Jcontr = J->getCC(current, q, pi, pf)*polVector0;
+//   /* else if(photonpol==1)  Jcontr = J.getCC2(q)*polVectorX;
+//   else if(photonpol==2)  Jcontr = J.getCC2(q)*polVectorY;
+//   else if(photonpol==3)  Jcontr = J.getCC2(q)*polVectorZ;*/
+//   else if(photonpol==-1) Jcontr= J->getCC(current, q, pi, pf)*polVectorMin;
+//   else if(photonpol==1) Jcontr=J->getCC(current, q, pi, pf)*polVectorPlus;
+// //   else if(photonpol==2) Jcontr=J->getCC(current, q, pi, pf)*polVectorX;
+//   else{ cerr << "invalid photon pol" << endl;  exit(1); }
+//   if(spinout==-1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr;
+//   else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
+//   else{ cerr << "invalid nucl pol" << endl;  exit(1); }
+//   
+//   complex<double> results[2];
+//   double restimate=0.,thestimate=0.,phiestimate=0.;
+//   rombergerN(this,&Model::intJR,0.,pnucl->getRange(),2,results,getPrec(),3,8,&restimate,pw,SRC,&thestimate, &phiestimate);
+//   if(!pw) delete grid;
+//   complex<double> result;
+//   delete J;
+//   if(CT) return results[1];
+//   else return results[0];
+// }
 
 
 void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellindex, 
-			int m, int CT, int pw, int current){
+			int m, int CT, int pw, int current, int SRC, int thick){
 
   //to translate the 2to2kinematics language to our particles:
   //p is A
@@ -178,14 +179,14 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   if(!pw){
-    if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,prec,integrator,homedir);
-    else grid = new OneGlauberGrid(60,18,pnucl,prec,integrator,homedir);
+    if(1/*SRC||thick*/) grid = &gridthick;
+    else grid = &onegrid;
+    grid->clearParticles();
     grid->addParticle(proton);
-    grid->fillGrids();
+    grid->updateGrids();
     grid->clearKnockout();
     grid->addKnockout(shellindex,m);    
   }
-  
   GammaStructure Jcontr0, Jcontrmin, Jcontrplus;
   FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
   FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
@@ -202,46 +203,261 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   barcontractplusdown = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontrplus;
   barcontractplusup = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontrplus;
   
+  int res=90;
+  unsigned count=0;
+  if(integrator==0){
+    complex<double> results[12];
+    double restimate=0.,thestimate=0.,phiestimate=0.;
+    rombergerN(this,&Model::intJR12,0.,pnucl->getRange(),12,results,getPrec(),3,8,&restimate,pw,SRC,&thestimate, &phiestimate);
+    //if(!pw) delete grid;
+    if(CT){
+      for(int j=0;j<2;++j){
+	for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i+1];
+      }
+    }
+    else{
+      for(int j=0;j<2;++j){
+	for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i];
+      }
+    }
+  }
+  else if(integrator==1||integrator==2){
+
+    numint::array<double,3> lower = {{0.,-1.,0.}};
+    numint::array<double,3> upper = {{pnucl->getRange(),1.,2.*PI}};
+    Model::Ftor_one F;
+    F.model = this;
+    F.SRC = SRC;
+    F.pw = pw;
+    numint::mdfunction<numint::vector_z,3> mdf;
+    mdf.func = &Ftor_one::exec;
+    mdf.param = &F;
+    numint::vector_z ret(12,0.);
+    F.f=Model::klaas_one_amp;
+    if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
+    if(CT){
+      for(int j=0;j<2;++j){
+	for(int i=0;i<3;i++) matrixel(j,i)=ret[j*6+2*i+1];
+      }
+    }
+    else{
+      for(int j=0;j<2;++j){
+	for(int i=0;i<3;i++) matrixel(j,i)=ret[j*6+2*i];
+      }
+    }
+  }      
+  else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
+      
+  cout << shellindex << " " << m << " ";
+  for(int i=0;i<6;i++) cout << matrixel(i/3,i%3) << " ";
+  cout << res << " " << count << endl << endl;
   
-  complex<double> results[12];
-  double restimate=0.,thestimate=0.,phiestimate=0.;
-  rombergerN(this,&Model::intJR12,0.,pnucl->getRange(),12,results,getPrec(),3,8,&restimate,pw,&thestimate, &phiestimate);
-  if(!pw) delete grid;
-  complex<double> result;
-  if(CT){
-    for(int j=0;j<2;++j){
-      for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i+1];
-    }
-  }
-  else{
-    for(int j=0;j<2;++j){
-      for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i];
-    }
-  }
   delete J;
 }
 
+void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shellindex, int m, int current){
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
+  double costheta=tk.GetCosthYlab();
+  if(costheta>1.) costheta=1.;
+  if(costheta<-1.) costheta=-1.;
+  double sintheta=sqrt(1.-costheta*costheta);
+  //careful!! we compute in a frame with p_f along z-axis, so have to rotate the photon polarization 4-vectors!
+  static FourVector<complex<double> > polVectorPlus(0.,
+						    -1./sqrt(2.)*costheta,
+						    complex<double>(0.,-1./sqrt(2.)),
+						 -1/sqrt(2.)*sintheta);
+  static FourVector<complex<double> > polVectorMin(0.,
+						   1./sqrt(2.)*costheta,
+						   complex<double>(0.,-1./sqrt(2.)),
+						   1./sqrt(2.)*sintheta);
+  static FourVector<complex<double> > polVector0(1.,0.,0.,0.);
+ 
+  shell=shellindex;
+  mm=m;
+  J= new NucleonEMOperator(tk.GetQsquared(),1,0);
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+  if(getUsersigma()) proton.setScreening(getSigmascreening());
+
+  grid = &gridthick;
+  grid->clearParticles();
+  grid->addParticle(proton);
+  grid->updateGrids();
+  grid->clearKnockout();
+  grid->addKnockout(shellindex,m);    
+
+  GammaStructure Jcontr;
+  FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
+  FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
+  FourVector<double> pi=pf-q;
+  pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);
+  pm=TVector3(-q[1],0.,pf[3]-q[3]);
+  for(int spinout=0;spinout<2;++spinout){
+    for(int photopol=0;photopol<3;++photopol){
+      if(photopol==0) Jcontr = J->getCC(current, q, pi, pf)*polVector0;
+      if(photopol==1) Jcontr= J->getCC(current, q, pi, pf)*polVectorMin;
+      if(photopol==2) Jcontr=J->getCC(current, q, pi, pf)*polVectorPlus;
+      if(spinout==0) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr;
+      else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
+      int res=90;
+      unsigned count=0;
+      if(integrator==0){
+	complex<double> results[5];
+	double restimate=0.,thestimate=0.,phiestimate=0.;
+	rombergerN(this,&Model::intJR,0.,pnucl->getRange(),5,results,getPrec(),3,8,&restimate,&thestimate, &phiestimate);
+	for(int k=0;k<5;++k) matrixel[k](spinout,photopol) = results[k];
+	
+      }
+      if(integrator==1||integrator==2){
+
+	numint::array<double,3> lower = {{0.,-1.,0.}};
+	numint::array<double,3> upper = {{pnucl->getRange(),1.,2.*PI}};
+	Model::Ftor_one F;
+	F.model = this;
+	F.SRC = 0;
+	F.pw = 0;
+	numint::mdfunction<numint::vector_z,3> mdf;
+	mdf.func = &Ftor_one::exec;
+	mdf.param = &F;
+	numint::vector_z ret(5,0.);
+	F.f=Model::klaas_mult_amp;
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
+	for(int k=0;k<5;++k) matrixel[k](spinout,photopol) = ret[k];
+      }      
+      else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
+      cout << shellindex << " " << m << " " << spinout << " " << photopol << " " << matrixel[0](spinout,photopol) << 
+	" " << matrixel[1](spinout,photopol) << " " << res << " " << count << endl;
+    }
+  }
+        
+  delete J;
+  
+}
+
+
+void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shellindex, int m, int current){
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
+  double costheta=tk.GetCosthYlab();
+  if(costheta>1.) costheta=1.;
+  if(costheta<-1.) costheta=-1.;
+  double sintheta=sqrt(1.-costheta*costheta);
+  //careful!! we compute in a frame with p_f along z-axis, so have to rotate the photon polarization 4-vectors!
+  static FourVector<complex<double> > polVectorPlus(0.,
+						    -1./sqrt(2.)*costheta,
+						    complex<double>(0.,-1./sqrt(2.)),
+						 -1/sqrt(2.)*sintheta);
+  static FourVector<complex<double> > polVectorMin(0.,
+						   1./sqrt(2.)*costheta,
+						   complex<double>(0.,-1./sqrt(2.)),
+						   1./sqrt(2.)*sintheta);
+  static FourVector<complex<double> > polVector0(1.,0.,0.,0.);
+ 
+  shell=shellindex;
+  mm=m;
+  J= new NucleonEMOperator(tk.GetQsquared(),1,0);
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+  if(getUsersigma()) proton.setScreening(getSigmascreening());
+  grid = &gridthick;
+  grid->clearParticles();
+  grid->addParticle(proton);
+  grid->updateGrids();
+  grid->clearKnockout();
+  grid->addKnockout(shellindex,m);    
+
+  GammaStructure Jcontr0, Jcontrmin, Jcontrplus;
+  FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
+  FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
+  FourVector<double> pi=pf-q;
+  pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);
+  pm=TVector3(-q[1],0.,pf[3]-q[3]);
+  Jcontr0 = J->getCC(current, q, pi, pf)*polVector0;
+  Jcontrmin= J->getCC(current, q, pi, pf)*polVectorMin;
+  Jcontrplus=J->getCC(current, q, pi, pf)*polVectorPlus;
+  barcontract0down = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr0;
+  barcontract0up = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr0;
+  barcontractmindown = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontrmin;
+  barcontractminup = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontrmin;
+  barcontractplusdown = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontrplus;
+  barcontractplusup = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontrplus;
+  int res=90;
+  unsigned count=0;
+//   if(integrator==0){
+//     complex<double> results[12];
+//     double restimate=0.,thestimate=0.,phiestimate=0.;
+//     rombergerN(this,&Model::intJR12,0.,pnucl->getRange(),12,results,getPrec(),3,8,&restimate,pw,SRC,&thestimate, &phiestimate);
+//     //if(!pw) delete grid;
+//     if(CT){
+//       for(int j=0;j<2;++j){
+// 	for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i+1];
+//       }
+//     }
+//     else{
+//       for(int j=0;j<2;++j){
+// 	for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i];
+//       }
+//     }
+//   }
+  if(integrator==1||integrator==2){
+
+    numint::array<double,3> lower = {{0.,-1.,0.}};
+    numint::array<double,3> upper = {{pnucl->getRange(),1.,2.*PI}};
+    Model::Ftor_one F;
+    F.model = this;
+    F.SRC = 0;
+    F.pw = 0;
+    numint::mdfunction<numint::vector_z,3> mdf;
+    mdf.func = &Ftor_one::exec;
+    mdf.param = &F;
+    numint::vector_z ret(30,0.);
+    F.f=Model::klaas_all_amp;
+    if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
+    for(int k=0;k<5;++k){
+      for(int j=0;j<2;++j){
+	for(int i=0;i<3;i++) matrixel[k](j,i)=ret[j*15+5*i+k];
+      }
+    }
+  }      
+  else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
+      
+  cout << shellindex << " " << m << " ";
+  for(int i=0;i<6;i++) cout << matrixel[0](i/3,i%3) << " ";
+  cout << res << " " << count << endl;
+  for(int i=0;i<6;i++) cout << matrixel[1](i/3,i%3) << " ";
+  cout << res << " " << count << endl << endl;
+  
+  delete J;
+  
+}
+
+
 void Model::intJR(const double r, complex<double> *results, va_list ap){
   
-  int pw = va_arg(ap,int);
   double *pthetaestimate = va_arg(ap,double*);
   double *pphiestimate = va_arg(ap,double*);
 
-  if(!pw) grid->setRinterp(r);
-  rombergerN(this,&Model::intJCosTheta,-1.,1.,2,results,getPrec(),3,8,pthetaestimate, pw, r, pphiestimate);
+  gridthick.setRinterp(r);
+  rombergerN(this,&Model::intJCosTheta,-1.,1.,5,results,getPrec(),3,8,pthetaestimate, r, pphiestimate);
   //MFSpinor already contains a *r!!!
-  results[0]*=r;
-  results[1]*=r;
+  for(int i=0;i<5;++i) results[i]*=r;
   return;
 }
 void Model::intJR12(const double r, complex<double> *results, va_list ap){
   
   int pw = va_arg(ap,int);
+  int SRC = va_arg(ap,int);
   double *pthetaestimate = va_arg(ap,double*);
   double *pphiestimate = va_arg(ap,double*);
 
   if(!pw) grid->setRinterp(r);
-  rombergerN(this,&Model::intJCosTheta12,-1.,1.,12,results,getPrec(),3,8,pthetaestimate, pw, r, pphiestimate);
+  rombergerN(this,&Model::intJCosTheta12,-1.,1.,12,results,getPrec(),3,8,pthetaestimate, pw, SRC, r, pphiestimate);
   //MFSpinor already contains a *r!!!
   for(int i=0;i<12;i++) results[i]*=r;
   return;
@@ -249,52 +465,44 @@ void Model::intJR12(const double r, complex<double> *results, va_list ap){
 
 void Model::intJCosTheta(const double costheta, complex<double> *results, va_list ap){
   
-  int pw = va_arg(ap,int);
   double r = va_arg(ap,double);
   double *pphiestimate = va_arg(ap,double*);
   double sintheta=sqrt(1.-costheta*costheta);
-  if(!pw) grid->setCthinterp(costheta);
-  rombergerN(this,&Model::intJPhi,0.,2.*PI,2,results,getPrec(),3,8,pphiestimate, pw,r, costheta, sintheta);
+  gridthick.setCthinterp(costheta);
+  rombergerN(this,&Model::intJPhi,0.,2.*PI,5,results,getPrec(),3,8,pphiestimate, r, costheta, sintheta);
   return;
 }
 void Model::intJCosTheta12(const double costheta, complex<double> *results, va_list ap){
   
   int pw = va_arg(ap,int);
+  int SRC = va_arg(ap,int);
   double r = va_arg(ap,double);
   double *pphiestimate = va_arg(ap,double*);
   double sintheta=sqrt(1.-costheta*costheta);
   if(!pw) grid->setCthinterp(costheta);
-  rombergerN(this,&Model::intJPhi12,0.,2.*PI,12,results,getPrec(),3,8,pphiestimate, pw,r, costheta, sintheta);
+  rombergerN(this,&Model::intJPhi12,0.,2.*PI,12,results,getPrec(),3,8,pphiestimate, pw, SRC, r, costheta, sintheta);
   return;
 }
 
 void Model::intJPhi(const double phi, complex<double> *results, va_list ap){
 
-  int pw = va_arg(ap,int);
   double r = va_arg(ap,double);
   double costheta = va_arg(ap,double);
   double sintheta = va_arg(ap,double);
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   
-  results[1]=results[0]= barcontract*TMFSpinor(*pnucl,shell,mm,r,costheta,phi)*
+  results[4]= barcontract*TMFSpinor(*pnucl,shell,mm,r,costheta,phi)*
     exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT);
-   if(!pw){
-    if(SRC){
-      results[0]*=dynamic_cast<AbstractFsiGridThick *>(grid)->getFsiSrcGridFull_interp1(phi);
-      results[1]*=dynamic_cast<AbstractFsiCTGridThick *>(grid)->getFsiSrcCtGridFull_interp1(phi);
-    }
-    else{
-      results[0]*=grid->getFsiGridFull_interp1(phi);
-      results[1]*=grid->getFsiCtGridFull_interp1(phi);
-    }
-  }
+  for(int i=0;i<4;++i) results[i]=results[4]*gridthick.getFsiGridN_interp1(i,phi);
+  
   return;
 }
 
 void Model::intJPhi12(const double phi, complex<double> *results, va_list ap){
 
   int pw = va_arg(ap,int);
+  int SRC = va_arg(ap,int);
   double r = va_arg(ap,double);
   double costheta = va_arg(ap,double);
   double sintheta = va_arg(ap,double);
@@ -331,4 +539,85 @@ void Model::intJPhi12(const double phi, complex<double> *results, va_list ap){
 
 
 
+void Model::klaas_one_amp(numint::vector_z & results, double r, double costheta, double phi, 
+			  Model & model, int SRC, int pw){
+  results=numint::vector_z(12,0.);
+  double sintheta=sqrt(1.-costheta*costheta);
+  
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  TMFSpinor wave(*(model.getPnucleus()),model.getShell(),model.getM(),r,costheta,phi);
+  complex<double> exp_pr=exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
+  results[1]=results[0]= exp_pr*(model.getBarcontract0down()*wave);
+  results[2]=results[3]= exp_pr*(model.getBarcontractmindown()*wave);
+  results[4]=results[5]= exp_pr*(model.getBarcontractplusdown()*wave);
+  results[6]=results[7]= exp_pr*(model.getBarcontract0up()*wave);
+  results[8]=results[9]= exp_pr*(model.getBarcontractminup()*wave);
+  results[10]=results[11]= exp_pr*(model.getBarcontractplusup()*wave);
+  if(!pw){
+    if(SRC){
+      complex<double> src=dynamic_cast<AbstractFsiGridThick *>(model.getGrid())
+			      ->getFsiSrcGridFull_interp3(r,costheta,phi);
+      complex<double> srcct=dynamic_cast<AbstractFsiCTGridThick *>(model.getGrid())
+			      ->getFsiSrcCtGridFull_interp3(r,costheta,phi);
+      for(int i=0;i<6;i++){
+	results[2*i]*=src;
+	results[2*i+1]*=srcct;
+      }      
+    }
+    else{
+      complex<double> fsi=model.getGrid()->getFsiGridFull_interp3(r,costheta,phi);
+      complex<double> fsict=model.getGrid()->getFsiCtGridFull_interp3(r,costheta,phi);
+      for(int i=0;i<6;i++){
+	results[2*i]*=fsi;
+	results[2*i+1]*=fsict;
+      }      
+    }
+  }
+  for(int i=0;i<12;i++) results[i]*=r;
+  return;
 
+  
+}
+  
+void Model::klaas_all_amp(numint::vector_z & results, double r, double costheta, double phi, 
+			  Model & model, int SRC, int pw){
+  results=numint::vector_z(30,0.);
+  double sintheta=sqrt(1.-costheta*costheta);
+  
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  TMFSpinor wave(*(model.getPnucleus()),model.getShell(),model.getM(),r,costheta,phi);
+  complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
+  results[0]= exp_pr*(model.getBarcontract0down()*wave);
+  results[5]= exp_pr*(model.getBarcontractmindown()*wave);
+  results[10]= exp_pr*(model.getBarcontractplusdown()*wave);
+  results[15]= exp_pr*(model.getBarcontract0up()*wave);
+  results[20]= exp_pr*(model.getBarcontractminup()*wave);
+  results[25]= exp_pr*(model.getBarcontractplusup()*wave);
+  for(int k=0;k<6;++k) for(int i=1;i<5; ++i) results[k*5+i] = results[k*5];
+  complex<double> glauberphase[4];
+  for(int i=0;i<4;++i){
+    glauberphase[i]=model.getThickGrid()->getFsiGridN_interp3(i,r,costheta,phi);
+    for(int k=0;k<6;++k) results[k*5+i]*=glauberphase[i];
+  }
+  return;
+
+  
+}
+  
+void Model::klaas_mult_amp(numint::vector_z & results, double r, double costheta, double phi, 
+			  Model & model, int SRC, int pw){
+  results=numint::vector_z(5,0.);
+  double sintheta=sqrt(1.-costheta*costheta);
+  
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  results[4]= r*exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)))
+	      *(model.getBarcontract()*TMFSpinor(*(model.getPnucleus()),model.getShell(),model.getM(),r,costheta,phi));
+  for(int i=0;i<4;++i) results[i]=results[4]*model.getThickGrid()->getFsiGridN_interp3(i,r,costheta,phi);
+  return;
+
+  
+}
+  

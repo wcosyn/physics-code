@@ -88,24 +88,28 @@ GlauberGridThick::~GlauberGridThick(){
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberGridThick::getFsiGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_grid[0][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_grid[0][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberGridThick::getFsiCtGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_ct_grid[0][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_ct_grid[0][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberGridThick::getFsiSrcGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_grid[1][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_grid[1][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberGridThick::getFsiSrcCtGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_ct_grid[1][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_ct_grid[1][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
@@ -421,7 +425,7 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
     double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
     if(integrator==0){
       double restimate=0.,thetaestimate=0.,phiestimate=0.;
-      if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+      if(getParticles().size()==0&&getParticles()[0].getCosTheta()==1.){
 	double results[4]={0.,0.,0.,0.};
 	rombergerN(this, &GlauberGridThick::intGlauberb_bound,1.E-02,getPnucleusthick()->getRange(),4,results,
 			    getPrec(),3,8,&restimate,proton,&thetaestimate, &phiestimate); 
@@ -445,7 +449,7 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
       
     else if(integrator==1||integrator==2){
       
-      if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+      if(getParticles().size()==0&&getParticles()[0].getCosTheta()==1.){
 	numint::array<double,3> lower = {{1.E-06,getParticles()[0].getHitz(),0.}};
 	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),getPnucleusthick()->getRange(),2.*PI}};
 	
@@ -490,10 +494,10 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
      
     }
     else {cerr  << "integrator type not implemented" << endl; exit(1);}
-//     cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
-//     fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
-//     fsi_ct_grid[1][proton][i][j][k] << 
-// 	" " << res << " " << count << " " << deeserror << endl;
+    cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
+    fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
+    fsi_ct_grid[1][proton][i][j][k] << 
+	" " << res << " " << count << " " << deeserror << endl;
     
   }  
   //delete[] results;

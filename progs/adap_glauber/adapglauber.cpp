@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   string homedir=argv[4];
 
   MeanFieldNucleusThick CarbonThick(nucleus,homedir);
-  FastParticle proton2(0, 0, 4878,0.,0.,8.,0.,homedir);
+  FastParticle proton2(0, 0, 1503.85,0.,0.,1.696,0.,homedir);
 //   proton2.printParticle();
   GlauberGridThick grid(60,18,5,&CarbonThick,prec,integr,homedir);
 //   OneGlauberGrid grid(60,18,&CarbonThick,prec,integr,homedir);

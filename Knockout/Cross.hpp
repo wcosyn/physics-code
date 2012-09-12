@@ -29,10 +29,12 @@
 #ifndef CROSS_HPP
 #define CROSS_HPP
 
+#include <vector>
 #include <TElectronKinematics.h>
 #include <MeanFieldNucleusThick.hpp>
 #include <TKinematics2to2.h>
 #include "Model.hpp"
+
 
 /*! \brief A class Cross, used to compute A(e,e'N) cross sections */
 class Cross{
@@ -61,6 +63,20 @@ public:
    * \return differential cross section [fm \f$ ^2 \f$/MeV/sr \f$ ^2 \f$]
    */
   double getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, double phi);
+  /*! Computes the differential \f$ A(e,e'N)\f$ cross section for certain kinematics and a certain shell of the nucleus
+   * \param cross vector with the different cross sections <BR>
+   *  [0]: plane-wave<BR>
+   *  [1]: RMSGA <BR>
+   *  [2]: RMSGA+SRC <BR>
+   *  [3]: RMSGA+CT <BR>
+   *  [4]: RMSGA+SRC+CT <BR>
+   * \param kin contains the hadron kinematics
+   * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+   * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param phi angle between electron and hadron plane
+   * \return differential cross section [fm \f$ ^2 \f$/MeV/sr \f$ ^2 \f$]
+   */
+  void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, int shellindex, double phi);
   /*! Computes the off-shell \f$ (e,e'p)\f$ cross section for certain kinematics and a certain shell of the nucleus <BR>
    * What is denoted as \f$ K \sigma_{ep} \f$ in the literature
    * \param kin contains the hadron kinematics
@@ -79,7 +95,7 @@ private:
   TElectronKinematics electron; /*!< electron kinematics */
   MeanFieldNucleusThick *pnucl; /*!< pointer to nucleus */
   double kinfactors[6]; /*!< electron kinematic factors, get multiplied with response functions */
-  double response[6]; /*!< response functions, from the hadronic tensor */
+  double response[5][6]; /*!< response functions, from the hadronic tensor */
   double frontfactor; /*!< kinematical front factor */
   double mott; /*!< mott cross section */
   bool usersigma;

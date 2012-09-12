@@ -88,24 +88,28 @@ GlauberDecayGridThick::~GlauberDecayGridThick(){
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_grid[0][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_grid[0][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiCtGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_ct_grid[0][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_ct_grid[0][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiSrcGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_grid[1][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_grid[1][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiSrcCtGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_ct_grid[1][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_ct_grid[1][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
@@ -113,24 +117,28 @@ complex<double> GlauberDecayGridThick::getFsiSrcCtGridFull_interp(){
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiDecayGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_grid[2][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_grid[2][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiCtDecayGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_ct_grid[2][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_ct_grid[2][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
 
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiSrcDecayGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_grid[3][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_grid[3][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }
   
 //interpolation of the grid after r,th,phi have been set
 complex<double> GlauberDecayGridThick::getFsiSrcCtDecayGridFull_interp(){
+  if(!filledallgrid) {cerr << "You have to fill the grids first!" << endl; exit(1);}
   return pow(getInterp(fsi_ct_grid[3][0]),getPnucleusthick()->getN()-getNeutronKnockout())
 	  *pow(getInterp(fsi_ct_grid[3][1]),getPnucleusthick()->getZ()-getProtonKnockout());
 }

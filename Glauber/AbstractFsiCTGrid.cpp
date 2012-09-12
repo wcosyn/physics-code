@@ -89,14 +89,14 @@ void AbstractFsiCTGrid::fillGrids(){
     if(infile2.is_open()){
      // cout << "Reading in FSI+CT grid from memory: " << fsi_ct_filename << endl;
       readinFsiCtGrid(infile2);
-      filledctgrid=1;
+      filledctgrid=filledallgrid=1;
       infile2.close();
     }
     //we have to calc the grid
     else{
       cout << "Constructing FSI+CT grid" << endl;
       constructCtGrid();
-      filledctgrid=1;
+      filledctgrid=filledallgrid=1;
       //write it out now too
       ofstream outfile(fsi_ct_filename.c_str(),ios::out|ios::binary);
       if(outfile.is_open()){
@@ -125,13 +125,13 @@ void AbstractFsiCTGrid::updateGrids(){
     if(infile2.is_open()){
      // cout << "Reading in FSI+CT grid from memory: " << fsi_ct_filename << endl;
       readinFsiCtGrid(infile2);
-      filledctgrid=1;
+      filledctgrid=filledallgrid=1;
       infile2.close();
     }
     else{
       cout << "Constructing FSI+CT grid" << endl;
       constructCtGrid();
-      filledctgrid=1;
+      filledctgrid=filledallgrid=1;
       ofstream outfile(fsi_ct_filename.c_str(),ios::out|ios::binary);
       if(outfile.is_open()){
 	//cout << "Writing out FSI+CT grid: " << fsi_ct_filename << endl;
@@ -140,7 +140,7 @@ void AbstractFsiCTGrid::updateGrids(){
 	return;
       }
       else{
-// 	cerr << "could not open file for writing corrgrid output: " << fsi_ct_filename << endl;
+	cerr << "could not open file for writing corrgrid output: " << fsi_ct_filename << endl;
       }    
     }
   }

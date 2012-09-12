@@ -20,7 +20,7 @@
 
 OPEN_NUMINT_NAMESPACE
 
-#define ROMBMAX 15
+#define ROMBMAX 10
 #define ROMBMIN 3
 
 template<typename T, unsigned N>
