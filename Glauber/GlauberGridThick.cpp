@@ -328,7 +328,7 @@ void GlauberGridThick::constructAllGrids(){
   for(int i=0;i<=getCthgrid();i++) delete [] treshold[i];
   delete [] treshold;
   treshold=NULL;
-  cout << "error " << error << endl;
+//   cout << "error " << error << endl;
 }
 
 
@@ -425,15 +425,14 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
     double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
     if(integrator==0){
       double restimate=0.,thetaestimate=0.,phiestimate=0.;
-      if(getParticles().size()==0&&getParticles()[0].getCosTheta()==1.){
+      if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
 	double results[4]={0.,0.,0.,0.};
 	rombergerN(this, &GlauberGridThick::intGlauberb_bound,1.E-02,getPnucleusthick()->getRange(),4,results,
-			    getPrec(),3,8,&restimate,proton,&thetaestimate, &phiestimate); 
+			    getPrec(),3,10,&restimate,proton,&thetaestimate, &phiestimate); 
 	fsi_grid[0][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*results[0];
 	fsi_grid[1][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*results[1]*src;
 	fsi_ct_grid[0][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*results[2];
 	fsi_ct_grid[1][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*results[3]*src;
-	
       }
       
       else{
@@ -449,7 +448,7 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
       
     else if(integrator==1||integrator==2){
       
-      if(getParticles().size()==0&&getParticles()[0].getCosTheta()==1.){
+      if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
 	numint::array<double,3> lower = {{1.E-06,getParticles()[0].getHitz(),0.}};
 	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),getPnucleusthick()->getRange(),2.*PI}};
 	
@@ -494,10 +493,10 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
      
     }
     else {cerr  << "integrator type not implemented" << endl; exit(1);}
-    cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
-    fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
-    fsi_ct_grid[1][proton][i][j][k] << 
-	" " << res << " " << count << " " << deeserror << endl;
+//     cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
+//     fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
+//     fsi_ct_grid[1][proton][i][j][k] << 
+// 	" " << res << " " << count << " " << deeserror << endl;
     
   }  
   //delete[] results;
@@ -882,7 +881,7 @@ void GlauberGridThick::intGlauberb_bound(const double b, double *results, va_lis
     for(int i=0;i<4;i++) results[i]=0.;
     return;
   }
-  rombergerN(this,&GlauberGridThick::intGlauberz_bound,bottom,ceiling,4,results,getPrec(),3,8,pthetaestimate,b, proton,pphiestimate);
+  rombergerN(this,&GlauberGridThick::intGlauberz_bound,bottom,ceiling,4,results,getPrec(),3,10,pthetaestimate,b, proton,pphiestimate);
   for(int i=0;i<4;i++) results[i]*=b*exp(-(b*b+getParticles()[0].getHitbnorm()*getParticles()[0].getHitbnorm())
 				/(2.*getParticles()[0].getBetasq(proton)) );
 }
@@ -899,17 +898,17 @@ void GlauberGridThick::intGlauberz_bound(const double z, double* results, va_lis
   }
   double costheta=z/r;
   double sintheta=b/r;
-  double dens=getPnucleusthick()->getDensity(r,proton);
+  double dens=getPnucleusthick()->getDensity(r,proton)/(r*r);
   
   double src=getFsiCorrelator().getCorrGrid_interp(r,costheta,proton);
-  double intresults[2];
-  rombergerN(this,&GlauberGridThick::intGlauberPhi_bound,0.,2.*PI,2,intresults,getPrec(),3,5,pphiestimate,b,r,costheta,sintheta,proton);
+  double intresults[2]={0.,0.};
+  rombergerN(this,&GlauberGridThick::intGlauberPhi_bound,0.,2.*PI,2,intresults,getPrec(),3,10,pphiestimate,b,r,costheta,sintheta,proton);
   //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
   results[0]=intresults[0];
   results[1]=intresults[1]*src;
   results[2]=results[0]*getParticles()[0].getCTsigma(z);
   results[3]=results[1]*getParticles()[0].getCTsigma(z);
-  for(int i=0;i<4;i++) results[i]*=dens/(r*r);
+  for(int i=0;i<4;i++) results[i]*=dens;
   
 }
   

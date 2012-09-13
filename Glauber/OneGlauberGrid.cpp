@@ -64,7 +64,7 @@ void OneGlauberGrid::calcGlauberphasesBoth(const int i, const int j, const int k
       double deeserror=0.;
       if(integrator==0){
 	double restimate=0.,thetaestimate=0.,phiestimate=0.;
-	rombergerN(this, &OneGlauberGrid::intGlauberB,1.e-02,getPnucleus()->getRange()-getPrec(),2,results,getPrec(),3,8,&restimate,level,
+	rombergerN(this, &OneGlauberGrid::intGlauberB,1.e-02,getPnucleus()->getRange()-getPrec(),2,results,getPrec(),3,10,&restimate,level,
 		  mm,&thetaestimate, &phiestimate); 
       }
       else if(integrator==1||integrator==2){
@@ -154,8 +154,8 @@ void OneGlauberGrid::intGlauberB(const double b, double *results, va_list ap){
   }
   
   double phiint=0;
-  rombergerN(this,&OneGlauberGrid::intGlauberPhi,0.,PI/2.,1,&phiint,getPrec(),3,8,pphiestimate,b,level);
-  rombergerN(this,&OneGlauberGrid::intGlauberZ,bottom+1.E-08,ceiling-1.E-08,2,results,getPrec(),3,8,pthetaestimate,b, level,m);
+  rombergerN(this,&OneGlauberGrid::intGlauberPhi,0.,PI/2.,1,&phiint,getPrec(),3,10,pphiestimate,b,level);
+  rombergerN(this,&OneGlauberGrid::intGlauberZ,bottom+1.E-08,ceiling-1.E-08,2,results,getPrec(),3,10,pthetaestimate,b, level,m);
   phiint*=4.*b*exp(-power(b-getParticles()[0].getHitbnorm(),2.)
 			      /(2.*getParticles()[0].getBetasq(level,getPnucleus())));
   results[0]*=phiint;

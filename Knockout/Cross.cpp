@@ -98,7 +98,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   
 }
 
-void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, int shellindex, double phi){
+void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, int shellindex, int thick, double phi){
   
   cross=vector<double>(5,0.);
   //electron kinematics
@@ -120,13 +120,14 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   kinfactors[4]=sqrt(tan2*(tan2+Q2overkk));
   kinfactors[5]=-1./sqrt(2)*Q2overkk*sqrt(tan2);
   
+  int total=thick?5:3;
   //compute response functions
-  for(int i=0;i<6;i++) for(int j=0;j<5;j++) response[j][i]=0.;
+  for(int i=0;i<6;i++) for(int j=0;j<total;j++) response[j][i]=0.;
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
-      Matrix<2,3> J[5];
-      reacmodel->getAllMatrixEl(kin,J,shellindex,m,current);
+      Matrix<2,3> J[total];
+      reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick);
       for(int i=0;i<2;i++){
-	for(int j=0;j<5;j++){
+	for(int j=0;j<total;j++){
 	  response[j][0]+=norm(J[j](i,0));
 	  response[j][1]+=norm(J[j](i,1))+norm(J[j](i,2));
 	  response[j][2]+=2.*real(conj(J[j](i,2))*J[j](i,1));
@@ -137,7 +138,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
       }
   }
   //combine everything
-  for(int j=0;j<5;j++) cross[j]=(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
+  for(int j=0;j<total;j++) cross[j]=(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
 		    +kinfactors[2]*response[j][2]*cos(2.*phi)+kinfactors[3]*response[j][3]*cos(phi))*mott*frontfactor/HBARC;
   delete reacmodel;
   

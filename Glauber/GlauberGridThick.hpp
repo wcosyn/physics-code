@@ -142,7 +142,7 @@ private:
    * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
    * \param ap variable parameter list
    */
-  void intGlauberPhi_bound(const double phi, double *results, va_list ap);
+  void intGlauberPhi_bound(double phi, double *results, va_list ap);
   /*! function that gets integrated over r, only fsi(+src)+ct grid output
    * \param r [fm] radial coordinate
    * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint

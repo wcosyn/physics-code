@@ -63,13 +63,13 @@ typedef void (*integrand_v) (unsigned ndim, unsigned npt,
    and non-zero if there  was an error. */
 int adapt_integrate(unsigned fdim, integrand f, void *fdata,
 		    unsigned dim, const double *xmin, const double *xmax, 
-		    unsigned maxEval, double reqAbsError, double reqRelError, 
+		    unsigned minEval, unsigned maxEval, double reqAbsError, double reqRelError, 
 		    double *val, double *err);
 
 /* as adapt_integrate, but vectorized integrand */
 int adapt_integrate_v(unsigned fdim, integrand_v f, void *fdata,
 		      unsigned dim, const double *xmin, const double *xmax, 
-		     unsigned maxEval, double reqAbsError, double reqRelError, 
+		     unsigned minEval, unsigned maxEval, double reqAbsError, double reqRelError, 
 		      double *val, double *err);
 
 #ifdef __cplusplus

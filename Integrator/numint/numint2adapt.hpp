@@ -131,7 +131,7 @@ int cube_adaptive(const mdfunction<T,N> &f, const numint::array<double, N> &a,
   double val[fdim], err[fdim];
 
   int code = adapt_integrate(fdim, mdf2ada::exec, &F,
-                             N,a.begin(),b.begin(),
+                             N,a.begin(),b.begin(),1.E03,
                              2.E06,epsabs,epsrel,
                              val,err);
 

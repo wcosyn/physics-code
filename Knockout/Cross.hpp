@@ -73,10 +73,11 @@ public:
    * \param kin contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param thick do you want thickness in the Glauber FSI or not?
    * \param phi angle between electron and hadron plane
    * \return differential cross section [fm \f$ ^2 \f$/MeV/sr \f$ ^2 \f$]
    */
-  void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, int shellindex, double phi);
+  void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, int shellindex, int thick, double phi);
   /*! Computes the off-shell \f$ (e,e'p)\f$ cross section for certain kinematics and a certain shell of the nucleus <BR>
    * What is denoted as \f$ K \sigma_{ep} \f$ in the literature
    * \param kin contains the hadron kinematics

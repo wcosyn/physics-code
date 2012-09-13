@@ -77,7 +77,7 @@ public:
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm \f$^{3/2}\f$] contains amplitudes <BR>
+   * \param results [ fm \f$^{3/2}\f$] contains amplitudes (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>
    * Second index is photon polarization (0 is 0, 1 is -1, 2 is +1) <BR>
    * \param shellindex which \f$ \alpha \f$ shell do we eject from
@@ -89,15 +89,18 @@ public:
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm \f$^{3/2}\f$] contains amplitudes <BR>
+   * \param results [ fm \f$^{3/2}\f$] contains amplitudes<BR>
+   * (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) if thickness <BR>
+   * (0=RMSGA,1=+SRC,2=plane-wave) if no thickness <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>
    * Second index is photon polarization (0 is 0, 1 is -1, 2 is +1) <BR>
    * \param shellindex which \f$ \alpha \f$ shell do we eject from
    * \param m \f$ m_j \f$ times TWO!!! of the initial nucleon
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+   * \param thick thickness in the glauber
    */
-  void getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, int current);
-  /*! Computes the off-shell amplitude \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu u(\vec{p}_m,m_i) \f$
+  void getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, int current, int thick);
+   /*! Computes the off-shell amplitude \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu u(\vec{p}_m,m_i) \f$
    * \param tk contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param spinin spin \f$ m_i \f$ of the initial nucleon times TWO!!! (-1 or +1)
