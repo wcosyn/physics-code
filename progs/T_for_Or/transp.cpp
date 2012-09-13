@@ -21,10 +21,14 @@ using namespace std;
 #include <TElectronKinematics.h>
 #include <Cross.hpp>
 #include <Utilfunctions.hpp>
+#include <vector>
+#include <numint/numint.hpp>
+
 
 void intPm(const double pm, double *results, va_list ap);
 void intcosth(const double costh, double *results, va_list ap);
 void getBound(double &high, double &low, MeanFieldNucleusThick *pnucleus, double Q2, double omega, int shell);
+void adap_intPm(numint::vector_d &, double pm,Cross* pObs, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec);
 
 
 //run ./transp [nucleon] [Q2,GeV^2] [Ein, MeV] [thetae, degr] [thickness] [sharedir]
@@ -49,24 +53,54 @@ int main(int argc, char *argv[])
   Cross obs(*elec,&Nucleus,prec,homedir, userset, screening);
 
   
-  double total[5];
-  for(int i=0;i<5;i++) total[i]=0.;
+//   for(int i=0;i<5;i++) total[i]=0.;
+//   
+//   for(int shell=0;shell</*Nucleus.getPLevels()*/1;shell++){
+//     double low=-1.,high=1.;
+//     getBound(high,low,&Nucleus,Q2,omega,shell);
+//     double results[5];
+//     double pestimate=0.;
+//     rombergerN(intPm,-1.,low,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, 
+// 	       thick,current);
+//     for(int j=0;j<5;j++) total[j]+=results[j];
+//     
+//     cout << Q2/1.E06 << " " << Ein << " " << shell << " " << results[0]/results[4] << " " << 
+// 	    results[1]/results[4] << " " << results[2]/results[4] << " " << results[3]/results[4] << endl;
+//   }
+//   cout << endl;
+//     cout << Q2/1.E06 << " " << Ein << " " << total[0]/total[4] << " " << 
+// 	    total[1]/total[4] << " " << total[2]/total[4] << " " << total[3]/total[4] << endl;
+
+  vector<double> totalcross(5,0.) 
+  struct Ftor {
+
+    static void exec(const numint::array<double,1> &x, void *param, numint::vector_d &ret) {
+      Ftor &p = * (Ftor *) param;
+      p.f(ret,x[0],p.pObs,p.pNucleus,p.elec);
+    }
+    Cross *pObs;
+    MeanFieldNucleusThick *pNucleus;
+    TElectronKinematics *elec;
+    void (*f)(numint::vector_d &, double pm,Cross* pObs, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec);
+  };
+
+  Ftor F;
+  F.pObs = &Obs;
+  F.pNucleus = &Nucleus;
+  F.elec=elec;
+
+  numint::mdfunction<numint::vector_d,1> mdf;
+  mdf.func = &Ftor::exec;
+  mdf.param = &F;
+
+  unsigned neval = 0;
+  numint::array<double,1> lower = {{0.}};
+  numint::array<double,1> upper = {{1.,1.,2.*PI}};
   
-  for(int shell=0;shell</*Nucleus.getPLevels()*/1;shell++){
-    double low=-1.,high=1.;
-    getBound(high,low,&Nucleus,Q2,omega,shell);
-    double results[5];
-    double pestimate=0.;
-    rombergerN(intPm,-1.,low,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, 
-	       thick,current);
-    for(int j=0;j<5;j++) total[j]+=results[j];
-    
-    cout << Q2/1.E06 << " " << Ein << " " << shell << " " << results[0]/results[4] << " " << 
-	    results[1]/results[4] << " " << results[2]/results[4] << " " << results[3]/results[4] << endl;
-  }
-  cout << endl;
-    cout << Q2/1.E06 << " " << Ein << " " << total[0]/total[4] << " " << 
-	    total[1]/total[4] << " " << total[2]/total[4] << " " << total[3]/total[4] << endl;
+  double SIGNIF = 1.E-05;
+  
+  
+  
   
   delete elec;
   return 0;

@@ -123,7 +123,8 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   int total=thick?5:3;
   //compute response functions
   for(int i=0;i<6;i++) for(int j=0;j<total;j++) response[j][i]=0.;
-  for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
+  //only half of the m values due to symmetry
+  for(int m=-pnucl->getJ_array()[shellindex];m<=0/*pnucl->getJ_array()[shellindex]*/;m+=2){
       Matrix<2,3> J[total];
       reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick);
       for(int i=0;i<2;i++){
@@ -137,8 +138,8 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
 	}
       }
   }
-  //combine everything
-  for(int j=0;j<total;j++) cross[j]=(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
+  //combine everything, factor 2 because of symmetry!
+  for(int j=0;j<total;j++) cross[j]=2.*(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
 		    +kinfactors[2]*response[j][2]*cos(2.*phi)+kinfactors[3]*response[j][3]*cos(phi))*mott*frontfactor/HBARC;
   delete reacmodel;
   

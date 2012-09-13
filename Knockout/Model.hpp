@@ -83,8 +83,9 @@ public:
    * \param shellindex which \f$ \alpha \f$ shell do we eject from
    * \param m \f$ m_j \f$ times TWO!!! of the initial nucleon
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+   * \param thick thickness in the glauber
    */
-  void getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, int current);
+  void getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, int current, int thick);
   /*! Computes amplitudes \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu \phi^{D}_{\alpha}(\vec{p}_m,m) \f$
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
@@ -116,6 +117,7 @@ public:
   GlauberGridThick* getThickGrid() {return &gridthick;}
   int getShell() const{return shell;}
   int getM() const{return mm;}
+  int getIntegrator() const{return integrator;}
   MeanFieldNucleusThick* getPnucleus() {return pnucl;}
   Matrix<1,4> & getBarcontract0up() {return barcontract0up;}
   Matrix<1,4> & getBarcontractminup() {return barcontractminup;}
@@ -210,12 +212,57 @@ private:
     */
     void (*f)(numint::vector_z & res, double x, double y, double z, Model & model, int SRC, int pw);
   };
+  /*! struct that is used for integrators (radial ones)*/
+  struct Ftor_r {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,1> &x, void *param, numint::vector_z &ret) {
+      Ftor_r &p = * (Ftor_r *) param;
+      p.f(ret,x[0],*p.model,p.thick,p.total);
+    }
+    Model *model;/*!< pointer to model instance that contains all */
+    int thick;/*!< SRC or not */
+    int total; /*!< plane-wave? */
+    /*! integrandum 
+    * \param res results
+    * \param r first integration variable
+    * \param model Model instance
+    * \param thick thick in FSI?
+    * \param total number of FSI situations?
+    */
+    void (*f)(numint::vector_z & res, double r, Model & model, int thick, int total);
+  };
+  /*! struct that is used for integrators (angular ones)*/
+  struct Ftor_angles {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,2> &x, void *param, numint::vector_z &ret) {
+      Ftor_angles &p = * (Ftor_angles *) param;
+      p.f(ret,x[0],x[1],*p.model,p.thick,p.total,p.r);
+    }
+    Model *model;/*!< pointer to model instance that contains all */
+    int thick;/*!< SRC or not */
+    int total; /*!< plane-wave? */
+    double r; /*!<radial coordinate*/
+    /*! integrandum 
+    * \param res results
+    * \param r first integration variable
+    * \param model Model instance
+    * \param thick thick in FSI?
+    * \param total number of FSI situations?
+    */
+    void (*f)(numint::vector_z & res, double costheta, double phi, Model & model, int thick, int total, double r);
+  };
   /*! integrandum function (clean ones)*/
   static void klaas_one_amp(numint::vector_z & results, double r, double costheta, double phi, Model & model, int SRC, int pw);
-  /*! integrandum function (clean ones), only CT*/
+  /*! integrandum function (clean ones)*/
   static void klaas_all_amp(numint::vector_z & results, double r, double costheta, double phi, Model & model, int SRC, int pw);
-  /*! integrandum function (clean ones), only CT*/
+  /*! integrandum function (clean ones)*/
   static void klaas_mult_amp(numint::vector_z & results, double r, double costheta, double phi, Model & model, int SRC, int pw);
+  /*! integrandum function (radial ones)*/
+  static void klaas_all_radial(numint::vector_z & results, double r, Model & model, int SRC, int pw);
+  /*! integrandum function (angular ones)*/
+  static void klaas_all_angular(numint::vector_z & results, double costheta, double phi, Model & model, int SRC, int pw, double r);
   
 
 };

@@ -11,8 +11,8 @@ Model::Model(MeanFieldNucleusThick *pnucleus, double precision, int integr, stri
 	      bool user_sigma, double sigma_screening)
 :pnucl(pnucleus), prec(precision), integrator(integr), homedir(dir),
 usersigma(user_sigma), sigmascreening(sigma_screening),
-gridthick(GlauberGridThick(60,18,5,pnucleus,1.E-04,0,dir)),
-onegrid(OneGlauberGrid(60,18,pnucleus,1.E-04,0,dir)){
+gridthick(GlauberGridThick(60,18,5,pnucleus,precision,2,dir)),
+onegrid(OneGlauberGrid(60,18,pnucleus,precision,2,dir)){
 }
 
 
@@ -256,7 +256,8 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   delete J;
 }
 
-void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shellindex, int m, int current){
+void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shellindex, int m, 
+			       int current, int thick){
   //to translate the 2to2kinematics language to our particles:
   //p is A
   //hyperon Y is fast final nucleon
@@ -282,7 +283,8 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
   FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
 
-  grid = &gridthick;
+  if(thick) grid = &gridthick;
+  else grid= &onegrid;
   grid->clearParticles();
   grid->addParticle(proton);
   grid->updateGrids();
@@ -304,33 +306,35 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
       else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
       int res=90;
       unsigned count=0;
+      int total=thick?5:3; //in thickness we need 5 diff FSI results, otherwise 3
       if(integrator==0){
-	complex<double> results[5];
+	complex<double> results[total];
 	double restimate=0.,thestimate=0.,phiestimate=0.;
-	rombergerN(this,&Model::intJR,0.,pnucl->getRange(),5,results,getPrec(),3,8,&restimate,&thestimate, &phiestimate);
-	for(int k=0;k<5;++k) matrixel[k](spinout,photopol) = results[k];
+	rombergerN(this,&Model::intJR,0.,pnucl->getRange(),total,results,getPrec(),3,8,
+		   &restimate,total,&thestimate, &phiestimate);
+	for(int k=0;k<total;++k) matrixel[k](spinout,photopol) = results[k];
 	
       }
-      if(integrator==1||integrator==2){
+      else if(integrator==1||integrator==2){
 
 	numint::array<double,3> lower = {{0.,-1.,0.}};
 	numint::array<double,3> upper = {{pnucl->getRange(),1.,2.*PI}};
 	Model::Ftor_one F;
 	F.model = this;
-	F.SRC = 0;
-	F.pw = 0;
+	F.SRC = thick;
+	F.pw = total;
 	numint::mdfunction<numint::vector_z,3> mdf;
 	mdf.func = &Ftor_one::exec;
 	mdf.param = &F;
-	numint::vector_z ret(5,0.);
+	numint::vector_z ret(total,0.);
 	F.f=Model::klaas_mult_amp;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
 	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
-	for(int k=0;k<5;++k) matrixel[k](spinout,photopol) = ret[k];
+	for(int k=0;k<total;++k) matrixel[k](spinout,photopol) = ret[k];
       }      
       else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
       cout << shellindex << " " << m << " " << spinout << " " << photopol << " " << matrixel[0](spinout,photopol) << 
-	" " << matrixel[1](spinout,photopol) << " " << res << " " << count << endl;
+	" " << matrixel[1](spinout,photopol) << " " << matrixel[total-1](spinout,photopol) << " " << res << " " << count << endl;
     }
   }
         
@@ -364,6 +368,7 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
   J= new NucleonEMOperator(tk.GetQsquared(),1,0);
   FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
+  
   if(thick) grid = &gridthick;
   else grid= &onegrid;
   grid->clearParticles();
@@ -420,6 +425,19 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
     mdf.param = &F;
     numint::vector_z ret(total*6,0.);
     F.f=Model::klaas_all_amp;
+
+//     numint::array<double,1> lower = {{0.,}};
+//     numint::array<double,1> upper = {{pnucl->getRange()}};
+//     Model::Ftor_r F;
+//     F.model = this;
+//     F.thick = thick;
+//     F.total = total;
+//     numint::mdfunction<numint::vector_z,1> mdf;
+//     mdf.func = &Ftor_r::exec;
+//     mdf.param = &F;
+//     numint::vector_z ret(total*6,0.);
+//     F.f=Model::klaas_all_radial;
+
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
     else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
     for(int k=0;k<total;++k){
@@ -445,11 +463,12 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
 
 void Model::intJR(const double r, complex<double> *results, va_list ap){
   
+  int total = va_arg(ap,int);
   double *pthetaestimate = va_arg(ap,double*);
   double *pphiestimate = va_arg(ap,double*);
 
   gridthick.setRinterp(r);
-  rombergerN(this,&Model::intJCosTheta,-1.,1.,5,results,getPrec(),3,8,pthetaestimate, r, pphiestimate);
+  rombergerN(this,&Model::intJCosTheta,-1.,1.,total,results,getPrec(),3,8,pthetaestimate, r, total, pphiestimate);
   //MFSpinor already contains a *r!!!
   for(int i=0;i<5;++i) results[i]*=r;
   return;
@@ -471,10 +490,11 @@ void Model::intJR12(const double r, complex<double> *results, va_list ap){
 void Model::intJCosTheta(const double costheta, complex<double> *results, va_list ap){
   
   double r = va_arg(ap,double);
+  int total = va_arg(ap,int);
   double *pphiestimate = va_arg(ap,double*);
   double sintheta=sqrt(1.-costheta*costheta);
   gridthick.setCthinterp(costheta);
-  rombergerN(this,&Model::intJPhi,0.,2.*PI,5,results,getPrec(),3,8,pphiestimate, r, costheta, sintheta);
+  rombergerN(this,&Model::intJPhi,0.,2.*PI,total,results,getPrec(),3,8,pphiestimate, r, costheta, sintheta, total);
   return;
 }
 void Model::intJCosTheta12(const double costheta, complex<double> *results, va_list ap){
@@ -494,12 +514,13 @@ void Model::intJPhi(const double phi, complex<double> *results, va_list ap){
   double r = va_arg(ap,double);
   double costheta = va_arg(ap,double);
   double sintheta = va_arg(ap,double);
+  int total = va_arg(ap,int);
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   
-  results[4]= barcontract*TMFSpinor(*pnucl,shell,mm,r,costheta,phi)*
+  results[total-1]= barcontract*TMFSpinor(*pnucl,shell,mm,r,costheta,phi)*
     exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT);
-  for(int i=0;i<4;++i) results[i]=results[4]*gridthick.getFsiGridN_interp1(i,phi);
+  for(int i=0;i<total-1;++i) results[i]=results[total-1]*gridthick.getFsiGridN_interp1(i,phi);
   
   return;
 }
@@ -585,31 +606,6 @@ void Model::klaas_one_amp(numint::vector_z & results, double r, double costheta,
   
 }
   
-// void Model::klaas_all_amp(numint::vector_z & results, double r, double costheta, double phi, 
-// 			  Model & model, int thick, int total){
-//   results=numint::vector_z(total*6,0.);
-//   double sintheta=sqrt(1.-costheta*costheta);
-//   
-//   double cosphi,sinphi;
-//   sincos(phi,&sinphi,&cosphi);
-//   TMFSpinor wave(*(model.getPnucleus()),model.getShell(),model.getM(),r,costheta,phi);
-//   complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
-//   results[0]= exp_pr*(model.getBarcontract0down()*wave);
-//   results[5]= exp_pr*(model.getBarcontractmindown()*wave);
-//   results[10]= exp_pr*(model.getBarcontractplusdown()*wave);
-//   results[15]= exp_pr*(model.getBarcontract0up()*wave);
-//   results[20]= exp_pr*(model.getBarcontractminup()*wave);
-//   results[25]= exp_pr*(model.getBarcontractplusup()*wave);
-//   for(int k=0;k<6;++k) for(int i=1;i<5; ++i) results[k*5+i] = results[k*5];
-//   complex<double> glauberphase[4];
-//   for(int i=0;i<4;++i){
-//     glauberphase[i]=model.getThickGrid()->getFsiGridN_interp3(i,r,costheta,phi);
-//     for(int k=0;k<6;++k) results[k*5+i]*=glauberphase[i];
-//   }
-//   return;
-// 
-//   
-// }
 
 void Model::klaas_all_amp(numint::vector_z & results, double r, double costheta, double phi, 
 			  Model & model, int thick, int total){
@@ -636,19 +632,68 @@ void Model::klaas_all_amp(numint::vector_z & results, double r, double costheta,
 
   
 }
+void Model::klaas_all_radial(numint::vector_z & results, double r,
+			  Model & model, int thick, int total){
+  results=numint::vector_z(total*6,0.);
+  numint::array<double,2> lower = {{-1.,0.}};
+  numint::array<double,2> upper = {{1.,2.*PI}};
+  Model::Ftor_angles F;
+  F.model = &model;
+  F.thick = thick;
+  F.total = total;
+  F.r=r;
+  numint::mdfunction<numint::vector_z,2> mdf;
+  mdf.func = &Ftor_angles::exec;
+  mdf.param = &F;
+//   numint::vector_z ret(total*6,0.);
+  F.f=Model::klaas_all_angular;
+  unsigned count=0;
+  if(model.getIntegrator()==1) numint::cube_romb(mdf,lower,upper,1.E-08,model.getPrec(),results,count,0);
+  else numint::cube_adaptive(mdf,lower,upper,1.E-08,model.getPrec(),results,count,0);
+  for(int i=0;i<total*6;++i) results[i]*=r;  
+  return;
+}
+  
+  
+  
 
-
-
-void Model::klaas_mult_amp(numint::vector_z & results, double r, double costheta, double phi, 
-			  Model & model, int SRC, int pw){
-  results=numint::vector_z(5,0.);
+void Model::klaas_all_angular(numint::vector_z & results, double costheta, double phi, 
+			  Model & model, int thick, int total, double r){
+  results=numint::vector_z(total*6,0.);
   double sintheta=sqrt(1.-costheta*costheta);
   
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
-  results[4]= r*exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)))
+  TMFSpinor wave(*(model.getPnucleus()),model.getShell(),model.getM(),r,costheta,phi);
+  complex<double> exp_pr=exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
+  results[0*total]= exp_pr*(model.getBarcontract0down()*wave);
+  results[1*total]= exp_pr*(model.getBarcontractmindown()*wave);
+  results[2*total]= exp_pr*(model.getBarcontractplusdown()*wave);
+  results[3*total]= exp_pr*(model.getBarcontract0up()*wave);
+  results[4*total]= exp_pr*(model.getBarcontractminup()*wave);
+  results[5*total]= exp_pr*(model.getBarcontractplusup()*wave);
+  for(int k=0;k<6;++k) for(int i=1;i<total; ++i) results[k*total+i] = results[k*total];
+  complex<double> glauberphase[total-1];
+  for(int i=0;i<(total-1);++i){
+    glauberphase[i]=model.getGrid()->getFsiGridN_interp3(i,r,costheta,phi);
+    for(int k=0;k<6;++k) results[k*total+i]*=glauberphase[i];
+  }
+  return;
+
+  
+}
+
+
+void Model::klaas_mult_amp(numint::vector_z & results, double r, double costheta, double phi, 
+			  Model & model, int thick, int total){
+  results=numint::vector_z(total,0.);
+  double sintheta=sqrt(1.-costheta*costheta);
+  
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  results[total-1]= r*exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)))
 	      *(model.getBarcontract()*TMFSpinor(*(model.getPnucleus()),model.getShell(),model.getM(),r,costheta,phi));
-  for(int i=0;i<4;++i) results[i]=results[4]*model.getThickGrid()->getFsiGridN_interp3(i,r,costheta,phi);
+  for(int i=0;i<total-1;++i) results[i]=results[total-1]*model.getThickGrid()->getFsiGridN_interp3(i,r,costheta,phi);
   return;
 
   
