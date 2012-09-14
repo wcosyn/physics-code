@@ -448,13 +448,13 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
   }      
   else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
       
-  cout << shellindex << " " << m << " ";
-  for(int i=0;i<6;i++) cout << matrixel[0](i/3,i%3) << " ";
-  cout << res << " " << count << endl;
-  for(int i=0;i<6;i++) cout << matrixel[1](i/3,i%3) << " ";
-  cout << res << " " << count << endl ;
-   for(int i=0;i<6;i++) cout << matrixel[total-1](i/3,i%3) << " ";
-  cout << res << " " << count << endl << endl;
+//   cout << shellindex << " " << m << " ";
+//   for(int i=0;i<6;i++) cout << matrixel[0](i/3,i%3) << " ";
+//   cout << res << " " << count << endl;
+//   for(int i=0;i<6;i++) cout << matrixel[1](i/3,i%3) << " ";
+//   cout << res << " " << count << endl ;
+//    for(int i=0;i<6;i++) cout << matrixel[total-1](i/3,i%3) << " ";
+//   cout << res << " " << count << endl << endl;
  
   delete J;
   

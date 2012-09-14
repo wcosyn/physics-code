@@ -366,13 +366,13 @@ void GlauberGridThick::constructCtGrid(){
 	  }
 	  calcGlauberphasesCt(i,j,k);
 	
-	  if(abs(pow(fsi_ct_grid[0][0][i][j][k],getPnucleusthick()->getN())*pow(fsi_ct_grid[0][1][i][j][k],getPnucleusthick()->getZ()))>0.99
-		  &&abs(pow(fsi_ct_grid[1][0][i][j][k],getPnucleusthick()->getN())*pow(fsi_ct_grid[1][1][i][j][k],getPnucleusthick()->getZ()))>0.99){
-	    treshold[j][k]=1;
-	    if(j==0||j==getCthgrid()){
-	      for(int ll=1;ll<=getPhigrid();ll++) treshold[j][ll]=1;
-	    }
-	  }
+// 	  if(abs(pow(fsi_ct_grid[0][0][i][j][k],getPnucleusthick()->getN())*pow(fsi_ct_grid[0][1][i][j][k],getPnucleusthick()->getZ()))>0.99
+// 		  &&abs(pow(fsi_ct_grid[1][0][i][j][k],getPnucleusthick()->getN())*pow(fsi_ct_grid[1][1][i][j][k],getPnucleusthick()->getZ()))>0.99){
+// 	    treshold[j][k]=1;
+// 	    if(j==0||j==getCthgrid()){
+// 	      for(int ll=1;ll<=getPhigrid();ll++) treshold[j][ll]=1;
+// 	    }
+// 	  }
 	  //r=0 symmetry shortcut
 	  if(i==0){
 	    for(j=0;j<=getCthgrid();j++){
@@ -460,8 +460,8 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
 	mdf.param = &F;
 	vector<double> ret(4,0.);
 	F.f=klaas_int_bound;
-	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-10,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-10,prec,ret,count,0);
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,ret,count,0);
 	fsi_grid[0][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*ret[0];
 	fsi_grid[1][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*ret[1]*src;
 	fsi_ct_grid[0][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*ret[2];
@@ -479,8 +479,8 @@ void GlauberGridThick::calcGlauberphasesBoth(const int i, const int j, const int
 	mdf.param = &F;
 	vector<complex<double> > ret(4,0.);
 	F.f=klaas_int_all;
-	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,ret,count,0);
 	fsi_grid[0][proton][i][j][k]=ret[0];
 	fsi_grid[1][proton][i][j][k]=ret[1]*src;
 	fsi_ct_grid[0][proton][i][j][k]=ret[2];
@@ -543,8 +543,8 @@ void GlauberGridThick::calcGlauberphasesCt(const int i, const int j, const int k
 	mdf.param = &F;
 	vector<double> ret(2,0.);
 	F.f=GlauberGridThick::klaas_int_bound_ct;
-	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,ret,count,0);
 	fsi_ct_grid[0][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*ret[0];
 	fsi_ct_grid[1][proton][i][j][k]=1.-getParticles()[0].getScatterfront(proton)*ret[1]*src;
       }
@@ -560,8 +560,8 @@ void GlauberGridThick::calcGlauberphasesCt(const int i, const int j, const int k
 	mdf.param = &F;
 	vector<complex<double> > ret(2,0.);
 	F.f=GlauberGridThick::klaas_int_all_ct;
-	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,ret,count,0);
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,ret,count,0);
 	fsi_ct_grid[0][proton][i][j][k]=ret[0];
 	fsi_ct_grid[1][proton][i][j][k]=ret[1]*src;
 

@@ -53,25 +53,25 @@ int main(int argc, char *argv[])
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
   Cross obs(*elec,&Nucleus,prec, 2, homedir, userset, screening);
 
-  double total[5];
-  for(int i=0;i<5;i++) total[i]=0.;
-  
-  for(int shell=0;shell<Nucleus.getPLevels();shell++){
-    double low=-1.,high=1.;
-    getBound(high,low,Nucleus,Q2,omega,shell);
-    double results[5];
-    double pestimate=0.;
-    rombergerN(intPm,-1.,low,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, 
-	       thick,current);
-    for(int j=0;j<5;j++) total[j]+=results[j];
-    
-    cout << Q2/1.E06 << " " << Ein << " " << shell << " " << results[0]/results[4] << " " << 
-	    results[1]/results[4] << " " << results[2]/results[4] << " " << results[3]/results[4] << endl;
-  }
-  cout << endl;
-    cout << Q2/1.E06 << " " << Ein << " " << total[0]/total[4] << " " << 
-	    total[1]/total[4] << " " << total[2]/total[4] << " " << total[3]/total[4] << endl;
-  exit(1);
+//   double total[5];
+//   for(int i=0;i<5;i++) total[i]=0.;
+//   
+//   for(int shell=0;shell<Nucleus.getPLevels();shell++){
+//     double low=-1.,high=1.;
+//     getBound(high,low,Nucleus,Q2,omega,shell);
+//     double results[5];
+//     double pestimate=0.;
+//     rombergerN(intPm,-1.,low,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, 
+// 	       thick,current);
+//     for(int j=0;j<5;j++) total[j]+=results[j];
+//     
+//     cout << Q2/1.E06 << " " << Ein << " " << shell << " " << results[0]/results[4] << " " << 
+// 	    results[1]/results[4] << " " << results[2]/results[4] << " " << results[3]/results[4] << endl;
+//   }
+//   cout << endl;
+//     cout << Q2/1.E06 << " " << Ein << " " << total[0]/total[4] << " " << 
+// 	    total[1]/total[4] << " " << total[2]/total[4] << " " << total[3]/total[4] << endl;
+//   exit(1);
 	    
   vector<double> totalcross(5,0.); 
   double cthmax[Nucleus.getPLevels()];
@@ -122,8 +122,8 @@ int main(int argc, char *argv[])
   
   F.f=adap_intPm;
   unsigned count=0;
-  numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,totalcross,count,0);
-//   numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-03,totalcross,count,0);
+ numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,totalcross,count,0);
+//    numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-03,totalcross,count,0);
   
     cout << Q2/1.E06 << " " << Ein << " " << totalcross[0]/totalcross[4] << " " << 
 	    totalcross[1]/totalcross[4] << " " << totalcross[2]/totalcross[4] << " " << totalcross[3]/totalcross[4] << " " << totalcross[4] << " " << count << endl;
