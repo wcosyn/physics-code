@@ -36,7 +36,7 @@ public:
    * \param user_sigma does the user want to change sigma?
    * \param sigma_screening [%] screening change of sigma
    */
-  Model(MeanFieldNucleusThick *pnucleus, double prec, int integrator, std::string dir, 
+  Model(MeanFieldNucleusThick *pnucleus, double prec, int integrator, std::string dir, int max_Eval,
 	bool user_sigma, double sigma_screening=0.);
   ~Model(); /*!< Destructor */
 //   void setSRC(int setSRC) {SRC=setSRC;} /*!< sets SRC in the Glauber FSI */
@@ -147,6 +147,7 @@ private:
   double sigmascreening; /*!< [%] screening effect to sigma */
   GlauberGridThick gridthick;
   OneGlauberGrid onegrid;
+  int maxEval; /*!< max Evals in integrations */
   
   int shell; /*!< what shell has the ejected nucleon */
   int mm; /*!< \f$ m_j \f$ quantum number of ejected nucleon */

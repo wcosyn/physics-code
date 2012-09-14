@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 //     getBound(high,low,Nucleus,Q2,omega,shell);
 //     double results[5];
 //     double pestimate=0.;
-//     rombergerN(intPm,-1.,low,5, results,1.E-02,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, 
+//     rombergerN(intPm,-1.,low,5, results,1.E-03,3,10,&pestimate,&obs,elec,&Nucleus,Q2,omega,shell, 
 // 	       thick,current);
 //     for(int j=0;j<5;j++) total[j]+=results[j];
 //     
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
   F.f=adap_intPm;
   unsigned count=0;
  numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,totalcross,count,0);
-//    numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-03,totalcross,count,0);
+//    numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-03,2.E06,totalcross,count,0);
   
     cout << Q2/1.E06 << " " << Ein << " " << totalcross[0]/totalcross[4] << " " << 
 	    totalcross[1]/totalcross[4] << " " << totalcross[2]/totalcross[4] << " " << totalcross[3]/totalcross[4] << " " << totalcross[4] << " " << count << endl;

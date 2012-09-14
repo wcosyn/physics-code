@@ -75,9 +75,10 @@ public:
    * \param shellindex selects the shell in the nucleus where the ejected N originates from
    * \param thick do you want thickness in the Glauber FSI or not?
    * \param phi angle between electron and hadron plane
+   * \param maxEval max # of evaluations in integrations
    * \return differential cross section [fm \f$ ^2 \f$/MeV/sr \f$ ^2 \f$]
    */
-  void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, int shellindex, int thick, double phi);
+  void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, int shellindex, int thick, double phi, int maxEval);
   /*! Computes the off-shell \f$ (e,e'p)\f$ cross section for certain kinematics and a certain shell of the nucleus <BR>
    * What is denoted as \f$ K \sigma_{ep} \f$ in the literature
    * \param kin contains the hadron kinematics
