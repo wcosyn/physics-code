@@ -11,8 +11,8 @@ Model::Model(MeanFieldNucleusThick *pnucleus, double precision, int integr, stri
 	      int max_Eval, bool user_sigma, double sigma_screening)
 :pnucl(pnucleus), prec(precision), integrator(integr), homedir(dir), maxEval(max_Eval),
 usersigma(user_sigma), sigmascreening(sigma_screening),
-gridthick(GlauberGridThick(120,18,10,pnucleus,precision,2,dir)),
-onegrid(OneGlauberGrid(60,18,pnucleus,precision,2,dir)){
+gridthick(GlauberGridThick(120,36,5,pnucleus,precision,2,dir)),
+onegrid(OneGlauberGrid(120,36,pnucleus,precision,2,dir)){
 }
 
 

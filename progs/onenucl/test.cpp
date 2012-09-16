@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
   double free=obs.getElCross(kin,2,0.)*HBARC*HBARC;
   vector<double> cross;
 
-  obs.getAllDiffCross(cross,kin,2,1,thick,0.,maxEval);
+  obs.getAllDiffCross(cross,kin,2,3,thick,0.,maxEval);
   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  
       cross[0] << " " << cross[1] << " " << cross[thick?4:2] << " " << free << " " << cross[0]/free << " " << cross[1]/free << endl;
   exit(1);
