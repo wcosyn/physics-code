@@ -44,7 +44,6 @@ public:
   virtual ~AbstractFsiCTGridThick();/*!< Destructor */
   
   virtual void printFsi_src_ct_grid()=0; /*!< Prints the FSI+SRC+CT grid for a certain situation, pure virtual function!! */
-
   /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,costheta,phi) */
   std::complex<double> getFsiSrcCtGridFull_interpvec(const TVector3 &rvec);
   /*!returns the value of the fsi+src+ct grid for a certain situation at coordinate (r,costheta,phi) */

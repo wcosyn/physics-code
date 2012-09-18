@@ -71,7 +71,20 @@ public:
   * 3: RMSGA+CT+SRC <BR>
   */
   virtual void print_grid(int grid);
-  
+  /*!gives you a glauberphase at a certain point (all 4 RMSGA variants)
+   * \param phases result
+   * \param rhit [fm] radial coordinate of hard interaction point`
+   * \param coshtetahi cos of azimuthal angle of hard interactionpoint
+   * \param phihit phi angle of hard interaction point
+   */
+  void getFsiphaseAll(std::vector<std::complex<double> > &phases, double rhit, double costhetahit, double phihit);
+  /*!gives you a glauberphase at a certain point (only 2 CT+RMSGA variants)
+   * \param phases result
+   * \param rhit [fm] radial coordinate of hard interaction point`
+   * \param coshtetahi cos of azimuthal angle of hard interactionpoint
+   * \param phihit phi angle of hard interaction point
+   */
+  void getFsiphaseCt(std::vector<std::complex<double> > &phases, double rhit, double costhetahit, double phihit);
 
 
 
@@ -102,6 +115,16 @@ private:
    * \param k grid index in phi
    */
   virtual void calcGlauberphasesCt(const int i, const int j, const int k);
+  /*! calculates the glauberphases for one previously set point (both FSI and FSI+CT)
+   * \param protonphases glauberphases (for proton scattering)
+   * \param neturonphases glauberphases (for neutron scattering)
+   */
+  virtual void calcGlauberphasesBoth(std::vector<std::complex<double> > &protonphases, std::vector<std::complex<double> > &neutronphases); 
+  /*! calculates the glauberphases for one previously set point (only FSI+CT)
+   * \param protonphases glauberphases (for proton scattering)
+   * \param neturonphases glauberphases (for neutron scattering)
+   */
+  virtual void calcGlauberphasesCt(std::vector<std::complex<double> > &protonphases, std::vector<std::complex<double> > &neutronphases);
   virtual void readinFsiGrid(ifstream &infile);  /*!< read in both the fsi(+src) and the fsi(+src)+ct grids */
   virtual void readinFsiCtGrid(ifstream &infile); /*!< read in only the fsi(+src)+ct grids */
   virtual void writeoutFsiGrid(ofstream &outfile); /*!< write out both the fsi(+src) and the fsi(+src)+ct grids */

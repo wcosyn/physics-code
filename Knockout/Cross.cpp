@@ -98,7 +98,8 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   
 }
 
-void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, int shellindex, int thick, double phi, int maxEval){
+void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
+			     int shellindex, int thick, double phi, int maxEval, bool lab){
   
   cross=vector<double>(5,0.);
   //electron kinematics
@@ -107,9 +108,10 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   double Q2overkk=Q2/qvec/qvec;
   double tan2=pow(tan(acos(electron.GetCosScatterAngle(kin))/2.),2.);
   //kinematical front factor
-  frontfactor=kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
+  frontfactor=lab? (kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
       /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
-	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()));
+	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
+	    kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPkcm()/(8*pow(PI,3.)*kin.GetW());
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.;
   reacmodel=new Model(pnucl,prec,integrator,homedir, maxEval, getUsersigma(),getSigmascreening());
   

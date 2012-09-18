@@ -144,11 +144,11 @@ for(int shell=0;shell<pNucleus->getPLevels();shell++) {
 			MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
     double pm=kin.GetPklab();
     if(!kin.IsPhysical()){
-      for(int i=0;i<5;i++) results[i]=0.;
+      for(int i=0;i<5;i++) results[i]+=0.;
       cout << "bla " << pm << endl;
     }
-    numint::vector_d cross=numint::vector_d(5,0.);
-    pObs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000);
+     numint::vector_d cross=numint::vector_d(5,0.);
+    pObs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000,0);
     for(int i=0;i<5;++i) results[i]+=cross[i];
     cout << costhetacm << " " << pm << " " << shell << " " << results[0] << endl;
   }
@@ -183,7 +183,7 @@ void intPm(const double costhcm, double *results, va_list ap){
   }
   // kin.Print();
     numint::vector_d cross=numint::vector_d(5,0.);
-    p_obs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000);
+    p_obs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000,0);
     for(int i=0;i<5;++i) results[i]=cross[i];
   cout << pm << " " << kin.IsPhysical() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetCosthYlab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " " << kin.GetCosthklab() <<" " << results[0] << " " << results[1] << " " << results[4] << endl;
   return;

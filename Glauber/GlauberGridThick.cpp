@@ -238,6 +238,41 @@ void GlauberGridThick::setFilenames(string dir){
  AbstractFsiCTGridThick::setFilenames(dir+"Gl."); 
 }
 
+void GlauberGridThick::getFsiphaseAll(vector<complex<double> > &phases, 
+					  double rhit, double costhetahit, double phihit){
+  phases=vector<complex<double> >(4,0.);
+  r_hit=rhit;
+  costheta_hit=costhetahit;
+  sintheta_hit=sqrt(1.-costheta_hit*costheta_hit);
+  phi_hit=phihit;
+  sincos(phi_hit,&sinphi_hit,&cosphi_hit);
+  vector<complex<double> >protonphases(4,0.);
+  vector<complex<double> >neutronphases(4,0.);
+  for(size_t it=0; it<getParticles().size();it++){
+    getParticles()[it].setHitcoord(r_hit, costheta_hit,sintheta_hit, cosphi_hit, sinphi_hit);
+  }
+  calcGlauberphasesBoth(protonphases,neutronphases);
+  for(int i=0;i<4;i++) phases[i]=pow(protonphases[i],getPnucleusthick()->getZ()-getProtonKnockout())*
+				  pow(neutronphases[i],getPnucleusthick()->getN()-getNeutronKnockout());
+}
+
+void GlauberGridThick::getFsiphaseCt(vector<complex<double> > &phases, 
+					  double rhit, double costhetahit, double phihit){
+  phases=vector<complex<double> >(2,0.);
+  r_hit=rhit;
+  costheta_hit=costhetahit;
+  sintheta_hit=sqrt(1.-costheta_hit*costheta_hit);
+  phi_hit=phihit;
+  sincos(phi_hit,&sinphi_hit,&cosphi_hit);
+  vector<complex<double> >protonphases(2,0.);
+  vector<complex<double> >neutronphases(2,0.);
+  for(size_t it=0; it<getParticles().size();it++){
+    getParticles()[it].setHitcoord(r_hit, costheta_hit,sintheta_hit, cosphi_hit, sinphi_hit);
+  }
+  calcGlauberphasesCt(protonphases,neutronphases);
+  for(int i=0;i<2;i++) phases[i]=pow(protonphases[i],getPnucleusthick()->getZ()-getProtonKnockout())*
+				  pow(neutronphases[i],getPnucleusthick()->getN()-getNeutronKnockout());
+}
 
 //calc both fsi and fsi+ct grid
 void GlauberGridThick::constructAllGrids(){
@@ -581,6 +616,175 @@ void GlauberGridThick::calcGlauberphasesCt(const int i, const int j, const int k
   //delete[] results;
 }
 
+
+//calc glauberphases for one gridpoint
+void GlauberGridThick::calcGlauberphasesBoth(vector< complex<double> > &protonphases, vector< complex<double> > &neutronphases){
+  protonphases = vector< complex<double> >(4,0.);
+  neutronphases = vector< complex<double> >(4,0.);
+  for(int proton=0;proton<2;proton++){
+    int res=90;
+    unsigned count=0;
+    double deeserror=0.;
+    double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
+    if(integrator==0){
+      double restimate=0.,thetaestimate=0.,phiestimate=0.;
+      if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+	double results[4]={0.,0.,0.,0.};
+	rombergerN(this, &GlauberGridThick::intGlauberb_bound,1.E-02,getPnucleusthick()->getRange(),4,results,
+			    getPrec(),3,10,&restimate,proton,&thetaestimate, &phiestimate); 
+	(proton? protonphases[0]:neutronphases[0])=1.-getParticles()[0].getScatterfront(proton)*results[0];
+	(proton? protonphases[1]:neutronphases[1])=1.-getParticles()[0].getScatterfront(proton)*results[1]*src;
+	(proton? protonphases[2]:neutronphases[2])=1.-getParticles()[0].getScatterfront(proton)*results[2];
+	(proton? protonphases[3]:neutronphases[3])=1.-getParticles()[0].getScatterfront(proton)*results[3]*src;
+      }
+      
+      else{
+	complex<double> results[4]={0.,0.,0.,0.};
+	rombergerN(this, &GlauberGridThick::intGlauberR,0.,getPnucleusthick()->getRange(),4,results,
+			    getPrec(),3,8,&restimate,proton,&thetaestimate, &phiestimate); 
+	(proton? protonphases[0]:neutronphases[0])=results[0];
+	(proton? protonphases[1]:neutronphases[1])=results[1]*src;
+	(proton? protonphases[2]:neutronphases[2])=results[2];
+	(proton? protonphases[3]:neutronphases[3])=results[3]*src;
+      }
+    }
+      
+    else if(integrator==1||integrator==2){
+      
+      if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+	numint::array<double,3> lower = {{1.E-06,getParticles()[0].getHitz(),0.}};
+	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),getPnucleusthick()->getRange(),2.*PI}};
+	
+	GlauberGridThick::Ftor_bound F;
+	F.grid = this;
+	F.proton = proton;
+	numint::mdfunction<numint::vector_d,3> mdf;
+	mdf.func = &Ftor_bound::exec;
+	mdf.param = &F;
+	vector<double> ret(4,0.);
+	F.f=klaas_int_bound;
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E06,ret,count,0);
+	(proton? protonphases[0]:neutronphases[0])=1.-getParticles()[0].getScatterfront(proton)*ret[0];
+	(proton? protonphases[1]:neutronphases[1])=1.-getParticles()[0].getScatterfront(proton)*ret[1]*src;
+	(proton? protonphases[2]:neutronphases[2])=1.-getParticles()[0].getScatterfront(proton)*ret[2];
+	(proton? protonphases[3]:neutronphases[3])=1.-getParticles()[0].getScatterfront(proton)*ret[3]*src;
+      }
+      else{
+	numint::array<double,3> lower = {{0.,-1.,0.}};
+	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),1.,2.*PI}};
+	
+	GlauberGridThick::Ftor_all F;
+	F.grid = this;
+	F.proton = proton;
+	numint::mdfunction<numint::vector_z,3> mdf;
+	mdf.func = &Ftor_all::exec;
+	mdf.param = &F;
+	vector<complex<double> > ret(4,0.);
+	F.f=klaas_int_all;
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E06,ret,count,0);
+	(proton? protonphases[0]:neutronphases[0])=ret[0];
+	(proton? protonphases[1]:neutronphases[1])=ret[1]*src;
+	(proton? protonphases[2]:neutronphases[2])=ret[2];
+	(proton? protonphases[3]:neutronphases[3])=ret[3]*src;
+
+      }
+      
+      
+      
+     
+    }
+    else {cerr  << "integrator type not implemented" << endl; exit(1);}
+//     cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
+//     fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
+//     fsi_ct_grid[1][proton][i][j][k] << 
+// 	" " << res << " " << count << " " << deeserror << endl;
+//     
+  }  
+  //delete[] results;
+}
+
+//calc glauberphases for one gridpoint,only CT grid
+void GlauberGridThick::calcGlauberphasesCt(vector<complex<double> > &protonphases, vector<complex<double> > &neutronphases){
+  protonphases=vector<complex<double> >(2,0.);
+  neutronphases=vector<complex<double> >(2,0.);
+  for(int proton=0;proton<2;proton++){
+    int res=90;
+    unsigned count=0;
+    double deeserror=0.;
+    double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
+    if(integrator==0){
+      double restimate=0.,thetaestimate=0.,phiestimate=0.;
+      if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+	double results[2]={0.,0.};
+	rombergerN(this, &GlauberGridThick::intGlauberb_bound_ct,1.E-02,getPnucleusthick()->getRange(),2,results,
+			    getPrec(),3,8,&restimate,proton,&thetaestimate, &phiestimate); 
+	(proton? protonphases[0]:neutronphases[0])=1.-getParticles()[0].getScatterfront(proton)*results[0];
+	(proton? protonphases[1]:neutronphases[1])=1.-getParticles()[0].getScatterfront(proton)*results[1]*src;
+	
+      }
+      
+      else{
+	complex<double> results[2]={0.,0.};
+	rombergerN(this, &GlauberGridThick::intGlauberRCT,0.,getPnucleusthick()->getRange(),2,results,
+			    getPrec(),3,8,&restimate,proton,&thetaestimate, &phiestimate); 
+	(proton? protonphases[0]:neutronphases[0])=results[0];
+	(proton? protonphases[1]:neutronphases[1])=results[1]*src;
+      }
+    }
+      
+    else if(integrator==1||integrator==2){
+      
+      if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+	numint::array<double,3> lower = {{1.E-06,getParticles()[0].getHitz(),0.}};
+	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),getPnucleusthick()->getRange(),2.*PI}};
+	
+	GlauberGridThick::Ftor_bound F;
+	F.grid = this;
+	F.proton = proton;
+	numint::mdfunction<numint::vector_d,3> mdf;
+	mdf.func = &Ftor_bound::exec;
+	mdf.param = &F;
+	vector<double> ret(2,0.);
+	F.f=GlauberGridThick::klaas_int_bound_ct;
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,5E06,ret,count,0);
+	(proton? protonphases[0]:neutronphases[0])=1.-getParticles()[0].getScatterfront(proton)*ret[0];
+	(proton? protonphases[1]:neutronphases[1])=1.-getParticles()[0].getScatterfront(proton)*ret[1]*src;
+      }
+      else{
+	numint::array<double,3> lower = {{0.,-1.,0.}};
+	numint::array<double,3> upper = {{getPnucleusthick()->getRange(),1.,2.*PI}};
+	
+	GlauberGridThick::Ftor_all F;
+	F.grid = this;
+	F.proton = proton;
+	numint::mdfunction<numint::vector_z,3> mdf;
+	mdf.func = &Ftor_all::exec;
+	mdf.param = &F;
+	vector<complex<double> > ret(2,0.);
+	F.f=GlauberGridThick::klaas_int_all_ct;
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,5E06,ret,count,0);
+	(proton? protonphases[0]:neutronphases[0])=ret[0];
+	(proton? protonphases[1]:neutronphases[1])=ret[1]*src;
+
+      }
+      
+      
+      
+     
+    }
+    else {cerr  << "integrator type not implemented" << endl; exit(1);}
+//     cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
+//     fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
+//     fsi_ct_grid[1][proton][i][j][k] << 
+// 	" " << res << " " << count << " " << deeserror << endl;
+    
+  }  
+  //delete[] results;
+}
 
 
 //readin fsi grid
