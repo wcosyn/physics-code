@@ -12,6 +12,7 @@
 #include <cstdarg>
 
 #include "AbstractFsiCTDecayGridThick.hpp"
+#include <numint/numint.hpp>
 
 /*! \brief A class for a Glauber ISI/FSI grid using thickness approximation and including decay of fast particles,implements AbstractFsiCTDecayGridThick
  * 
@@ -160,6 +161,90 @@ private:
    */
   void intGlauberPhiCT(const double phi, std::complex<double> *results, va_list ap);
   
+  /*! struct that is used for integrators (dirty ones)*/
+  struct Ftor_all {
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+      Ftor_all &p = * (Ftor_all *) param;
+      p.f(ret,x[0],x[1],x[2],*p.grid,p.proton);
+    }
+    GlauberDecayGridThick *grid; /*!< pointer to the grid where the integration is performed */
+    int proton; /*!< proton glauberphase or not */
+    /*! integrandum 
+    * \param res results
+    * \param x first integration variable
+    * \param y second integration variable
+    * \param z third integration variable
+    * \param grid the grid instance
+    * \param proton proton glauberphase or not
+    */
+    void (*f)(numint::vector_z & res, double x, double y, double z, GlauberDecayGridThick & grid, int proton);
+  };
+ /*! struct that is used for integrators (clean ones)*/
+   struct Ftor_bound {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
+      Ftor_bound &p = * (Ftor_bound *) param;
+      p.f(ret,x[0],x[1],x[2],*p.grid,p.proton);
+    }
+    GlauberDecayGridThick *grid;/*!< pointer to the grid where the integration is performed */
+    int proton;/*!< proton glauberphase or not */
+    /*! integrandum 
+    * \param res results
+    * \param x first integration variable
+    * \param y second integration variable
+    * \param z third integration variable
+    * \param grid the grid instance
+    * \param proton proton glauberphase or not
+    */
+    void (*f)(numint::vector_d &, double x, double y, double z, GlauberDecayGridThick &, int proton);
+  };
+
+  /*! integrandum function  (dirty ones)*/
+  static void klaas_int_all(numint::vector_z & ret, double r, double costheta, double phi, GlauberDecayGridThick & grid, int proton);
+  /*! integrandum function (clean ones)*/
+  static void klaas_int_bound(numint::vector_d &, double b, double z, double phi, GlauberDecayGridThick & grid, int proton);
+  /*! integrandum function  (dirty ones), only CT*/
+  static void klaas_int_all_ct(numint::vector_z & ret, double r, double costheta, double phi, GlauberDecayGridThick & grid, int proton);
+  /*! integrandum function (clean ones), only CT*/
+  static void klaas_int_bound_ct(numint::vector_d &, double b, double z, double phi, GlauberDecayGridThick & grid, int proton);
+  /*! function that gets integrated over , both fsi(+src) and fsi(+src)+ct grid output
+   * \param b [fm] radial coordinate in perp plane
+   * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intGlauberb_bound(const double b, double *results, va_list ap);
+  /*! function that gets integrated over cos(theta), both fsi(+src) and fsi(+src)+ct grid output
+   * \param z [fm] z-axis (cylindrical)
+   * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intGlauberz_bound(const double z, double *results, va_list ap);
+  /*! function that gets integrated over phi, both fsi(+src) and fsi(+src)+ct grid output
+   * \param phi [rad] phi coordinate
+   * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intGlauberPhi_bound(const double phi, double *results, va_list ap);
+  /*! function that gets integrated over ,  only fsi(+src)+ct grid output
+   * \param b [fm] radial coordinate in perp plane
+   * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intGlauberb_bound_ct(const double b, double *results, va_list ap);
+  /*! function that gets integrated over cos(theta),  only fsi(+src)+ct grid output
+   * \param z [fm] z-axis (cylindrical)
+   * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intGlauberz_bound_ct(const double z, double *results, va_list ap);
+  /*! function that gets integrated over phi,  only fsi(+src)+ct grid output
+   * \param phi [rad] phi coordinate
+   * \param results result: contains the glauberphases (fsi(+src) and fsi(+src)+ct) for a gridpoint
+   * \param ap variable parameter list
+   */
+  void intGlauberPhi_bound_ct(const double phi, double *results, va_list ap);
 
 };
 /** @} */

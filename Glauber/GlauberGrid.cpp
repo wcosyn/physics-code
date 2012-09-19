@@ -272,7 +272,7 @@ void GlauberGrid::constructAllGrids(){
 	  }
 	  //cout << r_hit << " " << theta_hit*RADTODEGR << " " << phi_hit*RADTODEGR << " " << fsi_grid[getPnucleus()->getTotalLevels()][0][i][j][k] << endl;
 	  
-	  if(abs(fsi_ct_grid[getPnucleus()->getTotalLevels()][0][i][j][k])>0.99&&abs(fsi_grid[getPnucleus()->getTotalLevels()][0][i][j][k])>0.99){
+	  if(abs(fsi_ct_grid[getPnucleus()->getTotalLevels()][0][i][j][k])>0.999999&&abs(fsi_grid[getPnucleus()->getTotalLevels()][0][i][j][k])>0.999999){
 	    treshold[j][k]=1;
 	    if(j==0||j==getCthgrid()){
 	      for(int ll=1;ll<=getPhigrid();ll++) treshold[j][ll]=1;
@@ -404,7 +404,7 @@ void GlauberGrid::constructCtGrid(){
 	  else{
 	    fsi_ct_grid[getPnucleus()->getTotalLevels()][0][i][j][k] *= pow(fsi_ct_grid[getPnucleus()->getTotalLevels()-1][getPnucleus()->getFinalMNeutron()][i][j][k],2.);		   
 	  }
-	  if(abs(fsi_ct_grid[getPnucleus()->getTotalLevels()][0][i][j][k])>0.99){
+	  if(abs(fsi_ct_grid[getPnucleus()->getTotalLevels()][0][i][j][k])>0.999999){
 	    treshold[j][k]=1;
 	    if(j==0||j==getCthgrid()){
 	      for(int ll=1;ll<=getPhigrid();ll++) treshold[j][ll]=1;
@@ -456,32 +456,117 @@ void GlauberGrid::constructCtGrid(){
 
 //calc glauberphases for one gridpoint
 void GlauberGrid::calcGlauberphasesBoth(const int i, const int j, const int k){
-  complex<double>* results= new complex<double>[2];
   for(int level=0;level<getPnucleus()->getTotalLevels();level++){
     for(int mm=0; mm<((getPnucleus()->getJ_array()[level]+1)/2);mm++){
-      double restimate=0.,thetaestimate=0.,phiestimate=0.;
-      rombergerN(this, &GlauberGrid::intGlauberR,0.,getPnucleus()->getRange(),2,results,getPrec(),3,8,&restimate,level,
-		 mm,&thetaestimate, &phiestimate); 
-      fsi_grid[level][mm][i][j][k]=results[0];
-      fsi_ct_grid[level][mm][i][j][k]=results[1];
+      int res=90;
+      unsigned count=0;
+      double deeserror=0.;
+      if(integrator==0){
+	double restimate=0.,thetaestimate=0.,phiestimate=0.;
+	if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+	  cerr << "You should be using the OneGlauberGrid class boy!" << endl;
+	  exit(1);
+	}
+	
+	else{
+	  complex<double> results[2]={0.,0.};
+	  rombergerN(this, &GlauberGrid::intGlauberR,0.,getPnucleus()->getRange(),2,results,getPrec(),3,8,&restimate,level,
+		    mm,&thetaestimate, &phiestimate); 
+	  fsi_grid[level][mm][i][j][k]=results[0];
+	  fsi_ct_grid[level][mm][i][j][k]=results[1];
+	}
+      }
+	
+      else if(integrator==1||integrator==2){
+	
+	if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+	  cerr << "You should be using the OneGlauberGrid class boy!" << endl;
+	  exit(1);
+	}
+	else{
+	  numint::array<double,3> lower = {{0.,-1.,0.}};
+	  numint::array<double,3> upper = {{getPnucleus()->getRange(),1.,2.*PI}};
+	  
+	  GlauberGrid::Ftor_one F;
+	  F.grid = this;
+	  F.level = level;
+	  F.mm=mm;
+	  numint::mdfunction<numint::vector_z,3> mdf;
+	  mdf.func = &Ftor_one::exec;
+	  mdf.param = &F;
+	  vector<complex<double> > ret(2,0.);
+	  F.f=klaas_one_bound;
+	  if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	  else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E06,ret,count,0);
+	  fsi_grid[level][mm][i][j][k]=ret[0];
+	  fsi_ct_grid[level][mm][i][j][k]=ret[1];
+
+	}
+      }
+      
+//       else {cerr  << "integrator type not implemented" << endl; exit(1);}
+//       cout << i << " " << j << " " << k << " " << level << " " << mm << fsi_grid[level][mm][i][j][k] << " " << fsi_ct_grid[level][mm][i][j][k] << 
+//       " " << res << " " << count << endl;
+
     }
   }   
-  delete[] results;
 }
 
 //calc glauberphases for one gridpoint,only CT grid
 void GlauberGrid::calcGlauberphasesCt(const int i, const int j, const int k){
-  complex<double> result;
   for(int level=0;level<getPnucleus()->getTotalLevels();level++){
     for(int mm=0; mm<((getPnucleus()->getJ_array()[level]+1)/2);mm++){
-      double restimate=0.,thetaestimate=0.,phiestimate=0.;
-      rombergerN(this, &GlauberGrid::intGlauberRCT,0.,getPnucleus()->getRange(),1,&result,getPrec(),3,8,&restimate,level,
-		 mm,&thetaestimate, &phiestimate); 
-      fsi_ct_grid[level][mm][i][j][k]=result;
-    }
-  }     
-}
+      int res=90;
+      unsigned count=0;
+      double deeserror=0.;
+      if(integrator==0){
+	double restimate=0.,thetaestimate=0.,phiestimate=0.;
+	if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+	  cerr << "You should be using the OneGlauberGrid class boy!" << endl;
+	  exit(1);
+	}
+	
+	else{
+	  complex<double> results=0.;
+	  rombergerN(this, &GlauberGrid::intGlauberR,0.,getPnucleus()->getRange(),1,&results,getPrec(),3,8,&restimate,level,
+		    mm,&thetaestimate, &phiestimate); 
+	  fsi_ct_grid[level][mm][i][j][k]=results;
+	}
+      }
+	
+      else if(integrator==1||integrator==2){
+	
+	if(getParticles().size()==1&&getParticles()[0].getCosTheta()==1.){
+	  cerr << "You should be using the OneGlauberGrid class boy!" << endl;
+	  exit(1);
+	}
+	else{
+	  numint::array<double,3> lower = {{0.,-1.,0.}};
+	  numint::array<double,3> upper = {{getPnucleus()->getRange(),1.,2.*PI}};
+	  
+	  GlauberGrid::Ftor_one F;
+	  F.grid = this;
+	  F.level = level;
+	  F.mm=mm;
+	  numint::mdfunction<numint::vector_z,3> mdf;
+	  mdf.func = &Ftor_one::exec;
+	  mdf.param = &F;
+	  vector<complex<double> > ret(1,0.);
+	  F.f=klaas_one_bound_ct;
+	  if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	  else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E06,ret,count,0);
+	  fsi_ct_grid[level][mm][i][j][k]=ret[2];
 
+	}
+      }
+      
+//       else {cerr  << "integrator type not implemented" << endl; exit(1);}
+//       cout << i << " " << j << " " << k << " " << level << " " << mm << fsi_grid[level][mm][i][j][k] << " " << fsi_ct_grid[level][mm][i][j][k] << 
+//       " " << res << " " << count << endl;
+
+    }
+  }   
+}
 
 
 //readin fsi grid
@@ -661,4 +746,62 @@ void GlauberGrid::intGlauberPhiCT(const double phi, complex<double>* result, va_
 }
 
 	 
+void GlauberGrid::klaas_one_bound(numint::vector_z & results, double r, double costheta, double phi, GlauberGrid & grid, 
+		   int level, int m){
+  double sintheta=sqrt(1.-costheta*costheta);
+  results=numint::vector_z(2,1.);
+  if(r>grid.getPnucleus()->getRange()) return;
+  double cosphi, sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  
+  for(size_t it=0;it<grid.getParticles().size();it++){
+    double zmom=grid.getParticles()[it].calcZ(r,costheta,sintheta,cosphi,sinphi);
+    bool check=(zmom>grid.getParticles()[it].getHitz());
+    if(grid.getParticles()[it].getIncoming()) check=!check;
+    if(check){
+      complex<double> temp=grid.getParticles()[it].getScatterfront(level,grid.getPnucleus())
+			    *exp(-grid.getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
+			          /(2.*grid.getParticles()[it].getBetasq(level,grid.getPnucleus())));
+      results[0]*=1.-temp;
+      results[1]*=1.-temp*grid.getParticles()[it].getCTsigma(zmom);
+    }
+  }
+  
+  double wf=(power(grid.getPnucleus()->getWave_F(level,r),2)*grid.getPnucleus()->getYminkappacos(level,m,costheta)
+	      +power(grid.getPnucleus()->getWave_G(level,r),2)*grid.getPnucleus()->getYkappacos(level,m,costheta));
+  for(int i=0;i<2;++i) results[i]*=wf;
+  
+  return;
+  
+}
+
+void GlauberGrid::klaas_one_bound_ct(numint::vector_z & results, double r, double costheta, double phi, GlauberGrid & grid, 
+		   int level, int m){
+  double sintheta=sqrt(1.-costheta*costheta);
+  results=numint::vector_z(1,1.);
+  if(r>grid.getPnucleus()->getRange()) return;
+  double cosphi, sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  
+  for(size_t it=0;it<grid.getParticles().size();it++){
+    double zmom=grid.getParticles()[it].calcZ(r,costheta,sintheta,cosphi,sinphi);
+    bool check=(zmom>grid.getParticles()[it].getHitz());
+    if(grid.getParticles()[it].getIncoming()) check=!check;
+    if(check){
+      results[0]*=1.-grid.getParticles()[it].getScatterfront(level,grid.getPnucleus())
+			    *exp(-grid.getParticles()[it].getBdist(r,costheta,sintheta,cosphi,sinphi,zmom)
+			          /(2.*grid.getParticles()[it].getBetasq(level,grid.getPnucleus())))
+			    *grid.getParticles()[it].getCTsigma(zmom);
+    }
+  }
+  
+  results[0]*=(power(grid.getPnucleus()->getWave_F(level,r),2)*grid.getPnucleus()->getYminkappacos(level,m,costheta)
+	      +power(grid.getPnucleus()->getWave_G(level,r),2)*grid.getPnucleus()->getYkappacos(level,m,costheta));
+  
+  return;
+  
+}
+
+
+
 

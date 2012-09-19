@@ -11,6 +11,7 @@
 #include <cstdarg>
 
 #include "AbstractFsiCTGrid.hpp"
+#include <numint/numint.hpp>
 
 /*! \brief A class for a RMSGA ISI/FSI grid, implementing the abstract AbstractFsiCTGrid class
  *
@@ -124,6 +125,32 @@ private:
    */
   void intGlauberPhiCT(const double phi, std::complex<double> *results, va_list ap);
   
+  /*! struct that is used for integrators */
+  struct Ftor_one {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+      Ftor_one &p = * (Ftor_one *) param;
+      p.f(ret,x[0],x[1],x[2],*p.grid,p.level,p.mm);
+    }
+    GlauberGrid *grid;/*!< pointer to the grid where the integration is performed */
+    int level;/*!< knockout level */
+    int mm; /*!< index in m_j */
+    /*! integrandum 
+    * \param res results
+    * \param x first integration variable
+    * \param y second integration variable
+    * \param z third integration variable
+    * \param grid the grid instance
+    * \param level knockout level
+    * \param mm index in m_j
+    */
+    void (*f)(numint::vector_z & res, double x, double y, double z, GlauberGrid & grid, int level, int mm);
+  };
+  /*! integrandum function (clean ones)*/
+  static void klaas_one_bound(numint::vector_z &, double r, double costheta, double phi, GlauberGrid & grid, int level, int mm);
+  /*! integrandum function (clean ones), only CT*/
+  static void klaas_one_bound_ct(numint::vector_z &, double r, double costheta, double phi, GlauberGrid & grid, int level, int mm);
 
 };
 

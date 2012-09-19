@@ -23,15 +23,17 @@ int main(int argc, char *argv[])
 
   MeanFieldNucleusThick CarbonThick(nucleus,homedir);
   FastParticle proton2(0, 0, 1503.85,0.,0.,1.696,0.,homedir);
+  FastParticle rho(4, 0, 1503.85,0.,0.,1.696,145.,homedir);
 //   proton2.printParticle();
- GlauberGridThick grid(60,18,5,&CarbonThick,prec,integr,homedir);
+ GlauberDecayGridThick grid(10,3,3,&CarbonThick,prec,integr,homedir);
 //     OneGlauberGrid grid(60,18,&CarbonThick,prec,integr,homedir);
-  grid.addParticle(proton2);
+  grid.addParticle(rho);
 //   gridthick.printParticles();
   grid.updateGrids();
   grid.printFsi_grid();
+  grid.printFsi_decay_grid();
   grid.printFsi_ct_grid();
-  grid.printFsi_src_grid();
-  grid.printFsi_src_ct_grid();
-  
+//   grid.printFsi_src_grid();
+//   grid.printFsi_src_ct_grid();
+//   
 }

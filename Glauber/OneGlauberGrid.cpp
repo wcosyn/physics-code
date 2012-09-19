@@ -238,13 +238,14 @@ void OneGlauberGrid::klaas_one_bound(numint::vector_d & results, double b, doubl
   double sintheta=b/r;
   double cosphi, sinphi;
   sincos(phi,&sinphi,&cosphi);
+  double zmom=grid.getParticles()[0].calcZ(r,costheta,sintheta,cosphi,sinphi);
   
   results[0]=(power(grid.getPnucleus()->getWave_F(level,r)/r,2)*grid.getPnucleus()->getYminkappacos(level,m,costheta)
 	      +power(grid.getPnucleus()->getWave_G(level,r)/r,2)*grid.getPnucleus()->getYkappacos(level,m,costheta))
 	      *4.*b*exp(-(power(b-grid.getParticles()[0].getHitbnorm(),2)
 	      +b*grid.getParticles()[0].getHitbnorm()*4.*sinphi*sinphi)
 	      /(2.*grid.getParticles()[0].getBetasq(level,grid.getPnucleus())));
-  results[1]=results[0]*grid.getParticles()[0].getCTsigma(z);
+  results[1]=results[0]*grid.getParticles()[0].getCTsigma(zmom);
   return;
   
 }
@@ -259,12 +260,13 @@ void OneGlauberGrid::klaas_one_bound_ct(numint::vector_d & results, double b, do
   double sintheta=b/r;
   double cosphi, sinphi;
   sincos(phi,&sinphi,&cosphi);
+  double zmom=grid.getParticles()[0].calcZ(r,costheta,sintheta,cosphi,sinphi);
   
   results[0]=(power(grid.getPnucleus()->getWave_F(level,r)/r,2)*grid.getPnucleus()->getYminkappacos(level,m,costheta)
 	      +power(grid.getPnucleus()->getWave_G(level,r)/r,2)*grid.getPnucleus()->getYkappacos(level,m,costheta))
 	      *4.*b*exp(-(power(b-grid.getParticles()[0].getHitbnorm(),2)
 	      +b*grid.getParticles()[0].getHitbnorm()*4.*sinphi*sinphi)
-	      /(2.*grid.getParticles()[0].getBetasq(level,grid.getPnucleus())))*grid.getParticles()[0].getCTsigma(z);
+	      /(2.*grid.getParticles()[0].getBetasq(level,grid.getPnucleus())))*grid.getParticles()[0].getCTsigma(zmom);
   return;
   
 }
