@@ -64,6 +64,7 @@ public:
   double getHitz() const {return hitz;}/*!<  get z coord relative to this momentum of the hard interaction coordinate */
   double getHitbnorm() const {return hitbnorm;}/*!< get norm of b coord relative to this momentum of the hard interaction coordinate */
   const double* getHitbvec() const {return hitb;}/*!<  get b vector in regular coord system for hard interaction coord*/
+  TVector3 getPvec() const{ return p*TVector3(ex,ey,ez);} /*!<returns the momentumvector */
   /*! Set (b,z) coordinates of the hard interaction point relative to this particle
    * \param r [fm] r coord of hard interaction point, spherical
    * \param costheta cos(theta) coord of hard interaction point, spherical

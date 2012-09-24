@@ -660,10 +660,10 @@ void GlauberDecayGridThick::calcGlauberphasesBoth(const int i, const int j, cons
       }
     }
     else {cerr  << "integrator type not implemented" << endl; exit(1);}
-    cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
-    fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
-    fsi_ct_grid[1][proton][i][j][k] << 
-	" " << res << " " << count << " " << deeserror << endl;
+//     cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
+//     fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
+//     fsi_ct_grid[1][proton][i][j][k] << 
+// 	" " << res << " " << count << " " << deeserror << endl;
     
   }  
   
@@ -743,10 +743,10 @@ void GlauberDecayGridThick::calcGlauberphasesCt(const int i, const int j, const 
       }
     }
     else {cerr  << "integrator type not implemented" << endl; exit(1);}
-    cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
-    fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
-    fsi_ct_grid[1][proton][i][j][k] << 
-	" " << res << " " << count << " " << deeserror << endl;
+//     cout << i << " " << j << " " << k << " " << proton << " "<< fsi_grid[0][proton][i][j][k] << " " <<
+//     fsi_grid[1][proton][i][j][k] << " " << fsi_ct_grid[0][proton][i][j][k] << " " <<
+//     fsi_ct_grid[1][proton][i][j][k] << 
+// 	" " << res << " " << count << " " << deeserror << endl;
     
   }  
 }

@@ -34,7 +34,8 @@ public:
    * \param betaoff [GeV\f$^-2 \f$] eikonal parameter, off-shell slope parameter of particle in final-state with spectator
    * \param lambda [GeV\f$^2 \f$] cutoff parameter for off-shell part
    */
-  DeuteronMomDistr(std::string name, double massi, int offshell, double sigma, double beta, double epsilon, double betaoff, double lambda);
+  DeuteronMomDistr(std::string name, double massi, int offshell, double sigma, double beta, 
+		   double epsilon, double betaoff, double lambda);
     /*! Constructor
    * \param name Deuteron wave function name, see TDeuteron
    */

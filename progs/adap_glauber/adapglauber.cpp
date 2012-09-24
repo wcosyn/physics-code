@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 //   proton2.printParticle();
  GlauberDecayGridThick grid(10,3,3,&CarbonThick,prec,integr,homedir);
 //     OneGlauberGrid grid(60,18,&CarbonThick,prec,integr,homedir);
-  grid.addParticle(rho);
+  grid.addParticle(proton2);
 //   gridthick.printParticles();
   grid.updateGrids();
   grid.printFsi_grid();

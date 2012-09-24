@@ -29,11 +29,11 @@ EFILEST   = 	../../bin/rhofixstatic
 
 #		Mathematical functions
 LIBS =	 	-lm  
-WIMLIBS = -lKnockout -lGlauber -lMePhys
+WIMLIBS = -lKnockout -lGlauber -lMePhys -lIntegrator
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
- INCLUDEDIRS =  -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout
-STATICLIBS =   ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a 
+ INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout 
+STATICLIBS =   ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a ~/Code/lib/libIntegrator.a
 
 
 #		Header files

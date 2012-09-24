@@ -13,6 +13,7 @@
 #include <complex>
 #include <TVector3.h>
 #include <Matrix.h>
+#include <numint/numint.hpp>
 
 //forward declaration
 class AbstractFsiCTGrid;
@@ -33,10 +34,12 @@ public:
    * \param pfsigrid pointer to a fsi/ct grid
    * \param prec precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
+   * \param theta_rot rotation angle that connects momentum frame with glauberframe
    * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   DistMomDistrGrid(int shellindex, const double max_p, const int p_grid, const int cth_grid, const int phi_grid,
-		   AbstractFsiCTGrid *pfsigrid, const double prec, const int integrator, std::string dir);
+		   AbstractFsiCTGrid *pfsigrid, const double prec, const int integrator, 
+		   const int max_Eval, const double theta_rot, std::string dir);
   ~DistMomDistrGrid(); /*!< Destructor */
   
   int getShellindex() const{return shellindex;} /*!< shell level */
@@ -62,6 +65,9 @@ public:
   int getPhiindex() const{return phiindex;}/*!<  returns the index for phi used in the 3d interpolation */
   AbstractFsiCTGrid *getPfsigrid() const{return pfsigrid;}/*!<  returns the pointer to the MeanFieldNucleus instance */
   double getPrec() const{return prec;} /*!< returns the precision in the integrations */
+  TVector3* getPvec_hit() {return &pvec_hit;}
+  Matrix<1,4>* getUpm_bar() {return &Upm_bar;}
+  
   
   void printRho_grid(int gridindex);  /*!< Prints the rho grid for a certain situation*/
   void printRhopw_grid();  /*!< Prints the rho plane wave grid */
@@ -84,9 +90,20 @@ public:
   double getRhopwGridFull_interp(double p);
 
    
-  
-   void fillGrids();  /*!< fills the momentum distribution grids that are used for interpolation */
-   void updateGrids(AbstractFsiCTGrid *, int);  /*!< updates the momentum distribution grids that are used for interpolation */
+   /*! fills the momentum distribution grids that are used for interpolation
+    * \param rotation TRotation if the frame of the missing momentum is different 
+    * from the frame that was used to compute the glauberphases
+    * 
+    */
+   void fillGrids(TRotation & rot);  
+   /*! updates the momentum distribution grids that are used for interpolation 
+    * \param fsigrid pointer to FSI grid you want to make a distorted momentum distribution forw
+    * \param level knockout level
+    * \param rotation TRotation if the frame of the missing momentum is different 
+    * from the frame that was used to compute the glauberphases
+    * 
+    */
+   void updateGrids(AbstractFsiCTGrid *fsigrid, int level, TRotation & rot);
   
   
   
@@ -127,17 +144,26 @@ private:
   Matrix<1,4> Upm_bar; /*!< holds a spinor that gest contracted with a nucleon MF spinor */
   double prec; /*!< precision in the integrations */
   int integrator; /*!<choice of integrator */
-  
+  int maxEval; /*!< max number of evaluations in the integrations */
+  double thetarot; /*!< rotationangle that connects glauberframe with momentumframe*/
+        
   double *rhopwgrid; /*!< plane-wave momentum distribution grid. only depends on norm of p */
   double ****rhogrid; /*!< non-ct momentum distribution grid */
   double ****rhoctgrid; /*!< ct momentum distribution grid */
     
   void constructpwGrid(); /*!< construct all grids */
-  void constructAllGrids(); /*!< construct all grids */
+  /*! construct all grids 
+    * \param rotation TRotation if the frame of the missing momentum is different 
+    * from the frame that was used to compute the glauberphases
+    */
+  void constructAllGrids(TRotation & rot); 
   void readinRhoGrid(ifstream &infile); /*!< read in all grids */
   void writeoutRhoGrid(ofstream &outfile); /*!< write out all grids */
-    
-  void constructCtGrid();  /*!< construct only the fsi+ct grids */
+  /*! construct only the fsi+ct grids
+    * \param rotation TRotation if the frame of the missing momentum is different 
+    * from the frame that was used to compute the glauberphases
+    */
+  void constructCtGrid(TRotation & rot);  
   void readinRhoCtGrid(ifstream &infile); /*!< read in only the fsi+ct grids */
   void writeoutRhoCtGrid(ofstream &outfile); /*!< write out only the fsi+ct grids */
 
@@ -187,6 +213,33 @@ private:
    */
   void intRhoRpw(const double r, double *result, va_list ap);
 
+  /*! struct that is used for integrators (clean ones)*/
+  struct Ftor_one {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+      Ftor_one &p = * (Ftor_one *) param;
+      p.f(ret,x[0],x[1],x[2],*p.grid,p.m);
+    }
+    DistMomDistrGrid *grid;/*!< pointer to the grid where the integration is performed */
+    int m;/*!< knockout level */
+    /*! integrandum 
+    * \param res results
+    * \param r first integration variable
+    * \param costheta second integration variable
+    * \param phi third integration variable
+    * \param grid the grid instance
+    * \param m index in m_j
+     */
+    void (*f)(numint::vector_z & res, double r, double costheta, double phi, DistMomDistrGrid & grid, 
+	      int m);
+  };
+  /*! integrandum function (clean ones)*/
+  static void klaas_distint(numint::vector_z &, double r, double costheta, double phi, DistMomDistrGrid & grid, 
+			    int m);
+  /*! integrandum function (clean ones), only CT*/
+  static void klaas_distint_ct(numint::vector_z &, double r, double costheta, double phi, DistMomDistrGrid & grid, 
+			       int m);
   
   
   

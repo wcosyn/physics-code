@@ -12,10 +12,12 @@ using namespace std;
 #include <FourVector.h>
 #include <Matrix.h>
 #include <TSpinor.h>
+#include <TRotation.h>
 #include "TMFSpinor.hpp"
 
 DistMomDistrGrid::DistMomDistrGrid(int shell, const double p_max, const int p_grid, const int cth_grid, const int phi_grid,
-				   AbstractFsiCTGrid *pfsi_grid, const double precision, const int integr, string homedir):
+				   AbstractFsiCTGrid *pfsi_grid, const double precision, const int integr, 
+				   const int max_Eval, const double theta_rot, string homedir):
 shellindex(shell),
 pmax(p_max),
 filledgrid(0),
@@ -27,7 +29,9 @@ cthgrid(cth_grid),
 phigrid(phi_grid),
 pfsigrid(pfsi_grid),
 prec(precision),
-integrator(integr){
+integrator(integr),
+maxEval(max_Eval),
+thetarot(theta_rot){
   
   mass = getShellindex()<getPfsigrid()->getPnucleus()->getPLevels()? MASSP:MASSN;
   invpstep=pgrid/p_max;
@@ -49,6 +53,7 @@ integrator(integr){
   }
   rhopwgrid = new double[getPgrid()+1];
   constructpwGrid();
+//   setFilenames(dir);
   //fillGrids();
   
   
@@ -153,16 +158,15 @@ void DistMomDistrGrid::setFilenames(string homedir){
   rho_filename=getPfsigrid()->getFsi_Filename();
   rhoct_filename=getPfsigrid()->getFsi_Ct_Filename();
   size_t found;
-
   found=rho_filename.rfind("/");
   if (found!=string::npos){
-    string addendum = "Rhogrid.l"+to_string(getShellindex())+".p"+to_string(getPgrid())
+    string addendum = "Rhogrid.l"+to_string(getShellindex())+".throt"+to_string(int(round(thetarot*10.)))
+		    +".p"+to_string(getPgrid())
 		    +".cth"+to_string(getCthgrid())+".phi"+to_string(getPhigrid())+".pmax"+
-		    to_string(getPmax())+".Prec"+to_string(getPrec()*1.E05)+".";
+		    to_string(getPmax())+".prec"+to_string(getPrec()*1.E05)+".integr"+to_string(integrator)+".";
     rho_filename.insert(found+1,addendum);
     rhoct_filename.insert(found+1,addendum);
   }
-//   cout << rho_filename << endl << rhoct_filename << endl;
 }
   
 
@@ -245,7 +249,7 @@ void DistMomDistrGrid::writeoutRhoCtGrid(ofstream &outfile){
 
 
 //calc both fsi and fsi+ct grid
-void DistMomDistrGrid::constructAllGrids(){
+void DistMomDistrGrid::constructAllGrids(TRotation & rot){
   //fill the arrays!
   for(int i=0; i<=getPgrid(); i++){
     p_hit = float(i)/getInvPstep();
@@ -255,9 +259,11 @@ void DistMomDistrGrid::constructAllGrids(){
       for(int k=0;k<=getPhigrid();k++){
 	phi_hit = 2.*PI*k/getPhigrid();
 	sincos(phi_hit,&sinphi_hit,&cosphi_hit);
-	pvec_hit= TVector3(p_hit*sintheta_hit*cosphi_hit,p_hit*sintheta_hit*sinphi_hit,p_hit*costheta_hit);	
+	pvec_hit= TVector3(p_hit*sintheta_hit*cosphi_hit,p_hit*sintheta_hit*sinphi_hit,p_hit*costheta_hit);
+	pvec_hit=pvec_hit.Transform(rot);	
 	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++) rhogrid[l][i][j][k]=rhoctgrid[l][i][j][k]=0.;
 	//symmetry for (-m,-ms)(m,ms), so only half needed, multiply everything by 2 in the end.
+	double absprec=1.E-12;
 	for(int m=1;m<=getPfsigrid()->getPnucleus()->getJ_array()[shellindex];m+=2){
 	  getPfsigrid()->clearKnockout();
 	  getPfsigrid()->addKnockout(getShellindex(),m);
@@ -265,20 +271,45 @@ void DistMomDistrGrid::constructAllGrids(){
 	    FourVector<double> pf(sqrt(p_hit*p_hit+mass*mass),pvec_hit.X(),pvec_hit.Y(),pvec_hit.Z());
 	    if(ms) Upm_bar=TSpinor::Bar(TSpinor(pf,mass,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
 	    else Upm_bar=TSpinor::Bar(TSpinor(pf,mass,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity));
-	    complex<double> results[getPfsigrid()->getNumber_of_grids()];
-	    double restimate=0.,thestimate=0.,phiestimate=0.;
-	    rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),getPfsigrid()->getNumber_of_grids(),
-		       results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
-	    for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
-	      rhogrid[l][i][j][k]+=norm(results[l]);
-	      rhoctgrid[l][i][j][k]+=norm(results[l+getPfsigrid()->getNumber_of_grids()/2]);
-// 	      if(l==0) cout << i << " " << j << " " << k << " " << m << " " << ms << " " << l << " " 
-// 	      << norm(results[l]) << " "<< norm(results[l+getPfsigrid()->getNumber_of_grids()/2]) << endl;
-
+	    int res=90;
+	    unsigned count=0;
+	    double deeserror=0.;
+	    if(integrator==0){
+	      complex<double> results[getPfsigrid()->getNumber_of_grids()];
+	      double restimate=0.,thestimate=0.,phiestimate=0.;
+	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),getPfsigrid()->getNumber_of_grids(),
+			results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
+	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+		rhogrid[l][i][j][k]+=norm(results[l]);
+		rhoctgrid[l][i][j][k]+=norm(results[l+getPfsigrid()->getNumber_of_grids()/2]);
+	      }
 	    }
+	    else if(integrator==2||integrator==1){
+	      numint::array<double,3> lower = {{0.,-1.,0.}};
+	      numint::array<double,3> upper = {{getPfsigrid()->getPnucleus()->getRange(),1.,2.*PI}};
+	      DistMomDistrGrid::Ftor_one F;
+	      F.grid = this;
+	      F.m = m;
+	      numint::mdfunction<numint::vector_z,3> mdf;
+	      mdf.func = &DistMomDistrGrid::Ftor_one::exec;
+	      mdf.param = &F;
+	      vector<complex<double> > ret(getPfsigrid()->getNumber_of_grids(),0.);
+	      F.f=DistMomDistrGrid::klaas_distint;
+	      if(integrator==1) res = numint::cube_romb(mdf,lower,upper,absprec,prec,ret,count,0);
+	      else res = numint::cube_adaptive(mdf,lower,upper,absprec,prec,maxEval,ret,count,0);
+	      if(abs(ret[i])*prec*0.1>absprec) absprec=abs(ret[i])*prec*0.1;
+	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+		rhogrid[l][i][j][k]+=norm(ret[l]);
+		rhoctgrid[l][i][j][k]+=norm(ret[l+getPfsigrid()->getNumber_of_grids()/2]);
+	      }
+	    }      
+	    else {cerr  << "integrator type not implemented" << endl; exit(1);}
+// 	    cout << i << " " << j << " " << k << " " << m << " " << ms << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< " " << res << " " << count << endl;
+	    
 	  }
 	}
 	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	  //extra factor of 2 due to symmetry
 	  rhogrid[l][i][j][k]/=pow(2.*PI,3.)/2.;
 	  rhoctgrid[l][i][j][k]/=pow(2.*PI,3.)/2.;
 	}
@@ -327,7 +358,7 @@ void DistMomDistrGrid::constructpwGrid(){
 }
 
 //calc both fsi and fsi+ct grid
-void DistMomDistrGrid::constructCtGrid(){
+void DistMomDistrGrid::constructCtGrid(TRotation & rot){
   //fill the arrays!
   for(int i=0; i<=getPgrid(); i++){
     p_hit = float(i)/getInvPstep();
@@ -338,27 +369,57 @@ void DistMomDistrGrid::constructCtGrid(){
 	phi_hit = 2.*PI*k/getPhigrid();
 	sincos(phi_hit,&sinphi_hit,&cosphi_hit);
 	pvec_hit= TVector3(p_hit*sintheta_hit*cosphi_hit,p_hit*sintheta_hit*sinphi_hit,p_hit*costheta_hit);	
+	pvec_hit=pvec_hit.Transform(rot);
 	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++) rhoctgrid[l][i][j][k]=0.;
-	for(int m=-getPfsigrid()->getPnucleus()->getJ_array()[shellindex];
-	    m<=getPfsigrid()->getPnucleus()->getJ_array()[shellindex];m+=2){
+	double absprec=1.E-12;
+	//symmetry in m_j,m_s final proton needs only half the values
+	for(int m=1;m<=getPfsigrid()->getPnucleus()->getJ_array()[shellindex];m+=2){
 	  getPfsigrid()->clearKnockout();
 	  getPfsigrid()->addKnockout(getShellindex(),m);
 	  for(int ms=0;ms<=1;ms++){
 	    FourVector<double> pf(sqrt(p_hit*p_hit+mass*mass),pvec_hit.X(),pvec_hit.Y(),pvec_hit.Z());
 	    if(ms) Upm_bar=TSpinor::Bar(TSpinor(pf,mass,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
 	    else Upm_bar=TSpinor::Bar(TSpinor(pf,mass,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity));
-	    complex<double> results[getPfsigrid()->getNumber_of_grids()/2];
-	    double restimate=0.,thestimate=0.,phiestimate=0.;
-	    rombergerN(this,&DistMomDistrGrid::intRhoRCT,0.,getPfsigrid()->getPnucleus()->getRange(),getPfsigrid()->getNumber_of_grids()/2,
-		       results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
-	    for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
-	      rhoctgrid[l][i][j][k]+=norm(results[l]);
-//  	      cout << i << " " << j << " " << k << " " << ms << " " << m << " " << l << " " << norm(results[l]) << endl;
+	    
+    	    int res=90;
+	    unsigned count=0;
+	    double deeserror=0.;
+	    if(integrator==0){
+	      complex<double> results[getPfsigrid()->getNumber_of_grids()/2];
+	      double restimate=0.,thestimate=0.,phiestimate=0.;
+	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),getPfsigrid()->getNumber_of_grids()/2,
+			results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
+	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+		//cout << results[l] << endl;
+		rhoctgrid[l][i][j][k]+=norm(results[l]);
+// 	      if(l==0) cout << i << " " << j << " " << k << " " << m << " " << ms << " " << l << " " 
+// 	      << norm(results[l]) << " "<< norm(results[l+getPfsigrid()->getNumber_of_grids()/2]) << endl;
+	      }
 	    }
+	    else if(integrator==2||integrator==1){
+	      numint::array<double,3> lower = {{0.,-1.,0.}};
+	      numint::array<double,3> upper = {{getPfsigrid()->getPnucleus()->getRange(),1.,2.*PI}};
+	      DistMomDistrGrid::Ftor_one F;
+	      F.grid = this;
+	      F.m = m;
+	      numint::mdfunction<numint::vector_z,3> mdf;
+	      mdf.func = &Ftor_one::exec;
+	      mdf.param = &F;
+	      vector<complex<double> > ret(getPfsigrid()->getNumber_of_grids()/2,0.);
+	      F.f=DistMomDistrGrid::klaas_distint_ct;
+	      if(integrator==1) res = numint::cube_romb(mdf,lower,upper,absprec,prec,ret,count,0);
+	      else res = numint::cube_adaptive(mdf,lower,upper,absprec,prec,maxEval,ret,count,0);
+	      if(abs(ret[i])*prec*0.1>absprec) absprec=abs(ret[i])*prec*0.1;
+	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+		rhoctgrid[l][i][j][k]+=norm(ret[l]);
+	      }
+	    }      
+	    else {cerr  << "integrator type not implemented" << endl; exit(1);}
+// 	    cout << i << " " << j << " " << k << " " << m << " " << ms << " " << rhoctgrid[0][i][j][k] << " " << rhoctgrid[1][i][j][k]<< " " << rhoctgrid[2][i][j][k]<< " " << res << " " << count << endl;
 	  }
 	}
 	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
-	  rhoctgrid[l][i][j][k]/=pow(2.*PI,3.);
+	  rhoctgrid[l][i][j][k]/=pow(2.*PI,3.)/2.;  //factor 2 because of symmetry
 	}
 	//r=0 symmetry shortcut
 	if(i==0){
@@ -392,10 +453,11 @@ void DistMomDistrGrid::intRhoR(const double r, complex<double> *results, va_list
   int m = va_arg(ap,int);
   double *pthetaestimate = va_arg(ap,double*);
   double *pphiestimate = va_arg(ap,double*);
-
+  
+  
   getPfsigrid()->setRinterp(r);
   rombergerN(this,&DistMomDistrGrid::intRhoCosTheta,-1.,1.,getPfsigrid()->getNumber_of_grids(),
-	     results,getPrec(),3,6,pthetaestimate, m, r, pphiestimate);
+	     results,getPrec(),3,6,pthetaestimate, m,  r, pphiestimate);
   for(int i=0;i<getPfsigrid()->getNumber_of_grids();i++) results[i]*=r;
   return;
 }
@@ -408,7 +470,7 @@ void DistMomDistrGrid::intRhoRCT(const double r, complex<double> *results, va_li
 
   getPfsigrid()->setRinterp(r);
   rombergerN(this,&DistMomDistrGrid::intRhoCosThetaCT,-1.,1.,getPfsigrid()->getNumber_of_grids()/2,
-	     results,getPrec(),3,6,pthetaestimate, m, r, pphiestimate);
+	     results,getPrec(),3,6,pthetaestimate, m,  r, pphiestimate);
   for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++) results[i]*=r;
   return;
 }
@@ -451,6 +513,7 @@ void DistMomDistrGrid::intRhoPhi(const double phi, complex<double> *results, va_
   double sintheta = va_arg(ap,double);
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
+  
   TMFSpinor wave(*getPfsigrid()->getPnucleus(),getShellindex(),m,r,costheta,phi);
   complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
 			  *(Upm_bar*wave);  
@@ -468,6 +531,8 @@ void DistMomDistrGrid::intRhoPhiCT(const double phi, complex<double> *results, v
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   TMFSpinor wave(*getPfsigrid()->getPnucleus(),getShellindex(),m,r,costheta,phi);
+  
+  
   complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
 			  *(Upm_bar*wave);  
 
@@ -476,7 +541,7 @@ void DistMomDistrGrid::intRhoPhiCT(const double phi, complex<double> *results, v
 }
 
 
-void DistMomDistrGrid::fillGrids(){
+void DistMomDistrGrid::fillGrids(TRotation & rot){
   setFilenames(dir);
   ifstream infile(rho_filename.c_str(),ios::in|ios::binary);
   //check if object has been created sometime earlier and read it in
@@ -488,7 +553,7 @@ void DistMomDistrGrid::fillGrids(){
   }
   else{
     cout << "Constructing all grids" << endl;
-    constructAllGrids();
+    constructAllGrids(rot);
     filledgrid=filledallgrid=filledctgrid=1;
     ofstream outfile(rho_filename.c_str(),ios::out|ios::binary);
     if(outfile.is_open()){
@@ -520,7 +585,7 @@ void DistMomDistrGrid::fillGrids(){
   }
   else{
     cout << "Constructing FSI+CT grid" << endl;
-    constructCtGrid();
+    constructCtGrid(rot);
     filledctgrid=1;
     ofstream outfile(rhoct_filename.c_str(),ios::out|ios::binary);
     if(outfile.is_open()){
@@ -537,10 +602,12 @@ void DistMomDistrGrid::fillGrids(){
 }
 
 
-void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell){
+void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell, TRotation & rot){
+  TVector3 axis;
+  rot.AngleAxis(thetarot,axis);
   if(!filledgrid){
-  fillGrids();
-//     cout << "Grids still empty " << endl;
+  fillGrids(rot);
+//      cout << "Grids still empty " << endl;
   }
   else{
     string old_rho_filename = rho_filename;
@@ -550,12 +617,12 @@ void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell){
     setFilenames(dir);
   
     if(rho_filename.compare(old_rho_filename)){
-//       cout << "fsi grid not equal" << rho_filename << endl << old_rho_filename << endl;
-      fillGrids();      
+//        cout << "fsi grid not equal" << rho_filename << endl << old_rho_filename << endl;
+      fillGrids(rot);      
     }
-//     else cout << "fsi grid equal to the earlier one, doing nothing" << endl << rho_filename << endl << old_rho_filename << endl;
+//      else cout << "fsi grid equal to the earlier one, doing nothing" << endl << rho_filename << endl << old_rho_filename << endl;
     if(old_rhoct_filename.compare(rhoct_filename)){
-//     cout << "fsict grid not equal " << endl << rhoct_filename << endl << old_rhoct_filename << endl;
+//      cout << "fsict grid not equal " << endl << rhoct_filename << endl << old_rhoct_filename << endl;
     
       ifstream infile2(rhoct_filename.c_str(),ios::in|ios::binary);
       //check if object has been created sometime earlier and read it in
@@ -567,7 +634,7 @@ void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell){
       }
       else{
 	cout << "Constructing FSI+CT grid" << endl;
-	constructCtGrid();
+	constructCtGrid(rot);
 	filledctgrid=1;
 	ofstream outfile(rhoct_filename.c_str(),ios::out|ios::binary);
 	if(outfile.is_open()){
@@ -586,3 +653,40 @@ void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell){
   }
 }
  
+ 
+/*! integrandum function (clean ones)*/
+void DistMomDistrGrid::klaas_distint(numint::vector_z &results, double r, double costheta, double phi, DistMomDistrGrid & grid, 
+			  int m){
+  results=numint::vector_z(grid.getPfsigrid()->getNumber_of_grids(),0.);
+  double sintheta=sqrt(1.-costheta*costheta);
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  TMFSpinor wave(*grid.getPfsigrid()->getPnucleus(),grid.getShellindex(),m,r,costheta,phi);
+  complex<double> exp_pr=exp(-INVHBARC*((*grid.getPvec_hit())*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta))*I_UNIT)
+			  *((*grid.getUpm_bar())*wave);  
+  for(int i=0;i<grid.getPfsigrid()->getNumber_of_grids();i++) results[i]=exp_pr*grid.getPfsigrid()->getFsiGridN_interp3(i,r,costheta,phi);
+  for(int i=0;i<grid.getPfsigrid()->getNumber_of_grids();i++) results[i]*=r;
+  return;
+}
+/*! integrandum function (clean ones), only CT*/
+void DistMomDistrGrid::klaas_distint_ct(numint::vector_z &results, double r, double costheta, double phi, DistMomDistrGrid & grid, 
+			      int m){
+
+  results=numint::vector_z(grid.getPfsigrid()->getNumber_of_grids()/2,0.);
+  double sintheta=sqrt(1.-costheta*costheta);
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  TMFSpinor wave(*grid.getPfsigrid()->getPnucleus(),grid.getShellindex(),m,r,costheta,phi);
+  complex<double> exp_pr=exp(-INVHBARC*((*grid.getPvec_hit())*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta))*I_UNIT)
+			  *((*grid.getUpm_bar())*wave);  
+
+  for(int i=0;i<grid.getPfsigrid()->getNumber_of_grids()/2;i++) results[i]=exp_pr*
+  grid.getPfsigrid()->getFsiGridN_interp3(i+grid.getPfsigrid()->getNumber_of_grids()/2,r,costheta,phi);
+  for(int i=0;i<grid.getPfsigrid()->getNumber_of_grids()/2;i++) results[i]*=r;
+  return;
+
+}
+
+
+
+

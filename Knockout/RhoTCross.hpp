@@ -16,7 +16,7 @@
 #include <GlauberDecayGridThick.hpp>
 #include <FastParticle.hpp>
 
-#define NROFRES 9 /*!< number of different cross sections calculated, 1 pw, 8 glaubers */
+// #define NROFRES 9 /*!< number of different cross sections calculated, 1 pw, 8 glaubers */
 
 
 /*! \brief A class used to compute A(e,e'rho) cross sections & transparencies*/
@@ -31,11 +31,14 @@ public:
    * \param usersigma [mb] user chosen value of sigma_tot rho-nucleon scattering
    * \param precision precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
+   * \param maxEval max # of function evaluations in the pm integration
    */
   RhoTCross(const int nucleus, const double pmax, const std::string dir, const bool no_cuts, 
-	    const bool userset, const double usersigma, const double precision, const int integrator);
+	    const bool userset, const double usersigma, const double precision, const int integrator,
+	    const int maxEval
+ 	  );
   ~RhoTCross(); /*!<Destructor */
-  /*! Calculate cross section integrated over z at fixed t
+  /*! Calculate cross section integrated over z at fixed t, cross section is dsigma/dEe'dOmega_e'dtdphi
    * \param results [GeV] all the different computed cross sections
    * \param Ebeam [GeV] beam energy
    * \param Q2 [GeV^2] Q^2
@@ -43,7 +46,7 @@ public:
    * \param t [GeV^2] momentum transfer squared
    */
   void getCrosst(double *results, const double Ebeam, const double Q2, const double nu, const double t);
-  /*! Calculate cross section integrated over t at fixed z
+  /*! Calculate cross section integrated over t at fixed z, cross section is dsigma/dEe'dOmega_e'dzdphi
    * \param results [GeV] all the different computed cross sections
    * \param Ebeam [GeV] beam energy
    * \param Q2 [GeV^2] Q^2
@@ -68,6 +71,9 @@ public:
    */
   void getCrossz_coh(double *results, const double Ebeam, const double Q2, const double nu, const double z);
   double getPrec() const{return prec;} /*!< returns the precision */
+  int getNrofcross() const{return nrofcross;} /*!<returns number of different cross sections */
+  MeanFieldNucleusThick* getNucleusthick() {return &nucleusthick;}
+  int getNocuts() const{return nocuts;}
   
 private:
   std::string homedir; /*!< share dir where all input is located */
@@ -77,6 +83,9 @@ private:
   double usersigma; /*!< value of user set sigma_rho*/
   double prec; /*!< precision in the integrations */
   int integrator; /*!< choice of integrator */
+  int nrofcross; /*!< number of different cross sections (number of FSI grids + 1 for plane-wave */
+  double abserror; /*!< absolute error in interations */
+  int maxEval; /*!< max # of function evaluations in integration*/
   MeanFieldNucleusThick nucleusthick; /*!< nucleus instance */
   DistMomDistrGrid **pdistgrid; /*!< array of distorted momentum distribution grid, one for each shell level */
   GlauberDecayGridThick **pfsigrid; /*!< array of Glauber FSI grid, one for each shell level */
@@ -143,7 +152,43 @@ private:
    * \param t [GeV^2] momentum transfer squared
    */
   double getfrontfactor(double nu, double qvec, double Erho, double prho, double pzrho, double pxrho,
-				 double s, double Q2, double mN, double t);
+				 double s, double Q2, double mN, double t, bool torz);
+  /*! struct that is used for integrators (clean ones)*/
+  struct Ftor_rho {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
+      Ftor_rho &p = * (Ftor_rho *) param;
+      p.f(ret,x[0],x[1],x[2],*p.cross,p.Q2,p.nu,p.qvec,p.t,p.Erho,p.prho);
+    }
+    RhoTCross *cross;/*!< pointer to the grid where the integration is performed */
+    double Q2;/*!< [GeV^2] Qsquared */
+    double nu; /*!<[GeV] virtual photon energy */
+    double qvec; /*!< [GeV] virtual photon momentum */
+    double t; /*!< [GeV^2] momentum transfer sq */
+    double Erho; /*!< [GeV] rho energy */
+    double prho; /*!< [GeV] rho momentum */
+    /*! integrandum 
+    * \param res results
+    * \param pm first integration variable
+    * \param costheta second integration variable
+    * \param phi third integration variable
+    * \param cross the RhoTCross instance
+    */
+    void (*f)(numint::vector_d & res, double pm, double costheta, double phi, RhoTCross & cross, double Q2, double nu, double qvec,
+      double t, double Erho, double prho);
+  };
+  /*! integrandum function (clean ones)*/
+  static void klaas_rho_t(numint::vector_d & res, double pm, double costheta, double phi, RhoTCross & cross, double Q2, double nu, double qvec,
+      double t, double dummy, double dummy2);
+  /*! integrandum function (clean ones), only CT*/
+  static void klaas_rho_z(numint::vector_d & res, double pm, double costheta, double phi, RhoTCross & cross, double Q2, double nu, double qvec,
+      double t, double Erho, double prho);
+  
+  
+  
+  
+  
 };
 
 /*! @} */

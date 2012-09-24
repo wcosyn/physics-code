@@ -68,7 +68,7 @@ void OneGlauberGrid::calcGlauberphasesBoth(const int i, const int j, const int k
 		  mm,&thetaestimate, &phiestimate); 
       }
       else if(integrator==1||integrator==2){
-	numint::array<double,3> lower = {{1.E-02,getParticles()[0].getHitz(),0.}};
+	numint::array<double,3> lower = {{1.E-06,getParticles()[0].getHitz(),0.}};
 	numint::array<double,3> upper = {{getPnucleus()->getRange(),getPnucleus()->getRange(),0.5*PI}};
 	OneGlauberGrid::Ftor_one F;
 	F.grid = this;
@@ -79,8 +79,8 @@ void OneGlauberGrid::calcGlauberphasesBoth(const int i, const int j, const int k
 	mdf.param = &F;
 	vector<double> ret(2,0.);
 	F.f=OneGlauberGrid::klaas_one_bound;
-	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,2.E06,ret,count,0);
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E06,ret,count,0);
 	results[0]=ret[0]; results[1]=ret[1];
 	
       }      
@@ -120,8 +120,8 @@ void OneGlauberGrid::calcGlauberphasesCt(const int i, const int j, const int k){
 	mdf.param = &F;
 	vector<double> ret(2,0.);
 	F.f=OneGlauberGrid::klaas_one_bound_ct;
-	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,2.E06,ret,count,0);
+	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E06,ret,count,0);
 	results=ret[0];
 	
       }      
