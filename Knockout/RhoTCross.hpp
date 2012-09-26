@@ -39,7 +39,7 @@ public:
  	  );
   ~RhoTCross(); /*!<Destructor */
   /*! Calculate cross section integrated over z at fixed t, cross section is dsigma/dEe'dOmega_e'dtdphi
-   * \param results [GeV] all the different computed cross sections
+   * \param results [GeV^-1] all the different computed cross sections
    * \param Ebeam [GeV] beam energy
    * \param Q2 [GeV^2] Q^2
    * \param nu [GeV] virtual photon energy

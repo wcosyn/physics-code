@@ -39,7 +39,8 @@ int main(int argc, char *argv[])
   double Ebeam = 5.014;
   
 
-  RhoTCross test = RhoTCross(nucleus,400,homedir,nocuts,1,usersigma,prec,2,maxEval);
+  RhoTCross test = RhoTCross(nucleus,400,homedir,nocuts,1,usersigma,prec,2,maxEval);  
+  
   if(integrator==0){
     double result[test.getNrofcross()];
     double nuestimate=0.,tzestimate=0.;

@@ -176,37 +176,33 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
 	//check cuts
 	if(nocuts||Erho/nu>0.9){
-	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
-	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
-	    double costhetarho = pzrho/prho;
-	    
-	    double intresults[nrofcross];
-	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
-	    double front=1.;
-	    //correct for not completely full shells
-	    if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
-	    if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
-	    for(int dd=0;dd<nrofcross;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,1);
-	  }
+	  double pxrho = SIGN(-(D+E*pzrho)/Cx)*sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
+	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
+	  double costhetarho = pzrho/prho;
+	  
+	  double intresults[nrofcross];
+	  getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	  double front=1.;
+	  //correct for not completely full shells
+	  if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
+	  if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
+	  for(int dd=0;dd<nrofcross;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,1);
 	}
 	pzrho = (-b-discr)/(2.*a);
 	Erho = (pzrho*qvec-A)/nu;
 	t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
 	//check cuts
 	if(nocuts||Erho/nu>0.9){
-	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
-	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
-	    double costhetarho = pzrho/prho;
-	    double intresults[nrofcross];	  
-	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
-	    double front=1.;
-	    //correct for not completely full shells
-	    if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
-	    if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
-	    for(int dd=0;dd<nrofcross;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,1);
-	  }
+	  double pxrho = SIGN(-(D+E*pzrho)/Cx)*sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
+	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
+	  double costhetarho = pzrho/prho;
+	  double intresults[nrofcross];	  
+	  getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	  double front=1.;
+	  //correct for not completely full shells
+	  if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
+	  if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
+	  for(int dd=0;dd<nrofcross;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,1);
 	}
       }    
     }
@@ -319,7 +315,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
     double Cx = pm*sintheta*cosphi;
     double s = C0*C0-Cz*Cz-Cx*Cx-Cy*Cy; //mandelstam 
     double En = C0-Erho;
-    double pn = sqrt(En*En-massi*massi);
+    double pn = sqrt(En*En-mN*mN);
     
     double A=(Cx*Cx+Cy*Cy+Cz*Cz-pn*pn+prho*prho)*0.5;
     double a = Cz*Cz+Cx*Cx;
@@ -350,35 +346,30 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
 	//check cuts
 	if(pzrho<prho&&(nocuts||(t<-0.1&&t>-0.4))){
-	  double pxrho = sqrt(prho*prho-pzrho*pzrho);
-	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
-	    double costhetarho = pzrho/prho;
-	    double intresults[nrofcross];
-	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
-	    double front=1.;
-	    //correct for not completely full shells
-	    if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
-	    if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
+	  double pxrho = SIGN((A-Cz*pzrho)/Cx)*sqrt(prho*prho-pzrho*pzrho);
+	  double costhetarho = pzrho/prho;
+	  double intresults[nrofcross];
+	  getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	  double front=1.;
+	  //correct for not completely full shells
+	  if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
+	  if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
 
-	    for(int dd=0;dd<nrofcross;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,0);
-	  }
+	  for(int dd=0;dd<nrofcross;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,0);
 	}
 	pzrho = (-b-discr)/(2.*a);
 	t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
 	//check cuts
 	if(pzrho<prho&&(nocuts||(t<-0.1&&t>-0.4))){
-	  double pxrho = sqrt(prho*prho-pzrho*pzrho);	  
-	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
-	    double costhetarho = pzrho/prho;
-	    double intresults[nrofcross];
-	    getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
-	    double front=1.;
-	    //correct for not completely full shells
-	    if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
-	    if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
-	    for(int dd=0;dd<nrofcross;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,0);
-
-	  }
+	  double pxrho = SIGN((A-Cz*pzrho)/Cx)*sqrt(prho*prho-pzrho*pzrho);	  
+	  double costhetarho = pzrho/prho;
+	  double intresults[nrofcross];
+	  getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	  double front=1.;
+	  //correct for not completely full shells
+	  if(i==nucleusthick.getPLevels()-1) front=double((nucleusthick.getFinalMProton()+1)*2-nucleusthick.getOnlyOneProton())/(nucleusthick.getJ_array()[i]+1);
+	  if(i==nucleusthick.getTotalLevels()-1) front=double((nucleusthick.getFinalMNeutron()+1)*2-nucleusthick.getOnlyOneNeutron())/(nucleusthick.getJ_array()[i]+1);
+	  for(int dd=0;dd<nrofcross;dd++) results[dd]+=front*intresults[dd]*getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,0);
 	}
       }
     }
@@ -477,37 +468,34 @@ void RhoTCross::klaas_rho_t(numint::vector_d & results, double pm, double costhe
 	double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
 	//check cuts
 	if(cross.getNocuts()||Erho/nu>0.9){
-	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
-	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
-	    double costhetarho = pzrho/prho;
-	    
-	    double intresults[cross.getNrofcross()];
-	    cross.getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
-	    double front=1.;
-	    //correct for not completely full shells
-	    if(i==cross.getNucleusthick()->getPLevels()-1) front=double((cross.getNucleusthick()->getFinalMProton()+1)*2-cross.getNucleusthick()->getOnlyOneProton())/(cross.getNucleusthick()->getJ_array()[i]+1);
-	    if(i==cross.getNucleusthick()->getTotalLevels()-1) front=double((cross.getNucleusthick()->getFinalMNeutron()+1)*2-cross.getNucleusthick()->getOnlyOneNeutron())/(cross.getNucleusthick()->getJ_array()[i]+1);
-	    for(int dd=0;dd<cross.getNrofcross();dd++) results[dd]+=front*intresults[dd]*cross.getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,1);
-	  }
+	  double pxrho = SIGN(-(D+E*pzrho)/Cx)*sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
+	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
+	  double costhetarho = pzrho/prho;
+	  	  
+	  double intresults[cross.getNrofcross()];
+	  cross.getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	  double front=1.;
+	  //correct for not completely full shells
+	  if(i==cross.getNucleusthick()->getPLevels()-1) front=double((cross.getNucleusthick()->getFinalMProton()+1)*2-cross.getNucleusthick()->getOnlyOneProton())/(cross.getNucleusthick()->getJ_array()[i]+1);
+	  if(i==cross.getNucleusthick()->getTotalLevels()-1) front=double((cross.getNucleusthick()->getFinalMNeutron()+1)*2-cross.getNucleusthick()->getOnlyOneNeutron())/(cross.getNucleusthick()->getJ_array()[i]+1);
+	  for(int dd=0;dd<cross.getNrofcross();dd++) results[dd]+=front*intresults[dd]*cross.getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,1);
 	}
 	pzrho = (-b-discr)/(2.*a);
 	Erho = (pzrho*qvec-A)/nu;
 	t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
 	//check cuts
 	if(cross.getNocuts()||Erho/nu>0.9){
-	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	  if(SIGN(D+E*pzrho)==SIGN(-Cx*pxrho)){
-	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
-	    double costhetarho = pzrho/prho;
-	    double intresults[cross.getNrofcross()];	  
-	    cross.getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
-	    double front=1.;
-	    //correct for not completely full shells
-	    if(i==cross.getNucleusthick()->getPLevels()-1) front=double((cross.getNucleusthick()->getFinalMProton()+1)*2-cross.getNucleusthick()->getOnlyOneProton())/(cross.getNucleusthick()->getJ_array()[i]+1);
-	    if(i==cross.getNucleusthick()->getTotalLevels()-1) front=double((cross.getNucleusthick()->getFinalMNeutron()+1)*2-cross.getNucleusthick()->getOnlyOneNeutron())/(cross.getNucleusthick()->getJ_array()[i]+1);
-	    for(int dd=0;dd<cross.getNrofcross();dd++) results[dd]+=front*intresults[dd]*cross.getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,1);
-	  }
+	  double pxrho = SIGN(-(D+E*pzrho)/Cx)*sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
+	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
+	  double costhetarho = pzrho/prho;
+	  
+	  double intresults[cross.getNrofcross()];	  
+	  cross.getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	  double front=1.;
+	  //correct for not completely full shells
+	  if(i==cross.getNucleusthick()->getPLevels()-1) front=double((cross.getNucleusthick()->getFinalMProton()+1)*2-cross.getNucleusthick()->getOnlyOneProton())/(cross.getNucleusthick()->getJ_array()[i]+1);
+	  if(i==cross.getNucleusthick()->getTotalLevels()-1) front=double((cross.getNucleusthick()->getFinalMNeutron()+1)*2-cross.getNucleusthick()->getOnlyOneNeutron())/(cross.getNucleusthick()->getJ_array()[i]+1);
+	  for(int dd=0;dd<cross.getNrofcross();dd++) results[dd]+=front*intresults[dd]*cross.getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,1);
 	}
       }    
     }
@@ -515,14 +503,10 @@ void RhoTCross::klaas_rho_t(numint::vector_d & results, double pm, double costhe
   for(int i=0;i<cross.getNrofcross();i++){
     results[i]*=pm*pm;
   }
-
-  
 }
 
 void RhoTCross::klaas_rho_z(numint::vector_d & results, double pm, double costheta, double phi, RhoTCross & cross, double Q2, double nu, double qvec,
     double t, double Erho, double prho){
-  
-  
   results=numint::vector_d(cross.getNrofcross(),0.);
   if(pm==0.){
     for(int i=0;i<cross.getNrofcross();i++) results[i]=0.;
@@ -545,7 +529,7 @@ void RhoTCross::klaas_rho_z(numint::vector_d & results, double pm, double costhe
     double Cx = pm*sintheta*cosphi;
     double s = C0*C0-Cz*Cz-Cx*Cx-Cy*Cy; //mandelstam 
     double En = C0-Erho;
-    double pn = sqrt(En*En-massi*massi);
+    double pn = sqrt(En*En-mN*mN);
     
     double A=(Cx*Cx+Cy*Cy+Cz*Cz-pn*pn+prho*prho)*0.5;
     double a = Cz*Cz+Cx*Cx;
@@ -576,35 +560,32 @@ void RhoTCross::klaas_rho_z(numint::vector_d & results, double pm, double costhe
 	double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
 	//check cuts
 	if(pzrho<prho&&(cross.getNocuts()||(t<-0.1&&t>-0.4))){
-	  double pxrho = sqrt(prho*prho-pzrho*pzrho);
-	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
-	    double costhetarho = pzrho/prho;
-	    double intresults[cross.getNrofcross()];
-	    cross.getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
-	    double front=1.;
-	    //correct for not completely full shells
-	    if(i==cross.getNucleusthick()->getPLevels()-1) front=double((cross.getNucleusthick()->getFinalMProton()+1)*2-cross.getNucleusthick()->getOnlyOneProton())/(cross.getNucleusthick()->getJ_array()[i]+1);
-	    if(i==cross.getNucleusthick()->getTotalLevels()-1) front=double((cross.getNucleusthick()->getFinalMNeutron()+1)*2-cross.getNucleusthick()->getOnlyOneNeutron())/(cross.getNucleusthick()->getJ_array()[i]+1);
+	  double pxrho = SIGN((A-Cz*pzrho)/Cx)*sqrt(prho*prho-pzrho*pzrho);
 
-	    for(int dd=0;dd<cross.getNrofcross();dd++) results[dd]+=front*intresults[dd]*cross.getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,0);
-	  }
+	  double costhetarho = pzrho/prho;
+	  double intresults[cross.getNrofcross()];
+	  cross.getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	  double front=1.;
+	  //correct for not completely full shells
+	  if(i==cross.getNucleusthick()->getPLevels()-1) front=double((cross.getNucleusthick()->getFinalMProton()+1)*2-cross.getNucleusthick()->getOnlyOneProton())/(cross.getNucleusthick()->getJ_array()[i]+1);
+	  if(i==cross.getNucleusthick()->getTotalLevels()-1) front=double((cross.getNucleusthick()->getFinalMNeutron()+1)*2-cross.getNucleusthick()->getOnlyOneNeutron())/(cross.getNucleusthick()->getJ_array()[i]+1);
+	  for(int dd=0;dd<cross.getNrofcross();dd++) results[dd]+=front*intresults[dd]*cross.getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,0);
 	}
 	pzrho = (-b-discr)/(2.*a);
 	t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
 	//check cuts
 	if(pzrho<prho&&(cross.getNocuts()||(t<-0.1&&t>-0.4))){
-	  double pxrho = sqrt(prho*prho-pzrho*pzrho);	  
-	  if(SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho)){
-	    double costhetarho = pzrho/prho;
-	    double intresults[cross.getNrofcross()];
-	    cross.getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
-	    double front=1.;
-	    //correct for not completely full shells
-	    if(i==cross.getNucleusthick()->getPLevels()-1) front=double((cross.getNucleusthick()->getFinalMProton()+1)*2-cross.getNucleusthick()->getOnlyOneProton())/(cross.getNucleusthick()->getJ_array()[i]+1);
-	    if(i==cross.getNucleusthick()->getTotalLevels()-1) front=double((cross.getNucleusthick()->getFinalMNeutron()+1)*2-cross.getNucleusthick()->getOnlyOneNeutron())/(cross.getNucleusthick()->getJ_array()[i]+1);
-	    for(int dd=0;dd<cross.getNrofcross();dd++) results[dd]+=front*intresults[dd]*cross.getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,0);
+	  double pxrho = SIGN((A-Cz*pzrho)/Cx)*sqrt(prho*prho-pzrho*pzrho);
 
-	  }
+	  double costhetarho = pzrho/prho;
+	  double intresults[cross.getNrofcross()];
+	  cross.getMomdistr(intresults,prho*1.E03,acos(costhetarho),Q2,i,pm*1.E03,costheta,phi);
+	  double front=1.;
+	  //correct for not completely full shells
+	  if(i==cross.getNucleusthick()->getPLevels()-1) front=double((cross.getNucleusthick()->getFinalMProton()+1)*2-cross.getNucleusthick()->getOnlyOneProton())/(cross.getNucleusthick()->getJ_array()[i]+1);
+	  if(i==cross.getNucleusthick()->getTotalLevels()-1) front=double((cross.getNucleusthick()->getFinalMNeutron()+1)*2-cross.getNucleusthick()->getOnlyOneNeutron())/(cross.getNucleusthick()->getJ_array()[i]+1);
+	  for(int dd=0;dd<cross.getNrofcross();dd++) results[dd]+=front*intresults[dd]*cross.getfrontfactor(nu,qvec,Erho,prho,pzrho,pxrho,s,Q2,mN,t,0);
+
 	}
       }
     }
