@@ -205,8 +205,33 @@ FastParticle& FastParticle::operator=(const FastParticle& rhs)
 {
   // Assignment
   if( this!=&rhs) { // avoid self-assignment
-     (*this)=FastParticle(rhs);
-     
+    particletype = rhs.getParticletype();
+    incoming = rhs.getIncoming();
+    p = rhs.getP();
+    theta = rhs.getTheta();
+    costheta = rhs.getCosTheta();
+    phi = rhs.getPhi();
+    ex = rhs.getEx();
+    ey = rhs.getEy();
+    ez = rhs.getEz();
+    hitz = rhs.getHitz();
+    hitbnorm = rhs.getHitbnorm();
+    beta2p = rhs.getBeta2p();
+    sigmap = rhs.getSigmap();
+    epsilonp = rhs.getEpsilonp();
+    beta2n = rhs.getBeta2n();
+    sigman = rhs.getSigman();
+    epsilonn = rhs.getEpsilonn();
+    hardscale = rhs.getHardScale();
+    nkt_sq = rhs.getNkt_sq();
+    lc = rhs.getLc();
+    mass = rhs.getMass();
+    E = rhs.getE();
+    decay_dil = rhs.getDecay_dil();
+    sigma_decay_n = rhs.getSigma_decay_n();
+    sigma_decay_p = rhs.getSigma_decay_p();
+    userset = rhs.userset;
+    for(int i=0;i<3;i++) hitb[i]=rhs.getHitbvec()[i];
      
      
   }

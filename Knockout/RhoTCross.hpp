@@ -15,6 +15,7 @@
 #include <DistMomDistrGrid.hpp>
 #include <GlauberDecayGridThick.hpp>
 #include <FastParticle.hpp>
+#include <map>
 
 // #define NROFRES 9 /*!< number of different cross sections calculated, 1 pw, 8 glaubers */
 
@@ -72,7 +73,7 @@ public:
   void getCrossz_coh(double *results, const double Ebeam, const double Q2, const double nu, const double z);
   double getPrec() const{return prec;} /*!< returns the precision */
   int getNrofcross() const{return nrofcross;} /*!<returns number of different cross sections */
-  MeanFieldNucleusThick* getNucleusthick() {return &nucleusthick;}
+  const MeanFieldNucleusThick& getNucleusthick() const{return nucleusthick;}
   int getNocuts() const{return nocuts;}
   
 private:
@@ -88,6 +89,7 @@ private:
   int maxEval; /*!< max # of function evaluations in integration*/
   MeanFieldNucleusThick nucleusthick; /*!< nucleus instance */
   DistMomDistrGrid **pdistgrid; /*!< array of distorted momentum distribution grid, one for each shell level */
+  std::map<double,DistMomDistrGrid> distgridmap; /*!< map used to store distorted momentum distributions */
   GlauberDecayGridThick **pfsigrid; /*!< array of Glauber FSI grid, one for each shell level */
 //   TKinematics2to2 *pkin;
 //  FastParticle *prho;

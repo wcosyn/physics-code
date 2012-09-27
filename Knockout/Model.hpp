@@ -119,13 +119,13 @@ public:
   int getM() const{return mm;}
   int getIntegrator() const{return integrator;}
   MeanFieldNucleusThick* getPnucleus() {return pnucl;}
-  Matrix<1,4> & getBarcontract0up() {return barcontract0up;}
-  Matrix<1,4> & getBarcontractminup() {return barcontractminup;}
-  Matrix<1,4> & getBarcontractplusup() {return barcontractplusup;}
-  Matrix<1,4> & getBarcontract0down() {return barcontract0down;}
-  Matrix<1,4> & getBarcontractmindown() {return barcontractmindown;}
-  Matrix<1,4> & getBarcontractplusdown() {return barcontractplusdown;}
-  Matrix<1,4> & getBarcontract() {return barcontract;}
+  const Matrix<1,4> & getBarcontract0up() const{return barcontract0up;}
+  const Matrix<1,4> & getBarcontractminup() const{return barcontractminup;}
+  const Matrix<1,4> & getBarcontractplusup() const{return barcontractplusup;}
+  const Matrix<1,4> & getBarcontract0down() const{return barcontract0down;}
+  const Matrix<1,4> & getBarcontractmindown() const{return barcontractmindown;}
+  const Matrix<1,4> & getBarcontractplusdown() const{return barcontractplusdown;}
+  const Matrix<1,4> & getBarcontract() const{return barcontract;}
   TVector3 & getPm() {return pm;}
   
 private:

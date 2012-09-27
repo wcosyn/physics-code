@@ -24,6 +24,7 @@ class AbstractFsiCTGrid;
  */
 class DistMomDistrGrid{
 public:
+  DistMomDistrGrid(); /*!< Default constructor, shouldn't be called, but implemented because of the maps used in RhoTCross */
   /*! Constructor
    * \param shellindex shell index of the nucleus you want the mom distribution for. 
    * Starts from first proton shell, neutron shells follow
@@ -41,16 +42,18 @@ public:
 		   AbstractFsiCTGrid *pfsigrid, const double prec, const int integrator, 
 		   const int max_Eval, const double theta_rot, std::string dir);
   ~DistMomDistrGrid(); /*!< Destructor */
+  DistMomDistrGrid(const DistMomDistrGrid &Copy); /*!< Copy constructor */
+  DistMomDistrGrid& operator=(const DistMomDistrGrid&);/*!< assignment overloading */
   
   int getShellindex() const{return shellindex;} /*!< shell level */
   const std::string getRho_Filename() const{return rho_filename;} /*!< returns filename for regular rho grid */
   const std::string getRhoCT_Filename() const{return rhoct_filename;} /*!< returns filename for rho+ct grid */
   const std::string getDir() const{return dir;}/*!< returns dir where all input/output is located */ 
+  double getMass() const{return mass;} /*!<  mass interacting nucleon*/
+  double getPmax() const{return pmax;}/*!<  returns max p size of the grid*/
   int getPgrid() const{return pgrid;}/*!<  returns the gridsize in r*/
   int getCthgrid() const{return cthgrid;}/*!<  returns the gridsize in theta*/
   int getPhigrid() const{return phigrid;}/*!<  returns the gridsize in phi*/
-  double getMass() const{return mass;} /*!<  mass interacting nucleon*/
-  double getPmax() const{return pmax;}/*!<  returns max p size of the grid*/
   double getInvPstep() const{return invpstep;}/*!<  returns the inverse of the stepsize of the grid in r*/
   double getInvCthstep() const{return invcthstep;}/*!<  returns the inverse of the stepsize of the grid in theta*/
   double getInvPhistep() const{return invphistep;}/*!<  returns the inverse of the stepsize of the grid in phi*/
@@ -63,11 +66,26 @@ public:
   int getPindex() const{return pindex;}/*!<  returns the index for r used in the 3d interpolation*/
   int getCthindex() const{return cthindex;}/*!<  returns the index for theta used in the 3d interpolation*/
   int getPhiindex() const{return phiindex;}/*!<  returns the index for phi used in the 3d interpolation */
-  AbstractFsiCTGrid *getPfsigrid() const{return pfsigrid;}/*!<  returns the pointer to the MeanFieldNucleus instance */
-  double getPrec() const{return prec;} /*!< returns the precision in the integrations */
-  TVector3* getPvec_hit() {return &pvec_hit;}
-  Matrix<1,4>* getUpm_bar() {return &Upm_bar;}
+  AbstractFsiCTGrid * const getPfsigrid() const{return pfsigrid;}/*!<  returns the pointer to the MeanFieldNucleus instance */
   
+  bool getFilledgrid() const{return filledgrid;}
+  bool getFilledctgrid() const{return filledctgrid;}
+  bool getFilledallgrid() const{return filledallgrid;}
+  const TVector3 & getPvec_hit() const{return pvec_hit;}
+  double getP_hit() const{return p_hit;}
+  double getCostheta_hit() const{return costheta_hit;}
+  double getSintheta_hit() const{return sintheta_hit;}
+  double getPhi_hit() const{return phi_hit;}
+  double getCosphi_hit() const{return cosphi_hit;}
+  double getSinphi_hit() const{return sinphi_hit;}
+  const Matrix<1,4>& getUpm_bar() const{return Upm_bar;}
+  double getPrec() const{return prec;} /*!< returns the precision in the integrations */
+  int getIntegrator() const{return integrator;}
+  int getMaxEval() const{return maxEval;}
+  double getThetarot() const{return thetarot;}
+  double* const getRhopwgrid() const{return rhopwgrid;}
+  double**** const getRhogrid() const{return rhogrid;}
+  double**** const getRhoctgrid() const{return rhoctgrid;}
   
   void printRho_grid(int gridindex);  /*!< Prints the rho grid for a certain situation*/
   void printRhopw_grid();  /*!< Prints the rho plane wave grid */
@@ -130,7 +148,10 @@ private:
   int pindex; /*!<  the index for r used in the 3d interpolation*/
   int cthindex; ;/*!<  the index for theta used in the 3d interpolation*/
   int phiindex; /*!<  the index for phi used in the 3d interpolation */
+  AbstractFsiCTGrid *pfsigrid;/*!<  the pointer to the fsigrid instance */
+  
   void setFilenames(std::string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
+
   bool filledgrid; /*!< denotes if the grid has been filled */
   bool filledctgrid; /*!< denotes if the ct grid has been filled */
   bool filledallgrid; /*!< denotes if allthe (possible) grids have been filled */
@@ -167,7 +188,6 @@ private:
   void readinRhoCtGrid(ifstream &infile); /*!< read in only the fsi+ct grids */
   void writeoutRhoCtGrid(ofstream &outfile); /*!< write out only the fsi+ct grids */
 
-  AbstractFsiCTGrid *pfsigrid;/*!<  the pointer to the fsigrid instance */
 
   /*! function that gets integrated over r, both fsi and fsi+ct grid output
    * \param r [fm] radial coordinate

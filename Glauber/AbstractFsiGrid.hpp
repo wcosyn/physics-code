@@ -168,6 +168,7 @@ public:
   double getPhi_hit() const{return phi_hit;}
   double getCosphi_hit() const{return cosphi_hit;}
   double getSinphi_hit() const{return sinphi_hit;}
+  bool getFilledallgrid() const{return filledallgrid;}
   
 protected:
   virtual void setFilenames(std::string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
