@@ -21,10 +21,10 @@ abserror(1.E-012),
 maxEval(max_Eval){
 
   pfsigrid = new GlauberDecayGridThick*[nucleusthick.getTotalLevels()];
-  pdistgrid = new DistMomDistrGrid*[nucleusthick.getTotalLevels()];
+//   pdistgrid = new DistMomDistrGrid*[nucleusthick.getTotalLevels()];
   for(int i=0;i<nucleusthick.getTotalLevels();i++){
     pfsigrid[i] = new GlauberDecayGridThick(60,20,5,&nucleusthick,prec,2,homedir);
-    pdistgrid[i] = new DistMomDistrGrid(i, pmax, 30,20,5,pfsigrid[i],1.E-03,2,2E04,0.,homedir);
+//     pdistgrid[i] = new DistMomDistrGrid(i, pmax, 30,20,5,pfsigrid[i],1.E-03,2,2E04,0.,homedir);
   }
   nrofcross=pfsigrid[0]->getNumber_of_grids()+1;
 }
@@ -32,10 +32,10 @@ maxEval(max_Eval){
 RhoTCross::~RhoTCross(){
   
   for(int i=0;i<nucleusthick.getTotalLevels();i++){
-    delete pdistgrid[i];
+//     delete pdistgrid[i];
     delete pfsigrid[i];
   }
-  delete [] pdistgrid;
+//   delete [] pdistgrid;
   delete [] pfsigrid;
 }
 
