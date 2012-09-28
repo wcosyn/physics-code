@@ -114,8 +114,8 @@ void AbstractFsiCTGrid::fillGrids(){
 
 //updates the grids, uses pure virtual functions!!!!
 void AbstractFsiCTGrid::updateGrids(){
-  string old_fsi_ct_filename = fsi_ct_filename;
   AbstractFsiGrid::updateGrids();
+  string old_fsi_ct_filename = fsi_ct_filename;
   setFilenames(getDir());
   //check is something is different so we needto update the grids
   if(old_fsi_ct_filename.compare(fsi_ct_filename)){
@@ -123,7 +123,7 @@ void AbstractFsiCTGrid::updateGrids(){
     ifstream infile2(fsi_ct_filename.c_str(),ios::in|ios::binary);
     //check if object has been created sometime earlier and read it in
     if(infile2.is_open()){
-     // cout << "Reading in FSI+CT grid from memory: " << fsi_ct_filename << endl;
+      //cout << "Reading in FSI+CT grid from memory: " << fsi_ct_filename << endl;
       readinFsiCtGrid(infile2);
       filledctgrid=filledallgrid=1;
       infile2.close();
