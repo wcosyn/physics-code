@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
   int integrator = atoi(argv[8]);
   int maxEval = atoi(argv[9]);
   double prec=atof(argv[10]);
-  string homedir=argv[11];
+  int maxEval2 = atoi(argv[11]);
+  string homedir=argv[12];
   double Ebeam = 5.014;
   
 
@@ -86,10 +87,10 @@ int main(int argc, char *argv[])
     mdf.param = &F;
     F.f=torz?klaas_t:klaas_z;
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,1.E-03,ret,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,1.E-02,1.E-03,2E04,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,1.E-03,maxEval2,ret,count,0);
     cout << Q2 << " ";
     for (int l=0;l<test.getNrofcross();l++) cout << ret[l] << " ";
-    cout << endl;
+    cout << count << " " << res << endl;
   }
   
   

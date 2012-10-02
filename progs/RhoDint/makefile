@@ -16,24 +16,24 @@ CPATH 	=	.
 
 #		Flags
 #  OPTFLAG	=	-O3 -fPIC
- OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
+ OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
 WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG)  $(GPFLAG) #$(STATIC)
+CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/rhoDint
-EFILEST   = 	../../bin/rhoDintstatic
+EFILE   = 	../../bin/rhoD
+EFILEST   = 	../../bin/rhoDstatic
 
 #		Mathematical functions
 LIBS =	 	-lm  
-WIMLIBS = -lKnockout -lGlauber -lMePhys
+WIMLIBS = -lKnockout -lGlauber -lMePhys -lIntegrator
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
- INCLUDEDIRS =  -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout
-STATICLIBS =   ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a 
+ INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout 
+STATICLIBS =   ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a ~/Code/lib/libIntegrator.a
 
 
 #		Header files

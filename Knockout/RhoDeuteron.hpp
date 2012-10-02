@@ -28,7 +28,8 @@ public:
    * \param p_max [MeV] maximum missing momentum in integrations 
    * \param no_cuts apply the experimental cuts in t or z or not 
    */
-  RhoDeuteron(const std::string wavefunction, const double p_max, const bool no_cuts);
+  RhoDeuteron(const std::string wavefunction, const double p_max, const bool no_cuts, const int integr,
+	      const double precision, const int max_Eval);
   ~RhoDeuteron(); /*!< Destructor */
   /*! Calculate cross section integrated over z at fixed t
    * \param results [fm^3GeV^4] all the different computed cross sections
@@ -62,10 +63,16 @@ public:
    * \param z [] E_rho/nu
    */
   void getCrossz_coh(double *results, const double Ebeam, const double Q2, const double nu, const double z);
+  int getNocuts() const{return nocuts;}
+  
 private:
   double pmax; /*!< maximum p_miss in integrations*/
   bool nocuts; /*!< experimental cuts in t or z applied? */
   DeuteronMomDistr deuteron; /*!< Momentum distribution instance of deuteron */
+  double prec; /*!< precision in the integrations */
+  int integrator; /*!< choice of integrator */
+  double abserror; /*!< absolute error in interations */
+  int maxEval; /*!< max # of function evaluations in integration*/
   
   /*! Calculates coherent cross section
    * \param pDvec [MeV] final deuteron momentum vec
@@ -150,7 +157,38 @@ private:
    * \param En [GeV] energy of recoil nucleon
    * \param t [GeV^2] momentum transfer squared
    */
-   double getfrontfactor(double qvec, double Erho, double prho, double pzrho, double s, double Q2, double t, double En);
+   double getfrontfactor(double qvec, double Erho, double prho, double pzrho, double s, double Q2, double t, 
+			 double En, double Eoff, bool torz);
+  struct Ftor_rhoD {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
+      Ftor_rhoD &p = * (Ftor_rhoD *) param;
+      p.f(ret,x[0],x[1],x[2],*p.deuteron,p.Q2,p.nu,p.qvec,p.t,p.Erho,p.prho);
+    }
+    RhoDeuteron *deuteron;/*!< pointer to rhodeuteron object */
+    double Q2;/*!< [GeV^2] Qsquared */
+    double nu; /*!<[GeV] virtual photon energy */
+    double qvec; /*!< [GeV] virtual photon momentum */
+    double t; /*!< [GeV^2] momentum transfer sq */
+    double Erho; /*!< [GeV] rho energy */
+    double prho; /*!< [GeV] rho momentum */
+    /*! integrandum 
+    * \param res results
+    * \param pm first integration variable
+    * \param costheta second integration variable
+    * \param phi third integration variable
+    * \param cross the RhoTCross instance
+    */
+    void (*f)(numint::vector_d & res, double pm, double costheta, double phi, RhoDeuteron & deuteron, double Q2, double nu, double qvec,
+      double t, double Erho, double prho);
+  };
+  /*! integrandum function (clean ones)*/
+  static void klaas_rhoD_t(numint::vector_d & res, double pm, double costheta, double phi, RhoDeuteron & deuteron, double Q2, double nu, double qvec,
+      double t, double dummy, double dummy2);
+  /*! integrandum function (clean ones), only CT*/
+  static void klaas_rhoD_z(numint::vector_d & res, double pm, double costheta, double phi, RhoDeuteron & deuteron, double Q2, double nu, double qvec,
+      double dummy, double Erho, double prho);
 
 };
 /*! @} */
