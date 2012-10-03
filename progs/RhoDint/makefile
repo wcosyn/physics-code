@@ -24,8 +24,8 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/rhoD
-EFILEST   = 	../../bin/rhoDstatic
+EFILE   = 	../../bin/rhoDint
+EFILEST   = 	../../bin/rhoDintstatic
 
 #		Mathematical functions
 LIBS =	 	-lm  

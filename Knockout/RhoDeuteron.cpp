@@ -7,14 +7,15 @@ using namespace std;
 
 
 RhoDeuteron::RhoDeuteron(const string name, const double p_max,const bool no_cuts, const int integr,
-	      const double precision, const int max_Eval):
+	      const double precision, const int max_Eval, const bool FSI):
 pmax(p_max),
 nocuts(no_cuts),
 deuteron(name),
 prec(precision),
 integrator(integr),
 abserror(1.E-012),
-maxEval(max_Eval){
+maxEval(max_Eval),
+fsi(FSI){
 }
 
 RhoDeuteron::~RhoDeuteron(){
@@ -55,11 +56,12 @@ void RhoDeuteron::getCrosst(double *result, const double Ebeam, const double Q2,
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,abserror,1.E-03,ret,count,0);
     else res = numint::cube_adaptive(mdf,lower,upper,abserror,1.E-03,maxEval,ret,count,0);
     for(int i=0;i<2;++i) result[i]=ret[i];
-    if(ret[2]*1.E-04>abserror) {abserror=ret[2]*1.E-04; }
+    if(ret[1]*1.E-04>abserror) {abserror=ret[1]*1.E-04; }
   }
     
     
   for(int i=0;i<2;i++) result[i]*=ALPHA*(Ebeam-nu)/(pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon)*MASSD*1.E-03)*1.E09/(2.*qvec);
+  cout << nu << " " << t << " " << result[0] << " " << result[1] << " " << res << " " << count << " " << abserror << " " << endl;
 }
 
 void RhoDeuteron::intPmt(const double pm, double *result, va_list ap){
@@ -221,7 +223,7 @@ void RhoDeuteron::getCrossz(double *result, const double Ebeam,  const double Q2
   else if(integrator==1||integrator==2){
     numint::vector_d ret(2,0.);
     numint::array<double,3> lower = {{0.,-1.,0.}};
-    numint::array<double,3> upper = {{pmax*1.E-03,1.,2.*PI}};
+    numint::array<double,3> upper = {{pmax*1.E-03,1.,PI}};
     
     RhoDeuteron::Ftor_rhoD F;
     F.deuteron = this;
@@ -238,12 +240,13 @@ void RhoDeuteron::getCrossz(double *result, const double Ebeam,  const double Q2
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,abserror,1.E-03,ret,count,0);
     else res = numint::cube_adaptive(mdf,lower,upper,abserror,1.E-03,maxEval,ret,count,0);
     for(int i=0;i<2;++i) result[i]=ret[i];
-    if(ret[2]*1.E-04>abserror)  {abserror=ret[2]*1.E-04; }
+    if(ret[1]*1.E-04>abserror)  {abserror=ret[1]*1.E-04; }
   }
   
  
-  for(int i=0;i<2;i++) result[i]*=ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon)*MASSD*1.E-03)*1.E09*nu/qvec;
-  
+  for(int i=0;i<2;i++) result[i]*=ALPHA*(Ebeam-nu)/(pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon)*MASSD*1.E-03)*1.E09*nu/qvec;
+   cout << nu << " " << z << " " << result[0] << " " << result[1] << " " << res << " " << count << " " << abserror << " " << endl;
+ 
 }
 
 void RhoDeuteron::intPmz(const double pm, double *result, va_list ap){
@@ -359,8 +362,8 @@ void RhoDeuteron::getMomdistr(double *results, double Erho, double prho, double 
   double sigmap, beta2p, epsp, sigman, beta2n, epsn;
   FastParticle::interpPionGlauberData(4,prho,sigmap,beta2p,epsp,sigman,beta2n,epsn);
   deuteron.setScatter(10.*sigmap,beta2p*INVHBARC*INVHBARC*1.E06,epsp);//careful with units!
-  results[1] = results[0] = deuteron.getMomDistrpw(pmvec);
-  //results[1] = deuteron.getMomDistrfsi(pmvec, nu, qvec, s, MASSRHO);
+  results[0] = deuteron.getMomDistrpw(pmvec);
+  results[1] = fsi? deuteron.getMomDistrfsi(pmvec, nu, qvec, s, MASSRHO) : results[0];
 }  
   
   
@@ -393,21 +396,23 @@ void RhoDeuteron::getCrosst_coh(double *result, const double Ebeam, const double
 //   double tt = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
   if(Erho/nu>0.9){
     double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-    if(!isnan(pxrho)){
-      double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
-      double costhetarho = pzrho/prho;
-      double pDz = Cz-pzrho;
-      double pDx = -pxrho;
-      double ss = -Q2+MASS_N*MASS_N+2.*MASS_N*nu;
-      double ED = sqrt(MASSD*MASSD*1.E-06+pDx*pDx+pDz*pDz);	
+    if(isnan(pxrho)) pxrho=0.;
+    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
+    double costhetarho = pzrho/prho;
+    double pDz = Cz-pzrho;
+    double pDx = -pxrho;
+    double ss = -Q2+MASS_N*MASS_N+2.*MASS_N*nu;
+    double ED = sqrt(MASSD*MASSD*1.E-06+pDx*pDx+pDz*pDz);	
 //   	  /*if(Erho/nu>0.9)*/ cout << "zero " <<
 //   	    Erho << " " << costhetarho << " " << Erho/nu << " " << tt << 
 //   	    " " << C0 << " " << ED+Erho << endl;
       TVector3 pDvec = TVector3(pDx*1.E-03,0.,pDx*1.E-03);
+//       *result = 1./(2.*MASSD*1.E-03);
+//       return;
       *result = calcCross_coh(pDvec)
 		*ALPHA*(Ebeam-nu)*prho*ss*exp(6*t)/(pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon)*MASSD*1.E-03*abs(ED+Erho*(1-qvec*pzrho/prho/prho)));
 //       cout << nu << " " << t << " " << *result << endl;
-    }
+    
   }
   else *result=0.;
 }
@@ -425,12 +430,15 @@ void RhoDeuteron::getCrossz_coh(double *result, const double Ebeam,  const doubl
   double pD = sqrt(ED*ED-MASSD*MASSD*1.E-06);
   double pzrho = (qvec*qvec+prho*prho-pD*pD)/(2.*qvec);
   double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
-  if(abs(pzrho/prho)<1&&t<-0.1&&t>-0.4)
+  if(t<-0.1&&t>-0.4)
   {
     double pxrho = sqrt(prho*prho-pzrho*pzrho);
+    if(isnan(pxrho)) pxrho=0.;
     double ss = -Q2+MASS_N*MASS_N+2.*MASS_N*nu;
     TVector3 pDvec = TVector3(-pxrho*1.E03,0.,(qvec-pzrho)*1.E03);
 //     cout << t << " " << pD*pD << " " << pxrho*pxrho+(qvec-pzrho)*(qvec-pzrho) << " " << pzrho/prho << endl;
+//     *result = nu;
+//     return;
     *result = calcCross_coh(pDvec)
     *ALPHA*(Ebeam-nu)*prho*ss*exp(6*t)/(pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon)*MASSD*1.E-03*abs(ED+Erho*(1-qvec*pzrho/prho/prho)));    
 //     cout << nu << " " << z << " " << *result << endl;
@@ -554,9 +562,10 @@ void RhoDeuteron::klaas_rhoD_t(numint::vector_d & results, double pm, double cos
   //   	    " " << C0 << " " << En+Erho << endl;
   // 	  *result +=deuteron.getMomdistr(prho*1.E03,acos(costhetarho),Q2,pm*1.E03,costheta,phi);	  
   // 		    *deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En)*prho;
+	  double front=deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,1);
 	  double intresults[2];
 	  deuteron.getMomdistr(intresults,Erho*1.E03,prho*1.E03,pzrho*1.E03,pxrho*1.E03,pmvec,nu*1.E03,qvec*1.E03);	  
-	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,1);	  
+	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*front;	  
 	}
       }
     }
@@ -581,9 +590,10 @@ void RhoDeuteron::klaas_rhoD_t(numint::vector_d & results, double pm, double cos
 //   	    Erho << " " << costhetarho << " " << Erho/nu << " " << tt << 
 //   	    " " << C0 << " " << En+Erho << endl;
 	  
+	  double front=deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,1);
 	  double intresults[2];
 	  deuteron.getMomdistr(intresults,Erho*1.E03,prho*1.E03,pzrho*1.E03,pxrho*1.E03,pmvec,nu*1.E03,qvec*1.E03);	  
-	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,1);
+	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*front;	  
 	}
       }
       pzrho = (-b-discr)/(2.*a);
@@ -603,9 +613,10 @@ void RhoDeuteron::klaas_rhoD_t(numint::vector_d & results, double pm, double cos
 //   	    Erho << " " << costhetarho << " " << Erho/nu << " " << tt << 
 //   	    " " << C0 << " " << En+Erho << endl;
 	  
+	  double front=deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,1);
 	  double intresults[2];
 	  deuteron.getMomdistr(intresults,Erho*1.E03,prho*1.E03,pzrho*1.E03,pxrho*1.E03,pmvec,nu*1.E03,qvec*1.E03);	  
-	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,1);
+	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*front;	  
 	}
       }
     }    
@@ -650,9 +661,10 @@ void RhoDeuteron::klaas_rhoD_z(numint::vector_d & results, double pm, double cos
 	double pxrho = sqrt(prho*prho-pzrho*pzrho);//pxrho defines x-axis (so only positive sqrt is considered)           
 	if(isnan(pxrho)) pxrho=0.;//underflow
 	if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
+	  double front=deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,0);
 	  double intresults[2];
 	  deuteron.getMomdistr(intresults,Erho*1.E03,prho*1.E03,pzrho*1.E03,pxrho*1.E03,pmvec,nu*1.E03,qvec*1.E03);	  
-	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,0);
+	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*front;	  
 	}
       }
     }
@@ -664,9 +676,10 @@ void RhoDeuteron::klaas_rhoD_z(numint::vector_d & results, double pm, double cos
 	double pxrho = sqrt(prho*prho-pzrho*pzrho);
 	if(isnan(pxrho)) pxrho=0.;//underflow
 	if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
+	  double front=deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,0);
 	  double intresults[2];
 	  deuteron.getMomdistr(intresults,Erho*1.E03,prho*1.E03,pzrho*1.E03,pxrho*1.E03,pmvec,nu*1.E03,qvec*1.E03);	  
-	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,0);
+	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*front;	  
 	}
       }
       pzrho = (-b-discr)/(2.*a);
@@ -675,13 +688,15 @@ void RhoDeuteron::klaas_rhoD_z(numint::vector_d & results, double pm, double cos
 	double pxrho = sqrt(prho*prho-pzrho*pzrho);	  
 	if(isnan(pxrho)) pxrho=0.;//underflow
 	if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
+	  double front=deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,0);
 	  double intresults[2];
 	  deuteron.getMomdistr(intresults,Erho*1.E03,prho*1.E03,pzrho*1.E03,pxrho*1.E03,pmvec,nu*1.E03,qvec*1.E03);	  
-	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,0);
+	  for(int dd=0;dd<2;dd++) results[dd]+=intresults[dd]*front;	  
 	}
       }
     }
   }
   
+  for(int i=0;i<2;i++) results[i]*=2.*pm*pm;
   
 }

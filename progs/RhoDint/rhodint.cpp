@@ -30,16 +30,16 @@ int main(int argc, char *argv[])
   double nu_min = atof(argv[3]);
   double nu_max = atof(argv[4]);
   int nocuts = atoi(argv[5]);
-  double usersigma = atof(argv[6]);
-  int integrator = atoi(argv[7]);
-  int maxEval = atoi(argv[8]);
-  double prec=atof(argv[9]);
-  int maxEval2 = atoi(argv[10]);
+  int integrator = atoi(argv[6]);
+  int maxEval = atoi(argv[7]);
+  bool fsi = atoi(argv[8]);
+//   double prec=atof(argv[9]);
+  //int maxEval2 = atoi(argv[10]);
   //string homedir=argv[10];
   double Ebeam = 5.014;
   
 
-  RhoDeuteron test = RhoDeuteron("paris",400,nocuts,integrator,prec,maxEval);  
+  RhoDeuteron test = RhoDeuteron("paris",400,nocuts,2,1.E-03,maxEval,fsi);  
   
   if(integrator==0){
     double result[2];
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     mdf.param = &F;
     F.f=torz?klaas_t:klaas_z;
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,1.E-03,ret,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,1.E-03,maxEval2,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,1.E-03,1e05,ret,count,0);
     cout << Q2 << " ";
     for (int l=0;l<2;l++) cout << ret[l] << " ";
     cout << count << " " << res << endl;
