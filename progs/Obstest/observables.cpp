@@ -30,9 +30,11 @@ using namespace std;
 //run ./onenucl [Q2 [MeV^2]] [omega] [missing momentum]
 int main(int argc, char *argv[])
 {
-  double Q2=atof(argv[1]);
-  double omega=atof(argv[2]);
-  double pm=atof(argv[3]);
+  double Ein=atof(argv[1]);
+  double Q2=atof(argv[2]);
+  double omega=atof(argv[3]);
+  int shell=atoi(argv[4]);
+  double pm=atof(argv[5]);
   bool screening=0;//atoi(argv[4]);
   double scr=1.;//atof(argv[5]);
   int nucleus=1;//atoi(argv[6]);
@@ -45,39 +47,20 @@ int main(int argc, char *argv[])
 
   MeanFieldNucleusThick Carbon(nucleus,homedir);
   TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
-  TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);
+  TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
   Cross obs(*elec,&Carbon,prec,integrator,homedir,screening,scr);
-  double free=obs.getElCross(kin,2,0.)*HBARC*HBARC;
+  double free=obs.getElCross(kin,2,PI)*HBARC*HBARC;
   vector<double> cross;
 
-  obs.getAllDiffCross(cross,kin,2,1,thick,0.,maxEval,1);
-//   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  
-//       cross[0] << " " << cross[1] << " " << cross[thick?4:2] << " " << free << " " << cross[0]/free << " " << cross[1]/free << endl;
+//   obs.getAllDiffCross(cross,kin,2,1,thick,0.,maxEval,1);
+  cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " "  
+      /*<< cross[0] << " " << cross[1] << " " << cross[thick?4:2] << " " << free << " " << cross[0]/free << " " << cross[1]/free << endl*/;
 
   vector<double> observ;
-  obs.getAllObs(observ,kin,2,1,thick,0.,maxEval,1);
-  cout << cross[4] << " " << observ[8*4] << endl;
-  for(int i=0;i<40;i++) cout << observ[i] << " ";
+  obs.getAllObs(observ,kin,2,shell,thick,PI,maxEval,1);
   //cout << observ[0] << " " << observ[8*(thick?4:2)] << " " << observ[3] << " " << observ[8*(thick?4:2)+3] << endl;
-//   for(int i=0;i<5;i++) {
-//     for(int j=0;j<8;j++) cout << observ[i*8+j] << " ";
-//     cout << endl;
-//   }
-      //   double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 0, 1, 0.);
-// // //   double crosss=obs.getDiffCross(kin, 0, 0, 0, 0, 0.);
-//   double crosspsrc=obs.getDiffCross(kin, 2, 0, 1, 0, 0, 1, 0.);
-// // //   double crosspct=obs.getDiffCross(kin, 0, 1, 0, 1, 0.);
-// // //   double crosspsrcct=obs.getDiffCross(kin, 1, 1, 0, 1, 0.);
-// // //   double crossppw=obs.getDiffCross(kin, 0, 0, 1, 1, 0.);
-// // //   cout << free/HBARC/HBARC << endl;
-//   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  
-//       crossp << " " << crosspsrc << " " << free << " " << crossp/free << " " << crosspsrc/free << endl;
-// 
-//       //   cout << crossp << " " << crosss << " " << crosspsrc << " " << crosspct << " " << crosspsrcct << " " << crossppw << endl;
-//   //cout << obs.getElCross(kin,0.) << " " << obs.getElCross(kin,PI) <<endl;
-// //   Model test(&Carbon,0,homedir);
-// //   cout << test.getMatrixEl(kin,-1,0,0,-1,1,1) << endl;
-// //   
+  for(int i=0;i<40;i++) cout << observ[i] << " ";
+  cout << free*1.E-09 << endl;
   delete elec;
   return 0;
 }

@@ -81,6 +81,11 @@ public:
    */
   void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
 		       int shellindex, int thick, double phi, int maxEval, bool lab);
+
+  void getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
+			     int shellindex, int thick, double phi, int maxEval, bool lab);
+
+  
   /*! Computes the off-shell \f$ (e,e'p)\f$ cross section for certain kinematics and a certain shell of the nucleus <BR>
    * What is denoted as \f$ K \sigma_{ep} \f$ in the literature
    * \param kin contains the hadron kinematics
@@ -99,7 +104,7 @@ private:
   TElectronKinematics electron; /*!< electron kinematics */
   MeanFieldNucleusThick *pnucl; /*!< pointer to nucleus */
   double kinfactors[6]; /*!< electron kinematic factors, get multiplied with response functions */
-  double response[5][6]; /*!< response functions, from the hadronic tensor */
+  double response[5][9]; /*!< response functions, from the hadronic tensor */
   double frontfactor; /*!< kinematical front factor */
   double mott; /*!< mott cross section */
   bool usersigma;

@@ -70,6 +70,7 @@ class TSpinor : public TObject
     std::ostream& operator<<(std::ostream&, const TSpinor&);
   
   static Matrix<1,4> Bar(const TSpinor&);
+  static const FourVector< Matrix<2,2> > kSigmaPauli; // Pauli matrix 4vector
   
  protected:
   void InitializeSpinor(double px,double py,double pz,double mass,const Polarization&, Normalization,int energyState);
@@ -77,7 +78,6 @@ class TSpinor : public TObject
  protected:
   Matrix<4,1> *fComponent; //! a spinor is a 4-component vector
  private:
-  static const FourVector< Matrix<2,2> > kSigmaPauli; // Pauli matrix 4vector
 
   ClassDef(TSpinor,3); // Dirac spinor for on-mass shell spin-1/2 particles
   
