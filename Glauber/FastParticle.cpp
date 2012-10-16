@@ -11,7 +11,7 @@ using namespace std;
 using namespace std;
 
 FastParticle::FastParticle(const int type, const int inc, const double momentum,
-			   const double ptheta, const double pphi, const double hard_scale, const double Gamma, const string dir)
+			   const double ptheta, const double pphi, const double hard_scale, const double Gamma, const std::string dir)
 :particletype(type),
 incoming(inc), 
 p(momentum),
@@ -92,7 +92,7 @@ userset(0){
 
 
 FastParticle::FastParticle(const int type, const int inc, const TVector3 &pvec, 
-			   const double hard_scale, const double Gamma, const string dir)
+			   const double hard_scale, const double Gamma, const std::string dir)
 :particletype(type),
 incoming(inc), 
 p(pvec.Mag()),

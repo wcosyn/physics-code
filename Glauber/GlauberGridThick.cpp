@@ -618,7 +618,8 @@ void GlauberGridThick::calcGlauberphasesCt(const int i, const int j, const int k
 
 
 //calc glauberphases for one gridpoint
-void GlauberGridThick::calcGlauberphasesBoth(vector< complex<double> > &protonphases, vector< complex<double> > &neutronphases){
+void GlauberGridThick::calcGlauberphasesBoth(std::vector< std::complex<double> > &protonphases,
+					     std::vector< std::complex<double> > &neutronphases){
   protonphases = vector< complex<double> >(4,0.);
   neutronphases = vector< complex<double> >(4,0.);
   for(int proton=0;proton<2;proton++){
@@ -706,7 +707,8 @@ void GlauberGridThick::calcGlauberphasesBoth(vector< complex<double> > &protonph
 }
 
 //calc glauberphases for one gridpoint,only CT grid
-void GlauberGridThick::calcGlauberphasesCt(vector<complex<double> > &protonphases, vector<complex<double> > &neutronphases){
+void GlauberGridThick::calcGlauberphasesCt(std::vector< std::complex<double> > &protonphases,
+					   std::vector< std::complex<double> > &neutronphases){
   protonphases=vector<complex<double> >(2,0.);
   neutronphases=vector<complex<double> >(2,0.);
   for(int proton=0;proton<2;proton++){

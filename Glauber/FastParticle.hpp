@@ -24,27 +24,27 @@
 class FastParticle{
 public:
   /*! Constructor
-   * \param particletype which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
-   * \param incoming is it the beam hadron particle?
+   * \param type which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
+   * \param inc is it the beam hadron particle?
    * \param momentum [MeV] momentum of the particle
-   * \param theta [rad] spherical coord, theta angle of momentum with the z-axis
-   * \param phi [rad] spherical coord, phi angle of momentum
+   * \param ptheta [rad] spherical coord, theta angle of momentum with the z-axis
+   * \param pphi [rad] spherical coord, phi angle of momentum
    * \param hard_scale [GeV^2] for CT calculations, the hard scale associated with the particle (like Q^2 or |t|, etc)
    * \param Gamma [MeV] Decay width in rest frame (main branching assumed)
    * \param dir homedir where all input is located
    */
-  FastParticle(const int particletype, const int incoming, const double momentum, const double theta, const double phi, 
-	       const double hard_scale, const double Gamma, std::string dir);
+  FastParticle(const int type, const int inc, const double momentum,
+			   const double ptheta, const double pphi, const double hard_scale, const double Gamma, const std::string dir);
   /*! Constructor
-   * \param particletype which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
-   * \param incoming is it the beam hadron particle?
+   * \param type which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
+   * \param inc is it the beam hadron particle?
    * \param pvec [MeV] 3-vector with momentum
    * \param hard_scale [GeV^2] for CT calculations, the hard scale associated with the particle (like Q^2 or |t|, etc)
    * \param Gamma [MeV] Decay width in rest frame (main branching assumed)
    * \param dir homedir where all input is located
    */
-  FastParticle(const int particletype, const int incoming, const TVector3 &pvec, 
-	       const double hard_scale, const double Gamma, std::string dir);
+  FastParticle(const int type, const int inc, const TVector3 &pvec, 
+			   const double hard_scale, const double Gamma, const std::string dir);
   /*! Copy Constructor
    * \param Copy copy
    */

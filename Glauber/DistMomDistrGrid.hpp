@@ -26,21 +26,22 @@ class DistMomDistrGrid{
 public:
   DistMomDistrGrid(); /*!< Default constructor, shouldn't be called, but implemented because of the maps used in RhoTCross */
   /*! Constructor
-   * \param shellindex shell index of the nucleus you want the mom distribution for. 
+   * \param shell shell index of the nucleus you want the mom distribution for. 
    * Starts from first proton shell, neutron shells follow
-   * \param max_p maximum size of p (in MeV)
+   * \param p_max maximum size of p (in MeV)
    * \param p_grid gridsize in p
    * \param cth_grid gridsize in cos theta
    * \param phi_grid gridsizein phi
-   * \param pfsigrid pointer to a fsi/ct grid
-   * \param prec precision you want in the integrations
-   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
-   * \param theta_rot rotation angle that connects momentum frame with glauberframe
-   * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
+   * \param pfsi_grid pointer to a fsi/ct grid
+   * \param precision precision you want in the integrations
+   * \param integr which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
+   * \param max_Eval max number of evaluations
+   * \param theta_rot [rad] rotation angle that connects momentum frame with glauberframe
+   * \param homedir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
-  DistMomDistrGrid(int shellindex, const double max_p, const int p_grid, const int cth_grid, const int phi_grid,
-		   AbstractFsiCTGrid *pfsigrid, const double prec, const int integrator, 
-		   const int max_Eval, const double theta_rot, std::string dir);
+  DistMomDistrGrid(const int shell, const double p_max, const int p_grid, const int cth_grid, const int phi_grid,
+				   AbstractFsiCTGrid *pfsi_grid, const double precision, const int integr, 
+				   const int max_Eval, const double theta_rot, const std::string homedir);
   ~DistMomDistrGrid(); /*!< Destructor */
   DistMomDistrGrid(const DistMomDistrGrid &Copy); /*!< Copy constructor */
   DistMomDistrGrid& operator=(const DistMomDistrGrid&);/*!< assignment overloading */
@@ -109,7 +110,7 @@ public:
 
    
    /*! fills the momentum distribution grids that are used for interpolation
-    * \param rotation TRotation if the frame of the missing momentum is different 
+    * \param rot TRotation if the frame of the missing momentum is different 
     * from the frame that was used to compute the glauberphases
     * 
     */
@@ -117,7 +118,7 @@ public:
    /*! updates the momentum distribution grids that are used for interpolation 
     * \param fsigrid pointer to FSI grid you want to make a distorted momentum distribution forw
     * \param level knockout level
-    * \param rotation TRotation if the frame of the missing momentum is different 
+    * \param rot TRotation if the frame of the missing momentum is different 
     * from the frame that was used to compute the glauberphases
     * 
     */
@@ -174,14 +175,14 @@ private:
     
   void constructpwGrid(); /*!< construct all grids */
   /*! construct all grids 
-    * \param rotation TRotation if the frame of the missing momentum is different 
+    * \param rot TRotation if the frame of the missing momentum is different 
     * from the frame that was used to compute the glauberphases
     */
   void constructAllGrids(TRotation & rot); 
   void readinRhoGrid(ifstream &infile); /*!< read in all grids */
   void writeoutRhoGrid(ofstream &outfile); /*!< write out all grids */
   /*! construct only the fsi+ct grids
-    * \param rotation TRotation if the frame of the missing momentum is different 
+    * \param rot TRotation if the frame of the missing momentum is different 
     * from the frame that was used to compute the glauberphases
     */
   void constructCtGrid(TRotation & rot);  

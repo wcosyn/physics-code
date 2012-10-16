@@ -28,9 +28,9 @@ rhopwgrid(NULL){
 //   exit(1);
 }
 
-DistMomDistrGrid::DistMomDistrGrid(int shell, const double p_max, const int p_grid, const int cth_grid, const int phi_grid,
+DistMomDistrGrid::DistMomDistrGrid(const int shell, const double p_max, const int p_grid, const int cth_grid, const int phi_grid,
 				   AbstractFsiCTGrid *pfsi_grid, const double precision, const int integr, 
-				   const int max_Eval, const double theta_rot, string homedir):
+				   const int max_Eval, const double theta_rot, const std::string homedir):
 shellindex(shell),
 pmax(p_max),
 filledgrid(0),

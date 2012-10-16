@@ -34,6 +34,7 @@ public:
    * \param prec precision you want in the integrations
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
+   * \param max_Eval max # of function evaluations in the coordinate integration
    * \param user_sigma does the user want to change sigma?
    * \param sigma_screening [%] screening change of sigma
    */
@@ -41,27 +42,15 @@ public:
 	bool user_sigma, double sigma_screening=0.);
   ~Model(); /*!< Destructor */
 //   void setSRC(int setSRC) {SRC=setSRC;} /*!< sets SRC in the Glauber FSI */
-//   /*! Computes an amplitude \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu \phi^{D}_{\alpha}(\vec{p}_m,m) \f$  <BR>
-//    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
-//    * \param tk contains the hadron kinematics
-//    * \param spinout spin \f$ m_f \f$ of the outgoing nucleon times TWO!!! (-1 or +1)
-//    * \param photonpol polarization of the photon (-1,0 or +1)
-//    * \param shellindex which \f$ \alpha \f$ shell do we eject from
-//    * \param m \f$ m_j \f$ times TWO!!! of the initial nucleon
-//    * \param CT do you want CT effects in the Glauber FSI?
-//    * \param pw no FSI?
-//    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
-//    * \param SRC SRC or not in the FSI
-//    * \param thick thickness in the glauber
-//    * \return matrix element in [ fm \f$^{3/2}\f$]
-//    */
 //   std::complex<double> getMatrixEl(TKinematics2to2 &tk,int spinout, int photonpol, int shellindex, int m, int CT, 
 // 				   int pw, int current, int SRC, int thick);
+  
+  
   /*! Computes amplitudes \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu \phi^{D}_{\alpha}(\vec{p}_m,m) \f$
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) <BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm \f$^{3/2}\f$] contains amplitudes <BR>
+   * \param results [ fm^{3/2}] contains amplitudes <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>
    * Second index is photon polarization (0 is 0, 1 is -1, 2 is +1) <BR>
    * \param shellindex which \f$ \alpha \f$ shell do we eject from
@@ -78,7 +67,7 @@ public:
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm \f$^{3/2}\f$] contains amplitudes (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) <BR>
+   * \param results [ fm^{3/2}] contains amplitudes (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>
    * Second index is photon polarization (0 is 0, 1 is -1, 2 is +1) <BR>
    * \param shellindex which \f$ \alpha \f$ shell do we eject from
@@ -91,7 +80,7 @@ public:
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm \f$^{3/2}\f$] contains amplitudes<BR>
+   * \param results [ fm^{3/2} contains amplitudes<BR>
    * (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) if thickness <BR>
    * (0=RMSGA,1=+SRC,2=plane-wave) if no thickness <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>

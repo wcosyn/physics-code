@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Resonance::Resonance(double m, complex<double> coefficient, double s0, double slope,
+Resonance::Resonance(double m, std::complex<double> coefficient, double s0, double slope,
 		     double betain,double epsilonin,double betaoffin, double lambdain): 
 mass(m),
 mass2(m*m),

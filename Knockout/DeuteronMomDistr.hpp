@@ -29,10 +29,10 @@ public:
    * - 3: no off-shell amplitude, fully suppressed
    * - 4: full off-shell amplitude, no suppression
    * \param sigma [mb] eikonal parameter, total cross section of particle in final-state with spectator
-   * \param beta [GeV\f$^-2 \f$] eikonal parameter, slope parameter of particle in final-state with spectator
+   * \param beta [GeV^-2] eikonal parameter, slope parameter of particle in final-state with spectator
    * \param epsilon [] eikonal parameter, real part of amplitude of particle in final-state with spectator
-   * \param betaoff [GeV\f$^-2 \f$] eikonal parameter, off-shell slope parameter of particle in final-state with spectator
-   * \param lambda [GeV\f$^2 \f$] cutoff parameter for off-shell part
+   * \param betaoff [GeV^-2] eikonal parameter, off-shell slope parameter of particle in final-state with spectator
+   * \param lambda [GeV^2] cutoff parameter for off-shell part
    */
   DeuteronMomDistr(std::string name, double massi, int offshell, double sigma, double beta, 
 		   double epsilon, double betaoff, double lambda);

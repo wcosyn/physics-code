@@ -29,7 +29,7 @@ public:
    * \param no_cuts apply the experimental cuts in t or z or not 
    * \param integr which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param precision precision you want in the integrations
-   * \param maxEval max # of function evaluations in the pm integration
+   * \param max_Eval max # of function evaluations in the pm integration
    * \param fsi fsi or not
    */
   RhoDeuteron(const std::string wavefunction, const double p_max, const bool no_cuts, const int integr,
@@ -161,6 +161,8 @@ private:
    * \param Q2 [GeV^2] Q^2
    * \param En [GeV] energy of recoil nucleon
    * \param t [GeV^2] momentum transfer squared
+   * \param Eoff [GeV] initial nucleon off-shell momentum
+   * \param torz t [1] or z[0] integrations
    */
    double getfrontfactor(double qvec, double Erho, double prho, double pzrho, double s, double Q2, double t, 
 			 double En, double Eoff, bool torz);

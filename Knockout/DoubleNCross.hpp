@@ -26,7 +26,7 @@ public:
    */
   DoubleNCross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucl, double prec, int integrator, std::string dir);
   ~DoubleNCross();/*!< Destructor */
-  /*! Computes the differential \f$ A(e,e'NN)\f$ cross section for certain kinematics and a certain shell of the nucleus
+  /*! Computes the differential A(e,e'NN) cross section for certain kinematics and a certain shell of the nucleus
    * \param kin contains the hadron kinematics
    * \param SRC do you want to include SRC in the FSI?
    * \param CT do you want to include CT effects?

@@ -152,6 +152,7 @@ private:
    * \param Q2 [GeV^2] Q^2
    * \param mN [GeV] mass of nucleon that interacts with photon
    * \param t [GeV^2] momentum transfer squared
+   * \param torz t [1] or z[0] integrations
    */
   double getfrontfactor(double nu, double qvec, double Erho, double prho, double pzrho, double pxrho,
 				 double s, double Q2, double mN, double t, bool torz);

@@ -6,7 +6,7 @@
 #include <Utilfunctions.hpp>
 using namespace std;
 
-DeuteronMomDistr::DeuteronMomDistr(string name, double mass, int offshells, double sigmain, double betain, double epsilonin,
+DeuteronMomDistr::DeuteronMomDistr(std::string name, double mass, int offshells, double sigmain, double betain, double epsilonin,
   double betaoffin, double lambdain):
 sigma(sigmain/10.*INVHBARC*INVHBARC),  //to MeV^-2
 beta(betain*1.E-06), // to MeV^-2
@@ -27,7 +27,7 @@ offshellset(offshells){
 }
 
 //for simple case
-DeuteronMomDistr::DeuteronMomDistr(string name):
+DeuteronMomDistr::DeuteronMomDistr(std::string name):
 sigma(0.),
 beta(0.),
 epsilon(0.),
