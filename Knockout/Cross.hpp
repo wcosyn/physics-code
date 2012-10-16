@@ -65,11 +65,13 @@ public:
   double getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, double phi);
   /*! Computes the differential \f$ A(e,e'N)\f$ cross section for certain kinematics and a certain shell of the nucleus
    * \param cross vector with the different cross sections <BR>
+   * differential cross section [fm \f$ ^2 \f$/MeV/sr \f$ ^2 \f$]
    *  [0]: plane-wave<BR>
    *  [1]: RMSGA <BR>
    *  [2]: RMSGA+SRC <BR>
    *  [3]: RMSGA+CT <BR>
    *  [4]: RMSGA+SRC+CT <BR>
+   * if no thickness [2] and [4] are not present (and vector has size 3, change indices accordingly)
    * \param kin contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param shellindex selects the shell in the nucleus where the ejected N originates from
@@ -77,13 +79,31 @@ public:
    * \param phi angle between electron and hadron plane
    * \param maxEval max # of evaluations in integrations
    * \param lab lab frame of cm frame for hadron part
-   * \return differential cross section [fm \f$ ^2 \f$/MeV/sr \f$ ^2 \f$]
    */
   void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
 		       int shellindex, int thick, double phi, int maxEval, bool lab);
 
+  /*! Computes observables for the \f$ A(e,e'N)\f$ reaction for certain kinematics and a certain shell of the nucleus.
+   * polarization axes defined as: z along momentum, y perp to the hadron plane, x perp to z in the hadron plane
+   * \param obs vector with the different cross sections <BR>
+   *  [0-7]: RMSGA <BR>
+   *  [8-15]: RMSGA+SRC <BR>
+   *  [16-23]: RMSGA+CT <BR>
+   *  [24-31]: RMSGA+SRC+CT <BR>
+   *  [32-39]: plane-wave [0=sigma (fm^2/MeV/sr^2), 1=A, 2=Px, 3=Py, 4=Pz, 5=P'x, 6=P'y, 7=P'z]<BR>
+   * if no thickness [8-15] and [24-31] are not present (and vector has size 24, change indices accordingly)
+   * \param kin contains the hadron kinematics
+   * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+   * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param thick do you want thickness in the Glauber FSI or not?
+   * \param thick medium modifications in EMcoupling (0=none, 1=QMC, 2=CQSM)
+   * \param phi angle between electron and hadron plane
+   * \param maxEval max # of evaluations in integrations
+   * \param lab lab frame of cm frame for hadron part
+   * \return differential cross section [fm \f$ ^2 \f$/MeV/sr \f$ ^2 \f$]
+   */
   void getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
-			     int shellindex, int thick, double phi, int maxEval, bool lab);
+			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab);
 
   
   /*! Computes the off-shell \f$ (e,e'p)\f$ cross section for certain kinematics and a certain shell of the nucleus <BR>

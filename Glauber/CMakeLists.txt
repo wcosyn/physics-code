@@ -6,6 +6,7 @@ project(Glauber)
 set(Glauber_HEADERS_HPP 
 MeanFieldNucleus.hpp
 MeanFieldNucleusThick.hpp
+NucleonEMOperator.hpp
 FsiCorrelator.hpp
 FastParticle.hpp
 AbstractFsiGrid.hpp

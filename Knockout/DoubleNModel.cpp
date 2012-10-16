@@ -51,16 +51,16 @@ complex<double> DoubleNModel::getMatrixEl(const TKinematics2to3 &tk, int spinout
   FourVector<double> q(tk.GetWlab(),0.,0.,tk.GetKlab());
   GammaStructure Jcontr1, Jcontr2;
   if(photonpol==0){
-    Jcontr1 = J1->getCC2(q)*polVector0;
-    Jcontr2 = J2->getCC2(q)*polVector0;
+    Jcontr1 = J1->getCC2(q, 0.,0,*pnucl)*polVector0;
+    Jcontr2 = J2->getCC2(q, 0.,0,*pnucl)*polVector0;
   }
   else if(photonpol==1){
-    Jcontr1 = J1->getCC2(q)*polVectorPlus;
-    Jcontr2 = J2->getCC2(q)*polVectorPlus;
+    Jcontr1 = J1->getCC2(q, 0.,0,*pnucl)*polVectorPlus;
+    Jcontr2 = J2->getCC2(q, 0.,0,*pnucl)*polVectorPlus;
   }
   else if(photonpol==-1){
-    Jcontr1 = J1->getCC2(q)*polVectorMin;
-    Jcontr2 = J2->getCC2(q)*polVectorMin;
+    Jcontr1 = J1->getCC2(q, 0.,0,*pnucl)*polVectorMin;
+    Jcontr2 = J2->getCC2(q, 0.,0,*pnucl)*polVectorMin;
   }
   else{ cerr << "invalid photon pol" << endl;  exit(1); }
   FastParticle nucl1(particletype1, 0, pf1,tk.GetQsquared()/1.e06,0.,homedir);

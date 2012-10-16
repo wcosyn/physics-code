@@ -19,6 +19,7 @@
 #include <GlauberGridThick.hpp>
 #include <OneGlauberGrid.hpp>
 #include <numint/numint.hpp>
+#include <TSpinor.h>
 
 #include <string>
 #include <cstdarg>
@@ -99,8 +100,9 @@ public:
    * \param m \f$ m_j \f$ times TWO!!! of the initial nucleon
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param thick thickness in the glauber
+   * \param medium medium modifications (0=none, 1=QCM, 2=CQSM)
    */
-  void getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, int current, int thick);
+  void getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, int current, int thick, int medium);
    /*! Computes the off-shell amplitude \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu u(\vec{p}_m,m_i) \f$
    * \param tk contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
@@ -126,6 +128,7 @@ public:
   const Matrix<1,4> & getBarcontractmindown() const{return barcontractmindown;}
   const Matrix<1,4> & getBarcontractplusdown() const{return barcontractplusdown;}
   const Matrix<1,4> & getBarcontract() const{return barcontract;}
+  const NucleonEMOperator & getJ() const{return *J;}
   TVector3 & getPm() {return pm;}
   
 private:
@@ -254,10 +257,57 @@ private:
     */
     void (*f)(numint::vector_z & res, double costheta, double phi, Model & model, int thick, int total, double r);
   };
+  /*! struct that is used for integrators (medium modif ones)*/
+  struct Ftor_medium {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+      Ftor_medium &p = * (Ftor_medium *) param;
+      p.f(ret,x[0],x[1],x[2],*p.model,p.thick,p.total,p.spinup, p.spindown, p.medium, p.q, p.pi,p.pf, 
+	  p.polmin, p.polplus, p.pol0, p.current);
+    }
+    Model *model;/*!< pointer to model instance that contains all */
+    int thick;/*!< thickness or not */
+    int total; /*!< number of different FSI? */
+    Matrix<1,4> spinup;
+    Matrix<1,4> spindown;
+    int medium; /*!< which medium modif */
+    FourVector<double> q;
+    FourVector<double> pi;
+    FourVector<double> pf;
+    FourVector<std::complex<double> > polmin;
+    FourVector<std::complex<double> > polplus;
+    FourVector<std::complex<double> > pol0;
+    int current; /*!<which current operator */
+    
+    /*! integrandum 
+    * \param res results
+    * \param x first integration variable
+    * \param y second integration variable
+    * \param z third integration variable
+    * \param model Model instance
+    * \param SRC SRC in FSI?
+    * \param pw plane-wave?
+    */
+    void (*f)(numint::vector_z & res, double x, double y, double z, Model & model, int thick, int total,
+	      Matrix<1,4> &spinup, Matrix<1,4> &spindown, const int medium,
+	      const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf,
+				   const FourVector<std::complex<double> > &polmin, const FourVector<std::complex<double> > &polplus, 
+				   const FourVector<std::complex<double> > &pol0,
+				   int current);
+    
+  };
   /*! integrandum function (clean ones)*/
   static void klaas_one_amp(numint::vector_z & results, double r, double costheta, double phi, Model & model, int SRC, int pw);
   /*! integrandum function (clean ones)*/
-  static void klaas_all_amp(numint::vector_z & results, double r, double costheta, double phi, Model & model, int SRC, int pw);
+  static void klaas_all_amp(numint::vector_z & results, double r, double costheta, double phi, Model & model, int thick, int total);
+  /*! integrandum function (medium modification)*/
+  static void klaas_all_amp_medium(numint::vector_z & results, double r, double costheta, double phi, Model & model,
+				   int thick, int total,Matrix<1,4> &spinup, Matrix<1,4> &spindown, const int medium,
+				   const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf,
+				   const FourVector<std::complex<double> > &polmin, const FourVector<std::complex<double> > &polplus, 
+				   const FourVector<std::complex<double> > &pol0,
+				   int current);
   /*! integrandum function (clean ones)*/
   static void klaas_mult_amp(numint::vector_z & results, double r, double costheta, double phi, Model & model, int SRC, int pw);
   /*! integrandum function (radial ones)*/

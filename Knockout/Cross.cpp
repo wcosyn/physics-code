@@ -131,7 +131,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   //R_TT does not have this symmetry!!!
   for(int m=-pnucl->getJ_array()[shellindex];m<=0/*pnucl->getJ_array()[shellindex]*/;m+=2){
     Matrix<2,3> J[total];
-    reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick);
+    reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,0);
 //     cout << m << " " << J[total-1] << endl;
     for(int i=0;i<2;i++){
       for(int j=0;j<total;j++){
@@ -153,7 +153,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
 
 
 void  Cross::getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
-			     int shellindex, int thick, double phi, int maxEval, bool lab){
+			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab){
   
   //electron kinematics
   double Q2=kin.GetQsquared();
@@ -184,7 +184,7 @@ void  Cross::getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int curre
   //only half of the m values due to symmetry
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
       Matrix<2,3> J[total];
-      reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick);
+      reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,medium);
       for(int j=0;j<total;j++){
 	  responsematrix[j][0]+=Matrix<2,2>(norm(J[j](1,0)),J[j](1,0)*conj(J[j](0,0)),
 					    J[j](0,0)*conj(J[j](1,0)),norm(J[j](1,0))); //W_L

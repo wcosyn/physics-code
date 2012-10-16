@@ -4,7 +4,6 @@ project(MePhys)
 
 # fill list of header files 
 set(MePhys_HEADERS_HPP 
-NucleonEMOperator.hpp
 NuclStructure.hpp
 DeuteronStructure.hpp
 Utilfunctions.hpp
