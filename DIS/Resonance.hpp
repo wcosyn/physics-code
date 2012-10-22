@@ -6,13 +6,13 @@
  * \details 
  * 
  * -Has a class that describes certain resonance in the FSI with all the scattering and particle properties <BR>
- * [Resonance] 
- * -Has a class that computes semi-inclusive DIS off the deuteron cross sections
- * [DeuteronCross]
- * -Has a class that computes inclusive DIS off the deuteron
- * [InclusiveCross]
- * -Has a class that computes inclusive DIS off the deuteron in a N resonance model
- * [InclusiveCrossRes]
+ * [Resonance] <BR>
+ * -Has a class that computes semi-inclusive DIS off the deuteron cross sections<BR>
+ * [DeuteronCross]<BR>
+ * -Has a class that computes inclusive DIS off the deuteron<BR>
+ * [InclusiveCross]<BR>
+ * -Has a class that computes inclusive DIS off the deuteron in a N resonance model<BR>
+ * [InclusiveCrossRes]<BR>
  * 
  */
 

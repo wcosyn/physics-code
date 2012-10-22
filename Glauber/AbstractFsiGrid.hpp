@@ -22,6 +22,8 @@
  * [FastParticle] <BR>
  * - A class that stores grids for distorted momentum distributions <BR>
  * [DistMomDistrGrid] <BR>
+ * - A class that computes nucleon form factors, dirac couplings, with medium modifications (CQM or QSM) if desired. <BR>
+ * [NucleonEMOperator] <BR>
 */
 
 
