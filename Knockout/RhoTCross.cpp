@@ -441,6 +441,7 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
     it=distgridmap.find(key);
   }
   distgridmap[key].updateGrids(pfsigrid[shell],shell,rot);
+  distgridmap[key].printRho_grid(0);
   //plane-wave
   results[nrofcross-1] = distgridmap[key].getRhopwGridFull_interp(pm);
   //fsi
