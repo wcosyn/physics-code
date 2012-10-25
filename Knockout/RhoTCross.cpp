@@ -441,12 +441,12 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
     it=distgridmap.find(key);
   }
   distgridmap[key].updateGrids(pfsigrid[shell],shell,rot);
-  distgridmap[key].printRho_grid(0);
+  //distgridmap[key].printRho_grid(0);
   //plane-wave
   results[nrofcross-1] = distgridmap[key].getRhopwGridFull_interp(pm);
   //fsi
   for(int i=0;i<nrofcross-1;i++) results[i] = distgridmap[key].getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
-  
+//    if(pm>200.&&results[0]>50.) {distgridmap[key].printRho_grid(0); cout  << endl << endl << endl;}
   
   
 //   pdistgrid[shell]->updateGrids(pfsigrid[shell],shell,rot);

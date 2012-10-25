@@ -71,7 +71,7 @@ rhopwgrid(NULL){
     rhopwgrid = new double[getPgrid()+1];
     constructpwGrid();
   }
-//   setFilenames(dir);
+   //setFilenames(dir);
   //fillGrids();
   
   
@@ -466,7 +466,7 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	      }
 	    }      
 	    else {cerr  << "integrator type not implemented" << endl; exit(1);}
-// 	    cout << i << " " << j << " " << k << " " << m << " " << ms << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< " " << res << " " << count << endl;
+//  	    cout << i << " " << j << " " << k << " " << m << " " << ms << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< " " << res << " " << count << endl;
 	    
 	  }
 	}
@@ -496,6 +496,7 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	  }
 	}
 		    
+// 	cout << p_hit << " " << costheta_hit << " " << phi_hit*RADTODEGR << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< endl;
 
 	
 	
