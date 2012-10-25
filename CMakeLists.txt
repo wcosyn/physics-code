@@ -121,8 +121,8 @@ elseif (hostname MATCHES trillian)
 #       SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
 
       # Select flags.
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -march=native -mtune=native -g -std=c++0x")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native -std=c++0x")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g -std=c++0x")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -std=c++0x")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg")
@@ -179,8 +179,8 @@ elseif (hostname MATCHES gengar OR hostname MATCHES haunter)
 #       SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
 
       # Select flags.
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -march=native -mtune=native -g -std=c++0x")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native -std=c++0x")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g -std=c++0x")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -std=c++0x")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg")
