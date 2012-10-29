@@ -150,6 +150,7 @@ private:
   int cthindex; ;/*!<  the index for theta used in the 3d interpolation*/
   int phiindex; /*!<  the index for phi used in the 3d interpolation */
   AbstractFsiCTGrid *pfsigrid;/*!<  the pointer to the fsigrid instance */
+  int number_of_Grids;
   
   void setFilenames(std::string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
 

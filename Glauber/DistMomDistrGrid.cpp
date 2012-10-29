@@ -47,16 +47,17 @@ maxEval(max_Eval),
 thetarot(theta_rot),
 rhogrid(NULL),
 rhoctgrid(NULL),
-rhopwgrid(NULL){
+rhopwgrid(NULL),
+number_of_Grids(pfsi_grid->getNumber_of_grids()){
   
   invpstep=pgrid/p_max;
   invcthstep=cthgrid/2.;
   invphistep=0.5*phigrid/PI;
   if(pfsigrid!=NULL){
     mass = getShellindex()<getPfsigrid()->getPnucleus()->getPLevels()? MASSP:MASSN;
-    rhogrid=new double***[getPfsigrid()->getNumber_of_grids()/2];
-    rhoctgrid=new double***[getPfsigrid()->getNumber_of_grids()/2];
-    for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++){
+    rhogrid=new double***[number_of_Grids/2];
+    rhoctgrid=new double***[number_of_Grids/2];
+    for(int i=0;i<number_of_Grids/2;i++){
       rhogrid[i]=new double**[getPgrid()+1];
       rhoctgrid[i]=new double**[getPgrid()+1];
       for(int j=0;j<(getPgrid()+1);j++){
@@ -80,7 +81,7 @@ rhopwgrid(NULL){
 DistMomDistrGrid::~DistMomDistrGrid(){
   //cout << "Deleting FSI object" << endl;
   if(rhogrid!=NULL){
-    for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++){
+    for(int i=0;i<number_of_Grids/2;i++){
       for(int j=0;j<(getPgrid()+1);j++){
 	for(int k=0;k<(getCthgrid()+1);k++){
 	  delete [] rhogrid[i][j][k];
@@ -139,12 +140,13 @@ maxEval(Copy.getMaxEval()),
 thetarot(Copy.getThetarot()),
 rhogrid(NULL),
 rhoctgrid(NULL),
-rhopwgrid(NULL){
+rhopwgrid(NULL),
+number_of_Grids(Copy.number_of_Grids){
   
   if(pfsigrid!=NULL){
-    rhogrid=new double***[Copy.getPfsigrid()->getNumber_of_grids()/2];
-    rhoctgrid=new double***[Copy.getPfsigrid()->getNumber_of_grids()/2];
-    for(int i=0;i<Copy.getPfsigrid()->getNumber_of_grids()/2;i++){
+    rhogrid=new double***[Copy.number_of_Grids/2];
+    rhoctgrid=new double***[Copy.number_of_Grids/2];
+    for(int i=0;i<Copy.number_of_Grids/2;i++){
       rhogrid[i]=new double**[Copy.getPgrid()+1];
       rhoctgrid[i]=new double**[Copy.getPgrid()+1];
       for(int j=0;j<(Copy.getPgrid()+1);j++){
@@ -211,11 +213,12 @@ DistMomDistrGrid& DistMomDistrGrid::operator=(const DistMomDistrGrid& rhs)
     rhogrid = NULL;
     rhoctgrid = NULL;
     rhopwgrid = NULL;
+    number_of_Grids=rhs.number_of_Grids;
     
     if(pfsigrid!=NULL){
-      rhogrid=new double***[rhs.getPfsigrid()->getNumber_of_grids()/2];
-      rhoctgrid=new double***[rhs.getPfsigrid()->getNumber_of_grids()/2];
-      for(int i=0;i<rhs.getPfsigrid()->getNumber_of_grids()/2;i++){
+      rhogrid=new double***[rhs.number_of_Grids/2];
+      rhoctgrid=new double***[rhs.number_of_Grids/2];
+      for(int i=0;i<rhs.number_of_Grids/2;i++){
 	rhogrid[i]=new double**[rhs.getPgrid()+1];
 	rhoctgrid[i]=new double**[rhs.getPgrid()+1];
 	for(int j=0;j<(rhs.getPgrid()+1);j++){
@@ -295,8 +298,8 @@ double DistMomDistrGrid::getRhoGridFull_interp1(int gridindex, const double phi)
 }
 
 double DistMomDistrGrid::getRhoGridFull_interp(int gridindex){
-  return Interp3d((gridindex < (getPfsigrid()->getNumber_of_grids()/2))? 
-		    rhogrid[gridindex] : rhoctgrid[gridindex-getPfsigrid()->getNumber_of_grids()/2],
+  return Interp3d((gridindex < (number_of_Grids/2))? 
+		    rhogrid[gridindex] : rhoctgrid[gridindex-number_of_Grids/2],
 		  getS_interp(), getT_interp(), getU_interp(), 
 		  getComp_s_interp(), getComp_t_interp(), getComp_u_interp(), 
 		  getPindex(), getCthindex(), getPhiindex());  
@@ -362,7 +365,7 @@ void DistMomDistrGrid::printRho_grid(int gridindex){
   
 //readin fsi grid
 void DistMomDistrGrid::readinRhoGrid(ifstream &infile){
-  for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++){
+  for(int i=0;i<number_of_Grids/2;i++){
     for(int j=0;j<(getPgrid()+1);j++){
       for(int k=0;k<(getCthgrid()+1);k++){
         for(int l=0;l<(getPhigrid()+1);l++) 
@@ -373,7 +376,7 @@ void DistMomDistrGrid::readinRhoGrid(ifstream &infile){
 }
   
 void DistMomDistrGrid::readinRhoCtGrid(ifstream &infile){
-  for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++){
+  for(int i=0;i<number_of_Grids/2;i++){
     for(int j=0;j<(getPgrid()+1);j++){
       for(int k=0;k<(getCthgrid()+1);k++){
         for(int l=0;l<(getPhigrid()+1);l++) 
@@ -386,7 +389,7 @@ void DistMomDistrGrid::readinRhoCtGrid(ifstream &infile){
   
 //write out rho grid
 void DistMomDistrGrid::writeoutRhoGrid(ofstream &outfile){
-  for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++){
+  for(int i=0;i<number_of_Grids/2;i++){
     for(int j=0;j<(getPgrid()+1);j++){
       for(int k=0;k<(getCthgrid()+1);k++){
         for(int l=0;l<(getPhigrid()+1);l++) 
@@ -399,7 +402,7 @@ void DistMomDistrGrid::writeoutRhoGrid(ofstream &outfile){
 
 //write out rho grid
 void DistMomDistrGrid::writeoutRhoCtGrid(ofstream &outfile){
-  for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++){
+  for(int i=0;i<number_of_Grids/2;i++){
     for(int j=0;j<(getPgrid()+1);j++){
       for(int k=0;k<(getCthgrid()+1);k++){
         for(int l=0;l<(getPhigrid()+1);l++) 
@@ -423,7 +426,7 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	sincos(phi_hit,&sinphi_hit,&cosphi_hit);
 	pvec_hit= TVector3(p_hit*sintheta_hit*cosphi_hit,p_hit*sintheta_hit*sinphi_hit,p_hit*costheta_hit);
 	pvec_hit=pvec_hit.Transform(rot);	
-	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++) rhogrid[l][i][j][k]=rhoctgrid[l][i][j][k]=0.;
+	for(int l=0;l<number_of_Grids/2;l++) rhogrid[l][i][j][k]=rhoctgrid[l][i][j][k]=0.;
 	//symmetry for (-m,-ms)(m,ms), so only half needed, multiply everything by 2 in the end.
 	double absprec=1.E-12;
 	for(int m=1;m<=getPfsigrid()->getPnucleus()->getJ_array()[shellindex];m+=2){
@@ -437,13 +440,13 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	    unsigned count=0;
 	    double deeserror=0.;
 	    if(integrator==0){
-	      complex<double> results[getPfsigrid()->getNumber_of_grids()];
+	      complex<double> results[number_of_Grids];
 	      double restimate=0.,thestimate=0.,phiestimate=0.;
-	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),getPfsigrid()->getNumber_of_grids(),
+	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),number_of_Grids,
 			results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
-	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	      for(int l=0;l<number_of_Grids/2;l++){
 		rhogrid[l][i][j][k]+=norm(results[l]);
-		rhoctgrid[l][i][j][k]+=norm(results[l+getPfsigrid()->getNumber_of_grids()/2]);
+		rhoctgrid[l][i][j][k]+=norm(results[l+number_of_Grids/2]);
 	      }
 	    }
 	    else if(integrator==2||integrator==1){
@@ -455,31 +458,32 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	      numint::mdfunction<numint::vector_z,3> mdf;
 	      mdf.func = &DistMomDistrGrid::Ftor_one::exec;
 	      mdf.param = &F;
-	      vector<complex<double> > ret(getPfsigrid()->getNumber_of_grids(),0.);
+	      vector<complex<double> > ret(number_of_Grids,0.);
 	      F.f=DistMomDistrGrid::klaas_distint;
 	      if(integrator==1) res = numint::cube_romb(mdf,lower,upper,absprec,prec,ret,count,0);
 	      else res = numint::cube_adaptive(mdf,lower,upper,absprec,prec,maxEval,ret,count,0);
 	      if(abs(ret[i])*prec*0.1>absprec) absprec=abs(ret[i])*prec*0.1;
-	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	      for(int l=0;l<number_of_Grids/2;l++){
 		rhogrid[l][i][j][k]+=norm(ret[l]);
-		rhoctgrid[l][i][j][k]+=norm(ret[l+getPfsigrid()->getNumber_of_grids()/2]);
+		rhoctgrid[l][i][j][k]+=norm(ret[l+number_of_Grids/2]);
 	      }
 	    }      
 	    else {cerr  << "integrator type not implemented" << endl; exit(1);}
-//  	    cout << i << " " << j << " " << k << " " << m << " " << ms << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< " " << res << " " << count << endl;
+//   	    cout << i << " " << j << " " << k << " " << m << " " << ms << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< " " << res << " " << count << endl;
 	    
 	  }
 	}
-	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	for(int l=0;l<number_of_Grids/2;l++){
 	  //extra factor of 2 due to symmetry
 	  rhogrid[l][i][j][k]/=pow(2.*PI,3.)/2.;
 	  rhoctgrid[l][i][j][k]/=pow(2.*PI,3.)/2.;
 	}
 	//r=0 symmetry shortcut
+// 	cout << p_hit << " " << costheta_hit << " " << phi_hit*RADTODEGR << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< endl;
 	if(i==0){
 	  for(j=0;j<=getCthgrid();j++){
 	    for(k=0;k<=getPhigrid();k++){
-	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	      for(int l=0;l<number_of_Grids/2;l++){
 		rhogrid[l][i][j][k]=rhogrid[l][0][0][0];
 		rhoctgrid[l][i][j][k]=rhoctgrid[l][0][0][0];
 	      }
@@ -489,14 +493,13 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	//theta=0 or Pi symmetry shortcut
 	else if(j==0||j==getCthgrid()){
 	  for(k=1;k<=getPhigrid();k++){
-	    for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	    for(int l=0;l<number_of_Grids/2;l++){
 	      rhogrid[l][i][j][k]=rhogrid[l][i][j][0];
 	      rhoctgrid[l][i][j][k]=rhoctgrid[l][i][j][0];
 	    }
 	  }
 	}
 		    
-// 	cout << p_hit << " " << costheta_hit << " " << phi_hit*RADTODEGR << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< endl;
 
 	
 	
@@ -533,7 +536,7 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
 	sincos(phi_hit,&sinphi_hit,&cosphi_hit);
 	pvec_hit= TVector3(p_hit*sintheta_hit*cosphi_hit,p_hit*sintheta_hit*sinphi_hit,p_hit*costheta_hit);	
 	pvec_hit=pvec_hit.Transform(rot);
-	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++) rhoctgrid[l][i][j][k]=0.;
+	for(int l=0;l<number_of_Grids/2;l++) rhoctgrid[l][i][j][k]=0.;
 	double absprec=1.E-12;
 	//symmetry in m_j,m_s final proton needs only half the values
 	for(int m=1;m<=getPfsigrid()->getPnucleus()->getJ_array()[shellindex];m+=2){
@@ -548,15 +551,15 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
 	    unsigned count=0;
 	    double deeserror=0.;
 	    if(integrator==0){
-	      complex<double> results[getPfsigrid()->getNumber_of_grids()/2];
+	      complex<double> results[number_of_Grids/2];
 	      double restimate=0.,thestimate=0.,phiestimate=0.;
-	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),getPfsigrid()->getNumber_of_grids()/2,
+	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),number_of_Grids/2,
 			results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
-	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	      for(int l=0;l<number_of_Grids/2;l++){
 		//cout << results[l] << endl;
 		rhoctgrid[l][i][j][k]+=norm(results[l]);
 // 	      if(l==0) cout << i << " " << j << " " << k << " " << m << " " << ms << " " << l << " " 
-// 	      << norm(results[l]) << " "<< norm(results[l+getPfsigrid()->getNumber_of_grids()/2]) << endl;
+// 	      << norm(results[l]) << " "<< norm(results[l+number_of_Grids/2]) << endl;
 	      }
 	    }
 	    else if(integrator==2||integrator==1){
@@ -568,12 +571,12 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
 	      numint::mdfunction<numint::vector_z,3> mdf;
 	      mdf.func = &Ftor_one::exec;
 	      mdf.param = &F;
-	      vector<complex<double> > ret(getPfsigrid()->getNumber_of_grids()/2,0.);
+	      vector<complex<double> > ret(number_of_Grids/2,0.);
 	      F.f=DistMomDistrGrid::klaas_distint_ct;
 	      if(integrator==1) res = numint::cube_romb(mdf,lower,upper,absprec,prec,ret,count,0);
 	      else res = numint::cube_adaptive(mdf,lower,upper,absprec,prec,maxEval,ret,count,0);
 	      if(abs(ret[i])*prec*0.1>absprec) absprec=abs(ret[i])*prec*0.1;
-	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	      for(int l=0;l<number_of_Grids/2;l++){
 		rhoctgrid[l][i][j][k]+=norm(ret[l]);
 	      }
 	    }      
@@ -581,14 +584,14 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
 // 	    cout << i << " " << j << " " << k << " " << m << " " << ms << " " << rhoctgrid[0][i][j][k] << " " << rhoctgrid[1][i][j][k]<< " " << rhoctgrid[2][i][j][k]<< " " << res << " " << count << endl;
 	  }
 	}
-	for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	for(int l=0;l<number_of_Grids/2;l++){
 	  rhoctgrid[l][i][j][k]/=pow(2.*PI,3.)/2.;  //factor 2 because of symmetry
 	}
 	//r=0 symmetry shortcut
 	if(i==0){
 	  for(j=0;j<=getCthgrid();j++){
 	    for(k=0;k<=getPhigrid();k++){
-	      for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	      for(int l=0;l<number_of_Grids/2;l++){
 		rhoctgrid[l][i][j][k]=rhoctgrid[l][0][0][0];
 	      }
 	    }
@@ -597,7 +600,7 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
 	//theta=0 or Pi symmetry shortcut
 	else if(j==0||j==getCthgrid()){
 	  for(k=1;k<=getPhigrid();k++){
-	    for(int l=0;l<getPfsigrid()->getNumber_of_grids()/2;l++){
+	    for(int l=0;l<number_of_Grids/2;l++){
 	      rhoctgrid[l][i][j][k]=rhoctgrid[l][i][j][0];
 	    }
 	  }
@@ -619,9 +622,9 @@ void DistMomDistrGrid::intRhoR(const double r, complex<double> *results, va_list
   
   
   getPfsigrid()->setRinterp(r);
-  rombergerN(this,&DistMomDistrGrid::intRhoCosTheta,-1.,1.,getPfsigrid()->getNumber_of_grids(),
+  rombergerN(this,&DistMomDistrGrid::intRhoCosTheta,-1.,1.,number_of_Grids,
 	     results,getPrec(),3,6,pthetaestimate, m,  r, pphiestimate);
-  for(int i=0;i<getPfsigrid()->getNumber_of_grids();i++) results[i]*=r;
+  for(int i=0;i<number_of_Grids;i++) results[i]*=r;
   return;
 }
 
@@ -632,9 +635,9 @@ void DistMomDistrGrid::intRhoRCT(const double r, complex<double> *results, va_li
   double *pphiestimate = va_arg(ap,double*);
 
   getPfsigrid()->setRinterp(r);
-  rombergerN(this,&DistMomDistrGrid::intRhoCosThetaCT,-1.,1.,getPfsigrid()->getNumber_of_grids()/2,
+  rombergerN(this,&DistMomDistrGrid::intRhoCosThetaCT,-1.,1.,number_of_Grids/2,
 	     results,getPrec(),3,6,pthetaestimate, m,  r, pphiestimate);
-  for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++) results[i]*=r;
+  for(int i=0;i<number_of_Grids/2;i++) results[i]*=r;
   return;
 }
 
@@ -650,7 +653,7 @@ void DistMomDistrGrid::intRhoCosTheta(const double costheta, complex<double> *re
   double *pphiestimate = va_arg(ap,double*);
   double sintheta=sqrt(1.-costheta*costheta);
   getPfsigrid()->setCthinterp(costheta);
-  rombergerN(this,&DistMomDistrGrid::intRhoPhi,0.,2.*PI,getPfsigrid()->getNumber_of_grids(),
+  rombergerN(this,&DistMomDistrGrid::intRhoPhi,0.,2.*PI,number_of_Grids,
 	     results,getPrec(),3,6,pphiestimate, m, r, costheta, sintheta);
   return;
 }
@@ -662,7 +665,7 @@ void DistMomDistrGrid::intRhoCosThetaCT(const double costheta, complex<double> *
   double *pphiestimate = va_arg(ap,double*);
   double sintheta=sqrt(1.-costheta*costheta);
   getPfsigrid()->setCthinterp(costheta);
-  rombergerN(this,&DistMomDistrGrid::intRhoPhiCT,0.,2.*PI,getPfsigrid()->getNumber_of_grids()/2,
+  rombergerN(this,&DistMomDistrGrid::intRhoPhiCT,0.,2.*PI,number_of_Grids/2,
 	     results,getPrec(),3,6,pphiestimate, m, r, costheta, sintheta);
   return;
 }
@@ -681,7 +684,7 @@ void DistMomDistrGrid::intRhoPhi(const double phi, complex<double> *results, va_
   complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
 			  *(Upm_bar*wave);  
 
-  for(int i=0;i<getPfsigrid()->getNumber_of_grids();i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i,phi);
+  for(int i=0;i<number_of_Grids;i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i,phi);
   return;
 }
 
@@ -699,7 +702,7 @@ void DistMomDistrGrid::intRhoPhiCT(const double phi, complex<double> *results, v
   complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
 			  *(Upm_bar*wave);  
 
-  for(int i=0;i<getPfsigrid()->getNumber_of_grids()/2;i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i+getPfsigrid()->getNumber_of_grids()/2,phi);
+  for(int i=0;i<number_of_Grids/2;i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i+number_of_Grids/2,phi);
   return;
 }
 
@@ -821,22 +824,22 @@ void DistMomDistrGrid::updateGrids(AbstractFsiCTGrid *pfsi_grid, int shell, TRot
 /*! integrandum function (clean ones)*/
 void DistMomDistrGrid::klaas_distint(numint::vector_z &results, double r, double costheta, double phi, DistMomDistrGrid & grid, 
 			  int m){
-  results=numint::vector_z(grid.getPfsigrid()->getNumber_of_grids(),0.);
+  results=numint::vector_z(grid.number_of_Grids,0.);
   double sintheta=sqrt(1.-costheta*costheta);
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   TMFSpinor wave(*grid.getPfsigrid()->getPnucleus(),grid.getShellindex(),m,r,costheta,phi);
   complex<double> exp_pr=exp(-INVHBARC*((grid.getPvec_hit())*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta))*I_UNIT)
 			  *((grid.getUpm_bar())*wave);  
-  for(int i=0;i<grid.getPfsigrid()->getNumber_of_grids();i++) results[i]=exp_pr*grid.getPfsigrid()->getFsiGridN_interp3(i,r,costheta,phi);
-  for(int i=0;i<grid.getPfsigrid()->getNumber_of_grids();i++) results[i]*=r;
+  for(int i=0;i<grid.number_of_Grids;i++) results[i]=exp_pr*grid.getPfsigrid()->getFsiGridN_interp3(i,r,costheta,phi);
+  for(int i=0;i<grid.number_of_Grids;i++) results[i]*=r;
   return;
 }
 /*! integrandum function (clean ones), only CT*/
 void DistMomDistrGrid::klaas_distint_ct(numint::vector_z &results, double r, double costheta, double phi, DistMomDistrGrid & grid, 
 			      int m){
 
-  results=numint::vector_z(grid.getPfsigrid()->getNumber_of_grids()/2,0.);
+  results=numint::vector_z(grid.number_of_Grids/2,0.);
   double sintheta=sqrt(1.-costheta*costheta);
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
@@ -844,9 +847,9 @@ void DistMomDistrGrid::klaas_distint_ct(numint::vector_z &results, double r, dou
   complex<double> exp_pr=exp(-INVHBARC*((grid.getPvec_hit())*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta))*I_UNIT)
 			  *((grid.getUpm_bar())*wave);  
 
-  for(int i=0;i<grid.getPfsigrid()->getNumber_of_grids()/2;i++) results[i]=exp_pr*
-  grid.getPfsigrid()->getFsiGridN_interp3(i+grid.getPfsigrid()->getNumber_of_grids()/2,r,costheta,phi);
-  for(int i=0;i<grid.getPfsigrid()->getNumber_of_grids()/2;i++) results[i]*=r;
+  for(int i=0;i<grid.number_of_Grids/2;i++) results[i]=exp_pr*
+  grid.getPfsigrid()->getFsiGridN_interp3(i+grid.number_of_Grids/2,r,costheta,phi);
+  for(int i=0;i<grid.number_of_Grids/2;i++) results[i]*=r;
   return;
 
 }
