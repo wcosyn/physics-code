@@ -479,7 +479,7 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	  rhoctgrid[l][i][j][k]/=pow(2.*PI,3.)/2.;
 	}
 	//r=0 symmetry shortcut
-// 	cout << p_hit << " " << costheta_hit << " " << phi_hit*RADTODEGR << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< endl;
+	cout << p_hit << " " << costheta_hit << " " << phi_hit*RADTODEGR << " " << rhogrid[0][i][j][k] << " " << rhogrid[1][i][j][k]<< " " << rhogrid[2][i][j][k]<< " " << rhoctgrid[0][i][j][k]<< endl;
 	if(i==0){
 	  for(j=0;j<=getCthgrid();j++){
 	    for(k=0;k<=getPhigrid();k++){
