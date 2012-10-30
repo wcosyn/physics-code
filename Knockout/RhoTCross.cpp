@@ -94,7 +94,7 @@ void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, 
     if(ret[2]*1.E-04>abserror) {abserror=ret[2]*1.E-04; }
   }
   for(int i=0;i<nrofcross;i++) results[i]*= ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon))*pow(INVHBARC*1.E03,3.)/nucleusthick.getA()/(2.*qvec);
-  cout << nu << " " << t << " " << results[0] << " " << res << " " << count << " " << abserror << " " << endl;
+//   cout << nu << " " << t << " " << results[0] << " " << res << " " << count << " " << abserror << " " << endl;
 }
 
 void RhoTCross::intPmt(const double pm, double *results, va_list ap){
@@ -287,7 +287,7 @@ void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2,
   }
   
   for(int i=0;i<nrofcross;i++) results[i]*= ALPHA*(Ebeam-nu)/(2.*pow(2.*PI,2.)*Ebeam*Q2*(1.-epsilon))*pow(INVHBARC*1.E03,3.)/nucleusthick.getA()*nu/qvec;
-  cout << nu << " " << z << " " << results[0] << " " << res << " " << count << " " << abserror << endl;
+//   cout << nu << " " << z << " " << results[0] << " " << res << " " << count << " " << abserror << endl;
   
 }
 
@@ -438,11 +438,13 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
   if(it==distgridmap.end()){
     distgridmap[key]=DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid[shell],1.E-04,2,5E04,0.,homedir);
 //     distgridmap.insert(pair<double,DistMomDistrGrid>(key,DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid[shell],1.E-03,2,2E04,0.,homedir)));
+    distgridmap[key].updateGrids(pfsigrid[shell],shell,rot);
+    distgridmap[key].printRho_grid(0);
+    cout << endl << endl;
     it=distgridmap.find(key);
   }
-  distgridmap[key].updateGrids(pfsigrid[shell],shell,rot);
-  //distgridmap[key].printRho_grid(0);
-  //plane-wave
+  else distgridmap[key].updateGrids(pfsigrid[shell],shell,rot);
+
   results[nrofcross-1] = distgridmap[key].getRhopwGridFull_interp(pm);
   //fsi
   for(int i=0;i<nrofcross-1;i++) results[i] = distgridmap[key].getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
