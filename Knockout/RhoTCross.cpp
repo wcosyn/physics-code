@@ -451,11 +451,6 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
 //    if(pm>200.&&results[0]>50.) {distgridmap[key].printRho_grid(0); cout  << endl << endl << endl;}
   
   
-//   pdistgrid[shell]->updateGrids(pfsigrid[shell],shell,rot);
-//   //plane-wave
-//   results[nrofcross-1] = pdistgrid[shell]->getRhopwGridFull_interp(pm);
-//   //fsi
-//   for(int i=0;i<nrofcross-1;i++) results[i]= pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
 }
   
   
@@ -465,7 +460,7 @@ double RhoTCross::getfrontfactor(double nu, double qvec, double Erho, double prh
   double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
   double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
   //elementary rho production cross section parametrized as exponential e^{beta*t}
-  return (massX)*(s*s-2.*s*(mN*mN-Q2)+pow(mN*mN+Q2,2.))/(mN*mN*(torz?nucleusthick.getMassA():1.))*exp(t*6.);
+  return (massX)*(s*s-2.*s*(mN*mN-Q2)+pow(mN*mN+Q2,2.))/(mN*mN*(torz?nucleusthick.getMassA()*1.E-03:1.))*exp(t*6.);
   
 }
 
