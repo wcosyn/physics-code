@@ -465,7 +465,7 @@ double RhoTCross::getfrontfactor(double nu, double qvec, double Erho, double prh
   double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
   double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
   //elementary rho production cross section parametrized as exponential e^{beta*t}
-  return (torz? 1.:massX)*(s*s-2.*s*(mN*mN-Q2)+pow(mN*mN+Q2,2.))/(mN*mN)*exp(t*6.);
+  return (massX)*(s*s-2.*s*(mN*mN-Q2)+pow(mN*mN+Q2,2.))/(mN*mN*(torz?nucleusthick.getMassA():1.))*exp(t*6.);
   
 }
 
