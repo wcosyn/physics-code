@@ -67,17 +67,18 @@ int main(int argc, char *argv[])
   double Q2 = atof(argv[3]);
   double nu_min = atof(argv[4]);
   double nu_max = atof(argv[5]);
-  int nocuts = atoi(argv[6]);
-  double usersigma = atof(argv[7]);
-  int integrator = atoi(argv[8]);
-  int maxEval = atoi(argv[9]);
-  double prec=atof(argv[10]);
+  double p_dil = atof(argv[6]);
+  int nocuts = atoi(argv[7]);
+  double usersigma = atof(argv[8]);
+  int integrator = atoi(argv[9]);
+  int maxEval = atoi(argv[10]);
+  double prec=atof(argv[11]);
 //   int maxEval2 = atoi(argv[11]);
-  string homedir=argv[11];
+  string homedir=argv[12];
   double Ebeam = 5.014;
   
 
-  RhoTCross test = RhoTCross(nucleus,350,homedir,nocuts,1,usersigma,prec,2,maxEval);  
+  RhoTCross test = RhoTCross(nucleus,330,homedir,nocuts,1,usersigma,prec,2,maxEval,p_dil);  
   
   if(integrator==0){
     double result[test.getNrofcross()];

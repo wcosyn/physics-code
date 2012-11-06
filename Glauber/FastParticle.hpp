@@ -201,8 +201,9 @@ public:
    * \param sigma [mb] tot cross section
    * \param beta [GeV^2] slope param
    * \param eps [] real to imag ratio
+   * \param p_dil [MeV] momentum used for decay time dilatation
    */
-  void setScatter(double sigma, double beta, double eps);
+  void setScatter(double sigma, double beta, double eps, double p_dil);
   bool getUserset() const{return userset;} /*!< returns if user set the scattering parameters */
   /*! Sets the glauber parameters for a nucleon fast particle
    * \param mom [MeV]  particle momentum
@@ -268,6 +269,7 @@ private:
   double sigma_decay_p; /*!<  [fm^2]  sigma parameter for decay products scattering with proton*/
   double sigma_decay_n; /*!<  [fm^2]  sigma parameter for decay products scattering with neutron*/
   bool userset; /*!<  if user has set scatt parameters */
+  double Gamma; /*!< [MeV] decay width in rest frame */
   static const double sigmap_array[];				      
   static const double beta2p_array[];
   static const double epsp_array[];

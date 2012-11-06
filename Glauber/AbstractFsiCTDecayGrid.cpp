@@ -76,8 +76,8 @@ complex<double> AbstractFsiCTDecayGrid::getFsiCtDecayGridFull_interp1(const doub
 //set filenames
 void AbstractFsiCTDecayGrid::setFilenames(string homedir){
   AbstractFsiCTGrid::setFilenames(homedir);
-  fsi_ct_filename.insert(fsi_ct_filename.size()-4,".Decay");
-  fsi_filename.insert(fsi_filename.size()-4,".Decay");
+  fsi_ct_filename.insert(fsi_ct_filename.size()-4,(".Decay"+to_string(int(round(getParticles()[0].getDecay_dil())))));
+  fsi_filename.insert(fsi_filename.size()-4,(".Decay"+to_string(int(round(getParticles()[0].getDecay_dil())))));
 }
   
   

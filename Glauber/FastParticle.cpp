@@ -11,7 +11,7 @@ using namespace std;
 using namespace std;
 
 FastParticle::FastParticle(const int type, const int inc, const double momentum,
-			   const double ptheta, const double pphi, const double hard_scale, const double Gamma, const std::string dir)
+			   const double ptheta, const double pphi, const double hard_scale, const double ggamma, const std::string dir)
 :particletype(type),
 incoming(inc), 
 p(momentum),
@@ -21,7 +21,8 @@ phi(pphi),
 hardscale(hard_scale),
 sigma_decay_p(0.),
 sigma_decay_n(0.),
-userset(0){
+userset(0),
+Gamma(ggamma){
   //cout << "Initializing FastParticle object: ";
   ex=sin(theta)*cos(phi);
   ey=sin(theta)*sin(phi);
@@ -832,10 +833,11 @@ void FastParticle::interpPionGlauberData(int particletype, double mom, double &s
 }
 
 
-void FastParticle::setScatter(double sigma, double beta, double eps){
+void FastParticle::setScatter(double sigma, double beta, double eps, double p_dil){
   setSigma(sigma);
   beta2n=beta2p=beta*pow(HBARC/1000.,2.);
   epsilonn=epsilonp=eps;
+  decay_dil = Gamma*sqrt(1.-p_dil*p_dil/(mass*mass+p_dil*p_dil));
   userset=1;
 }
 

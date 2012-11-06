@@ -5,7 +5,8 @@
 using namespace std;
 
 RhoTCross::RhoTCross(const int nucleus, const double p_max, const string dir, const bool no_cuts,
-  const bool user_set, const double user_sigma, const double precision, const int integr, const int max_Eval
+  const bool user_set, const double user_sigma, const double precision, const int integr, const int max_Eval,
+  const double p_dil
 ):
 homedir(dir),
 pmax(p_max),
@@ -18,7 +19,8 @@ pfsigrid(NULL),
 prec(precision),
 integrator(integr),
 abserror(1.E-012),
-maxEval(max_Eval){
+maxEval(max_Eval),
+pdil(p_dil){
 
   pfsigrid = new GlauberDecayGridThick*[nucleusthick.getTotalLevels()];
 //   pdistgrid = new DistMomDistrGrid*[nucleusthick.getTotalLevels()];
@@ -423,7 +425,7 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
   //if userset there's only one possible glaubergrid, so we don't have to check every time!
   if(!(userset&&pfsigrid[shell]->getFilledallgrid())){
     FastParticle rho(4, 0, prho,0.,0.,Q2,145.,homedir);
-    if(userset) rho.setScatter(usersigma,6.,-0.2);
+    if(userset) rho.setScatter(usersigma,6.,-0.2,pdil);
     pfsigrid[shell]->clearParticles();
     pfsigrid[shell]->addParticle(rho);
     pfsigrid[shell]->updateGrids();
@@ -436,7 +438,7 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
   map<double,DistMomDistrGrid>::iterator it=distgridmap.find(key);
 //   cout << key << " " << thetarho << " " << shell  << endl;
   if(it==distgridmap.end()){
-    distgridmap[key]=DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid[shell],1.E-04,2,2E05,0.,homedir);
+    distgridmap[key]=DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid[shell],1.E-03,2,5E04,0.,homedir);
 //     distgridmap.insert(pair<double,DistMomDistrGrid>(key,DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid[shell],1.E-03,2,2E04,0.,homedir)));
     distgridmap[key].updateGrids(pfsigrid[shell],shell,rot);
     distgridmap[key].printRho_grid(0);
@@ -451,6 +453,11 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
 //    if(pm>200.&&results[0]>50.) {distgridmap[key].printRho_grid(0); cout  << endl << endl << endl;}
   
   
+//   pdistgrid[shell]->updateGrids(pfsigrid[shell],shell,rot);
+//   //plane-wave
+//   results[nrofcross-1] = pdistgrid[shell]->getRhopwGridFull_interp(pm);
+//   //fsi
+//   for(int i=0;i<nrofcross-1;i++) results[i]= pdistgrid[shell]->getRhoGridFull_interp3(i, pm, pmcostheta, pmphi);
 }
   
   
@@ -460,7 +467,7 @@ double RhoTCross::getfrontfactor(double nu, double qvec, double Erho, double prh
   double EX = nu+nucleusthick.getMassA()*1.E-03-Erho;
   double massX = sqrt(EX*EX-pxrho*pxrho-(qvec-pzrho)*(qvec-pzrho));
   //elementary rho production cross section parametrized as exponential e^{beta*t}
-  return (massX)*(s*s-2.*s*(mN*mN-Q2)+pow(mN*mN+Q2,2.))/(mN*mN*(torz?nucleusthick.getMassA()*1.E-03:1.))*exp(t*6.);
+  return (torz? 1.:massX)*(s*s-2.*s*(mN*mN-Q2)+pow(mN*mN+Q2,2.))/(mN*mN)*exp(t*6.);
   
 }
 
