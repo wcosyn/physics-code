@@ -698,6 +698,7 @@ void Model::klaas_all_amp_medium(numint::vector_z & results, double r, double co
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   TMFSpinor wave(*(model.getPnucleus()),model.getShell(),model.getM(),r,costheta,phi);
+  //includes phase space r
   complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
   results[0*total]= exp_pr*(spindown*Jcontr0*wave);
   results[1*total]= exp_pr*(spindown*Jcontrmin*wave);

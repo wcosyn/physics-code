@@ -84,13 +84,13 @@ public:
   /*! Returns value of F(r) for shellindex
    * \param shellindex shell of the nucleon
    * \param r [fm] coordinate r, spherical
-   * \return [fm-{3/2}] F[shellindex](r)
+   * \return [fm-{1/2}] F[shellindex](r)
    */
   double getWave_F(const int shellindex, const double r) const;
-  /*! Returns value of B(r) for shellindex
+  /*! Returns value of F(r) for shellindex
    * \param shellindex shell of the nucleon
    * \param r [fm] coordinate r, spherical
-   * \return [fm-{3/2}] G[shellindex](r) 
+   * \return [fm-{1/2}] G[shellindex](r) 
    */
   double getWave_G(const int shellindex, const double r) const;
   /*! Returns value of Y^2_kappa(r) for shellindex

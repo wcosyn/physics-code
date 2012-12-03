@@ -17,11 +17,13 @@
 #include <iostream>
 #include "MeanFieldNucleus.hpp"
 
-/*! \brief A class for dirac spinor representing a mean-field wave function of a certain nucleon in a nucleus 
+/*! \brief A class for dirac spinor representing a mean-field wave function of a certain nucleon in a nucleus.
+ * 
+ * Careful!!!  We include a factor r in the definition here, so dimension is [fm^(-1/2)] <BR>
  * 
  * Four components have the following structure:<BR>
- * 0-1: \f$i\frac{G_{n\kappa}(r)}{r} Y_{\kappa m}(\Omega, \vec{\sigma})\f$ <BR>
- * 2-3: \f$i\frac{F_{n\kappa}(r)}{r} Y_{-\kappa m}(\Omega, \vec{\sigma})\f$
+ * 0-1: \f$iG_{n\kappa}(r) Y_{\kappa m}(\Omega, \vec{\sigma})\f$ <BR>
+ * 2-3: \f$-F_{n\kappa}(r) Y_{-\kappa m}(\Omega, \vec{\sigma})\f$
  * 
  */
 
@@ -42,8 +44,8 @@ class TMFSpinor : public TObject
    * \param nucleus nucleus we want a wf spinor from
    * \param shellindex shell index of the nucleon 
    * \param m m_j quantum number (times two!!)
-   * \param Gr [fm-{3/2}] G(r) already computed
-   * \param Fr [fm-{3/2}] F(r) already computed
+   * \param Gr [fm-{1/2}] G(r) already computed
+   * \param Fr [fm-{1/2}] F(r) already computed
    * \param costheta cos(theta)
    * \param phi azimutal coordinate
    */   
@@ -52,8 +54,8 @@ class TMFSpinor : public TObject
    * \param nucleus nucleus we want a wf spinor from
    * \param shellindex shell index of the nucleon 
    * \param m m_j quantum number (times two!!)
-   * \param Gr [fm-{3/2}] G(r) already computed
-   * \param Fr [fm-{3/2}] F(r) already computed
+   * \param Gr [fm-{1/2}] G(r) already computed
+   * \param Fr [fm-{1/2}] F(r) already computed
    * \param Spher_harm array with theta part of all 4 components
    * \param phi azimutal coordinate
    */   
@@ -72,8 +74,8 @@ class TMFSpinor : public TObject
    * \param nucleus nucleus we want a wf spinor from
    * \param shellindex shell index of the nucleon 
    * \param m m_j quantum number (times two!!)
-   * \param Gr [fm-{3/2}] G(r) already computed
-   * \param Fr [fm-{3/2}] F(r) already computed
+   * \param Gr [fm-{1/2}] G(r) already computed
+   * \param Fr [fm-{1/2}] F(r) already computed
    * \param costheta cos(theta)
    * \param phi azimutal coordinate
    * \param CG CG coefficients already computed
@@ -82,8 +84,8 @@ class TMFSpinor : public TObject
 	    double costheta, double phi, Matrix<4,1> CG);
   /*! Constructor
    * \param m m_j quantum number (times two!!)
-   * \param Gr [fm-{3/2}] G(r) already computed
-   * \param Fr [fm-{3/2}] F(r) already computed
+   * \param Gr [fm-{1/2}] G(r) already computed
+   * \param Fr [fm-{1/2}] F(r) already computed
    * \param Spher_harm array with theta part of all 4 components
    * \param phi azimutal coordinate
    * \param CG CG coefficients already computed

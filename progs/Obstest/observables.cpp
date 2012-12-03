@@ -26,6 +26,7 @@ using namespace std;
 #include <TElectronKinematics.h>
 #include <Cross.hpp>
 #include <Utilfunctions.hpp>
+#include <NucleonEMOperator.hpp>
 
 //run ./onenucl [Q2 [MeV^2]] [omega] [missing momentum]
 int main(int argc, char *argv[])
@@ -64,6 +65,14 @@ int main(int argc, char *argv[])
 //   delete elec;
 //   return 0;
 
+//FF_mod printout
+
+//   for(int i=0;i<15;i++)
+//     cout << i*0.016 << " " << NucleonEMOperator::QMCGE[8][i] << " " <<
+// 	NucleonEMOperator::QMCGM[8][i] << " " <<
+// 	NucleonEMOperator::CQSMGE[8][i] << " " << 
+// 	NucleonEMOperator::CQSMGE[8][i] << endl;
+//   exit(1);
 
   double Ein=600.;
   double Eout=atof(argv[3]);

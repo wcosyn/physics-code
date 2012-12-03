@@ -22,8 +22,10 @@
  * 1. Initialize object with constructor AbstractFsiCTDecayGrid()<BR>
  * 2. Add all particles subject to ISI/FSI with addParticle() <BR>
  * 3. Call fillGrids() or updateGrids() <BR>
- * 4. Add particles that are knocked out from nucleus <BR>
- * 5. Interpolate grid for a certain point or print the grid or whatever...<BR>
+ * 4. Add particles that are knocked out from nucleus  (using addKnockout()
+)<BR>
+ *  5. Interpolate grid for a certain point or print the grid or whatever... 
+(use getFsiGridFull_interp3() for instance) <BR>
  * 
  * 
  */
