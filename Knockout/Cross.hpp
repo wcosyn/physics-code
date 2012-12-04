@@ -35,6 +35,7 @@
 #include <TKinematics2to2.h>
 #include "Model.hpp"
 
+class AbstractFsiGrid;
 
 /*! \brief A class Cross, used to compute A(e,e'N) cross sections */
 class Cross{
@@ -85,7 +86,7 @@ public:
 
   /*! Computes observables for the A(e,e'N) reaction for certain kinematics and a certain shell of the nucleus.
    * polarization axes defined as: z along momentum, y perp to the hadron plane, x perp to z in the hadron plane
-   * \param obs vector with the different cross sections <BR>
+   * \param obs (return object) vector with the different differential cross sections [fm^2/MeV/sr^2] <BR>
    *  [0-7]: RMSGA <BR>
    *  [8-15]: RMSGA+SRC <BR>
    *  [16-23]: RMSGA+CT <BR>
@@ -95,13 +96,12 @@ public:
    * \param kin contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param medium medium modifications in EMcoupling? [0=none, 1=CQM, 2=QSM]
    * \param thick do you want thickness in the Glauber FSI or not?
-   * \param medium medium modifications? [0=none, 1=CQM, 2=QSM]
-   * \param thick medium modifications in EMcoupling (0=none, 1=QMC, 2=CQSM)
    * \param phi angle between electron and hadron plane
    * \param maxEval max # of evaluations in integrations
-   * \param lab lab frame of cm frame for hadron part
-   * \return differential cross section [fm^2/MeV/sr^2]
+   * \param lab lab frame or cm frame for hadron part
+   * \return differential cross section 
    */
   void getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
 			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab);
@@ -115,9 +115,62 @@ public:
    * \return differential cross section [dimensionless]
    */  
   double getElCross(TKinematics2to2 &kin, int current, double phi);
+  /*! Computes \f$\delta(r) [fm^{-1}]\f$ like defined in our density papers
+   * \param densr different densities [fm^-1] <BR>
+   *  [0]: RMSGA <BR>
+   *  [1]: RMSGA+SRC <BR>
+   *  [2]: RMSGA+CT <BR>
+   *  [3]: RMSGA+SRC+CT <BR>
+   *  [4]: plane-wave <BR>
+   * if no thickness [1] and [3] are not present (and vector has size 3, change indices accordingly)
+   * \param kin contains the hadron kinematics
+   * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param thick do you want thickness in the Glauber FSI or not?
+   * \param r [fm] argument of \f$\delta(r)\f$ 
+   * \param maxEval max # of evaluations in integrations
+   */
+  void getDensr(std::vector<double> &densr, const TKinematics2to2 &kin, const int shellindex, 
+		const int thick, const double r, const int maxEval);
+  /*! Computes \f$\delta(r,\cos{\theta}) [fm^{-1}]\f$ like defined in our density papers
+   * \param densr different densities [fm^-1] <BR>
+   *  [0]: RMSGA <BR>
+   *  [1]: RMSGA+SRC <BR>
+   *  [2]: RMSGA+CT <BR>
+   *  [3]: RMSGA+SRC+CT <BR>
+   *  [4]: plane-wave <BR>
+   * if no thickness [1] and [3] are not present (and vector has size 3, change indices accordingly)
+   * \param kin contains the hadron kinematics
+   * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param thick do you want thickness in the Glauber FSI or not?
+   * \param r [fm] argument of \f$\delta\f$ 
+   * \param costheta argument of \f$\delta\f$ 
+   * \param maxEval max # of evaluations in integrations
+   */
+  void getDensr_ctheta(std::vector<double> &densr, const TKinematics2to2 &kin, const int shellindex, 
+		const int thick, const double r, const double costheta, const int maxEval);
+  
+  /*! Computes \f$\phi_D(\vec{p}_m) [fm^{3/2}]\f$ like defined in our density papers
+   * \param phid different distorted fourier transforms [fm^3/2] <BR>
+   *  [0]: RMSGA <BR>
+   *  [1]: RMSGA+SRC <BR>
+   *  [2]: RMSGA+CT <BR>
+   *  [3]: RMSGA+SRC+CT <BR>
+   *  [4]: plane-wave <BR>
+   * if no thickness [1] and [3] are not present (and vector has size 3, change indices accordingly)
+   * \param kin contains the hadron kinematics
+   * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param m \f$ m_j \f$ times TWO!!! of the initial nucleon
+   * \param ms \f$ m_s \f$ times TWO!!! of the final nucleon
+   * \param thick do you want thickness in the Glauber FSI or not?
+   * \param maxEval max # of evaluations in integrations
+   */
+  void getPhid(std::vector< std::complex<double> > &phid, const TKinematics2to2 &kin, const int shellindex, const int m,
+		const int ms, const int thick, const int maxEval);
+  
   double getPrec() const{return prec;} /*!< precision of the integrations */
   double getSigmascreening() const{return sigmascreening;} /*!< [%] screening of sigma */
   bool getUsersigma() const{return usersigma;} /*!< has the user set sigma? */
+  MeanFieldNucleusThick * getPnucl() const{return pnucl;}  /*!< pointer to nucleus object */
 private:
   std::string homedir; /*!< Contains dir with all input */
   double prec; /*!< precision you want in the integrations */
@@ -132,6 +185,117 @@ private:
   double sigmascreening;
   Model *reacmodel; /*!< class object that computes the amplitudes */
 
+  /*! struct that is used for integration of phi_d */
+  struct Ftor_phid {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+      Ftor_phid &p = * (Ftor_phid *) param;
+      p.f(ret,x[0],x[1],x[2],*p.cross,p.total,p.grid,p.pm,p.spinor,p.shell,p.m);
+    }
+    Cross *cross;/*!< pointer to cross instance that contains all */
+    int total;/*!< number of results (5 with thicknes,3 without)*/
+    AbstractFsiGrid *grid;
+    TVector3 pm;
+    Matrix<1,4> spinor;
+    int shell;
+    int m;
+    /*! integrandum 
+    * \param res results
+    * \param r first integration variable
+    * \param costheta second integration variable
+    * \param phi third integration variable
+    * \param model Cross instance
+    * \param grid glauber grid
+    * \param pm missing momentum vector
+    * \param spinor outgoing nucleon spinor
+    * \param shell shell index
+    * \param m \f$ m_j \f$ times TWO!!! of the initial nucleon
+    */
+    void (*f)(numint::vector_z & res, double r, double costheta, double phi, Cross & cross, int total,
+	      AbstractFsiGrid *grid, TVector3 &pm, Matrix<1,4> &spinor, int shell, int m);
+  };
+  static void klaas_phid(numint::vector_z & res, double r, double costheta, double phi, Cross & cross, int total,
+	      AbstractFsiGrid *grid, TVector3 &pm, Matrix<1,4> &spinor, int shell, int m);
+  
+  
+  /*! struct that is used for integration of phi_d */
+  struct Ftor_densr {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
+      Ftor_densr &p = * (Ftor_densr *) param;
+      p.f(ret,x[0],x[1],*p.cross,p.total,p.grid,p.pm,p.spinordown,p.spinorup,p.phid,p.r,p.shell);
+    }
+    Cross *cross;/*!< pointer to cross instance that contains all */
+    int total;/*!< number of results (5 with thicknes,3 without)*/
+    AbstractFsiGrid *grid;
+    TVector3 pm;
+    Matrix<1,4> spinordown;
+    Matrix<1,4> spinorup;
+    std::complex<double>  **phid;
+    int shell;
+    double r;
+    /*! integrandum 
+    * \param res results
+    * \param r first integration variable
+    * \param costheta second integration variable
+    * \param phi third integration variable
+    * \param model Cross instance
+    * \param grid glauber grid
+    * \param pm missing momentum vector
+    * \param spinorup outgoing nucleon spinor
+    * \param spinordown outgoing nucleon spinor
+    * \param phid distorted fourier transform
+    * \param r [fm] r coordinate
+    * \param shell shellindex
+    */
+    void (*f)(numint::vector_d & res, double costheta, double phi, Cross & cross, int total,
+	      AbstractFsiGrid *grid, TVector3 &pm, Matrix<1,4> &spinordown, Matrix<1,4> &spinorup,
+	      std::complex<double>  **phid, double r, int shell);
+  };
+  static void klaas_densr(numint::vector_d & res, double costheta, double phi, Cross & cross, int total,
+	      AbstractFsiGrid *grid, TVector3 &pm, Matrix<1,4> &spinordown, Matrix<1,4> &spinorup,
+	      std::complex<double>  **phid, double r, int shell);
+ /*! struct that is used for integration of phi_d */
+  struct Ftor_densr_ctheta {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,1> &x, void *param, numint::vector_d &ret) {
+      Ftor_densr_ctheta &p = * (Ftor_densr_ctheta *) param;
+      p.f(ret,x[0],*p.cross,p.total,p.grid,p.pm,p.spinordown,p.spinorup,p.phid,p.r,p.ctheta, p.shell);
+    }
+    Cross *cross;/*!< pointer to cross instance that contains all */
+    int total;/*!< number of results (5 with thicknes,3 without)*/
+    AbstractFsiGrid *grid;
+    TVector3 pm;
+    Matrix<1,4> spinordown;
+    Matrix<1,4> spinorup;
+    std::complex<double>  **phid;
+    int shell;
+    double r;
+    double ctheta;
+    /*! integrandum 
+    * \param res results
+    * \param r first integration variable
+    * \param costheta second integration variable
+    * \param phi third integration variable
+    * \param model Cross instance
+    * \param grid glauber grid
+    * \param pm missing momentum vector
+    * \param spinorup outgoing nucleon spinor
+    * \param spinordown outgoing nucleon spinor
+    * \param phid distorted fourier transform
+    * \param r [fm] r coordinate
+    * \param shell shellindex
+    */
+    void (*f)(numint::vector_d & res, double phi, Cross & cross, int total,
+	      AbstractFsiGrid *grid, TVector3 &pm, Matrix<1,4> &spinordown, Matrix<1,4> &spinorup,
+	      std::complex<double>  **phid, double r, double costheta, int shell);
+  };
+  static void klaas_densr_ctheta(numint::vector_d & res, double phi, Cross & cross, int total,
+	      AbstractFsiGrid *grid, TVector3 &pm, Matrix<1,4> &spinordown, Matrix<1,4> &spinorup,
+	      std::complex<double>  **phid, double r, double costheta, int shell);
 };
 /** @} */  
 #endif

@@ -2,6 +2,9 @@
 
 #include <cmath>
 #include <TSpinor.h>
+#include <OneGlauberGrid.hpp>
+#include <GlauberGridThick.hpp>
+#include <TMFSpinor.hpp>
 
 using namespace std;
 
@@ -229,5 +232,269 @@ void  Cross::getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int curre
 //   for(int j=0;j<total;j++) cross[j]=2.*(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
 // 		    +kinfactors[2]*response[j][2]*cos(2.*phi)+kinfactors[3]*response[j][3]*cos(phi))*mott*frontfactor/HBARC;
   delete reacmodel;
+}
+
+			       
+void Cross::getDensr(std::vector<double> &densr, const TKinematics2to2 &tk, const int shellindex, 
+		const int thick, const double r, const int maxEval){
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
+  double costheta=tk.GetCosthYlab();
+  if(costheta>1.) costheta=1.;
+  if(costheta<-1.) costheta=-1.;
+  double sintheta=sqrt(1.-costheta*costheta);
+  //careful!! we compute in a frame with p_f along z-axis
   
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
+  AbstractFsiGrid *grid; 
+  if(thick) grid = new GlauberGridThick(120,36,5,pnucl,prec,2,homedir);
+  else grid= new OneGlauberGrid(120,36,pnucl,prec,2,homedir);
+  grid->clearParticles();
+  grid->addParticle(proton);
+  grid->updateGrids();
+
+  FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
+  FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
+  TVector3 pm(-q[1],0.,pf[3]-q[3]);
+  Matrix<1,4> spinoroutup, spinoroutdown;
+  spinoroutup=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
+  spinoroutdown=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity)); 
+
+  int res=90;
+  unsigned count=0;
+  int total=thick?5:3; //in thickness we need 5 diff FSI results, otherwise 3
+  complex<double> ** phid = new complex<double>* [2*abs(getPnucl()->getKappas()[shellindex])];
+  for(int i=0;i<2*abs(getPnucl()->getKappas()[shellindex]);i++) phid[i]=new complex<double>[total];
+  for(int i=0;i<2*abs(getPnucl()->getKappas()[shellindex]);i++){
+    vector<complex<double> >phidd(total,0.);
+    getPhid(phidd,tk,shellindex,2*(i/2)+1,2*(i%2)-1,thick,maxEval);
+    for(int j=0;j<total;j++) {phid[i][j]=phidd[j];}
+  }
+  if(integrator==1||integrator==2){
+
+    numint::array<double,2> lower = {{-1.,0.}};
+    numint::array<double,2> upper = {{1.,2.*PI}};
+    Cross::Ftor_densr F;
+    F.cross = this;
+    F.total = total;
+    F.grid = grid;
+    F.pm = pm;
+    F.spinorup = spinoroutup;
+    F.spinordown = spinoroutdown;
+    F.r = r;
+    F.phid=phid;
+    F.shell = shellindex;
+    numint::mdfunction<numint::vector_d,2> mdf;
+    mdf.func = &Ftor_densr::exec;
+    mdf.param = &F;
+    densr = vector<double>(total,0.);
+    F.f=Cross::klaas_densr;
+
+    if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,densr,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,densr,count,0);
+  }      
+  else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
+  
+  delete grid;
+  for(int i=0;i<2*abs(getPnucl()->getKappas()[shellindex]);i++) delete [] phid[i];
+  delete [] phid;
+  for(int i=0;i<total;i++) densr[i]*=1./pow(2.*PI,3.);
+  
+}
+
+void Cross::klaas_densr(numint::vector_d & results, double costheta, double phi, Cross & cross, int total,
+	      AbstractFsiGrid *grid, TVector3 &pm, Matrix<1,4> &spinordown, Matrix<1,4> &spinorup,
+	      std::complex<double>  **phid, double r, int shellindex){
+  results=numint::vector_d(total,0.);
+  double sintheta=sqrt(1.-costheta*costheta);
+  
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  //includes phase space!
+  complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
+  for(int m=1;m<=cross.getPnucl()->getJ_array()[shellindex];m+=2){
+    TMFSpinor wave(*(cross.getPnucl()),shellindex,m,r,costheta,phi);
+    grid->clearKnockout();
+    grid->addKnockout(shellindex,m);    
+    for(int i=0;i<total;i++){
+      complex<double> gl = ( i<(total-1)? grid->getFsiGridN_interp3(i,r,costheta,phi) : 1.);
+      complex<double> temp1 = exp_pr*(spinordown*wave)*gl;
+      complex<double> temp2 = exp_pr*(spinorup*wave)*gl;
+      results[i]+= real(temp1*conj(phid[m/2][i])+conj(temp1)*phid[m/2][i]
+      +temp2*conj(phid[m/2+1][i])+conj(temp2)*phid[m/2+1][i])*0.5;
+    }
+  }
+}
+
+void Cross::getDensr_ctheta(std::vector<double> &densr, const TKinematics2to2 &tk, const int shellindex, 
+		const int thick, const double r, const double denscostheta, const int maxEval){
+  
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
+  double costheta=tk.GetCosthYlab();
+  if(costheta>1.) costheta=1.;
+  if(costheta<-1.) costheta=-1.;
+  double sintheta=sqrt(1.-costheta*costheta);
+  //careful!! we compute in a frame with p_f along z-axis
+  
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
+  AbstractFsiGrid *grid; 
+  if(thick) grid = new GlauberGridThick(120,36,5,pnucl,prec,2,homedir);
+  else grid= new OneGlauberGrid(120,36,pnucl,prec,2,homedir);
+  grid->clearParticles();
+  grid->addParticle(proton);
+  grid->updateGrids();
+
+  FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
+  FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
+  TVector3 pm(-q[1],0.,pf[3]-q[3]);
+  Matrix<1,4> spinoroutup, spinoroutdown;
+  spinoroutup=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
+  spinoroutdown=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity)); 
+
+  int res=90;
+  unsigned count=0;
+  int total=thick?5:3; //in thickness we need 5 diff FSI results, otherwise 3
+  complex<double> ** phid = new complex<double>* [2*abs(getPnucl()->getKappas()[shellindex])];
+  for(int i=0;i<2*abs(getPnucl()->getKappas()[shellindex]);i++) phid[i]=new complex<double>[total];
+  for(int i=0;i<2*abs(getPnucl()->getKappas()[shellindex]);i++){
+    vector<complex<double> >phidd(total,0.);
+    getPhid(phidd,tk,shellindex,i/2,2*(i%2)-1,thick,maxEval);
+    for(int j=0;j<total;j++) phid[i][j]=phidd[j];
+  }
+  if(integrator==1||integrator==2){
+
+    numint::array<double,1> lower = {{0.}};
+    numint::array<double,1> upper = {{2.*PI}};
+    Cross::Ftor_densr_ctheta F;
+    F.cross = this;
+    F.total = total;
+    F.grid = grid;
+    F.pm = pm;
+    F.spinorup = spinoroutup;
+    F.spinordown = spinoroutdown;
+    F.r = r;
+    F.ctheta=denscostheta;
+    F.phid=phid;
+    F.shell = shellindex;
+    numint::mdfunction<numint::vector_d,1> mdf;
+    mdf.func = &Ftor_densr_ctheta::exec;
+    mdf.param = &F;
+    densr = vector<double>(total,0.);
+    F.f=Cross::klaas_densr_ctheta;
+
+    if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,densr,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,densr,count,0);
+  }      
+  else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
+  
+  delete grid;
+  for(int i=0;i<2*abs(getPnucl()->getKappas()[shellindex]);i++) delete [] phid[i];
+  delete [] phid;
+  for(int i=0;i<total;i++) densr[i]*=1./pow(2.*PI,3.);
+  
+}
+
+void Cross::klaas_densr_ctheta(numint::vector_d & results, double phi, Cross & cross, int total,
+	      AbstractFsiGrid *grid, TVector3 &pm, Matrix<1,4> &spinordown, Matrix<1,4> &spinorup,
+	      std::complex<double>  **phid, double r, double costheta, int shellindex){
+  results=numint::vector_d(total,0.);
+  double sintheta=sqrt(1.-costheta*costheta);
+  
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  //includes phase space!
+  complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
+  for(int m=1;m<=cross.getPnucl()->getJ_array()[shellindex];m+=2){
+    TMFSpinor wave(*(cross.getPnucl()),shellindex,m,r,costheta,phi);
+    grid->clearKnockout();
+    grid->addKnockout(shellindex,m);    
+    for(int i=0;i<total;i++){
+      complex<double> gl = ( i<(total-1)? grid->getFsiGridN_interp3(i,r,costheta,phi) : 1.);
+      complex<double> temp1 = exp_pr*(spinordown*wave)*gl;
+      complex<double> temp2 = exp_pr*(spinorup*wave)*gl;
+      results[i]+= real(temp1*conj(phid[m/2][i])+conj(temp1)*phid[m/2][i]
+      +temp2*conj(phid[m/2+1][i])+conj(temp2)*phid[m/2+1][i])*0.5;
+    }
+  }
+}
+
+void Cross::getPhid(std::vector<complex<double> > &phid, const TKinematics2to2 &tk, const int shellindex, const int m,
+		const int ms, const int thick, const int maxEval){
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
+  double costheta=tk.GetCosthYlab();
+  if(costheta>1.) costheta=1.;
+  if(costheta<-1.) costheta=-1.;
+  double sintheta=sqrt(1.-costheta*costheta);
+  //careful!! we compute in a frame with p_f along z-axis
+  
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
+  AbstractFsiGrid *grid; 
+  if(thick) grid = new GlauberGridThick(120,36,5,pnucl,prec,2,homedir);
+  else grid= new OneGlauberGrid(120,36,pnucl,prec,2,homedir);
+  grid->clearParticles();
+  grid->addParticle(proton);
+  grid->updateGrids();
+  grid->clearKnockout();
+  grid->addKnockout(shellindex,m);    
+
+  FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
+  FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
+  TVector3 pm(-q[1],0.,pf[3]-q[3]);
+  Matrix<1,4> spinorout;
+  if(ms==-1) spinorout=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
+  else spinorout=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity)); 
+
+  int res=90;
+  unsigned count=0;
+  int total=thick?5:3; //in thickness we need 5 diff FSI results, otherwise 3
+  if(integrator==1||integrator==2){
+
+    numint::array<double,3> lower = {{0.,-1.,0.}};
+    numint::array<double,3> upper = {{pnucl->getRange(),1.,2.*PI}};
+    Cross::Ftor_phid F;
+    F.cross = this;
+    F.total = total;
+    F.grid = grid;
+    F.pm = pm;
+    F.spinor = spinorout;
+    F.shell = shellindex;
+    F.m = m;
+    numint::mdfunction<numint::vector_z,3> mdf;
+    mdf.func = &Ftor_phid::exec;
+    mdf.param = &F;
+    phid = vector<complex<double> >(total,0.);
+    F.f=Cross::klaas_phid;
+
+    if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,phid,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,phid,count,0);
+  }      
+  else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
+  
+  delete grid;
+
+}
+
+void Cross::klaas_phid(numint::vector_z & results, double r, double costheta, double phi, Cross & cross, int total,
+	      AbstractFsiGrid *grid, TVector3 &pm, Matrix<1,4> &spinor, int shell, int m){
+  results=numint::vector_z(total,0.);
+  double sintheta=sqrt(1.-costheta*costheta);
+  
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  TMFSpinor wave(*(cross.getPnucl()),shell,m,r,costheta,phi);
+  //includes phase space!
+  complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
+  results[0]= exp_pr*(spinor*wave);
+  for(int i=1;i<total; ++i) results[i] = results[0];
+  for(int i=0;i<(total-1);++i) results[i]*=grid->getFsiGridN_interp3(i,r,costheta,phi);
+  
+
 }
