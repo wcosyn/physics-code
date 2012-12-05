@@ -259,8 +259,8 @@ void Cross::getDensr(std::vector<double> &densr, const TKinematics2to2 &tk, cons
   FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
   TVector3 pm(-q[1],0.,pf[3]-q[3]);
   Matrix<1,4> spinoroutup, spinoroutdown;
-  spinoroutup=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
-  spinoroutdown=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity)); 
+  spinoroutdown=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
+  spinoroutup=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity)); 
 
   int res=90;
   unsigned count=0;
@@ -300,7 +300,8 @@ void Cross::getDensr(std::vector<double> &densr, const TKinematics2to2 &tk, cons
   delete grid;
   for(int i=0;i<2*abs(getPnucl()->getKappas()[shellindex]);i++) delete [] phid[i];
   delete [] phid;
-  for(int i=0;i<total;i++) densr[i]*=1./pow(2.*PI,3.);
+  //factor of 2 because of symmetry in m_j
+  for(int i=0;i<total;i++) densr[i]*=2./pow(2.*PI,3.);
   
 }
 
@@ -353,8 +354,8 @@ void Cross::getDensr_ctheta(std::vector<double> &densr, const TKinematics2to2 &t
   FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
   TVector3 pm(-q[1],0.,pf[3]-q[3]);
   Matrix<1,4> spinoroutup, spinoroutdown;
-  spinoroutup=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
-  spinoroutdown=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity)); 
+  spinoroutdown=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
+  spinoroutup=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity)); 
 
   int res=90;
   unsigned count=0;
@@ -395,7 +396,8 @@ void Cross::getDensr_ctheta(std::vector<double> &densr, const TKinematics2to2 &t
   delete grid;
   for(int i=0;i<2*abs(getPnucl()->getKappas()[shellindex]);i++) delete [] phid[i];
   delete [] phid;
-  for(int i=0;i<total;i++) densr[i]*=1./pow(2.*PI,3.);
+  //factor of 2 due to symmetry in m_j
+  for(int i=0;i<total;i++) densr[i]*=2./pow(2.*PI,3.);
   
 }
 
@@ -408,7 +410,7 @@ void Cross::klaas_densr_ctheta(numint::vector_d & results, double phi, Cross & c
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   //includes phase space!
-  complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
+  complex<double> exp_pr=r*sintheta*exp(-I_UNIT*INVHBARC*(pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
   for(int m=1;m<=cross.getPnucl()->getJ_array()[shellindex];m+=2){
     TMFSpinor wave(*(cross.getPnucl()),shellindex,m,r,costheta,phi);
     grid->clearKnockout();
@@ -496,5 +498,45 @@ void Cross::klaas_phid(numint::vector_z & results, double r, double costheta, do
   for(int i=1;i<total; ++i) results[i] = results[0];
   for(int i=0;i<(total-1);++i) results[i]*=grid->getFsiGridN_interp3(i,r,costheta,phi);
   
+
+}
+
+
+void Cross::printDensity_profile(const TKinematics2to2 &kin, const int shellindex, 
+		const int thick, const int maxEval){
+  vector<double > densr;
+  double total=0.,totalpw=0.,avg_dens=0.,avg_denspw=0., avg_r=0., avg_rpw=0.;
+  
+  for(int k=0;k<100;k++){
+    double r=pnucl->getRange()/100.*k;
+    double dens=pnucl->getTotalDensity(r);
+    getDensr(densr,kin,shellindex,thick,r,maxEval);
+    total+=densr[1];
+    totalpw+=densr[4];
+    avg_r+=densr[1]*r;
+    avg_rpw+=densr[4]*r;
+    if(k!=0.) avg_dens+=densr[1]*dens/r/r;
+    if(k!=0.) avg_denspw+=densr[4]*dens/r/r;
+    
+    cout << kin.GetPklab() << " " << r << " " << densr[1] << " " << densr[4] << " " << dens*pnucl->getA() << endl;
+  }
+//   double phi_pm=0.,phi_pm_pw=0.;
+//   for(int m=1;m<=pnucl->getJ_array()[shellindex];m+=2){
+//     for(int ms=-1;ms<=1;ms+=2){
+//       vector<complex<double> > phid;
+//       getPhid(phid,kin,shellindex,m,ms,thick,maxEval);
+//       phi_pm+=norm(phid[1]);
+//       phi_pm_pw+=norm(phid[4]);
+//     }
+//   }
+//   //factor of 2 because of symmetry in m_j
+//   phi_pm*=2./pow(2.*PI,3.);
+//   phi_pm_pw*=2./pow(2.*PI,3.);
+  
+  cout << endl << endl;
+  cout << kin.GetPklab() << " " << avg_dens/total*pnucl->getA() << " " << avg_denspw/totalpw*pnucl->getA() << " " 
+    << avg_r/total << " " << avg_rpw/totalpw << " " 
+    << total*pnucl->getRange()/100. << " " << totalpw*pnucl->getRange()/100. << endl << endl;
+  cout << endl << endl;
 
 }

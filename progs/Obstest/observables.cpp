@@ -137,16 +137,10 @@ int main(int argc, char *argv[])
 //       << " " << kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
        Cross obs(*elec,&Carbon,prec,integrator,homedir,screening,scr);
       double free0=obs.getElCross(kin,2,0.)*HBARC*HBARC;
-  
-      vector<double> observ;
-      vector<double > densr;
-      obs.getAllObs(observ,kin,2,shell,thick,medium,0.,maxEval,1);
-      for(int k=0;k<50;k++){
-	double r=12./50.*k;
-	obs.getDensr(densr,kin,shell,thick,r,maxEval);
-	cout << r << " " << densr[0] << " " << densr[4] << endl;
-      }
-      cout << endl << endl;
+      obs.printDensity_profile(kin,shell,thick,maxEval);
+      
+//       vector<double> observ;
+//       obs.getAllObs(observ,kin,2,shell,thick,medium,0.,maxEval,1);
       
 //       for(int i=0;i<5;i+=4) cout << observ[i*8] << " " << observ[i*8+3] << " " << observ[i*8+5] << " " << observ[i*8+7]<< " ";
 //       cout << free0*1.E-09 << " " << densr[0] << " " << densr[4] << endl;

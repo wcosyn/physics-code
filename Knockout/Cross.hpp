@@ -115,7 +115,7 @@ public:
    * \return differential cross section [dimensionless]
    */  
   double getElCross(TKinematics2to2 &kin, int current, double phi);
-  /*! Computes \f$\delta(r) [fm^{-1}]\f$ like defined in our density papers
+  /*! Computes \f$\delta(r) [fm^2]\f$ like defined in our density papers
    * \param densr different densities [fm^-1] <BR>
    *  [0]: RMSGA <BR>
    *  [1]: RMSGA+SRC <BR>
@@ -131,7 +131,7 @@ public:
    */
   void getDensr(std::vector<double> &densr, const TKinematics2to2 &kin, const int shellindex, 
 		const int thick, const double r, const int maxEval);
-  /*! Computes \f$\delta(r,\cos{\theta}) [fm^{-1}]\f$ like defined in our density papers
+  /*! Computes \f$\delta(r,\cos{\theta}) [fm^2]\f$ like defined in our density papers
    * \param densr different densities [fm^-1] <BR>
    *  [0]: RMSGA <BR>
    *  [1]: RMSGA+SRC <BR>
@@ -171,6 +171,21 @@ public:
   double getSigmascreening() const{return sigmascreening;} /*!< [%] screening of sigma */
   bool getUsersigma() const{return usersigma;} /*!< has the user set sigma? */
   MeanFieldNucleusThick * getPnucl() const{return pnucl;}  /*!< pointer to nucleus object */
+  
+  /*! Prints a density profile for certain kinematics.
+   * Grid of 100 points for \f$\delta(r) [fm^{-1}]\f$ like defined in our density papers (getDensr() function) <BR>
+   * prints out [missing momentum (MeV)] [r (fm)] [\f$\delta(r) RMSGA+SRC\f$ (fm^-1)] [\f$\delta(r) RPWIA\f$ (fm^-1)]
+   * [\f$ r^2\rho_A(r) \f$ [fm ^2] <BR>
+   * At the end it prints the avg density \f$<\rho>\f$[fm^-3] for RMSGA+SRC & plane-wave, the avg radius \f$<r>\f$[fm] for RSMGA+SRC
+   * and the distorted momentum distribution \f$\rho^D(\vec{p}_m)\f$ [fm^3] for RMSGA+SRC & plane-wave <BR>
+   * \param kin contains the hadron kinematics
+   * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param thick do you want thickness in the Glauber FSI or not?
+   * \param maxEval max # of evaluations in integrations
+   */
+  void printDensity_profile(const TKinematics2to2 &kin, const int shellindex, 
+		const int thick, const int maxEval);
+  
 private:
   std::string homedir; /*!< Contains dir with all input */
   double prec; /*!< precision you want in the integrations */
