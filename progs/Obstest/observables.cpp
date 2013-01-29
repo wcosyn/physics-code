@@ -65,14 +65,18 @@ int main(int argc, char *argv[])
 //   delete elec;
 //   return 0;
 
-//FF_mod printout
+// FF_mod printout
 
-//   for(int i=0;i<15;i++)
-//     cout << i*0.016 << " " << NucleonEMOperator::QMCGE[8][i] << " " <<
-// 	NucleonEMOperator::QMCGM[8][i] << " " <<
-// 	NucleonEMOperator::CQSMGE[8][i] << " " << 
-// 	NucleonEMOperator::CQSMGE[8][i] << endl;
-//   exit(1);
+// for(int j=0;j<60;j++){
+//   for(int i=0;i<15;i++){
+//     cout << j*0.05 << " " << i*0.016 << " " << NucleonEMOperator::QMCGE[j][i] << " " <<
+// 	NucleonEMOperator::QMCGM[j][i] << " " <<
+// 	NucleonEMOperator::CQSMGE[j][i] << " " << 
+// 	NucleonEMOperator::CQSMGM[j][i] << endl;
+//   }
+//   cout << endl << endl << endl;
+// }
+// exit(1);
 
   double Ein=600.;
   double Eout=atof(argv[3]);

@@ -1,3 +1,12 @@
+/*! \file DeuteronCross.hpp 
+ * \brief Contains declaration of class DeuteronCross, computes deuteron exclusive cross sections
+ * \author Wim Cosyn
+ * \date 29/08/2012
+ * 
+ * \addtogroup DIS
+ * @{
+ */
+
 #ifndef DEUTERONCROSS_HPP
 #define DEUTERONCROSS_HPP
 
@@ -8,19 +17,44 @@
 
 #include <string>
 
+/*! \brief A class that computes semi-exclusive deuteron cross sections */
 class DeuteronCross{
   
 public:
-  DeuteronCross(TElectronKinematics elec, std::string name, bool proton, std::string strucname,
+    /*! Constructor
+   * \param elec Electron kinematics, see TElectronKinematics
+   * \param wfname Deuteron wave function name, see TDeuteron
+   * \param proton photon interacts with proton [1] or neutron [0]
+   * \param strucname which structure function parametrization ["CB"=Chrisy-Bosted, "SLAC", "Alekhin"]
+   * \param sigmain [mb] total rescattering cross section in FSI
+   * \param betain [GeV^-2] slope parameter
+   * \param epsilonin real part of scattering amplitude
+   * \param betaoffin [GeV^-2] off-shell beta parameter
+   * \param lambdain [GeV^2] lambda cutoff off-shell parameter
+   * \param offshellset  which offshell parametrization do you want to use? <BR>
+   * - 0: based on off-shell mass suppression (See M. Sargsian PRC82, 014612)
+   * - 1: based on dipole FF suppression with cutoff lambda (See S. Jesschonek PRC78, 014007)
+   * - 2: suppression with a off-shell beta parameter
+   * - 3: no off-shell amplitude, fully suppressed
+   * - 4: full off-shell amplitude, no suppression 
+   */
+  DeuteronCross(TElectronKinematics elec, std::string wfname, bool proton, std::string strucname,
     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset);
-  ~DeuteronCross();
-  double getavgCross(TKinematics2to2 &kin, int pw, double Einoff);
+  ~DeuteronCross(); /*!<Destructor */
+  /*! get the average cross section
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \param pw plane-wave calculation [1] or not [0]
+   * \param Einoff off-shell energy of the nucleon interacting with the photon
+   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ integrated over phi
+   */
+  double getavgCross(TKinematics2to2 &kin, bool pw, double Einoff);
   
 private:
-  double massi;
-  TElectronKinematics electron;
-  DeuteronMomDistr momdistr;
-  DeuteronStructure structure;  
+  double massi; /*!< mass of nucleon interacting with photon */
+  TElectronKinematics electron; /*!< electron kinematics */
+  DeuteronMomDistr momdistr; /*!< object instance used to calculate the deuteron momentum distributions */
+  DeuteronStructure structure; /*!< object used to calculate the structure functions needed in semi-inclusive deuteron scattering */
 };
-
+/*! @} */
 #endif

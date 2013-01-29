@@ -105,6 +105,22 @@ public:
 				   const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   static const FourVector<GammaStructure> gamma_mu; /*!< gamma matrices */
   static const GammaStructure Id; /*!< Unit matrix */
+  /*! grid for QMC GE modification, stepsize in Q2 [61] is 0.05 GeV^2, 
+   * stepsize in density[15] (norm to A) is 0.016 fm^-3
+   */
+  static const double QMCGE[61][15]; 
+  /*! grid for QMC GM modification, stepsize in Q2 [61] is 0.05 GeV^2, 
+   * stepsize in density[15] (norm to A) is 0.016 fm^-3
+   */
+  static const double QMCGM[61][15];
+  /*! grid for QSM GE modification, stepsize in Q2 [61] is 0.05 GeV^2, 
+   * stepsize in density[16] (norm to A) is 0.016 fm^-3
+   */
+  static const double CQSMGE[61][16];
+  /*! grid for QSM GM modification, stepsize in Q2 [61] is 0.05 GeV^2, 
+   * stepsize in density[16] (norm to A) is 0.016 fm^-3
+   */
+  static const double CQSMGM[61][16];
   
 private:
   bool proton; /*!< 1=proton, 0=neutron coupling */
@@ -145,22 +161,6 @@ private:
    */
   double getMmod(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   
-  /*! grid for QMC GE modification, stepsize in Q2 [61] is 0.05 GeV^2, 
-   * stepsize in density[15] (norm to A) is 0.016 fm^-3
-   */
-  static const double QMCGE[61][15]; 
-  /*! grid for QMC GM modification, stepsize in Q2 [61] is 0.05 GeV^2, 
-   * stepsize in density[15] (norm to A) is 0.016 fm^-3
-   */
-  static const double QMCGM[61][15];
-  /*! grid for QSM GE modification, stepsize in Q2 [61] is 0.05 GeV^2, 
-   * stepsize in density[16] (norm to A) is 0.016 fm^-3
-   */
-  static const double CQSMGE[61][16];
-  /*! grid for QSM GM modification, stepsize in Q2 [61] is 0.05 GeV^2, 
-   * stepsize in density[16] (norm to A) is 0.016 fm^-3
-   */
-  static const double CQSMGM[61][16];
   
 };
 

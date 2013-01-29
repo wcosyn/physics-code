@@ -509,7 +509,10 @@ void Cross::printDensity_profile(const TKinematics2to2 &kin, const int shellinde
   
   for(int k=0;k<100;k++){
     double r=pnucl->getRange()/100.*k;
-    double dens=pnucl->getTotalDensity(r);
+    double dens=pnucl->getTotalDensity(r)*pnucl->getA();
+//     double dens =  (pnucl->getF()[shellindex][k*12]*pnucl->getF()[shellindex][k*12]
+//       +pnucl->getG()[shellindex][k*12]*pnucl->getG()[shellindex][k*12])
+//       *abs(pnucl->getKappas()[shellindex])/(2.*PI);
     getDensr(densr,kin,shellindex,thick,r,maxEval);
     total+=densr[1];
     totalpw+=densr[4];
@@ -518,7 +521,8 @@ void Cross::printDensity_profile(const TKinematics2to2 &kin, const int shellinde
     if(k!=0.) avg_dens+=densr[1]*dens/r/r;
     if(k!=0.) avg_denspw+=densr[4]*dens/r/r;
     
-    cout << kin.GetPklab() << " " << r << " " << densr[1] << " " << densr[4] << " " << dens*pnucl->getA() << endl;
+    cout << kin.GetPklab() << " " << r << " " << densr[1] << " " << densr[4] << " " << dens
+   << endl;
   }
 //   double phi_pm=0.,phi_pm_pw=0.;
 //   for(int m=1;m<=pnucl->getJ_array()[shellindex];m+=2){
@@ -534,7 +538,7 @@ void Cross::printDensity_profile(const TKinematics2to2 &kin, const int shellinde
 //   phi_pm_pw*=2./pow(2.*PI,3.);
   
   cout << endl << endl;
-  cout << kin.GetPklab() << " " << avg_dens/total*pnucl->getA() << " " << avg_denspw/totalpw*pnucl->getA() << " " 
+  cout << kin.GetPklab() << " " << avg_dens/total << " " << avg_denspw/totalpw << " " 
     << avg_r/total << " " << avg_rpw/totalpw << " " 
     << total*pnucl->getRange()/100. << " " << totalpw*pnucl->getRange()/100. << endl << endl;
   cout << endl << endl;

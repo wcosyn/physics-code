@@ -42,7 +42,8 @@ public:
   DeuteronMomDistr(std::string name);
   ~DeuteronMomDistr(); /*!<Destructor */
   /*! Computes plane-wave momentum distribution, does not depend on phi
-   * \param kin contains the hadron kinematics
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \return plane-wave momentum distribution [MeV^-3]
    */
   double getMomDistrpw(TKinematics2to2 &kin) const;
@@ -60,7 +61,8 @@ public:
    */
   std::complex<double> getMomDistrpwcoh(TVector3 &pvec,TVector3 &pvec2,int M, int M2) const;
   /*! Computes distorted momentum distribution for DIS production off deuteron
-   * \param kin contains the hadron kinematics
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param phi angle between hadron and electron scattering plane
    * \return distorted momentum distribution [MeV^-3]
    */
@@ -88,8 +90,8 @@ private:
   double epsilon; /*!< [] real part of scattering amplitude */
   double betaoff; /*!< [MeV^-2] off-shell slope parameter, scattering parameter in FSI*/
   double lambda; /*!< [MeV^2 off-shell cutoff parameter */
-  double massi; /*!< mass of nucleon that gets hit by photon */
-  double massr; /*!< mass of spectator nucleon */
+  double massi; /*!< [MeV] mass of nucleon that gets hit by photon */
+  double massr; /*!< [MeV] mass of spectator nucleon */
   
   double przprime; /*!< pole in the fsi amplitude */
   double Wxprime2; /*!< intermediate invariant mass squared of the X in the FSI rescattering */
@@ -129,7 +131,8 @@ private:
    * also determines intermediate mass
    * \param pt [MeV] final transverse spectator momentum
    * \param Er [MeV] final spectator on-shell energy
-   * \param pkin contains hadron kinematics
+   * \param pkin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    */
   void get_przprime(double pt, double Er, TKinematics2to2 *pkin);
   /*! gives you the scatter amplitude of the final-state interaction

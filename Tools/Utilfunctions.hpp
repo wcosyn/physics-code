@@ -45,11 +45,11 @@ double normr(double r1, double costheta1, double sintheta1, double cosphi1, doub
  * \param order number of equations
  */
 void LUsolve(double **a, double *b, int order);
-/*! calculates sin and cos of value x in one go
- * \param x value to compute cos and sin of
- * \param sin pointer to sin value
- * \param cos pointer to cos value
- */
+// /*! calculates sin and cos of value x in one go
+//  * \param x value to compute cos and sin of
+//  * \param sin pointer to sin value
+//  * \param cos pointer to cos value
+//  */
 // void sincos(const double x, double * sin, double * cos);
 /*! performs a fit to data with a set of fitfunctions, also computes the chi squared of the fit
  * \param xarray data x array

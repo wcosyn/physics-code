@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
-
+#include <string>
 
 using namespace std;
 
@@ -17,14 +17,18 @@ int main(int argc, char *argv[])
 {
     double Ein=5000.;  
     double Q2=atof(argv[3])*1.E06;
+    string strucname = argv[5];
+    string wf = argv[4];
+    int symm = atoi(argv[1]);
+    int offshell = atoi(argv[2]);
     TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
     for(int i=1;i<20;i++){      
       double x=0.05*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       double teller=0.,fsi1=0.,fsi2=0.,noemer=0.;
       for(int proton=0;proton<=1;++proton){
-	InclusiveCross Dinc(proton,argv[5],argv[4],*elec,atoi(argv[1]),atoi(argv[2]));
-	NuclStructure nucleon(proton, Q2, x, 0, argv[5]);
+	InclusiveCross Dinc(proton,strucname,wf,*elec,symm,offshell);
+	NuclStructure nucleon(proton, Q2, x, 0, strucname);
 	teller+=Dinc.calc_F2Dinc(Q2,x);
 	double f1,f2;
   	Dinc.calc_F2DincFSI(f1,f2,Q2,x);
