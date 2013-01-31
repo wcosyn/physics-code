@@ -50,7 +50,7 @@ template<>
 inline void ada2numint(unsigned fdim, double *res, double &a) { a = res[0]; }
 
 template<>
-inline void ada2numint(unsigned fdim, double *res, dcomplex &a) { a.real() = res[0]; a.imag() = res[1]; }
+inline void ada2numint(unsigned fdim, double *res, dcomplex &a) { a=dcomplex(res[0],res[1]); } // old standard lang: a.real() = res[0]; a.imag() = res[1];
 
 template<>
 inline void ada2numint(unsigned fdim, double *res, vector_d &a) {
@@ -60,8 +60,9 @@ inline void ada2numint(unsigned fdim, double *res, vector_d &a) {
 template<>
 inline void ada2numint(unsigned fdim, double *res, vector_z &a) {
   for (unsigned i = 0; i < fdim/2; ++i) {
-    a[i].real() = res[2*i];
-    a[i].imag() = res[2*i+1];
+    a[i] = dcomplex(res[2*i],res[2*i+1]);
+    //a[i].real() = res[2*i]; old standard lang, functions have become pure getters
+    //a[i].imag() = res[2*i+1]; idem
   }
 }
 
@@ -121,7 +122,7 @@ int cube_adaptive(const mdfunction<T,N> &f, const numint::array<double, N> &a,
   F.f = f;
   F.Ncall = 0;
 
-  double xmin[N], xmax[N];
+  //double xmin[N], xmax[N];
 
   unsigned fdim;
 
