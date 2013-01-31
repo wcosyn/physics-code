@@ -39,7 +39,7 @@ int main()
 				for (int m=-Carbon.getJ_array()[shellindex]; m <= Carbon.getJ_array()[shellindex]; m+=2)
 				{
 					TMFSpinor phi1 = TMFSpinor(Carbon,shellindex,m,r,cos(theta),phi);
-					Matrix<1,4> phi1Bar = phi1.H(); // hermitian conjugate * gamma_0
+					Matrix<1,4> phi1Bar = phi1.H(); // hermitian conjugate
 					std::complex<double> phisq = phi1Bar*phi1;
 					phi_dat << "\t" << phisq.real();
 				}
