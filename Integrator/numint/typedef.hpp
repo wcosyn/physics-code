@@ -78,19 +78,22 @@ template<typename T>
 struct Convergence {
   typedef bool (*type) (const T &r, const T &s, double epsabs, double epsrel, int dirty);
 };
-
+/* compiling with the new c++ standart (c++0x) the enum below will cause errors because
+ * the new standart includes already a few error codes like EDOM, ERANGE, EFAULT,... So you
+ * will get an error like "assignment of numeric value" -> something like 33=1. So i have
+ * commented out the codes that appear to be already defined */
 enum { 
   SUCCESS  = 0, 
   FAILURE  = -1,
   CONTINUE = -2,  /* iteration has not converged */
-  EDOM     = 1,   /* input domain error, e.g sqrt(-1) */
-  ERANGE   = 2,   /* output range error, e.g. exp(1e100) */
-  EFAULT   = 3,   /* invalid pointer */
-  EINVAL   = 4,   /* invalid argument supplied by user */
+  /*EDOM     = 1, */  /* input domain error, e.g sqrt(-1) */
+  /*ERANGE   = 2, */  /* output range error, e.g. exp(1e100) */
+  /*EFAULT   = 3, */  /* invalid pointer */
+  /*EINVAL   = 4, */  /* invalid argument supplied by user */
   EFAILED  = 5,   /* generic failure */
   EFACTOR  = 6,   /* factorization failed */
   ESANITY  = 7,   /* sanity check failed - shouldn't happen */
-  ENOMEM   = 8,   /* malloc failed */
+  /*ENOMEM   = 8, */  /* malloc failed */
   EBADFUNC = 9,   /* problem with user-supplied function */
   ERUNAWAY = 10,  /* iterative process is out of control */
   EMAXITER = 11,  /* exceeded max number of iterations */
