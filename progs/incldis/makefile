@@ -10,18 +10,17 @@ VERSION =
 #		Calc-path
 CPATH 	=	.
 
-#		C compilation...
  CC      = 	icpc
-# CC      = 	g++
+#  CC      = 	g++
 
 #		Flags
-# OPTFLAG	=	-O3 -fPIC
-OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel 
+ OPTFLAG	=	-O3 -fPIC
+#  OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
 WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG)  $(DBGFLAG)  #$(GPFLAG) #$(STATIC)
+CFLAGS	=	$(OPTFLAG) $(WFLAG) $(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 
 #		Executable file
 EFILE   = 	../../bin/inclusive
@@ -29,12 +28,12 @@ EFILEST   = 	../../bin/staticinclusive
 
 
 #		Mathematical functions
-LIBS =	 	-lm  -lifcore
-WIMLIBS = -lMePhys -lGlauber -lDIS
+LIBS =	 	-lm -lifcore -lgfortran
+WIMLIBS = -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L/home/wim/Code/lib
- INCLUDEDIRS =  -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber -I/home/wim/Code/DIS
-STATICLIBS = /home/wim/Code/lib/libglauber.a  /home/wim/Code/lib/libmephys.a /home/wim/Code/lib/libdis.a 
+ LIBDIRS = -L ~/Code/lib
+ INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout -I ~/Code/DIS
+STATICLIBS =   ~/Code/lib/libDIS.a ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a ~/Code/lib/libIntegrator.a
 
 #		Header files
 HDRS =		

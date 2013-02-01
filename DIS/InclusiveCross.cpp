@@ -138,9 +138,12 @@ void InclusiveCross::int_costheta_incl_fsi(double costheta, double *results, va_
   complex<double> wave[12];
   for(int i=0;i<12;i++) wave[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
 								   prnorm*costheta)); 
+  complex<double> waveoff[12];
+  for(int i=0;i<12;i++) waveoff[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
+								   prnorm*costheta)); 
   double qresults[2];
   double qestimate=0.,qphiestimate=0.;
-  rombergerN(this,&InclusiveCross::int_qt,0.,1.E03,2,qresults,PREC,3,6,&qestimate,&kin,wave,&qphiestimate);
+  rombergerN(this,&InclusiveCross::int_qt,0.,1.E03,2,qresults,PREC,3,6,&qestimate,&kin,wave,waveoff,&qphiestimate);
   
   results[0]= structfactor/(kin.GetKlab()*32.*PI*PI*3.)
 		*sqrt(MASSD/(2.*(MASSD-Er)*Er));
@@ -155,10 +158,11 @@ void InclusiveCross::int_qt(double qt, double *results, va_list ap){
 
   TKinematics2to2 *pkin = va_arg(ap, TKinematics2to2*);
   complex<double>* wave = va_arg(ap,complex<double>*);
+  complex<double>* waveoff = va_arg(ap,complex<double>*);
   double *pqphiestimate = va_arg(ap,double*);
   
   if(qt<1.E-03) {results[0]=results[1]=0.; return;}
-  rombergerN(this, &InclusiveCross::int_qphi,0.,2*PI,2,results,PREC,3,6,pqphiestimate,qt,pkin,wave);
+  rombergerN(this, &InclusiveCross::int_qphi,0.,2*PI,2,results,PREC,3,6,pqphiestimate,qt,pkin,wave,waveoff);
   
   results[0]*=qt;
   results[1]*=qt;
@@ -171,6 +175,7 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
   double qt = va_arg(ap,double);
   TKinematics2to2 *pkin = va_arg(ap, TKinematics2to2*);
   complex<double>* wave = va_arg(ap,complex<double>*);
+  complex<double>* waveoff = va_arg(ap,complex<double>*);
   
   double prt=pkin->GetPklab()*sqrt(1.-pkin->GetCosthklab()*pkin->GetCosthklab());
   double sinqphi,cosqphi;
@@ -218,11 +223,14 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
       if(offshellset==3) offshellness=0.;
       if(offshellset==4) offshellness=1.;
       complex<double> wave2[12];
+      complex<double> wave2off[12];
       TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,przprime);
-      for(int i=0;i<12;i++) wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime)
-			-offshellness*wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 
+      for(int i=0;i<12;i++){
+	wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
+	wave2off[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 			
+      }
       complex<double> temp=0.;
-      for(int i=0;i<12;i++) temp+=wave[i]*conj(wave2[i]);
+      for(int i=0;i<12;i++) temp+=wave[i]*conj(wave2[i])+offshellness*waveoff[i]*conj(wave2off[i]);
       results[0]= imag(scatter(t)*temp
 	    *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
 
@@ -259,11 +267,14 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
   if(offshellset==3) offshellness=0.;
   if(offshellset==4) offshellness=1.;
   complex<double> wave2[12];
+  complex<double> wave2off[12];
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,przprime);
-  for(int i=0;i<12;i++) wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime)
-		    +offshellness*wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 
+  for(int i=0;i<12;i++){
+    wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
+    wave2off[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
+  }	    
   complex<double> temp=0.;
-  for(int i=0;i<12;i++) temp+=conj(wave[i])*wave2[i];
+  for(int i=0;i<12;i++) temp+=conj(wave[i])*wave2[i]+conj(waveoff[i])*wave2off[i];
   results[1]= imag(scatter(t)*temp
 	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi;
 

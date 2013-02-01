@@ -40,5 +40,5 @@ int main(int argc, char *argv[])
       cout << x << " " << teller/noemer << " " << (teller-fsi1)/noemer << " " << (teller-fsi2)/noemer << endl;
       //cout << x << " " << teller << " " << noemer << " " << teller/noemer << endl;
     }
-    delete elec
+    delete elec;
 }

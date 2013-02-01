@@ -18,7 +18,7 @@ DeuteronCross::~DeuteronCross(){
   
 }
 
-double DeuteronCross::getavgCross(TKinematics2to2 &kin,int pw, double Einoff){
+double DeuteronCross::getavgCross(TKinematics2to2 &kin,bool pw, double Einoff){
   
   double y=kin.GetWlab()/electron.GetBeamEnergy(kin); 
   double x=kin.GetQsquared()/(2.*massi*kin.GetWlab());
