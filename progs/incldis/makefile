@@ -10,8 +10,8 @@ VERSION =
 #		Calc-path
 CPATH 	=	.
 
- CC      = 	icpc
-#  CC      = 	g++
+#  CC      = 	icpc
+ CC      = 	g++
 
 #		Flags
  OPTFLAG	=	-O3 -fPIC

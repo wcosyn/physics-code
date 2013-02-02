@@ -91,7 +91,7 @@ void InclusiveCross::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double
   //fsi2: integration spec momentum of x2 first
   fsi1=results[0]*2.*PI*2.*massi/MASSD;
   fsi2=results[1]*2.*PI*2.*massi/MASSD;
- cout << fsi1 << " " << fsi2 << endl;
+ //cout << fsi1 << " " << fsi2 << endl;
   
   
 }

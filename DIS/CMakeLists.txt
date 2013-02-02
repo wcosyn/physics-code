@@ -39,9 +39,9 @@ SET(DIS_LIBRARY_PROPERTIES ${DIS_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(DIS SHARED ${DIS_SRCS})
-target_link_libraries(DIS ${LIBRARIES})
+target_link_libraries(DIS ${LIBRARIES} MePhys Glauber Knockout
+Integrator)
 set_target_properties(DIS PROPERTIES ${DIS_LIBRARY_PROPERTIES})
-target_link_libraries (DIS MePhys Glauber Knockout)
 ############### build the library #####################
 add_library(DISST STATIC ${DIS_SRCS})
 target_link_libraries(DISST -Wl,-no-whole-archive)

@@ -104,7 +104,7 @@ template <class T> void rombergerN(void (*function)(double, T*,  va_list), doubl
 		       int N, T* results, double acc, int min, int max, double *estimate, ...)
 {
 
-  if(abs(a-b)<1e-06){for(int i=0;i<N;i++) results[i]=0.;return;}
+  if(std::abs(a-b)<1e-06){for(int i=0;i<N;i++) results[i]=0.;return;}
   T **DN1= new T*[N];
   T **DN2= new T*[N];
   double x,h=b-a;
@@ -155,21 +155,21 @@ template <class T> void rombergerN(void (*function)(double, T*,  va_list), doubl
     if (n >= min) {
       double deviation=0.;
       for(int i=0;i<N;i++) {
-	dev[i] = (DN2[i][n] == std::complex<double>(0.,0.)) ? 0. : abs((DN2[i][n]-DN1[i][n-1]))/abs(DN2[i][n]);
+	dev[i] = (DN2[i][n] == std::complex<double>(0.,0.)) ? 0. : std::abs((DN2[i][n]-DN1[i][n-1]))/std::abs(DN2[i][n]);
 	if(dev[i]>deviation) deviation=dev[i];
       }
-     if (((deviation < acc ) ) || ((abs(DN2[0][n]-DN1[0][n-1]) <acc*1e-07 ))) {
+     if (((deviation < acc ) ) || ((std::abs(DN2[0][n]-DN1[0][n-1]) <acc*1e-07 ))) {
        for(int i=0;i<N;i++) {
 	 results[i] = DN2[i][n];
 	 delete [] DN2[i];
 	 delete [] DN1[i];
-	 if(abs(results[i])>(*estimate)) (*estimate)=abs(results[i]);
+	 if(std::abs(results[i])>(*estimate)) (*estimate)=std::abs(results[i]);
        }
        delete [] DN1; delete [] DN2;
        return;
      }
      double dummy = 0.;
-     for(int i=0;i<N;i++) dummy +=abs(DN2[i][n]);
+     for(int i=0;i<N;i++) dummy +=std::abs(DN2[i][n]);
      if(dummy <(*estimate)*1e-05){
        for(int i=0;i<N;i++){
 	 results[i] = DN2[i][n];
@@ -215,7 +215,7 @@ template <class T, class F> void rombergerN(F* object, void (F::*function)(doubl
 		       int N, T* results, double acc, int min, int max, double *estimate, ...)
 {
 
-  if(abs(a-b)<1e-06){for(int i=0;i<N;i++) results[i]=0.;return;}
+  if(std::abs(a-b)<1e-06){for(int i=0;i<N;i++) results[i]=0.;return;}
   T **DN1= new T*[N];
   T **DN2= new T*[N];
   double x,h=b-a;
@@ -266,21 +266,21 @@ template <class T, class F> void rombergerN(F* object, void (F::*function)(doubl
     if (n >= min) {
       double deviation=0.;
       for(int i=0;i<N;i++) {
-	dev[i] = (DN2[i][n] == std::complex<double>(0.,0.)) ? 0. : abs((DN2[i][n]-DN1[i][n-1]))/abs(DN2[i][n]);
+	dev[i] = (DN2[i][n] == std::complex<double>(0.,0.)) ? 0. : std::abs((DN2[i][n]-DN1[i][n-1]))/std::abs(DN2[i][n]);
 	if(dev[i]>deviation) deviation=dev[i];
       }
-     if (((deviation < acc ) ) || ((abs(DN2[0][n]-DN1[0][n-1]) <acc*1e-07 ))) {
+     if (((deviation < acc ) ) || ((std::abs(DN2[0][n]-DN1[0][n-1]) <acc*1e-07 ))) {
        for(int i=0;i<N;i++) {
 	 results[i] = DN2[i][n];
 	 delete [] DN2[i];
 	 delete [] DN1[i];
-	 if(abs(results[i])>(*estimate)) (*estimate)=abs(results[i]);
+	 if(std::abs(results[i])>(*estimate)) (*estimate)=std::abs(results[i]);
        }
        delete [] DN1; delete [] DN2;
        return;
      }
      double dummy = 0.;
-     for(int i=0;i<N;i++) if(dummy<abs(DN2[i][n])) dummy=abs(DN2[i][n]);
+     for(int i=0;i<N;i++) if(dummy<std::abs(DN2[i][n])) dummy=std::abs(DN2[i][n]);
      if(dummy <(*estimate)*1e-05){
        for(int i=0;i<N;i++){
 	 results[i] = DN2[i][n];

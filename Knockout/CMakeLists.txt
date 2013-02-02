@@ -42,9 +42,8 @@ SET(Knockout_LIBRARY_PROPERTIES ${Knockout_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(Knockout SHARED ${Knockout_SRCS})
-target_link_libraries(Knockout ${LIBRARIES})
+target_link_libraries(Knockout ${LIBRARIES} MePhys Glauber Integrator)
 set_target_properties(Knockout PROPERTIES ${Knockout_LIBRARY_PROPERTIES})
-target_link_libraries (Knockout MePhys Glauber)
 ############### build the library #####################
 add_library(KnockoutST STATIC ${Knockout_SRCS})
 target_link_libraries(KnockoutST -Wl,-no-whole-archive)
