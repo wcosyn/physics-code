@@ -35,7 +35,7 @@ using std::stringstream;
 #include <cassert>
 
 
-#define SHAREDIR "/home/camille/Code/share"
+#define SHAREDIR "/user/home/gent/vsc407/vsc40761/Code/share"
 #define FORCE_POS_ENERGY_PROJ 0 // to check WIM's previous results set to True, otherwise set false
 
 void printArray(MeanFieldNucleusThick&, const int*);
@@ -103,7 +103,9 @@ int main(int argc, char* argv[])
 		int nsteps = atoi(argv[2]);
 		symmetric_kinematics(nuc,i,nsteps);
 	} else {
-		symmetric_kinematics(nuc);
+		cerr << " expected 2 input params " << endl;
+		exit(1);
+		//symmetric_kinematics(nuc);
 	}
 	return 0;
 }

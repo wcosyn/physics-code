@@ -11,8 +11,8 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
-# CC      = 	icpc
- CC      = 	g++
+ CC      = 	icpc
+# CC      = 	g++
 
 #		Flags
  OPTFLAG	= -O3 -fPIC
@@ -28,7 +28,7 @@ CFLAGS	=	$(OPTFLAG) $(WFLAG) #-std=c++0x #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 LIBS =	 	-lm  #-lifcore
 WIMLIBS = -lMePhys -lGlauber -lDIS -lIntegrator -lKnockout
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L$(HOME)/Code/lib
+ LIBDIRS = -L$(HOME)/Code/lib -Wl,-rpath,$(HOME)/Code/lib
  INCLUDEDIRS =  -I$(HOME)/Code/Tools  -I$(HOME)/Code/Glauber -I$(HOME)/Code/DIS -I$(HOME)/Code/Integrator -I$(HOME)/Code/Knockout
 STATICLIBS = $(HOME)/Code/lib/libglauber.a  $(HOME)/Code/lib/libmephys.a $(HOME)/Code/lib/libdis.a 
 
