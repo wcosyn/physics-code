@@ -43,7 +43,7 @@ public:
   int getCthindex() const;/*!<  returns the index for theta used in the 2d interpolation*/
   void setRinterp(const double r);/*!< sets the rindex variable used in the 2d interpolation */
   void setCthinterp(double costheta); /*!< sets the thindex variable used in the 2d interpolation */
-  double correlation(const double r) const; /*!< correlation function g(r) \param  r [fm] radial coordinate */
+  double correlation(const double r) const; /*!< correlation function f(r) = 1 - g(r) \param  r [fm] radial coordinate */
   
   /*!returns the value of the gamma grid for the total density at coordinate (r,theta) */
   double getCorrGridFull_interp(const double r, const double costheta);

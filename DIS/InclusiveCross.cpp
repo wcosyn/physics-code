@@ -136,11 +136,14 @@ void InclusiveCross::int_costheta_incl_fsi(double costheta, double *results, va_
   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(Wxprime2+massr*massr)+pow(massr*massr-Wxprime2,2.));
   
   complex<double> wave[12];
-  for(int i=0;i<12;i++) wave[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
-								   prnorm*costheta)); 
   complex<double> waveoff[12];
-  for(int i=0;i<12;i++) waveoff[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
+  for(int i=0;i<12;i++){
+    wave[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
 								   prnorm*costheta)); 
+    waveoff[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
+								   prnorm*costheta)); 
+  }
+  
   double qresults[2];
   double qestimate=0.,qphiestimate=0.;
   rombergerN(this,&InclusiveCross::int_qt,0.,1.E03,2,qresults,PREC,3,6,&qestimate,&kin,wave,waveoff,&qphiestimate);
@@ -230,7 +233,7 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
 	wave2off[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 			
       }
       complex<double> temp=0.;
-      for(int i=0;i<12;i++) temp+=wave[i]*conj(wave2[i])+offshellness*waveoff[i]*conj(wave2off[i]);
+      for(int i=0;i<12;i++) temp+=/*wave[i]*conj(wave2[i])+*/offshellness*waveoff[i]*conj(wave2off[i]);
       results[0]= imag(scatter(t)*temp
 	    *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
 
@@ -272,9 +275,14 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
   for(int i=0;i<12;i++){
     wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
     wave2off[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
+//      cout << wave2[i] << " " << wave2off[i] << " " << vecprime[0] << " " << vecprime[1] << " " << vecprime[2] <<  endl;
   }	    
-  complex<double> temp=0.;
-  for(int i=0;i<12;i++) temp+=conj(wave[i])*wave2[i]+conj(waveoff[i])*wave2off[i];
+  complex<double> temp=0.,temp1=0.,temp2=0.;
+  for(int i=0;i<12;i++) {temp+=/*conj(wave[i])*wave2[i]+*/offshellness*conj(waveoff[i])*wave2off[i];
+  temp1+=conj(wave[i])*wave2[i];
+  temp2+=conj(waveoff[i])*wave2off[i];
+  }
+//   cout << abs(temp1) << " " << abs(temp2) << endl;
   results[1]= imag(scatter(t)*temp
 	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi;
 
@@ -283,7 +291,7 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
 
 
 void InclusiveCross::get_prz(double pt2, double Er, TKinematics2to2 *pkin, int first){
-  przprime=0.;
+  przprime=30;
   for(int i=0;i<50;i++){
     double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
     //guess for invariant mass initial X' Wx'2=(q+p_D-p_s')^2
@@ -302,12 +310,13 @@ void InclusiveCross::get_prz(double pt2, double Er, TKinematics2to2 *pkin, int f
       if((!first)&&(Wxprime2>f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
     }
     //check convergence
-    if((abs((przprime-f_prz)/f_prz)<1e-03)) {otherWx2= f_Wxprime2; przprime = f_prz; return;}
+    if((abs((przprime-f_prz)/f_prz)<1e-03)) {otherWx2= f_Wxprime2; przprime = f_prz; cout << prz << " " << przprime << endl; return;}
     //start again
     przprime=f_prz;
     otherWx2=f_Wxprime2;  
   }
   //no real convergence
+  cout << "bleeeep " << prz << " " << przprime << endl;
   return;
 }
 

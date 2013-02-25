@@ -26,7 +26,10 @@ public:
      * \param proton photon interacting with proton [1] or neutron [0]
    * \param wavename Deuteron wave function name, see TDeuteron
    * \param strucname which structure function parametrization ["CB"=Chrisy-Bosted, "SLAC", "Alekhin"]
-   * \param symm parameter that controls symmetric or not rescatterings in the FSI
+   * \param symm parameter that controls symmetric or not rescatterings in the FSI <BR>
+   * - 1: no mass terms
+   * - 0: mass terms always included
+   * - -1: mass terms included like in semi-inclusive DIS (mass must increase)
    * \param offshell which offshell parametrization do you want to use? <BR>
    * - 0: based on off-shell mass suppression (See M. Sargsian PRC82, 014612)
    * - 1: based on dipole FF suppression with cutoff lambda (See S. Jesschonek PRC78, 014007)
@@ -69,7 +72,12 @@ private:
   double lambda; /*!< [MeV^2 off-shell cutoff parameter */
   double massi; /*!< [MeV] mass of nucleon that gets hit by photon */
   double massr; /*!< [MeV] mass of spectator nucleon */
-  int symm; /*!< parameter that controls symmetric or asymmetric rescatterings in the FSI amplitude */
+    /*! \param symm parameter that controls symmetric or not rescatterings in the FSI <BR>
+   * - 1: no mass terms
+   * - 0: mass terms always included
+   * - -1: mass terms included like in semi-inclusive DIS (mass must increase)
+   */
+  int symm; 
   
   double przprime; /*!< [MeV] longitudinal spectator momentum after rescattering */
   double prz; /*!< [MeV] lingitudinal spectator momentum before rescattering */
