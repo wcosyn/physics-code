@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     int symm = atoi(argv[1]);
     int offshell = atoi(argv[2]);
     TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
-    for(int i=1;i<20;i++){      
+    for(int i=19;i<20;i++){      
       double x=0.05*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       double teller=0.,fsi1=0.,fsi2=0.,noemer=0.;

@@ -135,9 +135,9 @@ void InclusiveCross::int_costheta_incl_fsi(double costheta, double *results, va_
   if(abs(structfactor<1E-09)||isnan(structfactor)) {results[0]=0.; results[1]=0.; return; }
   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(Wxprime2+massr*massr)+pow(massr*massr-Wxprime2,2.));
   
-  complex<double> wave[12];
-  complex<double> waveoff[12];
-  for(int i=0;i<12;i++){
+  complex<double> wave[6];
+  complex<double> waveoff[6];
+  for(int i=0;i<6;i++){
     wave[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
 								   prnorm*costheta)); 
     waveoff[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
@@ -196,7 +196,7 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
 
   //spectator integration over X1
   otherWx2=-1.;
-  get_prz(pt2,Er,pkin,1);
+  get_prz2(pt2,Er,pkin,1);
   if(otherWx2<0.) results[0]=0.;
   else{
     double pprime = sqrt(pt2+przprime*przprime);
@@ -220,21 +220,30 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
       }
       if(offshellset==2){
 	betaoff=16.8*1.E-06;
-	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(otherWx2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
-	offshellness=exp((betaoff-beta)*t/2.);
+	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(otherWx2>2.4E06?2.4E06:otherWx2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+	offshellness=0.;//exp((betaoff-beta)*t/2.);
       }
-      if(offshellset==3) offshellness=0.;
-      if(offshellset==4) offshellness=1.;
-      complex<double> wave2[12];
-      complex<double> wave2off[12];
+      if(offshellset==3){
+	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+	offshellness=0.;
+      }
+      if(offshellset==4){
+	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+	offshellness=1.;
+      }
+      complex<double> wave2[6];
+      complex<double> wave2off[6];
       TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,przprime);
-      for(int i=0;i<12;i++){
+      for(int i=0;i<6;i++){
 	wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
 	wave2off[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime); 			
       }
       complex<double> temp=0.;
-      for(int i=0;i<12;i++) temp+=/*wave[i]*conj(wave2[i])+*/offshellness*waveoff[i]*conj(wave2off[i]);
-      results[0]= imag(scatter(t)*temp
+      for(int i=0;i<6;i++){
+	temp+=wave[i]*conj(wave2[i])+offshellness*waveoff[i]*conj(wave2off[i]);
+      }
+      //cout << przprime << " " << pkin->GetQsquared()/(2.*(MASSD-Erprime)*pkin->GetWlab()) << " " << abs(temp) << endl;
+      results[0]= imag(scatter(t)*2.*temp //factor 2 due to symmetry
 	    *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)));
 
     }
@@ -242,7 +251,7 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
   
     //spectator integration over X1
   otherWx2=-1.;
-  get_prz(pt2,Er,pkin,0);   
+  get_prz2(pt2,Er,pkin,0);   
   if(otherWx2<0.) {results[1]=0.; return;}
   double chi=sqrt(pkin->GetS()*pkin->GetS()-2.*pkin->GetS()*(otherWx2+massr*massr)+pow(massr*massr-otherWx2,2.));
   double pprime = sqrt(pt2+przprime*przprime);
@@ -264,26 +273,33 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
   }
   if(offshellset==2){
     betaoff=16.8*1.E-06;
-    sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
-   offshellness=exp((betaoff-beta)*t/2.);
+    sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+   offshellness=0.;//exp((betaoff-beta)*t/2.);
   }
-  if(offshellset==3) offshellness=0.;
-  if(offshellset==4) offshellness=1.;
-  complex<double> wave2[12];
-  complex<double> wave2off[12];
+  if(offshellset==3){
+    sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+    offshellness=0.;
+  }
+  if(offshellset==4){
+    sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+    offshellness=1.;
+  }
+  complex<double> wave2[6];
+  complex<double> wave2off[6];
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,przprime);
-  for(int i=0;i<12;i++){
+  for(int i=0;i<6;i++){
     wave2[i] = wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
     wave2off[i] = wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
 //      cout << wave2[i] << " " << wave2off[i] << " " << vecprime[0] << " " << vecprime[1] << " " << vecprime[2] <<  endl;
   }	    
   complex<double> temp=0.,temp1=0.,temp2=0.;
-  for(int i=0;i<12;i++) {temp+=/*conj(wave[i])*wave2[i]+*/offshellness*conj(waveoff[i])*wave2off[i];
+  for(int i=0;i<6;i++) {temp+=conj(wave[i])*wave2[i]+offshellness*conj(waveoff[i])*wave2off[i];
   temp1+=conj(wave[i])*wave2[i];
   temp2+=conj(waveoff[i])*wave2off[i];
+// 	cout << qphi << " " << przprime << " " << (i/4)*2-2 << " " << ((i/2)%2)*2-1 << " " << (i%2)*2-1<< " " << wave[i]*conj(wave2[i]) << " " << waveoff[i]*conj(wave2off[i]) << endl;
   }
 //   cout << abs(temp1) << " " << abs(temp2) << endl;
-  results[1]= imag(scatter(t)*temp
+  results[1]= imag(scatter(t)*2.*temp  //factor 2 due to symmetry
 	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi;
 
   return;  
@@ -291,7 +307,7 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
 
 
 void InclusiveCross::get_prz(double pt2, double Er, TKinematics2to2 *pkin, int first){
-  przprime=30;
+  przprime=0;
   for(int i=0;i<50;i++){
     double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
     //guess for invariant mass initial X' Wx'2=(q+p_D-p_s')^2
@@ -310,13 +326,47 @@ void InclusiveCross::get_prz(double pt2, double Er, TKinematics2to2 *pkin, int f
       if((!first)&&(Wxprime2>f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
     }
     //check convergence
-    if((abs((przprime-f_prz)/f_prz)<1e-03)) {otherWx2= f_Wxprime2; przprime = f_prz; cout << prz << " " << przprime << endl; return;}
+    if((abs((przprime-f_prz)/f_prz)<1e-03)) {otherWx2= f_Wxprime2; przprime = f_prz;/* cout << prz << " " << przprime << endl;*/ return;}
     //start again
     przprime=f_prz;
     otherWx2=f_Wxprime2;  
   }
   //no real convergence
-  cout << "bleeeep " << prz << " " << przprime << endl;
+//   cout << "bleeeep " << prz << " " << przprime << endl;
+  return;
+}
+
+
+void InclusiveCross::get_prz2(double pt2, double Er, TKinematics2to2 *pkin, int first){
+  przprime=0.;
+  double x=0.;
+  for(int i=0;i<1;i++){
+    double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
+    x=pkin->GetQsquared()/(2.*(MASSD-f_Erprime)*pkin->GetWlab());
+   //guess for invariant mass initial X' Wx'2=(q+p_D-p_s')^2
+    double f_Wxprime2=-pkin->GetQsquared()
+		      +pow(MASSD-f_Erprime,2.)-pt2-przprime*przprime
+		      +2.*pkin->GetWlab()*(MASSD-f_Erprime)+2.*pkin->GetKlab()*przprime;
+		      
+    double f_prz=-massi*(1-x);  //new value for prz 
+    //add mass diff term if necessary
+//     if(symm==0){
+//       if(first/*&&(Wxprime2<f_Wxprime2)*/) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
+//       if((!first)/*&&(Wxprime2>f_Wxprime2)*/) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
+//     }
+//     if(symm==-1){
+//       if(first&&(Wxprime2<f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
+//       if((!first)&&(Wxprime2>f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
+//     }
+    //check convergence
+    if((abs((przprime-f_prz)/f_prz)<1e-03)) {otherWx2= f_Wxprime2; przprime = f_prz; /*cout << i << " " << prz << " " << przprime << " " << x << endl;*/ return;}
+    //start again
+    przprime=f_prz;
+    otherWx2=f_Wxprime2;  
+  }
+  //no real convergence
+//   cout << "bleeeep " << prz << " " << przprime << " " << x << endl;
+//   cout << first << " " << x << " " << przprime << " " << otherWx2 << endl;
   return;
 }
 

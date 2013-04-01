@@ -35,11 +35,11 @@ int main(int argc, char *argv[])
   };
   vector<complex<double> > FT;
   double k=0.;
-  for(int i=0;i<130;i++){
+  for(int i=0;i<40;i++){
     double tot=0.;
     int totsh=0;
-    double p=3.*i;
-    cout << p*INVHBARC << " ";
+    double p=0.05*i*HBARC;
+    cout << 0.05*i << " ";
     for(int shell=0;shell < Nucleus.getTotalLevels() ; shell++){
 	Ftor F;
 	F.pNucleus = &Nucleus;
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
       cout << tot << endl;
       k+=p*p*tot;
   }
-   cout << k*pow(INVHBARC,3)*3. << endl;
+   //cout << k*pow(INVHBARC,3)*3. << endl;
 }
 
 void adap_intr(numint::vector_z & results, double r, MeanFieldNucleusThick *pNucleus, int shell, double p){
