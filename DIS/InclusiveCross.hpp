@@ -45,7 +45,7 @@ public:
   InclusiveCross(bool proton, std::string strucname, std::string wavename, TElectronKinematics &elec, int symm, int offshell, 
 		 double sigmain=40.,double betain=8., double epsilonin=-0.5, double betaoffin=8., double lambdain=1.2);
   ~InclusiveCross(); /*!< Destructor */
-  /*! Calculates the plane-wave inclusive cross section without any prefactors, just the deuteron structure functions time
+  /*! Calculates the plane-wave inclusive cross on-shell section without any prefactors, just the deuteron structure functions time
    * momentum distribution
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
@@ -61,7 +61,17 @@ public:
    * \param x [] bjorken x
    */
   void calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double x);
+  /*! Calculates the fsi inclusive off-shell cross section without any prefactors, just the deuteron structure functions time
+   * momentum distribution
+   * \param fsi1 [] inclusive fsi cross section without prefactors (structure functions times momentum distribution integrated)
+   * calculated in one of two ways (see notes)
+   * \param fsi2 [] other fsi formula
+   * \param Q2 [MeV^2] Q^2 of virtual photon
+   * \param x [] bjorken x
+   */
+  void calc_F2DincFSI_off(double &fsi1, double &fsi2, double Q2,double x);
   //void calc_F2DincFSI2(double &fsi1, double &fsi2, double Q2,double x);
+  void setOffshell(const int offshell){offshellset=offshell;} /*!< set offshell parametrization */
   
   
 private:
@@ -178,6 +188,8 @@ private:
   
    /*! integrandum function (clean ones)*/
   static void FSI_int(numint::vector_d & results, double pnorm, double costheta, double qt, 
+		      double qphi, InclusiveCross& cross, double Q2, double x);
+  static void FSI_int_off(numint::vector_d & results, double pnorm, double costheta, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x);
  
   
