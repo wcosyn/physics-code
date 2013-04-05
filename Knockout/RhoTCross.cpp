@@ -6,7 +6,7 @@ using namespace std;
 
 RhoTCross::RhoTCross(const int nucleus, const double p_max, const string dir, const bool no_cuts,
   const bool user_set, const double user_sigma, const double precision, const int integr, const int max_Eval,
-  const double p_dil
+  const double p_dil, const int particletype
 ):
 homedir(dir),
 pmax(p_max),
@@ -20,7 +20,8 @@ prec(precision),
 integrator(integr),
 abserror(1.E-012),
 maxEval(max_Eval),
-pdil(p_dil){
+pdil(p_dil),
+particle_type(particletype){
 
   pfsigrid = new GlauberDecayGridThick*[nucleusthick.getTotalLevels()];
 //   pdistgrid = new DistMomDistrGrid*[nucleusthick.getTotalLevels()];
@@ -424,7 +425,7 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
 			    double pm, double pmcostheta, double pmphi){
   //if userset there's only one possible glaubergrid, so we don't have to check every time!
   if(!(userset&&pfsigrid[shell]->getFilledallgrid())){
-    FastParticle rho(4, 0, prho,0.,0.,Q2,145.,homedir);
+    FastParticle rho(particle_type, 0, prho,0.,0.,Q2,145.,homedir);
     if(userset) rho.setScatter(usersigma,6.,-0.2,pdil);
     pfsigrid[shell]->clearParticles();
     pfsigrid[shell]->addParticle(rho);

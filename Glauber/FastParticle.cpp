@@ -80,6 +80,28 @@ Gamma(ggamma){
       mass = MASSRHO;
       sigma_decay_n=sigma_decay_p=sigman+sigmap;
       break;
+    case(5):
+      //cout <<"rho0 more CT" << endl;
+//       setPionGlauberData(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+      sigman=sigmap = (interpolate(sigman_array,log10(p),0.01,151,250.)+interpolate(sigmap_array,log10(p),0.01,151,250.))*0.5;
+      beta2n=beta2p = (interpolate(beta2n_array,log10(p),0.01,151,250.)+interpolate(beta2p_array,log10(p),0.01,151,250.))*0.5;
+      epsilonn = epsilonp = (interpolate(epsn_array,log10(p),0.01,151,250.)+interpolate(epsp_array,log10(p),0.01,151,250.))*0.5;
+      nkt_sq=0.35*0.35*4;
+      lc=2*p*HBARC/0.5/1e06;
+      mass = MASSRHO;
+      sigma_decay_n=sigma_decay_p=sigman+sigmap;
+      break;
+    case(6):
+      //cout <<"rho0 less CT" << endl;
+//       setPionGlauberData(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
+      sigman=sigmap = (interpolate(sigman_array,log10(p),0.01,151,250.)+interpolate(sigmap_array,log10(p),0.01,151,250.))*0.5;
+      beta2n=beta2p = (interpolate(beta2n_array,log10(p),0.01,151,250.)+interpolate(beta2p_array,log10(p),0.01,151,250.))*0.5;
+      epsilonn = epsilonp = (interpolate(epsn_array,log10(p),0.01,151,250.)+interpolate(epsp_array,log10(p),0.01,151,250.))*0.5;
+      nkt_sq=0.35*0.35*4;
+      lc=2*p*HBARC/1./1e06;
+      mass = MASSRHO;
+      sigma_decay_n=sigma_decay_p=sigman+sigmap;
+      break;
     default:
       cerr << "Particle type is not yet supported!!: " << particletype << endl;
       exit(1);

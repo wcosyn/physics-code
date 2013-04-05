@@ -114,22 +114,36 @@ private:
   void int_qphi(double qphi, double *results, va_list ap); 
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass
-   * \param pt [MeV] final transverse spectator momentum
+  * \param pt2 [MeV^2] final transverse spectator momentum sq
    * \param Er [MeV] final spectator on-shell energy
    * \param pkin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param first parameter that controls whether we take the pole before or after the rescattering
    */
-  void get_prz(double pt, double Er, TKinematics2to2 *pkin, int first);
+  void get_prz(double pt2, double Er, TKinematics2to2 *pkin, int first);
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass.  Based on new method in bjorken method where pr_z \approx m(x-1)
-   * \param pt [MeV] final transverse spectator momentum
-   * \param Er [MeV] final spectator on-shell energy
+  * \param pt2 [MeV^2] final transverse spectator momentum sq
    * \param pkin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-   * \param first parameter that controls whether we take the pole before or after the rescattering
    */
-  void get_prz2(double pt, double Er, TKinematics2to2 *pkin, int first);
+  void get_prz2(double pt2, TKinematics2to2 *pkin);
+  /*! recursive method to find the pole in the fsi integration, longitudinal part,
+   * also determines intermediate mass.  Based on new method in bjorken method where pr_z \approx m(x-1)
+  * \param pt2 [MeV^2] final transverse spectator momentum sq
+  * \param Q2 [MeV^2] four momentum transfer
+  * \param qvec [MeV] virt photon momentum
+  * \param nu [MeV] virt photon energy
+   */
+  void get_prz_first(double pt2, double Q2, double qvec, double nu);
+   /*! recursive method to find the pole in the fsi integration, longitudinal part,
+  * \param pt2 [MeV^2] final transverse spectator momentum sq
+  * \param Q2 [MeV^2] four momentum transfer
+  * \param qvec [MeV] virt photon momentum
+  * \param nu [MeV] virt photon energy
+  * \param W1 [MeV] invariant mass
+   */
+  void get_prz_first2(double pt2, double Q2, double qvec, double nu, double W1);
  /*! gives you the scatter amplitude of the final-state interaction
    * \param t [MeV^2] momentum transfer squared
    * \return \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$

@@ -34,10 +34,11 @@ public:
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param maxEval max # of function evaluations in the pm integration
    * \param p_dil [MeV] momentum used in decay width time dilatation
+   * \param particletype 4 regular rho, 5 more CT rho, 6 less Ct rho
    */
   RhoTCross(const int nucleus, const double pmax, const std::string dir, const bool no_cuts, 
 	    const bool userset, const double usersigma, const double precision, const int integrator,
-	    const int maxEval, const double p_dil
+	    const int maxEval, const double p_dil, const int particletype
  	  );
   ~RhoTCross(); /*!<Destructor */
   /*! Calculate cross section integrated over z at fixed t, cross section is dsigma/dEe'dOmega_e'dtdphi
@@ -88,7 +89,8 @@ private:
   int nrofcross; /*!< number of different cross sections (number of FSI grids + 1 for plane-wave */
   double abserror; /*!< absolute error in interations */
   int maxEval; /*!< max # of function evaluations in integration*/
-  double pdil; /*! [MeV] momentum used in time dilatation of decay width */
+  double pdil; /*!< [MeV] momentum used in time dilatation of decay width */
+  int particle_type; /*!< 4 regular rho, 5 more CT rho, 6 less Ct rho */
   MeanFieldNucleusThick nucleusthick; /*!< nucleus instance */
   DistMomDistrGrid **pdistgrid; /*!< array of distorted momentum distribution grid, one for each shell level */
   std::map<double,DistMomDistrGrid> distgridmap; /*!< map used to store distorted momentum distributions */

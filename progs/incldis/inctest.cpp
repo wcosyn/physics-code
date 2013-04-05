@@ -48,8 +48,8 @@ int main(int argc, char *argv[])
 	noemer+=nucleon.getF2();
       }
       cout << x << " " << teller/noemer << " " << (teller-fsi1)/noemer << " " << (teller-fsi2)/noemer << " " 
-	<<(teller-fsioff1)/noemer << " " << (teller-fsioff2)/noemer << " " << (teller-fsioffsuppr1)/noemer << " " 
-	<< (teller-fsioffsuppr2)/noemer << endl;
+	<<(teller-fsi1-fsioff1)/noemer << " " << (teller-fsi2-fsioff2)/noemer << " " << (teller-fsi1-fsioffsuppr1)/noemer << " " 
+	<< (teller-fsi2-fsioffsuppr2)/noemer << endl;
       //cout << x << " " << teller << " " << noemer << " " << teller/noemer << endl;
     }
     delete elec;

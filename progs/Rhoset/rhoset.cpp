@@ -73,12 +73,13 @@ int main(int argc, char *argv[])
   int integrator = atoi(argv[9]);
   int maxEval = atoi(argv[10]);
   double prec=atof(argv[11]);
+  int ptype=atoi(argv[12]);
 //   int maxEval2 = atoi(argv[11]);
-  string homedir=argv[12];
+  string homedir=argv[13];
   double Ebeam = 5.014;
   
 
-  RhoTCross test = RhoTCross(nucleus,330,homedir,nocuts,1,usersigma,prec,2,maxEval,p_dil);  
+  RhoTCross test = RhoTCross(nucleus,330,homedir,nocuts,1,usersigma,prec,2,maxEval,p_dil,ptype);  
   
   if(integrator==0){
     double result[test.getNrofcross()];
