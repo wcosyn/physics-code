@@ -67,7 +67,7 @@ public:
   int getPindex() const{return pindex;}/*!<  returns the index for r used in the 3d interpolation*/
   int getCthindex() const{return cthindex;}/*!<  returns the index for theta used in the 3d interpolation*/
   int getPhiindex() const{return phiindex;}/*!<  returns the index for phi used in the 3d interpolation */
-  AbstractFsiCTGrid * const getPfsigrid() const{return pfsigrid;}/*!<  returns the pointer to the MeanFieldNucleus instance */
+  AbstractFsiCTGrid * const getPfsigrid() const{return pfsigrid;}/*!<  returns the pointer to the AbstractFsiCTGrid instance */
   
   bool getFilledgrid() const{return filledgrid;}
   bool getFilledctgrid() const{return filledctgrid;}
