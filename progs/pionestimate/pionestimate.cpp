@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
   int maxEval=20000;//atoi(argv[10]);
   bool ppion=atoi(argv[2]);
   
-  string homedir="/home/wim/Code/share";
+  string homedir=argv[3];
 
   MeanFieldNucleusThick nucl(nucleus,homedir);
   DistMomDistrGrid *pgrid[nucl.getTotalLevels()];
