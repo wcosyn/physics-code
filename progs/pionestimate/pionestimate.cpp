@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
     FastParticle pion1(2, 0, ppi,0.,0.,3.,0.,homedir);
     FastParticle pion2(3, 0, ppi,thetapi,0.,3.,0.,homedir);
     grid.clearParticles();
-    grid.addParticle(pion1);
-    grid.addParticle(pion2);
+    if(ppion==1||ppion==2) grid.addParticle(pion1);
+    if(ppion==1||ppion==3) grid.addParticle(pion2);
     grid.updateGrids();
     grid.clearKnockout();
     for(int i=0;i<nucl.getTotalLevels();i++){
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
   }
   else{
     OneGlauberGrid grid = OneGlauberGrid(60,18,&nucl,prec,integrator,homedir);
-    FastParticle rhopion(7, 0, prho,0.,0.,3.,0.,homedir);
+    FastParticle rhopion(7, 0, ppi,0.,0.,3.,0.,homedir);
     grid.clearParticles();
     grid.addParticle(rhopion);
     grid.updateGrids();
