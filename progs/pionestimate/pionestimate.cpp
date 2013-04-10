@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
   int integrator=2;//atoi(argv[8]);
   int thick=1;//atoi(argv[9]);
   int maxEval=20000;//atoi(argv[10]);
-  bool ppion=atoi(argv[2]);
+  int ppion=atoi(argv[2]);
   
   string homedir=argv[3];
 
