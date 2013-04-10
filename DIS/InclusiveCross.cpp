@@ -202,8 +202,8 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
   //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
   //t = (ps-ps')^2
   double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
-  cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)
-    /(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
+  cross.sigma=(25.3*1.E-06*1.8E06+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)
+    /(1.E-05*1.8E06)*INVHBARC*INVHBARC;
   complex<double> wave2[6];
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,cross.przprime);
   for(int i=0;i<6;i++){
@@ -265,7 +265,7 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
   double qvec=sqrt(Q2+pow(Q2/(2.*cross.massi*x),2.));
   double nu=Q2/(2.*cross.massi*x);
   cross.Wxprime2=W*W;
-  cross.get_prz_first2(prt*prt,Q2,qvec,nu,W);
+  cross.get_prz_first(prt*prt,Q2,qvec,nu);
   double prnorm=sqrt(prt*prt+cross.prz*cross.prz);
   double Er=sqrt(cross.massr*cross.massr+prnorm*prnorm);
   double xprime = Q2/(2.*((MASSD-Er)*nu-cross.prz*qvec));
@@ -307,8 +307,8 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
   //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
   //t = (ps-ps')^2
   double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
-  cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)
-    /(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
+  cross.sigma=(25.3*1.E-06*1.8E06+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)
+    /(1.E-05*1.8E06)*INVHBARC*INVHBARC;
   complex<double> wave2[6];
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,cross.przprime);
   for(int i=0;i<6;i++){
