@@ -9,15 +9,15 @@ using namespace std;
 #include <TKinematics2to2.h>
 #include <TElectronKinematics.h>
 #include <DeuteronStructure.hpp>
-#include "DeuteronMomDistr.hpp"
-#include "DeuteronCross.hpp"
+#include <DeuteronMomDistr.hpp>
+#include <DeuteronCross.hpp>
 
 int main(int argc, char *argv[])
 {
   double Wprime=1.25E03;//invariant mass X
   double Q2=1.8E06;
   double Ein=5765.;
-  for (int i=0;i<6;i+=2){
+  for (int i=0;i<40;i+=1){
     double costhetar=-0.975+i*0.05;
   
   

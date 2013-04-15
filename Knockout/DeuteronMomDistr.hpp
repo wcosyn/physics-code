@@ -13,7 +13,7 @@
 #include <TDeuteron.h>
 #include <TKinematics2to2.h>
 #include <TInterpolatingWavefunction.h>
-
+#include <numint/numint.hpp>
 
 /*! \brief Has methods to compute a ton of deuteron momentum distributions (distorted too) */
 class DeuteronMomDistr{
@@ -140,6 +140,32 @@ private:
    * \return \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
    */
   std::complex<double> scatter(double t);
+  
+  /*! struct that is used for integrators fsi mom distribution*/
+  struct Ftor_FSI {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,2> &x, void *param, numint::vector_z &ret) {
+      Ftor_FSI &p = * (Ftor_FSI *) param;
+      p.f(ret,x[0],x[1],*p.momdistr, *p.kin,p.M,p.spinr,p.Er,p.phi);
+    }
+    DeuteronMomDistr *momdistr;/*!< pointer to DeuteronMomDistr instance that contains all */
+    TKinematics2to2 *kin; /*!< kinematics object */
+    int M; /*!< spin projection of the deuteron */
+    int spinr; /*!< spin proj of spectator */
+    double Er; /*!< [MeV] on-shell energy of spectator */
+    double phi; /*!< angle between hadron and electron plane */
+    /*! integrandum 
+    */
+    void (*f)(numint::vector_z & res, double qt, double qphi, DeuteronMomDistr &momdistr,
+	      TKinematics2to2 &kin, int M, int spinr, double Er, double phi);
+  };
+  
+   /*! integrandum function (clean ones)*/
+  static void FSI_int(numint::vector_z & results, double qt, double qphi, DeuteronMomDistr &momdistr,
+		      TKinematics2to2 &kin, int M, int spinr, double Er, double phi);
+
+  
   
 };
 /** @} */
