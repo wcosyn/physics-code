@@ -55,16 +55,17 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   if(offshellset==2) betaoff=par[2];
   else epsilon=par[2];
   DeuteronCross DeepsCross("paris",proton,"SLAC",par[0],par[1],epsilon,betaoff,lambdain,offshellset,looplimit);
-
+  cout << par[0] << " " << par[1] << " " << par[2] << endl;
   for(int i=startset;i<stopset;i++){
 //   for(int i=2;i<3;i++){
     double pr=prarray[i];
+//     cout << i << " " << endl;
     for(int j=0;j<34;j++){
       double costhetar=-0.975+j*0.05;
       if(deepsdata[Qindex][Windex][i][j][2]!=0.){
 	double pw=0.,fsi=0.;
 	DeepsCross.getDeepsresult(Qarray[Qindex], Warray[Windex], 5765, pr, costhetar, proton, pw,fsi);
-	cout << costhetar << " " << par[0] << " " << par[2] << " " << fsi << " " << deepsdata[Qindex][Windex][i][j][1] << endl;
+// 	cout << costhetar << " " << pw << " " << fsi << " " << deepsdata[Qindex][Windex][i][j][1] << endl;
 	if(!isnan(fsi)) f+=pow((fsi-deepsdata[Qindex][Windex][i][j][1])/deepsdata[Qindex][Windex][i][j][2],2.);
       }
     }
@@ -168,11 +169,11 @@ int main(int argc, char *argv[])
 }
 
   std::cout << "Fixing some parameters...\n";
-  if(offshellset==0){
-    for ( int i = fNDim-fixparam ; i < gMinuit->GetNumberTotalParameters() ; ++i ) gMinuit->FixParameter ( i );
-  }
-  if(offshellset!=0){
+  if(offshellset==2){
     for ( int i = fNDim-fixparam-1 ; i < gMinuit->GetNumberTotalParameters()-1 ; ++i ) gMinuit->FixParameter ( i );    
+  }
+  else{
+    for ( int i = fNDim-fixparam ; i < gMinuit->GetNumberTotalParameters() ; ++i ) gMinuit->FixParameter ( i );
   }
   
   // Print out to verify...

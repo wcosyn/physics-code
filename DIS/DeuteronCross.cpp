@@ -66,6 +66,10 @@ void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, d
 //   DeuteronCross test(*elec,"paris",proton,"SLAC",36.3274,1.97948,-0.5,8.,1.2,4);
   
   double Eout=Ein-nu;
+  //unphysical kinematics!!!
+  if(Eout<0.){ planewave=fsi=0.0/0.; return;}
+  if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ planewave=fsi=0.0/0.; return;}
+
   double thetain=acos((Ein*Ein+qvec*qvec-Eout*Eout)/(2.*Ein*qvec));
   double yprime=(Einoff*nu+prz*qvec)/(Ein*Einoff+Ein*cos(thetain)*pr*costhetar/*+Ein*sin(thetain)*pr*sqrt(1.-costhetar*costhetar)*/);  
   double R=0.18;
