@@ -29,7 +29,7 @@ EFILEST   = 	../../bin/staticdeepsfit
 
 
 #		Mathematical functions
-LIBS =	 	-lm  -lifcore
+LIBS =	 	-lm 
 WIMLIBS = -lMePhys -lGlauber -lDIS -lKnockout -lIntegrator
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
