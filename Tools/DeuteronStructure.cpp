@@ -10,8 +10,8 @@
 using namespace std;
 
 
-DeuteronStructure::DeuteronStructure(TElectronKinematics &el, int pr, string nm)
-:electron(el),proton(pr),name(nm),massi(proton?MASSP:MASSN){
+DeuteronStructure::DeuteronStructure(int pr, string nm)
+:proton(pr),name(nm),massi(proton?MASSP:MASSN){
   
 }
 
@@ -55,7 +55,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   return;
 }
 
-double DeuteronStructure::getStructure(TKinematics2to2 &kin,double phir, double Einoff) const{
+double DeuteronStructure::getStructure(TKinematics2to2 &kin, TElectronKinematics &electron, double phir, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
   return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT)
@@ -64,7 +64,7 @@ double DeuteronStructure::getStructure(TKinematics2to2 &kin,double phir, double 
 }
 
 
-double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, double Einoff) const{
+double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
   return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);

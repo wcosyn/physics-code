@@ -17,7 +17,7 @@ symm(sym),
 prz(-9999.),
 offshellset(offshell),
 electron(elec),
-structure(elec,proton,strucname){
+structure(proton,strucname){
 
   wf = TDeuteron::Wavefunction::CreateWavefunction(wavename);
   

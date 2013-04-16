@@ -5,7 +5,7 @@ project(DIS)
 # fill list of header files 
 set(DIS_HEADERS_HPP 
 InclusiveCross.hpp
-InclusiveCrossRes.hpp
+# InclusiveCrossRes.hpp
 DeuteronCross.hpp
 Resonance.hpp
 )
