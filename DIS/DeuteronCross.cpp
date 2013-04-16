@@ -4,9 +4,11 @@
 using namespace std;
 
 DeuteronCross::DeuteronCross(string name, bool proton, string strucname,
-			     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset):
+			     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset,
+			     int looplimit
+			    ):
 massi(proton? MASSP:MASSN),
-momdistr(name,massi,offshellset,sigmain,betain,epsilonin,betaoffin,lambdain),
+momdistr(name,massi,offshellset,sigmain,betain,epsilonin,betaoffin,lambdain,looplimit),
 structure(proton,strucname)
 {
   
@@ -30,7 +32,7 @@ double DeuteronCross::getavgCross(TKinematics2to2 &kin,TElectronKinematics &elec
   
 }
 
-void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton, double phi, std::string homedir,
+void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
     double &planewave, double &fsi){
 
   double massi=proton? MASSP:MASSN;
@@ -59,7 +61,7 @@ void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, d
   cout << xprime << " " << xx << endl;*/
   double x=Q2/(2.*massi*nu);
     
-  TKinematics2to2 kin("","",MASSD,MASSP,W,"qsquared:wlab:pklab",1.8E06,nu,pr);
+  TKinematics2to2 kin("","",MASSD,MASSP,W,"qsquared:wlab:pklab",Q2,nu,pr);
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
 //   DeuteronCross test(*elec,"paris",proton,"SLAC",36.3274,1.97948,-0.5,8.,1.2,4);
   
@@ -104,7 +106,7 @@ void DeuteronCross::readin_deeps(double ******pdeepsarray, string dir){
   for(int i=0;i<Q2index;i++){
     for(int j=0;j<Windex;j++){
       for(int k=0;k<psindex;k++){ 
-	string filename=dir+"deepsdata/exp.Q"+qq[i]+".W"+ww[j]+".p"+pp[k]+".dat";
+	string filename=dir+"/deepsdata/exp.Q"+qq[i]+".W"+ww[j]+".p"+pp[k]+".dat";
 	ifstream file(filename.c_str(),ios::in);
 	if (file.is_open()){
 	  for(int l=0;l<thetaindex;l++) file >> (*pdeepsarray)[i][j][k][l][0]>>(*pdeepsarray)[i][j][k][l][1]

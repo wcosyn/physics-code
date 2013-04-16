@@ -33,9 +33,10 @@ public:
    * \param epsilon [] eikonal parameter, real part of amplitude of particle in final-state with spectator
    * \param betaoff [GeV^-2] eikonal parameter, off-shell slope parameter of particle in final-state with spectator
    * \param lambda [GeV^2] cutoff parameter for off-shell part
+   * \param looplimit max number of tries in loop to get prz pole
    */
   DeuteronMomDistr(std::string name, double massi, int offshell, double sigma, double beta, 
-		   double epsilon, double betaoff, double lambda);
+		   double epsilon, double betaoff, double lambda, int looplimit);
     /*! Constructor
    * \param name Deuteron wave function name, see TDeuteron
    */
@@ -102,7 +103,7 @@ private:
    * - 3: no off-shell amplitude, fully suppressed
    * - 4: full off-shell amplitude, no suppression */
   int offshellset; 
-  
+  int looplimit; /*!< max number of tries in loop to get prz pole */
   /*! function that gets integrated over q_t (perpendicular to photon momentum) 
    * \param qt [MeV] in fsi: momentum transfer component perpendicular to photon momentum 
    * \param result result: contains fsi part of DIS distorted momentum distribution

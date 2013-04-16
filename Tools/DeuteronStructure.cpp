@@ -43,6 +43,8 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
     F1=F2*2.*xtilde/(1+R)*(pow(alphai/alphaq+1/(2.*xtilde),2.)-pt*pt/(2.*kin.GetQsquared())*R);
   }
   else strfunction->getF(F1,F2);
+  if(isnan(F2)){FL=FT=FTT=FTL=F2; return;}
+  if(isnan(F1)){FL=FT=FTT=FTL=F1; return;}
   //cout << F1 << " " << F2 << " " << nutilde << " " << pt << " " << kin.GetCosthklab() << endl;
   FL=pow((alphai+alphaq*piq/kin.GetQsquared())*(1+cosdelta),2.)*kin.GetWlab()/nutilde*F2-kin.GetWlab()/massi*sindelta2*F1;
   FT=2.*F1+pt*pt/(massi*nutilde)*F2;
@@ -58,6 +60,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
 double DeuteronStructure::getStructure(TKinematics2to2 &kin, TElectronKinematics &electron, double phir, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
+  if(isnan(FL)) return FL;
   return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT)
 	+sqrt(kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*cos(phir)*FTL+cos(2.*phir)*FTT;
   
@@ -67,6 +70,7 @@ double DeuteronStructure::getStructure(TKinematics2to2 &kin, TElectronKinematics
 double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
+  if(isnan(FL)) return FL;
   return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
   
 }
@@ -75,6 +79,7 @@ double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinemat
 double DeuteronStructure::getInclStructure(TKinematics2to2 &kin, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
+  if(isnan(FL)) return FL;
   //cout << FL << " " << FT << " " << FTT << " " << FTL << " " << kin.GetQsquared() << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
   return FL+kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())*kin.GetWlab()/massi*FT;
   

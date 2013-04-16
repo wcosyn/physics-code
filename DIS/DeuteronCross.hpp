@@ -36,9 +36,10 @@ public:
    * - 2: suppression with a off-shell beta parameter
    * - 3: no off-shell amplitude, fully suppressed
    * - 4: full off-shell amplitude, no suppression 
+   * \param looplimit max number of tries in loop to get prz pole
    */
   DeuteronCross(std::string wfname, bool proton, std::string strucname,
-    double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset);
+    double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset, int looplimit);
   ~DeuteronCross(); /*!<Destructor */
   /*! get the average cross section
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
@@ -56,12 +57,10 @@ public:
    * \param pr [MeV] spectator momentum
    * \param costhetar angle of spectator with q
    * \param proton DIS on proton (1) or neutron (0)
-   * \param phi angle between hadron and electron plane
-   * \param homedir SHARE dir with input
    * \param planewave plane wave result
    * \param fsi fsi result
    */
-  void getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton, double phi, std::string homedir,
+  void getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
     double &planewave, double &fsi);
   /*! reads in the Deeps data set in an array >
    * \param pdeepsarray pointer to array with the deeps results, indices as follows <BR>

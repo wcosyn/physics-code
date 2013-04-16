@@ -7,7 +7,7 @@
 using namespace std;
 
 DeuteronMomDistr::DeuteronMomDistr(std::string name, double mass, int offshells, double sigmain, double betain, double epsilonin,
-  double betaoffin, double lambdain):
+  double betaoffin, double lambdain, int loop_limit):
 sigma(sigmain/10.*INVHBARC*INVHBARC),  //to MeV^-2
 beta(betain*1.E-06), // to MeV^-2
 epsilon(epsilonin),
@@ -16,7 +16,8 @@ lambda(lambdain*1.E+06), // to MeV^2
 massi(mass),
 massr(massi==MASSP? MASSN:MASSP),
 przprime(-9999.),
-offshellset(offshells){
+offshellset(offshells),
+looplimit(loop_limit){
   wfref = TDeuteron::Wavefunction::CreateWavefunction(name);
   for(int i=0;i<=1000;i++){
     wf.AddUp(i,wfref->GetUp(i));
@@ -139,7 +140,7 @@ double DeuteronMomDistr::getMomDistrfsi(TKinematics2to2 &kin, double phi){
       int res=90;
       unsigned count=0;
     //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,2E04,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,2E03,ret,count,0);
       result=ret[0];
 //       rombergerN(this,&DeuteronMomDistr::totdens_qt,0.,1.E03,1,&result,PREC,3,10,&qestimate, 
 // 				  &kin,M,spinr, Er,phi,&thestimate);
@@ -166,6 +167,7 @@ void DeuteronMomDistr::FSI_int(numint::vector_z & result, double qt, double qphi
   momdistr.get_przprime(pt2,Er,&kin);
   if(momdistr.Wxprime2<0.) {result[0]= 0.; return;}
   double pprime = sqrt(pt2+momdistr.przprime*momdistr.przprime);
+  if(pprime>1.E03) { result[0]=0.; return;}
   double thetaprime=acos(momdistr.przprime/pprime);
   double phiprime=atan2(prt*sin(phi)-qt*sin(qphi),prt*cos(phi)-qt*cos(qphi));
   double Erprime=sqrt(momdistr.massr*momdistr.massr+pprime*pprime);
@@ -260,7 +262,7 @@ void DeuteronMomDistr::totdens_qphi(const double qphi, complex<double>* result, 
 
 void DeuteronMomDistr::get_przprime(double pt2, double Er, TKinematics2to2 *pkin){
   przprime=0.;
-  for(int i=0;i<50;i++){
+  for(int i=0;i<looplimit;i++){
     double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
     //guess for invariant mass initial X'
     double f_Wxprime2=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()
