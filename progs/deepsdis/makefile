@@ -32,9 +32,9 @@ EFILEST   = 	../../bin/staticdis
 LIBS =	 	-lm  -lifcore
 WIMLIBS = -lMePhys -lGlauber -lDIS -lKnockout -lIntegrator
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L/home/wim/Code/lib
- INCLUDEDIRS =  -I/home/wim/Code/Integrator -I/home/wim/Code/Tools  -I/home/wim/Code/Glauber -I/home/wim/Code/DIS -I/home/wim/Code/Knockout
-STATICLIBS = /home/wim/Code/lib/libglauber.a  /home/wim/Code/lib/libmephys.a /home/wim/Code/lib/libdis.a /home/wim/Code/lib/libknockout.a /home/wim/Code/lib/libintegrator.a
+ LIBDIRS = -L~/Code/lib
+ INCLUDEDIRS =  -I~/Code/Integrator -I~/Code/Tools  -I~/Code/Glauber -I~/Code/DIS -I~/Code/Knockout
+STATICLIBS = ~/Code/lib/libglauber.a  ~/Code/lib/libmephys.a ~/Code/lib/libdis.a ~/Code/lib/libknockout.a ~/Code/lib/libintegrator.a
 
 #		Header files
 HDRS =		
