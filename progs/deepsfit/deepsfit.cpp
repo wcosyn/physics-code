@@ -42,7 +42,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 {
 
   f=0.;
-  
+  int dof=0.;
   double Qarray[2]={1.8E06,2.8E06};
   double Warray[5]={1.25E03,1.5E03,1.73E03,2.02E03,2.4E03};
   double prarray[5]={300.,340.,390.,460.,560.};
@@ -66,12 +66,13 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	double pw=0.,fsi=0.;
 	DeepsCross.getDeepsresult(Qarray[Qindex], Warray[Windex], 5765, pr, costhetar, proton, pw,fsi);
 // 	cout << costhetar << " " << pw << " " << fsi << " " << deepsdata[Qindex][Windex][i][j][1] << endl;
-	if(!isnan(fsi)) f+=pow((fsi-deepsdata[Qindex][Windex][i][j][1])/deepsdata[Qindex][Windex][i][j][2],2.);
+	if(!isnan(fsi)){ f+=pow((fsi-deepsdata[Qindex][Windex][i][j][1])/deepsdata[Qindex][Windex][i][j][2],2.); dof++;}
       }
     }
   }
   // Function to minimize (chi^2)
   //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
+  f/=(dof-npar);
 }
 
 
