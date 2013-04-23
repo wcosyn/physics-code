@@ -197,12 +197,12 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
   double sinthetaprime=sqrt(pt2)/pprime;
   if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
   double Erprime=sqrt(cross.massr*cross.massr+pprime*pprime);
-  double xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()-cross.przprime*kin.GetKlab()));
+  double xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()+cross.przprime*kin.GetKlab()));
   if((Erprime>MASSD)||xprime>1) {result[0]=result[1]=0.; return;}
   //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
   //t = (ps-ps')^2
   double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
-  cross.sigma=(25.3*1.E-06*1.8E06+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)
+  cross.sigma=(25.3*1.E-06*1.8E06+53*(sqrt(cross.Wxprime2>5.76E06?5.76E06:cross.Wxprime2)-MASSP)*1.E-03)
     /(1.E-05*1.8E06)*INVHBARC*INVHBARC;
   complex<double> wave2[6];
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,cross.przprime);
@@ -268,7 +268,7 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
   cross.get_prz_first(prt*prt,Q2,qvec,nu);
   double prnorm=sqrt(prt*prt+cross.prz*cross.prz);
   double Er=sqrt(cross.massr*cross.massr+prnorm*prnorm);
-  double xprime = Q2/(2.*((MASSD-Er)*nu-cross.prz*qvec));
+  double xprime = Q2/(2.*((MASSD-Er)*nu+cross.prz*qvec));
   if((Er>MASSD)||(xprime>1)){result[1]=result[0]=0.;return;}
   double costheta=cross.prz/prnorm;
   TKinematics2to2 kin("","",MASSD,cross.massr,W,"qsquared:wlab:pklab",Q2,nu,prnorm);
@@ -296,19 +296,24 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
   }
   cross.otherWx2=-1.;
   cross.get_prz2(pt2,&kin);
-  if(cross.otherWx2<0.) {result[0]=result[1]=0.;return;}
   double pprime = sqrt(pt2+cross.przprime*cross.przprime);
   double costhetaprime=cross.przprime/pprime;
   double sinthetaprime=sqrt(pt2)/pprime;
   if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
   double Erprime=sqrt(cross.massr*cross.massr+pprime*pprime);
-  xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()-cross.przprime*kin.GetKlab()));;
+  double Ex=MASSD+nu-Er;
+  double Exprime=MASSD+nu-Erprime;
+  cross.otherWx2=cross.Wxprime2;
+  if(cross.otherWx2<0.) {result[0]=result[1]=0.;return;}
+  xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()+cross.przprime*kin.GetKlab()));;
   if((Erprime>MASSD)||xprime>1) {result[0]=result[1]=0.; return;}
   //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
   //t = (ps-ps')^2
   double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
-  cross.sigma=(25.3*1.E-06*1.8E06+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)
-    /(1.E-05*1.8E06)*INVHBARC*INVHBARC;
+//   cout << t << " " << t2 << " " << sqrt(cross.Wxprime2) << " " << sqrt(cross.otherWx2) << " " << Ex << " " << Exprime << endl;
+  
+  cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>5.76E06?5.76E06:cross.Wxprime2)-MASSP)*1.E-03)
+    /(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
   complex<double> wave2[6];
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,cross.przprime);
   for(int i=0;i<6;i++){
@@ -330,16 +335,16 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
   }
   if(cross.offshellset==2){
     cross.betaoff=16.8*1.E-06;
-    cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.otherWx2>2.4E06?2.4E06:cross.otherWx2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
+    cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>5.76E06?5.76E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
     offshellness=0.;//exp((cross.betaoff-cross.beta)*t/2.);
   }
   if(cross.offshellset==3){
     cross.betaoff=16.8*1.E-06;
-    cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
+    cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>5.76E06?5.76E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
     offshellness=exp((cross.betaoff-cross.beta)*t/2.);
   }
   if(cross.offshellset==4){
-    cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
+    cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>5.76E06?5.76E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
     offshellness=1.;
   }
   
@@ -353,316 +358,6 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
 }
 
 
-// void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W, double qt, 
-// 		      double qphi, InclusiveCross& cross, double Q2, double x){
-// 			
-//   result=numint::vector_d(2,0.);
-//   if((qt<1.E-03)||(pt<1.E-03)) { result[0]=result[1]=0.; return;}
-//   
-//   double qvec=sqrt(Q2+pow(Q2/(2.*cross.massi*x),2.));
-//   double nu=Q2/(2.*cross.massi*x);
-//   cross.Wxprime2=W*W;
-//   double Er=0.,costheta=0.,prnorm=0.;
-//   double A=cross.Wxprime2+Q2-MASSD*MASSD-2.*MASSD*nu-cross.massr*cross.massr;
-//   double B=-2.*(nu+MASSD);
-//   double aa=B*B-4.*qvec*qvec;
-//   double bb=4.*qvec*A;
-//   double cc=B*B*(cross.massr*cross.massr+pt*pt)-A*A;
-//   double discr = bb*bb-4.*aa*cc;
-//   if(discr<-1.E-09){result[1]=result[0]=0.;return;}
-//   if(abs(discr)<1.E-09){
-//     cross.prz=-bb/(2.*aa);
-//     prnorm=sqrt(pt*pt+cross.prz*cross.prz);
-//     Er=sqrt(cross.massr*cross.massr+prnorm*prnorm);
-//     if(Er>MASSD){result[1]=result[0]=0.;return;}
-//     else{
-//       costheta=cross.prz/prnorm;
-//       if(SIGN(A-2.*qvec*cross.prz)==SIGN(B*Er)){
-//   //       cout << "000 " << A-2.*qvec*cross.prz << " " << B*Er << " " << discr << " " << prnorm << endl;
-//   //       cout << W*W << " " << MASSD*MASSD-Q2+cross.massr*cross.massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*cross.prz << endl;
-//       TKinematics2to2 kin("","",MASSD,cross.massr,W,"qsquared:wlab:pklab",Q2,nu,prnorm);
-//       
-//       double structfactor=cross.structure.getInclStructure(kin,MASSD-Er);
-//       if(abs(structfactor<1E-09)||isnan(structfactor)) {result[0]=result[1]=0.; return; }
-//       //no phi integration, symmetry is already used in getInclStructure()
-//       double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)+pow(cross.massr*cross.massr-cross.Wxprime2,2.));
-//       complex<double> wave[6];
-//       for(int i=0;i<6;i++){
-// 	wave[i] = cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
-// 								      prnorm*costheta)); 
-//       }
-//       result[0]=result[1]=pt*W*structfactor/(kin.GetKlab()*kin.GetKlab()*32.*PI*PI*3.)
-// 		    *sqrt(MASSD/(2.*(MASSD-Er)*Er))*qt;
-//       double sinqphi,cosqphi;
-//       sincos(qphi,&sinqphi,&cosqphi);
-//       double pt2=prt*prt+qt*qt-2.*prt*qt*cosqphi;  
-//       double cosphiprime = (prt-qt*cosqphi)/sqrt(pt2);
-//       double sinphiprime = -qt*sinqphi/sqrt(pt2);
-//       if(abs(pt2)<1.E-03){
-// 	pt2=0.;
-// 	cosphiprime=1.;
-// 	sinphiprime=0.;
-//       }
-//       cross.otherWx2=-1.;
-//       cross.get_prz2(pt2,Er,&kin,1);
-//       if(cross.otherWx2<0.) {result[0]=result[1]=0.;return;}
-//       double pprime = sqrt(pt2+cross.przprime*cross.przprime);
-//       double costhetaprime=cross.przprime/pprime;
-//       double sinthetaprime=sqrt(pt2)/pprime;
-//       if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
-//       double Erprime=sqrt(cross.massr*cross.massr+pprime*pprime);
-//       double xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()-przprime*kin.getKlab()));;
-//       if((Erprime>MASSD)||xprime>1) {result[0]=result[1]=0.; return;}
-//       //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-//       //t = (ps-ps')^2
-//       double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
-//       cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)
-// 	/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-//       complex<double> wave2[6];
-//       TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,cross.przprime);
-//       for(int i=0;i<6;i++){
-// 	wave2[i] = cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
-//       }
-//       complex<double> temp=0.;
-//       for(int i=0;i<6;i++){
-// 	temp+=wave[i]*conj(wave2[i]);
-//       }
-// 
-//       double offshellness=0.;
-//       if(cross.offshellset==0){
-// 	double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-cross.massi*cross.massi
-// 	  +2.*kin.GetWlab()*(MASSD-Erprime-cross.massi)+2.*kin.GetKlab()*cross.prz;
-// 	offshellness=exp(cross.beta*massdiff);
-//       }
-//       if(cross.offshellset==1) {
-// 	double onshellm=-kin.GetQsquared()+cross.massi*cross.massi+2.*kin.GetWlab()*cross.massi;
-// 	offshellness=pow(cross.lambda*cross.lambda-onshellm,2.)/(pow(cross.Wxprime2-onshellm,2.)+pow(cross.lambda*cross.lambda-onshellm,2.));
-//       }
-//       if(cross.offshellset==2){
-// 	cross.betaoff=16.8*1.E-06;
-// 	cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.otherWx2>2.4E06?2.4E06:cross.otherWx2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 	offshellness=0.;//exp((cross.betaoff-cross.beta)*t/2.);
-//       }
-//       if(cross.offshellset==3){
-// 	cross.betaoff=16.8*1.E-06;
-// 	cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 	offshellness=exp((cross.betaoff-cross.beta)*t/2.);
-//       }
-//       if(cross.offshellset==4){
-// 	cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 	offshellness=1.;
-//       }
-//       
-//       result[0]*= imag(cross.scatter(t)*2.*temp //factor 2 due to symmetry
-// 	    *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi*offshellness;
-//       double chi2=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.otherWx2+cross.massr*cross.massr)
-// 	+pow(cross.massr*cross.massr-cross.otherWx2,2.));
-//       result[1]*=imag(cross.scatter(t)*2.*conj(temp) //factor 2 due to symmetry
-//      	  *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi2*offshellness;
-//       }
-//     }
-//   }
-//   else{
-//     cross.prz=(-bb+sqrt(discr))/(2.*aa);
-//     prnorm=sqrt(pt*pt+cross.prz*cross.prz);
-//     Er=sqrt(cross.massr*cross.massr+prnorm*prnorm);
-//     if(Er<MASSD){
-//       costheta=cross.prz/prnorm;
-//       if(SIGN(A-2.*qvec*cross.prz)==SIGN(B*Er)){
-//   //       cout << "111 " << A-2.*qvec*cross.prz << " " << B*Er << " " << discr << " " << prnorm << endl;
-//   //       cout << W*W << " " << MASSD*MASSD-Q2+cross.massr*cross.massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*cross.prz << endl;
-//   
-// 	TKinematics2to2 kin("","",MASSD,cross.massr,W,"qsquared:wlab:pklab",Q2,nu,prnorm);
-// 	
-// 	double structfactor=cross.structure.getInclStructure(kin,MASSD-Er);
-// 	if(!(abs(structfactor<1E-09)||isnan(structfactor))){ 
-// 	  numint::vector_d res=numint::vector_d(2,0.);
-// 	  //no phi integration, symmetry is already used in getInclStructure()
-// 	  double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)+pow(cross.massr*cross.massr-cross.Wxprime2,2.));
-// 	  complex<double> wave[6];
-// 	  for(int i=0;i<6;i++){
-// 	    wave[i] = cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
-// 									  prnorm*costheta)); 
-// 	  }
-// 	  res[0]=res[1]=pt*W*structfactor/(kin.GetKlab()*kin.GetKlab()*32.*PI*PI*3.)
-// 			*sqrt(MASSD/(2.*(MASSD-Er)*Er))*qt;
-// 	  double sinqphi,cosqphi;
-// 	  sincos(qphi,&sinqphi,&cosqphi);
-// 	  double pt2=prt*prt+qt*qt-2.*prt*qt*cosqphi;  
-// 	  double cosphiprime = (prt-qt*cosqphi)/sqrt(pt2);
-// 	  double sinphiprime = -qt*sinqphi/sqrt(pt2);
-// 	  if(abs(pt2)<1.E-03){
-// 	    pt2=0.;
-// 	    cosphiprime=1.;
-// 	    sinphiprime=0.;
-// 	  }
-// 	  cross.otherWx2=-1.;
-// 	  cross.get_prz2(pt2,Er,&kin,1);
-// 	  if(cross.otherWx2>0.){
-// 	    double pprime = sqrt(pt2+cross.przprime*cross.przprime);
-// 	    double costhetaprime=cross.przprime/pprime;
-// 	    double sinthetaprime=sqrt(pt2)/pprime;
-// 	    if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
-// 	    double Erprime=sqrt(cross.massr*cross.massr+pprime*pprime);
-// 	    double xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()-przprime*kin.getKlab()));
-// 	    if(!((Erprime>MASSD)||xprime>1)){
-// 	      //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-// 	      //t = (ps-ps')^2
-// 	      double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
-// 	      cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)
-// 		/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 	      complex<double> wave2[6];
-// 	      TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,cross.przprime);
-// 	      for(int i=0;i<6;i++){
-// 		wave2[i] = cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
-// 	      }
-// 	      complex<double> temp=0.;
-// 	      for(int i=0;i<6;i++){
-// 		temp+=wave[i]*conj(wave2[i]);
-// 	      }
-// 
-// 	      double offshellness=0.;
-// 	      if(cross.offshellset==0){
-// 		double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-cross.massi*cross.massi
-// 		  +2.*kin.GetWlab()*(MASSD-Erprime-cross.massi)+2.*kin.GetKlab()*cross.prz;
-// 		offshellness=exp(cross.beta*massdiff);
-// 	      }
-// 	      if(cross.offshellset==1) {
-// 		double onshellm=-kin.GetQsquared()+cross.massi*cross.massi+2.*kin.GetWlab()*cross.massi;
-// 		offshellness=pow(cross.lambda*cross.lambda-onshellm,2.)/(pow(cross.Wxprime2-onshellm,2.)+pow(cross.lambda*cross.lambda-onshellm,2.));
-// 	      }
-// 	      if(cross.offshellset==2){
-// 		cross.betaoff=16.8*1.E-06;
-// 		cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.otherWx2>2.4E06?2.4E06:cross.otherWx2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 		offshellness=0.;//exp((cross.betaoff-cross.beta)*t/2.);
-// 	      }
-// 	      if(cross.offshellset==3){
-// 		cross.betaoff=16.8*1.E-06;
-// 		cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 		offshellness=exp((cross.betaoff-cross.beta)*t/2.);
-// 	      }
-// 	      if(cross.offshellset==4){
-// 		cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 		offshellness=1.;
-// 	      }
-// 	      
-// 	      result[1]+=res[0]*imag(cross.scatter(t)*2.*temp //factor 2 due to symmetry
-// 		    *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi*offshellness;
-// 	      double chi2=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.otherWx2+cross.massr*cross.massr)
-// 		+pow(cross.massr*cross.massr-cross.otherWx2,2.));
-// 	      result[0]+=res[1]*imag(cross.scatter(t)*2.*conj(temp) //factor 2 due to symmetry
-// 		  *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi2*offshellness;
-// 	    }
-// 	  }
-// 	}        
-//       }
-//     }
-//     cross.prz=(-bb-sqrt(discr))/(2.*aa);
-//     prnorm=sqrt(pt*pt+cross.prz*cross.prz);
-//     Er=sqrt(cross.massr*cross.massr+prnorm*prnorm);
-//     if(Er>MASSD) return;
-//     costheta=cross.prz/prnorm;
-//     if(SIGN(A-2.*qvec*cross.prz)==SIGN(B*Er)){
-// //       cout << "222 " << A-2.*qvec*cross.prz << " " << B*Er << " " << discr << " " << prnorm << endl;
-// //       cout << W*W << " " << MASSD*MASSD-Q2+cross.massr*cross.massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*cross.prz << endl;
-// 
-//       TKinematics2to2 kin("","",MASSD,cross.massr,W,"qsquared:wlab:pklab",Q2,nu,prnorm);
-//       
-//       double structfactor=cross.structure.getInclStructure(kin,MASSD-Er);
-//       if(abs(structfactor<1E-09)||isnan(structfactor)) {return; }
-//       //no phi integration, symmetry is already used in getInclStructure()
-//       double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)
-// 	+pow(cross.massr*cross.massr-cross.Wxprime2,2.));
-//       complex<double> wave[6];
-//       for(int i=0;i<6;i++){
-// 	wave[i] = cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
-// 								      prnorm*costheta)); 
-//       }
-//       
-//       numint::vector_d res=numint::vector_d(2,0.);
-//       res[0]=res[1]=pt*W*structfactor/(kin.GetKlab()*kin.GetKlab()*32.*PI*PI*3.)
-// 		    *sqrt(MASSD/(2.*(MASSD-Er)*Er))*qt;
-//       double sinqphi,cosqphi;
-//       sincos(qphi,&sinqphi,&cosqphi);
-//       double pt2=prt*prt+qt*qt-2.*prt*qt*cosqphi;  
-//       double cosphiprime = (prt-qt*cosqphi)/sqrt(pt2);
-//       double sinphiprime = -qt*sinqphi/sqrt(pt2);
-//       if(abs(pt2)<1.E-03){
-// 	pt2=0.;
-// 	cosphiprime=1.;
-// 	sinphiprime=0.;
-//       }
-//       cross.otherWx2=-1.;
-//       cross.get_prz2(pt2,Er,&kin,1);
-//       if(cross.otherWx2<0.) {return;}
-//       double pprime = sqrt(pt2+cross.przprime*cross.przprime);
-//       double costhetaprime=cross.przprime/pprime;
-//       double sinthetaprime=sqrt(pt2)/pprime;
-//       if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
-//       double Erprime=sqrt(cross.massr*cross.massr+pprime*pprime);
-//       double xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()-przprime*kin.getKlab()));
-//       if((Erprime>MASSD)||xprime>1) { return;}
-//       //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-//       //t = (ps-ps')^2
-//       double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
-//       cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)
-// 	/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-//       complex<double> wave2[6];
-//       TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,cross.przprime);
-//       for(int i=0;i<6;i++){
-// 	wave2[i] = cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
-//       }
-//       complex<double> temp=0.;
-//       for(int i=0;i<6;i++){
-// 	temp+=wave[i]*conj(wave2[i]);
-//       }
-// 
-//       double offshellness=0.;
-//       if(cross.offshellset==0){
-// 	double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-cross.massi*cross.massi
-// 	  +2.*kin.GetWlab()*(MASSD-Erprime-cross.massi)+2.*kin.GetKlab()*cross.prz;
-// 	offshellness=exp(cross.beta*massdiff);
-//       }
-//       if(cross.offshellset==1) {
-// 	double onshellm=-kin.GetQsquared()+cross.massi*cross.massi+2.*kin.GetWlab()*cross.massi;
-// 	offshellness=pow(cross.lambda*cross.lambda-onshellm,2.)/(pow(cross.Wxprime2-onshellm,2.)+pow(cross.lambda*cross.lambda-onshellm,2.));
-//       }
-//       if(cross.offshellset==2){
-// 	cross.betaoff=16.8*1.E-06;
-// 	cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.otherWx2>2.4E06?2.4E06:cross.otherWx2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 	offshellness=0.;//exp((cross.betaoff-cross.beta)*t/2.);
-//       }
-//       if(cross.offshellset==3){
-// 	cross.betaoff=16.8*1.E-06;
-// 	cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 	offshellness=exp((cross.betaoff-cross.beta)*t/2.);
-//       }
-//       if(cross.offshellset==4){
-// 	cross.sigma=(25.3*1.E-06*kin.GetQsquared()+53*(sqrt(cross.Wxprime2>2.4E06?2.4E06:cross.Wxprime2)-MASSP)*1.E-03)/(1.E-05*kin.GetQsquared())*INVHBARC*INVHBARC;
-// 	offshellness=1.;
-//       }
-//       
-//       result[0]+=res[0]*imag(cross.scatter(t)*2.*temp //factor 2 due to symmetry
-// 	    *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi*offshellness;
-//       double chi2=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.otherWx2+cross.massr*cross.massr)
-// 	+pow(cross.massr*cross.massr-cross.otherWx2,2.));
-//       result[1]+=res[1]*imag(cross.scatter(t)*2.*conj(temp) //factor 2 due to symmetry
-//      	  *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi2*offshellness;
-//       
-//       
-//       
-//     }    
-//     
-//     
-//   }
-//   
-//   
-//   
-//   
-//   return;
-//   
-// 
-// }
 
 
 void InclusiveCross::int_pr_fsi(double prnorm, double *results, va_list ap){
@@ -789,15 +484,15 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
       }
       if(offshellset==2){
 	betaoff=16.8*1.E-06;
-	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(otherWx2>2.4E06?2.4E06:otherWx2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(otherWx2>5.76E06?5.76E06:otherWx2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
 	offshellness=0.;//exp((betaoff-beta)*t/2.);
       }
       if(offshellset==3){
-	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>5.76E06?5.76E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
 	offshellness=0.;
       }
       if(offshellset==4){
-	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+	sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>5.76E06?5.76E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
 	offshellness=1.;
       }
       complex<double> wave2[6];
@@ -847,15 +542,15 @@ void InclusiveCross::int_qphi(double qphi, double *results, va_list ap){
 //   }
 //   if(offshellset==2){
 //     betaoff=16.8*1.E-06;
-//     sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+//     sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>5.76E06?5.76E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
 //    offshellness=0.;//exp((betaoff-beta)*t/2.);
 //   }
 //   if(offshellset==3){
-//     sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+//     sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>5.76E06?5.76E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
 //     offshellness=0.;
 //   }
 //   if(offshellset==4){
-//     sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>2.4E06?2.4E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
+//     sigma=(25.3*1.E-06*pkin->GetQsquared()+53*(sqrt(Wxprime2>5.76E06?5.76E06:Wxprime2)-MASSP)*1.E-03)/(1.E-05*pkin->GetQsquared())*INVHBARC*INVHBARC;
 //     offshellness=1.;
 //   }
 //   complex<double> wave2[6];
@@ -918,23 +613,19 @@ void InclusiveCross::get_prz2(double pt2, TKinematics2to2 *pkin){
     double x=0.;
     for(int i=0;i<1;i++){
       double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
-      x=pkin->GetQsquared()/(2.*((MASSD-f_Erprime)*pkin->GetWlab()-przprime*pkin->GetKlab()));
+//       x=pkin->GetQsquared()/(2.*((MASSD-f_Erprime)*pkin->GetWlab()+przprime*pkin->GetKlab()));
+      x=pkin->GetQsquared()/(2.*(MASSN*pkin->GetWlab()));
     //guess for invariant mass initial X' Wx'2=(q+p_D-p_s')^2
-      double f_Wxprime2=-pkin->GetQsquared()
-			+pow(MASSD-f_Erprime,2.)-pt2-przprime*przprime
-			+2.*pkin->GetWlab()*(MASSD-f_Erprime)+2.*pkin->GetKlab()*przprime;
+//       double f_Wxprime2=-pkin->GetQsquared()
+// 			+pow(MASSD-f_Erprime,2.)-pt2-przprime*przprime
+// 			+2.*pkin->GetWlab()*(MASSD-f_Erprime)+2.*pkin->GetKlab()*przprime;
 			
-      double f_prz=-massi*(1-x);  //new value for prz 
-      //add mass diff term if necessary
-  //     if(symm==0){
-  //       if(first/*&&(Wxprime2<f_Wxprime2)*/) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
-  //       if((!first)/*&&(Wxprime2>f_Wxprime2)*/) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
-  //     }
-  //     if(symm==-1){
-  //       if(first&&(Wxprime2<f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
-  //       if((!first)&&(Wxprime2>f_Wxprime2)) f_prz-=(Wxprime2-f_Wxprime2)/(2.*pkin->GetKlab());
-  //     }
-      //check convergence
+      double f_prz=-massi*(1-x);
+      f_Erprime=sqrt(massr*massr+pt2+f_prz*f_prz);
+      double f_Wxprime2=-pkin->GetQsquared()
+			+pow(MASSD-f_Erprime,2.)-pt2-f_prz*f_prz
+			+2.*pkin->GetWlab()*(MASSD-f_Erprime)+2.*pkin->GetKlab()*f_prz;
+			
       if((abs((przprime-f_prz)/f_prz)<1e-03)) {otherWx2= f_Wxprime2; przprime = f_prz; /*cout << i << " " << prz << " " << przprime << " " << x << endl;*/ return;}
       //start again
       przprime=f_prz;
@@ -978,13 +669,19 @@ void InclusiveCross::get_prz_first(double pt2, double Q2, double qvec, double nu
     double x=0.;
     for(int i=0;i<1;i++){
       double f_Er=sqrt(massr*massr+pt2+prz*prz);  //guess for on-shell energy of initial spectator
-      x=Q2/(2.*((MASSD-f_Er)*nu-prz*qvec));
+//       x=Q2/(2.*((MASSD-f_Er)*nu+prz*qvec));
+      x=Q2/(2.*((MASSN*nu)));
     //guess for invariant mass initial X' Wx'2=(q+p_D-p_s')^2
       double f_Wxprime2=-Q2
 			+pow(MASSD-f_Er,2.)-pt2-prz*prz
 			+2.*nu*(MASSD-f_Er)+2.*qvec*prz;
 			
       double f_prz=-massi*(1-x);  //new value for prz 
+      f_Er=sqrt(massr*massr+pt2+f_prz*f_prz);
+      f_Wxprime2=-Q2
+			+pow(MASSD-f_Er,2.)-pt2-f_prz*f_prz
+			+2.*nu*(MASSD-f_Er)+2.*qvec*f_prz;
+      
        if((abs((prz-f_prz)/f_prz)<1e-03)) {przprime = f_prz; /*cout << i << " " << prz << " " << przprime << " " << x << endl;*/ return;}
       //start again
       prz=f_prz;
