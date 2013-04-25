@@ -108,10 +108,10 @@ private:
 
   void int_pr(double pr, double *result, va_list ap);
   void int_costheta_incl(double costheta, double *result, va_list ap);
-  void int_pr_fsi(double pr, double *result, va_list ap);
-  void int_costheta_incl_fsi(double costheta, double *result, va_list ap);
-  void int_qt(double qt, double *results, va_list ap);
-  void int_qphi(double qphi, double *results, va_list ap); 
+//   void int_pr_fsi(double pr, double *result, va_list ap);
+//   void int_costheta_incl_fsi(double costheta, double *result, va_list ap);
+//   void int_qt(double qt, double *results, va_list ap);
+//   void int_qphi(double qphi, double *results, va_list ap); 
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass
   * \param pt2 [MeV^2] final transverse spectator momentum sq
@@ -120,14 +120,14 @@ private:
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param first parameter that controls whether we take the pole before or after the rescattering
    */
-  void get_prz(double pt2, double Er, TKinematics2to2 *pkin, int first);
+  void get_prz(double pt2, double Er, TKinematics2to2 & kin, int first);
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass.  Based on new method in bjorken method where pr_z \approx m(x-1)
   * \param pt2 [MeV^2] final transverse spectator momentum sq
-   * \param pkin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    */
-  void get_prz2(double pt2, TKinematics2to2 *pkin);
+  void get_prz2(double pt2, TKinematics2to2 & kin);
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass.  Based on new method in bjorken method where pr_z \approx m(x-1)
   * \param pt2 [MeV^2] final transverse spectator momentum sq

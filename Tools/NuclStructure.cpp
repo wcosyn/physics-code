@@ -48,11 +48,13 @@ name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR){
       cerr << "non supported format in constructor" << endl;
       exit(1);
   }
+  if(!name.compare("CB")&&(Wsq>25.E06)) name="SLAC";
   return;
 
 }
 NuclStructure::NuclStructure(bool pr, double Q2in, double xin, double Wsqin, string nm="SLAC"):
 name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR),x(xin),Q2(Q2in),Wsq(Wsqin){
+  if(!name.compare("CB")&&(Wsq>25.E06)) name="SLAC";
   
 }
 
@@ -112,7 +114,7 @@ double NuclStructure::getF2_SLAC() const{
 
 void NuclStructure::getF_CB(double &F1, double &F2) const{
   if(Wsq>25.E06){ 
-    cerr << "Invariant mass too big for Christy & Bosted Parametrization!!" << endl;
+    cerr << "Invariant mass too big for Christy & Bosted Parametrization!! " << Wsq << endl;
     exit(1);
   }
   double R_CB;
@@ -168,7 +170,6 @@ double NuclStructure::getF2(){
 
 double NuclStructure::f2p_b(double massi, double xp, double q2, double fm) const{
 
-  double pmo=massi;
   double f2p,yn,wwi,t,gw;
   //f2p =  0.0;
   yn  =  q2/(2*massi*xp);//nuoffshell
@@ -177,7 +178,7 @@ double NuclStructure::f2p_b(double massi, double xp, double q2, double fm) const
   //	fm=pow(fm2,.5);
   //fm  = sqrt(fm2);
   //cout << fm;
-  wwi = (2.*yn*pmo+1.642)/(q2 +0.376);
+  wwi = (2.*yn*massi+1.642)/(q2 +0.376);
   t = 1.0 - 1.0/wwi;
   gw=0.256*pow(t,3)+2.178*pow(t,4)+
         0.898*pow(t,5)-6.716*pow(t,6)+3.756*pow(t,7);
@@ -189,7 +190,6 @@ double NuclStructure::f2p_b(double massi, double xp, double q2, double fm) const
 double NuclStructure::f2n_b(double massi, double xp, double q2, double fm) const{
   
   
-  double pmo=massi;
   double f2n,yn,wwi,t,gw;
   //f2n =  0.0;
   yn  =  q2/(2*massi*xp);
@@ -198,7 +198,7 @@ double NuclStructure::f2n_b(double massi, double xp, double q2, double fm) const
   //  fm=pow(fm2,2);
   //fm = sqrt(fm2);
   //cout << fm;
-  wwi = (2*yn*pmo + 1.642)/(q2 + 0.376);
+  wwi = (2*yn*massi + 1.642)/(q2 + 0.376);
   t   = 1.0-1.0/wwi;
   gw  = 0.064*pow(t,3) + 0.225*pow(t,4)+
   4.106*pow(t,5) - 7.079*pow(t,6)+3.055*pow(t,7);

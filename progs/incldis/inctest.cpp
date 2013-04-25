@@ -34,15 +34,15 @@ int main(int argc, char *argv[])
 	//cout << "bla " << f1 << " " << f2 << endl;
 	fsi1+=f1;
 	fsi2+=f2;
-  	Dinc.calc_F2DincFSI_off(f1,f2,Q2,x);
+//   	Dinc.calc_F2DincFSI_off(f1,f2,Q2,x);
 	//cout << "bla " << f1 << " " << f2 << endl;
-	fsioff1+=f1;
-	fsioff2+=f2;
+// 	fsioff1+=f1;
+// 	fsioff2+=f2;
 	//suppressed
 	Dinc.setOffshell(3);
-  	Dinc.calc_F2DincFSI_off(f1,f2,Q2,x);
-	fsioffsuppr1+=f1;
-	fsioffsuppr2+=f2;
+//   	Dinc.calc_F2DincFSI_off(f1,f2,Q2,x);
+// 	fsioffsuppr1+=f1;
+// 	fsioffsuppr2+=f2;
 	
 	
 	noemer+=nucleon.getF2();

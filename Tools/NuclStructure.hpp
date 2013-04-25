@@ -101,7 +101,7 @@ public:
    * [1]: var1 is Q2 [MeV^2] and var2 is W^2 [MeV^2] <BR>
    * [2]: var1 is Bjorken x [] and var2 is W^2 [MeV^2] <BR>
    * \param name Name of the parametriation. Possibilities: <BR>
-   * "CB": Christy & Bosted parametrization (see F1F209.f file) <BR>
+   * "CB": Christy & Bosted parametrization (see F1F209.f file) if invariant mass is >5 GeV, auto switch to SLAC!!!<BR>
    * "SLAC": SLAC paramtetrization from Bodek <BR>
    * "Alekhin": leading twist parametrization by Alekhin [see PRD 68,014002], also see alekhin.f file <BR>
    */
@@ -112,7 +112,7 @@ public:
    * \param xin [] Bjorken x
    * \param Wsqin [MeV^2] invariant mass squared W^2
    * \param name Name of the parametriation. Possibilities: <BR>
-   * "CB": Christy & Bosted parametrization (see F1F209.f file) <BR>
+   * "CB": Christy & Bosted parametrization (see F1F209.f file) if invariant mass is >5 GeV, auto switch to SLAC!!!<BR>
    * "SLAC": SLAC paramtetrization from Bodek <BR>
    * "Alekhin": leading twist parametrization by Alekhin [see PRD 68,014002], also see alekhin.f file <BR>
    */

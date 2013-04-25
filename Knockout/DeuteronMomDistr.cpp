@@ -164,7 +164,7 @@ void DeuteronMomDistr::FSI_int(numint::vector_z & result, double qt, double qphi
   double pt2=prt*prt+qt*qt-2.*prt*qt*cos(qphi-phi); //perp mom of initial spectator
 
   momdistr.Wxprime2=-1.;  //invariant mass X' before rescattering
-  momdistr.get_przprime(pt2,Er,&kin);
+  momdistr.get_przprime(pt2,Er,kin);
   if(momdistr.Wxprime2<0.) {result[0]= 0.; return;}
   double pprime = sqrt(pt2+momdistr.przprime*momdistr.przprime);
   if(pprime>1.E03) { result[0]=0.; return;}
@@ -230,7 +230,7 @@ void DeuteronMomDistr::totdens_qphi(const double qphi, complex<double>* result, 
   double pt2=prt*prt+qt*qt-2.*prt*qt*cos(qphi-phi); //perp mom of initial spectator
 
   Wxprime2=-1.;  //invariant mass X' before rescattering
-  get_przprime(pt2,Er,pkin);
+  get_przprime(pt2,Er,*pkin);
   if(Wxprime2<0.) {*result= 0.; return;}
   double pprime = sqrt(pt2+przprime*przprime);
   double thetaprime=acos(przprime/pprime);
@@ -260,19 +260,19 @@ void DeuteronMomDistr::totdens_qphi(const double qphi, complex<double>* result, 
   
 }
 
-void DeuteronMomDistr::get_przprime(double pt2, double Er, TKinematics2to2 *pkin){
+void DeuteronMomDistr::get_przprime(double pt2, double Er, TKinematics2to2 & kin){
   przprime=0.;
   for(int i=0;i<looplimit;i++){
     double f_Erprime=sqrt(massr*massr+pt2+przprime*przprime);  //guess for on-shell energy of initial spectator
     //guess for invariant mass initial X'
-    double f_Wxprime2=pkin->GetWlab()*pkin->GetWlab()-pkin->GetKlab()*pkin->GetKlab()
+    double f_Wxprime2=kin.GetWlab()*kin.GetWlab()-kin.GetKlab()*kin.GetKlab()
 		      +pow(MASSD-f_Erprime,2.)-pt2-przprime*przprime
-		      +2.*pkin->GetWlab()*(MASSD-f_Erprime)+2.*pkin->GetKlab()*przprime;
+		      +2.*kin.GetWlab()*(MASSD-f_Erprime)+2.*kin.GetKlab()*przprime;
 		      
-    double f_przprime=pkin->GetPklab()*pkin->GetCosthklab()-(pkin->GetWlab()+MASSD)/pkin->GetKlab()*(Er-f_Erprime);  //new value for przprime 
+    double f_przprime=kin.GetPklab()*kin.GetCosthklab()-(kin.GetWlab()+MASSD)/kin.GetKlab()*(Er-f_Erprime);  //new value for przprime 
     //add mass diff term if necessary
-    if((pkin->GetHyperonMass()*pkin->GetHyperonMass())>f_Wxprime2)
-      f_przprime-=((pkin->GetHyperonMass()*pkin->GetHyperonMass())-f_Wxprime2)/(2.*pkin->GetKlab());
+    if((kin.GetHyperonMass()*kin.GetHyperonMass())>f_Wxprime2)
+      f_przprime-=((kin.GetHyperonMass()*kin.GetHyperonMass())-f_Wxprime2)/(2.*kin.GetKlab());
     //check convergence
     if((abs((przprime-f_przprime)/f_przprime)<1e-03)) {Wxprime2= f_Wxprime2; przprime = f_przprime; return;}
     //start again

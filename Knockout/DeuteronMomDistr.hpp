@@ -135,7 +135,7 @@ private:
    * \param pkin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    */
-  void get_przprime(double pt, double Er, TKinematics2to2 *pkin);
+  void get_przprime(double pt, double Er, TKinematics2to2 & kin);
   /*! gives you the scatter amplitude of the final-state interaction
    * \param t [MeV^2] momentum transfer squared
    * \return \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
