@@ -21,12 +21,16 @@ int main(int argc, char *argv[])
     string wf = argv[3];
     int symm = atoi(argv[1]);
     TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
+    std::vector<double> resonances;
+    resonances.push_back(1.232E03);
+    resonances.push_back(1.5E03);
+    resonances.push_back(2.4E03);
     for(int i=1;i<20;i++){      
       double x=0.05*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       double teller=0.,fsi1=0.,fsi2=0.,fsioff1=0.,fsioff2=0.,fsioffsuppr1=0.,fsioffsuppr2=0.,noemer=0.;
       for(int proton=0;proton<=1;++proton){
-	InclusiveCross Dinc(proton,strucname,wf,*elec,symm,4);
+	InclusiveCross Dinc(proton,strucname,wf,*elec,resonances,symm,4);
 	NuclStructure nucleon(proton, Q2, x, 0, strucname);
 	teller+=Dinc.calc_F2Dinc(Q2,x);
 	double f1,f2;

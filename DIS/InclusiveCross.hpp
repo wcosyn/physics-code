@@ -26,6 +26,7 @@ public:
      * \param proton photon interacting with proton [1] or neutron [0]
    * \param wavename Deuteron wave function name, see TDeuteron
    * \param strucname which structure function parametrization ["CB"=Chrisy-Bosted, "SLAC", "Alekhin"]
+   * \param res [MeV] vector that contains resonance masses used in FSI
    * \param symm parameter that controls symmetric or not rescatterings in the FSI <BR>
    * - 1: no mass terms
    * - 0: mass terms always included
@@ -42,7 +43,7 @@ public:
    * \param betaoffin [GeV^-2] eikonal parameter, off-shell slope parameter of particle in final-state with spectator
    * \param lambdain [GeV^2] cutoff parameter for off-shell part
    */
-  InclusiveCross(bool proton, std::string strucname, std::string wavename, TElectronKinematics &elec, int symm, int offshell, 
+  InclusiveCross(bool proton, std::string strucname, std::string wavename, TElectronKinematics &elec, std::vector<double> & res, int symm, int offshell, 
 		 double sigmain=40.,double betain=8., double epsilonin=-0.5, double betaoffin=8., double lambdain=1.2);
   ~InclusiveCross(); /*!< Destructor */
   /*! Calculates the plane-wave inclusive cross on-shell section without any prefactors, just the deuteron structure functions time
@@ -88,6 +89,7 @@ private:
    * - -1: mass terms included like in semi-inclusive DIS (mass must increase)
    */
   int symm; 
+  std::vector<double> resonances; /*!<vector with resonance masses included in the FSI */
   
   double przprime; /*!< [MeV] longitudinal spectator momentum after rescattering */
   double prz; /*!< [MeV] lingitudinal spectator momentum before rescattering */
@@ -128,6 +130,14 @@ private:
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    */
   void get_prz2(double pt2, TKinematics2to2 & kin);
+  /*! method to find the pole in the fsi integration, longitudinal part,
+   * with resonance mass as input
+  * \param pt2 [MeV^2] final transverse spectator momentum sq
+  * \param W_sq [MeV^2] mass of resonance entering
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   */
+  void get_prz_res(double pt2, double W_sq, TKinematics2to2 & kin);
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass.  Based on new method in bjorken method where pr_z \approx m(x-1)
   * \param pt2 [MeV^2] final transverse spectator momentum sq
@@ -149,7 +159,13 @@ private:
    * \return \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
    */
   std::complex<double> scatter(double t);
-
+  /*! gives you sigma in the parametrization we got from deeps, Q^2 dependence included
+   * return [MeV^-2] sigma
+   * \param W_sq [MeV^2] invariant mass squared of scatterer
+   * \param Q2 [MeV^2] four-momentum transfer squared */
+  
+  static double sigmaparam(double W_sq, double Q2)  ;
+  
 //   void int_pperp_fsi(double pperp, double *result, va_list ap);
 //   void int_qt_bis(double qt, double *results, va_list ap);
 //   void int_qphi_bis(double qphi, double *results, va_list ap); 
