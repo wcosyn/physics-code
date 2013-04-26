@@ -132,7 +132,7 @@ void InclusiveCross::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double
 //   fsi1=results[0]*2.*PI*2.*massi/MASSD;
 //   fsi2=results[1]*2.*PI*2.*massi/MASSD;
  //cout << fsi1 << " " << fsi2 << endl;
-  
+  fsi1=fsi2=0.;
   numint::array<double,4> lower = {{0.,-1.,0.,0.}};
   numint::array<double,4> upper = {{1.E03,1.,1.E03,2.*PI}};
   InclusiveCross::Ftor_FSI F;
@@ -144,18 +144,21 @@ void InclusiveCross::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double
   mdf.param = &F;
   numint::vector_d ret(2,0.);
   F.f=InclusiveCross::FSI_int;
+  for(size_t it=0; it<resonances.size(); it++){
+    F.it=it;
   int res=90;
-  unsigned count=0;
-//     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-  res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,6E04,ret,count,0);
-//   cout << res << " " << count << endl;
-  fsi1= 2.*PI*2.*massi/MASSD*ret[0];
-  fsi2= 2.*PI*2.*massi/MASSD*ret[1];
+    unsigned count=0;
+  //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,6E04,ret,count,0);
+  //   cout << res << " " << count << endl;
+    fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
+    fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
+  }
   return;
 }
 
 void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x){
+		      double qphi, InclusiveCross& cross, double Q2, double x, size_t itt){
 			
   result=numint::vector_d(2,0.);
   if(prnorm<1.E-03||qt<1.E-03) { result[0]=result[1]=0.; return;}
@@ -193,10 +196,10 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
     cosphiprime=1.;
     sinphiprime=0.;
   }
-  vector<double> res_result=vector<double>(2,0.);
-  for(size_t it=0; it<cross.resonances.size(); it++){
+  vector<double> res_result;
+  /*for(size_t it=0; it<cross.resonances.size(); it++)*/{
     res_result=vector<double>(2,0.);
-    cross.otherWx2=cross.resonances[it]*cross.resonances[it];
+    cross.otherWx2=cross.resonances[itt]*cross.resonances[itt];
     cross.get_prz_res(pt2,cross.otherWx2,kin);
     if(cross.otherWx2<0.) {result[0]=result[1]=0.;return;}
     double pprime = sqrt(pt2+cross.przprime*cross.przprime);
@@ -272,7 +275,7 @@ void InclusiveCross::calc_F2DincFSI_off(double &fsi1, double &fsi2, double Q2,do
 }
 
 void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x){
+		      double qphi, InclusiveCross& cross, double Q2, double x,size_t itt){
 			
   result=numint::vector_d(2,0.);
   if((qt<1.E-03)||(prt<1.E-03)) { result[0]=result[1]=0.; return;}
