@@ -201,12 +201,11 @@ private:
     /*! integrandum function */
     static void exec(const numint::array<double,4> &x, void *param, numint::vector_d &ret) {
       Ftor_FSI &p = * (Ftor_FSI *) param;
-      p.f(ret,x[0],x[1],x[2],x[3],*p.cross,p.Q2,p.x,p.it);
+      p.f(ret,x[0],x[1],x[2],x[3],*p.cross,p.Q2,p.x);
     }
     InclusiveCross *cross;/*!< pointer to InclusiveCross instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
     double x; /*!< [] Bjorken x */
-    size_t it; /*!< iterator for resonance */
     /*! integrandum 
     * \param res results
     * \param pnorm first integration variable
@@ -214,15 +213,14 @@ private:
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     */
-    void (*f)(numint::vector_d & res, double pnorm, double costheta, double qt, double qphi, InclusiveCross& cross, 
-	      double Q2, double x, size_t it);
+    void (*f)(numint::vector_d & res, double pnorm, double costheta, double qt, double qphi, InclusiveCross& cross, double Q2, double x);
   };
   
    /*! integrandum function (clean ones)*/
   static void FSI_int(numint::vector_d & results, double pnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it);
+		      double qphi, InclusiveCross& cross, double Q2, double x);
   static void FSI_int_off(numint::vector_d & results, double pnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it);
+		      double qphi, InclusiveCross& cross, double Q2, double x);
  
   
 };

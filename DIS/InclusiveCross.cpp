@@ -71,7 +71,7 @@ void InclusiveCross::planewave_int(numint::vector_d & result, double prnorm, dou
   double Wx=sqrt(MASSD*MASSD-Q2+cross.massr*cross.massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*prnorm*costheta);
   TKinematics2to2 kin("","",MASSD,cross.massr,Wx,"qsquared:wlab:pklab",Q2,nu,prnorm);
   double structfactor=cross.structure.getInclStructure(kin,MASSD-Er);
-  if(abs(structfactor<1E-09)||isnan(structfactor)) {result[0]=0.; return; }
+  if(abs(structfactor)<1E-09||isnan(structfactor)) {result[0]=0.; return; }
   //no phi integration, symmetry is already used in getInclStructure()
   result[0]=prnorm*prnorm*(pow(cross.wf->GetUp(prnorm),2.)+pow(cross.wf->GetWp(prnorm),2.))/(4.*PI)*(MASSD/(2.*(MASSD-Er)))*structfactor;
   return;
@@ -132,7 +132,7 @@ void InclusiveCross::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double
 //   fsi1=results[0]*2.*PI*2.*massi/MASSD;
 //   fsi2=results[1]*2.*PI*2.*massi/MASSD;
  //cout << fsi1 << " " << fsi2 << endl;
-  fsi1=fsi2=0.;
+  
   numint::array<double,4> lower = {{0.,-1.,0.,0.}};
   numint::array<double,4> upper = {{1.E03,1.,1.E03,2.*PI}};
   InclusiveCross::Ftor_FSI F;
@@ -144,21 +144,18 @@ void InclusiveCross::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double
   mdf.param = &F;
   numint::vector_d ret(2,0.);
   F.f=InclusiveCross::FSI_int;
-  for(size_t it=0; it<resonances.size(); it++){
-    F.it=it;
   int res=90;
-    unsigned count=0;
-  //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,6E04,ret,count,0);
-  //   cout << res << " " << count << endl;
-    fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
-    fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
-  }
+  unsigned count=0;
+//     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
+  res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,6E04,ret,count,0);
+//   cout << res << " " << count << endl;
+  fsi1= 2.*PI*2.*massi/MASSD*ret[0];
+  fsi2= 2.*PI*2.*massi/MASSD*ret[1];
   return;
 }
 
 void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t itt){
+		      double qphi, InclusiveCross& cross, double Q2, double x){
 			
   result=numint::vector_d(2,0.);
   if(prnorm<1.E-03||qt<1.E-03) { result[0]=result[1]=0.; return;}
@@ -173,7 +170,7 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
   TKinematics2to2 kin("","",MASSD,cross.massr,sqrt(cross.Wxprime2),"qsquared:wlab:pklab",Q2,nu,prnorm);
 
   double structfactor=cross.structure.getInclStructure(kin,MASSD-Er);
-  if(abs(structfactor<1E-09)||isnan(structfactor)) {result[0]=result[1]=0.; return; }
+  if(abs(structfactor)<1E-09||isnan(structfactor)) {result[0]=result[1]=0.; return; }
   //no phi integration, symmetry is already used in getInclStructure()
   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)+pow(cross.massr*cross.massr-cross.Wxprime2,2.));
   complex<double> wave[6];
@@ -196,12 +193,11 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
     cosphiprime=1.;
     sinphiprime=0.;
   }
-  vector<double> res_result;
-  /*for(size_t it=0; it<cross.resonances.size(); it++)*/{
+  vector<double> res_result=vector<double>(2,0.);
+  for(size_t it=0; it<cross.resonances.size(); it++){
     res_result=vector<double>(2,0.);
-    cross.otherWx2=cross.resonances[itt]*cross.resonances[itt];
+    cross.otherWx2=cross.resonances[it]*cross.resonances[it];
     cross.get_prz_res(pt2,cross.otherWx2,kin);
-    if(cross.otherWx2<0.) {result[0]=result[1]=0.;return;}
     double pprime = sqrt(pt2+cross.przprime*cross.przprime);
     double costhetaprime=cross.przprime/pprime;
     double sinthetaprime=sqrt(pt2)/pprime;
@@ -209,33 +205,35 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
     double Erprime=sqrt(cross.massr*cross.massr+pprime*pprime);
     TKinematics2to2 kin2("","",MASSD,cross.massr,sqrt(cross.otherWx2),"qsquared:wlab:pklab",Q2,nu,pprime);
     double structfactor2=cross.structure.getInclStructure(kin2,MASSD-Erprime);
-    if(abs(structfactor2<1E-09)||isnan(structfactor2)) {result[0]=result[1]=0.; return; }
-    res_result[0]=res_result[1]=prnorm*prnorm*sqrt(structfactor*structfactor2)/(kin.GetKlab()*32.*PI*PI*3.)
-		  *sqrt(MASSD/(2.*(MASSD-Er)*Er))*qt;
-    double xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()+cross.przprime*kin.GetKlab())
-	-cross.massi*cross.massi+pow(MASSD-Erprime,2.)-pprime*pprime);
-    if((Erprime>MASSD)||xprime>1) {result[0]=result[1]=0.; return;}
-    //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
-    //t = (ps-ps')^2
-    double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
-    complex<double> wave2[6];
-    TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,cross.przprime);
-    for(int i=0;i<6;i++){
-      wave2[i] = cross.wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
+    if((abs(structfactor2)>1E-09)&&(!isnan(structfactor2))){
+      res_result[0]=res_result[1]=prnorm*prnorm*sqrt(structfactor*structfactor2)/(kin.GetKlab()*32.*PI*PI*3.)
+		    *sqrt(MASSD/(2.*(MASSD-Er)*Er))*qt;
+      double xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()+cross.przprime*kin.GetKlab())
+	  -cross.massi*cross.massi+pow(MASSD-Erprime,2.)-pprime*pprime);
+      if((Erprime<MASSD)&&(xprime<1)){
+	//double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
+	//t = (ps-ps')^2
+	double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
+	complex<double> wave2[6];
+	TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,cross.przprime);
+	for(int i=0;i<6;i++){
+	  wave2[i] = cross.wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
+	}
+	complex<double> temp=0.;
+	for(int i=0;i<6;i++){
+	  temp+=wave[i]*conj(wave2[i]);
+	}
+	cross.sigma=InclusiveCross::sigmaparam(cross.Wxprime2,kin.GetQsquared());
+	res_result[0]*= imag(cross.scatter(t)*2.*temp //factor 2 due to symmetry
+	      *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi;
+	cross.sigma=InclusiveCross::sigmaparam(cross.otherWx2,kin.GetQsquared());
+	double chi2=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.otherWx2+cross.massr*cross.massr)
+	  +pow(cross.massr*cross.massr-cross.otherWx2,2.));
+	res_result[1]*=imag(cross.scatter(t)*2.*conj(temp) //factor 2 due to symmetry
+		*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi2;
+	result[0]+=res_result[0]; result[1]+= res_result[1];  
+      }
     }
-    complex<double> temp=0.;
-    for(int i=0;i<6;i++){
-      temp+=wave[i]*conj(wave2[i]);
-    }
-    cross.sigma=InclusiveCross::sigmaparam(cross.Wxprime2,kin.GetQsquared());
-    res_result[0]*= imag(cross.scatter(t)*2.*temp //factor 2 due to symmetry
-	  *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi;
-    cross.sigma=InclusiveCross::sigmaparam(cross.otherWx2,kin.GetQsquared());
-    double chi2=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.otherWx2+cross.massr*cross.massr)
-      +pow(cross.massr*cross.massr-cross.otherWx2,2.));
-    res_result[1]*=imag(cross.scatter(t)*2.*conj(temp) //factor 2 due to symmetry
-	    *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi2;
-    result[0]+=res_result[0]; result[1]+= res_result[1];  
   }
   return;
   
@@ -275,7 +273,7 @@ void InclusiveCross::calc_F2DincFSI_off(double &fsi1, double &fsi2, double Q2,do
 }
 
 void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x,size_t itt){
+		      double qphi, InclusiveCross& cross, double Q2, double x){
 			
   result=numint::vector_d(2,0.);
   if((qt<1.E-03)||(prt<1.E-03)) { result[0]=result[1]=0.; return;}
@@ -297,7 +295,7 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
   TKinematics2to2 kin("","",MASSD,cross.massr,sqrt(invX),"qsquared:wlab:pklab",Q2,nu,prnorm);
   
   double structfactor=cross.structure.getInclStructure_off(kin,W*W,MASSD-Er);
-  if(abs(structfactor<1E-09)||isnan(structfactor)) {result[0]=result[1]=0.; return; }
+  if(abs(structfactor)<1E-09||isnan(structfactor)) {result[0]=result[1]=0.; return; }
   //no phi integration, symmetry is already used in getInclStructure()
   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)+pow(cross.massr*cross.massr-cross.Wxprime2,2.));
   complex<double> wave[6];
