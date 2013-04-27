@@ -23,9 +23,9 @@ int main(int argc, char *argv[])
     TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
     std::vector<double> resonances;
     resonances.push_back(1.232E03);
-    /*resonances.push_back(1.5E03);
-    resonances.push_back(2.4E03);
-    */for(int i=1;i<20;i++){      
+//     resonances.push_back(1.5E03);
+//     resonances.push_back(2.4E03);
+    for(int i=1;i<20;i++){      
       double x=0.05*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       double teller=0.,fsi1=0.,fsi2=0.,fsioff1=0.,fsioff2=0.,fsioffsuppr1=0.,fsioffsuppr2=0.,noemer=0.;
@@ -38,10 +38,10 @@ int main(int argc, char *argv[])
 	//cout << "bla " << f1 << " " << f2 << endl;
 	fsi1+=f1;
 	fsi2+=f2;
-//   	Dinc.calc_F2DincFSI_off(f1,f2,Q2,x);
-	//cout << "bla " << f1 << " " << f2 << endl;
-// 	fsioff1+=f1;
-// 	fsioff2+=f2;
+  	Dinc.calc_F2DincFSI_off(f1,f2,Q2,x);
+// 	cout << "bla " << f1 << " " << f2 << endl;
+	fsioff1+=f1;
+	fsioff2+=f2;
 	//suppressed
 	Dinc.setOffshell(3);
 //   	Dinc.calc_F2DincFSI_off(f1,f2,Q2,x);

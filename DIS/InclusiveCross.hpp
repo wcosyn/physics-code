@@ -138,6 +138,7 @@ private:
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    */
   void get_prz_res(double pt2, double W_sq, TKinematics2to2 & kin);
+  void get_prz_res(double pt2, double W_sq, double Q2, double nu, double qvec);
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass.  Based on new method in bjorken method where pr_z \approx m(x-1)
   * \param pt2 [MeV^2] final transverse spectator momentum sq
@@ -201,11 +202,12 @@ private:
     /*! integrandum function */
     static void exec(const numint::array<double,4> &x, void *param, numint::vector_d &ret) {
       Ftor_FSI &p = * (Ftor_FSI *) param;
-      p.f(ret,x[0],x[1],x[2],x[3],*p.cross,p.Q2,p.x);
+      p.f(ret,x[0],x[1],x[2],x[3],*p.cross,p.Q2,p.x,p.it);
     }
     InclusiveCross *cross;/*!< pointer to InclusiveCross instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
     double x; /*!< [] Bjorken x */
+    size_t it; /*!< iterator for resonance */
     /*! integrandum 
     * \param res results
     * \param pnorm first integration variable
@@ -213,14 +215,15 @@ private:
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     */
-    void (*f)(numint::vector_d & res, double pnorm, double costheta, double qt, double qphi, InclusiveCross& cross, double Q2, double x);
+    void (*f)(numint::vector_d & res, double pnorm, double costheta, double qt, double qphi, InclusiveCross& cross, 
+	      double Q2, double x, size_t it);
   };
   
    /*! integrandum function (clean ones)*/
   static void FSI_int(numint::vector_d & results, double pnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x);
+		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it);
   static void FSI_int_off(numint::vector_d & results, double pnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x);
+		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it);
  
   
 };
