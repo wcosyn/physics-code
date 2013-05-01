@@ -71,9 +71,10 @@ void InclusiveCross::planewave_int(numint::vector_d & result, double prnorm, dou
   double Wx=sqrt(MASSD*MASSD-Q2+cross.massr*cross.massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*prnorm*costheta);
   TKinematics2to2 kin("","",MASSD,cross.massr,Wx,"qsquared:wlab:pklab",Q2,nu,prnorm);
   double structfactor=cross.structure.getInclStructure(kin,MASSD-Er);
-  if((abs(structfactor)<1E-09)||isnan(structfactor)) {result[0]=0.; return; }
+  if((abs(structfactor)<1E-09)||isnan(structfactor)||isinf(structfactor)) {result[0]=0.; return; }
   //no phi integration, symmetry is already used in getInclStructure()
   result[0]=prnorm*prnorm*(pow(cross.wf->GetUp(prnorm),2.)+pow(cross.wf->GetWp(prnorm),2.))/(4.*PI)*(MASSD/(2.*(MASSD-Er)))*structfactor;
+//   /*if(cross.massr==MASSN) */cout << prnorm << " " << costheta << " " << result[0] << " " << result[0]/prnorm/prnorm << endl;
   return;
   
 
@@ -173,7 +174,7 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
   TKinematics2to2 kin("","",MASSD,cross.massr,sqrt(cross.Wxprime2),"qsquared:wlab:pklab",Q2,nu,prnorm);
 
   double structfactor=cross.structure.getInclStructure(kin,MASSD-Er);
-  if((abs(structfactor)<1E-09)||isnan(structfactor)) {result[0]=result[1]=0.; return; }
+  if((abs(structfactor)<1E-09)||isnan(structfactor)||isinf(structfactor)) {result[0]=result[1]=0.; return; }
   //no phi integration, symmetry is already used in getInclStructure()
   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)+pow(cross.massr*cross.massr-cross.Wxprime2,2.));
   complex<double> wave[6];
@@ -186,9 +187,6 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
   sincos(qphi,&sinqphi,&cosqphi);
   double pt2=prt*prt+qt*qt-2.*prt*qt*cosqphi;  
   cross.prz=kin.GetPklab()*kin.GetCosthklab();
-//   double Ex=MASSD+nu-Er;
-//   TKinematics2to2 kin2("","",MASSD,cross.massr,sqrt(Ex*Ex-qvec*qvec-prnorm*prnorm+2.*qvec*cross.prz),"qsquared:wlab:pklab",Q2,nu,prnorm);
-//   cout << "A " << costheta << " " << kin.GetCosthklab() << " " << kin2.GetCosthklab() << endl;
   double cosphiprime = (prt-qt*cosqphi)/sqrt(pt2);
   double sinphiprime = -qt*sinqphi/sqrt(pt2);
   if(abs(pt2)<1.E-03){
@@ -201,20 +199,20 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
     res_result=vector<double>(2,0.);
     cross.otherWx2=cross.resonances[itt]*cross.resonances[itt];
     cross.get_prz_res(pt2,cross.otherWx2,kin);
-    if(cross.otherWx2<0.) {result[0]=result[1]=0.;return;}
+    if(abs(cross.przprime+1.E09)<1.E-02){result[0]=result[1]=0.; return;}
     double pprime = sqrt(pt2+cross.przprime*cross.przprime);
     double costhetaprime=cross.przprime/pprime;
     double sinthetaprime=sqrt(pt2)/pprime;
     if(pprime<1.E-03) {costhetaprime=1.;sinthetaprime=0.;}
-    double Erprime=sqrt(cross.massr*cross.massr+pprime*pprime);
     TKinematics2to2 kin2("","",MASSD,cross.massr,sqrt(cross.otherWx2),"qsquared:wlab:pklab",Q2,nu,pprime);
-    double structfactor2=cross.structure.getInclStructure(kin2,MASSD-Erprime);
-    if((abs(structfactor2)<1E-09)||isnan(structfactor2)) {result[0]=result[1]=0.; return; }
-    res_result[0]=res_result[1]=prnorm*prnorm*sqrt(structfactor*structfactor2)/(kin.GetKlab()*32.*PI*PI*3.)
-		  *sqrt(MASSD/(2.*(MASSD-Er)*Er))*qt;
+    double Erprime=sqrt(cross.massr*cross.massr+pprime*pprime);
     double xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()+cross.przprime*kin.GetKlab())
 	-cross.massi*cross.massi+pow(MASSD-Erprime,2.)-pprime*pprime);
-    if((Erprime>MASSD)||xprime>1) {result[0]=result[1]=0.; return;}
+    if((Erprime>MASSD)/*||xprime>1*/) {result[0]=result[1]=0.; return;}
+    double structfactor2=cross.structure.getInclStructure(kin2,MASSD-Erprime);
+    if((abs(structfactor2)<1E-09)||isnan(structfactor2)||isinf(structfactor2)) {result[0]=result[1]=0.; return; }
+    res_result[0]=res_result[1]=prnorm*prnorm*sqrt(structfactor*structfactor2)/(abs(kin.GetKlab()-cross.przprime/Erprime*(MASSD+nu))*32.*PI*PI*3.)
+		  *sqrt(MASSD/(2.*(MASSD-Er)*Er))*qt;
     //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
     //t = (ps-ps')^2
     double t=(Er-Erprime)*(Er-Erprime)-(cross.prz-cross.przprime)*(cross.prz-cross.przprime)-qt*qt;
@@ -236,6 +234,8 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
     res_result[1]*=imag(cross.scatter(t)*2.*conj(temp) //factor 2 due to symmetry
 	    *sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)))*chi2;
     result[0]+=res_result[0]; result[1]+= res_result[1];  
+//   if(cross.massr==MASSN) cout << prnorm << " " << costheta << " " << pprime << " " << costhetaprime << " " << t << " " << qt << " " << 
+//     sqrt(MASSD*MASSD+cross.massr*cross.massr-Q2+2.*MASSD*(nu-Erprime)-2.*nu*Erprime+qvec*cross.przprime) << " " << result[0] << " " << result[0]/prnorm/prnorm << endl;
   }
   return;
   
@@ -302,7 +302,7 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
   TKinematics2to2 kin("","",MASSD,cross.massr,sqrt(invX),"qsquared:wlab:pklab",Q2,nu,prnorm);
   
   double structfactor=cross.structure.getInclStructure_off(kin,W*W,MASSD-Er);
-  if((abs(structfactor)<1E-09)||isnan(structfactor)) {result[0]=result[1]=0.; return; }
+  if((abs(structfactor)<1E-09)||isnan(structfactor)||isinf(structfactor)) {result[0]=result[1]=0.; return; }
   //no phi integration, symmetry is already used in getInclStructure()
   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)+pow(cross.massr*cross.massr-cross.Wxprime2,2.));
   complex<double> wave[6];
@@ -329,7 +329,7 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
   double Erprime=sqrt(cross.massr*cross.massr+pprime*pprime);
   TKinematics2to2 kin2("","",MASSD,cross.massr,sqrt(cross.otherWx2),"qsquared:wlab:pklab",Q2,nu,pprime);
   double structfactor2=cross.structure.getInclStructure_off(kin2,cross.otherWx2,MASSD-Erprime);
-  if((abs(structfactor2)<1E-09)||isnan(structfactor2)) {result[0]=result[1]=0.; return; }
+  if((abs(structfactor2)<1E-09)||isnan(structfactor2)||isinf(structfactor2)) {result[0]=result[1]=0.; return; }
   result[0]=result[1]=prt*W*sqrt(structfactor*structfactor2)/(kin.GetKlab()*32.*PI*PI*3.)
 		*sqrt(MASSD/(2.*(MASSD-Er)*Er))*qt;
   double Exprime=MASSD+nu-Erprime;
@@ -397,7 +397,7 @@ double InclusiveCross::sigmaparam(double W_sq, double Q2){
 
 // void InclusiveCross::int_pr_fsi(double prnorm, double *results, va_list ap){
 //   
-//   double x = va_arg(ap,double);
+  //   double x = va_arg(ap,double);
 //   double Q2 = va_arg(ap,double);
 //   double *pcosestimate = va_arg(ap,double*);
 //   
@@ -630,9 +630,29 @@ void InclusiveCross::get_prz2(double pt2, TKinematics2to2 & kin){
   return;
 }
 void InclusiveCross::get_prz_res(double pt2, double W_sq, TKinematics2to2 & kin){
-  double Er=sqrt(massr*massr+pt2);
-    przprime = (W_sq-massr*massr-MASSD*MASSD+kin.GetQsquared()-2.*MASSD*kin.GetWlab()
-    + 2.*Er*(MASSD+kin.GetWlab()))/(2.*kin.GetKlab());         
+//   double Er=sqrt(massr*massr+pt2);
+//     przprime = (W_sq-massr*massr-MASSD*MASSD+kin.GetQsquared()-2.*MASSD*kin.GetWlab()
+//     + 2.*Er*(MASSD+kin.GetWlab()))/(2.*kin.GetKlab());         
+  double A=(W_sq-massr*massr-MASSD*MASSD+kin.GetQsquared()-2.*MASSD*kin.GetWlab())/(-2.*(MASSD+kin.GetWlab()));
+  double B= kin.GetKlab()/(MASSD+kin.GetWlab());
+  double aa=B*B-1.;
+  double bb=2.*A*B;
+  double cc=A*A-massr*massr-pt2;
+  double discr=bb*bb-4.*aa*cc;
+  int check=0;
+  przprime=-1.E09;
+  if(abs(discr)<1.E-09) {przprime = -bb/(2.*aa);}
+  if(discr>0.){
+    double p1 = (-bb+sqrt(discr))/(2.*aa);
+    double Er=sqrt(massr*massr+pt2+p1*p1);
+    if(SIGN(A+B*p1)==1){check++; przprime=p1;}
+    double p2 = (-bb-sqrt(discr))/(2.*aa);
+    double Er2=sqrt(massr*massr+pt2+p2*p2);
+    if(SIGN(A+B*p2)==1){check++; przprime=p2;}
+//     cout << check << " " << A+B*p1 << " " << A+B*p2 << " " << Er << " " << Er2 << " " << p1 << " " << p2 << endl;
+    if(check==2) przprime=p1; //other one is too big to give physical results....
+  }
+  
 }
 void InclusiveCross::get_prz_res(double pt2, double W_sq, double Q2, double nu, double qvec){
   double Er=sqrt(massr*massr+pt2);

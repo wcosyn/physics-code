@@ -37,11 +37,12 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
     F1=F2*2.*xtilde/(1+R)*(pow(alphai/alphaq+1/(2.*xtilde),2.)-pt*pt/(2.*kin.GetQsquared())*R);
   }
   else strfunction.getF(F1,F2);
-  if(isnan(F2)){FL=FT=FTT=FTL=F2; return;}
+  if(isnan(F2)){cout << "bla " << endl; FL=FT=FTT=FTL=F2; return;}
   if(isnan(F1)){FL=FT=FTT=FTL=F1; return;}
   //cout << F1 << " " << F2 << " " << nutilde << " " << pt << " " << kin.GetCosthklab() << endl;
   FL=pow((alphai+alphaq*piq/kin.GetQsquared())*(1+cosdelta),2.)*kin.GetWlab()/nutilde*F2-kin.GetWlab()/massi*sindelta2*F1;
   FT=2.*F1+pt*pt/(massi*nutilde)*F2;
+  if(isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << endl;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
   FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
   /*cout << F1 << " " << F2 << endl;
@@ -106,7 +107,7 @@ double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinemat
 double DeuteronStructure::getInclStructure(TKinematics2to2 &kin, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
-  if(isnan(FL)) return FL;
+  if(isnan(FL)) {cout << "blaaa  " << endl; return FL;}
   //cout << FL << " " << FT << " " << FTT << " " << FTL << " " << kin.GetQsquared() << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
   return FL+kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())*kin.GetWlab()/massi*FT;
   

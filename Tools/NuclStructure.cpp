@@ -48,13 +48,13 @@ name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR){
       cerr << "non supported format in constructor" << endl;
       exit(1);
   }
-  if(!name.compare("CB")&&(Wsq>25.E06)) name="SLAC";
+  if(!name.compare("CB")&&(Wsq>6.25E06)) name="SLAC";
   return;
 
 }
 NuclStructure::NuclStructure(bool pr, double Q2in, double xin, double Wsqin, string nm="SLAC"):
 name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR),x(xin),Q2(Q2in),Wsq(Wsqin){
-  if(!name.compare("CB")&&(Wsq>25.E06)) name="SLAC";
+  if(!name.compare("CB")&&(Wsq>6.25E06)) name="SLAC";
   
 }
 
