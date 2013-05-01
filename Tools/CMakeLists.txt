@@ -77,6 +77,7 @@ endforeach()
 set(MePhys_FORT 
 alekhin.f
 F1F209_test.f
+cteq.f
 )
 # MESSAGE("${CMAKE_MODULE_PATH}")
 # foreach(outfile ${MePhys_DICTIONARY}

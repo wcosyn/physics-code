@@ -25,6 +25,11 @@ extern "C"{
   } dir_;
 }
 
+extern "C"{
+  double f2_ctq_(int *proton, double *x, double *Q2);
+}
+
+
 
 NuclStructure::NuclStructure(bool pr, double var1, double var2, int switchvar, string nm="SLAC"):
 name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR){
@@ -101,15 +106,32 @@ double NuclStructure::getF2_Alekhin(){
 void NuclStructure::getF_SLAC(double &F1, double &F2) const{
   F2=getF2_SLAC();
   double R=0.18;
+  F1=1./0.;
   //F1=F2*2.*x/(1+R)*(pow(alphai/alphaq+1/(2.*x),2.);
 }
 
 double NuclStructure::getF1_SLAC() const{
-  return 0.;
+  return 1./0.;
 }
 
 double NuclStructure::getF2_SLAC() const{
   return proton? f2p_b(mass*1.E-03, x,Q2*1.E-06, sqrt(Wsq*1.E-06)):f2n_b(mass*1.E-03, x,Q2*1.E-06, sqrt(Wsq*1.E-06));
+}
+
+void NuclStructure::getF_CTEQ(double &F1, double &F2){
+  F2=getF2_CTEQ();
+  F1=1./0.;
+  //F1=F2*2.*x/(1+R)*(pow(alphai/alphaq+1/(2.*x),2.);
+}
+
+double NuclStructure::getF1_CTEQ(){
+  return 1./0.;
+}
+
+double NuclStructure::getF2_CTEQ(){
+  double q2=Q2*1.E-06;
+  int pr = int(proton);
+  return f2_ctq_(&pr,&x,&q2);
 }
 
 void NuclStructure::getF_CB(double &F1, double &F2) const{
@@ -147,6 +169,7 @@ void NuclStructure::getF(double &F1, double &F2){
   if(!name.compare("SLAC")) getF_SLAC(F1,F2);
   else if(!name.compare("Alekhin")) getF_Alekhin(F1,F2);
   else if(!name.compare("CB")) getF_CB(F1,F2);
+  else if(!name.compare("CTEQ")) getF_CTEQ(F1,F2);
   else { cerr << "invalid name for structure function" << endl; exit(1);}
   return;
 }

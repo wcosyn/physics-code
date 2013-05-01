@@ -26,7 +26,7 @@
   * FourVector<double> ToFourVector(const TLorentzVector&); <BR>
   * TLorentzVector ToLorentzVector(const FourVector<double>&); <BR>
   * <BR>
-  * -moved definitions of T0FourVector and ToLorentzVector from kinematics2to3.cpp to a new file FourVector.cpp <BR>
+  * -moved definitions of ToFourVector and ToLorentzVector from kinematics2to3.cpp to a new file FourVector.cpp <BR>
   * <BR>
   * -commented out #include "2to3kinematics.h" in TDeuteron.cpp <BR>
   * <BR>
@@ -104,6 +104,7 @@ public:
    * "CB": Christy & Bosted parametrization (see F1F209.f file) if invariant mass is >5 GeV, auto switch to SLAC!!!<BR>
    * "SLAC": SLAC paramtetrization from Bodek <BR>
    * "Alekhin": leading twist parametrization by Alekhin [see PRD 68,014002], also see alekhin.f file <BR>
+   * "CTEQ": F2 based on the pdf's from CTEQ (code from Misak, see cteq.f file) <BR>
    */
   NuclStructure(bool proton, double var1, double var2, int switchvar, std::string name);
   /*! Constructor 
@@ -115,6 +116,7 @@ public:
    * "CB": Christy & Bosted parametrization (see F1F209.f file) if invariant mass is >5 GeV, auto switch to SLAC!!!<BR>
    * "SLAC": SLAC paramtetrization from Bodek <BR>
    * "Alekhin": leading twist parametrization by Alekhin [see PRD 68,014002], also see alekhin.f file <BR>
+   * "CTEQ": F2 based on the pdf's from CTEQ (code from Misak, see cteq.f file) <BR>
    */
   NuclStructure(bool proton, double Q2in, double xin, double Wsqin, std::string name);
   /*! returns F1 and F2 in the alekhin parametrization
@@ -138,6 +140,13 @@ public:
   void getF_CB(double &F1, double &F2) const;
   double getF1_CB() const;/*!< return F1 structure function in the Christy & Bosted parametrization */
   double getF2_CB() const;/*!< return F2 structure function in the Chrsity & Bosted parametrization */
+  /*! returns F1 and F2 in the CTEQ parametrization
+   * \param F1 F1 structure function
+   * \param F2 F2 structure function
+   */
+  void getF_CTEQ(double &F1, double &F2);
+  double getF1_CTEQ();/*!< return F1 structure function in the CTEQ parametrization */
+  double getF2_CTEQ();/*!< return F2 structure function in the CTEQ parametrization */
   /*! Returns the F1 and F2 structure functions */
   void getF(double &F1, double &F2);
   double getF1(); /*!< returns the F1 structure function */

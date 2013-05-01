@@ -25,21 +25,21 @@ int main(int argc, char *argv[])
 //     resonances.push_back(1.232E03);
 //     resonances.push_back(1.5E03);
     resonances.push_back(2.4E03);
-//     for(int i=1;i<200;i++){      
-//       double x=0.005*i;
-//       cout << x << " " << sqrt(Q2*(1./x-1.)+MASSN*MASSN)*1.E-03 << " " ;
-//       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
-//       double teller=0.,fsi1=0.,fsi2=0.,fsioff1=0.,fsioff2=0.,fsioffsuppr1=0.,fsioffsuppr2=0.,noemer=0.;
-//       for(int proton=0;proton<=1;++proton){
-// 	InclusiveCross Dinc(proton,strucname,wf,*elec,resonances,symm,4);
-// 	NuclStructure nucleon(proton, Q2, x, 0, strucname);
-// // 	teller+=Dinc.calc_F2Dinc(Q2,x);
-// 	noemer+=nucleon.getF2();
-// 	cout << nucleon.getF2() << " ";
-//       }
-//       cout << endl;
-//      }
-//     exit(1);
+    for(int i=1;i<200;i++){      
+      double x=0.005*i;
+      cout << x << " " << sqrt(Q2*(1./x-1.)+MASSN*MASSN)*1.E-03 << " " ;
+      //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
+      double teller=0.,fsi1=0.,fsi2=0.,fsioff1=0.,fsioff2=0.,fsioffsuppr1=0.,fsioffsuppr2=0.,noemer=0.;
+      for(int proton=0;proton<=1;++proton){
+	InclusiveCross Dinc(proton,strucname,wf,*elec,resonances,symm,4);
+	NuclStructure nucleon(proton, Q2, x, 0, strucname);
+// 	teller+=Dinc.calc_F2Dinc(Q2,x);
+	noemer+=nucleon.getF2();
+	cout << nucleon.getF2() << " ";
+      }
+      cout << endl;
+     }
+    exit(1);
     for(int i=1;i<20;i++){      
       double x=0.05*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
