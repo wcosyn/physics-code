@@ -559,20 +559,6 @@ void GlauberDecayGridThick::constructCtGrid(){
 //calc glauberphases for one gridpoint
 void GlauberDecayGridThick::calcGlauberphasesBoth(const int i, const int j, const int k){
   complex<double>* results= new complex<double>[8];
-  for(int proton=0;proton<2;proton++){
-    double src=getFsiCorrelator().getCorrGrid_interp(r_hit,costheta_hit,proton);
-    double restimate=0.,thetaestimate=0.,phiestimate=0.;
-    rombergerN(this, &GlauberDecayGridThick::intGlauberR,0.,getPnucleusthick()->getRange(),8,results,getPrec(),3,8,&restimate,proton,&thetaestimate, &phiestimate); 
-    fsi_grid[0][proton][i][j][k]=results[0];
-    fsi_grid[1][proton][i][j][k]=results[1]*src;
-    fsi_grid[2][proton][i][j][k]=results[2];
-    fsi_grid[3][proton][i][j][k]=results[3]*src;
-    fsi_ct_grid[0][proton][i][j][k]=results[4];
-    fsi_ct_grid[1][proton][i][j][k]=results[5]*src;
-    fsi_ct_grid[2][proton][i][j][k]=results[6];
-    fsi_ct_grid[3][proton][i][j][k]=results[7]*src;    
-  }   
-  delete[] results;
   
   for(int proton=0;proton<2;proton++){
     int res=90;
