@@ -67,12 +67,12 @@ public:
   /*! Computes the differential A(e,e'N) cross section for certain kinematics and a certain shell of the nucleus
    * \param cross vector with the different cross sections <BR>
    * differential cross section [fm ^2/MeV/sr^2]
-   *  [0]: plane-wave<BR>
-   *  [1]: RMSGA <BR>
-   *  [2]: RMSGA+SRC <BR>
-   *  [3]: RMSGA+CT <BR>
-   *  [4]: RMSGA+SRC+CT <BR>
-   * if no thickness [2] and [4] are not present (and vector has size 3, change indices accordingly)
+   *  [0]: RMSGA <BR>
+   *  [1]: RMSGA+SRC <BR>
+   *  [2]: RMSGA+CT <BR>
+   *  [3]: RMSGA+SRC+CT <BR>
+   *  [4]: plane-wave<BR>
+   * if no thickness [1] and [3] are not present (and vector has size 3, change indices accordingly)
    * \param kin contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param shellindex selects the shell in the nucleus where the ejected N originates from
