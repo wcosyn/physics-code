@@ -61,9 +61,12 @@ public:
    * \param pw do you want to compute a plane-wave cross section (nullifies the thick,SRC,CT parameters)
    * \param shellindex selects the shell in the nucleus where the ejected N originates from
    * \param phi angle between electron and hadron plane
+   * \param maxEval max # of evaluations in integrations
+   * \param lab lab frame of cm frame for hadron part
    * \return differential cross section [fm^2 /MeV/sr^2]
    */
-  double getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, double phi);
+  double getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
+		      double phi, int maxEval, bool lab);
   /*! Computes the differential A(e,e'N) cross section for certain kinematics and a certain shell of the nucleus
    * \param cross vector with the different cross sections <BR>
    * differential cross section [fm ^2/MeV/sr^2]

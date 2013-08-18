@@ -878,12 +878,12 @@ complex<double> TDeuteron::Wavefunction::DeuteronPState(int deuteronPol, int nuc
   // END_LATEX
   // with BEGIN_LATEX #dot{p}_{1} = ( #sqrt{#vec{p}_{1}^{2}+M_{1}^{2}},#vec{p}_{1}) END_LATEX the on-shell 4-momentum of particle 1.
   // The labelling particle 1 and 2 is arbitrary in the non-relativistic case (You can do the math).
-  if(IsRelativistic()) {
-    cerr << "ERROR in TDeuteron::Wavefunction::DeuteronPState(TSpinor::Polarization&,"
-	 << " TVector3&&): "
-	 << "has no meaning for relativistic wave functions.\n";
-    exit(1);
-  }
+//   if(IsRelativistic()) {
+//     cerr << "ERROR in TDeuteron::Wavefunction::DeuteronPState(TSpinor::Polarization&,"
+// 	 << " TVector3&&): "
+// 	 << "has no meaning for relativistic wave functions.\n";
+//     exit(1);
+//   }
 
   
   complex<double> state=0.;
@@ -1048,7 +1048,7 @@ complex<double> TDeuteron::Wavefunction::DeuteronRState(int deuteronPol, int nuc
       ClebschGordan(4,deuteronPol-mS*2,2,mS*2,2,deuteronPol)
       *ClebschGordan(1,nucleon1Pol,1,nucleon2Pol,2,mS*2)
       *SphericalHarmonic(2,deuteronPol/2-mS,r.Theta(),r.Phi())
-      *Radial_p(2,r.Mag());
+      *Radial_r(2,r.Mag());
   
   return state;
 }

@@ -73,6 +73,8 @@ public:
   void calc_F2DincFSI_off(double &fsi1, double &fsi2, double Q2,double x);
   //void calc_F2DincFSI2(double &fsi1, double &fsi2, double Q2,double x);
   void setOffshell(const int offshell){offshellset=offshell;} /*!< set offshell parametrization */
+  TDeuteron::Wavefunction* getDeutwf() const{return wf;} /*!< get instance to deuteron wave function */
+  
   
   
 private:

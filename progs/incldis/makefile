@@ -30,7 +30,7 @@ EFILEST   = 	../../bin/staticinclusive
 #		Mathematical functions
 LIBS =	 	-lm -lifcore -lgfortran
 WIMLIBS = -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator
-ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+ROOT =		`$(ROOTSYS)/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout -I ~/Code/DIS
 STATICLIBS =   ~/Code/lib/libDIS.a ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a ~/Code/lib/libIntegrator.a

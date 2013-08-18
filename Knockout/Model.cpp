@@ -249,9 +249,9 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   }      
   else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
       
-  cout << shellindex << " " << m << " ";
-  for(int i=0;i<6;i++) cout << matrixel(i/3,i%3) << " ";
-  cout << res << " " << count << endl << endl;
+//   cout << shellindex << " " << m << " ";
+//   for(int i=0;i<6;i++) cout << matrixel(i/3,i%3) << " ";
+//   cout << res << " " << count << endl << endl;
   
   delete J;
 }

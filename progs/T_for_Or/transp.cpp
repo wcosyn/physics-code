@@ -53,6 +53,30 @@ int main(int argc, char *argv[])
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
   Cross obs(*elec,&Nucleus,prec, 2, homedir, userset, screening);
 
+//   double k=sqrt(Q2+omega*omega);
+//   double Eout=Ein-omega;
+//   //cout << Q2 << " " << omega << " " << k << " " << Q2/(2.*MASSP*omega) << " " << atan2(-Eout*sin(thetae),Ein-Eout*cos(thetae))*RADTODEGR << endl;
+// 
+//   for(int i=0;i<=20;i++){
+//     double Eoutnew=Eout*(1.+(i-10.)/10.*0.15);
+//     omega=Ein-Eoutnew;
+//     Q2=4.*Ein*Eoutnew*pow(sin(thetae/2.),2.);
+//     cout << Q2*1.E-06 << " " << Q2/(2.*MASSP*omega) << endl;
+//     double thetap=0.;
+//     for(int shell=0;shell<Nucleus.getPLevels();shell++) {
+//       TKinematics2to2 kin("","",Nucleus.getMassA(),
+// 			  Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
+// 			  MASSP,"qsquared:wlab:costhkcm",Q2,omega,-1.);
+//           cout << kin.IsPhysical() << " " << shell << " " << kin.GetCosthklab() << " " 
+//     << kin.GetCosthYlab() << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+//     << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
+// 
+//     }
+//   }
+//   exit(1);
+  
+  
+
 //   double total[5];
 //   for(int i=0;i<5;i++) total[i]=0.;
 //   
@@ -147,10 +171,13 @@ for(int shell=0;shell<pNucleus->getPLevels();shell++) {
       for(int i=0;i<5;i++) results[i]+=0.;
       cout << "bla " << pm << endl;
     }
-     numint::vector_d cross=numint::vector_d(5,0.);
-    pObs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000,0);
-    for(int i=0;i<5;++i) results[i]+=cross[i];
-    cout << costhetacm << " " << pm << " " << shell << " " << results[0] << endl;
+//      numint::vector_d cross=numint::vector_d(5,0.);
+//     pObs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000,0);
+    double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0);
+    for(int i=0;i<5;++i) results[i]+=pw;//cross[i];
+    cout << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+    << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+    << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << results[0] << endl;
   }
   
 }
