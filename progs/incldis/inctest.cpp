@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     std::vector<double> resonances;
      resonances.push_back(1.232E03);
      resonances.push_back(1.5E03);
-    resonances.push_back(2.4E03);
+    resonances.push_back(1.75E03);
 //     for(int i=1;i<200;i++){      
 //       double x=0.005*i;
 //       cout << x << " " << sqrt(Q2*(1./x-1.)+MASSN*MASSN)*1.E-03 << " " ;
