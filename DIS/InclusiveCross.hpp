@@ -93,8 +93,8 @@ private:
   int symm; 
   std::vector<double> resonances; /*!<vector with resonance masses included in the FSI */
   
-  double przprime; /*!< [MeV] longitudinal spectator momentum after rescattering */
-  double prz; /*!< [MeV] lingitudinal spectator momentum before rescattering */
+//   double przprime; /*!< [MeV] longitudinal spectator momentum after rescattering */
+//   double prz; /*!< [MeV] lingitudinal spectator momentum before rescattering */
   double Wxprime2; /*!< [MeV^2] invariant mass of the X that is paired with the spectator that gets integrated first */
   double otherWx2; /*!< [MeV^2] invariant mass of the other X that depends on the first ps integration */
   /*! which offshell parametrization do you want to use? <BR>
@@ -139,8 +139,8 @@ private:
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    */
-  void get_prz_res(double pt2, double W_sq, TKinematics2to2 & kin);
-  void get_prz_res(double pt2, double W_sq, double Q2, double nu, double qvec);
+  double get_prz_res(double pt2, double W_sq, TKinematics2to2 & kin);
+  double get_prz_res(double pt2, double W_sq, double Q2, double nu, double qvec);
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass.  Based on new method in bjorken method where pr_z \approx m(x-1)
   * \param pt2 [MeV^2] final transverse spectator momentum sq
@@ -226,6 +226,8 @@ private:
   static void FSI_int(numint::vector_d & results, double pnorm, double costheta, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
   static void FSI_int_off(numint::vector_d & results, double pnorm, double costheta, double qt, 
+		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
+  static void FSI_int_offf(numint::vector_d & results, double pnorm, double costheta, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
  
   
