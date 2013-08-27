@@ -101,7 +101,7 @@ private:
    * - 0: based on off-shell mass suppression (See M. Sargsian PRC82, 014612)
    * - 1: based on dipole FF suppression with cutoff lambda (See S. Jesschonek PRC78, 014007)
    * - 2: suppression with a off-shell beta parameter
-   * - 3: no off-shell amplitude, fully suppressed
+   * - 3: suppressed with mass difference resonance and produced W, diffractive with beta
    * - 4: full off-shell amplitude, no suppression 
    */
   int offshellset;
@@ -110,28 +110,6 @@ private:
   TElectronKinematics electron; /*!< electron kinematis, see TElectronKinematics */
   DeuteronStructure structure;  /*!< deuteron structure functions object, see DeuteronStructure */
 
-  void int_pr(double pr, double *result, va_list ap);
-  void int_costheta_incl(double costheta, double *result, va_list ap);
-//   void int_pr_fsi(double pr, double *result, va_list ap);
-//   void int_costheta_incl_fsi(double costheta, double *result, va_list ap);
-//   void int_qt(double qt, double *results, va_list ap);
-//   void int_qphi(double qphi, double *results, va_list ap); 
-  /*! recursive method to find the pole in the fsi integration, longitudinal part,
-   * also determines intermediate mass
-  * \param pt2 [MeV^2] final transverse spectator momentum sq
-   * \param Er [MeV] final spectator on-shell energy
-   * \param pkin kinematics object containing the gamma+D->X+N kinematics <BR>
-   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-   * \param first parameter that controls whether we take the pole before or after the rescattering
-   */
-  void get_prz(double pt2, double Er, TKinematics2to2 & kin, int first);
-  /*! recursive method to find the pole in the fsi integration, longitudinal part,
-   * also determines intermediate mass.  Based on new method in bjorken method where pr_z \approx m(x-1)
-  * \param pt2 [MeV^2] final transverse spectator momentum sq
-   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
-   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-   */
-  void get_prz2(double pt2, TKinematics2to2 & kin);
   /*! method to find the pole in the fsi integration, longitudinal part,
    * with resonance mass as input
   * \param pt2 [MeV^2] final transverse spectator momentum sq
@@ -141,22 +119,6 @@ private:
    */
   double get_prz_res(double pt2, double W_sq, TKinematics2to2 & kin);
   double get_prz_res(double pt2, double W_sq, double Q2, double nu, double qvec);
-  /*! recursive method to find the pole in the fsi integration, longitudinal part,
-   * also determines intermediate mass.  Based on new method in bjorken method where pr_z \approx m(x-1)
-  * \param pt2 [MeV^2] final transverse spectator momentum sq
-  * \param Q2 [MeV^2] four momentum transfer
-  * \param qvec [MeV] virt photon momentum
-  * \param nu [MeV] virt photon energy
-   */
-  void get_prz_first(double pt2, double Q2, double qvec, double nu);
-   /*! recursive method to find the pole in the fsi integration, longitudinal part,
-  * \param pt2 [MeV^2] final transverse spectator momentum sq
-  * \param Q2 [MeV^2] four momentum transfer
-  * \param qvec [MeV] virt photon momentum
-  * \param nu [MeV] virt photon energy
-  * \param W1 [MeV] invariant mass
-   */
-  void get_prz_first2(double pt2, double Q2, double qvec, double nu, double W1);
  /*! gives you the scatter amplitude of the final-state interaction
    * \param t [MeV^2] momentum transfer squared
    * \return \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
@@ -226,8 +188,6 @@ private:
   static void FSI_int(numint::vector_d & results, double pnorm, double costheta, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
   static void FSI_int_off(numint::vector_d & results, double pnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
-  static void FSI_int_offf(numint::vector_d & results, double pnorm, double costheta, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
  
   

@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
 //       cout << endl;
 //      }
 //     exit(1);
-    for(int i=80;i<100;i++){      
-      double x=0.01*i;
+    for(int i=1;i<50;i++){      
+      double x=0.02*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       double teller=0.,fsi1=0.,fsi2=0.,fsioff1=0.,fsioff2=0.,fsioffsuppr1=0.,fsioffsuppr2=0.,noemer=1.;
       for(int proton=0;proton<=1;++proton){
