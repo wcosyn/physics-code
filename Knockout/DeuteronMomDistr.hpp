@@ -132,7 +132,7 @@ private:
    * also determines intermediate mass
    * \param pt [MeV] final transverse spectator momentum
    * \param Er [MeV] final spectator on-shell energy
-   * \param pkin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    */
   void get_przprime(double pt, double Er, TKinematics2to2 & kin);

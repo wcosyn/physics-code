@@ -27,15 +27,11 @@ public:
    * \param wavename Deuteron wave function name, see TDeuteron
    * \param strucname which structure function parametrization ["CB"=Chrisy-Bosted, "SLAC", "Alekhin"]
    * \param res [MeV] vector that contains resonance masses used in FSI
-   * \param symm parameter that controls symmetric or not rescatterings in the FSI <BR>
-   * - 1: no mass terms
-   * - 0: mass terms always included
-   * - -1: mass terms included like in semi-inclusive DIS (mass must increase)
    * \param offshell which offshell parametrization do you want to use? <BR>
    * - 0: based on off-shell mass suppression (See M. Sargsian PRC82, 014612)
    * - 1: based on dipole FF suppression with cutoff lambda (See S. Jesschonek PRC78, 014007)
    * - 2: suppression with a off-shell beta parameter
-   * - 3: no off-shell amplitude, fully suppressed
+   * - 3: suppression with mass difference between resonance mass and "true" W (used in paper)
    * - 4: full off-shell amplitude, no suppression
    * \param sigmain [mb] eikonal parameter, total cross section of particle in final-state with spectator
    * \param betain [GeV^-2] eikonal parameter, slope parameter of particle in final-state with spectator
@@ -43,7 +39,8 @@ public:
    * \param betaoffin [GeV^-2] eikonal parameter, off-shell slope parameter of particle in final-state with spectator
    * \param lambdain [GeV^2] cutoff parameter for off-shell part
    */
-  InclusiveCross(bool proton, std::string strucname, std::string wavename, TElectronKinematics &elec, std::vector<double> & res, int symm, int offshell, 
+  InclusiveCross(bool proton, std::string strucname, std::string wavename, TElectronKinematics &elec,
+		 std::vector<double> & res, int offshell, 
 		 double sigmain=40.,double betain=8., double epsilonin=-0.5, double betaoffin=8., double lambdain=1.2);
   ~InclusiveCross(); /*!< Destructor */
   /*! Calculates the plane-wave inclusive cross on-shell section without any prefactors, just the deuteron structure functions time
@@ -71,7 +68,7 @@ public:
    * \param x [] bjorken x
    */
   void calc_F2DincFSI_off(double &fsi1, double &fsi2, double Q2,double x);
-  //void calc_F2DincFSI2(double &fsi1, double &fsi2, double Q2,double x);
+
   void setOffshell(const int offshell){offshellset=offshell;} /*!< set offshell parametrization */
   TDeuteron::Wavefunction* getDeutwf() const{return wf;} /*!< get instance to deuteron wave function */
   
@@ -85,23 +82,16 @@ private:
   double lambda; /*!< [MeV^2 off-shell cutoff parameter */
   double massi; /*!< [MeV] mass of nucleon that gets hit by photon */
   double massr; /*!< [MeV] mass of spectator nucleon */
-    /*! \param symm parameter that controls symmetric or not rescatterings in the FSI <BR>
-   * - 1: no mass terms
-   * - 0: mass terms always included
-   * - -1: mass terms included like in semi-inclusive DIS (mass must increase)
-   */
-  int symm; 
+
   std::vector<double> resonances; /*!<vector with resonance masses included in the FSI */
   
-//   double przprime; /*!< [MeV] longitudinal spectator momentum after rescattering */
-//   double prz; /*!< [MeV] lingitudinal spectator momentum before rescattering */
   double Wxprime2; /*!< [MeV^2] invariant mass of the X that is paired with the spectator that gets integrated first */
   double otherWx2; /*!< [MeV^2] invariant mass of the other X that depends on the first ps integration */
   /*! which offshell parametrization do you want to use? <BR>
    * - 0: based on off-shell mass suppression (See M. Sargsian PRC82, 014612)
    * - 1: based on dipole FF suppression with cutoff lambda (See S. Jesschonek PRC78, 014007)
    * - 2: suppression with a off-shell beta parameter
-   * - 3: suppressed with mass difference resonance and produced W, diffractive with beta
+   * - 3: suppressed with mass difference resonance and produced W, diffractive with beta (used in article)
    * - 4: full off-shell amplitude, no suppression 
    */
   int offshellset;
@@ -111,7 +101,7 @@ private:
   DeuteronStructure structure;  /*!< deuteron structure functions object, see DeuteronStructure */
 
   /*! method to find the pole in the fsi integration, longitudinal part,
-   * with resonance mass as input
+   * with resonance mass as input.  Essentially solves Eq. (29) of the paper
   * \param pt2 [MeV^2] final transverse spectator momentum sq
   * \param W_sq [MeV^2] mass of resonance entering
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
@@ -121,7 +111,7 @@ private:
   double get_prz_res(double pt2, double W_sq, double Q2, double nu, double qvec);
  /*! gives you the scatter amplitude of the final-state interaction
    * \param t [MeV^2] momentum transfer squared
-   * \return \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
+   * \return [MeV^-2] \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
    */
   std::complex<double> scatter(double t);
   /*! gives you sigma in the parametrization we got from deeps, Q^2 dependence included
@@ -131,10 +121,6 @@ private:
   
   static double sigmaparam(double W_sq, double Q2)  ;
   
-//   void int_pperp_fsi(double pperp, double *result, va_list ap);
-//   void int_qt_bis(double qt, double *results, va_list ap);
-//   void int_qphi_bis(double qphi, double *results, va_list ap); 
-//   void get_przs(double pperp2, double pperp2other, double qvec, double nu, int first);
   /*! struct that is used for integrators plane wave ones*/
   struct Ftor_planewave {
 
@@ -150,17 +136,26 @@ private:
     * \param res results
     * \param pnorm first integration variable
     * \param costheta second integration variable
+    * \param cross instance of InclusiveCross where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     */
     void (*f)(numint::vector_d & res, double pnorm, double costheta, InclusiveCross& cross, double Q2, double x);
   };
   
-   /*! integrandum function (clean ones)*/
-  static void planewave_int(numint::vector_d & results, double pnorm, double costheta, InclusiveCross& cross, double Q2, double x);
+   /*! integrandum function (clean ones), Eq (19) of the paper
+    * \param results results
+    * \param pnorm first integration variable
+    * \param costheta second integration variable
+    * \param cross instance of InclusiveCross where we perform the integration on
+    * \param Q2 [MeV^2] momentum transfer 
+    * \param x [] Bjorken x
+    */
+  static void planewave_int(numint::vector_d & results, double pnorm, double costheta, 
+			    InclusiveCross& cross, double Q2, double x);
  
   
-  /*! struct that is used for integrators fsi on-shell ones*/
+  /*! struct that is used for integrators fsi on- and off-shell ones*/
   struct Ftor_FSI {
 
     /*! integrandum function */
@@ -177,17 +172,45 @@ private:
     * \param res results
     * \param pnorm first integration variable
     * \param costheta second integration variable
+    * \param qt [MeV] norm of transverse momentum transfer in FSI
+    * \param qphi [] radial angle of transverse momentum transfer in FSI
+    * \param cross instance of  InclusiveCross object we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param it iterator for initial resonance
+    * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
     */
     void (*f)(numint::vector_d & res, double pnorm, double costheta, double qt, double qphi, InclusiveCross& cross, 
 	      double Q2, double x, size_t it, size_t it2);
   };
   
-   /*! integrandum function (clean ones)*/
+   /*! integrandum function for on-shell contribution to the FSI amplitude (Eq. (30) of the paper)
+    * \param results results
+    * \param pnorm first integration variable
+    * \param costheta second integration variable
+    * \param qt [MeV] norm of transverse momentum transfer in FSI
+    * \param qphi [] radial angle of transverse momentum transfer in FSI
+    * \param cross instance of  InclusiveCross object we perform the integration on
+    * \param Q2 [MeV^2] momentum transfer 
+    * \param x [] Bjorken x
+    * \param it iterator for initial resonance
+    * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
+    */
   static void FSI_int(numint::vector_d & results, double pnorm, double costheta, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
-  static void FSI_int_off(numint::vector_d & results, double pnorm, double costheta, double qt, 
+   /*! integrandum function for off-shell contribution to the FSI amplitude (Eq. (33) of the paper)
+    * \param results results
+    * \param prt [MeV] norm of transverse spectator momentum (initial)
+    * \param W [MeV] invariant mass where the structure function is evaluated
+    * \param qt [MeV] norm of transverse momentum transfer in FSI
+    * \param qphi [] radial angle of transverse momentum transfer in FSI
+    * \param cross instance of  InclusiveCross object we perform the integration on
+    * \param Q2 [MeV^2] momentum transfer 
+    * \param x [] Bjorken x
+    * \param it iterator for initial resonance
+    * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
+    */
+  static void FSI_int_off(numint::vector_d & results, double prt, double W, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
  
   
