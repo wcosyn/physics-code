@@ -4,8 +4,8 @@
 
 using namespace std;
 
-InclusiveCross::InclusiveCross(bool proton, string strucname, string wavename, TElectronKinematics &elec, std::vector<double> & res,
-				int sym, int offshell, 
+InclusiveCross::InclusiveCross(bool proton, string strucname, string wavename, TElectronKinematics &elec, 
+			       std::vector<double> & res,int offshell, 
 				double sigmain,double betain, double epsilonin, double betaoffin, double lambdain)
 :sigma(sigmain/10.*INVHBARC*INVHBARC),
 beta(betain*1.E-06),
@@ -15,7 +15,6 @@ lambda(lambdain*1.E+06),
 massi(proton? MASSP:MASSN),
 massr(proton? MASSN:MASSP),
 resonances(res),
-symm(sym),
 offshellset(offshell),
 electron(elec),
 structure(proton,strucname){
@@ -368,10 +367,106 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
 
 
 
+void InclusiveCross::calc_F2DincFSI_distr(double &fsi1, double &fsi2, double Q2,double x, double central, double width){
+  
+  fsi1=fsi2=0.;
+  numint::array<double,5> lower = {{central-2.*width,0.,-1.,0.,0.}};
+  numint::array<double,5> upper = {{central+2.*width,1.E03,1.,1.E03,2.*PI}};
+  InclusiveCross::Ftor_FSI_distr F;
+  F.cross=this;
+  F.Q2 = Q2;
+  F.x = x;
+  F.central=central;
+  F.width=width;
+  
+  numint::mdfunction<numint::vector_d,5> mdf;
+  mdf.func = &Ftor_FSI_distr::exec;
+  mdf.param = &F;
+  numint::vector_d ret(2,0.);
+  F.f=InclusiveCross::FSI_int_distr;
+  for(size_t it=0; it<resonances.size(); it++){
+    F.it=it;
+    F.it2=0;
+  int res=90;
+  unsigned count=0;
+  //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,10E05,ret,count,0);
+  //   cout << res << " " << count << endl;
+    fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
+    fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
+  }
+  return;
+}
+
+void InclusiveCross::FSI_int_distr(numint::vector_d & result, double mass, double prnorm, double costheta, double qt, 
+		      double qphi, InclusiveCross& cross, double Q2, double x, size_t itt, size_t it2,
+		      double central, double width){
+
+  cross.setResonance(itt,mass);
+  FSI_int(result,prnorm,costheta,qt,qphi,cross,Q2,x,itt,it2);
+  double coef=exp(-(mass-central)*(mass-central)/(2.*width*width))/(width*sqrt(2.*PI));
+  result[0]*=coef;
+  result[1]*=coef;
+  return;
+}
 
 
+void InclusiveCross::calc_F2DincFSI_distr_off(double &fsi1, double &fsi2, double Q2,double x, 
+					      double central, double width){
+  
+  fsi1=fsi2=0.;
+  double Wmax=massi;
+  double qvec=sqrt(Q2+pow(Q2/(2.*massi*x),2.));
+  double nu=Q2/(2.*massi*x);
+  for(int i=0;i<1000;i++){
+    double W=sqrt(-Q2+MASSD*MASSD+2.*MASSD*nu+massr*massr-2.*sqrt(massr*massr+i*i)*(nu+MASSD)+2.*qvec*i);
+    if(W>Wmax) Wmax=W;
+  }
+//   cout << Wmax <<endl;
+  
+  numint::array<double,5> lower = {{central-2.*width,0.,massi,0.,0.}};
+  numint::array<double,5> upper = {{central+2.*width,1.E03,Wmax,1.E03,2.*PI}};
+  InclusiveCross::Ftor_FSI_distr F;
+  F.cross=this;
+  F.Q2 = Q2;
+  F.x = x;
+  F.central=central;
+  F.width=width;
+  
+  numint::mdfunction<numint::vector_d,5> mdf;
+  mdf.func = &Ftor_FSI_distr::exec;
+  mdf.param = &F;
+  numint::vector_d ret(2,0.);
+  F.f=InclusiveCross::FSI_int_distr_off;
+  for(size_t it=0; it<resonances.size(); it++){
+    F.it=it;
+    /*for(size_t it2=0; it2<resonances.size(); it2++)*/{
+      F.it2=it;
+      int res=90;
+      unsigned count=0;
+  //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,10E05,ret,count,0);
+    //   cout << res << " " << count << endl;
+      fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
+      fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
+    }
+  }
+  return;
+}
 
 
+void InclusiveCross::FSI_int_distr_off(numint::vector_d & result, double mass, double prt, double W, double qt, 
+		      double qphi, InclusiveCross& cross, double Q2, double x,size_t itt, size_t itt2,
+		      double central, double width){
+
+  cross.setResonance(itt,mass);
+  FSI_int_off(result,prt,W,qt,qphi,cross,Q2,x,itt,itt2);
+  double coef=exp(-(mass-central)*(mass-central)/(2.*width*width))/(width*sqrt(2.*PI));
+  result[0]*=coef;
+  result[1]*=coef;
+  return;
+  
+}
 
 
 double InclusiveCross::sigmaparam(double W_sq, double Q2){

@@ -23,7 +23,8 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG) $(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/inclusive
+EFILE1   = 	../../bin/inclusive
+EFILE2   = 	../../bin/disinc
 EFILEST   = 	../../bin/staticinclusive
 
 
@@ -41,25 +42,31 @@ HDRS =
 # root headers
 
 #		Object files
-OBJS = 	        $(HDRS:.hpp=.o) $(CPATH)/inctest.o
+OBJS = 	        $(HDRS:.hpp=.o) $(CPATH)/inclusive.o
+OBJS2 = 	        $(HDRS:.hpp=.o) $(CPATH)/disinctest.o
 
 #-------------------------------------------------------------------------
 
 #		Targets...
 
-all:		$(EFILE)
+# all:		$(EFILE1)
+inc:	$(EFILE1)
+disinc:	$(EFILE2)
 static:		$(EFILEST)
 #-------------------------------------------------------------------------
 clean:;		@rm -f $(OBJS) core*
 
 #-------------------------------------------------------------------------
 
-$(EFILE):	$(OBJS) $(HDRS)
+$(EFILE1):	$(OBJS) $(HDRS)
 		@echo "Linking $(EFILE)..."
-		$(CC) $(CFLAGS) -o $(EFILE) $(MAIN1) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
+		$(CC) $(CFLAGS) -o $(EFILE1) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
+$(EFILE2):	$(OBJS2) $(HDRS)
+		@echo "Linking $(EFILE)..."
+		$(CC) $(CFLAGS) -o $(EFILE2) $(OBJS2) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
 $(EFILEST):	$(OBJS) $(HDRS) 
 		@echo "Linking $(EFILEST)..."
-		$(CC) $(CFLAGS) -o $(EFILEST) $(MAIN1) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
+		$(CC) $(CFLAGS) -o $(EFILEST) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
 
 # $(OBJS):	$(HDRS) $(HDRS2) $(DICTHDRS) $(INCHDRS)
 
