@@ -34,16 +34,16 @@ int main(int argc, char *argv[])
       InclusiveCross Dinc(proton,strucname,wf,*elec,resonances,4);
       teller+=Dinc.calc_F2Dinc(Q2,x);
       double f1,f2;
-      Dinc.calc_F2DincFSI_distr(f1,f2,Q2,x,central,width);
+      Dinc.calc_F2DincFSI_uniform(f1,f2,Q2,x,central,width);
       fsi1+=f1;
       fsi2+=f2;
       if(!Dinc.getDeutwf()->IsRelativistic()){
-	Dinc.calc_F2DincFSI_distr_off(f1,f2,Q2,x,central,width);
+	Dinc.calc_F2DincFSI_uniform_off(f1,f2,Q2,x,central,width);
 	fsioff1+=f1;
 	fsioff2+=f2;
 	//suppressed
 	Dinc.setOffshell(3);
-	Dinc.calc_F2DincFSI_distr_off(f1,f2,Q2,x,central,width);
+	Dinc.calc_F2DincFSI_uniform_off(f1,f2,Q2,x,central,width);
 	fsioffsuppr1+=f1;
 	fsioffsuppr2+=f2;
       }
