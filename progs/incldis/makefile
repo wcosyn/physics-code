@@ -10,12 +10,12 @@ VERSION =
 #		Calc-path
 CPATH 	=	.
 
-#  CC      = 	icpc
- CC      = 	g++
+ CC      = 	icpc
+#  CC      = 	g++
 
 #		Flags
- OPTFLAG	=	-O3 -fPIC
-#  OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX
+#  OPTFLAG	=	-O3 -fPIC
+ OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
@@ -67,7 +67,7 @@ $(EFILE1):	$(OBJS) $(HDRS)
 $(EFILE2):	$(OBJS2) $(HDRS)
 		@echo "Linking $(EFILE2)..."
 		$(CC) $(CFLAGS) -o $(EFILE2) $(OBJS2) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
-$(EFILE2):	$(OBJS3) $(HDRS)
+$(EFILE3):	$(OBJS3) $(HDRS)
 		@echo "Linking $(EFILE3)..."
 		$(CC) $(CFLAGS) -o $(EFILE3) $(OBJS3) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
 $(EFILEST):	$(OBJS) $(HDRS) 
