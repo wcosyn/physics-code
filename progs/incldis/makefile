@@ -25,11 +25,12 @@ CFLAGS	=	$(OPTFLAG) $(WFLAG) $(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 #		Executable file
 EFILE1   = 	../../bin/inclusive
 EFILE2   = 	../../bin/disinc
+EFILE3   = 	../../bin/disuniform
 EFILEST   = 	../../bin/staticinclusive
 
 
 #		Mathematical functions
-LIBS =	 	-lm -lifcore -lgfortran
+LIBS =	 	-lm 
 WIMLIBS = -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator
 ROOT =		`$(ROOTSYS)/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
@@ -44,6 +45,7 @@ HDRS =
 #		Object files
 OBJS = 	        $(HDRS:.hpp=.o) $(CPATH)/inclusive.o
 OBJS2 = 	        $(HDRS:.hpp=.o) $(CPATH)/disinctest.o
+OBJS3 = 	        $(HDRS:.hpp=.o) $(CPATH)/disuniform.o
 
 #-------------------------------------------------------------------------
 
@@ -52,6 +54,7 @@ OBJS2 = 	        $(HDRS:.hpp=.o) $(CPATH)/disinctest.o
 # all:		$(EFILE1)
 inc:	$(EFILE1)
 disinc:	$(EFILE2)
+uniform: $(EFILE3)
 static:		$(EFILEST)
 #-------------------------------------------------------------------------
 clean:;		@rm -f $(OBJS) core*
@@ -62,8 +65,11 @@ $(EFILE1):	$(OBJS) $(HDRS)
 		@echo "Linking $(EFILE)..."
 		$(CC) $(CFLAGS) -o $(EFILE1) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
 $(EFILE2):	$(OBJS2) $(HDRS)
-		@echo "Linking $(EFILE)..."
+		@echo "Linking $(EFILE2)..."
 		$(CC) $(CFLAGS) -o $(EFILE2) $(OBJS2) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
+$(EFILE2):	$(OBJS3) $(HDRS)
+		@echo "Linking $(EFILE3)..."
+		$(CC) $(CFLAGS) -o $(EFILE3) $(OBJS3) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
 $(EFILEST):	$(OBJS) $(HDRS) 
 		@echo "Linking $(EFILEST)..."
 		$(CC) $(CFLAGS) -o $(EFILEST) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)

@@ -70,7 +70,8 @@ public:
   void calc_F2DincFSI_off(double &fsi1, double &fsi2, double Q2,double x);
 
   /*! Calculates the fsi inclusive cross section without any prefactors, just the deuteron structure functions time
-   * momentum distribution
+   * momentum distribution <BR>
+   * Uses broad resonance with Gaussian distribution
    * \param fsi1 [] inclusive fsi cross section without prefactors (structure functions times momentum distribution integrated)
    * calculated in one of two ways (see notes)
    * \param fsi2 [] other fsi formula
@@ -81,7 +82,8 @@ public:
    */
   void calc_F2DincFSI_distr(double &fsi1, double &fsi2, double Q2,double x, double central, double width);
   /*! Calculates the fsi inclusive off-shell cross section without any prefactors, just the deuteron structure functions time
-   * momentum distribution
+   * momentum distribution <BR>
+   * Uses broad resonance with Gaussian distribution
    * \param fsi1 [] inclusive fsi cross section without prefactors (structure functions times momentum distribution integrated)
    * calculated in one of two ways (see notes)
    * \param fsi2 [] other fsi formula
@@ -92,6 +94,30 @@ public:
    */
   void calc_F2DincFSI_distr_off(double &fsi1, double &fsi2, double Q2,double x, double central, double width);
 
+  /*! Calculates the fsi inclusive cross section without any prefactors, just the deuteron structure functions time
+   * momentum distribution <BR>
+   * Uses broad resonance with uniform distribution
+   * \param fsi1 [] inclusive fsi cross section without prefactors (structure functions times momentum distribution integrated)
+   * calculated in one of two ways (see notes)
+   * \param fsi2 [] other fsi formula
+   * \param Q2 [MeV^2] Q^2 of virtual photon
+   * \param x [] bjorken x
+   * \param central[MeV] central value of broad resonance
+   * \param width [MeV] width of broad resonance, Gaussian shape assumed
+   */
+  void calc_F2DincFSI_uniform(double &fsi1, double &fsi2, double Q2,double x, double central, double width);
+  /*! Calculates the fsi inclusive off-shell cross section without any prefactors, just the deuteron structure functions time
+   * momentum distribution <BR>
+   * Uses broad resonance with uniform distribution
+   * \param fsi1 [] inclusive fsi cross section without prefactors (structure functions times momentum distribution integrated)
+   * calculated in one of two ways (see notes)
+   * \param fsi2 [] other fsi formula
+   * \param Q2 [MeV^2] Q^2 of virtual photon
+   * \param x [] bjorken x
+   * \param central[MeV] central value of broad resonance
+   * \param width [MeV] width of broad resonance, Gaussian shape assumed
+   */
+  void calc_F2DincFSI_uniform_off(double &fsi1, double &fsi2, double Q2,double x, double central, double width);
   
   
   
@@ -277,7 +303,8 @@ private:
 	      double Q2, double x, size_t it, size_t it2, double central, double width);
   };
 
-   /*! integrandum function for on-shell contribution to the FSI amplitude with a broad resonance
+   /*! integrandum function for on-shell contribution to the FSI amplitude with a broad resonance,
+    * Gaussian shape for the distribution
     * \param results results
     * \param mass [MeV] pole value for resonance
     * \param pnorm [MeV] norm of spectator momentum
@@ -295,7 +322,8 @@ private:
   static void FSI_int_distr(numint::vector_d & results, double mass, double pnorm, double costheta, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2,
 		      double central, double width);
-   /*! integrandum function for off-shell contribution to the FSI amplitude (Eq. (33) of the paper)
+   /*! integrandum function for on-shell contribution to the FSI amplitude with a broad resonance,
+    * Gaussian shape for the distribution
     * \param results results
     * \param mass [MeV] pole value for resonance
     * \param prt [MeV] norm of transverse spectator momentum (initial)
@@ -315,6 +343,45 @@ private:
 		      double central, double width);
  
   
+   /*! integrandum function for on-shell contribution to the FSI amplitude with a broad resonance,
+    * uniform shape for the distribution
+    * \param results results
+    * \param mass [MeV] pole value for resonance
+    * \param pnorm [MeV] norm of spectator momentum
+    * \param costheta [] polar cos(theta) of spectator momentum
+    * \param qt [MeV] norm of transverse momentum transfer in FSI
+    * \param qphi [] radial angle of transverse momentum transfer in FSI
+    * \param cross instance of  InclusiveCross object we perform the integration on
+    * \param Q2 [MeV^2] momentum transfer 
+    * \param x [] Bjorken x
+    * \param it iterator for initial resonance
+    * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
+    * \param central[MeV] central value of broad resonance
+    * \param width [MeV] width of broad resonance, Gaussian shape assumed
+    */
+  static void FSI_int_uniform(numint::vector_d & results, double mass, double pnorm, double costheta, double qt, 
+		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2,
+		      double central, double width);
+   /*! integrandum function for on-shell contribution to the FSI amplitude with a broad resonance,
+    * uniform shape for the distribution
+    * \param results results
+    * \param mass [MeV] pole value for resonance
+    * \param prt [MeV] norm of transverse spectator momentum (initial)
+    * \param W [MeV] invariant mass where the structure function is evaluated
+    * \param qt [MeV] norm of transverse momentum transfer in FSI
+    * \param qphi [] radial angle of transverse momentum transfer in FSI
+    * \param cross instance of  InclusiveCross object we perform the integration on
+    * \param Q2 [MeV^2] momentum transfer 
+    * \param x [] Bjorken x
+    * \param it iterator for initial resonance
+    * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
+    * \param central[MeV] central value of broad resonance
+    * \param width [MeV] width of broad resonance, Gaussian shape assumed
+    */
+  static void FSI_int_uniform_off(numint::vector_d & results, double mass, double prt, double W, double qt, 
+		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2,
+		      double central, double width);
+ 
   
 };
 
