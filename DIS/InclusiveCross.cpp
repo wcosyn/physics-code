@@ -156,7 +156,6 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
   vector<double> res_result;
   res_result=vector<double>(2,0.);
   cross.otherWx2=cross.resonances[itt]*cross.resonances[itt];
-  cout << cross.resonances[itt] << endl;
   double przprime = cross.get_prz_res(pt2,cross.otherWx2,kin);
   if(abs(przprime+1.E09)<1.E-02){result[0]=result[1]=0.; return;}
   double pprime = sqrt(pt2+przprime*przprime);
