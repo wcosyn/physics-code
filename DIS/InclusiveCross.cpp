@@ -367,30 +367,31 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
 
 
 
-void InclusiveCross::calc_F2DincFSI_distr(double &fsi1, double &fsi2, double Q2,double x, double central, double width){
+void InclusiveCross::calc_F2DincFSI_Gauss(double &fsi1, double &fsi2, double Q2,double x, 
+					   std::vector<double> & centrals, std::vector<double> & widths){
   
   fsi1=fsi2=0.;
-  numint::array<double,5> lower = {{central-2.*width,0.,-1.,0.,0.}};
-  numint::array<double,5> upper = {{central+2.*width,1.E03,1.,1.E03,2.*PI}};
   InclusiveCross::Ftor_FSI_distr F;
   F.cross=this;
   F.Q2 = Q2;
   F.x = x;
-  F.central=central;
-  F.width=width;
+  F.centrals=centrals;
+  F.widths=widths;
   
   numint::mdfunction<numint::vector_d,5> mdf;
   mdf.func = &Ftor_FSI_distr::exec;
   mdf.param = &F;
   numint::vector_d ret(2,0.);
-  F.f=InclusiveCross::FSI_int_distr;
+  F.f=InclusiveCross::FSI_int_Gauss;
   for(size_t it=0; it<resonances.size(); it++){
+    numint::array<double,5> lower = {{centrals[it]-3.*widths[it],0.,-1.,0.,0.}};
+    numint::array<double,5> upper = {{centrals[it]+3.*widths[it],1.E03,1.,1.E03,2.*PI}};
     F.it=it;
     F.it2=0;
   int res=90;
   unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,20E05,ret,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E07,ret,count,0);
   //   cout << res << " " << count << endl;
     fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
     fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
@@ -398,22 +399,21 @@ void InclusiveCross::calc_F2DincFSI_distr(double &fsi1, double &fsi2, double Q2,
   return;
 }
 
-void InclusiveCross::FSI_int_distr(numint::vector_d & result, double mass, double prnorm, double costheta, double qt, 
+void InclusiveCross::FSI_int_Gauss(numint::vector_d & result, double mass, double prnorm, double costheta, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x, size_t itt, size_t it2,
-		      double central, double width){
+		      std::vector<double> & centrals, std::vector<double> & widths){
 
   cross.setResonance(itt,mass);
   FSI_int(result,prnorm,costheta,qt,qphi,cross,Q2,x,itt,it2);
-  double coef=exp(-(mass-central)*(mass-central)/(2.*width*width))/(width*sqrt(2.*PI));
+  double coef=exp(-(mass-centrals[itt])*(mass-centrals[itt])/(2.*widths[itt]*widths[itt]))/(widths[itt]*sqrt(2.*PI));
   result[0]*=coef;
   result[1]*=coef;
   return;
 }
 
 
-void InclusiveCross::calc_F2DincFSI_distr_off(double &fsi1, double &fsi2, double Q2,double x, 
-					      double central, double width){
-  
+void InclusiveCross::calc_F2DincFSI_Gauss_off(double &fsi1, double &fsi2, double Q2,double x, 
+						std::vector<double> & centrals, std::vector<double> & widths){
   fsi1=fsi2=0.;
   double Wmax=massi;
   double qvec=sqrt(Q2+pow(Q2/(2.*massi*x),2.));
@@ -424,28 +424,28 @@ void InclusiveCross::calc_F2DincFSI_distr_off(double &fsi1, double &fsi2, double
   }
 //   cout << Wmax <<endl;
   
-  numint::array<double,5> lower = {{central-2.*width,0.,massi,0.,0.}};
-  numint::array<double,5> upper = {{central+2.*width,1.E03,Wmax,1.E03,2.*PI}};
   InclusiveCross::Ftor_FSI_distr F;
   F.cross=this;
   F.Q2 = Q2;
   F.x = x;
-  F.central=central;
-  F.width=width;
+  F.centrals=centrals;
+  F.widths=widths;
   
   numint::mdfunction<numint::vector_d,5> mdf;
   mdf.func = &Ftor_FSI_distr::exec;
   mdf.param = &F;
   numint::vector_d ret(2,0.);
-  F.f=InclusiveCross::FSI_int_distr_off;
+  F.f=InclusiveCross::FSI_int_Gauss_off;
   for(size_t it=0; it<resonances.size(); it++){
+    numint::array<double,5> lower = {{centrals[it]-3.*widths[it],0.,massi,0.,0.}};
+    numint::array<double,5> upper = {{centrals[it]+3.*widths[it],1.E03,Wmax,1.E03,2.*PI}};
     F.it=it;
     /*for(size_t it2=0; it2<resonances.size(); it2++)*/{
       F.it2=it;
       int res=90;
       unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,20E05,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E07,ret,count,0);
     //   cout << res << " " << count << endl;
       fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
       fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
@@ -455,30 +455,29 @@ void InclusiveCross::calc_F2DincFSI_distr_off(double &fsi1, double &fsi2, double
 }
 
 
-void InclusiveCross::FSI_int_distr_off(numint::vector_d & result, double mass, double prt, double W, double qt, 
+void InclusiveCross::FSI_int_Gauss_off(numint::vector_d & result, double mass, double prt, double W, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x,size_t itt, size_t itt2,
-		      double central, double width){
+		      std::vector<double> & centrals, std::vector<double> & widths){
 
   cross.setResonance(itt,mass);
   FSI_int_off(result,prt,W,qt,qphi,cross,Q2,x,itt,itt2);
-  double coef=exp(-(mass-central)*(mass-central)/(2.*width*width))/(width*sqrt(2.*PI));
+  double coef=exp(-(mass-centrals[itt])*(mass-centrals[itt])/(2.*widths[itt]*widths[itt]))/(widths[itt]*sqrt(2.*PI));
   result[0]*=coef;
   result[1]*=coef;
   return;
   
 }
 
-void InclusiveCross::calc_F2DincFSI_uniform(double &fsi1, double &fsi2, double Q2,double x, double central, double width){
+void InclusiveCross::calc_F2DincFSI_uniform(double &fsi1, double &fsi2, double Q2,double x, 
+					    std::vector<double> & centrals, std::vector<double> & widths){
   
   fsi1=fsi2=0.;
-  numint::array<double,5> lower = {{central-2.*width,0.,-1.,0.,0.}};
-  numint::array<double,5> upper = {{central+2.*width,1.E03,1.,1.E03,2.*PI}};
   InclusiveCross::Ftor_FSI_distr F;
   F.cross=this;
   F.Q2 = Q2;
   F.x = x;
-  F.central=central;
-  F.width=width;
+  F.centrals=centrals;
+  F.widths=widths;
   
   numint::mdfunction<numint::vector_d,5> mdf;
   mdf.func = &Ftor_FSI_distr::exec;
@@ -486,12 +485,14 @@ void InclusiveCross::calc_F2DincFSI_uniform(double &fsi1, double &fsi2, double Q
   numint::vector_d ret(2,0.);
   F.f=InclusiveCross::FSI_int_uniform;
   for(size_t it=0; it<resonances.size(); it++){
+    numint::array<double,5> lower = {{centrals[it]-widths[it],0.,-1.,0.,0.}};
+    numint::array<double,5> upper = {{centrals[it]+widths[it],1.E03,1.,1.E03,2.*PI}};
     F.it=it;
     F.it2=0;
-  int res=90;
-  unsigned count=0;
-  //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,20E05,ret,count,0);
+    int res=90;
+    unsigned count=0;
+    //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E07,ret,count,0);
   //   cout << res << " " << count << endl;
     fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
     fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
@@ -501,11 +502,11 @@ void InclusiveCross::calc_F2DincFSI_uniform(double &fsi1, double &fsi2, double Q
 
 void InclusiveCross::FSI_int_uniform(numint::vector_d & result, double mass, double prnorm, double costheta, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x, size_t itt, size_t it2,
-		      double central, double width){
+		      std::vector<double> & centrals, std::vector<double> & widths){
 
   cross.setResonance(itt,mass);
   FSI_int(result,prnorm,costheta,qt,qphi,cross,Q2,x,itt,it2);
-  double coef=1./(2.*width);
+  double coef=1./(2.*widths[itt]);
   result[0]*=coef;
   result[1]*=coef;
   return;
@@ -513,7 +514,7 @@ void InclusiveCross::FSI_int_uniform(numint::vector_d & result, double mass, dou
 
 
 void InclusiveCross::calc_F2DincFSI_uniform_off(double &fsi1, double &fsi2, double Q2,double x, 
-					      double central, double width){
+					      std::vector<double> & centrals, std::vector<double> & widths){
   
   fsi1=fsi2=0.;
   double Wmax=massi;
@@ -525,14 +526,12 @@ void InclusiveCross::calc_F2DincFSI_uniform_off(double &fsi1, double &fsi2, doub
   }
 //   cout << Wmax <<endl;
   
-  numint::array<double,5> lower = {{central-2.*width,0.,massi,0.,0.}};
-  numint::array<double,5> upper = {{central+2.*width,1.E03,Wmax,1.E03,2.*PI}};
   InclusiveCross::Ftor_FSI_distr F;
   F.cross=this;
   F.Q2 = Q2;
   F.x = x;
-  F.central=central;
-  F.width=width;
+  F.centrals=centrals;
+  F.widths=widths;
   
   numint::mdfunction<numint::vector_d,5> mdf;
   mdf.func = &Ftor_FSI_distr::exec;
@@ -540,13 +539,15 @@ void InclusiveCross::calc_F2DincFSI_uniform_off(double &fsi1, double &fsi2, doub
   numint::vector_d ret(2,0.);
   F.f=InclusiveCross::FSI_int_uniform_off;
   for(size_t it=0; it<resonances.size(); it++){
+    numint::array<double,5> lower = {{centrals[it]-widths[it],0.,massi,0.,0.}};
+    numint::array<double,5> upper = {{centrals[it]+widths[it],1.E03,Wmax,1.E03,2.*PI}};
     F.it=it;
     /*for(size_t it2=0; it2<resonances.size(); it2++)*/{
       F.it2=it;
       int res=90;
       unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,20E05,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E07,ret,count,0);
     //   cout << res << " " << count << endl;
       fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
       fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
@@ -558,11 +559,11 @@ void InclusiveCross::calc_F2DincFSI_uniform_off(double &fsi1, double &fsi2, doub
 
 void InclusiveCross::FSI_int_uniform_off(numint::vector_d & result, double mass, double prt, double W, double qt, 
 		      double qphi, InclusiveCross& cross, double Q2, double x,size_t itt, size_t itt2,
-		      double central, double width){
+		      std::vector<double> & centrals, std::vector<double> & widths){
 
   cross.setResonance(itt,mass);
   FSI_int_off(result,prt,W,qt,qphi,cross,Q2,x,itt,itt2);
-  double coef=1./(2.*width);
+  double coef=1./(2.*widths[itt]);
   result[0]*=coef;
   result[1]*=coef;
   return;

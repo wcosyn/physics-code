@@ -26,6 +26,7 @@ CFLAGS	=	$(OPTFLAG) $(WFLAG) $(DBGFLAG)  #$(GPFLAG) #$(STATIC)
 EFILE1   = 	../../bin/inclusive
 EFILE2   = 	../../bin/disinc
 EFILE3   = 	../../bin/disuniform
+EFILE4   = 	../../bin/f2n
 EFILEST   = 	../../bin/staticinclusive
 
 
@@ -46,6 +47,7 @@ HDRS =
 OBJS = 	        $(HDRS:.hpp=.o) $(CPATH)/inclusive.o
 OBJS2 = 	        $(HDRS:.hpp=.o) $(CPATH)/disinctest.o
 OBJS3 = 	        $(HDRS:.hpp=.o) $(CPATH)/disuniform.o
+OBJS4 = 	        $(HDRS:.hpp=.o) $(CPATH)/f2n.o
 
 #-------------------------------------------------------------------------
 
@@ -53,11 +55,12 @@ OBJS3 = 	        $(HDRS:.hpp=.o) $(CPATH)/disuniform.o
 
 # all:		$(EFILE1)
 inc:	$(EFILE1)
-disinc:	$(EFILE2)
+gauss:	$(EFILE2)
 uniform: $(EFILE3)
+f2N: $(EFILE4)
 static:		$(EFILEST)
 #-------------------------------------------------------------------------
-clean:;		@rm -f $(OBJS) $(OBJS2) $(OBJS3) core*
+clean:;		@rm -f $(OBJS) $(OBJS2) $(OBJS3) $(OBJS4) core*
 
 #-------------------------------------------------------------------------
 
@@ -70,6 +73,9 @@ $(EFILE2):	$(OBJS2) $(HDRS)
 $(EFILE3):	$(OBJS3) $(HDRS)
 		@echo "Linking $(EFILE3)..."
 		$(CC) $(CFLAGS) -o $(EFILE3) $(OBJS3) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
+$(EFILE4):	$(OBJS4) $(HDRS)
+		@echo "Linking $(EFILE4)..."
+		$(CC) $(CFLAGS) -o $(EFILE4) $(OBJS4) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS) 
 $(EFILEST):	$(OBJS) $(HDRS) 
 		@echo "Linking $(EFILEST)..."
 		$(CC) $(CFLAGS) -o $(EFILEST) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
