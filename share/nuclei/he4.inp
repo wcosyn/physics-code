@@ -2,9 +2,9 @@
 3728.43             // mass of He4
 2809.44             // mass of H3
 2809.43		    // mass of He3
-93275.47      //mass of 10Be
-9326.99       //mass of 10B
-9330.64       //mass of 10C
+1879.13      //just mass of 2 neutron, unbound!!!
+1877.837      //p+n, unbound!
+1876.544      //p+p, unbound!!!
 1 1                 // number of proton and neutron levels
 0		    // excitation energy of the shells
 0                   // excitation energy of the shells
