@@ -1,10 +1,10 @@
 208 82               // mass number and proton number
 193729.05            // mass of Pb208
 192798.28            // mass of Tl207
-192800		     // mass of Pb207
-191866.34     //mass of Hg206
-191865.41     //mass of Tl206
-191863.55       //mass of Pb206
+192797.47            // mass of Pb207
+191866.34            //mass of Hg206
+191865.41            //mass of Tl206
+191863.55            //mass of Pb206
 16 22                // number of proton and neutron levels
 24.67 20.88 20.42 16.27 15.32 14.10 11.25 9.63 8.14 7.46 5.69 3.514 1.683 1.348 0.351 0 // excitation proton
 32.7 28.7 28.1 24.3 22.2 23.5 19.1 16.2 17.7 15.4 13.7 11.1 7.7 10.4 8.7 3.7 8.2 3.2 0.7 0.7 0 1.5  //excitation energy 
