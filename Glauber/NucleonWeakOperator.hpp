@@ -5,63 +5,71 @@
  * \addtogroup Glauber
  * @{
  */
-#ifndef NUCLEONEMOPERATOR_HPP
-#define NUCLEONEMOPERATOR_HPP
+#ifndef NUCLEONWEAKOPERATOR_HPP
+#define NUCLEONWEAKOPERATOR_HPP
 
 #include <iostream>
 #include "constants.hpp"
 #include "FourVector.h"
 #include "GammaStructure.h"
+#include "NucleonEMOperator.hpp"
 
-class MeanFieldNucleusThick; //forward declaration
 
 /*! \brief A class that contains the EM coupling to the nucleon.
- * Has form factors, medium modifications (CQM, QSM), 
+ * Has Weak force form factors (charged and neutral current), medium modifications (CQM, QSM), 
  * computes dirac matrices with coupling
  *
  */
-class NucleonEMOperator{
+class NucleonWeakOperator : public NucleonEMOperator{
 public:
-  NucleonEMOperator(); /*!< Empty constructor */
+  NucleonWeakOperator(); /*!< Empty constructor */
   /*! constructor
    * \param Q2 [MeV^2] photon fourmomentum transfer squared
    * \param proton interaction with proton [1] or neutron [0]
    * \param para which parametrization? [0=BBA, 1= dipole]
+   * \param charged 0: Z-boson, 1: W-boson
+   * \param M_A [MeV] axial mass in dipole paramterization
+   * \param r_s2 [fm^2] parameter for strange contribution to F1_weak
+   * \param mu_s [\mu_N] parameter for strange contribution to F2_weak
+   * \param gA_s [] parameter for strange contribution to G_A
    */
-  NucleonEMOperator(const double Q2, const bool proton, const int para);
-  ~NucleonEMOperator(); /*!< Destructor */
-  double getGE() const{ return GE;} /*!< Gives you electric form factor */
-  double getGM() const{return GM;} /*!< Gives you magnetic form factor */
-  double getF1() const{return F1;} /*!< Gives you F1 */
-  double getF2() const{return F2;} /*!< Gives you F2 */
-  /*! compute GE with medium modification
+  NucleonWeakOperator(const double Q2, const bool proton, const int para, const bool charged, const int M_A, const double r_s2,
+		    const double mu_s, const double gA_s=-0.19);
+  ~NucleonWeakOperator(); /*!< Destructor */
+  double getGE_weak() const{ return GE_weak;} /*!< Gives you electric form factor */
+  double getGM_weak() const{return GM_weak;} /*!< Gives you magnetic form factor */
+  double getGA_weak() const{return GA_weak;} /*!< Gives you axial vector form factor */
+  double getGP_weak() const{return GP_weak;} /*!< Gives you axial pseudoscalar form factor */
+  double getF1_weak() const{return F1_weak;} /*!< Gives you F1 */
+  double getF2_weak() const{return F2_weak;} /*!< Gives you F2 */
+  /*! compute GE_weak with medium modification
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
    * \param nucleus nucleus class object, contains the densities etc.
-   * \return GE with medium modification
+   * \return GE_weak with medium modification
    */
-  double getGE(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const{ return GE*getEmod(r,medium,nucleus);}
-  /*! compute GM with medium modification
+  double getGE_weak(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
+  /*! compute GM_weak with medium modification
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
    * \param nucleus nucleus class object, contains the densities etc.
-   * \return GM with medium modification
+   * \return GM_weak with medium modification
    */
-  double getGM(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const{ return GM*getMmod(r,medium,nucleus);}
-  /*! compute F1 with medium modification
+  double getGM_weak(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
+  /*! compute F1_weak with medium modification
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
    * \param nucleus nucleus class object, contains the densities etc.
-   * \return F1 with medium modification
+   * \return F1_weak with medium modification
    */
-  double getF1(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
-  /*! compute F2 with medium modification
+  double getF1_weak(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
+  /*! compute F2_weak with medium modification
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
    * \param nucleus nucleus class object, contains the densities etc.
-   * \return F2 with medium modification
+   * \return F2_weak with medium modification
    */
-  double getF2(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
+  double getF2_weak(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! computes the dirac foton-bound nucleon coupling according to the CC1 description of De Forest et al.
    * \param pi [MeV] initial nucleon momentum fourvector
    * \param pf [MeV] final nucleon momentum fourvector
@@ -101,72 +109,50 @@ public:
    * \param nucleus nucleus class object, contains the densities etc.
    * \return fourvector of dirac matrices with CC1 coupling to nucleon
    */
+  
+ /*! computes the dirac weak axial bound nucleon coupling 
+   * \param q [MeV] photon momentum fourvector
+   * \return fourvector of dirac matrices with axial coupling to nucleon
+   */
+  FourVector<GammaStructure> getAxial(const FourVector<double> &q) const;
+  
+  
   FourVector<GammaStructure> getCC(const int current, const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf, 
 				   const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
-  static const FourVector<GammaStructure> gamma_mu; /*!< gamma matrices */
-  static const GammaStructure Id; /*!< Unit matrix */
-  /*! grid for QMC GE modification, stepsize in Q2 [61] is 0.05 GeV^2, 
-   * stepsize in density[15] (norm to A) is 0.016 fm^-3
-   */
-  static const double QMCGE[61][15]; 
-  /*! grid for QMC GM modification, stepsize in Q2 [61] is 0.05 GeV^2, 
-   * stepsize in density[15] (norm to A) is 0.016 fm^-3
-   */
-  static const double QMCGM[61][15];
-  /*! grid for QSM GE modification, stepsize in Q2 [61] is 0.05 GeV^2, 
-   * stepsize in density[16] (norm to A) is 0.016 fm^-3
-   */
-  static const double CQSMGE[61][16];
-  /*! grid for QSM GM modification, stepsize in Q2 [61] is 0.05 GeV^2, 
-   * stepsize in density[16] (norm to A) is 0.016 fm^-3
-   */
-  static const double CQSMGM[61][16];
-
-  /*! gives you the modification of the electric form factor
-   * \param r [fm] radial coordinate
-   * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
-   * \return modification of GE_null
-   */
-  double getEmod(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
-  /*! gives you the modification of the magnetic form factor
-   * \param r [fm] radial coordinate
-   * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
-   * \return modification of GM_null
-   */
-  double getMmod(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
-
-
-protected:
-  bool proton; /*!< 1=proton, 0=neutron coupling */
-  int parametrization; /*!< 0=BBA, 1=dipole */
-  double Q2; /*!< [MeV^2] fourmomentum sq */
-  int Q2index; /*!< used in medium modification, index in the grid in Q2 */
-  double Q2_interp; /*!< interpolation variable for Q2 */
-  double tau; /*!< \f$ \tau = \frac{Q^2}{4m_N^2} \f$ */
-  double GE_null; /*!< GE value at Q^2=0 */
-  double GM_null; /*!< GM value at Q^2=0 */
-  double GE; /*!< electric form factor */
-  double GM; /*!< magnetic form factor */
-  double F1; /*!< F1 */
-  double F2;  /*!< kappa*F2!!!!  with kappa anomalous magneticmoment */
-  
+  static const FourVector<GammaStructure> gamma_5mu; /*!< gamma_5*gamma_mu matrices */
+  static const GammaStructure gamma_5; /*!< gamma_5 matrix */
   
 private:
+  bool charged; /*!< 0=Z-boson, 1=W-boson */
+
   
-  void setGE();
-  void setGM();
+  double GE_weak; /*!< weak electric form factor */
+  double GM_weak; /*!< weak magnetic form factor */
+  double GA_weak; /*!< weak axial form factor */
+  double GP_weak; /*!< weak axial form factor, pseudoscalar one */
+  double F1_weak; /*!< weak F1 */
+  double F2_weak;  /*!< weak kappa*F2!!!!  with kappa anomalous magneticmoment */
+ 
+  double M_A; /*!< [MeV] axial mass */
+  double r_s2; /*!< strangeness contribution parameter to F1_weak */
+  double mu_s;/*!< strangeness contribution parameter to F2_weak */
+  double gA_s; /*!< strangeness contribution parameter to GA_weak */
+ 
+  NucleonEMOperator isopartner; /*!< we need the isospin partner in EM FF to compute the weak ones! */
+ 
+  void setF1_weak();
+  void setF2_weak();
+  void setGE_weak();
+  void setGM_weak();  
+  void setGA_weak();
   /*! gives you a dipole form factor 
    * \param Q2 [MeV^2] fourmomentum sq
-   * \return dipole form factor
+   * \return axial dipole form factor
    */
-  double Get_Gdipole(const double Q2); 
-  void setF1();
-  void setF2();
+  double Get_dipole_mass(const double Q2, const double mass) const; 
   
   
-  
+    
 };
 
 /** @} */

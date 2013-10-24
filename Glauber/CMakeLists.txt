@@ -7,6 +7,7 @@ set(Glauber_HEADERS_HPP
 MeanFieldNucleus.hpp
 MeanFieldNucleusThick.hpp
 NucleonEMOperator.hpp
+NucleonWeakOperator.hpp
 FsiCorrelator.hpp
 FastParticle.hpp
 AbstractFsiGrid.hpp

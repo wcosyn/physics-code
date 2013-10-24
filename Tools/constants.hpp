@@ -21,6 +21,7 @@
 #define DEGRTORAD 0.0174532925 /*!< \def defines Pi/180 */
 #define RADTODEGR 57.2957795 /*!< \def defines 180/Pi */
 #define MASSD 1875.6
+#define SIN2W 0.2224 /*!< \def defines sin squared of Weinberg angle */
 /*! underflow in the code:
    * double smaller than underflow
    * should be treated as being zero */

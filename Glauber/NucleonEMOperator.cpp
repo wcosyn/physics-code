@@ -37,7 +37,8 @@ FourVector<GammaStructure> NucleonEMOperator::getCC1(const FourVector<double> &p
 }
 FourVector<GammaStructure> NucleonEMOperator::getCC2(const FourVector<double> &q, const double r, const int medium,
 						     const MeanFieldNucleusThick &nucleus) const{
-  if(medium) return gamma_mu*getF1(r,medium,nucleus)+getF2(r,medium,nucleus)/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
+  if(medium) return gamma_mu*getF1(r,medium,nucleus)
+    +getF2(r,medium,nucleus)/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
   else return gamma_mu*getF1()+getF2()/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
   
 }
