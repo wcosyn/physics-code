@@ -25,7 +25,7 @@ public:
   NucleonWeakOperator(); /*!< Empty constructor */
   /*! constructor
    * \param Q2 [MeV^2] photon fourmomentum transfer squared
-   * \param proton interaction with proton [1] or neutron [0]
+   * \param proton interaction with proton [1] or neutron [0], for charged currents it refers to INITIAL nucleon
    * \param para which parametrization? [0=BBA, 1= dipole]
    * \param charged 0: Z-boson, 1: W-boson
    * \param M_A [MeV] axial mass in dipole paramterization
