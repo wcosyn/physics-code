@@ -38,6 +38,11 @@ int main(int argc, char *argv[]){
   FourVector<complex<double> > q(nu,0.,0.,qvec);
   FourVector<complex<double> > ein(Ein,kx,0.,kz);
   FourVector<complex<double> > eout(Eout,kx,0.,kprimez);
+  double m=1.4455E03;
+  double p=3.45346E03;
+  double E=sqrt(m*m+p*p);
+  
+  FourVector<complex<double> > Z(E,0.,0.,p);
   
   FourVector<complex<double> > polVectorPlus(0.,
                                                     -1./sqrt(2.),
@@ -48,8 +53,22 @@ int main(int argc, char *argv[]){
                                                    complex<double>(0.,-1./sqrt(2.)),
                                                    0.);
   FourVector<complex<double> > polVector0(qvec/sqrt(Q2),0.,0.,nu/sqrt(Q2));
-
+  FourVector<complex<double> > polVectorZ(p/m,0.,0.,E/m);
   
+  for(int i=0;i<4;i++){
+    for(int j=0;j<4;j++){
+      cout << i << " " << j << " " << -1.*polVectorMin[j]*conj(polVectorMin[i])-conj(polVectorZ[i])*polVectorZ[j]-1.*polVectorPlus[j]*conj(polVectorPlus[i]) << " " << 
+	  ((i==j?(i==0?1.:-1.):(0.))-Z[i]*Z[j]/(m*m)) << endl;
+    }
+  }
+  cout << endl << endl;
+  for(int i=0;i<4;i++){
+    for(int j=0;j<4;j++){
+      cout << i << " " << j << " " << -1.*polVectorMin[j]*conj(polVectorMin[i])+conj(polVector0[i])*polVector0[j]-1.*polVectorPlus[j]*conj(polVectorPlus[i]) << " " << 
+	  ((i==j?(i==0?1.:-1.):(0.))+q[i]*q[j]/Q2) << endl;
+    }
+  }
+  cout << endl << endl;
   
   cout << Trace(((polVector0*gamma_mu)*(ein*gamma_mu)*(polVectorPlus*gamma_mu)*(eout*gamma_mu)).value())/denom/2. << " " << sqrt(Q2)/qvec*sqrt(Q2/qvec/qvec+tanth*tanth)/sqrt(2.)<< endl;
 
