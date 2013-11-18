@@ -301,6 +301,7 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
       if(photopol==0) Jcontr = J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
       if(photopol==1) Jcontr= J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
       if(photopol==2) Jcontr=J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
+      //spinors with quantization axis along z-axis correspond to the helicity spinors here!!!
       if(spinout==0) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr;
       else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
       int res=90;

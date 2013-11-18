@@ -11,12 +11,12 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
- CC      = 	icpc
-# CC      = 	g++
+# CC      = 	icpc
+ CC      = 	g++
 
 #		Flags
-#  OPTFLAG	=	-O2 -fPIC
-OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
+  OPTFLAG	=	-O2 -fPIC
+#OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
 
 STATIC  =	--static
 DBGFLAG	=	-g
@@ -32,7 +32,7 @@ EFILEST   = 	../../bin/staticobstest
 #		Mathematical functions
 LIBS =	 	-lm  -lifcore
 WIMLIBS = -lMePhys -lGlauber -lKnockout -lIntegrator
-ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+ROOT =		`$(ROOTSYS)/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout
 STATICLIBS =  ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a  ~/Code/lib/libMePhys.a   ~/Code/lib/libIntegrator.a   

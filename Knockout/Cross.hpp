@@ -88,14 +88,23 @@ public:
 		       int shellindex, int thick, double phi, int maxEval, bool lab);
 
   /*! Computes observables for the A(e,e'N) reaction for certain kinematics and a certain shell of the nucleus.
-   * polarization axes defined as: z along momentum, y perp to the hadron plane, x perp to z in the hadron plane
+   * polarization axes defined as: z along momentum, y perp to the hadron plane, x perp to z in the hadron plane <BR>
+   * See Jeschonnek Phys.Rev. C80 (2009) 054001 for density matrix formalism to obtain all the observables <BR>
+   * 
    * \param obs (return object) vector with the different differential cross sections [fm^2/MeV/sr^2] <BR>
    *  [0-7]: RMSGA <BR>
    *  [8-15]: RMSGA+SRC <BR>
    *  [16-23]: RMSGA+CT <BR>
    *  [24-31]: RMSGA+SRC+CT <BR>
-   *  [32-39]: plane-wave [0=sigma (fm^2/MeV/sr^2), 1=A, 2=Px, 3=Py, 4=Pz, 5=P'x, 6=P'y, 7=P'z]<BR>
+   *  [32-39]: plane-wave [0=sigma (fm^2/MeV/sr^2), 1=A, 2=Pt, 3=Pn, 4=Pl, 5=P't, 6=P'n, 7=P'l]<BR>
    * if no thickness [8-15] and [24-31] are not present (and vector has size 24, change indices accordingly)
+   * Warning: polarization observables defined with axis system fixed to hadron plane!!!!!!!! 
+   * The amplitudes are computed in a frame with ejected proton momentum along the z-axis.  We use 
+   * helicity spinors for the proton.  As demonstrated in Leader's book (Spin in particle physics) Sec. 3.2.3-3.2.4
+   * the density matrix doesn't change for helicity spinors and rotations in the reaction plane!  This is very useful.
+   * Care has to be taken though, polarization observables are now related to the helicity rest frame!  This corresponds to the
+   * l,t,n frame in the literature.  If you want to write down (transferred) polarizations in the frame with z-axis along the 
+   * virtual photon, you have to add an extra rotation for the rest frame (see Leader Eq.(3.2.6)+Eq.(3.2.10)<BR>
    * \param kin contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param shellindex selects the shell in the nucleus where the ejected N originates from
@@ -106,9 +115,33 @@ public:
    * \param lab lab frame or cm frame for hadron part
    * \return differential cross section 
    */
-  void getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
+  void getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
 			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab);
 
+  /*! Computes observables for the A(e,e'N) reaction for certain kinematics and a certain shell of the nucleus.
+   * polarization axes defined as: z along q, y perp to the electron plane, x perp to z in the electron plane <BR>
+   * 
+   * \param obs (return object) vector with the different differential cross sections [fm^2/MeV/sr^2] <BR>
+   *  [0-7]: RMSGA <BR>
+   *  [8-15]: RMSGA+SRC <BR>
+   *  [16-23]: RMSGA+CT <BR>
+   *  [24-31]: RMSGA+SRC+CT <BR>
+   *  [32-39]: plane-wave [0=sigma (fm^2/MeV/sr^2), 1=A, 2=Px, 3=Py, 4=Pz, 5=P'x, 6=P'y, 7=P'z]<BR>
+   * if no thickness [8-15] and [24-31] are not present (and vector has size 24, change indices accordingly)
+   * Warning: polarization observables defined with axis system fixed to electron plane!!!!!!!! 
+   * See getAllObs_tnl for more info!!<BR>
+   * \param kin contains the hadron kinematics
+   * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+   * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param medium medium modifications in EMcoupling? [0=none, 1=CQM, 2=QSM]
+   * \param thick do you want thickness in the Glauber FSI or not?
+   * \param phi angle between electron and hadron plane
+   * \param maxEval max # of evaluations in integrations
+   * \param lab lab frame or cm frame for hadron part
+   * \return differential cross section 
+   */
+  void getAllObs_xyz(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
+			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab);
   
   /*! Computes the off-shell (e,e'p) cross section for certain kinematics and a certain shell of the nucleus <BR>
    * What is denoted as \f$ K \sigma_{ep} \f$ in the literature

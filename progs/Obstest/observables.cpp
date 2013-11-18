@@ -137,24 +137,25 @@ int main(int argc, char *argv[])
     TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton()+Carbon.getExcitation()[shell]
 		,MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
     if(kin.IsPhysical()&&kin.GetPYlab()<801.6&&kin.GetPYlab()>534.4){
-//       cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR 
-//       << " " << kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
-       Cross obs(*elec,&Carbon,prec,integrator,homedir,screening,scr);
+        Cross obs(*elec,&Carbon,prec,integrator,homedir,screening,scr);
       double free0=obs.getElCross(kin,2,0.)*HBARC*HBARC;
-      obs.printDensity_profile(kin,shell,thick,maxEval);
+//       obs.printDensity_profile(kin,shell,thick,maxEval);
       
-//       vector<double> observ;
-//       obs.getAllObs(observ,kin,2,shell,thick,medium,0.,maxEval,1);
+      vector<double> observ;
+      obs.getAllObs_xyz(observ,kin,2,shell,thick,medium,0.,maxEval,1);
       
-//       for(int i=0;i<5;i+=4) cout << observ[i*8] << " " << observ[i*8+3] << " " << observ[i*8+5] << " " << observ[i*8+7]<< " ";
-//       cout << free0*1.E-09 << " " << densr[0] << " " << densr[4] << endl;
-//       cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR 
-//       << " " << -kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
-//       
-//       double free180=obs.getElCross(kin,2,PI)*HBARC*HBARC;
-//       obs.getAllObs(observ,kin,2,shell,thick,medium,PI,maxEval,1);
-//       for(int i=0;i<5;i+=4) cout << observ[i*8] << " " << observ[i*8+3] << " " << observ[i*8+5] << " " << observ[i*8+7]<< " ";
-//       cout << free180*1.E-09 << endl;
+     cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR 
+      << " " << kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
+      for(int i=0;i<5;i+=4) cout << observ[i*8] << " " << observ[i*8+3] << " " << observ[i*8+5] << " " << observ[i*8+7]<< " ";
+      cout << free0*1.E-09 << endl;
+      
+      cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR 
+      << " " << -kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
+      
+      double free180=obs.getElCross(kin,2,PI)*HBARC*HBARC;
+      obs.getAllObs_xyz(observ,kin,2,shell,thick,medium,PI,maxEval,1);
+      for(int i=0;i<5;i+=4) cout << observ[i*8] << " " << observ[i*8+3] << " " << observ[i*8+5] << " " << observ[i*8+7]<< " ";
+      cout << free180*1.E-09 << endl;
     }
 
   }  

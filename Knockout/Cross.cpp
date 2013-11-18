@@ -137,7 +137,6 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   for(int m=-pnucl->getJ_array()[shellindex];m<=0/*pnucl->getJ_array()[shellindex]*/;m+=2){
     Matrix<2,3> J[total];
     reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,0);
-//     cout << m << " " << J[total-1] << endl;
     for(int i=0;i<2;i++){
       for(int j=0;j<total;j++){
 	response[j][0]+=norm(J[j](i,0));//W_L
@@ -157,7 +156,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
 }
 
 
-void  Cross::getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
+void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
 			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab){
   
   //electron kinematics
@@ -186,13 +185,13 @@ void  Cross::getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int curre
   Matrix<2,2> responsematrix[total][6];
   for(int i=0;i<total;++i) for(int j=0;j<6;++j) responsematrix[i][j]=Matrix<2,2>();
  
-  //only half of the m values due to symmetry
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
       Matrix<2,3> J[total];
       reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,medium);
       for(int j=0;j<total;j++){
+	  //2*2 density matrices with helicities as indices
 	  responsematrix[j][0]+=Matrix<2,2>(norm(J[j](1,0)),J[j](1,0)*conj(J[j](0,0)),
-					    J[j](0,0)*conj(J[j](1,0)),norm(J[j](1,0))); //W_L
+					    J[j](0,0)*conj(J[j](1,0)),norm(J[j](0,0))); //W_L
 	  responsematrix[j][1]+=Matrix<2,2>(norm(J[j](1,1))+norm(J[j](1,2)),J[j](1,1)*conj(J[j](0,1))+J[j](1,2)*conj(J[j](0,2)),
 						J[j](0,1)*conj(J[j](1,1))+J[j](0,2)*conj(J[j](1,2)),norm(J[j](0,1))+norm(J[j](0,2)));//W_T
 	  responsematrix[j][2]+=Matrix<2,2>(J[j](1,2)*conj(J[j](1,1)),J[j](1,2)*conj(J[j](0,1)),
@@ -206,6 +205,9 @@ void  Cross::getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int curre
 	
       }
   }
+  
+  //traces of density matrices with pauli matrices (+ unit matrix) are building blocks of all observables
+  //see f.i. Jeschonnek PHYSICAL REVIEW C 81, 014008 (2010) Eqs (26) etc.
   complex<double> responsespin[total][6][4];
   for(int i=0;i<total;++i) 
     for(int j=0;j<6;++j) 
@@ -217,17 +219,17 @@ void  Cross::getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int curre
 		   +2.*kinfactors[3]*real(responsespin[i][4][0]-responsespin[i][3][0])*cos(phi); //total cross section
     obs[8*i+1] = (-2.*kinfactors[4]*imag(responsespin[i][4][0]-responsespin[i][3][0])*sin(phi))/obs[8*i]; //A
     obs[8*i+2] = (2.*kinfactors[2]*imag(responsespin[i][2][1])*sin(2.*phi)
-		   -2.*kinfactors[3]*imag(responsespin[i][4][1]+responsespin[i][3][1])*sin(phi))/obs[8*i]; //Px
+		   -2.*kinfactors[3]*imag(responsespin[i][4][1]+responsespin[i][3][1])*sin(phi))/obs[8*i]; //Pt
     obs[8*i+3] = (real(kinfactors[0]*responsespin[i][0][2]+kinfactors[1]*responsespin[i][1][2])+
 		  2.*kinfactors[2]*real(responsespin[i][2][2])*cos(2.*phi)
-		   +2.*kinfactors[3]*real(responsespin[i][4][2]-responsespin[i][3][2])*cos(phi))/obs[8*i]; //Py
+		   +2.*kinfactors[3]*real(responsespin[i][4][2]-responsespin[i][3][2])*cos(phi))/obs[8*i]; //Pn
     obs[8*i+4] = (2.*kinfactors[2]*imag(responsespin[i][2][3])*sin(2.*phi)
-		   -2.*kinfactors[3]*imag(responsespin[i][4][3]+responsespin[i][3][3])*sin(phi))/obs[8*i]; //Pz
+		   -2.*kinfactors[3]*imag(responsespin[i][4][3]+responsespin[i][3][3])*sin(phi))/obs[8*i]; //Pl
     obs[8*i+5] = (2.*kinfactors[4]*real(responsespin[i][4][1]+responsespin[i][3][1])*cos(phi)
-		  +kinfactors[5]*real(responsespin[i][5][1]))/obs[8*i]; //P'x
-    obs[8*i+6] = (-2.*kinfactors[4]*imag(responsespin[i][4][2]-responsespin[i][3][2])*sin(phi))/obs[8*i]; //P'y
+		  +kinfactors[5]*real(responsespin[i][5][1]))/obs[8*i]; //P't
+    obs[8*i+6] = (-2.*kinfactors[4]*imag(responsespin[i][4][2]-responsespin[i][3][2])*sin(phi))/obs[8*i]; //P'n
     obs[8*i+7] = (2.*kinfactors[4]*real(responsespin[i][4][3]+responsespin[i][3][3])*cos(phi)
-		  +kinfactors[5]*real(responsespin[i][5][3]))/obs[8*i]; //P'z
+		  +kinfactors[5]*real(responsespin[i][5][3]))/obs[8*i]; //P'l
     obs[8*i]*=mott*frontfactor/HBARC;
   }
   //combine everything, factor 2 because of symmetry!
@@ -236,6 +238,33 @@ void  Cross::getAllObs(std::vector<double> &obs, TKinematics2to2 &kin, int curre
   delete reacmodel;
 }
 
+void  Cross::getAllObs_xyz(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
+			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab){
+  getAllObs_tnl(obs,kin,current,shellindex,thick,medium,phi,maxEval,lab);
+  int total=thick?5:3;
+  double sinphi,cosphi;
+  sincos(phi,&sinphi,&cosphi);
+  double costheta=kin.GetCosthYlab();
+  if(costheta>1.) costheta=1.;
+  if(costheta<-1.) costheta=-1.;
+  double sintheta=sqrt(1.-costheta*costheta);
+  double Px,Py,Pz;
+  for(int i=0;i<total;i++){
+    Px = costheta*cosphi*obs[8*i+2]-sinphi*obs[8*i+3]+sintheta*cosphi*obs[8*i+4]; //Px
+    Py = costheta*sinphi*obs[8*i+2]+cosphi*obs[8*i+3]+sintheta*sinphi*obs[8*i+4]; //Py
+    Pz=  -sintheta*obs[8*i+2]+costheta*obs[8*i+4]; //Pz
+    obs[8*i+2]=Px;
+    obs[8*i+3]=Py;
+    obs[8*i+4]=Pz;
+    Px = costheta*cosphi*obs[8*i+5]-sinphi*obs[8*i+6]+sintheta*cosphi*obs[8*i+7]; //P'x
+    Py = costheta*sinphi*obs[8*i+5]+cosphi*obs[8*i+6]+sintheta*sinphi*obs[8*i+7]; //P'y
+    Pz=  -sintheta*obs[8*i+5]+costheta*obs[8*i+7]; //P'z
+    obs[8*i+5]=Px;
+    obs[8*i+6]=Py;
+    obs[8*i+7]=Pz;
+  }    
+
+}
 			       
 void Cross::getDensr(std::vector<double> &densr, const TKinematics2to2 &tk, const int shellindex, 
 		const int thick, const double r, const int maxEval){
