@@ -113,6 +113,28 @@ Gamma(ggamma){
       mass = MASSPI*2.;
 //       sigma_decay_n=sigma_decay_p=sigman+sigmap;
       break;
+    case(8):
+      // initial proton charge exchange
+      setGlauberParameters(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
+      sigman=0.11; //1.1mb = 0.11 fm^2
+      sigmap=0.; //no PP scattering in charge exchange
+      beta2n*=0.5;
+      beta2p*=0.5;
+      nkt_sq=0.35*0.35*9;
+      lc=2*p*HBARC/1./1e06;
+      mass = MASSP;     
+      break;
+    case(9):
+      //initial neutron charge exchange
+      setGlauberParameters(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
+      sigman=0.; //no NN scattering in charge exchange
+      sigmap=0.11; //1.1mb = 0.11 fm^2
+      beta2n*=0.5;
+      beta2p*=0.5;
+      nkt_sq=0.35*0.35*9;
+      lc=2*p*HBARC/1./1e06;
+      mass = MASSN;
+      break;      
     default:
       cerr << "Particle type is not yet supported!!: " << particletype << endl;
       exit(1);

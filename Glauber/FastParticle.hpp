@@ -24,7 +24,17 @@
 class FastParticle{
 public:
   /*! Constructor
-   * \param type which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
+   * \param type which particle [0-4] can be extended of course <BR>
+   * 0: proton <BR>
+   * 1: neutron <BR>
+   * 2: pi+ <BR>
+   * 3: pi- <BR>
+   * 4: rho0 <BR>
+   * 5: rho0 with more CT effects <BR>
+   * 6: rho0 with less CT effects <BR>
+   * 7: double pion along one momentum (rho decay simulation) <BR>
+   * 8: proton for charge exchange reactions <BR>
+   * 9: neutron for charge exchange reactions <BR>
    * \param inc is it the beam hadron particle?
    * \param momentum [MeV] momentum of the particle
    * \param ptheta [rad] spherical coord, theta angle of momentum with the z-axis
@@ -36,7 +46,17 @@ public:
   FastParticle(const int type, const int inc, const double momentum,
 			   const double ptheta, const double pphi, const double hard_scale, const double Gamma, const std::string dir);
   /*! Constructor
-   * \param type which particle [0-3] = [proton, neutron, pi+, pi-] can be extended of course
+   * \param type which particle [0-4] can be extended of course <BR>
+   * 0: proton <BR>
+   * 1: neutron <BR>
+   * 2: pi+ <BR>
+   * 3: pi- <BR>
+   * 4: rho0 <BR>
+   * 5: rho0 with more CT effects <BR>
+   * 6: rho0 with less CT effects <BR>
+   * 7: double pion along one momentum (rho decay simulation) <BR>
+   * 8: proton for charge exchange reactions <BR>
+   * 9: neutron for charge exchange reactions <BR>
    * \param inc is it the beam hadron particle?
    * \param pvec [MeV] 3-vector with momentum
    * \param hard_scale [GeV^2] for CT calculations, the hard scale associated with the particle (like Q^2 or |t|, etc)
