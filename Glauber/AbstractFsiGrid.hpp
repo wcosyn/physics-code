@@ -130,18 +130,24 @@ public:
   void setCthinterp(const double costheta); /*!< sets the thindex variable used in the 3d interpolation */
   void setPhiinterp(const double phi); /*!< sets the phiindex variable used in the 3d interpolation */
   
+  void setinterp(const double r, const double theta, const double phi);
+  void setinterp(const double costheta, const double phi);
+  void setinterp(const double phi);
+  
+  /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously
+   ,pure virtual function!!*/
+  virtual std::complex<double> getFsiGridFull_interp()=0;
+  
   //interpolation functions, one without arguments is a pure virtual function
   /*!returns the value of the fsi grid for a certain situation at coordinate (r,costheta,phi) */
-  std::complex<double> getFsiGridFull_interpvec(const TVector3 &rvec); 
+  std::complex<double> getFsiGridFull_interpvec(const TVector3 &rvec);
   /*!returns the value of the fsi grid for a certain situation at coordinate (r,costheta,phi) */
   std::complex<double> getFsiGridFull_interp3(const double r, const double costheta, const double phi); 
   /*!returns the value of the fsi grid for a certain situation at coordinate (costheta,phi), r has been set previously */
   std::complex<double> getFsiGridFull_interp2(const double costheta, const double phi);
   /*!returns the value of the fsi grid for a certain situation at coordinate (phi), r&theta have been set previously */
   std::complex<double> getFsiGridFull_interp1(const double phi);
-  /*!returns the value of the fsi grid for a certain situation at coordinate (r,theta,phi) that has been set previously
-   ,pure virtual function!!*/
-  virtual std::complex<double> getFsiGridFull_interp()=0;
+
 
   //interpolation functions, one without arguments is a pure virtual function
   /*!returns the value of a grid of choice for a certain situation at coordinate (r,costheta,phi) */

@@ -27,37 +27,37 @@ AbstractFsiGrid::~AbstractFsiGrid(){
 }
   
 //add particle to the particles vector
-void AbstractFsiGrid::addParticle(FastParticle& newparticle){
-    if (particles.empty()){
-      particles.push_back(newparticle);
-      if(newparticle.getParticletype()==0){
-	if(newparticle.getIncoming()) totalprotonout--;
-	else totalprotonout++;
-      }
-      if(newparticle.getParticletype()==1){
-	if(newparticle.getIncoming()) totalneutronout--;
-	else totalneutronout++;
-      }    
+void AbstractFsiGrid::addParticle(FastParticle& newparticle)
+{
+  if (particles.empty()){
+    particles.push_back(newparticle);
+    if(newparticle.getParticletype()==0){
+      if(newparticle.getIncoming()) totalprotonout--;
+      else totalprotonout++;
     }
-    else{
-      if(newparticle.getIncoming()){
-	if(particles[0].getIncoming()){
-	  cerr << "Not more than one incoming particle possible in the particle list!!!" << endl <<
-	  "Replacing old incoming particle with this one" << endl;
-	  if(particles[0].getParticletype()==0) totalprotonout++;
-	  if(particles[0].getParticletype()==1) totalneutronout++;
-	  particles[0]=newparticle;
-	  if(particles[0].getParticletype()==0) totalprotonout--;
-	  if(particles[0].getParticletype()==1) totalneutronout--;	
-	}
-	else particles.insert(particles.begin(),newparticle);
-	if(particles[0].getParticletype()==0) totalprotonout--;
-	if(particles[0].getParticletype()==1) totalneutronout--;	
-      }
-      else particles.push_back(newparticle);
-      if(newparticle.getParticletype()==0) totalprotonout--;
-      if(newparticle.getParticletype()==1) totalneutronout--;	    
+    if(newparticle.getParticletype()==1){
+      if(newparticle.getIncoming()) totalneutronout--;
+      else totalneutronout++;
     }
+  } else {
+    if(newparticle.getIncoming()){
+      if(particles[0].getIncoming()){
+        cerr << "Not more than one incoming particle possible in the particle list!!!" << endl <<
+        "Replacing old incoming particle with this one" << endl;
+        if(particles[0].getParticletype()==0) totalprotonout++;
+        if(particles[0].getParticletype()==1) totalneutronout++;
+        particles[0]=newparticle;
+        if(particles[0].getParticletype()==0) totalprotonout--;
+        if(particles[0].getParticletype()==1) totalneutronout--;
+      }
+      else particles.insert(particles.begin(),newparticle);
+      if(particles[0].getParticletype()==0) totalprotonout--;
+      if(particles[0].getParticletype()==1) totalneutronout--;
+    }
+    else particles.push_back(newparticle);
+    if(newparticle.getParticletype()==0) totalprotonout--;
+    if(newparticle.getParticletype()==1) totalneutronout--;
+  }
 }
 
 //print the particles in the particles vector
@@ -148,29 +148,44 @@ void AbstractFsiGrid::setPhiinterp(const double phi){
   comp_u_interp=1.-u_interp;
 }
 
+void AbstractFsiGrid::setinterp(const double r, const double costheta, const double phi)
+{
+  setRinterp(r);
+  setCthinterp(costheta);
+  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
+  else setPhiinterp(phi);
+}
+
+void AbstractFsiGrid::setinterp(const double costheta, const double phi)
+{
+  setCthinterp(costheta);
+  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
+  else setPhiinterp(phi);
+}
+
+void AbstractFsiGrid::setinterp(const double phi)
+{
+  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
+  else setPhiinterp(phi);
+}
+
 //interpolation functions
 complex<double> AbstractFsiGrid::getFsiGridFull_interpvec(const TVector3 &rvec){
   return getFsiGridFull_interp3(rvec.Mag(),rvec.CosTheta(),rvec.Phi());
 }
 
 complex<double> AbstractFsiGrid::getFsiGridFull_interp3(const double r, const double costheta, const double phi){
-  setRinterp(r);
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(r,costheta,phi);
   return getFsiGridFull_interp();
 }
 
 complex<double> AbstractFsiGrid::getFsiGridFull_interp2(const double costheta, const double phi){
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(costheta,phi);
   return getFsiGridFull_interp();
 }
 
 complex<double> AbstractFsiGrid::getFsiGridFull_interp1(const double phi){
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(phi);
   return getFsiGridFull_interp();
 }
 
@@ -181,23 +196,17 @@ complex<double> AbstractFsiGrid::getFsiGridN_interpvec(const int grid, const TVe
 }
 
 complex<double> AbstractFsiGrid::getFsiGridN_interp3(const int grid, const double r, const double costheta, const double phi){
-  setRinterp(r);
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(r,costheta,phi);
   return getFsiGridN_interp(grid);
 }
 
 complex<double> AbstractFsiGrid::getFsiGridN_interp2(const int grid, const double costheta, const double phi){
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(costheta,phi);
   return getFsiGridN_interp(grid);
 }
 
 complex<double> AbstractFsiGrid::getFsiGridN_interp1(const int grid, const double phi){
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(phi);
   return getFsiGridN_interp(grid);
 }
 
@@ -222,7 +231,17 @@ complex<double> AbstractFsiGrid::getInterp(complex<double> ***grid){
 
 
 
-//set filenames
+/**set filenames
+ *
+ * To generate the filename we divide the momentum by 10 and cast it to an int.
+ * This will cause the files with for example momentum 392 and 399 MeV to be interpreted the same. \n
+ * Also we multiply cosTheta with 10 and round to an int. 
+ * This will cause the files with for example cosTheta 0.98 and 0.96 to be interpreted the same. \n
+ * Also we multiply phi with 10 and round to an int.
+ * This will cause the files with for example phi 2.94 and 2.88 to interpreted the same. \n
+ * 
+ * Furthermore we add scattering parameters, grid sizes, and the integrator+precision used.
+ */
 void AbstractFsiGrid::setFilenames(string homedir){
   for(size_t i=0;i<particles.size();i++){
     //check if scatt parameters were set by user
@@ -256,7 +275,7 @@ void AbstractFsiGrid::fillGrids(){
   invphistep=0.5*phigrid/PI;
   for(size_t i=0;i<getParticles().size();i++){
     allinplane=1;
-    if((getParticles()[i].getPhi()!=0.)&&(getParticles()[i].getPhi()!=PI)){      
+    if((getParticles()[i].getPhi()!=0.)&&(getParticles()[i].getPhi()!=PI)){
       allinplane=0;
       break;
     }
@@ -271,18 +290,18 @@ void AbstractFsiGrid::fillGrids(){
   //check if object has been created sometime earlier and read it in
   if(infile.is_open()){
     //cout << "Reading in FSI grid from memory: " << fsi_filename << endl;
-    readinFsiGrid(infile);
+    readinFsiGrid(infile); // ! pure virtual
     filledgrid=1;
     infile.close();
   }
   else{
 //     cout << "Constructing all grids" << endl;
-    constructAllGrids();
+    constructAllGrids(); // ! pure virtual
     filledgrid=filledallgrid=1;
-    ofstream outfile(fsi_filename.c_str(),ios::out|ios::binary);
+    ofstream outfile(fsi_filename.c_str(),ios::out|ios::binary); // the ios::out here is somewhat redundant as ofstream defaults to ios::out
     if(outfile.is_open()){
       //cout << "Writing out FSI grid: " << fsi_filename << endl;
-      writeoutFsiGrid(outfile);
+      writeoutFsiGrid(outfile); // ! pure virtual
       outfile.close();
     }
     else{
@@ -307,4 +326,3 @@ void AbstractFsiGrid::updateGrids(){
 //     else cout << "fsi grid equal to the earlier one, doing nothing" << endl << fsi_filename << endl << old_fsi_filename << endl;
   }
 }
-  

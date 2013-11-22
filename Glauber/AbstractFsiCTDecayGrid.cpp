@@ -14,7 +14,7 @@ AbstractFsiGrid(r_grid,cth_grid,phi_grid,pnucl,prec,integrator,homedir),
 AbstractFsiCTGrid(r_grid,cth_grid,phi_grid,pnucl,prec,integrator,homedir){
   number_of_grids=4;
 }  
-  
+
 AbstractFsiCTDecayGrid::~AbstractFsiCTDecayGrid(){
   //cout << "Deleting FSI object" << endl;
   
@@ -26,24 +26,17 @@ complex<double> AbstractFsiCTDecayGrid::getFsiDecayGridFull_interpvec(const TVec
 }
 
 complex<double> AbstractFsiCTDecayGrid::getFsiDecayGridFull_interp3(const double r, const double costheta, const double phi){
-  setRinterp(r);
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(r,costheta,phi);
   return getFsiDecayGridFull_interp();
 }
 
 complex<double> AbstractFsiCTDecayGrid::getFsiDecayGridFull_interp2(const double costheta, const double phi){
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(costheta,phi);
   return getFsiDecayGridFull_interp();
 }
 
-
 complex<double> AbstractFsiCTDecayGrid::getFsiDecayGridFull_interp1(const double phi){
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(phi);
   return getFsiDecayGridFull_interp();
 }
 
@@ -52,24 +45,17 @@ complex<double> AbstractFsiCTDecayGrid::getFsiCtDecayGridFull_interpvec(const TV
 }
 
 complex<double> AbstractFsiCTDecayGrid::getFsiCtDecayGridFull_interp3(const double r, const double costheta, const double phi){
-  setRinterp(r);
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(r,costheta,phi);
   return getFsiCtDecayGridFull_interp();
 }
 
 complex<double> AbstractFsiCTDecayGrid::getFsiCtDecayGridFull_interp2(const double costheta, const double phi){
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(costheta,phi);
   return getFsiCtDecayGridFull_interp();
 }
 
-
 complex<double> AbstractFsiCTDecayGrid::getFsiCtDecayGridFull_interp1(const double phi){
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(phi);
   return getFsiCtDecayGridFull_interp();
 }
 
@@ -79,5 +65,4 @@ void AbstractFsiCTDecayGrid::setFilenames(string homedir){
   fsi_ct_filename.insert(fsi_ct_filename.size()-4,(".Decay"+to_string(int(round(getParticles()[0].getDecay_dil())))));
   fsi_filename.insert(fsi_filename.size()-4,(".Decay"+to_string(int(round(getParticles()[0].getDecay_dil())))));
 }
-  
-  
+

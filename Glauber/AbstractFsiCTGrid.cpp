@@ -30,24 +30,18 @@ complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interpvec(const TVector3 &rv
 }
 
 complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interp3(const double r, const double costheta, const double phi){
-  setRinterp(r);
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(r,costheta,phi);
   return getFsiCtGridFull_interp();
 }
 
 complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interp2(const double costheta, const double phi){
-  setCthinterp(costheta);
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);
-  else setPhiinterp(phi);
+  setinterp(costheta,phi);
   return getFsiCtGridFull_interp();
 }
 
 
 complex<double> AbstractFsiCTGrid::getFsiCtGridFull_interp1(const double phi){
-  if(getAllinplane()&&phi>PI) setPhiinterp(2.*PI-phi);  //exploit symmetry
-  else setPhiinterp(phi);
+  setinterp(phi);
   return getFsiCtGridFull_interp();
 }
 
@@ -65,7 +59,7 @@ void AbstractFsiCTGrid::setFilenames(string homedir){
   
 //fills the grids, uses pure virtual functions!!!!
 void AbstractFsiCTGrid::fillGrids(){
-  AbstractFsiGrid::fillGrids();
+  AbstractFsiGrid::fillGrids(); // fill regular FSI (RMSGA) grid, this function is implemented in AbstractFsiGrid but it uses pure virtual functions
   setFilenames(getDir());
   if(filledallgrid){
     //ct grid was filled while constructing RMSGA grid
@@ -95,26 +89,29 @@ void AbstractFsiCTGrid::fillGrids(){
     //we have to calc the grid
     else{
       cout << "Constructing FSI+CT grid" << endl;
-      constructCtGrid();
+      constructCtGrid(); // ! pure virtual
       filledctgrid=filledallgrid=1;
       //write it out now too
       ofstream outfile(fsi_ct_filename.c_str(),ios::out|ios::binary);
       if(outfile.is_open()){
-	//cout << "Writing out FSI+CT grid: " << fsi_ct_filename << endl;
-	writeoutFsiCtGrid(outfile);
-	outfile.close();
-	return;
+        //cout << "Writing out FSI+CT grid: " << fsi_ct_filename << endl;
+        writeoutFsiCtGrid(outfile);
+        outfile.close();
+        return;
+      } else {
+        cerr << "could not open file for writing corrgrid output: " << fsi_ct_filename << endl;
       }
-      else{
-	cerr << "could not open file for writing corrgrid output: " << fsi_ct_filename << endl;
-      }    
     }
   }
 }
 
 //updates the grids, uses pure virtual functions!!!!
 void AbstractFsiCTGrid::updateGrids(){
-  AbstractFsiGrid::updateGrids();
+  AbstractFsiGrid::updateGrids(); // implemented virtual function in AbstractFsiGrid but uses pure virtual functions.
+                                    // the class that will eventually call this will have inherited the virtual function
+                                    // updateGrids(), which uses the [former] pure virtual functions that are now implemented
+                                    // within this class and hence will be called, as virtual functions are called using the 
+                                    // object rather then handle type
   string old_fsi_ct_filename = fsi_ct_filename;
   setFilenames(getDir());
   //check is something is different so we needto update the grids
@@ -134,14 +131,13 @@ void AbstractFsiCTGrid::updateGrids(){
       filledctgrid=filledallgrid=1;
       ofstream outfile(fsi_ct_filename.c_str(),ios::out|ios::binary);
       if(outfile.is_open()){
-	//cout << "Writing out FSI+CT grid: " << fsi_ct_filename << endl;
-	writeoutFsiCtGrid(outfile);
-	outfile.close();
-	return;
+        //cout << "Writing out FSI+CT grid: " << fsi_ct_filename << endl;
+        writeoutFsiCtGrid(outfile);
+        outfile.close();
+        return;
+      } else {
+        cerr << "could not open file for writing corrgrid output: " << fsi_ct_filename << endl;
       }
-      else{
-	cerr << "could not open file for writing corrgrid output: " << fsi_ct_filename << endl;
-      }    
     }
   }
 //   else cout << "fsict grid equal to the earlier one, doing nothing" << endl << fsi_ct_filename << endl << old_fsi_ct_filename << endl;
