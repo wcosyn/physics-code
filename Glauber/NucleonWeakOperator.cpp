@@ -68,7 +68,7 @@ switch(current){
 }
 
 FourVector<GammaStructure> NucleonWeakOperator::getAxial(const FourVector<double> &q) const{
- return -getGA_weak()*gamma_5mu+getGP_weak()*gamma_5*q;
+ return +getGA_weak()*gamma_5mu-getGP_weak()*gamma_5*q; //-gamma^mu*gamma5G_A - q^mu gamma5 GP
 }
 
 
@@ -82,24 +82,24 @@ void NucleonWeakOperator::setGA_weak(){
   double gA_null=1.262;
   GP_weak=0.;
   if(charged){
-    GA_weak=(proton? -1.:1.)*gA_null*Get_dipole_mass(Q2,M_A);
-    GP_weak=2.*(proton? MASSP:MASSN)*GA_weak/(MASSPI*MASSPI+Q2);
+    GA_weak=gA_null*Get_dipole_mass(Q2,M_A);
+    GP_weak=2.*(proton? MASSP:MASSN)*GA_weak/(MASSPI*MASSPI+Q2)*(1.-MASSPI*MASSPI/(M_A*M_A));
   }
   else
-    GA_weak=(gA_s+(proton? -1.:1.)*gA_null)*0.5*Get_dipole_mass(Q2,M_A);
+    GA_weak=(gA_s+(proton? 1.:-1.)*gA_null)*0.5*Get_dipole_mass(Q2,M_A);
 }
 
 void NucleonWeakOperator::setF1_weak(){
   if(charged)
-    F1_weak=isopartner.getF1()-getF1();
+    F1_weak=(proton?1.:-1.)*(getF1()-isopartner.getF1());
   else
-    F1_weak=0.5*(getF1()-isopartner.getF1())-2.*SIN2W*getF1()+0.5*r_s2*INVHBARC*INVHBARC/6.*Q2*Get_dipole_mass(Q2,1300.);
+    F1_weak=0.5*(proton?1.:-1.)*(getF1()-isopartner.getF1())-2.*SIN2W*getF1()+0.5*r_s2*INVHBARC*INVHBARC/6.*Q2*Get_dipole_mass(Q2,1300.);
 }
 void NucleonWeakOperator::setF2_weak(){
   if(charged)
-    F2_weak=isopartner.getF2()-getF2();
+    F2_weak=(proton?1.:-1.)*(getF2()-isopartner.getF2());
   else
-    F2_weak=0.5*(getF2()-isopartner.getF2())-2.*SIN2W*getF2()-0.5*mu_s*Get_dipole_mass(Q2,1260.); 
+    F2_weak=0.5*(proton?1.:-1.)*(getF2()-isopartner.getF2())-2.*SIN2W*getF2()-0.5*mu_s*Get_dipole_mass(Q2,1260.); 
 }
 
 void NucleonWeakOperator::setGE_weak(){
@@ -114,9 +114,9 @@ double NucleonWeakOperator::getF1_weak(const double r, const int medium, const M
   double isoF1mod=(tau*isopartner.getGM()*isopartner.getMmod(r,medium,nucleus)
 		    +isopartner.getGE()*isopartner.getEmod(r,medium,nucleus))/(1+tau);
   if(charged)
-    return isoF1mod-F1mod;
+    return (proton?1.:-1.)*(F1mod-isoF1mod);
   else
-    return 0.5*(F1mod-isoF1mod)-2.*SIN2W*F1mod+0.5*r_s2*INVHBARC*INVHBARC/6.*Q2*Get_dipole_mass(Q2,1300.);
+    return 0.5*(proton?1.:-1.)*(F1mod-isoF1mod)-2.*SIN2W*F1mod+0.5*r_s2*INVHBARC*INVHBARC/6.*Q2*Get_dipole_mass(Q2,1300.);
   
 }
 
@@ -125,9 +125,9 @@ double NucleonWeakOperator::getF2_weak(const double r, const int medium, const M
   double isoF2mod=(isopartner.getGM()*isopartner.getMmod(r,medium,nucleus)
 		    -isopartner.getGE()*isopartner.getEmod(r,medium,nucleus))/(1+tau);
   if(charged)
-    return isoF2mod-F2mod;
+    return (proton?1.:-1.)*(F2mod-isoF2mod);
   else
-    return 0.5*(F2mod-isoF2mod)-2.*SIN2W*F2mod-0.5*mu_s*Get_dipole_mass(Q2,1260.); 
+    return 0.5*(proton?1.:-1.)*(F2mod-isoF2mod)-2.*SIN2W*F2mod-0.5*mu_s*Get_dipole_mass(Q2,1260.); 
 }
 
 
