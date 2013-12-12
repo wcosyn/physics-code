@@ -32,7 +32,7 @@ public:
    * \param dir std::string containing the dir were all input is located
    */
   MeanFieldNucleus(const int nucleus = 0, const std::string & dir = ".");
-  
+  MeanFieldNucleus(const MeanFieldNucleus&); /*!< copy constructor */
   ~MeanFieldNucleus();/*!< Destructor */
   
   const std::string getNucleusName() const {return nucleusname;} /*!< Returns a std::string with the name of the nucleus, f.i. "C" */

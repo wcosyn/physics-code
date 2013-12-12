@@ -91,6 +91,68 @@ MeanFieldNucleus::MeanFieldNucleus(const int nucleus, const string & dir){
   constructThetaArray();
 }
 
+// copy constructor
+MeanFieldNucleus::MeanFieldNucleus(const MeanFieldNucleus& rhs){
+    nucleusname = rhs.nucleusname;
+    A = rhs.A;
+    Z = rhs.Z;
+    N = rhs.N;
+    onlyoneproton = rhs.onlyoneproton;
+    onlyoneneutron = rhs.onlyoneneutron;
+    finalmproton = rhs.finalmproton;
+    finalmneutron = rhs.finalmneutron;
+    plevels = rhs.plevels;
+    nlevels = rhs.nlevels;
+    totallevels = rhs.totallevels;
+    
+    n_array = new int[totallevels];
+    kappas = new int[totallevels];
+    excitation = new double[totallevels];
+    l_array = new int[totallevels];
+    lbar_array = new int[totallevels];
+    j_array = new int[totallevels];
+    
+    for (int i=0; i<totallevels;i++){
+        n_array[i]     = rhs.n_array[i];
+        kappas[i]      = rhs.kappas[i];
+        excitation[i] = rhs.excitation[i];
+        l_array[i]      = rhs.l_array[i];
+        lbar_array[i] = rhs.lbar_array[i];
+        j_array[i]      = rhs.j_array[i];
+    }
+    
+    massA = rhs.massA; 
+    massA_min_proton = rhs.massA_min_proton; 
+    massA_min_neutron = rhs. massA_min_neutron; 
+    massA_min_pp = rhs.massA_min_pp; 
+    massA_min_pn = rhs.massA_min_pn; 
+    massA_min_nn = rhs.massA_min_nn; 
+    
+    
+    inputfile = rhs.inputfile;
+    rgridfile = rhs.rgridfile;
+    
+    range = rhs.range;
+    wf_r_lines = rhs.wf_r_lines;
+    wf_r_step = rhs.wf_r_step;
+    
+    F = new double*[totallevels];
+    G = new double*[totallevels];
+    
+    for(int i=0;i<totallevels;i++){
+        F[i] = new double[wf_r_lines];
+        G[i] = new double[wf_r_lines];
+        for(int j=0;j<wf_r_lines;j++){
+            G[i][j] = rhs.G[i][j];
+            F[i][j] = rhs.F[i][j];
+            }
+    }
+    
+    Ykappa=NULL;
+    Yminkappa=NULL;
+    constructThetaArray();
+}
+
 //destructor
 MeanFieldNucleus::~MeanFieldNucleus(){
   //cout << "Cleaning up nucleus..." << inputfile << endl;
