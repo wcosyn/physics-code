@@ -35,6 +35,7 @@ newcoef.h
 TMPI.h
 TKinematics2to3.h
 TKinematics2to3WithLabAngles.h
+TLeptonKinematics.h
 )
 foreach(it ${MePhys_HEADERS_H})
   STRING(REGEX REPLACE "(^.*).h" "\\1.cpp" bla ${it})
