@@ -40,6 +40,10 @@
 #define M_PIP 139.57      // pi^+
 #define M_PIM 139.57      // pi^-
 #define M_PI0 134.977     // pi^0
+#define G_FERMI 1.16637E-11 //Fermi weak coupling [MeV-2]
+#define M_Z 911876 //Z boson [MeV]
+#define M_W 80385 //W boson [MeV]
+#define COS_CAB 0.97427 //V_ud cosine of Cabbibo angle
 
 #define HOMEDIR "/home/wim/Code/share"
 

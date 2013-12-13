@@ -80,13 +80,15 @@ double NucleonWeakOperator::Get_dipole_mass(const double Q2, const double M) con
 
 void NucleonWeakOperator::setGA_weak(){
   double gA_null=1.262;
-  GP_weak=0.;
+  
   if(charged){
     GA_weak=gA_null*Get_dipole_mass(Q2,M_A);
-    GP_weak=2.*(proton? MASSP:MASSN)*GA_weak/(MASSPI*MASSPI+Q2)*(1.-MASSPI*MASSPI/(M_A*M_A));
   }
   else
     GA_weak=(gA_s+(proton? 1.:-1.)*gA_null)*0.5*Get_dipole_mass(Q2,M_A);
+  //G_P should not contribute for neutral currents (prop to lepton mass)
+  GP_weak=2.*(proton? MASSP:MASSN)*GA_weak/(MASSPI*MASSPI+Q2)*(1.-MASSPI*MASSPI/(M_A*M_A)); 
+
 }
 
 void NucleonWeakOperator::setF1_weak(){

@@ -11,6 +11,8 @@ DoubleNModel.hpp
 DoubleNCross.hpp
 RhoTCross.hpp
 RhoDeuteron.hpp
+WeakQEHadronCurrent.hpp
+WeakQECross.hpp
 )
 
 foreach(it ${Knockout_HEADERS_HPP})

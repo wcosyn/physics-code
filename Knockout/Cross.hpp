@@ -13,6 +13,8 @@
  * [DoubleNModel, DoubleNCross] <BR>
  * - It has classes to compute rho production on a deuteron and a general nucleus <BR>
  * [RhoDeuteron, RhoTCross] <BR>
+ * - It has classes to compute weak quasi-elastic knockout on a general nucleus <BR>
+ * [WeakQECross, WeakQEHadronCurrent] <BR>
  * 
  */
 
@@ -82,7 +84,7 @@ public:
    * \param thick do you want thickness in the Glauber FSI or not?
    * \param phi angle between electron and hadron plane
    * \param maxEval max # of evaluations in integrations
-   * \param lab lab frame of cm frame for hadron part
+   * \param lab lab frame or cm frame for hadron part
    */
   void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
 		       int shellindex, int thick, double phi, int maxEval, bool lab);
@@ -143,14 +145,15 @@ public:
   void getAllObs_xyz(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
 			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab);
   
-  /*! Computes the off-shell (e,e'p) cross section for certain kinematics and a certain shell of the nucleus <BR>
+  /*! Computes the off-shell (e,e'p) cross section for certain kinematics <BR>
    * What is denoted as \f$ K \sigma_{ep} \f$ in the literature
    * \param kin contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param phi angle between electron and hadron plane
+   * \param maxEval max # of evaluations in integrations
    * \return differential cross section [dimensionless]
    */  
-  double getElCross(TKinematics2to2 &kin, int current, double phi);
+  double getElCross(TKinematics2to2 &kin, int current, double phi, int maxEval);
   /*! Computes \f$\delta(r) [fm^2]\f$ like defined in our density papers
    * \param densr different densities [fm^-1] <BR>
    *  [0]: RMSGA <BR>

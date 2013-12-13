@@ -18,13 +18,13 @@ Cross::~Cross(){
   
 }
 
-double Cross::getElCross(TKinematics2to2 &kin, int current, double phi){
+double Cross::getElCross(TKinematics2to2 &kin, int current, double phi, int maxEval){
   double Q2=kin.GetQsquared();
   double qvec=kin.GetKlab();
   double Q2overkk=Q2/qvec/qvec;
   double tan2=electron.GetTan2HalfAngle(kin);
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.;
-  reacmodel=new Model(pnucl,prec,integrator,homedir,getUsersigma(),getSigmascreening());
+  reacmodel=new Model(pnucl,prec,integrator,homedir,maxEval,getUsersigma(),getSigmascreening());
 
   //electron kinematic factors
   kinfactors[0]=pow(Q2overkk,2.);
@@ -69,6 +69,10 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   double Q2overkk=Q2/qvec/qvec;
   double tan2=pow(tan(acos(electron.GetCosScatterAngle(kin))/2.),2.);
   //kinematical front factor
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
   frontfactor=lab? (kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
       /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
 	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
@@ -115,6 +119,10 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   double Q2overkk=Q2/qvec/qvec;
   double tan2=pow(tan(acos(electron.GetCosScatterAngle(kin))/2.),2.);
   //kinematical front factor
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
   frontfactor=lab? (kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
       /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
 	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
@@ -165,6 +173,10 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
   double Q2overkk=Q2/qvec/qvec;
   double tan2=pow(tan(acos(electron.GetCosScatterAngle(kin))/2.),2.);
   //kinematical front factor
+  //to translate the 2to2kinematics language to our particles:
+  //p is A
+  //hyperon Y is fast final nucleon
+  //kaon is residual A-1 nucleus
   frontfactor=lab? (kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
       /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
 	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
