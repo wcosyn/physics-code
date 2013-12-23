@@ -61,6 +61,7 @@ TKinematics2to2LinkDef.h
 TMPILinkDef.h
 TKinematics2to3LinkDef.h
 TKinematics2to3WithLabAnglesLinkDef.h
+TLeptonKinematicsLinkDef.h
 )
 
 

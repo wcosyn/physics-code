@@ -41,6 +41,10 @@ using std::cerr;
 
 ClassImp(TLeptonKinematics)
 
+ const double TLeptonKinematics::masse= 0.510998910;
+ const double TLeptonKinematics::massmu = 105.6583715;
+ const double TLeptonKinematics::masstau = 1776.82;
+
 //_____________________________________________________________________
 TLeptonKinematics::TLeptonKinematics(Lepton type)
 : fInput(kEpsilon), fBeamEnergy(0.), fScatterAngle(0.)

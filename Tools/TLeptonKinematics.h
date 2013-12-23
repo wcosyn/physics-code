@@ -63,11 +63,11 @@ class TLeptonKinematics : public TObject
   double GetBeamEnergy(const TKinematics2to3&) const;
 //   double GetEpsilon(const TKinematics2to3&) const; /*!< \return costheta_l [-1,1] cosine of the lepton scattering angle */
   double GetCosScatterAngle(const TKinematics2to3&) const;
-  double GetLeptonMass() const; /*!< [MeV] returns lepton mass */
+  double GetLeptonMass() const{return mass;} /*!< [MeV] returns lepton mass */
 //   double GetTan2HalfAngle(const TKinematics2to3&) const;
-  static const double masse = 0.510998910; /*!< [MeV] electronmass */
-  static const double massmu = 105.6583715; /*!< [MeV] muon mass */
-  static const double masstau = 1776.82; /*!< [MeV] tau mass */
+  static const double masse; /*!< [MeV] electronmass */
+  static const double massmu; /*!< [MeV] muon mass */
+  static const double masstau; /*!< [MeV] tau mass */
   
   /*! constructs the four vectors for the incoming and outgoing lepton
    * \param kin kinematics of the hadron piece
