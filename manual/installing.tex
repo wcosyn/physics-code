@@ -1,0 +1,18 @@
+\section{Install}
+You can check out the code by doing
+\begin{align*}
+	\texttt{\$ svn checkout https://ssftrac.ugent.be/svn/wim .}
+\end{align*}
+When first building the code make sure you already have root installed with the modules \texttt{fftw3}, \texttt{gviz}, \texttt{mathmore} and \texttt{minuit2} enabled. To build and install the code do
+\begin{align*}
+    & \texttt{\$ cd build} \\
+	& \texttt{\$ cmake -DCMAKE\_BUILD\_TYPE=RELEASE ..} \\
+	& \texttt{\$ make } \\
+	& \texttt{\$ make install } 
+\end{align*}
+\subsection{Troubleshooting}
+\begin{itemize}
+\item Error in \texttt{cmake}: ROOTSYS not set.
+If you get an error like this you probably should add the path of the \texttt{root-config} script to the search path in the file \texttt{\$\{PROJECT\_SOURCE\_DIR\}/cmake/Modules/FindROOT.cmake}. This is done by adding the path to the line \texttt{SET(ROOT\_CONFIG\_SEARCHPATH /insert\_your\_path\_here)}. In my case this was \texttt{usr/local/bin}. If you don't know the location of the \texttt{root-config} executable you maybe able to find it using \texttt{\$ find /usr -name root-config}.
+
+\end{itemize}
