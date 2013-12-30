@@ -39,8 +39,11 @@ int main(int argc, char *argv[])
   TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
 //   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);  //Monaghan Data
   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithCosScatterAngle(TLeptonKinematics::muon,costhetamu);
+  cout << lepton->GetBeamEnergy(kin) << " " << lepton->GetCosScatterAngle(kin) << endl;
   WeakQECross obs(lepton,&Carbon,prec,integrator,homedir,charged, 1.19E03, screening, 0.);
+  obs.getDiffWeakQECross(kin,2,0,0,0,1,0,0.,maxEval,1,1,1);
 //   double free=obs.getElCross(kin,2,0.)*HBARC*HBARC;
 //   vector<double> cross;
+  delete lepton;
 
 }

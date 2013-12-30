@@ -33,7 +33,7 @@ EFILEST   = 	../../bin/intteststatic
 #		Mathematical functions
 LIBS =	 	-lm  -lifcore
 WIMLIBS = -lMePhys -lIntegrator
-ROOT =		`$(ROOTSYS)/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Tools  -I ~/Code/Integrator
 STATICLIBS =  ~/Code/lib/libIntegrator.a  ~/Code/lib/libMePhys.a   

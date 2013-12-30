@@ -17,8 +17,9 @@
 #include <cmath>
 #include <gsl/gsl_poly.h>
 #include <vector>
+#include "Utilfunctions.hpp"
 
-
+using namespace std;
 using std::cerr;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -343,7 +344,7 @@ bool TLeptonKinematics::SolveKinematics(const TKinematics2to2& tk) const
 //     ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
 //     break;
 
-  case kScatterAngle:
+  case kScatterAngle:{
     // Solve the kinematics starting with the scattering angle
     if( fabs(fScatterAngle) > 1. ) {
       if( fabs(fScatterAngle)-1.0 < STRANGEUFLOW ) 
@@ -353,35 +354,77 @@ bool TLeptonKinematics::SolveKinematics(const TKinematics2to2& tk) const
     }
 
     // Find the beam energy
-    if( fScatterAngle == 1. ) fBeamEnergy = tk.GetWlab() + STRANGEUFLOW;
+//     if( fScatterAngle == 1. ) fBeamEnergy = tk.GetWlab() + STRANGEUFLOW;
+    int count=0;
+    if(abs(fScatterAngle)==1.){
+      fBeamEnergy = (tk.GetWlab()+sqrt(tk.GetWlab()*tk.GetWlab()+(tk.GetQsquared())))*(tk.GetQsquared()+mass*mass)/(2.*tk.GetQsquared());
+      double eout=fBeamEnergy-tk.GetWlab();
+      double pout=sqrt(eout*eout-mass*mass);
+      double a=(tk.GetQsquared()+mass*mass)/2.-fBeamEnergy*eout;
+      double b=-fBeamEnergy*pout*fScatterAngle;
+      if(SIGN(a)==SIGN(b)){
+	count++;
+// 	cout << tk.GetQsquared() << " " << -mass*mass+2.*fBeamEnergy*(eout-pout*fScatterAngle) << endl;
+// 	cout << sqrt(pout*pout+fBeamEnergy*fBeamEnergy-2.*fScatterAngle*pout*fBeamEnergy) << " " << tk.GetKlab() << endl;      
+      }
+    }
+    else if(fScatterAngle==0.){
+      cout << "bla" << endl;
+      fBeamEnergy=(tk.GetWlab()+sqrt(tk.GetWlab()*tk.GetWlab()+2.*(tk.GetQsquared()+mass*mass)))/2.;
+      count++;
+    }
     else{
+      //solve in GeV because otherwise the solver doesn't return the right solution for some reason...(overflows?)
       double sol[8];
       double coef[5];
-      coef[0]=pow(tk.GetQsquared()+mass*mass,2.)/4.;
-      coef[1]=(tk.GetQsquared()+mass*mass)*tk.GetWlab();
-      coef[2]=-tk.GetQsquared()+(mass*mass-tk.GetWlab()*tk.GetWlab())*(fScatterAngle*fScatterAngle-1.);
-      coef[3]=2.*tk.GetWlab()*(fScatterAngle*fScatterAngle-1.);
+      coef[0]=pow(tk.GetQsquared()+mass*mass,2.)/4.*1.E-12;
+      coef[1]=(tk.GetQsquared()+mass*mass)*tk.GetWlab()*1.E-09;
+      coef[2]=(-tk.GetQsquared()+(mass*mass-tk.GetWlab()*tk.GetWlab())*(fScatterAngle*fScatterAngle-1.))*1.E-06;
+      coef[3]=2.*tk.GetWlab()*(fScatterAngle*fScatterAngle-1.)*1.E-03;
       coef[4]=1.-fScatterAngle*fScatterAngle;
       gsl_poly_complex_workspace * w
 	  = gsl_poly_complex_workspace_alloc (5);
       
-      gsl_poly_complex_solve (coef, 5, w, sol);
+      int succes = gsl_poly_complex_solve (coef, 5, w, sol);
+      if(succes!=0){      cerr << "ERROR in TLeptonKinematics::SolveKinematics(TKinematics2to2&): "
+	  << "Gsl solver for lepton kinematics did not converge \n";
+      assert(1==0);
+      }
+
 
       gsl_poly_complex_workspace_free (w);
-      int count=0;
       for(int i=0;i<4;i++){
-	if(abs(sol[i*2+1])<STRANGEUFLOW && sol[i*2] >=tk.GetWlab()){
-	  count++;
-	  fBeamEnergy=sol[2*i];
+	if(abs(sol[i*2+1])<STRANGEUFLOW && sol[i*2] >=tk.GetWlab()*1.E-03){
+	  double eout=sol[2*i]*1.E03-tk.GetWlab();
+	  double pout=sqrt(eout*eout-mass*mass);
+	  double a=(tk.GetQsquared()+mass*mass)/2.-sol[2*i]*1.E03*eout;
+	  double b=-sol[2*i]*1.E03*pout*fScatterAngle;
+//  	  cout << "sol " << i << " " << sol[i*2] << " " << sol[i*2+1] << " " << a << " " << b << endl;
+	  if(SIGN(a)==SIGN(b)){
+	    if(count==0){
+	      count++;
+	      fBeamEnergy=sol[2*i]*1.E03;	  
+// 	      cout << tk.GetQsquared() << " " << -mass*mass+2.*fBeamEnergy*(eout-pout*fScatterAngle) << endl;
+// 	      cout << sqrt(pout*pout+fBeamEnergy*fBeamEnergy-2.*fScatterAngle*pout*fBeamEnergy) << " " << tk.GetKlab() << endl;
+	    }
+	    else if(abs(sol[2*i]-fBeamEnergy*1.E-03)>1.E-06){
+	      count++;
+	      fBeamEnergy=sol[2*i]*1.E03;	  
+// 	      cout << tk.GetQsquared() << " " << -mass*mass+2.*fBeamEnergy*(eout-pout*fScatterAngle) << endl;
+// 	      cout << sqrt(pout*pout+fBeamEnergy*fBeamEnergy-2.*fScatterAngle*pout*fBeamEnergy) << " " << tk.GetKlab() << endl;
+	    }
+	  }
+// 	  
 	}
+	
       }
-      if(count==0) return false;
-      if(count>1){
-      cerr << "ERROR in TLeptonKinematics::SolveKinematics(TKinematics2to2&): "
-	  << "Multiple lepton solutions\n";
-      assert(1==0);
     }
 
+    if(count==0) return false;
+    if(count>1){
+    cerr << "ERROR in TLeptonKinematics::SolveKinematics(TKinematics2to2&): "
+	<< "Multiple lepton solutions\n";
+    assert(1==0);
     }
     if( fBeamEnergy <= tk.GetWlab() ) return false;
 
@@ -402,13 +445,13 @@ bool TLeptonKinematics::SolveKinematics(const TKinematics2to2& tk) const
 //     }
 //     ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
     break;
-    
-  default:
+  }
+  default:{
     cerr << "ERROR in TLeptonKinematics::SolveKinematics(TKinematics2to2&): "
 	 << "Invalid input variable.\n";
     assert(1==0);
   }
-  
+  }
   return true;
 }
 
@@ -482,7 +525,7 @@ bool TLeptonKinematics::SolveKinematics(const TKinematics2to3& tk) const
 //     ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
 //     break;
 
-  case kScatterAngle:
+  case kScatterAngle:{
     // Solve the kinematics starting with the scattering angle
     if( fabs(fScatterAngle) > 1. ) {
       if( fabs(fScatterAngle)-1.0 < STRANGEUFLOW ) 
@@ -492,39 +535,81 @@ bool TLeptonKinematics::SolveKinematics(const TKinematics2to3& tk) const
     }
 
     // Find the beam energy
-    if( fScatterAngle == 1. ) fBeamEnergy = tk.GetWlab() + STRANGEUFLOW;
+//     if( fScatterAngle == 1. ) fBeamEnergy = tk.GetWlab() + STRANGEUFLOW;
+    int count=0;
+    if(abs(fScatterAngle)==1.){
+      fBeamEnergy = (tk.GetWlab()+sqrt(tk.GetWlab()*tk.GetWlab()+(tk.GetQsquared())))*(tk.GetQsquared()+mass*mass)/(2.*tk.GetQsquared());
+      double eout=fBeamEnergy-tk.GetWlab();
+      double pout=sqrt(eout*eout-mass*mass);
+      double a=(tk.GetQsquared()+mass*mass)/2.-fBeamEnergy*eout;
+      double b=-fBeamEnergy*pout*fScatterAngle;
+      if(SIGN(a)==SIGN(b)){
+	count++;
+// 	cout << tk.GetQsquared() << " " << -mass*mass+2.*fBeamEnergy*(eout-pout*fScatterAngle) << endl;
+// 	cout << sqrt(pout*pout+fBeamEnergy*fBeamEnergy-2.*fScatterAngle*pout*fBeamEnergy) << " " << tk.GetKlab() << endl;      
+      }
+    }
+    else if(fScatterAngle==0.){
+      cout << "bla" << endl;
+      fBeamEnergy=(tk.GetWlab()+sqrt(tk.GetWlab()*tk.GetWlab()+2.*(tk.GetQsquared()+mass*mass)))/2.;
+      count++;
+    }
     else{
+      //solve in GeV because otherwise the solver doesn't return the right solution for some reason...(overflows?)
       double sol[8];
       double coef[5];
-      coef[0]=pow(tk.GetQsquared()+mass*mass,2.)/4.;
-      coef[1]=(tk.GetQsquared()+mass*mass)*tk.GetWlab();
-      coef[2]=-tk.GetQsquared()+(mass*mass-tk.GetWlab()*tk.GetWlab())*(fScatterAngle*fScatterAngle-1.);
-      coef[3]=2.*tk.GetWlab()*(fScatterAngle*fScatterAngle-1.);
+      coef[0]=pow(tk.GetQsquared()+mass*mass,2.)/4.*1.E-12;
+      coef[1]=(tk.GetQsquared()+mass*mass)*tk.GetWlab()*1.E-09;
+      coef[2]=(-tk.GetQsquared()+(mass*mass-tk.GetWlab()*tk.GetWlab())*(fScatterAngle*fScatterAngle-1.))*1.E-06;
+      coef[3]=2.*tk.GetWlab()*(fScatterAngle*fScatterAngle-1.)*1.E-03;
       coef[4]=1.-fScatterAngle*fScatterAngle;
       gsl_poly_complex_workspace * w
 	  = gsl_poly_complex_workspace_alloc (5);
       
-      gsl_poly_complex_solve (coef, 5, w, sol);
+      int succes = gsl_poly_complex_solve (coef, 5, w, sol);
+      if(succes!=0){      cerr << "ERROR in TLeptonKinematics::SolveKinematics(TKinematics2to2&): "
+	  << "Gsl solver for lepton kinematics did not converge \n";
+      assert(1==0);
+      }
+
 
       gsl_poly_complex_workspace_free (w);
-      int count=0;
       for(int i=0;i<4;i++){
-	if(abs(sol[i*2+1])<STRANGEUFLOW && sol[i*2] >=tk.GetWlab()){
-	  count++;
-	  fBeamEnergy=sol[2*i];
+	if(abs(sol[i*2+1])<STRANGEUFLOW && sol[i*2] >=tk.GetWlab()*1.E-03){
+	  double eout=sol[2*i]*1.E03-tk.GetWlab();
+	  double pout=sqrt(eout*eout-mass*mass);
+	  double a=(tk.GetQsquared()+mass*mass)/2.-sol[2*i]*1.E03*eout;
+	  double b=-sol[2*i]*1.E03*pout*fScatterAngle;
+//  	  cout << "sol " << i << " " << sol[i*2] << " " << sol[i*2+1] << " " << a << " " << b << endl;
+	  if(SIGN(a)==SIGN(b)){
+	    if(count==0){
+	      count++;
+	      fBeamEnergy=sol[2*i]*1.E03;	  
+// 	      cout << tk.GetQsquared() << " " << -mass*mass+2.*fBeamEnergy*(eout-pout*fScatterAngle) << endl;
+// 	      cout << sqrt(pout*pout+fBeamEnergy*fBeamEnergy-2.*fScatterAngle*pout*fBeamEnergy) << " " << tk.GetKlab() << endl;
+	    }
+	    else if(abs(sol[2*i]-fBeamEnergy*1.E-03)>1.E-06){
+	      count++;
+	      fBeamEnergy=sol[2*i]*1.E03;	  
+// 	      cout << tk.GetQsquared() << " " << -mass*mass+2.*fBeamEnergy*(eout-pout*fScatterAngle) << endl;
+// 	      cout << sqrt(pout*pout+fBeamEnergy*fBeamEnergy-2.*fScatterAngle*pout*fBeamEnergy) << " " << tk.GetKlab() << endl;
+	    }
+	  }
+// 	  
 	}
+	
       }
-      if(count==0) return false;
-      if(count>1){
-      cerr << "ERROR in TLeptonKinematics::SolveKinematics(TKinematics2to2&): "
-	  << "Multiple lepton solutions\n";
-	assert(1==0);
-      }
+    }
 
+    if(count==0) return false;
+    if(count>1){
+    cerr << "ERROR in TLeptonKinematics::SolveKinematics(TKinematics2to2&): "
+	<< "Multiple lepton solutions\n";
+    assert(1==0);
     }
     if( fBeamEnergy <= tk.GetWlab() ) return false;
 
-    // Calculate epsilon
+//     // Calculate epsilon
 //     if( fScatterAngle<= -1. ) fEpsilon = 0.;
 //     else if( tk.GetQsquared()<STRANGEUFLOW ) fEpsilon = 1.;
 //     else {
@@ -541,11 +626,12 @@ bool TLeptonKinematics::SolveKinematics(const TKinematics2to3& tk) const
 //     }
 //     ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
     break;
-    
-  default:
+  }
+  default:{
     cerr << "ERROR in TLeptonKinematics::SolveKinematics(TKinematics2to2&): "
 	 << "Invalid input variable.\n";
     assert(1==0);
+  }
   }
   
   return true;

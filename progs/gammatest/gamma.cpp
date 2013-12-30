@@ -74,8 +74,9 @@ int main(int argc, char *argv[]){
 
   cout << Trace(((polVector0*gamma_mu)*gamma_5*(ein*gamma_mu)*(polVectorPlus*gamma_mu)*(eout*gamma_mu)).value())/denom/2. << " " 
   << sqrt(Q2/2)/qvec*tanth << endl;
+  cout << -Trace(((polVectorMin*gamma_mu)*gamma_5*(ein*gamma_mu)*(polVectorPlus*gamma_mu)*(eout*gamma_mu)).value())/denom/2. << " " 
+  << tanth*sqrt(Q2/qvec/qvec+tanth*tanth) << endl;
       
   cout << Trace((gamma_mu[0]*gamma_mu[1]*gamma_mu[2]*gamma_mu[3]*gamma_5).value()) << endl;
-      
       
 }
