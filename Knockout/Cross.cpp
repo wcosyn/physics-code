@@ -80,12 +80,12 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.;
   reacmodel=new Model(pnucl,prec,integrator,homedir,maxEval,getUsersigma(),getSigmascreening());
   
-  kinfactors[0]=pow(Q2overkk,2.);
-  kinfactors[1]=tan2+Q2overkk/2.;
-  kinfactors[2]=-Q2overkk/2.;
-  kinfactors[3]=-Q2overkk*sqrt((tan2+Q2overkk)/2.);
-  kinfactors[4]=sqrt(tan2*(tan2+Q2overkk));
-  kinfactors[5]=-1./sqrt(2)*Q2overkk*sqrt(tan2);
+  kinfactors[0]=pow(Q2overkk,2.); //v_L
+  kinfactors[1]=tan2+Q2overkk/2.; //v_T
+  kinfactors[2]=-Q2overkk/2.; //v_TT
+  kinfactors[3]=-Q2overkk*sqrt((tan2+Q2overkk)/2.); //v_TL
+  kinfactors[4]=sqrt(tan2*(tan2+Q2overkk)); //v'_T
+  kinfactors[5]=-1./sqrt(2)*Q2overkk*sqrt(tan2); //v'_TL
   
   //compute response functions
   for(int i=0;i<6;i++) response[0][i]=0.;

@@ -369,7 +369,6 @@ bool TLeptonKinematics::SolveKinematics(const TKinematics2to2& tk) const
       }
     }
     else if(fScatterAngle==0.){
-      cout << "bla" << endl;
       fBeamEnergy=(tk.GetWlab()+sqrt(tk.GetWlab()*tk.GetWlab()+2.*(tk.GetQsquared()+mass*mass)))/2.;
       count++;
     }
@@ -550,7 +549,6 @@ bool TLeptonKinematics::SolveKinematics(const TKinematics2to3& tk) const
       }
     }
     else if(fScatterAngle==0.){
-      cout << "bla" << endl;
       fBeamEnergy=(tk.GetWlab()+sqrt(tk.GetWlab()*tk.GetWlab()+2.*(tk.GetQsquared()+mass*mass)))/2.;
       count++;
     }
@@ -651,7 +649,7 @@ void TLeptonKinematics::GetLeptonVectors(const TKinematics2to2& kin, FourVector<
   double kx=fBeamEnergy*pout*sqrt(1.-fScatterAngle*fScatterAngle)/kin.GetKlab();
   double kz=kin.GetWlab()*fBeamEnergy/kin.GetKlab() + (mass*mass+kin.GetQsquared())/(2.*kin.GetKlab());
   double kzprime=kin.GetWlab()*Eout/kin.GetKlab() + (mass*mass-kin.GetQsquared())/(2.*kin.GetKlab());
-  k_in[0]=fBeamEnergy; k_in[1]=k_out[2]=kx; k_in[2]=k_out[2]=0.;k_in[3]=kz;
+  k_in[0]=fBeamEnergy; k_in[1]=k_out[1]=kx; k_in[2]=k_out[2]=0.;k_in[3]=kz;
   k_out[0]=Eout; k_out[3]=kzprime;
   
 }
