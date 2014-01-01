@@ -111,15 +111,15 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
   if(charged){
     double Ebeam=lepton->GetBeamEnergy(kin);
     double Eout=Ebeam-kin.GetWlab();
-    double leptonmass=lepton->GetLeptonMass();
-    double mott=sqrt(1.-pow(leptonmass/Eout,2.))*pow(G_FERMI*COS_CAB*Eout/(Q2/M_W/M_W+1.)/PI/2.,2.);
+    double leptonmass2=lepton->GetLeptonMass()*lepton->GetLeptonMass();
+    double mott=sqrt(1.-leptonmass2/Eout/Eout)*pow(G_FERMI*COS_CAB*Eout/(Q2/M_W/M_W+1.)/PI/2.,2.);
     
     double kinfactors[6];
     double response[6];
 
     FourVector<double> k_in,k_out;
     lepton->GetLeptonVectors(kin,k_in,k_out);
-    double massfactor=sqrt(1.-leptonmass*leptonmass/k_out[0]/k_out[0]);
+    double massfactor=sqrt(1.-leptonmass2/k_out[0]/k_out[0]);
     
     
     
@@ -130,9 +130,18 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     double costhl=lepton->GetCosScatterAngle(kin);
     double sinthl=sqrt(1.-costhl*costhl);
     
-    kinfactors[1]=1-massfactor*costhl+k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl; //v_T
+    kinfactors[0]=1.+massfactor*costhl-2.*leptonmass2*nu/k_out[0]/M_W/M_W
+	+leptonmass2*pow(nu/M_W/M_W,2.)*(1.-massfactor*costhl); //v_L (part corresponding with unbroken current)
+    double v_L2 = -leptonmass2/qvec/k_out[0] + leptonmass2/M_W/M_W/qvec*(nu*(1.-massfactor*costhl)+Q2/k_out[0])
+      -nu/qvec*leptonmass2*pow(Q/M_W/M_W,2.)*(1-massfactor*costhl); //second contrib to v_L, mix z,0
+    double v_L3 = leptonmass2/qvec/qvec*pow(1.-Q2/M_W/M_W,2.)*(1-massfactor*costhl); //third contrib to v_L, z*z
+    kinfactors[1]=1.-massfactor*costhl+k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl; //v_T
     kinfactors[2]=-k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl; //v_TT
-    kinfactors[5]=-massfactor*sinthl/sqrt(2.);
+    kinfactors[3]=-sinthl/sqrt(2.)/qvec*(k_in[0]+k_out[0]-nu*leptonmass2/M_W/M_W); //v_TL
+    double v_TL2 =-sintl*leptonmass2/sqrt(2.)/qvec/qvec*(1.-Q2/M_W/M_W); //v_TL contrib from mixed current
+    kinfactors[4]=(k_in[0]+k_out[0])/qvec*(1.-massfactor*costhl)-leptonmass2/qvec/k_out[0]; //v_T'
+    kinfactors[5]=-massfactor*sinthl/sqrt(2.); //v_TL'
+    
     
     const FourVector<GammaStructure> gamma_mu=FourVector<GammaStructure>(GammaStructure(0.,0.,1.),
 											GammaStructure(0.,0.,0.,1.),
@@ -152,39 +161,56 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     FourVector<complex<double> > polVector0(qvec/Q,0.,0.,nu/Q);
     FourVector<complex<double> > polVectorZ(nu/Q,0.,0.,qvec/Q);
     polVectorZ*=1.-Q2/M_W/M_W;
-//     cout << k_in << " " << k_out << " " << nu << " " << qvec << " " << costhl << endl;
     
-    cout << -Trace(((polVectorMin*gamma_mu)*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
-    << " " << 1-massfactor*costhl+k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl << endl;
 
-    cout << -Trace(((polVectorMin*gamma_mu)*(k_in*gamma_mu)*(polVectorMin*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
-    << " " << -k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl << endl;
-    
-    cout << -Trace(((polVectorMin*gamma_mu)*gamma_5*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << " " 
-    << (k_in[0]+k_out[0])/qvec*(1.-massfactor*costhl)-leptonmass*leptonmass/qvec/k_out[0] << endl;
-    
-    cout << Trace(((polVector0*gamma_mu)*gamma_5*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << " " 
-    << massfactor*sinthl*Q/qvec/sqrt(2.) << endl;
-    
-    cout << Trace(((polVectorZ*gamma_mu)*gamma_5*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << endl;
-    cout << Trace(((polVector0*gamma_mu)*gamma_5*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << endl;
-
-    cout << Trace(((polVector0*gamma_mu)*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
-    << " " << sinthl/qvec/qvec*massfactor/sqrt(2.)*(Q*(k_in[0]+k_out[0])-nu*leptonmass*leptonmass/Q) << endl;
-
-    cout << Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
-    << " " << -sinthl/qvec*massfactor/sqrt(2.)*leptonmass*leptonmass/Q*(1.-Q2/M_W/M_W) << endl;
-    
-    cout << Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/2. 
-    << " " << leptonmass*leptonmass*(1.+leptonmass*leptonmass/Q2)*pow(1.-Q2/M_W/M_W,2.) << endl;
-    
-    cout << Trace(((polVector0*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/2. 
-    << " " << -leptonmass*leptonmass/qvec*((k_in[0]+k_out[0])-leptonmass*leptonmass*nu/Q2)*(1.-Q2/M_W/M_W) << endl;
-
-    cout << Trace(((polVector0*gamma_mu)*(k_in*gamma_mu)*(polVector0*gamma_mu)*(k_out*gamma_mu)).value())/2. 
-    << " " << (pow(k_in[0]+k_out[0],2.)/qvec/qvec-1.)*Q2-leptonmass*leptonmass*(1.+2.*(k_in[0]*k_in[0]-k_out[0]*k_out[0])/qvec/qvec)
-    +pow(leptonmass,4.)*nu*nu/qvec/qvec/Q2 << " " << -Q2-leptonmass*leptonmass+pow(Q2*(k_in[0]+k_out[0])-leptonmass*leptonmass*nu,2.)/qvec/qvec/Q2 << endl;
-
+//testing kin factors
+//     cout << -Trace(((polVectorMin*gamma_mu)*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
+//     << " " << 1-massfactor*costhl+k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl << endl;
+// 
+//     cout << -Trace(((polVectorMin*gamma_mu)*(k_in*gamma_mu)*(polVectorMin*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
+//     << " " << -k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl << endl;
+//     
+//     cout << -Trace(((polVectorMin*gamma_mu)*gamma_5*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << " " 
+//     << (k_in[0]+k_out[0])/qvec*(1.-massfactor*costhl)-leptonmass2/qvec/k_out[0] << endl;
+//     
+//     cout << Trace(((polVector0*gamma_mu)*gamma_5*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << " " 
+//     << massfactor*sinthl*Q/qvec/sqrt(2.) << endl;
+//     
+//     cout << Trace(((polVectorZ*gamma_mu)*gamma_5*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << endl;
+//     cout << Trace(((polVector0*gamma_mu)*gamma_5*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << endl;
+// 
+//     cout << Trace(((polVector0*gamma_mu)*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
+//     << " " << sinthl/qvec/qvec*massfactor/sqrt(2.)*(Q*(k_in[0]+k_out[0])-nu*leptonmass2/Q) << endl;
+// 
+//     cout << Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
+//     << " " << -sinthl/qvec*massfactor/sqrt(2.)*leptonmass2/Q*(1.-Q2/M_W/M_W) << endl;
+//     
+//     cout << std::setprecision(9) <<Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/2. 
+//     << " " << leptonmass2*(1.+leptonmass2/Q2)*pow(1.-Q2/M_W/M_W,2.) << endl;
+//     
+//     cout << std::setprecision(9) <<Trace(((polVector0*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/2. 
+//     << " " << -leptonmass2/qvec*((k_in[0]+k_out[0])-leptonmass2*nu/Q2)*(1.-Q2/M_W/M_W) << endl;
+// 
+//     cout << std::setprecision(9) <<Trace(((polVector0*gamma_mu)*(k_in*gamma_mu)*(polVector0*gamma_mu)*(k_out*gamma_mu)).value())/2. 
+//     << " " << (pow(k_in[0]+k_out[0],2.)/qvec/qvec-1.)*Q2-leptonmass2*(1.+2.*(k_in[0]*k_in[0]-k_out[0]*k_out[0])/qvec/qvec)
+//     +pow(leptonmass2,2.)*nu*nu/qvec/qvec/Q2 << " " << -Q2-leptonmass2+pow(Q2*(k_in[0]+k_out[0])-leptonmass2*nu,2.)/qvec/qvec/Q2 << endl;
+// 
+//     cout << std::setprecision(9) <<(qvec*qvec*Trace(((polVector0*gamma_mu)*(k_in*gamma_mu)*(polVector0*gamma_mu)*(k_out*gamma_mu)).value()) 
+//       - 2.*qvec*nu*Trace(((polVector0*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())
+//       +nu*nu*Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value()))/(4.*k_in[0]*k_out[0]*Q2) << 
+//       " " << 1.+massfactor*costhl -2.*leptonmass2*nu/k_out[0]/M_W/M_W+leptonmass2*pow(nu/M_W/M_W,2.)*(1.-massfactor*costhl)<< endl;
+//     
+//     cout << std::setprecision(9) <<
+//       (Trace(((polVector0*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())
+//       -nu/qvec*Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value()))/(4.*k_in[0]*k_out[0]) << 
+//       " " << -leptonmass2/qvec/k_out[0] + leptonmass2/M_W/M_W/qvec*(nu*(1.-massfactor*costhl)+Q2/k_out[0])
+//       -nu/qvec*leptonmass2*pow(Q/M_W/M_W,2.)*(1-massfactor*costhl) << endl;
+// 
+//     cout << std::setprecision(9) <<
+//       Q2/qvec/qvec*Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << 
+//       " " << leptonmass2/qvec/qvec*pow(1.-Q2/M_W/M_W,2.)*(1-massfactor*costhl) << endl;
+      
+      
     return mott*frontfactor/HBARC;
   }
   else{
