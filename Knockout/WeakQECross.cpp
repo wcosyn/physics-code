@@ -114,8 +114,8 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     double leptonmass2=lepton->GetLeptonMass()*lepton->GetLeptonMass();
     double mott=sqrt(1.-leptonmass2/Eout/Eout)*pow(G_FERMI*COS_CAB*Eout/(Q2/M_W/M_W+1.)/PI/2.,2.);
     
-    double kinfactors[6];
-    double response[6];
+    double kinfactors[9];
+    double response[9];
 
     FourVector<double> k_in,k_out;
     lepton->GetLeptonVectors(kin,k_in,k_out);
@@ -132,38 +132,38 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     
     kinfactors[0]=1.+massfactor*costhl-2.*leptonmass2*nu/k_out[0]/M_W/M_W
 	+leptonmass2*pow(nu/M_W/M_W,2.)*(1.-massfactor*costhl); //v_L (part corresponding with unbroken current)
-    double v_L2 = -leptonmass2/qvec/k_out[0] + leptonmass2/M_W/M_W/qvec*(nu*(1.-massfactor*costhl)+Q2/k_out[0])
+    kinfactors[1] = -leptonmass2/qvec/k_out[0] + leptonmass2/M_W/M_W/qvec*(nu*(1.-massfactor*costhl)+Q2/k_out[0])
       -nu/qvec*leptonmass2*pow(Q/M_W/M_W,2.)*(1-massfactor*costhl); //second contrib to v_L, mix z,0
-    double v_L3 = leptonmass2/qvec/qvec*pow(1.-Q2/M_W/M_W,2.)*(1-massfactor*costhl); //third contrib to v_L, z*z
-    kinfactors[1]=1.-massfactor*costhl+k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl; //v_T
-    kinfactors[2]=-k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl; //v_TT
-    kinfactors[3]=-sinthl/sqrt(2.)/qvec*(k_in[0]+k_out[0]-nu*leptonmass2/M_W/M_W); //v_TL
-    double v_TL2 =-sintl*leptonmass2/sqrt(2.)/qvec/qvec*(1.-Q2/M_W/M_W); //v_TL contrib from mixed current
-    kinfactors[4]=(k_in[0]+k_out[0])/qvec*(1.-massfactor*costhl)-leptonmass2/qvec/k_out[0]; //v_T'
-    kinfactors[5]=-massfactor*sinthl/sqrt(2.); //v_TL'
+    kinfactors[2] = leptonmass2/qvec/qvec*pow(1.-Q2/M_W/M_W,2.)*(1-massfactor*costhl); //third contrib to v_L, z*z
+    kinfactors[3]=1.-massfactor*costhl+k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl; //v_T
+    kinfactors[4]=-k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl; //v_TT
+    kinfactors[5]=-sinthl/sqrt(2.)/qvec*(k_in[0]+k_out[0]-nu*leptonmass2/M_W/M_W); //v_TL
+    kinfactors[6] =-sinthl*leptonmass2/sqrt(2.)/qvec/qvec*(1.-Q2/M_W/M_W); //v_TL contrib from mixed current
+    kinfactors[7]=(k_in[0]+k_out[0])/qvec*(1.-massfactor*costhl)-leptonmass2/qvec/k_out[0]; //v_T'
+    kinfactors[8]=-massfactor*sinthl/sqrt(2.); //v_TL'
     
     
-    const FourVector<GammaStructure> gamma_mu=FourVector<GammaStructure>(GammaStructure(0.,0.,1.),
-											GammaStructure(0.,0.,0.,1.),
-				      GammaStructure(0.,0.,0.,0.,1.),GammaStructure(0.,0.,0.,0.,0.,1.));
-
-
-    const GammaStructure gamma_5(0.,1.);
-
-    FourVector<complex<double> > polVectorPlus(0.,
-						      -1./sqrt(2.),
-						      complex<double>(0.,-1./sqrt(2.)),
-						  0.);
-    FourVector<complex<double> > polVectorMin(0.,
-						    1./sqrt(2.),
-						    complex<double>(0.,-1./sqrt(2.)),
-						    0.);
-    FourVector<complex<double> > polVector0(qvec/Q,0.,0.,nu/Q);
-    FourVector<complex<double> > polVectorZ(nu/Q,0.,0.,qvec/Q);
-    polVectorZ*=1.-Q2/M_W/M_W;
-    
-
 //testing kin factors
+//     const FourVector<GammaStructure> gamma_mu=FourVector<GammaStructure>(GammaStructure(0.,0.,1.),
+// 											GammaStructure(0.,0.,0.,1.),
+// 				      GammaStructure(0.,0.,0.,0.,1.),GammaStructure(0.,0.,0.,0.,0.,1.));
+// 
+// 
+//     const GammaStructure gamma_5(0.,1.);
+// 
+//     FourVector<complex<double> > polVectorPlus(0.,
+// 						      -1./sqrt(2.),
+// 						      complex<double>(0.,-1./sqrt(2.)),
+// 						  0.);
+//     FourVector<complex<double> > polVectorMin(0.,
+// 						    1./sqrt(2.),
+// 						    complex<double>(0.,-1./sqrt(2.)),
+// 						    0.);
+//     FourVector<complex<double> > polVector0(qvec/Q,0.,0.,nu/Q);
+//     FourVector<complex<double> > polVectorZ(nu/Q,0.,0.,qvec/Q);
+//     polVectorZ*=1.-Q2/M_W/M_W;
+    
+
 //     cout << -Trace(((polVectorMin*gamma_mu)*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
 //     << " " << 1-massfactor*costhl+k_in[0]*k_out[0]/qvec/qvec*massfactor*massfactor*sinthl*sinthl << endl;
 // 
@@ -209,8 +209,33 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 //     cout << std::setprecision(9) <<
 //       Q2/qvec/qvec*Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << 
 //       " " << leptonmass2/qvec/qvec*pow(1.-Q2/M_W/M_W,2.)*(1-massfactor*costhl) << endl;
-      
-      
+//       
+//     cout << std::setprecision(9) << nu*nu/qvec/qvec*(1.+massfactor*costhl)-2.*nu/qvec*leptonmass2/qvec/k_out[0]+leptonmass2/qvec/qvec*(1.-massfactor)*costhl <<
+//     " " << 1.+massfactor*costhl-2.*k_in[0]*k_out[0]*massfactor*massfactor*sinthl*sinthl/qvec/qvec << endl;
+
+    for(int i=0;i<9;i++) response[9]=0.;
+    for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
+	Matrix<2,4> J;
+	reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current, SRC, thick);
+	for(int i=0;i<2;i++){
+	  response[0]+=norm(J(i,0)-qvec/kin.GetWlab()*J(i,3));
+	  response[1]+=2.*real(J(i,3)*conj(J(i,0)-qvec/kin.GetWlab()*J(i,3)));
+	  response[2]+=norm(J(i,3));
+	  response[3]+=norm(J(i,1))+norm(J(i,2));
+	  response[4]+=2.*real(conj(J(i,2))*J(i,1));
+	  response[5]+=2.*real(conj(J(i,0)-qvec/kin.GetWlab()*J(i,3))*(J(i,2)-J(i,1)));
+	  response[5]+=2.*real(conj(J(i,3))*(J(i,2)-J(i,1)));
+	  response[7]+=norm(J(i,1))-norm(J(i,2));
+	  response[8]+=2.*imag((J(i,0)-qvec/kin.GetWlab()*J(i,3))*conj(J(i,2)-J(i,1)));
+	}
+    }
+    if(!phi_int) result=kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
+      +kinfactors[3]*response[3]+kinfactors[4]*response[4]*cos(2.*phi)
+      +(kinfactors[5]*response[5]+kinfactors[6]*response[6])*cos(phi)
+      +(neutrino?-1.:1.)*(kinfactors[7]*response[7]+kinfactors[8]*response[8]*sin(phi));
+    else result=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
+      +kinfactors[3]*response[3]+(neutrino?-1.:1.)*kinfactors[7]*response[7]);
+    delete reacmodel;
     return mott*frontfactor/HBARC;
   }
   else{
