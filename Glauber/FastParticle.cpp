@@ -394,13 +394,13 @@ double FastParticle::getBetasq(int level, MeanFieldNucleus *pnucleus) const{
 
 complex<double> FastParticle::getScatterfront(int level, MeanFieldNucleus *pnucleus) const{
   return getSigma(level,pnucleus)
-			  *(1.-I_UNIT*getEpsilon(level,pnucleus))
+			  *((particletype==8||particletype==9)?(-I_UNIT):(1.-I_UNIT*getEpsilon(level,pnucleus)))
 			  /(4.*PI*getBetasq(level,pnucleus));
 }
 
 complex<double> FastParticle::getScatterfront(bool proton) const{
   return getSigma(proton)
-			  *(1.-I_UNIT*getEpsilon(proton))
+			  *((particletype==8||particletype==9)?(-I_UNIT):(1.-I_UNIT*getEpsilon(level,pnucleus)))
 			  /(4.*PI*getBetasq(proton));
 }
 
