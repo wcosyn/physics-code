@@ -16,7 +16,7 @@ proton(prot),parametrization(para),Q2(q2){
   tau=Q2/(4.*(proton? MASSP*MASSP:MASSN*MASSN));
   GE_null=proton? 1.:1.91304;
   GM_null=proton? 2.79:-1.91304;
-  setGM();
+  setGM(); //GM first because GE can depend on GM for Q^2 above 6 GeV^2
   setGE();
   setF1();
   setF2();
@@ -73,27 +73,37 @@ switch(current){
 
 
 void NucleonEMOperator::setGE(){
-  if(parametrization==0){
-    if(!proton) GE=GE_null*pow(1+Q2/.71*1.E06,-2)*tau*0.942/(1+4.61*tau);
+  if(parametrization==0){ //BBA
+    if(!proton) GE=GE_null*pow(1+Q2/.71*1.E06,-2)*tau*0.942/(1+4.61*tau); //neutron
     else{
       if(Q2<6.*1.E06) GE=GE_null/(1. + 3.253 * Q2*1.E-06 + 1.422 * pow(Q2*1.E-06,2) + 0.08582 * pow(Q2*1.E-06,3) 
 	    + 0.3318 * pow(Q2*1.E-06,4) +  (-0.09371)*pow(Q2*1.E-06,5) + 
 	    0.01076*pow(Q2*1.E-06,6));
-      else{
+      else{ //above 6GeV^2 scale like GM
 	NucleonEMOperator form6(6.,proton,parametrization);
 	GE=GM/form6.getGM()*form6.getGE();
       }
     }
     return;
   }
-  else if(parametrization==1){
+  else if(parametrization==1){ //SLAC dipole
     GE=proton? Get_Gdipole(Q2)*GE_null : GE_null*Get_Gdipole(Q2)*tau/(1+5.6*tau);
+    return;
+  }
+  else if(parametrization==2){ //JJ Kelly
+    GE = proton? GE_null*(1.-0.24*tau)/(1.+10.98*tau+12.82*tau*tau+21.97*pow(tau,3.)):
+          1.7*tau/(1.+3.3*tau)*Get_Gdipole(Q2);                                  
+    return;
+  }
+  else if(parametrization==3){ //BBBA 
+    GE = proton? GE_null*(1.-0.0578*tau)/(1.+11.1*tau+13.6*tau*tau+33.0*pow(tau,3.)):
+    (1.25*tau+1.3*tau*tau)/(1.-9.86*tau+305.*tau*tau-758.0*pow(tau,3.)+802.0*pow(tau,4.));
     return;
   }
 }
 
 void NucleonEMOperator::setGM(){
-  if(parametrization==0){
+  if(parametrization==0){ //BBA
      GM=proton? GM_null/(1. + 3.104 *Q2*1.E-06 + 1.428 * pow(Q2*1.E-06,2) + 0.1112 * pow(Q2*1.E-06,3)
 	       +(-0.006981)*pow(Q2*1.E-06,4) + 0.0003705*pow(Q2*1.E-06,5) + 
 	       (-0.000007063)*pow(Q2*1.E-06,6)):
@@ -102,8 +112,19 @@ void NucleonEMOperator::setGM(){
 		+(-0.1287)*pow(Q2*1.E-06,4) + 0.008912*pow(Q2*1.E-06,5));
      return;
   }
-  else if(parametrization==1){
+  else if(parametrization==1){ //SLAC dipole 
     GM=proton? GM_null*Get_Gdipole(Q2) : GM_null*Get_Gdipole(Q2);
+    return;
+  }
+  else if(parametrization==2){ //JJ Kelly
+    GM = proton? GM_null*(1.+0.12*tau)/(1.+10.97*tau+18.86*tau*tau+6.55*pow(tau,3.)):
+	  GM_null*(1.+2.33*tau)/(1.+14.72*tau+24.20*tau*tau+84.1*pow(tau,3.));
+    return;
+  }
+  else if(parametrization==3){ //BBBA 
+    GM = proton? GM_null*(1.+0.15*tau)/(1.+11.1*tau+19.6*tau*tau+7.54*pow(tau,3.)):
+      GM_null*(1.+1.81*tau)/(1.+14.1*tau+20.7*tau*tau+68.7*pow(tau,3.));
+
     return;
   }
 }

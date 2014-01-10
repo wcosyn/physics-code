@@ -229,6 +229,7 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 	  response[8]+=2.*imag((J(i,0)-qvec/kin.GetWlab()*J(i,3))*conj(J(i,2)-J(i,1)));
 	}
     }
+    double result=0.;
     if(!phi_int) result=kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
       +kinfactors[3]*response[3]+kinfactors[4]*response[4]*cos(2.*phi)
       +(kinfactors[5]*response[5]+kinfactors[6]*response[6])*cos(phi)
@@ -236,7 +237,7 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     else result=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
       +kinfactors[3]*response[3]+(neutrino?-1.:1.)*kinfactors[7]*response[7]);
     delete reacmodel;
-    return mott*frontfactor/HBARC;
+    return mott*frontfactor*result/HBARC;
   }
   else{
      double mott=(1.+electron->GetCosScatterAngle(kin))*

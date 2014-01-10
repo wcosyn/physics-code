@@ -26,7 +26,11 @@ public:
   /*! constructor
    * \param Q2 [MeV^2] photon fourmomentum transfer squared
    * \param proton interaction with proton [1] or neutron [0], for charged currents it refers to INITIAL nucleon
-   * \param para which parametrization? [0=BBA, 1= dipole]
+   * \param para which parametrization? <BR>
+   * - 0=BBA (H. Budd, A. Bodek, and J. Arrington, hep-ex/0308005, J. Arrington, Phys. Rev. C 69, 022201(R) (2004)) <BR>
+   * - 1=SLAC dipole <BR>
+   * - 2=JJ Kelly (Phys. Rev. C70, 068202, 2004) <BR>
+   * -3=BBBA (Bradford, Bodek, Budd, Arrington,  hep-ex/0602017) <BR>
    * \param charged 0: Z-boson, 1: W-boson
    * \param M_A [MeV] axial mass in dipole paramterization
    * \param r_s2 [fm^2] parameter for strange contribution to F1_weak
