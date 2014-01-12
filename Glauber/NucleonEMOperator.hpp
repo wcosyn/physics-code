@@ -107,6 +107,32 @@ public:
    */
   FourVector<GammaStructure> getCC(const int current, const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf, 
 				   const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
+  /*! computes the dirac foton-bound nucleon coupling according to the CC1 description of De Forest et al.
+   * \param pi [MeV] initial nucleon momentum fourvector
+   * \param pf [MeV] final nucleon momentum fourvector
+   * \return fourvector of dirac matrices with CC1 coupling to nucleon
+   */
+  FourVector<GammaStructure> getCC1(const FourVector<double> &pi, const FourVector<double> &pf) const;
+  /*! computes the dirac foton-bound nucleon coupling according to the CC2 description of De Forest et al.
+   * \param q [MeV] photon momentum fourvector
+   * \return fourvector of dirac matrices with CC1 coupling to nucleon
+   */
+  FourVector<GammaStructure> getCC2(const FourVector<double> &q) const;
+  /*! computes the dirac foton-bound nucleon coupling according to the CC3 description of De Forest et al.
+   * \param q [MeV] photon momentum fourvector
+   * \param pi [MeV] initial nucleon momentum fourvector
+   * \param pf [MeV] final nucleon momentum fourvector
+   * \return fourvector of dirac matrices with CC1 coupling to nucleon
+   */
+  FourVector<GammaStructure> getCC3(const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf) const;
+  /*! computes the dirac foton-bound nucleon coupling according to a CC description of De Forest et al.
+   * \param current which CC of De Forest [1=CC1, 2=CC2, 3=CC3]
+   * \param q [MeV] photon momentum fourvector
+   * \param pi [MeV] initial nucleon momentum fourvector
+   * \param pf [MeV] final nucleon momentum fourvector
+   * \return fourvector of dirac matrices with CC1 coupling to nucleon
+   */
+  FourVector<GammaStructure> getCC(const int current, const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf) const;
   static const FourVector<GammaStructure> gamma_mu; /*!< gamma matrices */
   static const GammaStructure Id; /*!< Unit matrix */
   /*! grid for QMC GE modification, stepsize in Q2 [61] is 0.05 GeV^2, 

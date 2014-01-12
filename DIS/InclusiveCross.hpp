@@ -165,8 +165,17 @@ private:
   * \param W_sq [MeV^2] mass of resonance entering
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \return [MeV] on-shell pole p_s,z value
    */
   double get_prz_res(double pt2, double W_sq, TKinematics2to2 & kin);
+  /*! method to find the pole in the fsi integration, longitudinal part,
+   * with resonance mass as input.  Essentially solves Eq. (29) of the paper
+  * \param pt2 [MeV^2] final transverse spectator momentum sq
+  * \param W_sq [MeV^2] mass of resonance entering
+   * \param nu [MeV] virtual photon energy
+   * \param qvec [MeV] virtual photon momentum
+   * \return [MeV] on-shell pole p_s,z value
+   */
   double get_prz_res(double pt2, double W_sq, double Q2, double nu, double qvec);
  /*! gives you the scatter amplitude of the final-state interaction
    * \param t [MeV^2] momentum transfer squared

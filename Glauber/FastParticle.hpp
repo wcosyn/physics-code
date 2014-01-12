@@ -160,6 +160,17 @@ public:
    * \return [fm^2] frontfactor scattering
    */
   std::complex<double> getScatterfront(bool proton) const;
+
+ /*! gives you the Feynman scatter amplitude of the final-state interaction
+   * \param t [MeV^2] momentum transfer squared
+   * \param proton scattering with proton (1) or neutron (0)
+   * \return [MeV^-2] \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
+   */
+  std::complex<double> scatter(double t, bool proton) const{
+    return getSigma(proton)*(I_UNIT+getEpsilon(proton))*exp(getBetasq(proton)*t/2.); 
+  }
+
+
   /*! for CT calc, return ratio between sigma_eff and regular sigma
    * \param zmom distance along path of outgoing particle
    * \return ratio

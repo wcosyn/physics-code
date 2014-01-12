@@ -13,6 +13,7 @@ RhoTCross.hpp
 RhoDeuteron.hpp
 WeakQEHadronCurrent.hpp
 WeakQECross.hpp
+DQEinclusive.hpp
 )
 
 foreach(it ${Knockout_HEADERS_HPP})

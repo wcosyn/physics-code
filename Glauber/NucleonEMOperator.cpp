@@ -71,6 +71,38 @@ switch(current){
 }
 
 
+FourVector<GammaStructure> NucleonEMOperator::getCC1(const FourVector<double> &pi, const FourVector<double> &pf) const{
+  return getGM()*gamma_mu-getF2()/(2.*(proton?MASSP:MASSN))*(pi+pf)*Id;
+}
+FourVector<GammaStructure> NucleonEMOperator::getCC2(const FourVector<double> &q) const{
+  return gamma_mu*getF1()+getF2()/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
+  
+}
+FourVector<GammaStructure> NucleonEMOperator::getCC3(const FourVector<double> &q, const FourVector<double> &pi,
+						     const FourVector<double> &pf) const{
+  return getF1()/(2.*(proton?MASSP:MASSN))*(pi+pf)*Id 
+    + getGM()/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q)); 
+}
+
+FourVector<GammaStructure> NucleonEMOperator::getCC(const int current, const FourVector<double>& q, 
+						    const FourVector<double>& pi, const FourVector<double>& pf) const{
+switch(current){
+    case(1):
+      return getCC1(pi,pf);
+      break;
+    case(2):
+      return getCC2(q);
+      break;
+    case(3):
+      return getCC3(q,pi,pf);
+      break;
+    default:
+      cerr << "Current operator not supported " << current << endl;
+      exit(1);
+  }
+}
+
+
 
 void NucleonEMOperator::setGE(){
   if(parametrization==0){ //BBA

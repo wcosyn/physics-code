@@ -15,7 +15,7 @@
 #define MASSRHO 775.49 /*!< \def defines rho0 mass [MeV] */
 #define HBARC 197.327  /*!< \def defines hbar*c [MeV*fm] */
 #define ALPHA 0.00729735253 /*!< \def defines finestructure constant [] */
-#define I_UNIT complex<double>(0.,1.) /*!< \def defines complex number I */
+#define I_UNIT std::complex<double>(0.,1.) /*!< \def defines complex number I */
 #define INVHBARC 0.00506770453255 /*!< \def defines (hbar*c)^-1 [(MeV*fm)^-1] */
 #define MUP 2.79 /*!< \def defines proton anomalous magnetic moment */
 #define DEGRTORAD 0.0174532925 /*!< \def defines Pi/180 */

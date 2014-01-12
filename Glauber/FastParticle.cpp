@@ -400,7 +400,7 @@ complex<double> FastParticle::getScatterfront(int level, MeanFieldNucleus *pnucl
 
 complex<double> FastParticle::getScatterfront(bool proton) const{
   return getSigma(proton)
-			  *((particletype==8||particletype==9)?(-I_UNIT):(1.-I_UNIT*getEpsilon(level,pnucleus)))
+			  *((particletype==8||particletype==9)?(-I_UNIT):(1.-I_UNIT*getEpsilon(proton)))
 			  /(4.*PI*getBetasq(proton));
 }
 
