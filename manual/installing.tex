@@ -14,5 +14,5 @@ When first building the code make sure you already have root installed with the 
 \begin{itemize}
 \item Error in \texttt{cmake}: ROOTSYS not set.
 If you get an error like this you probably should add the path of the \texttt{root-config} script to the search path in the file \texttt{\$\{PROJECT\_SOURCE\_DIR\}/cmake/Modules/FindROOT.cmake}. This is done by adding the path to the line \texttt{SET(ROOT\_CONFIG\_SEARCHPATH /insert\_your\_path\_here)}. In my case this was \texttt{usr/local/bin}. If you don't know the location of the \texttt{root-config} executable you maybe able to find it using \texttt{\$ find /usr -name root-config}.
-
+\item Error \texttt{Wrong ELF class}. If you get errors mentioning ELF-class then you are probably linking 64 to 32 bit code which does not compute. Make sure you are linking to the 64 bit libraries of \texttt{root} and not the 32 bit ones. For me the 64 bit libraries were located in \texttt{/usr/local/lib/root} while the 32 bit ones were in \texttt{/usr/local/root/lib/root}. 
 \end{itemize}
