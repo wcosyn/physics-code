@@ -30,7 +30,7 @@ include_directories( ${INCLUDE_DIRECTORIES})
 ### EXTERNAL CUBA PROJECT ###
 #############################
 
-set(Cuba_dir ${CMAKE_CURRENT_SOURCE_DIR}/Cuba-3.1)
+set(Cuba_dir ${CMAKE_CURRENT_SOURCE_DIR}/Cuba-3.3)
 
 include(ExternalProject)
 ExternalProject_Add(Cuba
