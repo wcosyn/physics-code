@@ -164,7 +164,7 @@ void NucleonEMOperator::setGM(){
 
 double NucleonEMOperator::Get_Gdipole(double Q2)  
 {
-  return pow(1+Q2/.71*1.E06,-2);
+  return pow(1+Q2/0.71E06,-2);
 }
 
 

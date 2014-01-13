@@ -68,7 +68,8 @@ public:
   
   void setOffshell(const int offshell){offshellset=offshell;} /*!< set offshell parametrization */
   TDeuteron::Wavefunction* getDeutwf() const{return wf;} /*!< get instance to deuteron wave function */
-  NucleonEMOperator* getFFactors() const{return ffactors;} /*!< get instance to form factors */
+  NucleonEMOperator* getFFactorseq() const{return ffactorseq;} /*!< get instance to form factors */
+  NucleonEMOperator* getFFactorsdiff() const{return ffactorsdiff;} /*!< get instance to form factors */
   double getMassr() const{return massr;}
   double getMassi() const{return massi;}
   
@@ -101,16 +102,17 @@ private:
 
   TDeuteron::Wavefunction *wf; /*!< pointer to deuteron wave funtion, see TDeuteron */
   TElectronKinematics electron; /*!< electron kinematis, see TElectronKinematics */
-  NucleonEMOperator *ffactors;  /*!< nucleon form factors, see NucleonEMOperator */
+  NucleonEMOperator *ffactorseq;  /*!< nucleon form factors, see NucleonEMOperator, nucleon is equal to "proton" from constructor */
+  NucleonEMOperator *ffactorsdiff;  /*!< nucleon form factors, see NucleonEMOperator, nucleon is diff to "proton", needed in crossed diagrams */
   int ffparam; /*!< parametrization of formfactors, see NucleonEMOperator */
   
   /*! struct that is used for integrators plane wave ones*/
   struct Ftor_planewave {
 
     /*! integrandum function */
-    static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
+    static void exec(const numint::array<double,1> &x, void *param, numint::vector_d &ret) {
       Ftor_planewave &p = * (Ftor_planewave *) param;
-      p.f(ret,x[0],x[1],*p.cross,p.Q2,p.x,p.current);
+      p.f(ret,x[0],*p.cross,p.Q2,p.x,p.current);
     }
     DQEinclusive *cross;/*!< pointer to  instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
@@ -119,25 +121,23 @@ private:
     /*! integrandum 
     * \param res results
     * \param pperp [MeV] integration variable, transverse spectator momentum
-    * \param phi [] integration variable, polar transverse angle of the spect. momentum
     * \param cross instance of  where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).  
     */
-    void (*f)(numint::vector_d & res, double pperp, double phi, DQEinclusive& cross, double Q2, double x, int current);
+    void (*f)(numint::vector_d & res, double pperp, DQEinclusive& cross, double Q2, double x, int current);
   };
   
    /*! integrandum function
     * \param results results
     * \param pperp [MeV] integration variable, transverse spectator momentum
-    * \param phi [] integration variable, polar transverse angle of the spect. momentum
     * \param cross instance of DQEinclusive where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
     */
-  static void planewave_int(numint::vector_d & results, double pperp, double phi,
+  static void planewave_int(numint::vector_d & results, double pperp, 
 			    DQEinclusive& cross, double Q2, double x, int current);
  
   
@@ -145,9 +145,9 @@ private:
   struct Ftor_FSI {
 
     /*! integrandum function */
-    static void exec(const numint::array<double,4> &x, void *param, numint::vector_d &ret) {
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
       Ftor_FSI &p = * (Ftor_FSI *) param;
-      p.f(ret,x[0],x[1],x[2],x[3],*p.cross,p.Q2,p.x,p.current);
+      p.f(ret,x[0],x[1],x[2],*p.cross,p.Q2,p.x,p.current);
     }
     DQEinclusive *cross;/*!< pointer to  instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
@@ -156,7 +156,6 @@ private:
     /*! integrandum 
     * \param res results
     * \param pperp [MeV] integration variable, transverse spectator momentum
-    * \param phi [] integration variable, polar transverse angle of the spect. momentum
     * \param qt [MeV] norm of transverse momentum transfer in FSI
     * \param qphi [] radial angle of transverse momentum transfer in FSI
     * \param cross instance of  where we perform the integration on
@@ -164,14 +163,13 @@ private:
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
     */
-    void (*f)(numint::vector_d & res, double pperp, double phi, double qt, double qphi, DQEinclusive& cross, 
+    void (*f)(numint::vector_d & res, double pperp, double qt, double qphi, DQEinclusive& cross, 
 	      double Q2, double x, int current);
   };
   
    /*! integrandum function for on-shell contribution to the FSI amplitude
     * \param results results
     * \param pperp [MeV] integration variable, transverse spectator momentum
-    * \param phi [] integration variable, polar transverse angle of the spect. momentum
     * \param qt [MeV] norm of transverse momentum transfer in FSI
     * \param qphi [] radial angle of transverse momentum transfer in FSI
     * \param cross instance of  DQEinclusive object we perform the integration on
@@ -179,12 +177,11 @@ private:
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
     */
-  static void FSI_int(numint::vector_d & results, double pperp, double phi, double qt, 
+  static void FSI_int(numint::vector_d & results, double pperp, double qt, 
 		      double qphi, DQEinclusive& cross, double Q2, double x, int current);
    /*! integrandum function for off-shell contribution to the FSI amplitude
     * \param results results
     * \param pperp [MeV] integration variable, transverse spectator momentum
-    * \param phi [] integration variable, polar transverse angle of the spect. momentum
     * \param qt [MeV] norm of transverse momentum transfer in FSI
     * \param qphi [] radial angle of transverse momentum transfer in FSI
     * \param cross instance of  DQEinclusive object we perform the integration on
@@ -192,7 +189,7 @@ private:
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
     */
-  static void FSI_int_off(numint::vector_d & results, double pperp, double phi, double qt, 
+  static void FSI_int_off(numint::vector_d & results, double pperp, double qt, 
 		      double qphi, DQEinclusive& cross, double Q2, double x, int current);
  
   
