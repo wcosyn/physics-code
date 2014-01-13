@@ -78,8 +78,8 @@ template<typename T>
 struct Convergence {
   typedef bool (*type) (const T &r, const T &s, double epsabs, double epsrel, int dirty);
 };
-/* compiling with the new c++ standart (c++0x) the enum below will cause errors because
- * the new standart includes already a few error codes like EDOM, ERANGE, EFAULT,... So you
+/* compiling with the new c++ standard (c++0x) the enum below will cause errors because
+ * the new standard includes already a few error codes like EDOM, ERANGE, EFAULT,... So you
  * will get an error like "assignment of numeric value" -> something like 33=1. So i have
  * commented out the codes that appear to be already defined */
 enum { 
