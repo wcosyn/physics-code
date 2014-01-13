@@ -26,8 +26,23 @@ set(INCLUDE_DIRECTORIES
 ${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/numint )
 include_directories( ${INCLUDE_DIRECTORIES})
 
+#############################
+### EXTERNAL CUBA PROJECT ###
+#############################
 
+set(Cuba_dir ${CMAKE_CURRENT_SOURCE_DIR}/Cuba-3.1)
 
+include(ExternalProject)
+ExternalProject_Add(Cuba
+					SOURCE_DIR ${Cuba_dir}
+					CONFIGURE_COMMAND ${Cuba_dir}/configure --prefix=${Cuba_dir} --libdir=${CMAKE_SOURCE_DIR}/lib
+					BINARY_DIR ${Cuba_dir}
+					BUILD_COMMAND make install
+					)
+
+############################
+### END OF EXT. CUBA   #####
+############################
 
 # Set the library version in the main CMakeLists.txt
 SET(INTEGRATOR_MAJOR_VERSION 1)
