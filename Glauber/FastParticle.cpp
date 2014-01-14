@@ -23,7 +23,7 @@ sigma_decay_p(0.),
 sigma_decay_n(0.),
 userset(0),
 Gamma(ggamma){
-  cout << "Initializing FastParticle object: " << endl;
+//   cout << "Initializing FastParticle object: " << endl;
   ex=sin(theta)*cos(phi);
   ey=sin(theta)*sin(phi);
   ez=cos(theta);

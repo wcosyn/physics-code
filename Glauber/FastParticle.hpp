@@ -167,7 +167,7 @@ public:
    * \return [MeV^-2] \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
    */
   std::complex<double> scatter(double t, bool proton) const{
-    return getSigma(proton)*(I_UNIT+getEpsilon(proton))*exp(getBetasq(proton)*t/2.); 
+    return getSigma(proton)*(I_UNIT+getEpsilon(proton))*exp(getBetasq(proton)*t/2.*INVHBARC*INVHBARC)*INVHBARC*INVHBARC; 
   }
 
 
