@@ -47,22 +47,16 @@ public:
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    */
   void calc_F2Dinc(double &contrib1, double &contrib2, double Q2,double x, int current);
-  /*! Calculates the fsi inclusive cross section without any prefactors, just the deuteron incl F_L structure function
+  /*! Calculates the fsi (on and off) inclusive cross section without any prefactors, just the deuteron incl F_L structure function
    * \param fsi1 [] inclusive fsi cross section without prefactors, direct term 
    * \param fsi2 [] crossed term
+   * \param fsi1 [] inclusive fsi cross section without prefactors, direct term, off-shell part  
+   * \param fsi2 [] crossed term, off-shell part
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    */
-  void calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double x, int current);
-  /*! Calculates the fsi inclusive off-shell cross section without any prefactors, just the deuteron incl F_L structure function
-   * \param fsi1 [] inclusive fsi cross section without prefactors, direct term
-   * \param fsi2 [] other fsi formula, crossed term
-   * \param Q2 [MeV^2] Q^2 of virtual photon
-   * \param x [] bjorken x
-   * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
-   */
-  void calc_F2DincFSI_off(double &fsi1, double &fsi2, double Q2,double x, int current);
+  void calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, int current);
 
   
   
@@ -82,7 +76,7 @@ public:
    * \return [0] no solutions [1] solutions
    */
   bool get_prz(std::vector<double> &sol, double pt, double Q2, double nu, double qvec);
-  
+  double getMinpcm() const{return minpcm;}
   
 private:
   double betaoff; /*!< [MeV^-2] off-shell slope parameter, scattering parameter in FSI*/
@@ -99,7 +93,7 @@ private:
    * - 4: full off-shell amplitude, no suppression 
    */
   int offshellset;
-
+  double minpcm;
   TDeuteron::Wavefunction *wf; /*!< pointer to deuteron wave funtion, see TDeuteron */
   TElectronKinematics electron; /*!< electron kinematis, see TElectronKinematics */
   NucleonEMOperator *ffactorseq;  /*!< nucleon form factors, see NucleonEMOperator, nucleon is equal to "proton" from constructor */
@@ -139,7 +133,6 @@ private:
     */
   static void planewave_int(numint::vector_d & results, double pperp, 
 			    DQEinclusive& cross, double Q2, double x, int current);
- 
   
   /*! struct that is used for integrators fsi on- and off-shell ones*/
   struct Ftor_FSI {
@@ -167,7 +160,7 @@ private:
 	      double Q2, double x, int current);
   };
   
-   /*! integrandum function for on-shell contribution to the FSI amplitude
+   /*! integrandum function for on-shell and off-shell contribution to the FSI amplitude
     * \param results results
     * \param pperp [MeV] integration variable, transverse spectator momentum
     * \param qt [MeV] norm of transverse momentum transfer in FSI
@@ -179,19 +172,6 @@ private:
     */
   static void FSI_int(numint::vector_d & results, double pperp, double qt, 
 		      double qphi, DQEinclusive& cross, double Q2, double x, int current);
-   /*! integrandum function for off-shell contribution to the FSI amplitude
-    * \param results results
-    * \param pperp [MeV] integration variable, transverse spectator momentum
-    * \param qt [MeV] norm of transverse momentum transfer in FSI
-    * \param qphi [] radial angle of transverse momentum transfer in FSI
-    * \param cross instance of  DQEinclusive object we perform the integration on
-    * \param Q2 [MeV^2] momentum transfer 
-    * \param x [] Bjorken x
-    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
-    */
-  static void FSI_int_off(numint::vector_d & results, double pperp, double qt, 
-		      double qphi, DQEinclusive& cross, double Q2, double x, int current);
- 
   
 };
 
