@@ -9,6 +9,9 @@
  * @date last update: 11/04/2011
  */
 
+#ifndef NUMINT_TOOLS_HPP
+#define NUMINT_TOOLS_HPP 1
+
 #include <numint/macros.hpp>
 #include <numint/typedef.hpp>
 #include <iomanip>
@@ -136,3 +139,5 @@ inline void print(std::vector<T> &x) { std::cout << "[";
 }
 
 CLOSE_NUMINT_NAMESPACE
+
+#endif NUMINT_TOOLS_HPP
