@@ -140,4 +140,4 @@ inline void print(std::vector<T> &x) { std::cout << "[";
 
 CLOSE_NUMINT_NAMESPACE
 
-#endif NUMINT_TOOLS_HPP
+#endif // NUMINT_TOOLS_HPP
