@@ -30,6 +30,7 @@
 #include <numint/macros.hpp>
 #include <numint/typedef.hpp>
 #include <numint/numint2adapt.hpp>
+#include <numint/numint2Cuba.hpp>
 
 OPEN_NUMINT_NAMESPACE
 
