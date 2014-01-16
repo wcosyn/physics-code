@@ -8,7 +8,7 @@
 
 
 # Check if cmake has the required version
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0 FATAL_ERROR)
 project(mycode CXX Fortran)
 MESSAGE("c++ ${CMAKE_CXX_COMPILER}")
 MESSAGE("c ${CMAKE_C_COMPILER}")
