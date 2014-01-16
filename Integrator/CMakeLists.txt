@@ -30,7 +30,15 @@ include_directories( ${INCLUDE_DIRECTORIES})
 ### EXTERNAL CUBA PROJECT ###
 #############################
 
-set(Cuba_dir ${CMAKE_CURRENT_SOURCE_DIR}/Cuba)
+# because cmake does not support following symlinks for most commands
+# we execute external process readlink to resolve the symlink Cuba
+# this will only work on unix systems though :(
+# note that the OUTPUT_STRIP_TRAILING_WHITESPACE is quite essential, took me a while to figure out
+execute_process(COMMAND readlink -f Cuba
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
+		OUTPUT_VARIABLE Cuba_dir
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+		)
 
 include(ExternalProject)
 ExternalProject_Add(Cuba
