@@ -38,7 +38,7 @@ void DQEinclusive::calc_F2Dinc(double &contrib1, double &contrib2, double Q2,dou
   ffactorsdiff=new NucleonEMOperator(Q2,!proton,ffparam);
   
   numint::array<double,1> lower = {{0.}};
-  numint::array<double,1> upper = {{1.E03}};
+  numint::array<double,1> upper = {{0.7E03}};
   DQEinclusive::Ftor_planewave F;
   F.cross=this;
   F.Q2 = Q2;
@@ -91,7 +91,7 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
       double prnorm=sqrt(pperp*pperp+prz[it]*prz[it]);
 //       double costheta=prz[it]/prnorm;
       double Ernorm=sqrt(pperp*pperp+prz[it]*prz[it]+cross.getMassr()*cross.getMassr());
-      if(Ernorm<MASSD-100.){
+      if(Ernorm<MASSD-200.){
 	FourVector<double> q(nu,0.,0.,qvec);
 	
 	//direct term
@@ -143,7 +143,7 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 				  cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))
 				  *conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))));
 		  //cross
-		  if(Erprimenorm<MASSD-100.) res1+=real(nu*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0prime
+		  if(Erprimenorm<MASSD-200.) res1+=real(nu*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0prime
 				      +Q2/(2.*qvec*qvec)*(currentinmin*currentoutminprime+currentinplus*currentoutplusprime))*
 				  cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))
 				  *conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, TVector3(-pperp*cosphi,-pperp*sinphi,qvec-prz[it]))));
@@ -155,7 +155,7 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 	}
 	res0*=pperp*MASSD/(2.*(MASSD-Ernorm))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu));
 	//minus sign because of wave function!!
-	if(Erprimenorm<MASSD-100.) res1*=-pperp*MASSD/(2.*sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm)))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu))
+	if(Erprimenorm<MASSD-200.) res1*=-pperp*MASSD/(2.*sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm)))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu))
 	  *sqrt(Erprimenorm/Ernorm);
 	result[0]+=res0;
 	result[1]+=res1;
@@ -180,7 +180,7 @@ void DQEinclusive::calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, 
   fsi1=fsi2=0.;
   minpcm=1.E03;
   numint::array<double,3> lower = {{0.,0.,0.}};
-  numint::array<double,3> upper = {{1.E03,1.E03,2.*PI}};
+  numint::array<double,3> upper = {{0.7E03,0.7E03,2.*PI}};
   DQEinclusive::Ftor_FSI F;
   F.cross=this;
   F.Q2 = Q2;
@@ -194,7 +194,7 @@ void DQEinclusive::calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, 
   int res=90;
   unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-  res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,6E04,ret,count,0);
+  res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,6E03,ret,count,0);
 //     cout << "fsi " << res << " " << count << endl;
   fsi1= 2.*PI/3./MASSD/(64.*PI*PI)*ret[0];
   fsi2= 2.*PI/3./MASSD/(64.*PI*PI)*ret[1];
@@ -225,6 +225,7 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
   double pcm=sqrt(s/4.-MASSP*MASSP);
   if(pcm<cross.minpcm) cross.minpcm=pcm;
   double chi=sqrt(s)*pcm*2.;
+
   FastParticle rescatter(0,0,pcm,0.,0.,Q2,0.,"");
   
   static FourVector<complex<double> > polVectorPlus(0.,
@@ -245,7 +246,7 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
       double prnorm=sqrt(pperp1*pperp1+prz1[it1]*prz1[it1]);
 //       double costheta=prz[it]/prnorm;
       double Ernorm=sqrt(pperp1*pperp1+prz1[it1]*prz1[it1]+cross.getMassr()*cross.getMassr());
-      if(Ernorm<MASSD-500.){
+      if(Ernorm<MASSD-200.){
 	FourVector<double> q(nu,0.,0.,qvec);
 	
 	//direct term
@@ -266,7 +267,7 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 	  for(size_t it2=0;it2<prz2.size();it2++){      
 	    double Erprimenorm=sqrt(pperp2*pperp2+prz2[it2]*prz2[it2]+cross.getMassr()*cross.getMassr());
 	    double Erprimenorm_cross=sqrt(pperp2*pperp2+prz2[it2]*prz2[it2]+cross.getMassi()*cross.getMassi());
-	    if(Erprimenorm<MASSD-500.){
+	    if(Erprimenorm<MASSD-200.){
 
 	      FourVector<double> pi2(MASSD-Erprimenorm,-pperp1*cosphi1-qt*cos(qphi),-qt*sin(qphi),-prz2[it2]); //pi2=pD-ps1+qt
 	      FourVector<double> pn2=pi2+q; //pn2=pi2+q
@@ -344,14 +345,14 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 		  }
 		}
 	      }
-	      res0*=-pperp1*qt*MASSD/sqrt(Ernorm*Erprimenorm)/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
+	      res0*=-pperp1*qt/sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
 	      /abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
-	      res2*=pperp1*qt*MASSD/sqrt(Ernorm*Erprimenorm)/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
+	      res2*=pperp1*qt/sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
 	      /abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
 	      //minus sign because of wave function!!
-	      res1*=pperp1*qt*MASSD/(2.*sqrt((Ernorm*Erprimenorm_cross)*(MASSD-Ernorm)*(MASSD-Erprimenorm_cross)))
+	      res1*=pperp1*qt*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm_cross))/sqrt(Ernorm*Erprimenorm_cross)
 	      /abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))/abs(qvec-prz2[it2]/Erprimenorm_cross*(MASSD+nu))*chi;
-	      res3*=-pperp1*qt*MASSD/(2.*sqrt((Ernorm*Erprimenorm_cross)*(MASSD-Ernorm)*(MASSD-Erprimenorm_cross)))
+	      res3*=-pperp1*qt*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm_cross))/sqrt(Ernorm*Erprimenorm_cross)
 	      /abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))/abs(qvec-prz2[it2]/Erprimenorm_cross*(MASSD+nu))*chi;
 	      result[0]+=imag(res0);
 	      result[1]+=imag(res1);

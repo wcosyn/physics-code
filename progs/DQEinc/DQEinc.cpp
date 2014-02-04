@@ -31,11 +31,11 @@ int main(int argc, char *argv[])
 	DQEinclusive Dinc(proton,ffparam,wf,*elec,4);
 	double f1,f2,f3,f4;
 	Dinc.calc_F2Dinc(f1,f2,Q2,x,2);
-// 	cout << "pwresult " << proton << " " << f1 << " " << f2 << endl;
+//  	cout << "pwresult " << proton << " " << f1 << " " << f2 << endl;
 	teller1+=f1;
 	teller2+=f2;
 	Dinc.calc_F2DincFSI(f1,f2,f3,f4,Q2,x,2);
-	cout << "fsiresut " << proton << " " << f1 << " " << f2 << " " << f3 << " " << f4 << endl;
+//  	cout << "fsiresult " << proton << " " << f1 << " " << f2 << " " << f3 << " " << f4 << endl;
 	fsi1+=f1;
 	fsi2+=f2;
 	fsioff1+=f3;
