@@ -15,8 +15,9 @@ MESSAGE(STATUS "Looking for Root...")
 SET(ROOT_CONFIG_SEARCHPATH
   ${SIMPATH}/tools/root/bin
   $ENV{ROOTSYS}
+  $ENV{ROOTSYS}/bin
   /usr/bin
-  /usr/local/bin
+#/apps/gent/gastly/nehalem/software/ROOT/v5.34.01-ictce-4.0.6/bin
 )
 
 SET(ROOT_DEFINITIONS "")

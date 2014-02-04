@@ -28,6 +28,15 @@ find_package(Doxygen)
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 
+set(HPC_NAMES 
+gengar
+haunter
+gastly
+dugtrio 
+raichu
+delcatty
+gulpin)
+
 
 # Create a library called "libEvent" which includes the source files given in
 # the array .
@@ -170,7 +179,10 @@ elseif (hostname MATCHES trillian)
 
 # endif (hostname MATCHES trillian) 
 
-elseif (hostname MATCHES gengar OR hostname MATCHES haunter)
+#supercomputer config
+elseif (hostname MATCHES .os)
+foreach(hpcname ${HPC_NAMES})
+if(hostname MATCHES ${hpcname})
    MESSAGE("--- Configuring for supercomputer")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
@@ -184,8 +196,8 @@ elseif (hostname MATCHES gengar OR hostname MATCHES haunter)
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg")
-      set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g")
-      set(CMAKE_C_FLAGS_RELEASE          "-O3 ")
+      set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2  -g")
+      set(CMAKE_C_FLAGS_RELEASE          "-O2 ")
       set(CMAKE_C_FLAGS_DEBUG            "-g -O3  -fno-reorder-blocks -fno-schedule-insns -fno-inline")
       set(CMAKE_C_FLAGS_DEBUGFULL        "-g3  -fno-inline -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common")
       set(CMAKE_C_FLAGS_PROFILE          "-O0 -g  -pg")
@@ -195,7 +207,7 @@ elseif (hostname MATCHES gengar OR hostname MATCHES haunter)
     endif (CMAKE_COMPILER_IS_GNUCXX)
     if(${CMAKE_CXX_COMPILER} MATCHES "icpc")
       MESSAGE("--- Found Intel compiler collection")
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0  -shared-intel -fp-model source -unroll -pthread -ipo -xSSE4.1 -axSSE4.1,SSE4.2 -parallel -g -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -shared-intel -fp-model source -unroll -pthread -ipo -xSSE4.1 -axSSE4.1,SSE4.2 -parallel -g -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -shared-intel -fp-model source -unroll -pthread -ipo -xSSE4.1 -axSSE4.1,SSE4.2 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g ")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
@@ -223,6 +235,8 @@ elseif (hostname MATCHES gengar OR hostname MATCHES haunter)
     set (CMAKE_Fortran_FLAGS_RELEASE "-O2")
     set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
   endif (Fortran_COMPILER_NAME STREQUAL "gfortran")
+endif(hostname MATCHES ${hpcname})
+endforeach(hpcname ${HPC_NAMES})
 
 else(hostname MATCHES accident OR hostname MATCHES talvin13) 
    MESSAGE("--- default configuration")
