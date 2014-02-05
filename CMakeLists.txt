@@ -35,7 +35,8 @@ gastly
 dugtrio 
 raichu
 delcatty
-gulpin)
+gulpin
+gligar)
 
 
 # Create a library called "libEvent" which includes the source files given in

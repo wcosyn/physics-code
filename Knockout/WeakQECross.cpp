@@ -143,25 +143,25 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     kinfactors[8]=-massfactor*sinthl/sqrt(2.); //v_TL'
     
     
-//testing kin factors
-//     const FourVector<GammaStructure> gamma_mu=FourVector<GammaStructure>(GammaStructure(0.,0.,1.),
-// 											GammaStructure(0.,0.,0.,1.),
-// 				      GammaStructure(0.,0.,0.,0.,1.),GammaStructure(0.,0.,0.,0.,0.,1.));
-// 
-// 
-//     const GammaStructure gamma_5(0.,1.);
-// 
-//     FourVector<complex<double> > polVectorPlus(0.,
-// 						      -1./sqrt(2.),
-// 						      complex<double>(0.,-1./sqrt(2.)),
-// 						  0.);
-//     FourVector<complex<double> > polVectorMin(0.,
-// 						    1./sqrt(2.),
-// 						    complex<double>(0.,-1./sqrt(2.)),
-// 						    0.);
-//     FourVector<complex<double> > polVector0(qvec/Q,0.,0.,nu/Q);
-//     FourVector<complex<double> > polVectorZ(nu/Q,0.,0.,qvec/Q);
-//     polVectorZ*=1.-Q2/M_W/M_W;
+// testing kin factors
+    const FourVector<GammaStructure> gamma_mu=FourVector<GammaStructure>(GammaStructure(0.,0.,1.),
+											GammaStructure(0.,0.,0.,1.),
+				      GammaStructure(0.,0.,0.,0.,1.),GammaStructure(0.,0.,0.,0.,0.,1.));
+
+
+    const GammaStructure gamma_5(0.,1.);
+
+    FourVector<complex<double> > polVectorPlus(0.,
+						      -1./sqrt(2.),
+						      complex<double>(0.,-1./sqrt(2.)),
+						  0.);
+    FourVector<complex<double> > polVectorMin(0.,
+						    1./sqrt(2.),
+						    complex<double>(0.,-1./sqrt(2.)),
+						    0.);
+    FourVector<complex<double> > polVector0(qvec/Q,0.,0.,nu/Q);
+    FourVector<complex<double> > polVectorZ(nu/Q,0.,0.,qvec/Q);
+    polVectorZ*=1.-Q2/M_W/M_W;
     
 
 //     cout << -Trace(((polVectorMin*gamma_mu)*(k_in*gamma_mu)*(polVectorPlus*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) 
@@ -209,8 +209,8 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 //     cout << std::setprecision(9) <<
 //       Q2/qvec/qvec*Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << 
 //       " " << leptonmass2/qvec/qvec*pow(1.-Q2/M_W/M_W,2.)*(1-massfactor*costhl) << endl;
-//       
-//     cout << std::setprecision(9) << nu*nu/qvec/qvec*(1.+massfactor*costhl)-2.*nu/qvec*leptonmass2/qvec/k_out[0]+leptonmass2/qvec/qvec*(1.-massfactor)*costhl <<
+// //       
+//     cout << std::setprecision(9) << nu*nu/qvec/qvec*(1.+massfactor*costhl)+2.*nu/qvec*leptonmass2/qvec/k_out[0]+leptonmass2/qvec/qvec*(1.-massfactor*costhl) <<
 //     " " << 1.+massfactor*costhl-2.*k_in[0]*k_out[0]*massfactor*massfactor*sinthl*sinthl/qvec/qvec << endl;
 
     for(int i=0;i<9;i++) response[9]=0.;

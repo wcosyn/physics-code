@@ -112,9 +112,9 @@ void WeakQEHadronCurrent::getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> & matrixe
   mm=m;
   J= new NucleonWeakOperator(tk.GetQsquared(),proton,0,charged,M_A,r_s2,mu_s,gA_s);
   //in fastparticle outgoing nucleon (0=proton,1=neutron)!! changes for CC
-  FastParticle nucleon(charged?proton:!proton, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
-  if(getUsersigma()) nucleon.setScreening(getSigmascreening());
   if(!pw){
+    FastParticle nucleon(charged?proton:!proton, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+    if(getUsersigma()) nucleon.setScreening(getSigmascreening());
     if(SRC||thick) grid = &gridthick;
     else grid = &onegrid;
     grid->clearParticles();
