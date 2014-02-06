@@ -28,8 +28,8 @@ EFILE1   = 	../../bin/DQEinc
 
 #		Mathematical functions
 LIBS =	 	-lm 
-WIMLIBS = -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator
-ROOT =		`$(ROOTSYS)/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+WIMLIBS = -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator -lcuba
+ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout -I ~/Code/DIS
 STATICLIBS =   ~/Code/lib/libDIS.a ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a ~/Code/lib/libIntegrator.a
