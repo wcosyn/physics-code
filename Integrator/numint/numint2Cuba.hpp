@@ -96,7 +96,7 @@ struct mdf2cuba{
     
     numint::array<double,N> x; // N should be equal to ndim!
     for (unsigned i=0; i<N; i++) x[i] = xx[i]*(p.b[i]-p.a[i])+p.a[i]; // remember cuba integrates in a unit hypercube
-    FN_EVAL(p.f,x,p.ret); // evaluate function p.f @ coordinates x and store result in ret
+    FN_EVAL(p.f,x,p.ret); // evaluate mdfunction p.f @ coordinates x and store result in ret, eg: mdf.func(x,mdf.param,ret)
     numint2cuba(*ncomp,ff,p.ret); // convert the <T> return value to something cuba integrator can use ff (array of doubles)
     for (unsigned i=0; i<N; i++) { // Jacobian of unit hypercube transformation
       for (int j=0; j<*ncomp; j++) {
@@ -113,7 +113,7 @@ struct mdf2cuba{
 template<typename T, unsigned N>
 void cuhre( const mdfunction<T,N> &f, const numint::array<double, N> &a,
            const numint::array<double,N> &b,int nvec, double epsrel, double epsabs,int flags,
-           int minEval, int maxEval,int key, char* statefile,int &nregions, int &neval, int &fail, T &result,double &err, double &prob ){
+           int minEval, int maxEval,int key, char* statefile,int &nregions, int &neval, int &fail, T &result, T &err, T &prob ){
   
   struct mdf2cuba<T,N> F;
   F.f = f; // set the integrand
@@ -123,15 +123,21 @@ void cuhre( const mdfunction<T,N> &f, const numint::array<double, N> &a,
   FN_EVAL<T,N>(f,a,result);
   fdim = get_cuba_size(result); // call function once here to find out the size of fdim, for example complex value gets treated as a two component function
   
-  double *val = new double[fdim];
+  double *result_t = new double[fdim];
+  double *err_t    = new double[fdim]; // error has same dimensions as result
+  double *prob_t   = new double[fdim]; // prob  has same dimensions as result
   
   Cuhre(N, fdim, mdf2cuba<T,N>::exec, &F, nvec,
         epsrel, epsabs, flags,
         minEval, maxEval, key, statefile,
-        &nregions, &neval, &fail, val, &err, &prob);
+        &nregions, &neval, &fail, result_t, err_t, prob_t);
   
-  cuba2numint(fdim,val,result); // convert the multicomponent function back to normal variables like complex ones
-  delete [] val; // after conversion from val to result we don't need this anymore
+  cuba2numint(fdim,result_t,result); // convert the multicomponent function back to normal variables like complex ones
+  cuba2numint(fdim,err_t,err);       // convert the multicomponent error back to the template variables
+  cuba2numint(fdim,prob_t,prob);     // convert the multicomponent prob back to the template variables
+  delete [] result_t; // after conversion from the *_t arrays we don't need these anymore
+  delete [] err_t;
+  delete [] prob_t;
 }
 
 
@@ -140,7 +146,7 @@ void divonne( const mdfunction<T,N> &f, const numint::array<double, N> &a,
            const numint::array<double,N> &b,int nvec, double epsrel, double epsabs,int flags, int seed,
            int minEval, int maxEval,int key1, int key2, int key3, int maxpass, double border, double maxchisq,
            double mindeviation, int ngiven, int ldxgiven,double *xgiven, int nextra, peakfinder_t peakfinder,
-           char* statefile,int &nregions, int &neval, int &fail, T &result,double &err, double &prob ){
+           char* statefile,int &nregions, int &neval, int &fail, T &result,T &err,T &prob ){
   
   struct mdf2cuba<T,N> F;
   F.f = f; // set the integrand
@@ -150,16 +156,22 @@ void divonne( const mdfunction<T,N> &f, const numint::array<double, N> &a,
   FN_EVAL<T,N>(f,a,result);
   fdim = get_cuba_size(result); // call function once here to find out the size of fdim, for example complex value gets treated as a two component function
   
-  double *val = new double[fdim];
+  double *result_t = new double[fdim];
+  double *err_t    = new double[fdim]; // error has same dimensions as result
+  double *prob_t   = new double[fdim]; // prob  has same dimensions as result
   
   Divonne(N, fdim, mdf2cuba<T,N>::exec, &F, nvec,
         epsrel, epsabs, flags,seed,
         minEval, maxEval, key1, key2, key3, maxpass,border,
         maxchisq,mindeviation,ngiven,ldxgiven,xgiven,nextra,peakfinder,
-        statefile, &nregions, &neval, &fail, val, &err, &prob);
+        statefile, &nregions, &neval, &fail, result_t, err_t, prob_t);
   
-  cuba2numint(fdim,val,result); // convert the multicomponent function back to normal variables like complex ones
-  delete [] val; // after conversion from val to result we don't need this anymore
+  cuba2numint(fdim,result_t,result); // convert the multicomponent function back to normal variables like complex ones
+  cuba2numint(fdim,err_t,err);       // convert the multicomponent error back to the template variables
+  cuba2numint(fdim,prob_t,prob);     // convert the multicomponent prob back to the template variables
+  delete [] result_t; // after conversion from the *_t arrays we don't need these anymore
+  delete [] err_t;
+  delete [] prob_t;
 }
 
 template<typename T, unsigned N>
@@ -175,15 +187,21 @@ void suave( const mdfunction<T,N> &f, const numint::array<double, N> &a,
   FN_EVAL<T,N>(f,a,result);
   fdim = get_cuba_size(result); // call function once here to find out the size of fdim, for example complex value gets treated as a two component function
   
-  double *val = new double[fdim];
+  double *result_t = new double[fdim];
+  double *err_t    = new double[fdim]; // error has same dimensions as result
+  double *prob_t   = new double[fdim]; // prob  has same dimensions as result
   
   Suave(N, fdim, mdf2cuba<T,N>::exec, &F, nvec,
         epsrel, epsabs, flags,seed,
         minEval, maxEval,nnew,flatness,
-        statefile,&nregions, &neval, &fail, val, &err, &prob);
+        statefile,&nregions, &neval, &fail, result_t, err_t, prob_t);
   
-  cuba2numint(fdim,val,result); // convert the multicomponent function back to normal variables like complex ones
-  delete [] val; // after conversion from val to result we don't need this anymore
+  cuba2numint(fdim,result_t,result); // convert the multicomponent function back to normal variables like complex ones
+  cuba2numint(fdim,err_t,err);       // convert the multicomponent error back to the template variables
+  cuba2numint(fdim,prob_t,prob);     // convert the multicomponent prob back to the template variables
+  delete [] result_t; // after conversion from the *_t arrays we don't need these anymore
+  delete [] err_t;
+  delete [] prob_t;
 }
 
 template<typename T, unsigned N>
@@ -199,15 +217,21 @@ void vegas( const mdfunction<T,N> &f, const numint::array<double, N> &a,
   FN_EVAL<T,N>(f,a,result);
   fdim = get_cuba_size(result); // call function once here to find out the size of fdim, for example complex value gets treated as a two component function
   
-  double *val = new double[fdim];
+  double *result_t = new double[fdim];
+  double *err_t    = new double[fdim]; // error has same dimensions as result
+  double *prob_t   = new double[fdim]; // prob  has same dimensions as result
   
   Vegas(N, fdim, mdf2cuba<T,N>::exec, &F, nvec,
         epsrel, epsabs, flags,seed,
         minEval, maxEval, nstart,nincrease,nbatch,gridno,
-        statefile, &neval, &fail, val, &err, &prob);
+        statefile, &neval, &fail, result_t, err_t, prob_t);
   
-  cuba2numint(fdim,val,result); // convert the multicomponent function back to normal variables like complex ones
-  delete [] val; // after conversion from val to result we don't need this anymore
+  cuba2numint(fdim,result_t,result); // convert the multicomponent function back to normal variables like complex ones
+  cuba2numint(fdim,err_t,err);       // convert the multicomponent error back to the template variables
+  cuba2numint(fdim,prob_t,prob);     // convert the multicomponent prob back to the template variables
+  delete [] result_t; // after conversion from the *_t arrays we don't need these anymore
+  delete [] err_t;
+  delete [] prob_t;
 }
 
 CLOSE_NUMINT_NAMESPACE
