@@ -3,6 +3,8 @@
 #define CUBA_TEST_INTEGRANDS
 #include <cmath>
 #include <numint/numint.hpp>
+#include <vector>
+using std::vector;
 
 #define SQRT_2PI 2.506628275
 
@@ -40,6 +42,8 @@ int unit_sphere(const int* ndim, const double x[], const int* ncomp, double *f, 
 	return 0;
 }
 
+
+
 template<unsigned N>
 void unit_sphere( const numint::array<double,N> &x, void* param, double &ret){
 	double r = 0.;
@@ -49,5 +53,54 @@ void unit_sphere( const numint::array<double,N> &x, void* param, double &ret){
 	//cout << "evaluated sphere @ " << x[0] << "," << x[1] << "," << x[2] << " r = " << r << " returned " << ret << endl;
 }
 
+// !!! assumes the typename T has a field size declared. Is ok for numint::array's and vector<...> !!!
+template<typename T, unsigned N>
+void unit_sphere_comp( const numint::array<double ,N> &x, void* param, T &ret){
+	double r = 0.;
+	for (unsigned i=0; i<N; i++) 
+		r += x[i]*x[i];
+	for (unsigned i=0; i<ret.size(); i++) 
+		ret[i] = (r > 1)? 0. : 1. ;
+}
+
+// !!! assumes the typename T has a field size declared. Is ok for numint::array's and vector<...> !!!
+/** fills first 3 components with a unit sphere integrand, all the rest with hypercube ( \equiv 1) **/
+template<typename T, unsigned N>
+void mixed_sphere_cube_comp( const numint::array<double ,N> &x, void* param, T &ret){
+	double r = 0.;
+	for (unsigned i=0; i<N; i++)
+		r += x[i]*x[i];
+	for (unsigned i=0; i<3 && i < ret.size(); i++) // unit hypersphere components
+		ret[i] = (r > 1)? 0. : 1. ;
+	for (unsigned i=3; i<ret.size(); i++) // unit hypercube components
+		ret[i] = 1.;
+}
+
+/*
+template<unsigned N,unsigned Ncomp>
+void unit_sphere_comp( const numint::array<double ,N> &x, void* param, numint::array<double,Ncomp> &ret){
+	//std::cout << " unit_sphere_comp called with size of ret: " << ret.size() << std::endl;
+	double r = 0.;
+	for (unsigned i=0; i<N; i++) {
+		//std::cout << "coordinate " << i << " is " << x [i] << std::endl;
+		r += x[i]*x[i];
+	}
+	for (unsigned i=0; i<ret.size(); i++) {
+		ret[i] = (r > 1)? 0. : 1. ;
+		//std::cout << " component " << i << " set to " << ret[i] << " r is " << r << endl;
+	}
+	//cout << "evaluated sphere @ " << x[0] << "," << x[1] << "," << x[2] << " r = " << r << " returned " << ret << endl;
+}
+
+template<unsigned N>
+void unit_sphere_comp( const numint::array<double, N> &x, void* param, vector<double> &ret){
+	double r = 0.;
+	for (unsigned i=0; i<N; i++) {
+		r += x[i]*x[i];
+	}
+	for (unsigned i=0; i<ret.size(); i++) {
+		ret[i] = (r > 1)? 0. : 1. ;
+	}
+}*/
 
 #endif // CUBA_TEST_INTEGRANDS

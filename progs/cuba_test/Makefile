@@ -15,7 +15,7 @@ CPATH 	=	.
  CC      = 	g++
 
 #		Flags
- OPTFLAG	=	-g #-O3 -fPIC
+ OPTFLAG	= -O3 #-fPIC
 #OPTFLAG	=	 -O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel
 STATIC  =	--static
 DBGFLAG	=	-g
@@ -44,7 +44,7 @@ HDRS =
 
 #		Targets...
 
-targets=cubatest cubatest_wrapped
+targets=cubatest cubatest_wrapped cubatest_multicomp
 
 all:		$(targets)
 

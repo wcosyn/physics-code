@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <cmath>
 #include <iostream>
+#include <vector>
+using std::vector;
 using std::cout;
 using std::endl;
 
@@ -10,6 +12,7 @@ void test_cuhre();
 void test_divonne();
 void test_suave();
 void test_vegas();
+void test_vegas_comp();
 
 int main(){
 	test_cuhre();
@@ -82,7 +85,7 @@ void test_vegas() {
 	double error;
 	double prob;
 	
-	numint::vegas(mymdf,start,stop,nvec,epsrel,epsabs,flags,seed,
+	vegas(mymdf,start,stop,nvec,epsrel,epsabs,flags,seed,
 				mineval,maxeval,nstart,nincrease,nbatch,gridno,
 				statefile,neval,fail,integral,error,prob);
 	
@@ -125,7 +128,7 @@ void test_divonne(){
 	double integral = 0.; // init to 0. is not needed but valgrind will warn us that this is pointing to uninitialized bytes if we don't
 	double error = 0.;
 	double prob = 0.;
-	numint::divonne(mymdf,start,stop,nvec,
+	divonne(mymdf,start,stop,nvec,
 		epsrel,epsabs,flags,seed,
 		mineval,maxeval,key1,key2,key3,
 		maxpass,border,maxchisq,mindeviation,
