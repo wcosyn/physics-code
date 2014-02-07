@@ -92,7 +92,7 @@ void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, 
     mdf.param = &F;
     F.f=klaas_rho_t;
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,abserror,1.E-03,ret,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,abserror,1.E-03,maxEval,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,abserror,1.E-03,1E03,maxEval,ret,count,0);
     for(int i=0;i<nrofcross;++i) results[i]=ret[i];
     if(ret[2]*1.E-04>abserror) {abserror=ret[2]*1.E-04; }
   }
@@ -284,7 +284,7 @@ void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2,
     mdf.param = &F;
     F.f=klaas_rho_z;
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,abserror,1.E-03,ret,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,abserror,1.E-03,maxEval,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,abserror,1.E-03,1E03,maxEval,ret,count,0);
     for(int i=0;i<nrofcross;++i) results[i]=ret[i];
     if(ret[2]*1.E-04>abserror)  {abserror=ret[2]*1.E-04; }
   }

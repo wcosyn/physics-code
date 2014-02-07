@@ -17,6 +17,8 @@
 #include <GammaStructure.h> 
 #include <vector>
 
+//forward declaration
+class FastParticle;
 
 /*! \brief A class that computes inclusive deuteron cross sections */
 class DQEinclusive{
@@ -212,7 +214,7 @@ private:
     static double exec(double var2, void *param) {
       Ftor_PV &p = * (Ftor_PV *) param;
       return p.f(p.var1,var2,p.pperp1,p.pperp2,p.qt,p.cosphi1,p.sinphi1,p.cosqphi,p.sinqphi,p.prz2poles,
-		 *p.cross,p.Q2,p.x,p.qvec,p.nu,p.current,p.crossed);
+		 *p.cross,p.Q2,p.x,p.qvec,p.nu,p.current,p.crossed,*p.rescatter);
     }
     double var1; /*!< first variable over which we integrate */
     DQEinclusive *cross;/*!< pointer to  instance that contains all */
@@ -230,6 +232,7 @@ private:
     double qt;
     double qvec;
     double nu;
+    FastParticle *rescatter;
     /*! integrandum 
     * \param pz1 [MeV] integration variable, z-component of first spectator
     * \param pz2 [MeV] integration variable, z-component of second spectator
@@ -242,7 +245,7 @@ private:
     */
      double (*f)(double pz1, double pz2, double pperp1, double pperp2, double qt, double cosphi1, double sinphi1,
 		 double cosqphi, double sinqphi, std::vector<double> &prz2poles, DQEinclusive& cross, 
-	      double Q2, double x, double qvec, double nu, int current, bool crossed);
+	      double Q2, double x, double qvec, double nu, int current, bool crossed, FastParticle &rescatter);
   };
   
    /*! integrandum function for on-shell and off-shell contribution to the FSI amplitude
@@ -257,7 +260,7 @@ private:
     */
   static double FSI_intPV(double pz1, double pz2, double pperp1, double pperp2, double qt, double cosphi1, double sinphi1,
 		 double cosqphi, double sinqphi, std::vector<double> &prz2poles,  DQEinclusive& cross, 
-	      double Q2, double x, double qvec, double nu, int current, bool crossed);
+	      double Q2, double x, double qvec, double nu, int current, bool crossed, FastParticle &rescatter);
   
   /*! integrandum function for first PV integration
    * \param pz1 [MeV] first integration variable

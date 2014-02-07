@@ -234,7 +234,7 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
     numint::vector_z ret(12,0.);
     F.f=Model::klaas_one_amp;
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,maxEval,ret,count,0);
     if(CT){
       for(int j=0;j<2;++j){
 	for(int i=0;i<3;i++) matrixel(j,i)=ret[j*6+2*i+1];
@@ -328,7 +328,7 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
 	numint::vector_z ret(total,0.);
 	F.f=Model::klaas_mult_amp;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,maxEval,ret,count,0);
 	for(int k=0;k<total;++k) matrixel[k](spinout,photopol) = ret[k];
       }      
       else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
@@ -441,7 +441,7 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
   //     F.f=Model::klaas_all_radial;
 
       if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-      else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,ret,count,0);
+      else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,maxEval,ret,count,0);
       for(int k=0;k<total;++k){
 	for(int j=0;j<2;++j){
 	  for(int i=0;i<3;i++) matrixel[k](j,i)=ret[j*total*3+total*i+k];
@@ -490,7 +490,7 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
       F.f=Model::klaas_all_amp_medium;
 
       if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-      else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,ret,count,0);
+      else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,maxEval,ret,count,0);
       for(int k=0;k<total;++k){
 	for(int j=0;j<2;++j){
 	  for(int i=0;i<3;i++) matrixel[k](j,i)=ret[j*total*3+total*i+k];
@@ -737,7 +737,7 @@ void Model::klaas_all_radial(numint::vector_z & results, double r,
   F.f=Model::klaas_all_angular;
   unsigned count=0;
   if(model.getIntegrator()==1) numint::cube_romb(mdf,lower,upper,1.E-08,model.getPrec(),results,count,0);
-  else numint::cube_adaptive(mdf,lower,upper,1.E-08,model.getPrec(),2.E06,results,count,0);
+  else numint::cube_adaptive(mdf,lower,upper,1.E-08,model.getPrec(),1E03,2E06,results,count,0);
   for(int i=0;i<total*6;++i) results[i]*=r;  
   return;
 }

@@ -481,7 +481,7 @@ void GlauberGrid::calcGlauberphasesBoth(const int i, const int j, const int k) {
           if (integrator == 1)
             res = numint::cube_romb(mdf, lower, upper, 1.E-12, prec, ret, count, 0);
           else
-            res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E06, ret, count, 0);
+            res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E03,2E06, ret, count, 0);
           fsi_grid[level][mm][i][j][k] = ret[0];
           fsi_ct_grid[level][mm][i][j][k] = ret[1];
 
@@ -535,7 +535,7 @@ void GlauberGrid::calcGlauberphasesCt(const int i, const int j, const int k) {
           if (integrator == 1)
             res = numint::cube_romb(mdf, lower, upper, 1.E-12, prec, ret, count, 0);
           else
-            res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E06, ret, count, 0);
+            res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E03,2E06, ret, count, 0);
           fsi_ct_grid[level][mm][i][j][k] = ret[2];
 
         }

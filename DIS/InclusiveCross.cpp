@@ -49,7 +49,7 @@ double InclusiveCross::calc_F2Dinc(double Q2,double x){
   int res=90;
   unsigned count=0;
 //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-  res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,2E04,ret,count,0);
+  res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E04,ret,count,0);
 //     cout << res << " " << count << endl;
   return 2.*PI*2.*massi/MASSD*ret[0];
   
@@ -107,7 +107,7 @@ void InclusiveCross::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double
   int res=90;
     unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,6E04,ret,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E03,6E04,ret,count,0);
   //   cout << res << " " << count << endl;
     fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
     fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
@@ -229,7 +229,7 @@ void InclusiveCross::calc_F2DincFSI_off(double &fsi1, double &fsi2, double Q2,do
       int res=90;
       unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,6E04,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E03,6E04,ret,count,0);
     //   cout << res << " " << count << endl;
       fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
       fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
@@ -391,7 +391,7 @@ void InclusiveCross::calc_F2DincFSI_Gauss(double &fsi1, double &fsi2, double Q2,
   int res=90;
   unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E07,ret,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E04,1E07,ret,count,0);
   //   cout << res << " " << count << endl;
     fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
     fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
@@ -445,7 +445,7 @@ void InclusiveCross::calc_F2DincFSI_Gauss_off(double &fsi1, double &fsi2, double
       int res=90;
       unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E07,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E04,1E07,ret,count,0);
     //   cout << res << " " << count << endl;
       fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
       fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
@@ -492,7 +492,7 @@ void InclusiveCross::calc_F2DincFSI_uniform(double &fsi1, double &fsi2, double Q
     int res=90;
     unsigned count=0;
     //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E07,ret,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E04,1E07,ret,count,0);
   //   cout << res << " " << count << endl;
     fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
     fsi2+= 2.*PI*2.*massi/MASSD*ret[1];
@@ -547,7 +547,7 @@ void InclusiveCross::calc_F2DincFSI_uniform_off(double &fsi1, double &fsi2, doub
       int res=90;
       unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E07,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E04,1E07,ret,count,0);
     //   cout << res << " " << count << endl;
       fsi1+= 2.*PI*2.*massi/MASSD*ret[0];
       fsi2+= 2.*PI*2.*massi/MASSD*ret[1];

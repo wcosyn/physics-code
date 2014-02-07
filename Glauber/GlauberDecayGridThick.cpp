@@ -489,7 +489,7 @@ void GlauberDecayGridThick::calcGlauberphasesBoth(const int i, const int j, cons
         if (integrator == 1)
           res = numint::cube_romb(mdf, lower, upper, 1.E-12, prec, ret, count, 0);
         else
-          res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E06, ret, count, 0);
+          res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E03,2E06, ret, count, 0);
         fsi_grid[0][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * ret[0];
         fsi_grid[1][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * ret[1] * src;
         fsi_grid[2][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * ret[2];
@@ -513,7 +513,7 @@ void GlauberDecayGridThick::calcGlauberphasesBoth(const int i, const int j, cons
         if (integrator == 1)
           res = numint::cube_romb(mdf, lower, upper, 1.E-12, prec, ret, count, 0);
         else
-          res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E06, ret, count, 0);
+          res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E03,2E06, ret, count, 0);
         fsi_grid[0][proton][i][j][k] = ret[0];
         fsi_grid[1][proton][i][j][k] = ret[1] * src;
         fsi_grid[2][proton][i][j][k] = ret[2];
@@ -578,7 +578,7 @@ void GlauberDecayGridThick::calcGlauberphasesCt(const int i, const int j, const 
         if (integrator == 1)
           res = numint::cube_romb(mdf, lower, upper, 1.E-12, prec, ret, count, 0);
         else
-          res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 5E06, ret, count, 0);
+          res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E03,5E06, ret, count, 0);
         fsi_ct_grid[0][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * ret[0];
         fsi_ct_grid[1][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * ret[1] * src;
         fsi_ct_grid[2][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * ret[2];
@@ -599,7 +599,7 @@ void GlauberDecayGridThick::calcGlauberphasesCt(const int i, const int j, const 
         if (integrator == 1)
           res = numint::cube_romb(mdf, lower, upper, 1.E-12, prec, ret, count, 0);
         else
-          res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 5E06, ret, count, 0);
+          res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E03,5E06, ret, count, 0);
         fsi_ct_grid[0][proton][i][j][k] = ret[0];
         fsi_ct_grid[1][proton][i][j][k] = ret[1] * src;
         fsi_ct_grid[2][proton][i][j][k] = ret[2];

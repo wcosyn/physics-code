@@ -461,7 +461,7 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	      vector<complex<double> > ret(number_of_Grids,0.);
 	      F.f=DistMomDistrGrid::klaas_distint;
 	      if(integrator==1) res = numint::cube_romb(mdf,lower,upper,absprec,prec,ret,count,0);
-	      else res = numint::cube_adaptive(mdf,lower,upper,absprec,prec,maxEval,ret,count,0);
+	      else res = numint::cube_adaptive(mdf,lower,upper,absprec,prec,2E03,maxEval,ret,count,0);
 	      if(abs(ret[i])*prec*0.1>absprec) absprec=abs(ret[i])*prec*0.1;
 	      for(int l=0;l<number_of_Grids/2;l++){
 		rhogrid[l][i][j][k]+=norm(ret[l]);
@@ -574,7 +574,7 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
 	      vector<complex<double> > ret(number_of_Grids/2,0.);
 	      F.f=DistMomDistrGrid::klaas_distint_ct;
 	      if(integrator==1) res = numint::cube_romb(mdf,lower,upper,absprec,prec,ret,count,0);
-	      else res = numint::cube_adaptive(mdf,lower,upper,absprec,prec,maxEval,ret,count,0);
+	      else res = numint::cube_adaptive(mdf,lower,upper,absprec,prec,2E03,maxEval,ret,count,0);
 	      if(abs(ret[i])*prec*0.1>absprec) absprec=abs(ret[i])*prec*0.1;
 	      for(int l=0;l<number_of_Grids/2;l++){
 		rhoctgrid[l][i][j][k]+=norm(ret[l]);

@@ -80,7 +80,7 @@ void OneGlauberGrid::calcGlauberphasesBoth(const int i, const int j, const int k
 	vector<double> ret(2,0.);
 	F.f=OneGlauberGrid::klaas_one_bound;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E06,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E03,2E06,ret,count,0);
 	results[0]=ret[0]; results[1]=ret[1];
 	
       }      
@@ -121,7 +121,7 @@ void OneGlauberGrid::calcGlauberphasesCt(const int i, const int j, const int k){
 	vector<double> ret(2,0.);
 	F.f=OneGlauberGrid::klaas_one_bound_ct;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E06,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,prec,2E03,2E06,ret,count,0);
 	results=ret[0];
 	
       }      

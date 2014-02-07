@@ -140,7 +140,7 @@ double DeuteronMomDistr::getMomDistrfsi(TKinematics2to2 &kin, double phi){
       int res=90;
       unsigned count=0;
     //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,2E03,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E03,ret,count,0);
       result=ret[0];
 //       rombergerN(this,&DeuteronMomDistr::totdens_qt,0.,1.E03,1,&result,PREC,3,10,&qestimate, 
 // 				  &kin,M,spinr, Er,phi,&thestimate);

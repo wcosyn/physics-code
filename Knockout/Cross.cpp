@@ -336,7 +336,7 @@ void Cross::getDensr(std::vector<double> &densr, const TKinematics2to2 &tk, cons
     F.f=Cross::klaas_densr;
 
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,densr,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,densr,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E02,maxEval,densr,count,0);
   }      
   else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
   
@@ -432,7 +432,7 @@ void Cross::getDensr_ctheta(std::vector<double> &densr, const TKinematics2to2 &t
     F.f=Cross::klaas_densr_ctheta;
 
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,densr,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,densr,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E02,maxEval,densr,count,0);
   }      
   else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
   
@@ -519,7 +519,7 @@ void Cross::getPhid(std::vector<complex<double> > &phid, const TKinematics2to2 &
     F.f=Cross::klaas_phid;
 
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,phid,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,phid,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,maxEval,phid,count,0);
   }      
   else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
   

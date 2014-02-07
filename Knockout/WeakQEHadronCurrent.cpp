@@ -158,7 +158,7 @@ void WeakQEHadronCurrent::getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> & matrixe
     numint::vector_z ret(16,0.);
     F.f=WeakQEHadronCurrent::klaas_one_amp;
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,2.E06,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,2E06,ret,count,0);
     if(CT){
       for(int j=0;j<2;++j){
 	for(int i=0;i<4;i++) matrixel(j,i)=ret[j*8+2*i+1];
@@ -249,7 +249,7 @@ void WeakQEHadronCurrent::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,4> *m
 	numint::vector_z ret(total,0.);
 	F.f=WeakQEHadronCurrent::klaas_mult_amp;
 	if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,2.E06,ret,count,0);
+	else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,2E06,ret,count,0);
 	for(int k=0;k<total;++k) matrixel[k](spinout,photopol) = ret[k];
       }      
       else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
@@ -343,7 +343,7 @@ void WeakQEHadronCurrent::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,4> *matri
 
 
       if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-      else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,ret,count,0);
+      else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,maxEval,ret,count,0);
       for(int k=0;k<total;++k){
 	for(int j=0;j<2;++j){
 	  for(int i=0;i<4;i++) matrixel[k](j,i)=ret[j*total*4+total*i+k];
@@ -393,7 +393,7 @@ void WeakQEHadronCurrent::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,4> *matri
       F.f=WeakQEHadronCurrent::klaas_all_amp_medium;
 
       if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-      else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,maxEval,ret,count,0);
+      else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,maxEval,ret,count,0);
       for(int k=0;k<total;++k){
 	for(int j=0;j<2;++j){
 	  for(int i=0;i<4;i++) matrixel[k](j,i)=ret[j*total*4+total*i+k];

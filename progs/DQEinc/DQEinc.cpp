@@ -35,13 +35,17 @@ int main(int argc, char *argv[])
   	cout << "pwresult " << x << " " << proton << " " << f1 << " " << f2 << endl;
 	teller1+=f1;
 	teller2+=f2;
- 	Dinc.calc_F2DincFSI(f1,f2,f3,f4,Q2,x,2,integrator);
+//  	Dinc.calc_F2DincFSI(f1,f2,f3,f4,Q2,x,2,integrator);
    	cout << "fsiresult " << x << " " << proton << " " << f1 << " " << f2 << " " << f3 << " " << f4 << endl;
 // 	fsi1+=f1;
 // 	fsi2+=f2;
 // 	fsioff1+=f3;
 // 	fsioff2+=f4;
 // 	(proton?f2_2:f2_1)=Dinc.getMinpcm();
+ 	Dinc.calc_F2DincFSI_PVoff(f1,f2,Q2,x,2,integrator);
+   	cout << "fsiresultoff " << x << " " << proton << " " << f1 << " " << f2 << " " << endl;
+
+	
       }
 //       cout << x << " " << teller1 << " " << teller2 << " " << teller1+teller2 << " " << fsi1 << " " << fsi2 << " "
 //       << fsi1+fsi2 << " " << fsioff1 << " " << fsioff2 << " " << fsioff1+fsioff2 << " " << 

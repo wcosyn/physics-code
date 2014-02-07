@@ -91,7 +91,7 @@ inline void numint2ada(unsigned fdim, double *res, vector_z &a) {
 
 template <typename T, unsigned N>
 int cube_adaptive(const mdfunction<T,N> &f, const numint::array<double, N> &a,
-                  const numint::array<double,N> &b, double epsabs, double epsrel, int maxEval,
+                  const numint::array<double,N> &b, double epsabs, double epsrel, int minEval, int maxEval,
                   T &result, unsigned &neval, int dirty,
                   typename Convergence<T>::type compare=NULL) {
 
@@ -130,7 +130,7 @@ int cube_adaptive(const mdfunction<T,N> &f, const numint::array<double, N> &a,
   double val[fdim], err[fdim];
 
   int code = adapt_integrate(fdim, mdf2ada::exec, &F,
-                             N,a.begin(),b.begin(),4*std::pow(10.,int(fdim)),
+                             N,a.begin(),b.begin(),minEval,
                              maxEval,epsabs,epsrel,
                              val,err);
 
