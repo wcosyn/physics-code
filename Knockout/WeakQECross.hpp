@@ -74,11 +74,11 @@ public:
    * \param maxEval max # of evaluations in integrations
    * \param lab lab frame or cm frame for hadron part
    * \param phi_int integrated over phi (angle between lepton and hadron plane)?
-   * \param neutrino [1] neutrino or [0] antineutrino
-   * \return differential cross section [fm^2 /MeV/sr^2]
+   * \param [out] crossneut [fm^2/MeV/sr^2] differential cross section for incoming neutrino
+   * \param [out] crossantineut [fm^2/MeV/sr^2] differential cross section for incoming antineutrino
    */
-  double getDiffWeakQECross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
-		      double phi, int maxEval, bool lab, bool phi_int, bool neutrino);
+  void getDiffWeakQECross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
+		      double phi, int maxEval, bool lab, bool phi_int, double &crossneut, double &crossantineut);
   /*! Computes the differential A(nu,lN) cross section for certain kinematics and a certain shell of the nucleus
    * \param cross vector with the different cross sections <BR>
    * differential cross section [fm ^2/MeV/sr^2]
