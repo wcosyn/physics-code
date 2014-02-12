@@ -123,7 +123,7 @@ public:
   const Matrix<1,4> & getBarcontractplusdown() const{return barcontractplusdown;}
   const Matrix<1,4> & getBarcontractzdown() const{return barcontractzdown;}
   const Matrix<1,4> & getBarcontract() const{return barcontract;}
-  const NucleonEMOperator & getJ() const{return *J;}
+  const NucleonWeakOperator & getJ() const{return *J;}
   TVector3 & getPm() {return pm;}
   
 private:
@@ -131,7 +131,7 @@ private:
   int integrator; /*!< choice of integrator */
   AbstractFsiCTGrid *grid; /*!< pointer to Glauber Grid */
   MeanFieldNucleusThick *pnucl; /*!<  pointer to nucleus */
-  NucleonEMOperator *J; /*!<  pointer to nucleon formfactor instance */
+  NucleonWeakOperator *J; /*!<  pointer to nucleon formfactor instance */
   Matrix<1,4> barcontract; /*!< intermediate contraction of bar spinor with 4*4 current  */
   Matrix<1,4> barcontract0up; /*!< intermediate contraction of bar spinor with 4*4 current  */
   Matrix<1,4> barcontractminup; /*!< intermediate contraction of bar spinor with 4*4 current  */

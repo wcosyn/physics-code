@@ -69,16 +69,16 @@ public:
    * \param SRC do you want to include SRC in the FSI?
    * \param CT do you want to include CT effects?
    * \param pw do you want to compute a plane-wave cross section (nullifies the thick,SRC,CT parameters)
-   * \param shellindex selects the shell in the nucleus where the ejected N originates from
+   * \param shellindex selects the shell in the nucleus where the ejected N originates from. <BR>
+   * This also determines reaction type!! initial proton means antineutrino beam, initial neutron means neutrino beam.
    * \param phi angle between lepton and hadron plane
    * \param maxEval max # of evaluations in integrations
    * \param lab lab frame or cm frame for hadron part
    * \param phi_int integrated over phi (angle between lepton and hadron plane)?
-   * \param [out] crossneut [fm^2/MeV/sr^2] differential cross section for incoming neutrino
-   * \param [out] crossantineut [fm^2/MeV/sr^2] differential cross section for incoming antineutrino
+   * \return [fm^2/MeV/sr^2] differential cross section 
    */
-  void getDiffWeakQECross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
-		      double phi, int maxEval, bool lab, bool phi_int, double &crossneut, double &crossantineut);
+  double getDiffWeakQECross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
+		      double phi, int maxEval, bool lab, bool phi_int);
   /*! Computes the differential A(nu,lN) cross section for certain kinematics and a certain shell of the nucleus
    * \param cross vector with the different cross sections <BR>
    * differential cross section [fm ^2/MeV/sr^2]

@@ -82,7 +82,7 @@ public:
    * \param nucleus nucleus class object, contains the densities etc.
    * \return fourvector of dirac matrices with CC1 coupling to nucleon
    */
-  FourVector<GammaStructure> getCC1(const FourVector<double> &pi, const FourVector<double> &pf, 
+  FourVector<GammaStructure> getCC1_weak(const FourVector<double> &pi, const FourVector<double> &pf, 
 				    const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! computes the dirac foton-bound nucleon coupling according to the CC2 description of De Forest et al.
    * \param q [MeV] photon momentum fourvector
@@ -91,7 +91,7 @@ public:
    * \param nucleus nucleus class object, contains the densities etc.
    * \return fourvector of dirac matrices with CC1 coupling to nucleon
    */
-  FourVector<GammaStructure> getCC2(const FourVector<double> &q, const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
+  FourVector<GammaStructure> getCC2_weak(const FourVector<double> &q, const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! computes the dirac foton-bound nucleon coupling according to the CC3 description of De Forest et al.
    * \param q [MeV] photon momentum fourvector
    * \param pi [MeV] initial nucleon momentum fourvector
@@ -101,7 +101,7 @@ public:
    * \param nucleus nucleus class object, contains the densities etc.
    * \return fourvector of dirac matrices with CC1 coupling to nucleon
    */
-  FourVector<GammaStructure> getCC3(const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf,
+  FourVector<GammaStructure> getCC3_weak(const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf,
 				    const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! computes the dirac foton-bound nucleon coupling according to a CC description of De Forest et al.
    * \param current which CC of De Forest [1=CC1, 2=CC2, 3=CC3]
@@ -121,7 +121,7 @@ public:
   FourVector<GammaStructure> getAxial(const FourVector<double> &q) const;
   
   
-  FourVector<GammaStructure> getCC(const int current, const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf, 
+  FourVector<GammaStructure> getCC_weak(const int current, const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf, 
 				   const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   static const FourVector<GammaStructure> gamma_5mu; /*!< gamma_5*gamma_mu matrices */
   static const GammaStructure gamma_5; /*!< gamma_5 matrix */

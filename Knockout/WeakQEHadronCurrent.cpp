@@ -54,10 +54,10 @@ complex<double> WeakQEHadronCurrent::getFreeMatrixEl(TKinematics2to2 &tk, bool p
   FourVector<double> Pin(Ein,pf[1],0.,pf[3]-q[3]); 
   J= new NucleonWeakOperator(tk.GetQsquared(),proton,0,charged,M_A,r_s2,mu_s,gA_s);
   GammaStructure Jcontr;
-  if(photonpol==0)  Jcontr = J->getCC(current, q, Pin, pf, 0.,0,*pnucl)*polVector0;
-  else if(photonpol==-1) Jcontr= J->getCC(current, q, Pin, pf, 0.,0,*pnucl)*polVectorMin;
-  else if(photonpol==1) Jcontr=J->getCC(current, q, Pin, pf, 0.,0,*pnucl)*polVectorPlus;
-  else if(photonpol==3) Jcontr=J->getCC(current, q, Pin, pf, 0.,0,*pnucl)*polVectorz;
+  if(photonpol==0)  Jcontr = J->getCC_weak(current, q, Pin, pf, 0.,0,*pnucl)*polVector0;
+  else if(photonpol==-1) Jcontr= J->getCC_weak(current, q, Pin, pf, 0.,0,*pnucl)*polVectorMin;
+  else if(photonpol==1) Jcontr=J->getCC_weak(current, q, Pin, pf, 0.,0,*pnucl)*polVectorPlus;
+  else if(photonpol==3) Jcontr=J->getCC_weak(current, q, Pin, pf, 0.,0,*pnucl)*polVectorz;
    
   delete J;
   //contract everything
@@ -129,10 +129,10 @@ void WeakQEHadronCurrent::getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> & matrixe
   FourVector<double> pi=pf-q;
   pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);
   pm=TVector3(-q[1],0.,pf[3]-q[3]);
-  Jcontr0 = J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
-  Jcontrmin= J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
-  Jcontrplus=J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
-  Jcontrz=J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorz;
+  Jcontr0 = J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
+  Jcontrmin= J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
+  Jcontrplus=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
+  Jcontrz=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorz;
   barcontract0down = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr0;
   barcontract0up = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr0;
   barcontractmindown = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontrmin;
@@ -216,7 +216,6 @@ void WeakQEHadronCurrent::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,4> *m
   grid->updateGrids();
   grid->clearKnockout();
   grid->addKnockout(shellindex,m);    
-
   GammaStructure Jcontr;
   FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
   FourVector<double> pf(sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+tk.GetPYlab()*tk.GetPYlab()),0.,0.,tk.GetPYlab());
@@ -225,10 +224,10 @@ void WeakQEHadronCurrent::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,4> *m
   pm=TVector3(-q[1],0.,pf[3]-q[3]);
   for(int spinout=0;spinout<2;++spinout){
     for(int photopol=0;photopol<3;++photopol){
-      if(photopol==0) Jcontr = J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
-      if(photopol==1) Jcontr= J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
-      if(photopol==2) Jcontr=J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
-      if(photopol==3) Jcontr=J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorz;
+      if(photopol==0) Jcontr = J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
+      if(photopol==1) Jcontr= J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
+      if(photopol==2) Jcontr=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
+      if(photopol==3) Jcontr=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorz;
       //spinors with quantization axis along z-axis correspond to the helicity spinors here!!!
       if(spinout==0) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr;
       else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
@@ -309,10 +308,10 @@ void WeakQEHadronCurrent::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,4> *matri
 
   if(!medium){
     GammaStructure Jcontr0, Jcontrmin, Jcontrplus, Jcontrz;
-    Jcontr0 = J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
-    Jcontrmin= J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
-    Jcontrplus=J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
-    Jcontrz=J->getCC(current, q, pi, pf, 0.,0,*pnucl)*polVectorz;
+    Jcontr0 = J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
+    Jcontrmin= J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
+    Jcontrplus=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
+    Jcontrz=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorz;
     Matrix<1,4> spindown=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
     Matrix<1,4> spinup=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity));
     barcontract0down = spindown*Jcontr0;
@@ -496,10 +495,10 @@ void WeakQEHadronCurrent::klaas_all_amp_medium(numint::vector_z & results, doubl
   results=numint::vector_z(total*8,0.);
   double sintheta=sqrt(1.-costheta*costheta);
   GammaStructure Jcontr0, Jcontrmin, Jcontrplus, Jcontrz;
-  Jcontr0 = model.getJ().getCC(current, q, pi, pf, r,medium,*model.getPnucleus())*pol0;
-  Jcontrmin= model.getJ().getCC(current, q, pi, pf, r,medium,*model.getPnucleus())*polmin;
-  Jcontrplus=model.getJ().getCC(current, q, pi, pf, r,medium,*model.getPnucleus())*polplus;
-  Jcontrplus=model.getJ().getCC(current, q, pi, pf, r,medium,*model.getPnucleus())*polz;
+  Jcontr0 = model.getJ().getCC_weak(current, q, pi, pf, r,medium,*model.getPnucleus())*pol0;
+  Jcontrmin= model.getJ().getCC_weak(current, q, pi, pf, r,medium,*model.getPnucleus())*polmin;
+  Jcontrplus=model.getJ().getCC_weak(current, q, pi, pf, r,medium,*model.getPnucleus())*polplus;
+  Jcontrplus=model.getJ().getCC_weak(current, q, pi, pf, r,medium,*model.getPnucleus())*polz;
   
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);

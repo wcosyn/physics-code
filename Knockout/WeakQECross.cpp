@@ -86,8 +86,8 @@ WeakQECross::~WeakQECross(){
 // }
 
 
-void WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
-			   double phi, int maxEval, bool lab, bool phi_int, double &crossneut, double &crossantineut){
+double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
+			   double phi, int maxEval, bool lab, bool phi_int){
   
   //electron kinematics
   double Q2=kin.GetQsquared();
@@ -108,6 +108,7 @@ void WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int thic
   reacmodel=new WeakQEHadronCurrent(pnucl,prec,integrator,homedir,maxEval,charged, 
 				    M_A, getUsersigma(), gA_s, r_s2, mu_s,getSigmascreening());
   
+  //CC
   if(charged){
     double Ebeam=lepton->GetBeamEnergy(kin);
     double Eout=Ebeam-kin.GetWlab();
@@ -213,7 +214,7 @@ void WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int thic
 //     cout << std::setprecision(9) << nu*nu/qvec/qvec*(1.+massfactor*costhl)+2.*nu/qvec*leptonmass2/qvec/k_out[0]+leptonmass2/qvec/qvec*(1.-massfactor*costhl) <<
 //     " " << 1.+massfactor*costhl-2.*k_in[0]*k_out[0]*massfactor*massfactor*sinthl*sinthl/qvec/qvec << endl;
 
-    for(int i=0;i<9;i++) response[9]=0.;
+    for(int i=0;i<9;i++) response[i]=0.;
     for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
 	Matrix<2,4> J;
 	reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current, SRC, thick);
@@ -230,24 +231,16 @@ void WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int thic
 	}
     }
     double result=0.;
-    if(!phi_int) {
-      crossneut=kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
-      +kinfactors[3]*response[3]+kinfactors[4]*response[4]*cos(2.*phi)
-      +(kinfactors[5]*response[5]+kinfactors[6]*response[6])*cos(phi);
-      crossantineut=crossneut+(kinfactors[7]*response[7]+kinfactors[8]*response[8]*sin(phi));
-      crossneut-=(kinfactors[7]*response[7]+kinfactors[8]*response[8]*sin(phi));
-    }
-    //integrated over phi angle knockout nucleon 
-    else {
-      crossneut=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
-      +kinfactors[3]*response[3]);
-      crossantineut=crossneut+2.*PI*kinfactors[7]*response[7];
-      crossneut-=2.*PI*kinfactors[7]*response[7];
-    }
+    if(!phi_int) result=kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
+	      +kinfactors[3]*response[3]+kinfactors[4]*response[4]*cos(2.*phi)
+	      +(kinfactors[5]*response[5]+kinfactors[6]*response[6])*cos(phi)
+	      +(shellindex<pnucl->getPLevels()?1.:-1.)*(kinfactors[7]*response[7]+kinfactors[8]*response[8]*sin(phi));
+    else result=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
+	      +kinfactors[3]*response[3]+(shellindex<pnucl->getPLevels()?1.:-1.)*kinfactors[7]*response[7]);
     delete reacmodel;
-    crossneut*= mott*frontfactor/HBARC;
-    crossantineut*= mott*frontfactor/HBARC;
-  }
+    return mott*frontfactor*result/HBARC;
+  }  
+  //NC
   else{
      double mott=(1.+electron->GetCosScatterAngle(kin))*
 	pow(electron->GetBeamEnergy(kin)-kin.GetWlab()*G_FERMI/(Q2/M_Z/M_Z+1.)/PI,2.)/2.;
@@ -277,20 +270,13 @@ void WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int thic
     }
     double result=0.;
     //combine everything
-    if(!phi_int){
-      crossneut=kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]*cos(2.*phi)
-      +kinfactors[3]*response[3]*cos(phi);
-      crossantineut=crossneut+(kinfactors[4]*response[4]+kinfactors[5]*response[5]*sin(phi));
-      crossneut-=(kinfactors[4]*response[4]+kinfactors[5]*response[5]*sin(phi));
-    }
-    else{
-      crossneut=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]);
-      crossantineut=crossneut+kinfactors[4]*response[4];
-      crossneut+=kinfactors[4]*response[4];
-    }
+   if(!phi_int) result=kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]*cos(2.*phi)
+	      +kinfactors[3]*response[3]*cos(phi)
+	      +(shellindex<pnucl->getPLevels()?1.:-1.)*(kinfactors[4]*response[4]+kinfactors[5]*response[5]*sin(phi));
+    else result=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]
+      +(shellindex<pnucl->getPLevels()?1.:-1.)*kinfactors[4]*response[4]);
     delete reacmodel;
-    crossneut*= mott*frontfactor/HBARC;
-    crossantineut*= mott*frontfactor/HBARC;
+    return mott*frontfactor*result/HBARC;
   }  
 }
 

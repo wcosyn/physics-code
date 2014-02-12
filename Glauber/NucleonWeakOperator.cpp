@@ -26,20 +26,20 @@ NucleonWeakOperator::~NucleonWeakOperator(){
 
 
 
-FourVector<GammaStructure> NucleonWeakOperator::getCC1(const FourVector<double> &pi, const FourVector<double> &pf, 
+FourVector<GammaStructure> NucleonWeakOperator::getCC1_weak(const FourVector<double> &pi, const FourVector<double> &pf, 
 						     const double r, const int medium, const MeanFieldNucleusThick &nucleus) const{
   if(medium) return getGM_weak(r,medium,nucleus)*gamma_mu
 		      -getF2_weak(r,medium,nucleus)/(2.*(proton?MASSP:MASSN))*(pi+pf)*Id;
   else return getGM_weak()*gamma_mu-getF2_weak()/(2.*(proton?MASSP:MASSN))*(pi+pf)*Id;
 }
-FourVector<GammaStructure> NucleonWeakOperator::getCC2(const FourVector<double> &q, const double r, const int medium,
+FourVector<GammaStructure> NucleonWeakOperator::getCC2_weak(const FourVector<double> &q, const double r, const int medium,
 						     const MeanFieldNucleusThick &nucleus) const{
   if(medium) return gamma_mu*getF1_weak(r,medium,nucleus)
     +getF2_weak(r,medium,nucleus)/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
   else return gamma_mu*getF1_weak()+getF2_weak()/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
   
 }
-FourVector<GammaStructure> NucleonWeakOperator::getCC3(const FourVector<double> &q, const FourVector<double> &pi,
+FourVector<GammaStructure> NucleonWeakOperator::getCC3_weak(const FourVector<double> &q, const FourVector<double> &pi,
 						     const FourVector<double> &pf, const double r, const int medium,
 						     const MeanFieldNucleusThick &nucleus) const{
   if(medium) return getF1_weak(r,medium,nucleus)/(2.*(proton?MASSP:MASSN))*(pi+pf)*Id 
@@ -48,18 +48,18 @@ FourVector<GammaStructure> NucleonWeakOperator::getCC3(const FourVector<double> 
     + getGM_weak()/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q)); 
 }
 
-FourVector<GammaStructure> NucleonWeakOperator::getCC(const int current, const FourVector<double>& q, 
+FourVector<GammaStructure> NucleonWeakOperator::getCC_weak(const int current, const FourVector<double>& q, 
 						    const FourVector<double>& pi, const FourVector<double>& pf, 
 						    const double r, const int medium, const MeanFieldNucleusThick &nucleus) const{
 switch(current){
     case(1):
-      return getCC1(pi,pf,r,medium,nucleus);
+      return getCC1_weak(pi,pf,r,medium,nucleus);
       break;
     case(2):
-      return getCC2(q,r,medium,nucleus);
+      return getCC2_weak(q,r,medium,nucleus);
       break;
     case(3):
-      return getCC3(q,pi,pf,r,medium,nucleus);
+      return getCC3_weak(q,pi,pf,r,medium,nucleus);
       break;
     default:
       cerr << "Current operator not supported " << current << endl;
