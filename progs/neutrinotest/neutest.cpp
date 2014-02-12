@@ -304,7 +304,8 @@ int main(int argc, char *argv[])
   bool screening=0;//atoi(argv[4]);
   int nucleus=1;//atoi(argv[6]);
   double prec=1.E-05;//atof(argv[7]);
-  int integrator=atoi(argv[3]);
+  int integrator=2;//
+  int fluxintegrator=atoi(argv[3]);
   int thick=0;//atoi(argv[9]);
   int maxEval=20000;//atoi(argv[10]);
   bool charged=1;
@@ -387,7 +388,7 @@ int main(int argc, char *argv[])
   
   F.f=adap_intPm;
   unsigned count=0;
-  if(!integrator) numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,avgcross,count,0);
+  if(!fluxintegrator) numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,avgcross,count,0);
   else numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-03,2E02,2E04,avgcross,count,0);
    
   //cross section in 10^-39 cm^2 GeV ^-1
