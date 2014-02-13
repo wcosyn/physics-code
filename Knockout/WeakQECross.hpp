@@ -119,6 +119,7 @@ public:
   double getSigmascreening() const{return sigmascreening;} /*!< [%] screening of sigma */
   bool getUsersigma() const{return usersigma;} /*!< has the user set sigma? */
   MeanFieldNucleusThick * getPnucl() const{return pnucl;}  /*!< pointer to nucleus object */
+  TLeptonKinematics * getPlepton() const{return lepton;} /*!< get pointer to lepton object */
   
   
 private:

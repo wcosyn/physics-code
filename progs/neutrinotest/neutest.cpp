@@ -407,11 +407,12 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 		double E_out, double costhetamu, int current, double *cthmax){
 		  
   results=numint::vector_d(2,0.);
-  
   //we can fix the vector boson kinematics
   double omega=E_in-E_out;
   double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton.GetLeptonMass()*lepton.GetLeptonMass()/(E_out*E_out))*costhetamu)
       -lepton.GetLeptonMass()*lepton.GetLeptonMass();
+//   cout << E_in << " " << omega<< " " << Q2*1.E-06 << " " << sqrt(Q2+omega*omega) << endl;
+  pObs.getPlepton()->SetBeamEnergy(E_in);
   for(int shell=0;shell<pNucleus.getTotalLevels();shell++) {
     if(costhetacm<cthmax[shell]){
       TKinematics2to2 kin("","",pNucleus.getMassA(),
