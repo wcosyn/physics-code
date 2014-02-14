@@ -31,7 +31,7 @@ EFILEST   = 	../../bin/staticonenucl
 
 #		Mathematical functions
 LIBS =	 	-lm  -lifcore
-WIMLIBS = -lMePhys -lGlauber -lKnockout -lIntegrator
+WIMLIBS = -lMePhys -lGlauber -lKnockout -lIntegrator -lcuba
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout

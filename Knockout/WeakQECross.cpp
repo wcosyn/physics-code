@@ -105,6 +105,8 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 	+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
 	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
 	    kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPkcm()/(8*pow(PI,3.)*kin.GetW());
+  cout << sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()
+	+kin.GetPklab()) << " " << kin.GetWlab()+pnucl->getMassA()-sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab()) << " " << qvec << " " << kin.GetCosthYlab() << " " << kin.GetPYlab() << endl;
   reacmodel=new WeakQEHadronCurrent(pnucl,prec,integrator,homedir,maxEval,charged, 
 				    M_A, getUsersigma(), gA_s, r_s2, mu_s,getSigmascreening());
   
@@ -238,6 +240,7 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     else result=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
 	      +kinfactors[3]*response[3]+(shellindex<pnucl->getPLevels()?1.:-1.)*kinfactors[7]*response[7]);
     delete reacmodel;
+    cout <<"mott " << mott << " " << frontfactor << endl;
     return mott*frontfactor*result/HBARC;
   }  
   //NC

@@ -48,15 +48,25 @@ int main(int argc, char *argv[])
 //   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);  //Monaghan Data
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(3245.); //Dutta Data
   Cross obs(*elec,&Carbon,prec,integrator,homedir,screening,scr);
-  double free=obs.getElCross(kin,2,0.)*HBARC*HBARC;
+  double free=obs.getElCross(kin,2,0.,2E03)*HBARC*HBARC;
   vector<double> cross;
 
+  
+//comparison with pascal's code (input_compare_onenucl.dat input file) 
+//  ../../bin/onenucl 1696000.0 851.5 190.0 with dutta beam inq
+//   double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 1, 1, 0.,2E04,1);
+//   double crosss=obs.getDiffCross(kin, 2, 0, 0, 0, 1,0,0.,2E04,1);
+//   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << 
+//   acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << endl;
+//   cout << sqrt(Q2+omega*omega) << " " << crossp << " " << crosss << endl;
+//   exit(1);
+  
   obs.getAllDiffCross(cross,kin,2,1,thick,0.,maxEval,1);
   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  
       cross[0] << " " << cross[1] << " " << cross[4] << " " << free << " " << cross[0]/free << " " << cross[1]/free << endl;
   
       
-  free=obs.getElCross(kin,2,PI)*HBARC*HBARC;
+  free=obs.getElCross(kin,2,PI,2E03)*HBARC*HBARC;
   obs.getAllDiffCross(cross,kin,2,1,thick,PI,maxEval,1);
   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << -kin.GetPklab() << " " <<  
       cross[0] << " " << cross[1] << " " << cross[4] << " " << free << " " << cross[0]/free << " " << cross[1]/free << endl;

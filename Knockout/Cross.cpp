@@ -74,7 +74,8 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   //hyperon Y is fast final nucleon
   //kaon is residual A-1 nucleus
   frontfactor=lab? (kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
-      /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
+      /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()+kin.GetPklab())
+	+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
 	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
 	    kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPkcm()/(8*pow(PI,3.)*kin.GetW());
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.;
@@ -103,8 +104,11 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   }
   double result=0.;
   //combine everything
+//   for(int i=0;i<6;i++) cout << response[0][i] << " ";
+//   cout << endl;
   result=kinfactors[0]*response[0][0]+kinfactors[1]*response[0][1]+kinfactors[2]*response[0][2]*cos(2.*phi)+kinfactors[3]*response[0][3]*cos(phi);
   delete reacmodel;
+//   cout << mott << " " << frontfactor << " " << result << endl;
   return mott*frontfactor*result/HBARC;
   
 }
@@ -140,8 +144,8 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   int total=thick?5:3;
   //compute response functions
   for(int i=0;i<6;i++) for(int j=0;j<total;j++) response[j][i]=0.;
-  //only half of the m values due to symmetry, careful!!! this symmetry is only valid for unpolarized cross sections!!!!!
-  //R_TT does not have this symmetry!!!
+  //only half of the m values due to symmetry, careful!!! this symmetry is only valid for (electron) unpolarized cross sections!!!!!
+  //R_T' does not have this symmetry!!!
   for(int m=-pnucl->getJ_array()[shellindex];m<=0/*pnucl->getJ_array()[shellindex]*/;m+=2){
     Matrix<2,3> J[total];
     reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,0);
