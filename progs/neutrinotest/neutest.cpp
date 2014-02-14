@@ -420,7 +420,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 			  MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
       double pm=kin.GetPklab();
       if(!kin.IsPhysical()){
-	for(int i=0;i<2;i++) results[i]+=0.;
+	//for(int i=0;i<2;i++) results[i]+=0.;
 	cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
       }
       else{

@@ -24,7 +24,7 @@ class NucleonWeakOperator : public NucleonEMOperator{
 public:
   NucleonWeakOperator(); /*!< Empty constructor */
   /*! constructor
-   * \param Q2 [MeV^2] photon fourmomentum transfer squared
+   * \param [in] Q2 [MeV^2] photon fourmomentum transfer squared
    * \param proton interaction with proton [1] or neutron [0], for charged currents it refers to INITIAL nucleon
    * \param para which parametrization? <BR>
    * - 0=BBA (H. Budd, A. Bodek, and J. Arrington, hep-ex/0308005, J. Arrington, Phys. Rev. C 69, 022201(R) (2004)) <BR>
@@ -34,7 +34,7 @@ public:
    * \param charged 0: Z-boson, 1: W-boson
    * \param M_A [MeV] axial mass in dipole paramterization
    * \param r_s2 [fm^2] parameter for strange contribution to F1_weak
-   * \param mu_s [\mu_N] parameter for strange contribution to F2_weak
+   * \param mu_s [mu_N] parameter for strange contribution to F2_weak
    * \param gA_s [] parameter for strange contribution to G_A
    */
   NucleonWeakOperator(const double Q2, const bool proton, const int para, const bool charged, const int M_A, const double r_s2,
@@ -49,80 +49,81 @@ public:
   /*! compute GE_weak with medium modification
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
+   * \param [in] nucleus nucleus class object, contains the densities etc.
    * \return GE_weak with medium modification
    */
   double getGE_weak(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! compute GM_weak with medium modification
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
+   * \param [in] nucleus nucleus class object, contains the densities etc.
    * \return GM_weak with medium modification
    */
   double getGM_weak(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! compute F1_weak with medium modification
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
+   * \param [in] nucleus nucleus class object, contains the densities etc.
    * \return F1_weak with medium modification
    */
   double getF1_weak(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! compute F2_weak with medium modification
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
+   * \param [in] nucleus nucleus class object, contains the densities etc.
    * \return F2_weak with medium modification
    */
   double getF2_weak(const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! computes the dirac foton-bound nucleon coupling according to the CC1 description of De Forest et al.
-   * \param pi [MeV] initial nucleon momentum fourvector
-   * \param pf [MeV] final nucleon momentum fourvector
+   * \param [in] pi [MeV] initial nucleon momentum fourvector
+   * \param [in] pf [MeV] final nucleon momentum fourvector
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
+   * \param [in] nucleus nucleus class object, contains the densities etc.
    * \return fourvector of dirac matrices with CC1 coupling to nucleon
    */
   FourVector<GammaStructure> getCC1_weak(const FourVector<double> &pi, const FourVector<double> &pf, 
 				    const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! computes the dirac foton-bound nucleon coupling according to the CC2 description of De Forest et al.
-   * \param q [MeV] photon momentum fourvector
+   * \param [in] q [MeV] photon momentum fourvector
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
+   * \param [in] nucleus nucleus class object, contains the densities etc.
    * \return fourvector of dirac matrices with CC1 coupling to nucleon
    */
   FourVector<GammaStructure> getCC2_weak(const FourVector<double> &q, const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   /*! computes the dirac foton-bound nucleon coupling according to the CC3 description of De Forest et al.
-   * \param q [MeV] photon momentum fourvector
-   * \param pi [MeV] initial nucleon momentum fourvector
-   * \param pf [MeV] final nucleon momentum fourvector
+   * \param [in] q [MeV] photon momentum fourvector
+   * \param [in] pi [MeV] initial nucleon momentum fourvector
+   * \param [in] pf [MeV] final nucleon momentum fourvector
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
+   * \param [in] nucleus nucleus class object, contains the densities etc.
    * \return fourvector of dirac matrices with CC1 coupling to nucleon
    */
   FourVector<GammaStructure> getCC3_weak(const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf,
 				    const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
+  
   /*! computes the dirac foton-bound nucleon coupling according to a CC description of De Forest et al.
    * \param current which CC of De Forest [1=CC1, 2=CC2, 3=CC3]
-   * \param q [MeV] photon momentum fourvector
-   * \param pi [MeV] initial nucleon momentum fourvector
-   * \param pf [MeV] final nucleon momentum fourvector
+   * \param [in] q [MeV] photon momentum fourvector
+   * \param [in] pi [MeV] initial nucleon momentum fourvector
+   * \param [in] pf [MeV] final nucleon momentum fourvector
    * \param r [fm] radial coordinate in nucleus
    * \param medium which modification [1=CQM, 2=QSM]
-   * \param nucleus nucleus class object, contains the densities etc.
+   * \param [in] nucleus nucleus class object, contains the densities etc.
    * \return fourvector of dirac matrices with CC1 coupling to nucleon
    */
-  
- /*! computes the dirac weak axial bound nucleon coupling 
-   * \param q [MeV] photon momentum fourvector
+  FourVector<GammaStructure> getCC_weak(const int current, const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf, 
+				   const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
+
+  /*! computes the dirac weak axial bound nucleon coupling 
+   * \param [in] q [MeV] photon momentum fourvector
    * \return fourvector of dirac matrices with axial coupling to nucleon
    */
   FourVector<GammaStructure> getAxial(const FourVector<double> &q) const;
   
   
-  FourVector<GammaStructure> getCC_weak(const int current, const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf, 
-				   const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   static const FourVector<GammaStructure> gamma_5mu; /*!< gamma_5*gamma_mu matrices */
   static const GammaStructure gamma_5; /*!< gamma_5 matrix */
   
@@ -150,7 +151,8 @@ private:
   void setGM_weak();  
   void setGA_weak();
   /*! gives you a dipole form factor 
-   * \param Q2 [MeV^2] fourmomentum sq
+   * \param [in] Q2 [MeV^2] fourmomentum sq
+   * \param mass [MeV] axial nucleon mass
    * \return axial dipole form factor
    */
   double Get_dipole_mass(const double Q2, const double mass) const; 

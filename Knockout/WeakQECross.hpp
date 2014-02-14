@@ -1,7 +1,7 @@
 
 
 /*! \file WeakQECross.hpp 
- * \brief Contains declaration of class WeakQECross, used to compute A(\nu,lN) cross sections, both charged
+ * \brief Contains declaration of class WeakQECross, used to compute A(nu,lN) cross sections, both charged
  * and neutral weak currents
  * \author Wim Cosyn
  * \date 13/12/2013
@@ -21,7 +21,7 @@
 
 class AbstractFsiGrid;
 
-/*! \brief A class WeakQECross, used to compute A(\nu,lN) cross sections (CC and NC weak quasi-elastic knockout) */
+/*! \brief A class WeakQECross, used to compute A(nu,lN) cross sections (CC and NC weak quasi-elastic knockout) */
 class WeakQECross{
 public:
     /*! Constructor for weak charged current processes
@@ -31,12 +31,12 @@ public:
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
   * \param charged neutral weak current [0] or charged weak current [1]
-   * \param M_A [MeV] value of axial mass
+   * \param M_A_in [MeV] value of axial mass
    * \param user_sigma does the user want to change sigma?
    * \param gA_s [] strange contrib to G_A
    * \param r_s2 [fm^2] strange contrib to F1weak
    * \param mu_s [] strange contrib to F2weak
-   * \param sigmascreening [%] how much do you want to change the sigma value
+   * \param sigma_screening [%] how much do you want to change the sigma value
    */
   WeakQECross(TLeptonKinematics *lepton, MeanFieldNucleusThick *pnucl, 
 	double prec, int integrator, std::string dir, bool charged, double M_A_in, bool user_sigma,
@@ -49,19 +49,19 @@ public:
    * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
   * \param charged neutral weak current [0] or charged weak current [1]
-   * \param M_A [MeV] value of axial mass
+   * \param M_A_in [MeV] value of axial mass
    * \param user_sigma does the user want to change sigma?
    * \param gA_s [] strange contrib to G_A
    * \param r_s2 [fm^2] strange contrib to F1weak
    * \param mu_s [] strange contrib to F2weak
-   * \param sigmascreening [%] how much do you want to change the sigma value
+   * \param sigma_screening [%] how much do you want to change the sigma value
    */
   WeakQECross(TElectronKinematics *elec, MeanFieldNucleusThick *pnucl, 
 	double prec, int integrator, std::string dir, bool charged, double M_A_in, bool user_sigma,
 	double gA_s=-0.19, double r_s2=0., 
 	double mu_s=0., double sigma_screening=0.);
   ~WeakQECross(); /*!< Destructor */
-  /*! Computes the differential A(\nu,lN) cross section for certain kinematics and a certain shell of the nucleus,
+  /*! Computes the differential A(nu,lN) cross section for certain kinematics and a certain shell of the nucleus,
    * automatic care is taken in the final state of isospin change for CC
    * \param kin contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
@@ -101,7 +101,7 @@ public:
   void getAllDiffWeakQECross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
 		       int shellindex, int thick, double phi, int maxEval, bool lab, bool phi_int, bool neutrino);
 
-  /*! Computes the off-shell (\nu,lN) cross section for certain kinematics <BR>
+  /*! Computes the off-shell (nu,lN) cross section for certain kinematics <BR>
    * What is denoted as \f$ K \sigma_{ep} \f$ in the literature
    * \param kin contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).

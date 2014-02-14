@@ -1,5 +1,5 @@
 /*! \file WeakQEHadronCurrent.hpp 
- * \brief Contains declaration of class WeakQEHadronCurrent, used to compute A(e,e'N) amplitudes
+ * \brief Contains declaration of class WeakQEHadronCurrent, used to compute A(nu,lN) amplitudes
  * \author Wim Cosyn
  * \date 28/08/2012
  * 
@@ -26,7 +26,7 @@
 
 
 
-/*! \brief A class WeakQEHadronCurrent, used to compute A(\nu,lN) amplitudes */
+/*! \brief A class WeakQEHadronCurrent, used to compute A(nu,lN) amplitudes */
 class WeakQEHadronCurrent{
 public:
     /*! Constructor
@@ -36,7 +36,7 @@ public:
    * \param dir string that contains dir with all input, should be the ./share subdir of the project!
    * \param max_Eval max # of function evaluations in the coordinate integration
    * \param charged neutral weak current [0] or charged weak current [1]
-   * \param M_A [MeV] value of axial mass
+   * \param M_A_in [MeV] value of axial mass
    * \param user_sigma does the user want to change sigma?
    * \param gA_s [] strange contrib to G_A
    * \param r_s2 [fm^2] strange contrib to F1weak

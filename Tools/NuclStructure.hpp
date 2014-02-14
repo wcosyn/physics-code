@@ -11,7 +11,8 @@
  * 
  * I also added some new classes: <BR>
  * - A class that contains nucleon structure functions [NuclStructure] <BR>
- * - A class that contains deuteron structure functions [DeuteronStructure] <BR><BR>
+ * - A class that contains deuteron structure functions [DeuteronStructure] <BR>
+ * - A leptonkinematics class for neutrino scattering [TLeptonKinematics] <BR><BR>
  * 
  * Utilfunctions.hpp contains a few helper functions (mostly math related)<BR>
  * --------------------------------------<BR>
@@ -28,18 +29,18 @@
   * <BR>
   * -moved definitions of ToFourVector and ToLorentzVector from kinematics2to3.cpp to a new file FourVector.cpp <BR>
   * <BR>
-  * -commented out #include "2to3kinematics.h" in TDeuteron.cpp <BR>
+  * -commented out include "2to3kinematics.h" in TDeuteron.cpp <BR>
   * <BR>
   * -commented out all hash functions <BR>
   * -commented out numtoa.h includes <BR>
   * <BR>
-  * -moved all the necessary wrapper classes in the dir with deuteron code, changed #include <> to #include "" <BR>
+  * -moved all the necessary wrapper classes in the dir with deuteron code, changed include <> to include "" <BR>
   * <BR>
   * -commented out all includes of Structures.h as only defines of constants were needed <BR>
   * <BR>
   * -included needed constants (STRANGEUFLOW, M_P, M_N) to my file constants.hpp (some  double definitions now of course) <BR>
   * <BR>
-  * -replaced all includes of Structures.h with #include "constants.hpp" (was not even needed in TYukawaPWF.cpp) <BR>
+  * -replaced all includes of Structures.h with include "constants.hpp" (was not even needed in TYukawaPWF.cpp) <BR>
   * <BR>
   * -changed TYukawaPWF to also include parmetrization with non-equidistant Mass(i) (AV18 f.i.) <BR>
   *  -added double *fM member <BR>
