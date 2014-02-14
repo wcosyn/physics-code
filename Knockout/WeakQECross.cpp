@@ -219,15 +219,15 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 	Matrix<2,4> J;
 	reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current, SRC, thick);
 	for(int i=0;i<2;i++){
-	  response[0]+=norm(J(i,0)-qvec/kin.GetWlab()*J(i,3));
-	  response[1]+=2.*real(J(i,3)*conj(J(i,0)-qvec/kin.GetWlab()*J(i,3)));
-	  response[2]+=norm(J(i,3));
-	  response[3]+=norm(J(i,1))+norm(J(i,2));
-	  response[4]+=2.*real(conj(J(i,2))*J(i,1));
-	  response[5]+=2.*real(conj(J(i,0)-qvec/kin.GetWlab()*J(i,3))*(J(i,2)-J(i,1)));
-	  response[5]+=2.*real(conj(J(i,3))*(J(i,2)-J(i,1)));
-	  response[7]+=norm(J(i,1))-norm(J(i,2));
-	  response[8]+=2.*imag((J(i,0)-qvec/kin.GetWlab()*J(i,3))*conj(J(i,2)-J(i,1)));
+	  response[0]+=norm(J(i,0)-qvec/kin.GetWlab()*J(i,3)); //W_L1
+	  response[1]+=2.*real(J(i,3)*conj(J(i,0)-qvec/kin.GetWlab()*J(i,3)));//W_L2
+	  response[2]+=norm(J(i,3)); //W_L3
+	  response[3]+=norm(J(i,1))+norm(J(i,2)); //W_T
+	  response[4]+=2.*real(conj(J(i,2))*J(i,1)); //W_TT
+	  response[5]+=2.*real(conj(J(i,0)-qvec/kin.GetWlab()*J(i,3))*(J(i,2)-J(i,1))); //W_LT1
+	  response[5]+=2.*real(conj(J(i,3))*(J(i,2)-J(i,1))); //W_LT2
+	  response[7]+=norm(J(i,1))-norm(J(i,2)); //W_T'
+	  response[8]+=2.*imag((J(i,0)-qvec/kin.GetWlab()*J(i,3))*conj(J(i,2)-J(i,1))); //W_LT'
 	}
     }
     double result=0.;
