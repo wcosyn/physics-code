@@ -101,12 +101,8 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
   
   //m_n*m_{A-1}*p_f/E_{A-1}/f_rec (for lab)
   double frontfactor=lab? (kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
-      /abs(sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()
-	+kin.GetPklab())+sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab())
-	    *(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
+      /abs(kin.GetEklab()+kin.GetEYlab()*(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
 	    kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPkcm()/(8*pow(PI,3.)*kin.GetW());
-  cout << sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()
-	+kin.GetPklab()) << " " << kin.GetWlab()+pnucl->getMassA()-sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab()) << " " << qvec << " " << kin.GetCosthYlab() << " " << kin.GetPYlab() << endl;
   reacmodel=new WeakQEHadronCurrent(pnucl,prec,integrator,homedir,maxEval,charged, 
 				    M_A, getUsersigma(), gA_s, r_s2, mu_s,getSigmascreening());
   

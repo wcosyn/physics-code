@@ -33,6 +33,7 @@
 // #include <Structures.h>
 #include "constants.hpp"
 #include <vector>
+#include <cmath>
 class TString;
 
 
@@ -89,6 +90,8 @@ class TKinematics : public TNamed
   double        GetCosthklab() const    { return fCosthklab; }
   double        GetPYlab() const       { return fPYlab; }
   double        GetCosthYlab() const    { return fCosthYlab; }
+  double        GetEYlab() const {return sqrt(fMy*fMy+fPYlab*fPYlab);}
+  double        GetEklab() const {return sqrt(fMk*fMk+fPklab*fPklab);}
   double        GetQsquared() const    { return fQsquared; }
   double        GetW() const           { return fW; }
   double        GetS() const           { return fS; }

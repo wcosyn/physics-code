@@ -332,37 +332,37 @@ int main(int argc, char *argv[])
   //find reasonable integration limits
   double E_low=E_out;
   double E_high=E_out;
-  bool switchlow=0;
-  for(int i=1;i<1000;i++){
-    double E_in=E_out+(3.E03-E_out)*0.001*i;
-    double omega=E_in-E_out;
-    double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
-	-lepton->GetLeptonMass()*lepton->GetLeptonMass();
-    double x=Q2/(2.*MASSP*omega);
-//     cout << E_in << " " << omega << " " << Q2*1.E-06 << " " << x <<  endl;
-    for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
-      //lowest p_m is always at theta_cm -1
-      TKinematics2to2 kin("","",Nucleus.getMassA(),
-			  Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
-			  shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,-1.);
-      //anything above 300 MeV contribution will be negligible
-      if(kin.GetPklab()<300.){ 
-	if(!switchlow){
-	  cout<< E_in << " " << kin.GetPklab() << " " << shell << endl;
-	  switchlow=1;
-	  E_low=E_in;
-	}
-	else if(E_in>E_high) E_high=E_in;
-	double tempmax=1., tempmin=-1.;
-	getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell);
-// 	cout << shell << " " << kin.GetPklab() <<" " << cthmin[shell] << " " << cthmax[shell] << endl;
-	if(max<tempmax) max=tempmax;
-	if(cthmax[shell]<tempmax) cthmax[shell]=tempmax;
-      }
-    }
-  }
-  cout << E_low << " " << E_high << " " << max << endl;
-  for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;}
+//   bool switchlow=0;
+//   for(int i=1;i<1000;i++){
+//     double E_in=E_out+(3.E03-E_out)*0.001*i;
+//     double omega=E_in-E_out;
+//     double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
+// 	-lepton->GetLeptonMass()*lepton->GetLeptonMass();
+//     double x=Q2/(2.*MASSP*omega);
+// //     cout << E_in << " " << omega << " " << Q2*1.E-06 << " " << x <<  endl;
+//     for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
+//       //lowest p_m is always at theta_cm -1
+//       TKinematics2to2 kin("","",Nucleus.getMassA(),
+// 			  Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
+// 			  shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,-1.);
+//       //anything above 300 MeV contribution will be negligible
+//       if(kin.GetPklab()<300.){ 
+// 	if(!switchlow){
+// 	  cout<< E_in << " " << kin.GetPklab() << " " << shell << endl;
+// 	  switchlow=1;
+// 	  E_low=E_in;
+// 	}
+// 	else if(E_in>E_high) E_high=E_in;
+// 	double tempmax=1., tempmin=-1.;
+// 	getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell);
+// // 	cout << shell << " " << kin.GetPklab() <<" " << cthmin[shell] << " " << cthmax[shell] << endl;
+// 	if(max<tempmax) max=tempmax;
+// 	if(cthmax[shell]<tempmax) cthmax[shell]=tempmax;
+//       }
+//     }
+//   }
+//   cout << E_low << " " << E_high << " " << max << endl;
+//   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;}
   
   //test for comparison with pascal
   
@@ -377,12 +377,6 @@ int main(int argc, char *argv[])
   TKinematics2to2 kin("","",Nucleus.getMassA(),
 		      Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
 		      shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
-  cout << sqrt(kin.GetMesonMass()*kin.GetMesonMass()+kin.GetPklab()
-	+kin.GetPklab()) + sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetPYlab()*kin.GetPYlab()) << " " 
-	<< Nucleus.getMassA()+kin.GetWlab() << endl;
-	cout << kin.GetKlab() << " " << kin.GetPklab()*kin.GetCosthklab()+kin.GetPYlab()*kin.GetCosthYlab() << endl;
-	cout << kin.GetPklab()*sqrt(1.-pow(kin.GetCosthklab(),2.))-kin.GetPYlab()*sqrt(1.-pow(kin.GetCosthYlab(),2.)) << endl;
-	cout << kin.GetMesonMass() << " " << kin.GetHyperonMass() << endl;
   double pm=kin.GetPklab();
     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
     << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
