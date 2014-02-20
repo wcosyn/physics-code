@@ -28,13 +28,16 @@
 class MeanFieldNucleus{
 public:
   /*! \brief Constructor
-   * \param nucleus an integer denoting which nucleus [0-7] =[He,C,O,Fe,Pb,Al,Cu,Au]
+   * \param nucleus an integer denoting which nucleus [0-7] =[He,C,O,Fe,Pb,Al,Cu,Au], or use MeanFieldNucleus::[He|C|O|Fe|Pb|Al|Cu|Au], so you don't have to look up the numbering convention all the time. 
    * \param dir std::string containing the dir were all input is located
    */
-  MeanFieldNucleus(const int nucleus = 0, const std::string & dir = ".");
+  MeanFieldNucleus(const int nucleus, const std::string & dir = ".");
   MeanFieldNucleus(const MeanFieldNucleus&); /*!< copy constructor */
   ~MeanFieldNucleus();/*!< Destructor */
-  
+ 
+  /*! An enum so we don't have to look up which nucleus corresponds to which number all the time */
+  enum Type { He, C, O, Fe, Pb, Al, Cu, Au };
+
   const std::string getNucleusName() const {return nucleusname;} /*!< Returns a std::string with the name of the nucleus, f.i. "C" */
   int getA() const {return A;} /*!<  Returns the total number of nucleons */
   int getZ() const {return Z;} /*!< Returns the total number of protons*/
