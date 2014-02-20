@@ -89,27 +89,31 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   kinfactors[5]=-1./sqrt(2)*Q2overkk*sqrt(tan2); //v'_TL
   
   //compute response functions
+  double test[3]={0.,0.,0.};
   for(int i=0;i<6;i++) response[0][i]=0.;
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
       Matrix<2,3> J;
       reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current, SRC, thick);
-      for(int i=0;i<2;i++){
+      for(int i=0;i<1;i++){ //only polarization, other one follows from parity symmetry!!
+	  cout << i << " " << m << " " << J(i,0) << " " << J(i,1) << " " <<  J(i,2) << endl;
 	response[0][0]+=norm(J(i,0));
 	response[0][1]+=norm(J(i,1))+norm(J(i,2));
 	response[0][2]+=2.*real(conj(J(i,2))*J(i,1));
 	response[0][3]+=2.*real(conj(J(i,0))*(J(i,2)-J(i,1)));
-	response[0][4]+=norm(J(i,1))-norm(J(i,2));
+	response[0][4]+=0.;//norm(J(i,1))-norm(J(i,2));  //0 because of parity symmetry!!!!
 	response[0][5]+=2.*imag(J(i,0)*conj(J(i,2)-J(i,1)));
       }
   }
   double result=0.;
+//   factor 2 because of parity symmetry
+  for(int i=0;i<6;i++) response[0][i] *=2.;
   //combine everything
-//   for(int i=0;i<6;i++) cout << response[0][i] << " ";
-//   cout << endl;
+  for(int i=0;i<6;i++) cout << response[0][i] << " ";
+  cout << pnucl->getKappas()[shellindex] << endl;
   result=kinfactors[0]*response[0][0]+kinfactors[1]*response[0][1]+kinfactors[2]*response[0][2]*cos(2.*phi)+kinfactors[3]*response[0][3]*cos(phi);
   delete reacmodel;
 //   cout << mott << " " << frontfactor << " " << result << endl;
-  return mott*frontfactor*result/HBARC;
+  return mott*frontfactor*result/HBARC; 
   
 }
 
@@ -144,12 +148,11 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   int total=thick?5:3;
   //compute response functions
   for(int i=0;i<6;i++) for(int j=0;j<total;j++) response[j][i]=0.;
-  //only half of the m values due to symmetry, careful!!! this symmetry is only valid for (electron) unpolarized cross sections!!!!!
-  //R_T' does not have this symmetry!!!
-  for(int m=-pnucl->getJ_array()[shellindex];m<=0/*pnucl->getJ_array()[shellindex]*/;m+=2){
+  for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
     Matrix<2,3> J[total];
     reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,0);
-    for(int i=0;i<2;i++){
+  //only half of the m values due to parity symmetry, careful!!! 
+    for(int i=0;i<1;i++){
       for(int j=0;j<total;j++){
 	response[j][0]+=norm(J[j](i,0));//W_L
 	response[j][1]+=norm(J[j](i,1))+norm(J[j](i,2)); //W_T
@@ -200,24 +203,88 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
   //for(int i=0;i<6;i++) for(int j=0;j<total;j++) response[j][i]=0.;
   Matrix<2,2> responsematrix[total][6];
   for(int i=0;i<total;++i) for(int j=0;j<6;++j) responsematrix[i][j]=Matrix<2,2>();
- 
-  for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
+  //we can exploit parity symmetry for half of the currents!!!
+  for(int m=-pnucl->getJ_array()[shellindex];m<=0/*pnucl->getJ_array()[shellindex]*/;m+=2){
       Matrix<2,3> J[total];
       reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,medium);
       for(int j=0;j<total;j++){
 	  //2*2 density matrices with helicities as indices
-	  responsematrix[j][0]+=Matrix<2,2>(norm(J[j](1,0)),J[j](1,0)*conj(J[j](0,0)),
-					    J[j](0,0)*conj(J[j](1,0)),norm(J[j](0,0))); //W_L
-	  responsematrix[j][1]+=Matrix<2,2>(norm(J[j](1,1))+norm(J[j](1,2)),J[j](1,1)*conj(J[j](0,1))+J[j](1,2)*conj(J[j](0,2)),
-						J[j](0,1)*conj(J[j](1,1))+J[j](0,2)*conj(J[j](1,2)),norm(J[j](0,1))+norm(J[j](0,2)));//W_T
-	  responsematrix[j][2]+=Matrix<2,2>(J[j](1,2)*conj(J[j](1,1)),J[j](1,2)*conj(J[j](0,1)),
-					    J[j](0,2)*conj(J[j](1,1)),J[j](0,2)*conj(J[j](0,1))); //W_TT
-	  responsematrix[j][3]+=Matrix<2,2>(J[j](1,0)*conj(J[j](1,1)),J[j](1,0)*conj(J[j](0,1)),
-					    J[j](0,0)*conj(J[j](1,1)),J[j](0,0)*conj(J[j](0,1))); //part of W_LT & W_LT' (w_0,-1)
-	  responsematrix[j][4]+=Matrix<2,2>(J[j](1,0)*conj(J[j](1,2)),J[j](1,0)*conj(J[j](0,2)),
-					    J[j](0,0)*conj(J[j](1,2)),J[j](0,0)*conj(J[j](0,2))); //part of W_LT & W_LT' (w_0,1)
-	  responsematrix[j][5]+=Matrix<2,2>(norm(J[j](1,2))-norm(J[j](1,1)),J[j](1,2)*conj(J[j](0,2))-J[j](1,1)*conj(J[j](0,1)),
-						J[j](0,2)*conj(J[j](1,2))-J[j](0,1)*conj(J[j](1,1)),norm(J[j](0,2))-norm(J[j](0,1)));//W_T'
+// 	  responsematrix[j][0]+=Matrix<2,2>(norm(J[j](1,0)),
+// 					    J[j](1,0)*conj(J[j](0,0)),
+// 					    J[j](0,0)*conj(J[j](1,0)),
+// 					    norm(J[j](0,0))); //W_L
+// 	  responsematrix[j][1]+=Matrix<2,2>(norm(J[j](1,1))+norm(J[j](1,2)),
+// 					    J[j](1,1)*conj(J[j](0,1))+J[j](1,2)*conj(J[j](0,2)),
+// 					    J[j](0,1)*conj(J[j](1,1))+J[j](0,2)*conj(J[j](1,2)),
+// 					    norm(J[j](0,1))+norm(J[j](0,2)));//W_T
+// 	  responsematrix[j][2]+=Matrix<2,2>(J[j](1,2)*conj(J[j](1,1)),
+// 					    J[j](1,2)*conj(J[j](0,1)),
+// 					    J[j](0,2)*conj(J[j](1,1)),
+// 					    J[j](0,2)*conj(J[j](0,1))); //W_TT 
+// 	  responsematrix[j][3]+=Matrix<2,2>(J[j](1,0)*conj(J[j](1,1)),
+// 					    J[j](1,0)*conj(J[j](0,1)),
+// 					    J[j](0,0)*conj(J[j](1,1)),
+// 					    J[j](0,0)*conj(J[j](0,1))); //part of W_LT & W_LT' (w_0,-1)
+// 	  responsematrix[j][4]+=Matrix<2,2>(J[j](1,0)*conj(J[j](1,2)),
+// 					    J[j](1,0)*conj(J[j](0,2)),
+// 					    J[j](0,0)*conj(J[j](1,2)),
+// 					    J[j](0,0)*conj(J[j](0,2))); //part of W_LT & W_LT' (w_0,1)
+// 	  responsematrix[j][5]+=Matrix<2,2>(norm(J[j](1,2))-norm(J[j](1,1)),
+// 					    J[j](1,2)*conj(J[j](0,2))-J[j](1,1)*conj(J[j](0,1)),
+// 					    J[j](0,2)*conj(J[j](1,2))-J[j](0,1)*conj(J[j](1,1)),
+// 					    norm(J[j](0,2))-norm(J[j](0,1)));//W_T'
+// 	  responsematrix[j][0]+=Matrix<2,2>(norm(J[j](0,0)),
+// 					    -J[j](0,0)*conj(J[j](1,0)),
+// 					    -J[j](1,0)*conj(J[j](0,0)),
+// 					    norm(J[j](1,0))); //W_L parity symmetry contribution
+// 	  responsematrix[j][1]+=Matrix<2,2>(norm(J[j](0,1))+norm(J[j](0,2)),
+// 					    -J[j](0,1)*conj(J[j](1,1))-J[j](0,2)*conj(J[j](1,2)),
+// 					    -J[j](1,1)*conj(J[j](0,1))-J[j](1,2)*conj(J[j](0,2)),
+// 					    norm(J[j](1,1))+norm(J[j](1,2)));//W_T parity symmetry contribution
+// 	  responsematrix[j][2]+=Matrix<2,2>(J[j](0,1)*conj(J[j](0,2)),
+// 					    -J[j](0,1)*conj(J[j](1,2)),
+// 					    -J[j](1,1)*conj(J[j](0,2)),
+// 					    J[j](1,1)*conj(J[j](1,2))); //W_TT parity symmetry contribution
+// 	  responsematrix[j][3]+=Matrix<2,2>(-J[j](0,0)*conj(J[j](0,2)),
+// 					    J[j](0,0)*conj(J[j](1,2)),
+// 					    J[j](1,0)*conj(J[j](0,2)),
+// 					    -J[j](1,0)*conj(J[j](1,2))); //part of W_LT & W_LT' (w_0,-1)	
+// 	  responsematrix[j][4]+=Matrix<2,2>(-J[j](0,0)*conj(J[j](0,1)),
+// 					    J[j](0,0)*conj(J[j](1,1)),
+// 					    J[j](1,0)*conj(J[j](0,1)),
+// 					    -J[j](1,0)*conj(J[j](1,1))); //part of W_LT & W_LT' (w_0,1)
+// 	  responsematrix[j][5]+=Matrix<2,2>(norm(J[j](0,1))-norm(J[j](0,2)),
+// 					    -J[j](0,1)*conj(J[j](1,1))+J[j](0,2)*conj(J[j](1,2)),
+// 					    -J[j](1,1)*conj(J[j](0,1))+J[j](1,2)*conj(J[j](0,2)),
+// 					    norm(J[j](1,1))-norm(J[j](1,2)));//W_T'
+
+	  //exploited parity symmetry here (just one matrix sum of the two above)
+	  responsematrix[j][0]+=Matrix<2,2>(norm(J[j](0,0))+norm(J[j](1,0)),
+					    2.*imag(J[j](1,0)*conj(J[j](0,0)))*I_UNIT,
+					    2.*imag(J[j](0,0)*conj(J[j](1,0)))*I_UNIT,
+					    norm(J[j](0,0))+norm(J[j](1,0))); //W_L
+	  responsematrix[j][1]+=Matrix<2,2>(norm(J[j](0,1))+norm(J[j](0,2))+norm(J[j](1,1))+norm(J[j](1,2)),
+					    2.*imag(J[j](1,1)*conj(J[j](0,1))+J[j](1,2)*conj(J[j](0,2)))*I_UNIT,
+					    2.*imag(J[j](0,1)*conj(J[j](1,1))+J[j](0,2)*conj(J[j](1,2)))*I_UNIT,
+					    norm(J[j](0,1))+norm(J[j](0,2))+norm(J[j](1,1))+norm(J[j](1,2)));//W_T
+	  responsematrix[j][2]+=Matrix<2,2>(J[j](1,2)*conj(J[j](1,1))+J[j](0,1)*conj(J[j](0,2)),
+					    2.*imag(J[j](1,2)*conj(J[j](0,1)))*I_UNIT,
+					    2.*imag(J[j](0,2)*conj(J[j](1,1)))*I_UNIT,
+					    J[j](0,2)*conj(J[j](0,1))+J[j](1,1)*conj(J[j](1,2))); //W_TT 
+	  responsematrix[j][3]+=Matrix<2,2>(J[j](1,0)*conj(J[j](1,1))-J[j](0,0)*conj(J[j](0,2)),
+					    J[j](1,0)*conj(J[j](0,1))+J[j](0,0)*conj(J[j](1,2)),
+					    J[j](0,0)*conj(J[j](1,1))+J[j](1,0)*conj(J[j](0,2)),
+					    J[j](0,0)*conj(J[j](0,1))-J[j](1,0)*conj(J[j](1,2))); //part of W_LT & W_LT' (w_0,-1)
+	  responsematrix[j][4]+=Matrix<2,2>(J[j](1,0)*conj(J[j](1,2))-J[j](0,0)*conj(J[j](0,1)),
+					    J[j](1,0)*conj(J[j](0,2))+J[j](0,0)*conj(J[j](1,1)),
+					    J[j](0,0)*conj(J[j](1,2))+J[j](1,0)*conj(J[j](0,1)),
+					    J[j](0,0)*conj(J[j](0,2))-J[j](1,0)*conj(J[j](1,1))); //part of W_LT & W_LT' (w_0,1)
+	  responsematrix[j][5]+=Matrix<2,2>(norm(J[j](1,2))-norm(J[j](1,1))+norm(J[j](0,1))-norm(J[j](0,2)),
+					    2.*real(J[j](1,2)*conj(J[j](0,2))-J[j](1,1)*conj(J[j](0,1))),
+					    2.*real(J[j](0,2)*conj(J[j](1,2))-J[j](0,1)*conj(J[j](1,1))),
+					    norm(J[j](0,2))-norm(J[j](0,1))+norm(J[j](1,1))-norm(J[j](1,2)));//W_T'
+	
+	
 	
       }
   }

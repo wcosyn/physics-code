@@ -12,7 +12,7 @@ NucleonWeakOperator::NucleonWeakOperator(){
 }
 
 NucleonWeakOperator::NucleonWeakOperator(const double q2, const bool prot, const int para, const bool charge,
-					 const int M_A_in, const double r_s2_in, const double mu_s_in, const double gA_s_in):
+					 const double M_A_in, const double r_s2_in, const double mu_s_in, const double gA_s_in):
 NucleonEMOperator(q2,prot,para),charged(charge),M_A(M_A_in),r_s2(r_s2_in),mu_s(mu_s_in),gA_s(gA_s_in),isopartner(q2,!prot,para){
   setGA_weak();
   setF1_weak();
@@ -80,7 +80,6 @@ double NucleonWeakOperator::Get_dipole_mass(const double Q2, const double M) con
 
 void NucleonWeakOperator::setGA_weak(){
   double gA_null=1.262;
-  
   if(charged){
     GA_weak=gA_null*Get_dipole_mass(Q2,M_A);
   }

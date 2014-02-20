@@ -52,16 +52,29 @@ int main(int argc, char *argv[])
   vector<double> cross;
 
   
-//comparison with pascal's code (input_compare_onenucl.dat input file) 
+// comparison with pascal's code (input_compare_onenucl.dat input file) 
 //  ../../bin/onenucl 1696000.0 851.5 190.0 with dutta beam inq
-//   double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 1, 1, 0.,2E04,1);
-//   double crosss=obs.getDiffCross(kin, 2, 0, 0, 0, 1,0,0.,2E04,1);
-//   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << 
-//   acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << endl;
-//   cout << sqrt(Q2+omega*omega) << " " << crossp << " " << crosss << endl;
+  double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 1, 1, 0.,2E04,1);
+  double crosss=obs.getDiffCross(kin, 2, 0, 0, 0, 1,0,0.,2E04,1);
+  cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << 
+  acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << endl;
+  cout << sqrt(Q2+omega*omega) << " " << crossp << " " << crosss << endl;
+
+  MeanFieldNucleusThick Fe(3,homedir);
+  TKinematics2to2 kin2("","",Fe.getMassA(),Fe.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
+  Cross obs2(*elec,&Fe,prec,integrator,homedir,screening,scr);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 0, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 1, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 2, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 3, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 4, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 5, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 6, 0.,2E04,1);
+  
 //   exit(1);
   
-  obs.getAllDiffCross(cross,kin,2,1,thick,0.,maxEval,1);
+
+ /* obs.getAllDiffCross(cross,kin,2,1,thick,0.,maxEval,1);
   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " <<  
       cross[0] << " " << cross[1] << " " << cross[4] << " " << free << " " << cross[0]/free << " " << cross[1]/free << endl;
   
@@ -70,12 +83,13 @@ int main(int argc, char *argv[])
   obs.getAllDiffCross(cross,kin,2,1,thick,PI,maxEval,1);
   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << -kin.GetPklab() << " " <<  
       cross[0] << " " << cross[1] << " " << cross[4] << " " << free << " " << cross[0]/free << " " << cross[1]/free << endl;
+ */     
       
-      
-//   vector<double> observ;
-//   obs.getAllObs(observ,kin,2,1,thick,0.,maxEval,1);
+  vector<double> observ;
+  obs.getAllObs_tnl(observ,kin,2,1,thick,0,1.,2E04,1);
 //   cout << cross[4] << " " << observ[8*4] << endl;
-//   for(int i=0;i<40;i++) cout << observ[i] << " ";
+  for(int i=0;i<8;i++) cout << observ[i] << endl;
+  for(int i=0;i<8;i++) cout << observ[32+i] << endl;
   //cout << observ[0] << " " << observ[8*(thick?4:2)] << " " << observ[3] << " " << observ[8*(thick?4:2)+3] << endl;
 //   for(int i=0;i<5;i++) {
 //     for(int j=0;j<8;j++) cout << observ[i*8+j] << " ";

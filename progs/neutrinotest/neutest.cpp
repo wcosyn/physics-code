@@ -365,15 +365,16 @@ int main(int argc, char *argv[])
 //   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;}
   
   //test for comparison with pascal
-  
+  //../../bin/neutest 300 -0.9 1 ~/Code/share
+
   double E_in=900.;
   double omega=E_in-E_out;
   double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
       -lepton->GetLeptonMass()*lepton->GetLeptonMass();
    cout << E_in << " " << omega<< " " << Q2*1.E-06 << " " << sqrt(Q2+omega*omega) << endl;
   obs.getPlepton()->SetBeamEnergy(E_in);
-  int shell=3;
   double costhetacm=-0.9;
+  int shell=3;
   TKinematics2to2 kin("","",Nucleus.getMassA(),
 		      Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
 		      shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
@@ -386,10 +387,28 @@ int main(int argc, char *argv[])
     cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
   }
   else{
-    double result=obs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E04,1,1);
+    double result=obs.getDiffWeakQECross(kin,current,thick,0,0,0,shell,0.,2E04,1,1);
     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
     << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
     << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << result << endl;
+  }
+  shell=2;
+  TKinematics2to2 kin2("","",Nucleus.getMassA(),
+		      Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
+		      shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
+  pm=kin2.GetPklab();
+    cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin2.GetCosthklab())*RADTODEGR << " " 
+    << acos(kin2.GetCosthYlab())*RADTODEGR << " " << kin2.GetPklab() << " " << kin2.GetPYlab() 
+    << " " << kin2.GetKlab() << " " << kin2.GetWlab() << endl;
+  if(!kin2.IsPhysical()){
+    //for(int i=0;i<2;i++) results[i]+=0.;
+    cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
+  }
+  else{
+    double result=obs.getDiffWeakQECross(kin2,current,thick,0,0,0,shell,0.,2E04,1,1);
+    cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin2.GetCosthklab())*RADTODEGR << " " 
+    << acos(kin2.GetCosthYlab())*RADTODEGR << " " << kin2.GetPklab() << " " << kin2.GetPYlab() 
+    << " " << kin2.GetKlab() << " " << kin2.GetWlab() << " " << result << endl;
   }
   exit(1);
   

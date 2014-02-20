@@ -208,26 +208,38 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 //     cout << std::setprecision(9) <<
 //       Q2/qvec/qvec*Trace(((polVectorZ*gamma_mu)*(k_in*gamma_mu)*(polVectorZ*gamma_mu)*(k_out*gamma_mu)).value())/(4.*k_in[0]*k_out[0]) << 
 //       " " << leptonmass2/qvec/qvec*pow(1.-Q2/M_W/M_W,2.)*(1-massfactor*costhl) << endl;
-// //       
+// //    z,z comparison pascal me   
 //     cout << std::setprecision(9) << nu*nu/qvec/qvec*(1.+massfactor*costhl)+2.*nu/qvec*leptonmass2/qvec/k_out[0]+leptonmass2/qvec/qvec*(1.-massfactor*costhl) <<
 //     " " << 1.+massfactor*costhl-2.*k_in[0]*k_out[0]*massfactor*massfactor*sinthl*sinthl/qvec/qvec << endl;
 
+
+    double test[4];
+    for(int i=0;i<4;i++) test[i]=0.;
+    
+    
     for(int i=0;i<9;i++) response[i]=0.;
     for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
 	Matrix<2,4> J;
 	reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current, SRC, thick);
 	for(int i=0;i<2;i++){
+	  cout << i << " " << m << " " << J(i,0) << " " << J(i,1) << " " <<  J(i,2) << " " << J(i,3) << endl;
 	  response[0]+=norm(J(i,0)-qvec/kin.GetWlab()*J(i,3)); //W_L1
 	  response[1]+=2.*real(J(i,3)*conj(J(i,0)-qvec/kin.GetWlab()*J(i,3)));//W_L2
 	  response[2]+=norm(J(i,3)); //W_L3
 	  response[3]+=norm(J(i,1))+norm(J(i,2)); //W_T
 	  response[4]+=2.*real(conj(J(i,2))*J(i,1)); //W_TT
 	  response[5]+=2.*real(conj(J(i,0)-qvec/kin.GetWlab()*J(i,3))*(J(i,2)-J(i,1))); //W_LT1
-	  response[5]+=2.*real(conj(J(i,3))*(J(i,2)-J(i,1))); //W_LT2
+	  response[6]+=2.*real(conj(J(i,3))*(J(i,2)-J(i,1))); //W_LT2
 	  response[7]+=norm(J(i,1))-norm(J(i,2)); //W_T'
 	  response[8]+=2.*imag((J(i,0)-qvec/kin.GetWlab()*J(i,3))*conj(J(i,2)-J(i,1))); //W_LT'
+	  test[0]+=2.*imag(conj(J(i,2))*J(i,1));
+	  test[1]+=2.*imag(conj(J(i,0)-qvec/kin.GetWlab()*J(i,3))*(J(i,2)+J(i,1)));
+	  test[2]+=2.*imag(conj(J(i,3))*(J(i,2)+J(i,1)));
+	  test[3]+=2.*real((J(i,0)-qvec/kin.GetWlab()*J(i,3))*conj(J(i,2)+J(i,1)));
 	}
     }
+    for(int i=0;i<9;i++) cout << kinfactors[i] << " " << response[i] << endl;
+    for(int i=0;i<4;i++) cout << test[i] << endl;
     double result=0.;
     if(!phi_int) result=kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
 	      +kinfactors[3]*response[3]+kinfactors[4]*response[4]*cos(2.*phi)

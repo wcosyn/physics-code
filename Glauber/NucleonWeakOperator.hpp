@@ -37,7 +37,7 @@ public:
    * \param mu_s [mu_N] parameter for strange contribution to F2_weak
    * \param gA_s [] parameter for strange contribution to G_A
    */
-  NucleonWeakOperator(const double Q2, const bool proton, const int para, const bool charged, const int M_A, const double r_s2,
+  NucleonWeakOperator(const double Q2, const bool proton, const int para, const bool charged, const double M_A, const double r_s2,
 		    const double mu_s, const double gA_s=-0.19);
   ~NucleonWeakOperator(); /*!< Destructor */
   double getGE_weak() const{ return GE_weak;} /*!< Gives you electric form factor */

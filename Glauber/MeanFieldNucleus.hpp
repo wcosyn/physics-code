@@ -53,7 +53,7 @@ public:
   const int* getKappas() const {return kappas;} /*!< Returns array with all the kappa quantum numbers of each shell*/
   const int* getL_array() const {return l_array;} /*!< Returns array with all the l quantum numbers of each shell*/
   const int* getLbar_array() const {return lbar_array;} /*!< Returns array with all the l_bar quantum numbers of each shell*/
-  const int* getJ_array() const {return j_array;} /*!< Returns array with all the j quantum numbers of each shell*/
+  const int* getJ_array() const {return j_array;} /*!< Returns array with all the j quantum numbers of each shell, 2*j is returned so integer values!!!!*/
   double getMassA() const {return massA;} /*!< Returns the nucleus mass*/
   /*! Returns the mass of A-1 (either Z-1 or N-1 depending on level)
    * \param level shell level of minus 1 particle */
