@@ -83,7 +83,7 @@ complex<double> WeakQEHadronCurrent::getFreeMatrixEl(TKinematics2to2 &tk, bool p
 
 
 void WeakQEHadronCurrent::getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> & matrixel, int shellindex, 
-			int m, int CT, int pw, int current, int SRC, int thick){
+			int m, int CT, int pw, int current, int SRC, int thick, bool vector_or_axial){
 
   //to translate the 2to2kinematics language to our particles:
   //p is A
@@ -129,10 +129,18 @@ void WeakQEHadronCurrent::getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> & matrixe
   FourVector<double> pi=pf-q;
   pi[0]=sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pi[1]*pi[1]+pi[2]*pi[2]+pi[3]*pi[3]);
   pm=TVector3(-q[1],0.,pf[3]-q[3]);
-  Jcontr0 = J->getAxial(q)*polVector0;
-  Jcontrmin= J->getAxial(q)*polVectorMin;
-  Jcontrplus=J->getAxial(q)*polVectorPlus;
-  Jcontrz=-J->getAxial(q)*polVectorz; //minus sign to get J^z!!!
+  if(vector_or_axial){
+    Jcontr0 = J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
+    Jcontrmin= J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
+    Jcontrplus=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
+    Jcontrz=-J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorz; //minus sign to get J^z!!!
+  }
+  else{
+    Jcontr0 = J->getAxial(q)*polVector0;
+    Jcontrmin = J->getAxial(q)*polVectorMin;
+    Jcontrplus =J->getAxial(q)*polVectorPlus;
+    Jcontrz =-J->getAxial(q)*polVectorz; //minus sign to get J^z!!!
+  }
   barcontract0down = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr0;
   barcontract0up = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr0;
   barcontractmindown = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontrmin;
@@ -158,7 +166,7 @@ void WeakQEHadronCurrent::getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> & matrixe
     numint::vector_z ret(16,0.);
     F.f=WeakQEHadronCurrent::klaas_one_amp;
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,2E06,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,maxEval,ret,count,0);
     if(CT){
       for(int j=0;j<2;++j){
 	for(int i=0;i<4;i++) matrixel(j,i)=ret[j*8+2*i+1];
@@ -224,10 +232,10 @@ void WeakQEHadronCurrent::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,4> *m
   pm=TVector3(-q[1],0.,pf[3]-q[3]);
   for(int spinout=0;spinout<2;++spinout){
     for(int photopol=0;photopol<3;++photopol){
-      if(photopol==0) Jcontr = J->getAxial(q)*polVector0;
-      if(photopol==1) Jcontr= J->getAxial(q)*polVectorMin;
-      if(photopol==2) Jcontr=J->getAxial(q)*polVectorPlus;
-      if(photopol==3) Jcontr=J->getAxial(q)*polVectorz;
+      if(photopol==0) Jcontr = J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
+      if(photopol==1) Jcontr= J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
+      if(photopol==2) Jcontr=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
+      if(photopol==3) Jcontr=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorz;
       //spinors with quantization axis along z-axis correspond to the helicity spinors here!!!
       if(spinout==0) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr;
       else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
@@ -308,10 +316,10 @@ void WeakQEHadronCurrent::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,4> *matri
 
   if(!medium){
     GammaStructure Jcontr0, Jcontrmin, Jcontrplus, Jcontrz;
-    Jcontr0 = J->getAxial(q)*polVector0;
-    Jcontrmin= J->getAxial(q)*polVectorMin;
-    Jcontrplus=J->getAxial(q)*polVectorPlus;
-    Jcontrz=J->getAxial(q)*polVectorz;
+    Jcontr0 = J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVector0;
+    Jcontrmin= J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorMin;
+    Jcontrplus=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorPlus;
+    Jcontrz=J->getCC_weak(current, q, pi, pf, 0.,0,*pnucl)*polVectorz;
     Matrix<1,4> spindown=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity));
     Matrix<1,4> spinup=TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity));
     barcontract0down = spindown*Jcontr0;
@@ -421,7 +429,8 @@ void WeakQEHadronCurrent::klaas_one_amp(numint::vector_z & results, double r, do
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   TMFSpinor wave(*(model.getPnucleus()),model.getShell(),model.getM(),r,costheta,phi);
-  complex<double> exp_pr=exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
+  //no r squared because wave function already is multiplied by r
+  complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
   results[1]=results[0]= exp_pr*(model.getBarcontract0down()*wave);
   results[2]=results[3]= exp_pr*(model.getBarcontractmindown()*wave);
   results[4]=results[5]= exp_pr*(model.getBarcontractplusdown()*wave);
@@ -436,7 +445,7 @@ void WeakQEHadronCurrent::klaas_one_amp(numint::vector_z & results, double r, do
 			      ->getFsiSrcGridFull_interp3(r,costheta,phi);
       complex<double> srcct=dynamic_cast<AbstractFsiCTGridThick *>(model.getGrid())
 			      ->getFsiSrcCtGridFull_interp3(r,costheta,phi);
-      for(int i=0;i<6;i++){
+      for(int i=0;i<8;i++){
 	results[2*i]*=src;
 	results[2*i+1]*=srcct;
       }      
@@ -444,13 +453,12 @@ void WeakQEHadronCurrent::klaas_one_amp(numint::vector_z & results, double r, do
     else{
       complex<double> fsi=model.getGrid()->getFsiGridFull_interp3(r,costheta,phi);
       complex<double> fsict=model.getGrid()->getFsiCtGridFull_interp3(r,costheta,phi);
-      for(int i=0;i<6;i++){
+      for(int i=0;i<8;i++){
 	results[2*i]*=fsi;
 	results[2*i+1]*=fsict;
       }      
     }
   }
-  for(int i=0;i<12;i++) results[i]*=r; //no r squared because wave function already is multiplied by r
   return;
 
   

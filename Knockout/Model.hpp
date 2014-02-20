@@ -50,7 +50,7 @@ public:
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) <BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm^{3/2}] contains amplitudes <BR>
+   * \param [out] results [ fm^{3/2}] contains amplitudes <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>
    * Second index is photon polarization (0 is 0, 1 is -1, 2 is +1) <BR>
    * \param shellindex which \f$ \alpha \f$ shell do we eject from
@@ -67,7 +67,7 @@ public:
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm^{3/2}] contains amplitudes (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) <BR>
+   * \param [out] results [ fm^{3/2}] contains amplitudes (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>
    * Second index is photon polarization (0 is 0, 1 is -1, 2 is +1) <BR>
    * \param shellindex which \f$ \alpha \f$ shell do we eject from
@@ -80,7 +80,7 @@ public:
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm^{3/2} contains amplitudes<BR>
+   * \param [out] results [ fm^{3/2} contains amplitudes<BR>
    * (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) if thickness <BR>
    * (0=RMSGA,1=+SRC,2=plane-wave) if no thickness <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>

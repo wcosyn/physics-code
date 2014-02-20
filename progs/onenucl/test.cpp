@@ -60,16 +60,16 @@ int main(int argc, char *argv[])
   acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << endl;
   cout << sqrt(Q2+omega*omega) << " " << crossp << " " << crosss << endl;
 
-  MeanFieldNucleusThick Fe(3,homedir);
-  TKinematics2to2 kin2("","",Fe.getMassA(),Fe.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
-  Cross obs2(*elec,&Fe,prec,integrator,homedir,screening,scr);
-  obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 0, 0.,2E04,1);
-  obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 1, 0.,2E04,1);
-  obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 2, 0.,2E04,1);
-  obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 3, 0.,2E04,1);
-  obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 4, 0.,2E04,1);
-  obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 5, 0.,2E04,1);
-  obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 6, 0.,2E04,1);
+//   MeanFieldNucleusThick Fe(3,homedir);
+//   TKinematics2to2 kin2("","",Fe.getMassA(),Fe.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
+//   Cross obs2(*elec,&Fe,prec,integrator,homedir,screening,scr);
+//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 0, 0.,2E04,1);
+//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 1, 0.,2E04,1);
+//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 2, 0.,2E04,1);
+//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 3, 0.,2E04,1);
+//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 4, 0.,2E04,1);
+//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 5, 0.,2E04,1);
+//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 6, 0.,2E04,1);
   
 //   exit(1);
   

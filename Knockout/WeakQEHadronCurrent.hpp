@@ -53,7 +53,7 @@ public:
    * for all four vector boson polarizations (0,-1,+1,z) and both final nucleon helicities (-1,+1) <BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm^{3/2}] contains amplitudes <BR>
+   * \param [out] results [ fm^{3/2}] contains amplitudes <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>
    * Second index is photon polarization (0 is 0, 1 is -1, 2 is +1, 3 is z) <BR>
    * \param shellindex which \f$ \alpha \f$ shell do we eject from
@@ -63,14 +63,15 @@ public:
    * \param SRC SRC or not in the FSI
    * \param thick thickness in the glauber
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+   * \param vector_or_axial [1] calc vector part of the current [0] calc axial vector part of the current
    */
   void getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> &results, int shellindex, int m, int CT, int pw, int current,
-    int SRC, int thick);
+    int SRC, int thick, bool vector_or_axial);
   /*! Computes amplitudes \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu \phi^{D}_{\alpha}(\vec{p}_m,m) \f$
    * for all four vector boson polarizations (0,-1,+1,z) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm^{3/2}] contains amplitudes (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) <BR>
+   * \param [out] results [ fm^{3/2}] contains amplitudes (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>
    * Second index is photon polarization (0 is 0, 1 is -1, 2 is +1, 3 is z) <BR>
    * \param shellindex which \f$ \alpha \f$ shell do we eject from
@@ -83,7 +84,7 @@ public:
    * for all four vector boson polarizations (0,-1,+1,z) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
    * \param tk contains the hadron kinematics
-   * \param results [ fm^{3/2} contains amplitudes<BR>
+   * \param [out] results [ fm^{3/2} contains amplitudes<BR>
    * (0=RMSGA,1=+SRC,2=+CT,3+CT+SRC,4=plane-wave) if thickness <BR>
    * (0=RMSGA,1=+SRC,2=plane-wave) if no thickness <BR>
    * First index is final nucleon helicity (0 is down, 1 is up) <BR>

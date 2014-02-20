@@ -379,37 +379,37 @@ int main(int argc, char *argv[])
 		      Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
 		      shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
   double pm=kin.GetPklab();
-    cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-    << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-    << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
+//     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+//     << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+//     << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
   if(!kin.IsPhysical()){
     //for(int i=0;i<2;i++) results[i]+=0.;
     cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
   }
   else{
     double result=obs.getDiffWeakQECross(kin,current,thick,0,0,0,shell,0.,2E04,1,1);
-    cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-    << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-    << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << result << endl;
+//     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+//     << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+//     << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << result << endl;
   }
-  shell=2;
-  TKinematics2to2 kin2("","",Nucleus.getMassA(),
-		      Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
-		      shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
-  pm=kin2.GetPklab();
-    cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin2.GetCosthklab())*RADTODEGR << " " 
-    << acos(kin2.GetCosthYlab())*RADTODEGR << " " << kin2.GetPklab() << " " << kin2.GetPYlab() 
-    << " " << kin2.GetKlab() << " " << kin2.GetWlab() << endl;
-  if(!kin2.IsPhysical()){
-    //for(int i=0;i<2;i++) results[i]+=0.;
-    cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
-  }
-  else{
-    double result=obs.getDiffWeakQECross(kin2,current,thick,0,0,0,shell,0.,2E04,1,1);
-    cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin2.GetCosthklab())*RADTODEGR << " " 
-    << acos(kin2.GetCosthYlab())*RADTODEGR << " " << kin2.GetPklab() << " " << kin2.GetPYlab() 
-    << " " << kin2.GetKlab() << " " << kin2.GetWlab() << " " << result << endl;
-  }
+//   shell=2;
+//   TKinematics2to2 kin2("","",Nucleus.getMassA(),
+// 		      Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
+// 		      shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
+//   pm=kin2.GetPklab();
+// //     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin2.GetCosthklab())*RADTODEGR << " " 
+// //     << acos(kin2.GetCosthYlab())*RADTODEGR << " " << kin2.GetPklab() << " " << kin2.GetPYlab() 
+// //     << " " << kin2.GetKlab() << " " << kin2.GetWlab() << endl;
+//   if(!kin2.IsPhysical()){
+//     //for(int i=0;i<2;i++) results[i]+=0.;
+//     cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
+//   }
+//   else{
+//     double result=obs.getDiffWeakQECross(kin2,current,thick,0,0,0,shell,0.,2E04,1,1);
+// //     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin2.GetCosthklab())*RADTODEGR << " " 
+// //     << acos(kin2.GetCosthYlab())*RADTODEGR << " " << kin2.GetPklab() << " " << kin2.GetPYlab() 
+// //     << " " << kin2.GetKlab() << " " << kin2.GetWlab() << " " << result << endl;
+//   }
   exit(1);
   
   

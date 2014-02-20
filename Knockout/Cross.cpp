@@ -100,7 +100,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
 	response[0][1]+=norm(J(i,1))+norm(J(i,2));
 	response[0][2]+=2.*real(conj(J(i,2))*J(i,1));
 	response[0][3]+=2.*real(conj(J(i,0))*(J(i,2)-J(i,1)));
-	response[0][4]+=0.;//norm(J(i,1))-norm(J(i,2));  //0 because of parity symmetry!!!!
+	response[0][4]+=0.;//norm(J(i,2))-norm(J(i,1));  //0 because of parity symmetry!!!!
 	response[0][5]+=2.*imag(J(i,0)*conj(J(i,2)-J(i,1)));
       }
   }
