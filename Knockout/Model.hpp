@@ -187,7 +187,7 @@ private:
   struct Ftor_one {
 
     /*! integrandum function */
-    static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
       Ftor_one &p = * (Ftor_one *) param;
       p.f(ret,x[0],x[1],x[2],*p.model,p.SRC,p.pw);
     }
@@ -203,7 +203,7 @@ private:
     * \param SRC SRC in FSI?
     * \param pw plane-wave?
     */
-    void (*f)(numint::vector_z & res, double x, double y, double z, Model & model, int SRC, int pw);
+    void (*f)(numint::vector_d & res, double x, double y, double z, Model & model, int SRC, int pw);
   };
   /*! struct that is used for integrators (radial ones)*/
   struct Ftor_r {
@@ -287,7 +287,7 @@ private:
     
   };
   /*! integrandum function (clean ones)*/
-  static void klaas_one_amp(numint::vector_z & results, double r, double costheta, double phi, Model & model, int SRC, int pw);
+  static void klaas_one_amp(numint::vector_d & results, double r, double costheta, double phi, Model & model, int SRC, int pw);
   /*! integrandum function (clean ones)*/
   static void klaas_all_amp(numint::vector_z & results, double r, double costheta, double phi, Model & model, int thick, int total);
   /*! integrandum function (medium modification)*/

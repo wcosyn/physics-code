@@ -228,21 +228,21 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
     F.model = this;
     F.SRC = SRC;
     F.pw = pw;
-    numint::mdfunction<numint::vector_z,3> mdf;
+    numint::mdfunction<numint::vector_d,3> mdf;
     mdf.func = &Ftor_one::exec;
     mdf.param = &F;
-    numint::vector_z ret(12,0.);
+    numint::vector_d ret(12,0.);
     F.f=Model::klaas_one_amp;
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-08,prec,ret,count,0);
     else res = numint::cube_adaptive(mdf,lower,upper,1.E-08,prec,1E03,maxEval,ret,count,0);
     if(CT){
       for(int j=0;j<2;++j){
-	for(int i=0;i<3;i++) matrixel(j,i)=ret[j*6+2*i+1];
+	for(int i=0;i<3;i++) matrixel(j,i)=ret[j*6+2*i+1]*(pnucl->getL_array()[shellindex]%2==0?I_UNIT:1.);
       }
     }
     else{
       for(int j=0;j<2;++j){
-	for(int i=0;i<3;i++) matrixel(j,i)=ret[j*6+2*i];
+	for(int i=0;i<3;i++) matrixel(j,i)=ret[j*6+2*i]*(pnucl->getL_array()[shellindex]%2==0?I_UNIT:1.);
       }
     }
   }      
@@ -613,9 +613,9 @@ void Model::intJPhi12(const double phi, complex<double> *results, va_list ap){
 
 
 
-void Model::klaas_one_amp(numint::vector_z & results, double r, double costheta, double phi, 
+void Model::klaas_one_amp(numint::vector_d & real_results, double r, double costheta, double phi, 
 			  Model & model, int SRC, int pw){
-  results=numint::vector_z(12,0.);
+  numint::vector_d results=numint::vector_d(12,0.);
   double sintheta=sqrt(1.-costheta*costheta);
   
   double cosphi,sinphi;
@@ -648,7 +648,7 @@ void Model::klaas_one_amp(numint::vector_z & results, double r, double costheta,
       }      
     }
   }
-  for(int i=0;i<12;i++) results[i]*=r;
+  for(int i=0;i<12;i++) real_results=(model.getPnucleus->getL_array()[model.getShell()]%2==0?imag(results[i]):real(results[i])*r;
   return;
 
   
