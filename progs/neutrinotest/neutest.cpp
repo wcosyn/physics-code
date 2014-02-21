@@ -332,85 +332,67 @@ int main(int argc, char *argv[])
   //find reasonable integration limits
   double E_low=E_out;
   double E_high=E_out;
-//   bool switchlow=0;
-//   for(int i=1;i<1000;i++){
-//     double E_in=E_out+(3.E03-E_out)*0.001*i;
-//     double omega=E_in-E_out;
-//     double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
-// 	-lepton->GetLeptonMass()*lepton->GetLeptonMass();
-//     double x=Q2/(2.*MASSP*omega);
-// //     cout << E_in << " " << omega << " " << Q2*1.E-06 << " " << x <<  endl;
-//     for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
-//       //lowest p_m is always at theta_cm -1
-//       TKinematics2to2 kin("","",Nucleus.getMassA(),
-// 			  Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
-// 			  shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,-1.);
-//       //anything above 300 MeV contribution will be negligible
-//       if(kin.GetPklab()<300.){ 
-// 	if(!switchlow){
-// 	  cout<< E_in << " " << kin.GetPklab() << " " << shell << endl;
-// 	  switchlow=1;
-// 	  E_low=E_in;
-// 	}
-// 	else if(E_in>E_high) E_high=E_in;
-// 	double tempmax=1., tempmin=-1.;
-// 	getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell);
-// // 	cout << shell << " " << kin.GetPklab() <<" " << cthmin[shell] << " " << cthmax[shell] << endl;
-// 	if(max<tempmax) max=tempmax;
-// 	if(cthmax[shell]<tempmax) cthmax[shell]=tempmax;
-//       }
-//     }
-//   }
-//   cout << E_low << " " << E_high << " " << max << endl;
-//   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;}
+  bool switchlow=0;
+  for(int i=1;i<1000;i++){
+    double E_in=E_out+(3.E03-E_out)*0.001*i;
+    double omega=E_in-E_out;
+    double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
+	-lepton->GetLeptonMass()*lepton->GetLeptonMass();
+    double x=Q2/(2.*MASSP*omega);
+//     cout << E_in << " " << omega << " " << Q2*1.E-06 << " " << x <<  endl;
+    for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
+      //lowest p_m is always at theta_cm -1
+      TKinematics2to2 kin("","",Nucleus.getMassA(),
+			  Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
+			  shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,-1.);
+      //anything above 300 MeV contribution will be negligible
+      if(kin.GetPklab()<300.){ 
+	if(!switchlow){
+	  cout<< E_in << " " << kin.GetPklab() << " " << shell << endl;
+	  switchlow=1;
+	  E_low=E_in;
+	}
+	else if(E_in>E_high) E_high=E_in;
+	double tempmax=1., tempmin=-1.;
+	getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell);
+// 	cout << shell << " " << kin.GetPklab() <<" " << cthmin[shell] << " " << cthmax[shell] << endl;
+	if(max<tempmax) max=tempmax;
+	if(cthmax[shell]<tempmax) cthmax[shell]=tempmax;
+      }
+    }
+  }
+  cout << E_low << " " << E_high << " " << max << endl;
+  for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;}
   
   //test for comparison with pascal
   //../../bin/neutest 300 -0.9 1 ~/Code/share
 
-  double E_in=900.;
-  double omega=E_in-E_out;
-  double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
-      -lepton->GetLeptonMass()*lepton->GetLeptonMass();
-   cout << E_in << " " << omega<< " " << Q2*1.E-06 << " " << sqrt(Q2+omega*omega) << endl;
-  obs.getPlepton()->SetBeamEnergy(E_in);
-  double costhetacm=-0.9;
-  int shell=3;
-  TKinematics2to2 kin("","",Nucleus.getMassA(),
-		      Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
-		      shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
-  double pm=kin.GetPklab();
-//     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-//     << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-//     << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
-  if(!kin.IsPhysical()){
-    //for(int i=0;i<2;i++) results[i]+=0.;
-    cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
-  }
-  else{
-    double result=obs.getDiffWeakQECross(kin,current,thick,0,0,0,shell,0.,2E04,1,1);
-//     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-//     << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-//     << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << result << endl;
-  }
-//   shell=2;
-//   TKinematics2to2 kin2("","",Nucleus.getMassA(),
+//   double E_in=900.;
+//   double omega=E_in-E_out;
+//   double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
+//       -lepton->GetLeptonMass()*lepton->GetLeptonMass();
+//    cout << E_in << " " << omega<< " " << Q2*1.E-06 << " " << sqrt(Q2+omega*omega) << endl;
+//   obs.getPlepton()->SetBeamEnergy(E_in);
+//   double costhetacm=-1.; //for easy comparison, lots of currents are zero here!
+//   int shell=3;
+//   TKinematics2to2 kin("","",Nucleus.getMassA(),
 // 		      Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
 // 		      shell<Nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
-//   pm=kin2.GetPklab();
-// //     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin2.GetCosthklab())*RADTODEGR << " " 
-// //     << acos(kin2.GetCosthYlab())*RADTODEGR << " " << kin2.GetPklab() << " " << kin2.GetPYlab() 
-// //     << " " << kin2.GetKlab() << " " << kin2.GetWlab() << endl;
-//   if(!kin2.IsPhysical()){
+//   double pm=kin.GetPklab();
+// //     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+// //     << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+// //     << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
+//   if(!kin.IsPhysical()){
 //     //for(int i=0;i<2;i++) results[i]+=0.;
 //     cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
 //   }
 //   else{
-//     double result=obs.getDiffWeakQECross(kin2,current,thick,0,0,0,shell,0.,2E04,1,1);
-// //     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin2.GetCosthklab())*RADTODEGR << " " 
-// //     << acos(kin2.GetCosthYlab())*RADTODEGR << " " << kin2.GetPklab() << " " << kin2.GetPYlab() 
-// //     << " " << kin2.GetKlab() << " " << kin2.GetWlab() << " " << result << endl;
+//     double result=obs.getDiffWeakQECross(kin,current,thick,0,0,1,shell,0.,2E04,1,1);
+//     cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+//     << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+//     << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << result << endl;
 //   }
-  exit(1);
+//   exit(1);
   
   
   //initialize object
@@ -470,7 +452,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 	cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
       }
       else{
-	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E04,0,1);
+	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E03,0,1);
 	results[(shell<pNucleus.getPLevels()?1:0)]+= result;
 	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
 	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 

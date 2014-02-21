@@ -54,11 +54,11 @@ int main(int argc, char *argv[])
   
 // comparison with pascal's code (input_compare_onenucl.dat input file) 
 //  ../../bin/onenucl 1696000.0 851.5 190.0 with dutta beam inq
-  double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 1, 1, 0.,2E04,1);
-  double crosss=obs.getDiffCross(kin, 2, 0, 0, 0, 1,0,0.,2E04,1);
+  double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 1, 1, 0.,2E05,1);
+//   double crosss=obs.getDiffCross(kin, 2, 0, 0, 0, 1,0,0.,2E04,1);
   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << 
-  acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << endl;
-  cout << sqrt(Q2+omega*omega) << " " << crossp << " " << crosss << endl;
+  acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << endl;
+//   cout << sqrt(Q2+omega*omega) << " " << crossp << " " << crosss << endl;
 
 //   MeanFieldNucleusThick Fe(3,homedir);
 //   TKinematics2to2 kin2("","",Fe.getMassA(),Fe.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
@@ -86,10 +86,10 @@ int main(int argc, char *argv[])
  */     
       
   vector<double> observ;
-  obs.getAllObs_tnl(observ,kin,2,1,thick,0,1.,2E04,1);
+//   obs.getAllObs_tnl(observ,kin,2,1,thick,0,1.,2E04,1);
 //   cout << cross[4] << " " << observ[8*4] << endl;
-  for(int i=0;i<8;i++) cout << observ[i] << endl;
-  for(int i=0;i<8;i++) cout << observ[32+i] << endl;
+//   for(int i=0;i<8;i++) cout << observ[i] << endl;
+//   for(int i=0;i<8;i++) cout << observ[32+i] << endl;
   //cout << observ[0] << " " << observ[8*(thick?4:2)] << " " << observ[3] << " " << observ[8*(thick?4:2)+3] << endl;
 //   for(int i=0;i<5;i++) {
 //     for(int j=0;j<8;j++) cout << observ[i*8+j] << " ";

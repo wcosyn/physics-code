@@ -106,7 +106,7 @@ switch(current){
 
 void NucleonEMOperator::setGE(){
   if(parametrization==0){ //BBA
-    if(!proton) GE=GE_null*pow(1+Q2/.71*1.E06,-2)*tau*0.942/(1+4.61*tau); //neutron
+    if(!proton) GE=GE_null*pow(1+Q2/.71E06,-2)*tau*0.942/(1+4.61*tau); //neutron
     else{
       if(Q2<6.*1.E06) GE=GE_null/(1. + 3.253 * Q2*1.E-06 + 1.422 * pow(Q2*1.E-06,2) + 0.08582 * pow(Q2*1.E-06,3) 
 	    + 0.3318 * pow(Q2*1.E-06,4) +  (-0.09371)*pow(Q2*1.E-06,5) + 
