@@ -452,7 +452,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 	cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << endl;
       }
       else{
-	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E03,0,1);
+	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E04,0,1);
 	results[(shell<pNucleus.getPLevels()?1:0)]+= result;
 	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
 	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
