@@ -241,8 +241,8 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 		(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))*conj(Axial(i,2)-Axial(i,1))); //W_LT1
 	    response[6]+=4.*real((Vector(i,3))*conj(Vector(i,2)-Vector(i,1))
 	      +(Axial(i,3))*conj(Axial(i,2)-Axial(i,1))); //W_LT2
-	    response[8]+=4.*imag((Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))*conj(Vector(i,2)-Vector(i,1))+
-		(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))*conj(Axial(i,2)-Axial(i,1))); //W_LT'
+	    response[8]+=4.*imag((Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))*conj(Vector(i,2)-Vector(i,1))
+	      +(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))*conj(Axial(i,2)-Axial(i,1))); //W_LT'
 	    
 	    //these are zero in electron scattering or NC but not for CC due to parity rules!!!!
 	    extraresponse[0]+=-4.*imag(Vector(i,2)*conj(Axial(i,1))+Axial(i,2)*conj(Vector(i,1)));
@@ -287,7 +287,10 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     
     //compute response functions
     double response[6];
+    double extraresponse[3];
     for(int i=0;i<6;i++) response[i]=0.;
+    for(int i=0;i<3;i++) extraresponse[i]=0.;
+    
     for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
 	Matrix<2,4> J;
 	Matrix<2,4> Vector;
@@ -295,20 +298,35 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 	reacmodel->getMatrixEl(kin,Vector,shellindex,m,CT,pw, current, SRC, thick,1);
 	reacmodel->getMatrixEl(kin,Axial,shellindex,m,CT,pw, current, SRC, thick,0);
 	J=Vector+Axial;
-	for(int i=0;i<2;i++){
-	  response[0]+=norm(J(i,0)-qvec/kin.GetWlab()*J(i,3));
-	  response[1]+=norm(J(i,1))+norm(J(i,2));
-	  response[2]+=2.*real(conj(J(i,2))*J(i,1));
-	  response[3]+=2.*real(conj(J(i,0)-qvec/kin.GetWlab()*J(i,3))*(J(i,2)-J(i,1)));
-	  response[4]+=norm(J(i,1))-norm(J(i,2));
-	  response[5]+=2.*imag((J(i,0)-qvec/kin.GetWlab()*J(i,3))*conj(J(i,2)-J(i,1)));
+	for(int i=0;i<1;i++){ //exploit parity symmetries, only one polarization needed
+//  	  cout << i << " " << m << " " << J(i,0) << " " << J(i,1) << " " <<  J(i,2) << " " << J(i,3) << endl;
+	  response[0]+=2.*(norm(Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))+
+		  norm(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))); //W_L
+	  response[1]+=2.*(norm(Vector(i,1))+norm(Vector(i,2))+norm(Axial(i,1))+norm(Axial(i,2))); //W_T
+	  response[4]+=4.*real(conj(Vector(i,2))*Axial(i,2)-conj(Vector(i,1))*Axial(i,1)); //W_T'
+	  if(!phi_int){
+	    response[2]+=4.*real(Vector(i,2)*conj(Vector(i,1))+Axial(i,2)*conj(Axial(i,1))); //W_TT
+	    response[3]+=4.*real((Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))*conj(Vector(i,2)-Vector(i,1))+
+		(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))*conj(Axial(i,2)-Axial(i,1))); //W_LT
+	    response[5]+=4.*imag((Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))*conj(Vector(i,2)-Vector(i,1))
+	      +(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))*conj(Axial(i,2)-Axial(i,1))); //W_LT'
+	    extraresponse[0]+=-4.*imag(Vector(i,2)*conj(Axial(i,1))+Axial(i,2)*conj(Vector(i,1)));
+	    extraresponse[1]+=4.*imag((Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))*conj(Axial(i,2)+Axial(i,1))
+	      +(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))*conj(Vector(i,2)+Vector(i,1)));
+	    extraresponse[2]+=4.*real((Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))*conj(Axial(i,2)+Axial(i,1))
+	      +(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))*conj(Vector(i,2)+Vector(i,1)));
+	  }
 	}
     }
+//     for(int i=0;i<6;i++) cout << kinfactors[i] << " " << response[i] << endl;
+//     for(int i=0;i<3;i++) cout << extraresponse[i] << endl;
     double result=0.;
     //combine everything
-   if(!phi_int) result=kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]*cos(2.*phi)
-	      +kinfactors[3]*response[3]*cos(phi)
-	      +(shellindex<pnucl->getPLevels()?1.:-1.)*(kinfactors[4]*response[4]+kinfactors[5]*response[5]*sin(phi));
+   if(!phi_int) result=kinfactors[0]*response[0]+kinfactors[1]*response[1]
+			+kinfactors[2]*(response[2]*cos(2.*phi)+extraresponse[0]*sin(2.*phi))
+			+kinfactors[3]*(response[3]*cos(phi)+extraresponse[1]*sin(phi))
+	      +(shellindex<pnucl->getPLevels()?1.:-1.)*(kinfactors[4]*response[4]
+							+kinfactors[5]*(response[5]*sin(phi)+extraresponse[2]*cos(phi)));
     else result=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]
       +(shellindex<pnucl->getPLevels()?1.:-1.)*kinfactors[4]*response[4]);
     delete reacmodel;

@@ -120,6 +120,7 @@ public:
   bool getUsersigma() const{return usersigma;} /*!< has the user set sigma? */
   MeanFieldNucleusThick * getPnucl() const{return pnucl;}  /*!< pointer to nucleus object */
   TLeptonKinematics * getPlepton() const{return lepton;} /*!< get pointer to lepton object */
+  TElectronKinematics * getPelectron() const{return electron;} /*!< get pointer to lepton object */
   
   
 private:
