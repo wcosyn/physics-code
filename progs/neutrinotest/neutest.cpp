@@ -444,7 +444,8 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
   for(int shell=0;shell<pNucleus.getTotalLevels();shell++) {
     if(costhetacm<cthmax[shell]){
       TKinematics2to2 kin("","",pNucleus.getMassA(),
-			  pNucleus.getMassA_min_proton()+pNucleus.getExcitation()[shell],
+			  (shell<pNucleus.getPLevels()? pNucleus.getMassA_min_proton(): pNucleus.getMassA_min_neutron())
+			  +pNucleus.getExcitation()[shell],
 			  shell<pNucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
       double pm=kin.GetPklab();
       if(!kin.IsPhysical()){
@@ -453,7 +454,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
       }
       else{
 	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E04,0,1);
-	results[(shell<pNucleus.getPLevels()?1:0)]+= result;
+	results[(shell<pNucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
 	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
 	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
 	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << result << endl;

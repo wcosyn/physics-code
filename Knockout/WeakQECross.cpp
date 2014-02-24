@@ -234,7 +234,7 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 	    +Axial(i,3)*conj(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3)));//W_L2
 	  response[2]+=2.*(norm(Vector(i,3))+norm(Axial(i,3))); //W_L3
 	  response[3]+=2.*(norm(Vector(i,1))+norm(Vector(i,2))+norm(Axial(i,1))+norm(Axial(i,2))); //W_T
-	  response[7]+=4.*real(conj(Vector(i,2))*Axial(i,2)-conj(Vector(i,1))*Axial(i,1)); //W_T'
+	  response[7]+=0.;//4.*real(conj(Vector(i,2))*Axial(i,2)-conj(Vector(i,1))*Axial(i,1)); //W_T'
 	  if(!phi_int){
 	    response[4]+=4.*real(Vector(i,2)*conj(Vector(i,1))+Axial(i,2)*conj(Axial(i,1))); //W_TT
 	    response[5]+=4.*real((Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))*conj(Vector(i,2)-Vector(i,1))+
@@ -244,7 +244,7 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 	    response[8]+=4.*imag((Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))*conj(Vector(i,2)-Vector(i,1))
 	      +(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))*conj(Axial(i,2)-Axial(i,1))); //W_LT'
 	    
-	    //these are zero in electron scattering or NC but not for CC due to parity rules!!!!
+	    //these are zero in electron scattering but not for CC due to parity rules!!!!
 	    extraresponse[0]+=-4.*imag(Vector(i,2)*conj(Axial(i,1))+Axial(i,2)*conj(Vector(i,1)));
 	    extraresponse[1]+=4.*imag((Vector(i,0)-kin.GetWlab()/qvec*Vector(i,3))*conj(Axial(i,2)+Axial(i,1))
 	      +(Axial(i,0)-kin.GetWlab()/qvec*Axial(i,3))*conj(Vector(i,2)+Vector(i,1)));
