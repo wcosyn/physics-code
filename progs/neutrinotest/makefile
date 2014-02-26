@@ -24,10 +24,6 @@ GPFLAG  = 	-pg
 WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG) # $(DBGFLAG) #$(GPFLAG)  #$(STATIC)
 
-#		Executable file
-EFILE   = 	../../bin/neutest
-EFILEST   = 	../../bin/staticneutest
-
 
 #		Mathematical functions
 LIBS =	 	-lm
@@ -44,25 +40,38 @@ HDRS =
 # root headers
 
 #		Object files
-OBJS = 	        $(HDRS:.hpp=.o)  $(CPATH)/neutest.o
+# OBJS = 	        $(EFILE:../../bin/=)  
+# OBJS2 = 	        $(HDRS:.hpp=.o)  $(CPATH)/neutestint.o
 
 #-------------------------------------------------------------------------
+#		Executable file
+EFILE   = 	../../bin/neutest ../../bin/neutestint
+EFILEST   = 	../../bin/staticneutest 
 
 #		Targets...
 
 all:		$(EFILE)
 static:		$(EFILEST)
 #-------------------------------------------------------------------------
-clean:;		@rm -f $(OBJS) core*
+clean:;		@rm -f *.o $(EFILE)
 
 #-------------------------------------------------------------------------
+.SECONDEXPANSION:
+$(EFILE):  $$(@F).cpp; 
+	@echo $(@F).cpp
+	$(CC) $(CFLAGS) $(@F).cpp $(LIBS) $(WIMLIBS) $(LDFLAGS) $(ROOT) $(LIBDIRS) $(INCLUDEDIRS) -o $@
 
-$(EFILE):	$(OBJS) $(HDRS)
-		@echo "Linking $(EFILE)..."
-		$(CC) $(CFLAGS) -o $(EFILE) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
-$(EFILEST):	$(OBJS) $(HDRS) 
-		@echo "Linking $(EFILEST)..."
-		$(CC) $(CFLAGS) -o $(EFILEST) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
+# $(EFILE):; @echo $(@F).cpp
+
+# # $(EFILE):	$(OBJS) $(HDRS)
+# # 		@echo "Linking $(EFILE)..."
+# # 		$(CC) $(CFLAGS) -o $(EFILE) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
+# $(EFILE2):	$(OBJS2) $(HDRS)
+# 		@echo "Linking $(EFILE2)..."
+# 		$(CC) $(CFLAGS) -o $(EFILE) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
+# $(EFILEST):	$(OBJS) $(HDRS) 
+# 		@echo "Linking $(EFILEST)..."
+# 		$(CC) $(CFLAGS) -o $(EFILEST) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
 
 
 # $(OBJS):	$(HDRS) $(HDRS2) $(DICTHDRS) $(INCHDRS)
@@ -71,7 +80,7 @@ $(EFILEST):	$(OBJS) $(HDRS)
 
 
 #		Rule to make objectfile
-%.o: 		%.cpp
-		@echo "Compiling..."
-		$(CC) $(CFLAGS) -c $*.cpp -o $*.o $(ROOT) $(INCLUDEDIRS)
+# %.o: 		%.cpp
+# 		@echo "Compiling..."
+# 		$(CC) $(CFLAGS) -c $*.cpp -o $*.o $(ROOT) $(INCLUDEDIRS)
 
