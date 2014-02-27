@@ -496,7 +496,7 @@ int main(int argc, char *argv[])
   cout << endl << endl << endl;}
    
   
-  if(min>=max)   cout << T_mu_min+50. << " " << (costhetamu_min+costhetamu_min)/2. << " " << 0.
+  if(min>=max)   cout << T_mu_min+50. << " " << (costhetamu_min+costhetamu_max)/2. << " " << 0.
   << " " << 0. << " " << 0 << endl;
 
   
@@ -559,7 +559,7 @@ void adap_intPm(numint::vector_d & results, double E_out, double costhetamu, dou
       else{
 	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E04,0,1);
 	results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
-	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+	cout << shell << " " << E_out << " " << costhetamu << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
 	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
 	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << endl;
       }
