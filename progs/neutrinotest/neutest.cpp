@@ -387,6 +387,7 @@ int main(int argc, char *argv[])
 //    cout << E_in << " " << omega<< " " << Q2*1.E-06 << " " << sqrt(Q2+omega*omega) << endl;
 //   obs.getPlepton()->SetBeamEnergy(E_in);
 //   double costhetacm=-1.; //for easy comparison, lots of currents are zero here!
+//   double costhetacm=-0.9; //for easy comparison, lots of currents are zero here!
 //   int shell=3;
 //   TKinematics2to2 kin("","",Nucleus.getMassA(),
 // 		      Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[shell],
