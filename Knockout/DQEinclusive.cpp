@@ -535,7 +535,7 @@ void DQEinclusive::calc_F2DincFSI_PVoff(double &fsi1_off, double &fsi2_off, doub
   
   ffactorseq=new NucleonEMOperator(Q2,proton,ffparam);
   ffactorsdiff=new NucleonEMOperator(Q2,!proton,ffparam);
-
+  //first we perform the regular 4d integration, inside we do the PV integrations.
   
   minpcm=1.E03;
   numint::array<double,3> lower = {{0.,0.,0.}};
@@ -709,6 +709,7 @@ void DQEinclusive::FSI_PV(numint::vector_d & result, double pperp1, double qt,
   }
   result[0]*=chi*qt*pperp1;
   result[1]*=chi*qt*pperp1;
+  cout << pperp1 << " " << qt << " " << qphi << " " << result[0] << " " << result[1] << endl;
 }
 
 double DQEinclusive::PV_int1(double pz1, void * params){

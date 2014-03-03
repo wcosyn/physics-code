@@ -15,6 +15,8 @@
  * [RhoDeuteron, RhoTCross] <BR>
  * - It has classes to compute weak quasi-elastic knockout on a general nucleus <BR>
  * [WeakQECross, WeakQEHadronCurrent] <BR>
+ * -It Has a class to compute the quasi-elastic contribution to inclusive D(e,e') scattering <BR>
+ * [DQEinclusive] <BR>
  * 
  */
 
