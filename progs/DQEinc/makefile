@@ -10,12 +10,12 @@ VERSION =
 #		Calc-path
 CPATH 	=	.
 
-#  CC      = 	icpc
-  CC      = 	g++
+  CC      = 	icpc
+#  CC      = 	g++
 
 #		Flags
-  OPTFLAG	=	-O3 -fPIC
-#  OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX
+#  OPTFLAG	=	-O3 -fPIC -std=c++0x
+  OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX -std=c++0x
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
