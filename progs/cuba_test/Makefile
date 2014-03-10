@@ -1,65 +1,46 @@
+# Makefile with auto dep checking
+# Note that the build will fail if header files are renamed
+# make will crash reporting it can't find the renamed header files
+# because the *.d depency files will be out of date.
+# This can be fixed with extra code but to keep the Makefile nice & short
+# Just do make clean and make to rebuild the correct dependency files
 #
-# Makefile for Glauber calculations:	Wim Cosyn
-#
-#-------------------------------------------------------------------------
-#
-
-#		Version number
-VERSION =	
-
-#		Calc-path
-CPATH 	=	.
-
-#		C compilation...
-# CC      = 	icpc
- CC      = 	g++
-
-#		Flags
- OPTFLAG	= -O3 #-fPIC
-#OPTFLAG	=	 -O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel
-STATIC  =	--static
-DBGFLAG	=	-g
-GPFLAG  = 	-pg
-WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG)  #$(GPFLAG) #$(STATIC)
+# @author Camille Colle
 
 
-#		Mathematical functions
-LIBS =	 	-lm  #-lifcore
-WIMLIBS = -lMePhys -lGlauber -lDIS -lIntegrator -lKnockout -lcuba
-ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L$(HOME)/Code/lib
- INCLUDEDIRS =  -I$(HOME)/Code/Tools -I$(HOME)/Code/Glauber -I$(HOME)/Code/DIS -I$(HOME)/Code/Integrator -I$(HOME)/Code/Knockout
-STATICLIBS = $(HOME)/Code/lib/libglauber.a  $(HOME)/Code/lib/libmephys.a $(HOME)/Code/lib/libdis.a $(HOME)/Code/lib/libcuba.a
-LDFLAGS = -Wl,-rpath,$(HOME)/Code/lib/
-#		Header files
-HDRS =		
-
-# root headers
-
-#		Object files
-#OBJS = 	        $(HDRS:.hpp=.o) 
-
-#-------------------------------------------------------------------------
-
-#		Targets...
-
-targets=cubatest cubatest_wrapped cubatest_multicomp
-
-all:		$(targets)
-
-$(targets): %: %.cpp
-	$(CC) $(CFLAGS) $< $(LIBS) $(WIMLIBS) $(LDFLAGS) $(ROOT) $(LIBDIRS) $(INCLUDEDIRS) -o $@
-	
-#-------------------------------------------------------------------------
-.PHONY:clean
-clean:;		@rm $(targets) *.o
-
-#-------------------------------------------------------------------------
+CC     = g++
+EXTRAFLAGS = #-Wall -Wextra -Weffc++
+CFLAGS = -O3 $(EXTRAFLAGS) `gsl-config --cflags` `root-config --cflags`
+INC    = -I$(HOME)/Code/Tools -I$(HOME)/Code/Integrator
+LIBS   = -L$(HOME)/Code/lib -lcuba -lIntegrator `gsl-config --libs` `root-config --libs`
 
 
+TARGETS=cubatest cubatest_wrapped cubatest_multicomp # list here all files that contain a main()
+OBJS = cubatest.o cubatest_wrapped.o cubatest_multicomp.o # list here all object files needed to build
+DEPS:=$(OBJS:.o=.d)
 
-#		Rule to make objectfile
-%.o: 		%.cpp
-		@echo "Compiling..."
-		$(CC) $(CFLAGS) -c $*.cpp -o $*.o $(ROOT) $(INCLUDEDIRS)
+all: $(TARGETS)
+
+$(TARGETS): %: %.o
+	@tput setf 4
+	@tput bold
+	@printf "Building executable $@ \n"
+	@tput sgr0
+	$(CC) $^ $(CFLAGS) $(INC) $(LIBS) -o $@
+
+-include $(DEPS)
+
+
+%.o: %.cpp
+	@tput setf 6
+	@printf "Building dependency for $@ \n"
+	@tput sgr0
+	$(CC) $< -MM $(INC) > $(patsubst %.o,%.d,$@)
+	@tput setf 6
+	@printf "Building object file $@ \n"
+	@tput sgr0
+	$(CC) $< -c $(CFLAGS) $(INC) -o $@
+
+.PHONY: clean
+clean:
+	rm *.o *.d
