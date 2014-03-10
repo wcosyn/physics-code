@@ -27,20 +27,20 @@ $(TARGETS): %: %.o
 	@printf "Building executable $@ \n"
 	@tput sgr0
 	$(CC) $^ $(CFLAGS) $(INC) $(LIBS) -o $@
-
+	@printf "\n"
 -include $(DEPS)
 
 
 %.o: %.cpp
 	@tput setf 6
-	@printf "Building dependency for $@ \n"
+	@printf "Building dependencies for $@ \n"
 	@tput sgr0
 	$(CC) $< -MM $(INC) > $(patsubst %.o,%.d,$@)
 	@tput setf 6
 	@printf "Building object file $@ \n"
 	@tput sgr0
 	$(CC) $< -c $(CFLAGS) $(INC) -o $@
-
+	@printf "\n"
 .PHONY: clean
 clean:
-	rm *.o *.d
+	rm *.o *.d $(TARGETS)
