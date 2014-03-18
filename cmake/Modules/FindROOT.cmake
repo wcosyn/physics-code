@@ -12,13 +12,20 @@
 
 MESSAGE(STATUS "Looking for Root...")
 
-SET(ROOT_CONFIG_SEARCHPATH
-  ${SIMPATH}/tools/root/bin
-  $ENV{ROOTSYS}
-  $ENV{ROOTSYS}/bin
-  /usr/bin
+execute_process(COMMAND root-config --bindir
+	OUTPUT_VARIABLE ROOT_CONFIG_SEARCHPATH
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+## Kept the Code below for now 
+## if the above command execute_process works
+## this can be deleted
+#SET(ROOT_CONFIG_SEARCHPATH
+#  ${SIMPATH}/tools/root/bin
+#  $ENV{ROOTSYS}
+#  $ENV{ROOTSYS}/bin
+#  /usr/bin
 #/apps/gent/gastly/nehalem/software/ROOT/v5.34.01-ictce-4.0.6/bin
-)
+#)
 
 SET(ROOT_DEFINITIONS "")
 
@@ -33,7 +40,7 @@ FIND_PROGRAM(ROOT_CONFIG_EXECUTABLE NAMES root-config PATHS
 IF (${ROOT_CONFIG_EXECUTABLE} MATCHES "ROOT_CONFIG_EXECUTABLE-NOTFOUND")
   MESSAGE( FATAL_ERROR "ROOT not installed in the searchpath and ROOTSYS is not set. Please
  set ROOTSYS or add the path to your ROOT installation in the Macro FindROOT.cmake in the
- subdirectory cmake/modules.")
+ subdirectory cmake/modules. Or make root-config visible to your terminal.")
 ELSE (${ROOT_CONFIG_EXECUTABLE} MATCHES "ROOT_CONFIG_EXECUTABLE-NOTFOUND")
   STRING(REGEX REPLACE "(^.*)/bin/root-config" "\\1" test ${ROOT_CONFIG_EXECUTABLE}) 
   SET( ENV{ROOTSYS} ${test})
