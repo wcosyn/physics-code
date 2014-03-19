@@ -24,13 +24,13 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(GPFLAG)  #$(DBGFLAG)  #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/dis
-EFILEST   = 	../../bin/staticdis
+EFILE   = 	../../bin/deepstest ../../bin/deepsfit
+EFILEST   = 	../../bin/staticdeepstest ../../bin/staticdeepsfit
 
 
 #		Mathematical functions
 LIBS =	 	-lm 
-WIMLIBS = -lMePhys -lGlauber -lDIS -lKnockout -lIntegrator
+WIMLIBS = -lMePhys -lGlauber -lDIS -lKnockout -lIntegrator -lcuba
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/DIS -I ~/Code/Knockout
@@ -38,35 +38,15 @@ STATICLIBS =  ~/Code/lib/libglauber.a   ~/Code/lib/libmephys.a  ~/Code/lib/libdi
 
 #		Header files
 HDRS =		
-# root headers
-
-#		Object files
-OBJS = 	        $(HDRS:.hpp=.o) $(CPATH)/deepstest.o
-
-#-------------------------------------------------------------------------
-
-#		Targets...
 
 all:		$(EFILE)
 static:		$(EFILEST)
 #-------------------------------------------------------------------------
-clean:;		@rm -f $(OBJS) core*
+clean:;		@rm -f *.o $(EFILE)
 
 #-------------------------------------------------------------------------
+.SECONDEXPANSION:
+$(EFILE):  $$(@F).cpp; 
+	@echo $(@F).cpp
+	$(CC) $(CFLAGS) $(@F).cpp $(LIBS) $(WIMLIBS) $(LDFLAGS) $(ROOT) $(LIBDIRS) $(INCLUDEDIRS) -o $@
 
-$(EFILE):	$(OBJS) $(HDRS)
-		@echo "Linking $(EFILE)..."
-		$(CC) $(CFLAGS) -o $(EFILE) $(MAIN1) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
-$(EFILEST):	$(OBJS) $(HDRS) 
-		@echo "Linking $(EFILEST)..."
-		$(CC) $(CFLAGS) -o $(EFILEST) $(MAIN1) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
-
-# $(OBJS):	$(HDRS) $(HDRS2) $(DICTHDRS) $(INCHDRS)
-
-#------
-
-
-#		Rule to make objectfile
-%.o: 		%.cpp
-		@echo "Compiling..."
-		$(CC) $(CFLAGS) -c $*.cpp -o $*.o $(ROOT) $(INCLUDEDIRS)

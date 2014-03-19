@@ -521,12 +521,12 @@ int main(int argc, char *argv[])
   F.f=adap_intPm;
   unsigned count=0;
   if(!fluxintegrator) numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,avgcross,count,0);
-  else numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-03,2E02,2E04,avgcross,count,0);
+  else numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-03,2E02,1E05,avgcross,count,0);
    
   //cross section in 10^-39 cm^2 GeV ^-1 per nucleon!!
   //factor 2\pi because of integration over muon polar angle
   cout << endl << endl << endl;
-  cout << T_mu_min+50. << " " << (costhetamu_min+costhetamu_min)/2. << " " << avgcross[0]*1.E16*2.*PI/Nucleus.getN()/100./0.1
+  cout << T_mu_min+50. << " " << (costhetamu_min+costhetamu_max)/2. << " " << avgcross[0]*1.E16*2.*PI/Nucleus.getN()/100./0.1
   << " " << avgcross[1]*1.E16*2.*PI/Nucleus.getZ()/100./0.1 << " " << count << endl;
   
   delete lepton;
@@ -557,7 +557,7 @@ void adap_intPm(numint::vector_d & results, double E_out, double costhetamu, dou
 // 	cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << " " << kin.GetPk() << endl;
       }
       else{
-	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,1E05,0,1);
+	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E04,0,1);
 	results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
 	cout << shell << " " << E_out << " " << costhetamu << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
 	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 

@@ -44,8 +44,9 @@ int main(int argc, char *argv[])
       (proton?f2_2:f2_1)=Dinc.getMinpcm();
       Dinc.calc_F2DincFSI_PVoff(f1,f2,Q2,x,2,integrator);
       cout << "fsiresultoff " << x << " " << proton << " " << f1 << " " << f2 << " " << endl;
-
-
+      fisoffPV1+=f1;
+      fisoffPV2+=f2;
+      
     }
     cout << x << " " << teller1 << " " << teller2 << " " << teller1+teller2 << " " << fsi1 << " " << fsi2 << " "
     << fsi1+fsi2 << " " << fsioff1 << " " << fsioff2 << " " << fsioff1+fsioff2 << " " 
