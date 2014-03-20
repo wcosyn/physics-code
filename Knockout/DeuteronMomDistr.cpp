@@ -80,6 +80,25 @@ double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin) const{
   return pwtotal*MASSD/(2.*(MASSD-sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass())));
 }
 
+double DeuteronMomDistr::getAzzDistrpw(TKinematics2to2 &kin) const{
+  //kaon translates to spectator nucleon
+  double pwtotal=0.;
+  double sintheta=sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
+  for(int M=-2;M<=2;M+=2){
+    for(int spinr=-1;spinr<=1;spinr+=2){
+      complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta,
+								     0.,
+								     kin.GetPklab()*kin.GetCosthklab()));
+								    
+      pwtotal+=(M==0?-2.:1.)*norm(wave);
+    }
+  }
+  //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
+  pwtotal*=2./3.;
+  //relativistic normalization
+  return pwtotal*MASSD/(2.*(MASSD-sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass())));
+}
+
 
 double DeuteronMomDistr::getMomDistrpw(TVector3 &pvec) const{
   double pwtotal=0.;
@@ -147,6 +166,51 @@ double DeuteronMomDistr::getMomDistrfsi(TKinematics2to2 &kin, double phi){
       wave+=I_UNIT/(32.*PI*PI*kin.GetKlab()*sqrt(Er))*result/sqrt(MASSD/(2.*(MASSD-Er)));
 
       fsitotal+=norm(wave);
+    }
+  }
+  //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
+  fsitotal*=2./3.;
+  return fsitotal*MASSD/(2.*(MASSD-Er));
+}
+
+double DeuteronMomDistr::getAzzDistrfsi(TKinematics2to2 &kin, double phi){
+  //kaon translates to spectator nucleon
+  double fsitotal=0.;
+  double sintheta=sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
+  double Er=sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass());
+  for(int M=-2;M<=2;M+=2){
+    for(int spinr=-1;spinr<=1;spinr+=2){
+      //plane-wave part
+      complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta*cos(phi),
+								    kin.GetPklab()*sintheta*sin(phi),
+								    kin.GetPklab()*kin.GetCosthklab()));
+      complex<double> result;
+      double qestimate=0.,thestimate=0.;
+
+      numint::array<double,2> lower = {{0.,0.}};
+      numint::array<double,2> upper = {{1.E03,2.*PI}};
+      DeuteronMomDistr::Ftor_FSI F;
+      F.momdistr=this;
+      F.kin=&kin;
+      F.M = M;
+      F.spinr=spinr;
+      F.Er = Er;
+      F.phi=phi;
+      numint::mdfunction<numint::vector_z,2> mdf;
+      mdf.func = &Ftor_FSI::exec;
+      mdf.param = &F;
+      numint::vector_z ret(1,0.);
+      F.f=DeuteronMomDistr::FSI_int;
+      int res=90;
+      unsigned count=0;
+    //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E03,ret,count,0);
+      result=ret[0];
+//       rombergerN(this,&DeuteronMomDistr::totdens_qt,0.,1.E03,1,&result,PREC,3,10,&qestimate, 
+// 				  &kin,M,spinr, Er,phi,&thestimate);
+      wave+=I_UNIT/(32.*PI*PI*kin.GetKlab()*sqrt(Er))*result/sqrt(MASSD/(2.*(MASSD-Er)));
+
+      fsitotal+=(M==0?-2.:1.)*norm(wave);
     }
   }
   //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;

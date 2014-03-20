@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     double x=atof(argv[5]);
     
     string wf = argv[2];
+    double maxEval=atof(argv[6]);
     TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
 
     double qvec=sqrt(Q2+pow(Q2/(2.*MASSP*x),2.));

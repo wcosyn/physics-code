@@ -48,6 +48,8 @@ public:
    * \return plane-wave momentum distribution [MeV^-3]
    */
   double getMomDistrpw(TKinematics2to2 &kin) const;
+  double getAzzDistrpw(TKinematics2to2 &kin) const;
+  double getAzzDistrfsi(TKinematics2to2 &kin, double phi);
   /*! Computes plane-wave momentum distribution, does not depend on phi
    * \param pvec vector of spectator momentum
    * \return plane-wave momentum distribution [MeV^-3]

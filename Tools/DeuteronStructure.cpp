@@ -103,6 +103,15 @@ double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinemat
   
 }
 
+double DeuteronStructure::getavgStructure_off(TKinematics2to2 &kin, TElectronKinematics &electron, double Wsq, double Einoff) const{
+  double FL, FT, FTT, FTL;
+  getStructureFunctions_off(kin,FL, FT, FTT, FTL, Wsq, Einoff);
+  if(isnan(FL)) return FL;
+  //cout << FL << " " << FT << " " << FTT << " " << FTL << " " << kin.GetQsquared() << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
+  return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
+  
+}
+
 
 double DeuteronStructure::getInclStructure(TKinematics2to2 &kin, double Einoff) const{
   double FL, FT, FTT, FTL;

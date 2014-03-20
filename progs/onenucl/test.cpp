@@ -54,24 +54,24 @@ int main(int argc, char *argv[])
   
 // comparison with pascal's code (input_compare_onenucl.dat input file) 
 //  ../../bin/onenucl 1696000.0 851.5 190.0 with dutta beam inq
-  double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 1, 1, 0.,2E05,1);
+//   double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 1, 1, 0.,2E05,1);
 //   double crosss=obs.getDiffCross(kin, 2, 0, 0, 0, 1,0,0.,2E04,1);
-  cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << 
-  acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << endl;
+//   cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << 
+//   acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << endl;
 //   cout << sqrt(Q2+omega*omega) << " " << crossp << " " << crosss << endl;
 
-//   MeanFieldNucleusThick Fe(3,homedir);
-//   TKinematics2to2 kin2("","",Fe.getMassA(),Fe.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
-//   Cross obs2(*elec,&Fe,prec,integrator,homedir,screening,scr);
-//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 0, 0.,2E04,1);
-//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 1, 0.,2E04,1);
-//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 2, 0.,2E04,1);
-//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 3, 0.,2E04,1);
-//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 4, 0.,2E04,1);
-//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 5, 0.,2E04,1);
-//   obs2.getDiffCross(kin2, 2, 0, 0, 0, 0, 6, 0.,2E04,1);
+  MeanFieldNucleusThick Fe(3,homedir);
+  TKinematics2to2 kin2("","",Fe.getMassA(),Fe.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
+  Cross obs2(*elec,&Fe,prec,integrator,homedir,screening,scr);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 0, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 1, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 2, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 3, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 4, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 5, 0.,2E04,1);
+  obs2.getDiffCross(kin2, 2, 0, 0, 0, 1, 6, 0.,2E04,1);
   
-//   exit(1);
+  exit(1);
   
 
  /* obs.getAllDiffCross(cross,kin,2,1,thick,0.,maxEval,1);

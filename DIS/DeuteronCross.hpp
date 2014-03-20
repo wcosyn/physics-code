@@ -62,6 +62,11 @@ public:
    */
   void getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
     double &planewave, double &fsi);
+  double getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool azz, bool pw, double Einoff);
+  void getDeepsAzz(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
+    double &Azz, double &Azzfsi, double &planewave, double &fsi);
+  
+  
   /*! reads in the Deeps data set in an array >
    * \param pdeepsarray pointer to array with the deeps results, indices as follows <BR>
    * Q2 [2 values] <BR>

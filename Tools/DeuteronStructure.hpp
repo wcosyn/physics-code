@@ -52,7 +52,7 @@ public:
   /*! gives you the combination of all structure functions
    * \param kin semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-   * \param el electron kinematics, see TElectronKinematics
+   * \param[in] el electron kinematics, see TElectronKinematics
    * \param phi [rad] angle between electron scattering plane and hadron reaction plane
    * \param Einoff [MeV] off-shell energy of interacting nucleon
    */
@@ -60,10 +60,18 @@ public:
   /*! combination of all structure functions averaged over phi (angle between hadron and electron plane)
    * \param kin semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-    * \param el electron kinematics, see TElectronKinematics
+    * \param[in] el electron kinematics, see TElectronKinematics
      * \param Einoff [MeV] off-shell energy of interacting nucleon
    */
   double getavgStructure(TKinematics2to2 &kin, TElectronKinematics &el, double Einoff) const;
+  /*! combination of all structure functions averaged over phi (angle between hadron and electron plane)
+   * Off-shell produced X case here!!!  mass W is known, but differs from invariant mass 
+   * \param kin semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+    * \param[in] el electron kinematics, see TElectronKinematics
+     * \param Einoff [MeV] off-shell energy of interacting nucleon
+   */
+  double getavgStructure_off(TKinematics2to2 &kin, TElectronKinematics &el, double Wsq, double Einoff) const;
   /*! Deuteron F2 structure functions, used in the inclusive calculations, defined as
    * \f$ F_2^D = F_L^D + \frac{Q^2}{2|q|^2}\frac{\nu}{m_N}F_T^D \f$
    * \param kin semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>

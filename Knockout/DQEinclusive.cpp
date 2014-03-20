@@ -70,15 +70,15 @@ void DQEinclusive::calc_F2Dinc(double &contrib1, double &contrib2, double Q2,dou
       res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E04,ret,ccount,0);
       break;
     }
-    case(1):{ //cuhre cubature from cuba lib
-      int nvec=1;
-      int flags=0x00;
-      int key=11;
-      char statefile[] = {""};
-      int nregions =0;
-      numint::cuhre(mdf,lower,upper,nvec,1.E-08,PREC,flags,1E03,2E04,key,statefile,nregions,count,fail,ret,error,prob);
-      break;
-    }
+//     case(1):{ //cuhre cubature from cuba lib
+//       int nvec=1;
+//       int flags=0x00;
+//       int key=11;
+//       char statefile[] = {""};
+//       int nregions =0;
+//       numint::cuhre(mdf,lower,upper,nvec,1.E-08,PREC,flags,1E03,2E04,key,statefile,nregions,count,fail,ret,error,prob);
+//       break;
+//     }
 //     case(2):{ //suave MC from cuba lib
 //       int nvec=1;
 //       int flags = 0x00;
@@ -252,7 +252,7 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 
 
 void DQEinclusive::calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, 
-				  int current, int integrator){
+				  int current, int integrator, int maxEval){
   
   ffactorseq=new NucleonEMOperator(Q2,proton,ffparam);
   ffactorsdiff=new NucleonEMOperator(Q2,!proton,ffparam);
@@ -281,78 +281,78 @@ void DQEinclusive::calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, 
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
   switch(integrator){
     case(0):{  //numint adaptive cubature from MIT lib
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E04,ret,ccount,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,maxEval,ret,ccount,0);
       break;
     }
-    case(1):{ //cuhre cubature from cuba lib
-      int nvec=1;
-      int flags=0x00;
-      int key=11;
-      char statefile[] = {""};
-      int nregions =0;
-      numint::cuhre(mdf,lower,upper,nvec,1.E-08,PREC,flags,1E03,2E04,key,statefile,nregions,count,fail,ret,error,prob);
-      break;
-    }
- /*   case(2):{ //suave MC from cuba lib
-      int nvec=1;
-      int flags = 0x00;
-      int seed = rand();
-      int nnew = 5000;
-      double flatness = 0.25;
-      char statefile[] = {""};
-      
-      // **** OUTPUT VARIABLES ****** //
-      int nregions    = 0;
-      numint::suave(mdf,lower,upper,nvec,1.E-08,PREC,flags,seed,1E03,2E04,nnew,flatness,
-		    statefile,nregions,count,fail,ret,error,prob);
-      break;
-    }
-    case(3):{ //vegas MC from cuba lib
-      int nvec = 1;// unless you know what SIMD is leave this 1
-      int flags = 0x00;
-      int seed = rand();
-      int nstart = 100;
-      int nincrease = 1000;
-      int nbatch = 5000;
-      int gridno = 0;
-      char statefile[] = {""};
-      // **** OUTPUT VARIABLES ****** //
-      numint::vegas(mdf,lower,upper,nvec,1.E-08,PREC,flags,seed,
-				1E03,2E04,nstart,nincrease,nbatch,gridno,
-				statefile,count,fail,ret,error,prob);
-      break;
-    }
-    case(4):{ //divonne MC from cuba lib
-	// **** INPUT VARIABLES ****** //
-	int nvec = 1; // unless you know what SIMD is leave this 1
-	int flags = 0x00;
-	int seed  = rand();
-	int key1 = 1;
-	int key2 = 1;
-	int key3 = 1;
-	int maxpass = 50 ;
-	double border = 0.;
-	double maxchisq = 5;
-	double mindeviation = 0.1;
-	int ngiven = 0;
-	int ldxgiven = 0;
-	double* xgiven = NULL;
-	int nextra = 0;
-	peakfinder_t peakfinder = 0;
-	char statefile[] = {""};
-	
-	// **** OUTPUT VARIABLES ****** //
-	int nregions=0;
-	numint::divonne(mdf,lower,upper,nvec,
-		1.E-05,PREC,flags,seed,
-		1E03,2E04,key1,key2,key3,
-		maxpass,border,maxchisq,mindeviation,
-		ngiven,ldxgiven,xgiven,nextra,peakfinder,
-		statefile,nregions,count,fail,
-		ret,error,prob);
-	break;
-    }
- */   default:{
+//     case(1):{ //cuhre cubature from cuba lib
+//       int nvec=1;
+//       int flags=0x00;
+//       int key=11;
+//       char statefile[] = {""};
+//       int nregions =0;
+//       numint::cuhre(mdf,lower,upper,nvec,1.E-08,PREC,flags,1E03,maxEval,key,statefile,nregions,count,fail,ret,error,prob);
+//       break;
+//     }
+//     case(2):{ //suave MC from cuba lib
+//       int nvec=1;
+//       int flags = 0x00;
+//       int seed = rand();
+//       int nnew = 5000;
+//       double flatness = 0.25;
+//       char statefile[] = {""};
+//       
+// //       **** OUTPUT VARIABLES ****** //
+//       int nregions    = 0;
+//       numint::suave(mdf,lower,upper,nvec,1.E-08,PREC,flags,seed,1E03,maxEval,nnew,flatness,
+// 		    statefile,nregions,count,fail,ret,error,prob);
+//       break;
+//     }
+//     case(3):{ //vegas MC from cuba lib
+//       int nvec = 1;// unless you know what SIMD is leave this 1
+//       int flags = 0x00;
+//       int seed = rand();
+//       int nstart = 100;
+//       int nincrease = 1000;
+//       int nbatch = 5000;
+//       int gridno = 0;
+//       char statefile[] = {""};
+// //       **** OUTPUT VARIABLES ****** //
+//       numint::vegas(mdf,lower,upper,nvec,1.E-08,PREC,flags,seed,
+// 				1E03,maxEval,nstart,nincrease,nbatch,gridno,
+// 				statefile,count,fail,ret,error,prob);
+//       break;
+//     }
+//     case(4):{ //divonne MC from cuba lib
+// // 	**** INPUT VARIABLES ****** //
+// 	int nvec = 1; // unless you know what SIMD is leave this 1
+// 	int flags = 0x00;
+// 	int seed  = rand();
+// 	int key1 = 1;
+// 	int key2 = 1;
+// 	int key3 = 1;
+// 	int maxpass = 50 ;
+// 	double border = 0.;
+// 	double maxchisq = 5;
+// 	double mindeviation = 0.1;
+// 	int ngiven = 0;
+// 	int ldxgiven = 0;
+// 	double* xgiven = NULL;
+// 	int nextra = 0;
+// 	peakfinder_t peakfinder = 0;
+// 	char statefile[] = {""};
+// 	
+// // 	**** OUTPUT VARIABLES ****** //
+// 	int nregions=0;
+// 	numint::divonne(mdf,lower,upper,nvec,
+// 		1.E-05,PREC,flags,seed,
+// 		1E03,maxEval,key1,key2,key3,
+// 		maxpass,border,maxchisq,mindeviation,
+// 		ngiven,ldxgiven,xgiven,nextra,peakfinder,
+// 		statefile,nregions,count,fail,
+// 		ret,error,prob);
+// 	break;
+//     }
+    default:{
       cerr << "integrator not supported" << endl;
       assert(1==0);
     }
@@ -562,75 +562,75 @@ void DQEinclusive::calc_F2DincFSI_PVoff(double &fsi1_off, double &fsi2_off, doub
       res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E01,2E04,ret,ccount,0);
       break;
     }
-    case(1):{ //cuhre cubature from cuba lib
-      int nvec=1;
-      int flags=0x00;
-      int key=11;
-      char statefile[] = {""};
-      int nregions =0;
-      numint::cuhre(mdf,lower,upper,nvec,1.E-08,PREC,flags,1E03,2E04,key,statefile,nregions,count,fail,ret,error,prob);
-      break;
-    }
- /*   case(2):{ //suave MC from cuba lib
-      int nvec=1;
-      int flags = 0x00;
-      int seed = rand();
-      int nnew = 5000;
-      double flatness = 0.25;
-      char statefile[] = {""};
-      
-      // **** OUTPUT VARIABLES ****** //
-      int nregions    = 0;
-      numint::suave(mdf,lower,upper,nvec,1.E-08,PREC,flags,seed,1E03,2E04,nnew,flatness,
-		    statefile,nregions,count,fail,ret,error,prob);
-      break;
-    }
-    case(3):{ //vegas MC from cuba lib
-      int nvec = 1;// unless you know what SIMD is leave this 1
-      int flags = 0x00;
-      int seed = rand();
-      int nstart = 100;
-      int nincrease = 1000;
-      int nbatch = 5000;
-      int gridno = 0;
-      char statefile[] = {""};
-      // **** OUTPUT VARIABLES ****** //
-      numint::vegas(mdf,lower,upper,nvec,1.E-08,PREC,flags,seed,
-				1E03,2E04,nstart,nincrease,nbatch,gridno,
-				statefile,count,fail,ret,error,prob);
-      break;
-    }
-    case(4):{ //divonne MC from cuba lib
-	// **** INPUT VARIABLES ****** //
-	int nvec = 1; // unless you know what SIMD is leave this 1
-	int flags = 0x00;
-	int seed  = rand();
-	int key1 = 1;
-	int key2 = 1;
-	int key3 = 1;
-	int maxpass = 50 ;
-	double border = 0.;
-	double maxchisq = 5;
-	double mindeviation = 0.1;
-	int ngiven = 0;
-	int ldxgiven = 0;
-	double* xgiven = NULL;
-	int nextra = 0;
-	peakfinder_t peakfinder = 0;
-	char statefile[] = {""};
-	
-	// **** OUTPUT VARIABLES ****** //
-	int nregions=0;
-	numint::divonne(mdf,lower,upper,nvec,
-		1.E-05,PREC,flags,seed,
-		1E03,2E04,key1,key2,key3,
-		maxpass,border,maxchisq,mindeviation,
-		ngiven,ldxgiven,xgiven,nextra,peakfinder,
-		statefile,nregions,count,fail,
-		ret,error,prob);
-	break;
-    }
- */   default:{
+//     case(1):{ //cuhre cubature from cuba lib
+//       int nvec=1;
+//       int flags=0x00;
+//       int key=11;
+//       char statefile[] = {""};
+//       int nregions =0;
+//       numint::cuhre(mdf,lower,upper,nvec,1.E-08,PREC,flags,1E03,2E04,key,statefile,nregions,count,fail,ret,error,prob);
+//       break;
+//     }
+//     case(2):{ //suave MC from cuba lib
+//       int nvec=1;
+//       int flags = 0x00;
+//       int seed = rand();
+//       int nnew = 5000;
+//       double flatness = 0.25;
+//       char statefile[] = {""};
+//       
+//       // **** OUTPUT VARIABLES ****** //
+//       int nregions    = 0;
+//       numint::suave(mdf,lower,upper,nvec,1.E-08,PREC,flags,seed,1E03,2E04,nnew,flatness,
+// 		    statefile,nregions,count,fail,ret,error,prob);
+//       break;
+//     }
+//     case(3):{ //vegas MC from cuba lib
+//       int nvec = 1;// unless you know what SIMD is leave this 1
+//       int flags = 0x00;
+//       int seed = rand();
+//       int nstart = 100;
+//       int nincrease = 1000;
+//       int nbatch = 5000;
+//       int gridno = 0;
+//       char statefile[] = {""};
+//       // **** OUTPUT VARIABLES ****** //
+//       numint::vegas(mdf,lower,upper,nvec,1.E-08,PREC,flags,seed,
+// 				1E03,2E04,nstart,nincrease,nbatch,gridno,
+// 				statefile,count,fail,ret,error,prob);
+//       break;
+//     }
+//     case(4):{ //divonne MC from cuba lib
+// 	// **** INPUT VARIABLES ****** //
+// 	int nvec = 1; // unless you know what SIMD is leave this 1
+// 	int flags = 0x00;
+// 	int seed  = rand();
+// 	int key1 = 1;
+// 	int key2 = 1;
+// 	int key3 = 1;
+// 	int maxpass = 50 ;
+// 	double border = 0.;
+// 	double maxchisq = 5;
+// 	double mindeviation = 0.1;
+// 	int ngiven = 0;
+// 	int ldxgiven = 0;
+// 	double* xgiven = NULL;
+// 	int nextra = 0;
+// 	peakfinder_t peakfinder = 0;
+// 	char statefile[] = {""};
+// 	
+// 	// **** OUTPUT VARIABLES ****** //
+// 	int nregions=0;
+// 	numint::divonne(mdf,lower,upper,nvec,
+// 		1.E-05,PREC,flags,seed,
+// 		1E03,2E04,key1,key2,key3,
+// 		maxpass,border,maxchisq,mindeviation,
+// 		ngiven,ldxgiven,xgiven,nextra,peakfinder,
+// 		statefile,nregions,count,fail,
+// 		ret,error,prob);
+// 	break;
+//     }
+    default:{
       cerr << "integrator not supported" << endl;
       assert(1==0);
     }

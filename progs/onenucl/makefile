@@ -59,7 +59,7 @@ clean:;		@rm -f $(OBJS) core*
 
 $(EFILE):	$(OBJS) $(HDRS)
 		@echo "Linking $(EFILE)..."
-		$(CC) $(CFLAGS) -o $(EFILE) $(OBJS) $(LIBS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
+		$(CC) $(CFLAGS) -o $(EFILE) $(OBJS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
 $(EFILEST):	$(OBJS) $(HDRS) 
 		@echo "Linking $(EFILEST)..."
 		$(CC) $(CFLAGS) -o $(EFILEST) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)

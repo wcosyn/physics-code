@@ -32,6 +32,19 @@ double DeuteronCross::getavgCross(TKinematics2to2 &kin,TElectronKinematics &elec
   
 }
 
+double DeuteronCross::getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool azz, bool pw, double Einoff){
+  
+  double y=kin.GetWlab()/elec.GetBeamEnergy(kin); 
+  double x=kin.GetQsquared()/(2.*massi*kin.GetWlab());
+  double front=(4.*PI*ALPHA*ALPHA)/(x*kin.GetQsquared()*kin.GetQsquared())
+		*(1-y-(x*x*y*y*massi*massi)/kin.GetQsquared());
+  double dens=azz?(pw?momdistr.getAzzDistrpw(kin):momdistr.getAzzDistrfsi(kin,0.)):
+    (pw?momdistr.getMomDistrpw(kin):momdistr.getMomDistrfsi(kin,0.));
+  double Dstrucs=structure.getavgStructure(kin,elec,Einoff);
+  return front*dens*Dstrucs*sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass())*HBARC*HBARC*1.E19;
+  
+}
+
 void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
     double &planewave, double &fsi){
 
@@ -84,6 +97,60 @@ void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, d
     
 }
 
+void DeuteronCross::getDeepsAzz(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
+    double &Azz, double &Azzfsi, double &planewave, double &fsi){
+
+  double massi=proton? MASSP:MASSN;
+  double massr=proton? MASSN:MASSP;
+  
+  double Er=sqrt(massr*massr+pr*pr);
+  double Einoff=MASSD-Er;
+  double massoff=sqrt(Einoff*Einoff-pr*pr);
+  
+  double xprime=Q2/(W*W-massoff*massoff+Q2);
+  
+  //calc nu
+  double prz=pr*costhetar;
+  double aaa=Einoff*Einoff-prz*prz;
+  double bbb=-Einoff*Q2/xprime;
+  double ccc=Q2*Q2/(4.*xprime*xprime)-Q2*prz*prz;
+  
+  double discr=sqrt(bbb*bbb-4.*aaa*ccc);
+  double nu1=(-bbb+discr)/(2.*aaa);
+  double nu2=(-bbb-discr)/(2.*aaa);
+  //cout << nu1 << " " << nu2 << endl;
+  double nu=nu2;
+  if(costhetar<0.) nu=nu1;
+  double qvec=sqrt(Q2+nu*nu);
+/*  double xx=Q2/2./(Einoff*nu+prz*qvec);
+  cout << xprime << " " << xx << endl;*/
+  double x=Q2/(2.*massi*nu);
+    
+  TKinematics2to2 kin("","",MASSD,MASSP,W,"qsquared:wlab:pklab",Q2,nu,pr);
+  TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
+//   DeuteronCross test(*elec,"paris",proton,"SLAC",36.3274,1.97948,-0.5,8.,1.2,4);
+  
+  double Eout=Ein-nu;
+  //unphysical kinematics!!!
+  if(Eout<0.){ planewave=fsi=0.0/0.; return;}
+  if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ planewave=fsi=0.0/0.; return;}
+
+  double thetain=acos((Ein*Ein+qvec*qvec-Eout*Eout)/(2.*Ein*qvec));
+  double yprime=(Einoff*nu+prz*qvec)/(Ein*Einoff+Ein*cos(thetain)*pr*costhetar/*+Ein*sin(thetain)*pr*sqrt(1.-costhetar*costhetar)*/);  
+  double R=0.18;
+  double frontdeeps=(4.*PI*ALPHA*ALPHA)/(xprime*Q2*Q2)*
+  (yprime*yprime/(2.*(1.+R))+(1.-yprime)+(pow(massoff*xprime*yprime,2.)*(1.-R))/(Q2*(1+R)));
+  double dxprimedx=-2.*xprime*xprime*nu/(x*qvec)*((Einoff+prz)/(nu-qvec)+1./(2.*xprime));
+  
+  
+  Azz = getavgAzz(kin,*elec,1,1,Einoff)/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10;
+  Azzfsi= getavgAzz(kin,*elec,1,0,Einoff)/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10;
+  planewave = getavgAzz(kin,*elec,0,1,Einoff);
+  fsi= getavgAzz(kin,*elec,0,0,Einoff);
+  
+  return;
+    
+}
 
 void DeuteronCross::readin_deeps(double ******pdeepsarray, string dir){
   

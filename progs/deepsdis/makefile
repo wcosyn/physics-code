@@ -11,12 +11,12 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
- CC      = 	icpc
-# CC      = 	g++
+#  CC      = 	icpc
+CC      = 	g++
 
 #		Flags
-# OPTFLAG	=	-O3 -fPIC
-OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel 
+OPTFLAG	=	-O3 -fPIC
+# OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel 
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg

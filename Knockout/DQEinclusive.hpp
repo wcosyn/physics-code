@@ -60,9 +60,11 @@ public:
    * \param x [] bjorken x
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param integrator selects type of integrator [0=adaptive cubature from MIT lib, 1=Cuhre from cuba lib, 2=suave from cuba lib,
+   * \param maxEval max number of integrandum evaluations
    * 3=vegas from cuba lib, 4=divonne from cuba lib]
    */
-  void calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, int current, int integrator);
+  void calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, int current, 
+		      int integrator, int maxEval);
 
   /*! Calculates the off-shell fsi  inclusive cross section without any prefactors, just the deuteron incl F_L structure function
    * \param [out] fsi1_off [] inclusive fsi cross section without prefactors, direct term, off-shell part  

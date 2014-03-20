@@ -91,11 +91,12 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   //compute response functions
   double test[3]={0.,0.,0.};
   for(int i=0;i<6;i++) response[0][i]=0.;
+  cout << pnucl->getJ_array()[shellindex]/2. << " " << pnucl->getL_array()[shellindex] << endl;
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
       Matrix<2,3> J;
       reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current, SRC, thick);
-      for(int i=0;i<1;i++){ //only polarization, other one follows from parity symmetry!!
-// 	  cout << i << " " << m << " " << J(i,0) << " " << J(i,1) << " " <<  J(i,2) << endl;
+      for(int i=0;i<2;i++){ //only polarization, other one follows from parity symmetry!!
+	  cout << i << " " << m << " " << J(i,0) << " " << J(i,1) << " " <<  J(i,2) << endl;
 	response[0][0]+=norm(J(i,0));
 	response[0][1]+=norm(J(i,1))+norm(J(i,2));
 	response[0][2]+=2.*real(conj(J(i,2))*J(i,1));
@@ -106,7 +107,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   }
   double result=0.;
 //   factor 2 because of parity symmetry
-  for(int i=0;i<6;i++) response[0][i] *=2.;
+//   for(int i=0;i<6;i++) response[0][i] *=2.;
   //combine everything
 //   for(int i=0;i<6;i++) cout << response[0][i] << " ";
 //   cout << pnucl->getKappas()[shellindex] << endl;
