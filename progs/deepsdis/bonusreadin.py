@@ -31,16 +31,16 @@ for Q2 in np.arange(0,3):
   print "}" if Q2==2 else "},"
 print "}\n\n";
 	  
-print "//Bonus data beam 4GeV"
+print "//Bonus data beam 5GeV"
 print "//first index is Q^2={1.66,3.38}"
 print "//second index is W={1.17,1.48,1.73,2.03,2.44}"
 print "//third index is p_s[MeV]={78,93,110,135}"
 print "//fourth index is costh={-0.9,-0.7,..,0.9} (10 values)"
 print "//fifth index is [costh value, bonus ratio value, stat error, syst error]"
 
-data=data('bonusdata5.txt')
+data=np.loadtxt('bonusdata5.txt')
 
-print "bonusdata4[2][5][4][10][4]={ "
+print "bonusdata5[2][5][4][10][4]={ "
 for Q2 in np.arange(0,2):
   print "{ "
   for W in np.arange(0,5):
@@ -52,7 +52,7 @@ for Q2 in np.arange(0,2):
 	print "" if costh==9 else ","
       print "}" if ps==3 else "},"
     print "}" if W==4 else "},"
-  print "}" if Q2==2 else "},"
+  print "}" if Q2==1 else "},"
 print "}";
 	  
       

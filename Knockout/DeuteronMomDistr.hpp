@@ -42,7 +42,13 @@ public:
    */
   DeuteronMomDistr(std::string name);
   ~DeuteronMomDistr(); /*!<Destructor */
-  /*! Computes plane-wave momentum distribution, does not depend on phi
+  /*! Computes plane-wave momentum distribution in LC formalism according to Frankfurt and Strikman, Phys.Rep.88
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \return plane-wave momentum distribution [MeV^-3]
+   */
+  double getLCMomDistrpw(TKinematics2to2 &kin) const;
+  /*! Computes plane-wave momentum distribution, does not depend on phi, includes flux factor for baryon conservation
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \return plane-wave momentum distribution [MeV^-3]
@@ -55,7 +61,7 @@ public:
    * \return plane-wave momentum distribution [MeV^-3]
    */
   double getMomDistrpw(TVector3 &pvec) const;  
-  /*! Computes plane-wave momentum distribution, but off-diagnola in deuteron polarization and spectator momentum!
+  /*! Computes plane-wave momentum distribution, but off-diagonal in deuteron polarization and spectator momentum!
    * \param pvec vector of spectator momentum
    * \param pvec2 vector of other spectator momentum
    * \param M deuteron polarization (-1,0,1)

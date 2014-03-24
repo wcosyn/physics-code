@@ -71,8 +71,8 @@ class TLeptonKinematics : public TObject
   
   /*! constructs the four vectors for the incoming and outgoing lepton
    * \param kin kinematics of the hadron piece
-   * \param k_in [MeV] incoming lepton fourvector
-   * \param k_out [MeV] outgoing lepton fourvector
+   * \param[out] k_in [MeV] incoming lepton fourvector
+   * \param[out] k_out [MeV] outgoing lepton fourvector
    */
   void GetLeptonVectors(const TKinematics2to2& kin, FourVector<double> &k_in, FourVector<double> &k_out); 
   

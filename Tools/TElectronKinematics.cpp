@@ -470,3 +470,23 @@ bool TElectronKinematics::SolveKinematics(const TKinematics2to3& tk) const
   
   return true;
 }
+
+void TElectronKinematics::GetLeptonVectors(const TKinematics2to2& kin, FourVector<double> &k_in, 
+					 FourVector<double> &k_out){
+  
+  if( !SolveKinematics(kin) ) {
+    cerr << "ERROR in TLeptonKinematics::GetLeptonVectors "
+	 << "impossible kinematics.\n";
+    assert(1==0);
+  }
+  
+  double Eout=fBeamEnergy-kin.GetWlab();
+  double pout=Eout;
+  double kx=fBeamEnergy*pout*sqrt(1.-fScatterAngle*fScatterAngle)/kin.GetKlab();
+  double kz=kin.GetWlab()*fBeamEnergy/kin.GetKlab() + (kin.GetQsquared())/(2.*kin.GetKlab());
+  double kzprime=kin.GetWlab()*Eout/kin.GetKlab() + (-kin.GetQsquared())/(2.*kin.GetKlab());
+  k_in[0]=fBeamEnergy; k_in[1]=k_out[1]=kx; k_in[2]=k_out[2]=0.;k_in[3]=kz;
+  k_out[0]=Eout; k_out[3]=kzprime;
+  
+}
+

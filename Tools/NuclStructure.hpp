@@ -124,30 +124,6 @@ public:
    * \param F1 F1 structure function
    * \param F2 F2 structure function
    */
-  void getF_Alekhin(double &F1, double &F2);
-  double getF1_Alekhin(); /*!< return F1 structure function in the Alekhin parametrization */
-  double getF2_Alekhin(); /*!< return F2 structure function in the Alekhin parametrization */
-  /*! returns F1 and F2 in the SLAC parametrization
-   * \param F1 F1 structure function
-   * \param F2 F2 structure function
-   */
-  void getF_SLAC(double &F1, double &F2) const;
-  double getF1_SLAC() const; /*!< return F1 structure function in the SLAC parametrization */
-  double getF2_SLAC() const; /*!< return F2 structure function in the SLAC parametrization */
-  /*! returns F1 and F2 in the Christy & Bosted parametrization
-   * \param F1 F1 structure function
-   * \param F2 F2 structure function
-   */
-  void getF_CB(double &F1, double &F2) const;
-  double getF1_CB() const;/*!< return F1 structure function in the Christy & Bosted parametrization */
-  double getF2_CB() const;/*!< return F2 structure function in the Chrsity & Bosted parametrization */
-  /*! returns F1 and F2 in the CTEQ parametrization
-   * \param F1 F1 structure function
-   * \param F2 F2 structure function
-   */
-  void getF_CTEQ(double &F1, double &F2);
-  double getF1_CTEQ();/*!< return F1 structure function in the CTEQ parametrization */
-  double getF2_CTEQ();/*!< return F2 structure function in the CTEQ parametrization */
   /*! Returns the F1 and F2 structure functions */
   void getF(double &F1, double &F2);
   double getF1(); /*!< returns the F1 structure function */
@@ -187,6 +163,33 @@ private:
    * \return something :p
    */
   double bodek(double wm, double qsq) const;
+  
+  
+  void getF_Alekhin(double &F1, double &F2);
+  double getF1_Alekhin(); /*!< return F1 structure function in the Alekhin parametrization */
+  double getF2_Alekhin(); /*!< return F2 structure function in the Alekhin parametrization */
+  /*! returns F1 and F2 in the SLAC parametrization
+   * \param F1 F1 structure function
+   * \param F2 F2 structure function
+   */
+  void getF_SLAC(double &F1, double &F2) const;
+  double getF1_SLAC() const; /*!< return F1 structure function in the SLAC parametrization */
+  double getF2_SLAC() const; /*!< return F2 structure function in the SLAC parametrization */
+  /*! returns F1 and F2 in the Christy & Bosted parametrization
+   * \param F1 F1 structure function
+   * \param F2 F2 structure function
+   */
+  void getF_CB(double &F1, double &F2) const;
+  double getF1_CB() const;/*!< return F1 structure function in the Christy & Bosted parametrization */
+  double getF2_CB() const;/*!< return F2 structure function in the Chrsity & Bosted parametrization */
+  /*! returns F1 and F2 in the CTEQ parametrization
+   * \param F1 F1 structure function
+   * \param F2 F2 structure function
+   */
+  void getF_CTEQ(double &F1, double &F2);
+  double getF1_CTEQ();/*!< return F1 structure function in the CTEQ parametrization */
+  double getF2_CTEQ();/*!< return F2 structure function in the CTEQ parametrization */
+  
 };
 /** @} */
 #endif

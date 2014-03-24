@@ -41,10 +41,10 @@ public:
    * This one is for DIS where an off-shell X is produced, W is the mass and enters as input
    * \param kin semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-   * \param FL FL structure function
-   * \param FT FT structure function
-   * \param FTT FTT structure function
-   * \param FTL FTL structure function
+   * \param[out] FL FL structure function
+   * \param[out] FT FT structure function
+   * \param[out] FTT FTT structure function
+   * \param[out] FTL FTL structure function
    * \param Wsq [MeV^2] mass of produced X squared, differs from invariant p_X^2 due to off-shellness
    * \param Einoff [MeV] off-shell energy of interacting nucleon
    */

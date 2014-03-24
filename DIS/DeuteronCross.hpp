@@ -41,6 +41,13 @@ public:
   DeuteronCross(std::string wfname, bool proton, std::string strucname,
     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset, int looplimit);
   ~DeuteronCross(); /*!<Destructor */
+  /*! get the average cross section like it was generated in the BONUS MC
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \param electron has electron kinematics
+   * \return [MeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\OmegadE'd^3p_s} \f$ integrated over phi
+   */
+  double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron);
   /*! get the average cross section
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
@@ -57,18 +64,23 @@ public:
    * \param pr [MeV] spectator momentum
    * \param costhetar angle of spectator with q
    * \param proton DIS on proton (1) or neutron (0)
-   * \param planewave plane wave result
-   * \param fsi fsi result
+   * \param[out] planewave [MeV^-3] plane wave result
+   * \param[out]  fsi [MeV^-3]  fsi result
    */
   void getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
     double &planewave, double &fsi);
-  double getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool azz, bool pw, double Einoff);
-  void getDeepsAzz(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
-    double &Azz, double &Azzfsi, double &planewave, double &fsi);
-  
-  
+  /*! computes the avg cross section with the formula as used in the Bonus MC (TKachenko arXiv:1402.2477)
+   * \param Q2 [MeV^2] four-momentum transfer
+   * \param W [MeV] invariant mass of X
+   * \param Ein [MeV] beam energy
+   * \param pr [MeV] spectator momentum
+   * \param costhetar angle of spectator with q
+   * \param proton DIS on proton (1) or neutron (0)
+   * \return [MeV^-6] plane wave result
+   */
+  double getBonusMCresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton);
   /*! reads in the Deeps data set in an array >
-   * \param pdeepsarray pointer to array with the deeps results, indices as follows <BR>
+   * \param[out] pdeepsarray pointer to array with the deeps results, indices as follows <BR>
    * Q2 [2 values] <BR>
    * invariant mass W [5 values] <BR>
    * spectator momentum [5 values] <BR>

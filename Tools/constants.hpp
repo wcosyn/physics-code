@@ -28,6 +28,7 @@
 #define STRANGEUFLOW 1.0e-9 
 #define M_P 938.272       // proton
 #define M_N 939.565       // neutron
+#define M_NUCL 938.9185  //avg nucleon mass
 #define M_KP 493.677      // kaon^+
 #define M_K0 497.672      // kaon^0
 #define M_L 1115.683      // lambda

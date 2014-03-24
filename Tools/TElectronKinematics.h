@@ -11,7 +11,7 @@
 #define TELECTRONKINEMATICS_H
 
 #include "TObject.h"
-
+#include "FourVector.h"
 // Forward declarations
 class TKinematics2to2;
 class TKinematics2to3;
@@ -49,6 +49,12 @@ class TElectronKinematics : public TObject
   double GetCosScatterAngle(const TKinematics2to3&) const;
   double GetTan2HalfAngle(const TKinematics2to3&) const;
 
+  /*! constructs the four vectors for the incoming and outgoing lepton
+   * \param kin kinematics of the hadron piece
+   * \param[out] k_in [MeV] incoming lepton fourvector
+   * \param[out] k_out [MeV] outgoing lepton fourvector
+   */
+  void GetLeptonVectors(const TKinematics2to2& kin, FourVector<double> &k_in, FourVector<double> &k_out); 
   
   
  protected:

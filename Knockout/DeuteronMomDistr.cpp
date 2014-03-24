@@ -60,6 +60,29 @@ void DeuteronMomDistr::setScatter(double sigmain, double betain, double epsin){
  return; 
 }
 
+double DeuteronMomDistr::getLCMomDistrpw(TKinematics2to2 &kin) const{
+  //kaon translates to spectator nucleon
+  double pwtotal=0.;
+  double alpha=2.*(kin.GetEklab()-kin.GetPklab()*kin.GetCosthklab())/MASSD; //lightcone alpha_s=(E-p_z)/M_n
+  double sintheta=sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
+  double pt=kin.GetPklab()*sintheta;
+  double k=sqrt((M_NUCL*M_NUCL+pt*pt)/(alpha*(2.-alpha))-M_NUCL*M_NUCL); //lightcone momentum rescaling
+  double k_z=sqrt(k*k-pt*pt);
+  for(int M=-2;M<=2;M+=2){
+    for(int spinr=-1;spinr<=1;spinr+=2){
+      complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(pt,
+								     0.,
+								     k_z));
+								    
+      pwtotal+=norm(wave);
+    }
+  }
+  //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
+  pwtotal*=2./3.;
+  //relativistic normalization
+  return pwtotal*sqrt(M_NUCL*M_NUCL+k*k)/(2.-alpha)/kin.GetEklab(); 
+}
+
 
 double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin) const{
   //kaon translates to spectator nucleon
