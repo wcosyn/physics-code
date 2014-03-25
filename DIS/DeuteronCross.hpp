@@ -45,7 +45,7 @@ public:
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param electron has electron kinematics
-   * \return [MeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\OmegadE'd^3p_s} \f$ integrated over phi
+   * \return [GeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\OmegadE'd^3p_s} \f$ integrated over phi
    */
   double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron);
   /*! get the average cross section
@@ -76,9 +76,37 @@ public:
    * \param pr [MeV] spectator momentum
    * \param costhetar angle of spectator with q
    * \param proton DIS on proton (1) or neutron (0)
-   * \return [MeV^-6] plane wave result
+   * \param[out] MCresult [MeV^-6] plane wave result using formulas from the BONUS MC simulation
+   * \param[out] modelresult [MeV^-6] plane wave result using our model
+   * 
    */
-  double getBonusMCresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton);
+  void getBonusMCresult(double &MCresult, double &modelresult,
+			double Q2, double W, double Ein, double pr, double costhetar, bool proton);
+    
+  /*! get the average Azz observable
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \param electron has electron kinematics
+   * \param pw plane-wave calculation [1] or not [0]
+   * \param Einoff off-shell energy of the nucleon interacting with the photon
+   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ integrated over phi
+   */
+  double getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool azz, bool pw, double Einoff); 
+  /*! computes the results like they are presented in the Deeps data
+   * \param Q2 [MeV^2] four-momentum transfer
+   * \param W [MeV] invariant mass of X
+   * \param Ein [MeV] beam energy
+   * \param pr [MeV] spectator momentum
+   * \param costhetar angle of spectator with q
+   * \param proton DIS on proton (1) or neutron (0)
+   * \param[out] planewave [MeV^-3] plane wave result
+   * \param[out]  fsi [MeV^-3]  fsi result
+   */
+  void getDeepsAzz(double Q2, double W, double Ein, double pr, double costhetar, bool proton, 
+		    double &Azz, double &Azzfsi, double &planewave, double &fsi); 
+
+  
+  
   /*! reads in the Deeps data set in an array >
    * \param[out] pdeepsarray pointer to array with the deeps results, indices as follows <BR>
    * Q2 [2 values] <BR>

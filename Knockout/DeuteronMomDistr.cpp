@@ -68,19 +68,20 @@ double DeuteronMomDistr::getLCMomDistrpw(TKinematics2to2 &kin) const{
   double pt=kin.GetPklab()*sintheta;
   double k=sqrt((M_NUCL*M_NUCL+pt*pt)/(alpha*(2.-alpha))-M_NUCL*M_NUCL); //lightcone momentum rescaling
   double k_z=sqrt(k*k-pt*pt);
-  for(int M=-2;M<=2;M+=2){
-    for(int spinr=-1;spinr<=1;spinr+=2){
-      complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(pt,
-								     0.,
-								     k_z));
-								    
-      pwtotal+=norm(wave);
-    }
-  }
-  //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
-  pwtotal*=2./3.;
+//   for(int M=-2;M<=2;M+=2){
+//     for(int spinr=-1;spinr<=1;spinr+=2){
+//       complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(pt,
+// 								     0.,
+// 								     k_z));
+// 								    
+//       pwtotal+=norm(wave);
+//     }
+//   }
+//   //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
+//   pwtotal*=2./3.;
   //relativistic normalization
-  return pwtotal*sqrt(M_NUCL*M_NUCL+k*k)/(2.-alpha)/kin.GetEklab(); 
+//   cout << k << " " << kin.GetPklab() << " " << sqrt(M_NUCL*M_NUCL+k*k)/(2.-alpha)/kin.GetEklab() << " " << alpha << endl;
+  return (pow(wf.GetUp(k),2.)+pow(wf.GetWp(k),2.))/(4.*PI)*sqrt(M_NUCL*M_NUCL+k*k)/(2.-alpha)/kin.GetEklab(); 
 }
 
 
@@ -88,19 +89,20 @@ double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin) const{
   //kaon translates to spectator nucleon
   double pwtotal=0.;
   double sintheta=sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
-  for(int M=-2;M<=2;M+=2){
-    for(int spinr=-1;spinr<=1;spinr+=2){
-      complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta,
-								     0.,
-								     kin.GetPklab()*kin.GetCosthklab()));
-								    
-      pwtotal+=norm(wave);
-    }
-  }
-  //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
-  pwtotal*=2./3.;
+//   for(int M=-2;M<=2;M+=2){
+//     for(int spinr=-1;spinr<=1;spinr+=2){
+//       complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta,
+// 								     0.,
+// 								     kin.GetPklab()*kin.GetCosthklab()));
+// 								    
+//       pwtotal+=norm(wave);
+//     }
+//   }
+//   //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
+//   pwtotal*=2./3.;
   //relativistic normalization
-  return pwtotal*MASSD/(2.*(MASSD-sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass())));
+  return (pow(wf.GetUp(kin.GetPklab()),2.)+pow(wf.GetWp(kin.GetPklab()),2.))/(4.*PI)
+	    *MASSD/(2.*(MASSD-sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass())));
 }
 
 double DeuteronMomDistr::getAzzDistrpw(TKinematics2to2 &kin) const{

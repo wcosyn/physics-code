@@ -88,6 +88,7 @@ public:
   * \param Einoff [MeV] off-shell energy of interacting nucleon
    */
   double getInclStructure_off(TKinematics2to2 &kin, double Wsq, double Einoff) const;
+  const std::string & getName() const{return name;}
   
 private:
 //   TElectronKinematics electron; /*!< electron kinematics */
