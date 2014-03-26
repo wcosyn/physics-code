@@ -20,6 +20,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   double alphaq=(kin.GetWlab()-kin.GetKlab())/(MASSD/2.);
   double alphai=(Einoff+kin.GetPklab()*kin.GetCosthklab())/(MASSD/2.);  //vec{pi}=-vec{pr} in PW!
   double pt=kin.GetPklab()*sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
+  if(isnan(pt)) pt=0.;
   double cosdelta=kin.GetWlab()/kin.GetKlab();
   double sindelta2=kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab());
   double piq=(Einoff*kin.GetWlab()+kin.GetKlab()*kin.GetPklab()*kin.GetCosthklab());  //vec{pi}=-vec{pr} in PW!
@@ -42,7 +43,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   //cout << F1 << " " << F2 << " " << nutilde << " " << pt << " " << kin.GetCosthklab() << endl;
   FL=pow((alphai+alphaq*piq/kin.GetQsquared())*(1+cosdelta),2.)*kin.GetWlab()/nutilde*F2-kin.GetWlab()/massi*sindelta2*F1;
   FT=2.*F1+pt*pt/(massi*nutilde)*F2;
-  if(isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << endl;
+  if(isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
   FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
   /*cout << F1 << " " << F2 << endl;

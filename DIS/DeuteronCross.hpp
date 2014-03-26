@@ -76,12 +76,14 @@ public:
    * \param pr [MeV] spectator momentum
    * \param costhetar angle of spectator with q
    * \param proton DIS on proton (1) or neutron (0)
+   * \param pw [1] plane wave only
    * \param[out] MCresult [MeV^-6] plane wave result using formulas from the BONUS MC simulation
-   * \param[out] modelresult [MeV^-6] plane wave result using our model
+   * \param[out] modelresultpw [MeV^-6] plane wave result using our model
+   * \param[out] modelresultfsi [MeV^-6] fsi result using our model
    * 
    */
-  void getBonusMCresult(double &MCresult, double &modelresult,
-			double Q2, double W, double Ein, double pr, double costhetar, bool proton);
+  void getBonusMCresult(double &MCresult, double &modelresultpw, double &modelresultfsi, 
+			double Q2, double W, double Ein, double pr, double costhetar, bool proton, bool pw);
     
   /*! get the average Azz observable
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>

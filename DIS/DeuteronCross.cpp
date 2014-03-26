@@ -3,6 +3,7 @@
 #include <TLorentzRotation.h>
 #include <FourVector.h>
 #include <NuclStructure.hpp>
+#include <TVector3.h>
 
 using namespace std;
 
@@ -14,8 +15,10 @@ massi(proton? MASSP:MASSN),
 momdistr(name,massi,offshellset,sigmain,betain,epsilonin,betaoffin,lambdain,looplimit),
 structure(proton,strucname)
 {
-  
-  
+//   for(int i=0;i<500;i++) cout << i << " " << momdistr.getMomDistrpw(TVector3(0.,0.,i)) << " " 
+//       << momdistr.getLCMomDistrpw(TVector3(0.,0.,i)) << " " << momdistr.getLCMomDistrpw(TVector3(0.,0.,-i)) 
+//       << " " << momdistr.getLCMomDistrpw(TVector3(0.,i,0.))  << endl;
+//   exit(1);
 }
 
 
@@ -25,7 +28,7 @@ DeuteronCross::~DeuteronCross(){
 
 double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec){
   
-  double dens=momdistr.getLCMomDistrpw(kin); //lightcone momentum distribution
+  double dens=momdistr.getMomDistrpw(kin); //lightcone momentum distribution
   FourVector<double> k_in, k_out;
   elec.GetLeptonVectors(kin,k_in,k_out);
   double costhetap=kin.GetCosthklab();
@@ -40,23 +43,19 @@ double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec
   FourVector<double> q(kin.GetWlab(),0.,0.,kin.GetKlab());
   FourVector<double> q_transf=transf*q;
   double xtransf=kin.GetQsquared()/(2.*massi*q_transf[0]); //get modified x
-  double epsilon=1/(1.+2.*(1+kin.GetQsquared()/4./massi/massi/xtransf/xtransf)*pow(tan(thetae_transf/2.),2.));
   NuclStructure nucl(massi==MASSP?1:0,kin.GetQsquared(),xtransf,0,structure.getName());
   double F1,F2;
   nucl.getF(F1,F2);
-  double R=F2/(2.*xtransf*F1)*(1.+kin.GetQsquared()/q_transf[0]/q_transf[0])-1.;
   double res=2.*PI*ALPHA*ALPHA*pow(cos(thetae_transf/2.),2.)/(4.*pow(k_in_transf[0],2.)*pow(sin(thetae_transf/2.),4.))*dens
-    *F2/epsilon/q_transf[0]*(1.+epsilon*R)/(1.+R);
-//   cout << F1 << " " << F2 << " "  << xtransf << " " << sqrt(massi*massi-kin.GetQsquared()+2.*massi*q_transf[0]) << " " << 
-//       dens << " " << R << " " << thetae_transf << endl;
-//     cout << 2.*PI*ALPHA*ALPHA*pow(cos(thetae_transf/2.),2.)/(4.*pow(k_in_transf[0],2.)*pow(sin(thetae_transf/2.),4.))/2./xtransf/k_in_transf[0]/k_out_transf[0] << endl;
-//     cout << F2/epsilon*(1.+epsilon*R)/(1.+R) << endl;
+    *(F2+2.*q_transf[0]/massi*F1*pow(tan(thetae_transf/2.),2.))/q_transf[0];
   return F2==0.? 0.: res;
   
 }
 
-void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresult, 
-				     double Q2, double W, double Ein, double pr, double costhetar, bool proton){
+void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresultpw, double &modelresultfsi, 
+				     double Q2, double W, double Ein, double pr, double costhetar, bool proton,
+				     bool pw
+				    ){
 
   double massi=proton? MASSP:MASSN;
   double massr=proton? MASSN:MASSP;
@@ -90,11 +89,12 @@ void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresult,
   
   double Eout=Ein-nu;
   //unphysical kinematics!!!
-  if(Eout<0.){ /*cout << Eout << endl;*/ MCresult=modelresult=0.;return;}
-  if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresult=0.;return;}
+  if(Eout<0.){ /*cout << Eout << endl;*/ MCresult=modelresultpw=modelresultfsi=0.;return;}
+  if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
   
   MCresult= getavgBonus(kin,*elec)*1.E18;
-  modelresult= getavgCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
+  modelresultpw= getavgCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
+  modelresultfsi= pw? modelresultpw: getavgCross(kin,*elec,0, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
 }
 
 double DeuteronCross::getavgCross(TKinematics2to2 &kin,TElectronKinematics &elec, bool pw, double Einoff){

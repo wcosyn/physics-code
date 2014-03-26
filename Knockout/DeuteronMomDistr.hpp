@@ -43,24 +43,40 @@ public:
   DeuteronMomDistr(std::string name);
   ~DeuteronMomDistr(); /*!<Destructor */
   /*! Computes plane-wave momentum distribution in LC formalism according to Frankfurt and Strikman, Phys.Rep.88
-   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \return plane-wave momentum distribution [MeV^-3]
    */
   double getLCMomDistrpw(TKinematics2to2 &kin) const;
+  /*! Computes plane-wave momentum distribution in LC formalism according to Frankfurt and Strikman, Phys.Rep.88
+  * \param p [MeV] relative momentum in deuteron rest frame
+  * \return plane-wave momentum distribution [MeV^-3]
+   */
+  double getLCMomDistrpw(TVector3 p) const;
   /*! Computes plane-wave momentum distribution, does not depend on phi, includes flux factor for baryon conservation
-   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \return plane-wave momentum distribution [MeV^-3]
    */
   double getMomDistrpw(TKinematics2to2 &kin) const;
+  /*! Computes plane-wave Azz distribution, does not depend on phi, includes flux factor for baryon conservation
+   * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \return plane-wave Azz deuteron distribution [MeV^-3]
+   */
   double getAzzDistrpw(TKinematics2to2 &kin) const;
+  /*! Computes distorted Azz deuteron distribution for DIS production off deuteron
+   * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \param phi angle between hadron and electron scattering plane
+   * \return distorted Azz deuteron distribution [MeV^-3]
+   */
   double getAzzDistrfsi(TKinematics2to2 &kin, double phi);
   /*! Computes plane-wave momentum distribution, does not depend on phi
    * \param pvec vector of spectator momentum
    * \return plane-wave momentum distribution [MeV^-3]
    */
-  double getMomDistrpw(TVector3 &pvec) const;  
+  double getMomDistrpw(TVector3 pvec) const;  
   /*! Computes plane-wave momentum distribution, but off-diagonal in deuteron polarization and spectator momentum!
    * \param pvec vector of spectator momentum
    * \param pvec2 vector of other spectator momentum
@@ -68,9 +84,9 @@ public:
    * \param M2 other deuteron polarization (-1,0,1)
    * \return plane-wave momentum distribution [MeV^-3]
    */
-  std::complex<double> getMomDistrpwcoh(TVector3 &pvec,TVector3 &pvec2,int M, int M2) const;
+  std::complex<double> getMomDistrpwcoh(TVector3 pvec,TVector3 pvec2,int M, int M2) const;
   /*! Computes distorted momentum distribution for DIS production off deuteron
-   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param phi angle between hadron and electron scattering plane
    * \return distorted momentum distribution [MeV^-3]
@@ -84,7 +100,7 @@ public:
    * \param massother mass of other particle involved in the FSI [MeV]
    * \return distorted momentum distribution [MeV^-3]
    */
-  double getMomDistrfsi(TVector3 &pvec, double nu, double qvec, double s, double massother);
+  double getMomDistrfsi(TVector3 pvec, double nu, double qvec, double s, double massother);
   /*! Set scattering parameters for FSI
    * \param sigmain total cross section [mb]
    * \param betain slope parameter [GeV^-2]
