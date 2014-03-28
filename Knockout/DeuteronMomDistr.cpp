@@ -81,17 +81,17 @@ double DeuteronMomDistr::getLCMomDistrpw(TKinematics2to2 &kin) const{
 //   pwtotal*=2./3.;
   //relativistic normalization
 //   cout << k << " " << kin.GetPklab() << " " << sqrt(M_NUCL*M_NUCL+k*k)/(2.-alpha)/kin.GetEklab() << " " << alpha << endl;
-  return (pow(wf.GetUp(k),2.)+pow(wf.GetWp(k),2.))/(4.*PI)*sqrt(M_NUCL*M_NUCL+k*k)/(2.-alpha)/kin.GetEklab(); 
+  return (pow(wf.GetUp(k),2.)+pow(wf.GetWp(k),2.))/(4.*PI)*sqrt(massr*massr+k*k)/(2.-alpha)/kin.GetEklab(); 
 }
 
 double DeuteronMomDistr::getLCMomDistrpw(TVector3 p) const{
   //kaon translates to spectator nucleon
   double pwtotal=0.;
-  double E=sqrt(p.Mag2()+massi*massi);
+  double E=sqrt(p.Mag2()+massr*massr);
   double alpha=2.*(E-p[2])/MASSD; //lightcone alpha_s=(E-p_z)/M_n
-  double pt=sqrt(p[0]*p[0]+p[1]*p[1]);
-  double k=sqrt((M_NUCL*M_NUCL+pt*pt)/(alpha*(2.-alpha))-M_NUCL*M_NUCL); //lightcone momentum rescaling
-  double k_z=sqrt(k*k-pt*pt);
+  double pt2=p[0]*p[0]+p[1]*p[1];
+  double k=sqrt((M_NUCL*M_NUCL+pt2)/(alpha*(2.-alpha))-M_NUCL*M_NUCL); //lightcone momentum rescaling
+  double k_z=(1-alpha)*sqrt(M_NUCL*M_NUCL+k*k);
 //   for(int M=-2;M<=2;M+=2){
 //     for(int spinr=-1;spinr<=1;spinr+=2){
 //       complex<double> wave=wf.DeuteronPState(M, -1, spinr, TVector3(pt,
@@ -105,7 +105,9 @@ double DeuteronMomDistr::getLCMomDistrpw(TVector3 p) const{
 //   pwtotal*=2./3.;
   //relativistic normalization
 //   cout << k << " " << kin.GetPklab() << " " << sqrt(M_NUCL*M_NUCL+k*k)/(2.-alpha)/kin.GetEklab() << " " << alpha << endl;
-  return (pow(wf.GetUp(k),2.)+pow(wf.GetWp(k),2.))/(4.*PI)*sqrt(M_NUCL*M_NUCL+k*k)/(2.-alpha)/E; 
+//   cout << p.Mag() << " " << k << " " << k_z << " " << alpha << " " << (pow(wf.GetUp(k),2.)+pow(wf.GetWp(k),2.))/(4.*PI)*sqrt(massr*massr+k*k)/(2.-alpha)/E 
+//   << " " << (pow(wf.GetUp(p.Mag()),2.)+pow(wf.GetWp(p.Mag()),2.))/(4.*PI)*MASSD/(2.*(MASSD-E)) << " " << MASSD/(2.*(MASSD-E)) << " " << sqrt(massr*massr+k*k)/(2.-alpha)/E << endl; 
+  return (pow(wf.GetUp(k),2.)+pow(wf.GetWp(k),2.))/(4.*PI)*sqrt(massr*massr+k*k)/(2.-alpha)/E; 
 }
 
 double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin) const{
@@ -125,7 +127,7 @@ double DeuteronMomDistr::getMomDistrpw(TKinematics2to2 &kin) const{
 //   pwtotal*=2./3.;
   //relativistic normalization
   return (pow(wf.GetUp(kin.GetPklab()),2.)+pow(wf.GetWp(kin.GetPklab()),2.))/(4.*PI)
-	    *MASSD/(2.*(MASSD-sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass())));
+	    *MASSD/(2.*(MASSD-kin.GetEklab()));
 }
 
 double DeuteronMomDistr::getAzzDistrpw(TKinematics2to2 &kin) const{

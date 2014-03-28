@@ -44,6 +44,10 @@ class TElectronKinematics : public TObject
   double GetEpsilon(const TKinematics2to2&) const;
   double GetCosScatterAngle(const TKinematics2to2&) const;
   double GetTan2HalfAngle(const TKinematics2to2&) const;
+  double GetBeamEnergy(const double Q2, const double nu) const;
+  double GetEpsilon(const double Q2, const double nu) const;
+  double GetCosScatterAngle(const double Q2, const double nu) const;
+  double GetTan2HalfAngle(const double Q2, const double nu) const;
   double GetBeamEnergy(const TKinematics2to3&) const;
   double GetEpsilon(const TKinematics2to3&) const;
   double GetCosScatterAngle(const TKinematics2to3&) const;
@@ -60,6 +64,7 @@ class TElectronKinematics : public TObject
  protected:
   TElectronKinematics();
   bool SolveKinematics(const TKinematics2to2&) const;
+  bool SolveKinematics(const double Q2, const double nu) const;
   bool SolveKinematics(const TKinematics2to3&) const;
   
  private:

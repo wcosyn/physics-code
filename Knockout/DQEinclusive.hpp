@@ -41,21 +41,21 @@ public:
   DQEinclusive(bool proton, int FFparam, std::string wavename, TElectronKinematics &elec,
 		 int offshell, double betaoffin=8., double lambdain=1.2);
   ~DQEinclusive(); /*!< Destructor */
-  /*! Calculates the plane-wave inclusive cross on-shell section without any prefactors, just the deuteron incl F_L structure function
-   * \param [out] Q2 [MeV^2] Q^2 of virtual photon
-   * \param [out] x [] bjorken x
-   * \param contrib1 [] direct born part
-   * \param contrib2 [] crossed born part
+  /*! Calculates the plane-wave inclusive cross section, just the deuteron incl F_L structure function
+   * \param Q2 [MeV^2] Q^2 of virtual photon
+   * \param x [] bjorken x
+   * \param [out] contrib1 [nb/GeV] direct born cross section d\sigma/dEdOmega
+   * \param [out] contrib2 [nb/GeV] crossed born cross section d\sigma/dEdOmeg
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param integrator selects type of integrator [0=adaptive cubature from MIT lib, 1=Cuhre from cuba lib, 2=suave from cuba lib,
    * 3=vegas from cuba lib, 4=divonne from cuba lib]
    */
-  void calc_F2Dinc(double &contrib1, double &contrib2, double Q2,double x, int current, int integrator);
-  /*! Calculates the fsi (on and off) inclusive cross section without any prefactors, just the deuteron incl F_L structure function
-   * \param [out] fsi1 [] inclusive fsi cross section without prefactors, direct term 
-   * \param [out] fsi2 [] crossed term
-   * \param [out] fsi1_off [] inclusive fsi cross section without prefactors, direct term, off-shell part  
-   * \param [out] fsi2_off [] crossed term, off-shell part
+  void calc_Crossinc(double &contrib1, double &contrib2, double Q2,double x, int current, int integrator);
+  /*! Calculates the fsi (on and off) inclusive cross section d\sigma/dEdOmega
+   * \param [out] fsi1 [nb/GeV] inclusive fsi cross section d\sigma/dEdOmega
+   * \param [out] fsi2 [nb/GeV] crossed term fsi cross section d\sigma/dEdOmega
+   * \param [out] fsi1_off [nb/GeV] inclusive fsi cross section d\sigma/dEdOmega, direct term, off-shell part  
+   * \param [out] fsi2_off [nb/GeV] inclusive cross section d\sigma/dEdOmegacrossed term, off-shell part
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
@@ -63,19 +63,19 @@ public:
    * \param maxEval max number of integrandum evaluations
    * 3=vegas from cuba lib, 4=divonne from cuba lib]
    */
-  void calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, int current, 
+  void calc_CrossincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, int current, 
 		      int integrator, int maxEval);
 
   /*! Calculates the off-shell fsi  inclusive cross section without any prefactors, just the deuteron incl F_L structure function
-   * \param [out] fsi1_off [] inclusive fsi cross section without prefactors, direct term, off-shell part  
-   * \param [out] fsi2_off [] crossed term, off-shell part
+   * \param [out] fsi1_off [nb/GeV] inclusive fsi cross section , direct term, off-shell part  
+   * \param [out] fsi2_off [nb/GeV] inclusive fsi cross section, crossed term, off-shell part
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param integrator selects type of integrator [0=adaptive cubature from MIT lib, 1=Cuhre from cuba lib, 2=suave from cuba lib,
    * 3=vegas from cuba lib, 4=divonne from cuba lib]
    */
-  void calc_F2DincFSI_PVoff(double &fsi1_off, double &fsi2_off, double Q2,double x, int current, int integrator);
+  void calc_CrossincFSI_PVoff(double &fsi1_off, double &fsi2_off, double Q2,double x, int current, int integrator);
   
   
   void setOffshell(const int offshell){offshellset=offshell;} /*!< set offshell parametrization */
@@ -127,12 +127,13 @@ private:
     /*! integrandum function */
     static void exec(const numint::array<double,1> &x, void *param, numint::vector_d &ret) {
       Ftor_planewave &p = * (Ftor_planewave *) param;
-      p.f(ret,x[0],*p.cross,p.Q2,p.x,p.current);
+      p.f(ret,x[0],*p.cross,p.Q2,p.x,p.current,p.tanhalfth2);
     }
     DQEinclusive *cross;/*!< pointer to  instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
     double x; /*!< [] Bjorken x */
     int current; /*!< CC1,CC2,CC3*/
+    double tanhalfth2; /*!< electron scattering tan squared of half angle */
     /*! integrandum 
     * \param [out] res results
     * \param pperp [MeV] integration variable, transverse spectator momentum
@@ -140,20 +141,22 @@ private:
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).  
+    * \param tanhalfth2 [] squared tan half angle of scattering electron
     */
-    void (*f)(numint::vector_d & res, double pperp, DQEinclusive& cross, double Q2, double x, int current);
+    void (*f)(numint::vector_d & res, double pperp, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2);
   };
   
    /*! integrandum function
-    * \param [out] results results
+    * \param [out] results contractin of leptonic and hadronic tensor
     * \param pperp [MeV] integration variable, transverse spectator momentum
     * \param cross instance of DQEinclusive where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+    * \param tanhalfth2 [] squared tan half angle of scattering electron
     */
   static void planewave_int(numint::vector_d & results, double pperp, 
-			    DQEinclusive& cross, double Q2, double x, int current);
+			    DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2);
   
   /*! struct that is used for integrators fsi on- and off-shell ones*/
   struct Ftor_FSI {
@@ -161,12 +164,13 @@ private:
     /*! integrandum function */
     static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
       Ftor_FSI &p = * (Ftor_FSI *) param;
-      p.f(ret,x[0],x[1],x[2],*p.cross,p.Q2,p.x,p.current);
+      p.f(ret,x[0],x[1],x[2],*p.cross,p.Q2,p.x,p.current,p.tanhalfth2);
     }
     DQEinclusive *cross;/*!< pointer to  instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
     double x; /*!< [] Bjorken x */
     int current; /*!< CC1,CC2,CC3*/
+    double tanhalfth2; /*!< electron scattering tan squared of half angle */
     /*! integrandum 
     * \param [out] res results
     * \param pperp [MeV] integration variable, transverse spectator momentum
@@ -176,9 +180,10 @@ private:
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+    * \param tanhalfth2 [] squared tan half angle of scattering electron
     */
     void (*f)(numint::vector_d & res, double pperp, double qt, double qphi, DQEinclusive& cross, 
-	      double Q2, double x, int current);
+	      double Q2, double x, int current, double tanhalfth2);
   };
   
    /*! integrandum function for on-shell and off-shell contribution to the FSI amplitude
@@ -190,9 +195,10 @@ private:
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+    * \param tanhalfth2 [] squared tan half angle of scattering electron
     */
   static void FSI_int(numint::vector_d & results, double pperp, double qt, 
-		      double qphi, DQEinclusive& cross, double Q2, double x, int current);
+		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2);
   
    /*! integrandum function for off-shell direct PV calculations contribution to the FSI amplitude
     * \param [out] results results
@@ -202,10 +208,11 @@ private:
     * \param cross instance of  DQEinclusive object we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param tanhalfth2 [] squared tan half angle of scattering electron
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
     */
   static void FSI_PV(numint::vector_d & results, double pperp, double qt, 
-		      double qphi, DQEinclusive& cross, double Q2, double x, int current);
+		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2);
 
 
 
@@ -216,13 +223,14 @@ private:
     static double exec(double var2, void *param) {
       Ftor_PV &p = * (Ftor_PV *) param;
       return p.f(p.var1,var2,p.pperp1,p.pperp2,p.qt,p.cosphi1,p.sinphi1,p.cosqphi,p.sinqphi,p.prz2poles,
-		 *p.cross,p.Q2,p.x,p.qvec,p.nu,p.current,p.crossed,*p.rescatter);
+		 *p.cross,p.Q2,p.x,p.tanhalfth2,p.qvec,p.nu,p.current,p.crossed,*p.rescatter);
     }
     double var1; /*!< first variable over which we integrate */
     DQEinclusive *cross;/*!< pointer to  instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
     double x; /*!< [] Bjorken x */
     int current; /*!< CC1,CC2,CC3*/
+    double tanhalfth2; /*!< electron scattering tan squared of half angle */
     bool crossed; /*!< 0: direct diagram; 1: crossed diagram */
     std::vector<double> prz2poles; /*!< [MeV] pole values vor second spectator */
     double cosqphi; /*!< cosine of polar angle of momentum transfer */
@@ -249,6 +257,7 @@ private:
     * \param [in] cross instance of  where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param tanhalfth2 [] squared tan half angle of scattering electron
     * \param qvec [MeV] virtual photon momentum
     * \param nu [MeV] virtual photon energy
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
@@ -258,7 +267,7 @@ private:
     */
      double (*f)(double pz1, double pz2, double pperp1, double pperp2, double qt, double cosphi1, double sinphi1,
 		 double cosqphi, double sinqphi, std::vector<double> &prz2poles, DQEinclusive& cross, 
-	      double Q2, double x, double qvec, double nu, int current, bool crossed, FastParticle &rescatter);
+	      double Q2, double x, double tanhalfth2, double qvec, double nu, int current, bool crossed, FastParticle &rescatter);
   };
   
    /*! integrandum function for on-shell and off-shell contribution to the FSI amplitude
@@ -275,6 +284,7 @@ private:
     * \param [in] cross instance of  where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param tanhalfth2 [] squared tan half angle of scattering electron
     * \param qvec [MeV] virtual photon momentum
     * \param nu [MeV] virtual photon energy
     * \param cross instance of  where we perform the integration on
@@ -287,7 +297,7 @@ private:
     */
   static double FSI_intPV(double pz1, double pz2, double pperp1, double pperp2, double qt, double cosphi1, double sinphi1,
 		 double cosqphi, double sinqphi, std::vector<double> &prz2poles,  DQEinclusive& cross, 
-	      double Q2, double x, double qvec, double nu, int current, bool crossed, FastParticle &rescatter);
+	      double Q2, double x, double tanhalfth2, double qvec, double nu, int current, bool crossed, FastParticle &rescatter);
   
   /*! integrandum function for first PV integration
    * \param pz1 [MeV] first integration variable

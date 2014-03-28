@@ -23,8 +23,8 @@ DQEinclusive::DQEinclusive(bool proton_in, int ff_param, string wavename, TElect
 :proton(proton_in),
 betaoff(betaoffin*1.E-06),
 lambda(lambdain*1.E+06),
-massi(proton? MASSP:MASSN),
-massr(proton? MASSN:MASSP),
+massi(proton_in? MASSP:MASSN),
+massr(proton_in? MASSN:MASSP),
 offshellset(offshell),
 electron(elec),
 ffactorseq(NULL),
@@ -41,8 +41,9 @@ DQEinclusive::~DQEinclusive(){
 }
 
 
-void DQEinclusive::calc_F2Dinc(double &contrib1, double &contrib2, double Q2,double x, int current, int integrator){
+void DQEinclusive::calc_Crossinc(double &contrib1, double &contrib2, double Q2,double x, int current, int integrator){
   
+  double nu=Q2/(x*2.*massi);
   ffactorseq=new NucleonEMOperator(Q2,proton,ffparam);
   ffactorsdiff=new NucleonEMOperator(Q2,!proton,ffparam);
   
@@ -53,6 +54,7 @@ void DQEinclusive::calc_F2Dinc(double &contrib1, double &contrib2, double Q2,dou
   F.Q2 = Q2;
   F.x = x;
   F.current = current;
+  F.tanhalfth2=electron.GetTan2HalfAngle(Q2,nu);
   numint::mdfunction<numint::vector_d,1> mdf;
   mdf.func = &Ftor_planewave::exec;
   mdf.param = &F;
@@ -146,13 +148,16 @@ void DQEinclusive::calc_F2Dinc(double &contrib1, double &contrib2, double Q2,dou
 //      cout << "pw " << res << " " << count << endl;
   delete ffactorseq;
   delete ffactorsdiff;
-  contrib1= 2.*PI/3./MASSD*ret[0];
-  contrib2= 2.*PI/3./MASSD*ret[1];    
+  double sigmamott=ALPHA*ALPHA*(1+electron.GetCosScatterAngle(Q2,nu))/
+    (2.*pow(electron.GetBeamEnergy(Q2,nu)*(1-electron.GetCosScatterAngle(Q2,nu)),2.))*HBARC*HBARC*1.E07;
+    cout << sigmamott << " " << acos(electron.GetCosScatterAngle(Q2,nu))/PI*180. << " " << 2.*PI/3./MASSD*1.E03*ret[0] << endl;
+  contrib1= 2.*PI/3./MASSD*1.E03*ret[0]*sigmamott;
+  contrib2= 2.*PI/3./MASSD*1.E03*ret[1]*sigmamott;    
 }
 
 
 void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
-				   DQEinclusive& cross, double Q2, double x, int current){
+				   DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2){
   double phi=0.;
   result=numint::vector_d(2,0.);
   double res0=0.,res1=0.;
@@ -218,13 +223,13 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 		complex<double> currentoutminprime=conj((spinr==-1?us_down:us_up)*Jminprime*(spini_out==-1?uiprime_down:uiprime_up));
 		for(int M=-2;M<=2;M+=2){
 		  //direct
-		  res0+=real(nu*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0
-				      +Q2/(2.*qvec*qvec)*(currentinmin*currentoutmin+currentinplus*currentoutplus))*
+		  res0+=real((Q2*Q2/pow(qvec,4.)*currentin0*currentout0
+				      +(Q2/(2.*qvec*qvec)+tanhalfth2)*(currentinmin*currentoutmin+currentinplus*currentoutplus))*
 				  cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))
 				  *conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))));
 		  //cross
-		  if(Erprimenorm<MASSD-200.) res1+=real(nu*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0prime
-				      +Q2/(2.*qvec*qvec)*(currentinmin*currentoutminprime+currentinplus*currentoutplusprime))*
+		  if(Erprimenorm<MASSD-200.) res1+=real((Q2*Q2/pow(qvec,4.)*currentin0*currentout0prime
+				      +(Q2/(2.*qvec*qvec)+tanhalfth2)*(currentinmin*currentoutminprime+currentinplus*currentoutplusprime))*
 				  cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))
 				  *conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, TVector3(-pperp*cosphi,-pperp*sinphi,qvec-prz[it]))));
 									  
@@ -251,9 +256,10 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 }
 
 
-void DQEinclusive::calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, 
+void DQEinclusive::calc_CrossincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, 
 				  int current, int integrator, int maxEval){
   
+  double nu=Q2/(x*2.*MASSP);
   ffactorseq=new NucleonEMOperator(Q2,proton,ffparam);
   ffactorsdiff=new NucleonEMOperator(Q2,!proton,ffparam);
 
@@ -267,6 +273,7 @@ void DQEinclusive::calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, 
   F.Q2 = Q2;
   F.x = x;
   F.current = current;
+  F.tanhalfth2=electron.GetTan2HalfAngle(Q2,nu);
   numint::mdfunction<numint::vector_d,3> mdf;
   mdf.func = &Ftor_FSI::exec;
   mdf.param = &F;
@@ -358,10 +365,12 @@ void DQEinclusive::calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, 
     }
   }
 //     cout << "fsi " << res << " " << count << endl;
-  fsi1= 2.*PI/3./MASSD/(64.*PI*PI)*ret[0];
-  fsi2= 2.*PI/3./MASSD/(64.*PI*PI)*ret[1];
-  fsi1_off= 2.*PI/3./MASSD/(64.*PI*PI)*ret[2];
-  fsi2_off= 2.*PI/3./MASSD/(64.*PI*PI)*ret[3];
+  double sigmamott=ALPHA*ALPHA*(1+electron.GetCosScatterAngle(Q2,nu))/
+    (2.*pow(electron.GetBeamEnergy(Q2,nu)*(1-electron.GetCosScatterAngle(Q2,nu)),2.))*HBARC*HBARC*1.E07;
+  fsi1= 2.*PI/3./MASSD*1.E03/(64.*PI*PI)*ret[0]*sigmamott;
+  fsi2= 2.*PI/3./MASSD*1.E03/(64.*PI*PI)*ret[1]*sigmamott;
+  fsi1_off= 2.*PI/3./MASSD*1.E03/(64.*PI*PI)*ret[2]*sigmamott;
+  fsi2_off= 2.*PI/3./MASSD*1.E03/(64.*PI*PI)*ret[3]*sigmamott;
 
   
   delete ffactorseq;
@@ -371,7 +380,7 @@ void DQEinclusive::calc_F2DincFSI(double &fsi1, double &fsi2, double &fsi1_off, 
 }
 
 void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt, 
-		      double qphi, DQEinclusive& cross, double Q2, double x, int current){
+		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2){
 			
   double phi1=0.;
   result=numint::vector_d(4,0.);
@@ -484,16 +493,16 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 					*conj(cross.getDeutwf()->DeuteronPStateOff(M, spini_out, spinn, 
 						TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,prz2[it2])));
 			//direct onshell
-			res0+=nu*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+Q2/(2.*qvec*qvec)
+			res0+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
 			  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*wf*directrescatt;
 			//cross onshell
-			res1+=nu*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+Q2/(2.*qvec*qvec)*
+			res1+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+(Q2/(2.*qvec*qvec)+tanhalfth2)*
 			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2*crossrescatt;
 			//direct offshell
-			res2+=nu*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+Q2/(2.*qvec*qvec)
+			res2+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
 			  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*wf_off*directrescatt;
 			//cross offshell
-			res3+=nu*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+Q2/(2.*qvec*qvec)*
+			res3+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+(Q2/(2.*qvec*qvec)+tanhalfth2)*
 			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2_off*crossrescatt;
 		      }
 		    }
@@ -530,9 +539,10 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 }
 
 
-void DQEinclusive::calc_F2DincFSI_PVoff(double &fsi1_off, double &fsi2_off, double Q2,double x, 
+void DQEinclusive::calc_CrossincFSI_PVoff(double &fsi1_off, double &fsi2_off, double Q2,double x, 
 				  int current, int integrator){
   
+  double nu=Q2/(x*2.*MASSP);
   ffactorseq=new NucleonEMOperator(Q2,proton,ffparam);
   ffactorsdiff=new NucleonEMOperator(Q2,!proton,ffparam);
   //first we perform the regular 4d integration, inside we do the PV integrations.
@@ -545,6 +555,7 @@ void DQEinclusive::calc_F2DincFSI_PVoff(double &fsi1_off, double &fsi2_off, doub
   F.Q2 = Q2;
   F.x = x;
   F.current = current;
+  F.tanhalfth2=electron.GetTan2HalfAngle(Q2,nu);
   numint::mdfunction<numint::vector_d,3> mdf;
   mdf.func = &Ftor_FSI::exec;
   mdf.param = &F;
@@ -636,8 +647,10 @@ void DQEinclusive::calc_F2DincFSI_PVoff(double &fsi1_off, double &fsi2_off, doub
     }
   }
 //     cout << "fsi " << res << " " << count << endl;
-  fsi1_off= 2.*PI/3./MASSD/(64.*PI*PI*PI)*ret[0];
-  fsi2_off= 2.*PI/3./MASSD/(64.*PI*PI*PI)*ret[1];
+  double sigmamott=ALPHA*ALPHA*(1+electron.GetCosScatterAngle(Q2,nu))/
+    (2.*pow(electron.GetBeamEnergy(Q2,nu)*(1-electron.GetCosScatterAngle(Q2,nu)),2.))*HBARC*HBARC*1.E07;
+  fsi1_off= 2.*PI/3./MASSD*1.E03/(64.*PI*PI*PI)*ret[0]*sigmamott;
+  fsi2_off= 2.*PI/3./MASSD*1.E03/(64.*PI*PI*PI)*ret[1]*sigmamott;
 
   
   delete ffactorseq;
@@ -647,7 +660,7 @@ void DQEinclusive::calc_F2DincFSI_PVoff(double &fsi1_off, double &fsi2_off, doub
 }
 
 void DQEinclusive::FSI_PV(numint::vector_d & result, double pperp1, double qt, 
-		      double qphi, DQEinclusive& cross, double Q2, double x, int current){
+		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2){
   
   double phi1=0.;
   result=numint::vector_d(2,0.);
@@ -671,6 +684,7 @@ void DQEinclusive::FSI_PV(numint::vector_d & result, double pperp1, double qt,
   pvint.cross=&cross;
   pvint.Q2 = Q2;
   pvint.x = x;
+  pvint.tanhalfth2 = tanhalfth2;
   pvint.current = current;
   pvint.cosqphi=cosqphi;
   pvint.sinqphi=sinqphi;
@@ -739,7 +753,7 @@ double DQEinclusive::PV_int1(double pz1, void * params){
 
 double DQEinclusive::FSI_intPV(double pz1, double pz2, double pperp1, double pperp2, double qt, double cosphi1, 
 			       double sinphi1, double cosqphi, double sinqphi, vector<double> &prz2poles,  
-			       DQEinclusive& cross, double Q2, double x, double qvec, double nu, int current, bool crossed,
+			       DQEinclusive& cross, double Q2, double x, double tanhalfth2, double qvec, double nu, int current, bool crossed,
 			       FastParticle &rescatter
 			      ){
   complex<double>result=0.;
@@ -802,7 +816,7 @@ double DQEinclusive::FSI_intPV(double pz1, double pz2, double pperp1, double ppe
 				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, 
 					TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,pz2)));
 		//direct offshell
-		result*=nu*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+Q2/(2.*qvec*qvec)
+		result*=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
 		  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*rescatt;
 	      }
 	    }	    

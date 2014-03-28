@@ -157,6 +157,18 @@ double TElectronKinematics::GetBeamEnergy(const TKinematics2to2& tk) const
   return fBeamEnergy;
 }
 
+double TElectronKinematics::GetBeamEnergy(const double Q2, const double nu) const
+{
+  // Returns the incoming electron's energy in [MeV]
+  // given the kinematics in the g*D system.
+  if( !SolveKinematics(Q2,nu) ) {
+    cerr << "ERROR in TElectronKinematics::GetBeamEnergy(const double Q2, const double nu) "
+	 << "impossible kinematics.\n";
+    assert(1==0);
+  }
+  return fBeamEnergy;
+}
+
 double TElectronKinematics::GetBeamEnergy(const TKinematics2to3& tk) const
 {
   // Returns the incoming electron's energy in [MeV]
@@ -183,6 +195,18 @@ double TElectronKinematics::GetEpsilon(const TKinematics2to2& tk) const
   return fEpsilon;
 }
 
+double TElectronKinematics::GetEpsilon(const double Q2, const double nu) const
+{
+  // Returns the virtual photon's transverse linear polarization
+  // given the kinematics in the g*D system.
+  if( !SolveKinematics(Q2,nu) ) {
+    cerr << "ERROR in TElectronKinematics::GetEpsilon(const double Q2, const double nu) "
+	 << "impossible kinematics.\n";
+    assert(1==0);
+  }
+  return fEpsilon;
+}
+
 double TElectronKinematics::GetEpsilon(const TKinematics2to3& tk) const
 {
   // Returns the virtual photon's transverse linear polarization
@@ -202,6 +226,19 @@ double TElectronKinematics::GetCosScatterAngle(const TKinematics2to2& tk) const
   // given the kinematics in the g*D system.
   if( !SolveKinematics(tk) ) {
     cerr << "ERROR in TElectronKinematics::GetCosScatterAngle(TKinematics2to2&) "
+	 << "impossible kinematics.\n";
+    assert(1==0);
+  }
+  return fScatterAngle; 
+}
+
+//_____________________________________________________________________
+double TElectronKinematics::GetCosScatterAngle(const double Q2, const double nu) const
+{
+  // Returns the cosine of the electron's scattering angle
+  // given the kinematics in the g*D system.
+  if( !SolveKinematics(Q2,nu) ) {
+    cerr << "ERROR in TElectronKinematics::GetCosScatterAngle(const double Q2, const double nu) "
 	 << "impossible kinematics.\n";
     assert(1==0);
   }
@@ -235,6 +272,19 @@ double TElectronKinematics::GetTan2HalfAngle(const TKinematics2to2& tk) const
 
 
 //_____________________________________________________________________
+double TElectronKinematics::GetTan2HalfAngle(const double Q2, const double nu) const
+{
+  // Returns the cosine of the electron's scattering angle
+  // given the kinematics in the g*D system.
+  if( !SolveKinematics(Q2,nu) ) {
+    cerr << "ERROR in TElectronKinematics::GetCosScatterAngle(const double Q2, const double nu) "
+	 << "impossible kinematics.\n";
+    assert(1==0);
+  }
+  return ftan2HalfAngle; 
+}
+
+//_____________________________________________________________________
 double TElectronKinematics::GetTan2HalfAngle(const TKinematics2to3& tk) const
 {
   // Returns the cosine of the electron's scattering angle
@@ -250,117 +300,19 @@ double TElectronKinematics::GetTan2HalfAngle(const TKinematics2to3& tk) const
 //_____________________________________________________________________
 bool TElectronKinematics::SolveKinematics(const TKinematics2to2& tk) const
 {
-  // Solve the electron scattering system kinematics and check whether 
-  // the electron-system kinematics are compatible with those of the 
-  // virtual photon - deuteron system.
-  //
-  // Returns 'false' when the kinematics are unphysical.
+  return SolveKinematics(tk.GetQsquared(),tk.GetWlab());
 
-  double tmp;
-
-  switch( fInput ) {
-  case kBeamEnergy:
-    // Solve the kinematics starting with the beam energy.
-    if( fBeamEnergy <= tk.GetWlab() ) return false;
-    
-    // Find the scattering angle
-    fScatterAngle = 1. - tk.GetQsquared()/2./fBeamEnergy/(fBeamEnergy-tk.GetWlab());
-    if( fabs(fScatterAngle) > 1. ) {
-      if( fabs(fScatterAngle)-1.0 < STRANGEUFLOW ) 
-     	fScatterAngle = ( fScatterAngle>0.0 ? 1.0 : -1.0 );
-      else
-	return false;
-    }
-
-    // Finally calculate epsilon
-    if( fScatterAngle<= -1. ) fEpsilon = 0.;
-    else if( tk.GetQsquared()<STRANGEUFLOW ) fEpsilon = 1.;
-    else {
-      ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
-      fEpsilon = 1./(1.+2.*(1.+tk.GetWlab()*tk.GetWlab()/tk.GetQsquared())
-		     *ftan2HalfAngle);
-    }
-    if( fEpsilon < 0. ) {
-      if( fEpsilon < -STRANGEUFLOW ) return false;
-      else fEpsilon = 0.;
-    } else if( fEpsilon > 1. ) {
-      if( (fEpsilon-1.) > STRANGEUFLOW ) return false;
-      else fEpsilon = 1.;
-    }
-    break;
-
-  case kEpsilon:
-    // Solve the kinematics starting with epsilon.
-    if( fEpsilon<0. || fEpsilon>1. ) return false;
-
-    // Find the scattering angle
-    if( tk.GetQsquared()<STRANGEUFLOW ) fScatterAngle = 1.;
-    else {
-      tmp = (1./fEpsilon-1.)/2./(1.+tk.GetWlab()*tk.GetWlab()/tk.GetQsquared());
-      fScatterAngle = (1.-tmp)/(1.+tmp);
-    }
-    if( fabs(fScatterAngle) > 1. ) {
-      if( fabs(fScatterAngle)-1.0 < STRANGEUFLOW ) 
-     	fScatterAngle = ( fScatterAngle>0.0 ? 1.0 : -1.0 );
-      else
-	return false;
-    }
-
-    // Calculate the beam energy
-    if( fScatterAngle > 1. ) return false;
-    else if( fScatterAngle == 1. ) fBeamEnergy = tk.GetWlab() + STRANGEUFLOW;
-    else
-      fBeamEnergy = tk.GetWlab()/2. + sqrt(tk.GetWlab()*tk.GetWlab()/4.
-					   +tk.GetQsquared()/2./(1.-fScatterAngle));
-    if( fBeamEnergy <= tk.GetWlab() ) return false;
-    ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
-    break;
-
-  case kScatterAngle:
-    // Solve the kinematics starting with the scattering angle
-    if( fabs(fScatterAngle) > 1. ) {
-      if( fabs(fScatterAngle)-1.0 < STRANGEUFLOW ) 
-     	fScatterAngle = ( fScatterAngle>0.0 ? 1.0 : -1.0 );
-      else
-	return false;
-    }
-
-    // Find the beam energy
-    if( fScatterAngle == 1. ) fBeamEnergy = tk.GetWlab() + STRANGEUFLOW;
-    else
-      fBeamEnergy = tk.GetWlab()/2. + sqrt( tk.GetWlab()*tk.GetWlab()/4.
-					    +tk.GetQsquared()/2./(1.-fScatterAngle) );
-    if( fBeamEnergy <= tk.GetWlab() ) return false;
-
-    // Calculate epsilon
-    if( fScatterAngle<= -1. ) fEpsilon = 0.;
-    else if( tk.GetQsquared()<STRANGEUFLOW ) fEpsilon = 1.;
-    else {
-      ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
-      fEpsilon = 1./(1.+2.*(1.+tk.GetWlab()*tk.GetWlab()/tk.GetQsquared())
-		     *ftan2HalfAngle);
-    }
-    if( fEpsilon < 0. ) {
-      if( fEpsilon < -STRANGEUFLOW ) return false;
-      else fEpsilon = 0.;
-    } else if( fEpsilon > 1. ) {
-      if( (fEpsilon-1.) > STRANGEUFLOW ) return false;
-      else fEpsilon = 1.;
-    }
-    ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
-    break;
-    
-  default:
-    cerr << "ERROR in TElectronKinematics::SolveKinematics(TKinematics2to2&): "
-	 << "Invalid input variable.\n";
-    assert(1==0);
-  }
-  
-  return true;
 }
 
 //_____________________________________________________________________
 bool TElectronKinematics::SolveKinematics(const TKinematics2to3& tk) const
+{
+
+  return SolveKinematics(tk.GetQsquared(),tk.GetWlab());
+}
+
+//_____________________________________________________________________
+bool TElectronKinematics::SolveKinematics(const double Q2, const double nu) const
 {
   // Solve the electron scattering system kinematics and check whether 
   // the electron-system kinematics are compatible with those of the 
@@ -373,10 +325,10 @@ bool TElectronKinematics::SolveKinematics(const TKinematics2to3& tk) const
   switch( fInput ) {
   case kBeamEnergy:
     // Solve the kinematics starting with the beam energy.
-    if( fBeamEnergy <= tk.GetWlab() ) return false;
+    if( fBeamEnergy <= nu ) return false;
     
     // Find the scattering angle
-    fScatterAngle = 1. - tk.GetQsquared()/2./fBeamEnergy/(fBeamEnergy-tk.GetWlab());
+    fScatterAngle = 1. - Q2/2./fBeamEnergy/(fBeamEnergy-nu);
     if( fabs(fScatterAngle) > 1. ) {
       if( fabs(fScatterAngle)-1.0 < STRANGEUFLOW ) 
      	fScatterAngle = ( fScatterAngle>0.0 ? 1.0 : -1.0 );
@@ -386,10 +338,10 @@ bool TElectronKinematics::SolveKinematics(const TKinematics2to3& tk) const
 
     // Finally calculate epsilon
     if( fScatterAngle<= -1. ) fEpsilon = 0.;
-    else if( tk.GetQsquared()<STRANGEUFLOW ) fEpsilon = 1.;
+    else if( Q2<STRANGEUFLOW ) fEpsilon = 1.;
     else {
       ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
-      fEpsilon = 1./(1.+2.*(1.+tk.GetWlab()*tk.GetWlab()/tk.GetQsquared())
+      fEpsilon = 1./(1.+2.*(1.+nu*nu/Q2)
 		     *ftan2HalfAngle);
     }
     if( fEpsilon < 0. ) {
@@ -406,9 +358,9 @@ bool TElectronKinematics::SolveKinematics(const TKinematics2to3& tk) const
     if( fEpsilon<0. || fEpsilon>1. ) return false;
 
     // Find the scattering angle
-    if( tk.GetQsquared()<STRANGEUFLOW ) fScatterAngle = 1.;
+    if( Q2<STRANGEUFLOW ) fScatterAngle = 1.;
     else {
-      tmp = (1./fEpsilon-1.)/2./(1.+tk.GetWlab()*tk.GetWlab()/tk.GetQsquared());
+      tmp = (1./fEpsilon-1.)/2./(1.+nu*nu/Q2);
       fScatterAngle = (1.-tmp)/(1.+tmp);
     }
     if( fabs(fScatterAngle) > 1. ) {
@@ -420,11 +372,11 @@ bool TElectronKinematics::SolveKinematics(const TKinematics2to3& tk) const
 
     // Calculate the beam energy
     if( fScatterAngle > 1. ) return false;
-    else if( fScatterAngle == 1. ) fBeamEnergy = tk.GetWlab() + STRANGEUFLOW;
+    else if( fScatterAngle == 1. ) fBeamEnergy = nu + STRANGEUFLOW;
     else
-      fBeamEnergy = tk.GetWlab()/2. + sqrt(tk.GetWlab()*tk.GetWlab()/4.
-					   +tk.GetQsquared()/2./(1.-fScatterAngle));
-    if( fBeamEnergy <= tk.GetWlab() ) return false;
+      fBeamEnergy = nu/2. + sqrt(nu*nu/4.
+					   +Q2/2./(1.-fScatterAngle));
+    if( fBeamEnergy <= nu ) return false;
     ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
     break;
 
@@ -438,18 +390,18 @@ bool TElectronKinematics::SolveKinematics(const TKinematics2to3& tk) const
     }
 
     // Find the beam energy
-    if( fScatterAngle == 1. ) fBeamEnergy = tk.GetWlab() + STRANGEUFLOW;
+    if( fScatterAngle == 1. ) fBeamEnergy = nu + STRANGEUFLOW;
     else
-      fBeamEnergy = tk.GetWlab()/2. + sqrt( tk.GetWlab()*tk.GetWlab()/4.
-					    +tk.GetQsquared()/2./(1.-fScatterAngle) );
-    if( fBeamEnergy <= tk.GetWlab() ) return false;
+      fBeamEnergy = nu/2. + sqrt( nu*nu/4.
+					    +Q2/2./(1.-fScatterAngle) );
+    if( fBeamEnergy <= nu ) return false;
 
     // Calculate epsilon
     if( fScatterAngle<= -1. ) fEpsilon = 0.;
-    else if( tk.GetQsquared()<STRANGEUFLOW ) fEpsilon = 1.;
+    else if( Q2<STRANGEUFLOW ) fEpsilon = 1.;
     else {
       ftan2HalfAngle = (1.-fScatterAngle)/(1.+fScatterAngle);
-      fEpsilon = 1./(1.+2.*(1.+tk.GetWlab()*tk.GetWlab()/tk.GetQsquared())
+      fEpsilon = 1./(1.+2.*(1.+nu*nu/Q2)
 		     *ftan2HalfAngle);
     }
     if( fEpsilon < 0. ) {
