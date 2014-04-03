@@ -1,4 +1,4 @@
-//run ./neutest [T_\mu [MeV]] [cos(theta_mu)] 
+//run ./neutest [T_\mu [MeV]] [cos(theta_mu)] [integrator] [homedir]
 
 //we integrate for miniboone cross section
 //integration happens over incoming neutrino energy folded with flux
@@ -408,6 +408,15 @@ int main(int argc, char *argv[])
 //   }
 //   exit(1);
   
+//   for(int i=0;i<20;i++){
+//     double costhetacm=min+(max-min)*i/20.;
+//     for(int j=0;j<50;j++){
+//       double E_in=E_low+(E_high-E_low)*j/50.;
+//       adap_intPm(avgcross,E_in,costhetacm,obs,Nucleus,*lepton,E_out,costhetamu,current,cthmax);
+//     }
+//   }
+//   exit(1);
+  
   
   //initialize object
   Ftor F;
@@ -455,6 +464,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
       -lepton.GetLeptonMass()*lepton.GetLeptonMass();
 //   cout << E_in << " " << omega<< " " << Q2*1.E-06 << " " << sqrt(Q2+omega*omega) << endl;
   pObs.getPlepton()->SetBeamEnergy(E_in);
+//   int shell=0;
   for(int shell=0;shell<nucleus.getTotalLevels();shell++) {
     if(costhetacm<cthmax[shell]){
       TKinematics2to2 kin("","",nucleus.getMassA(),
@@ -471,14 +481,15 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 	results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
 	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
 	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << endl;
+	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
+	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << endl;
       }
     }
     
   }
   //fold with flux
-  results[0]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
-  results[1]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
+//   results[0]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
+//   results[1]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
 }
 
 double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,

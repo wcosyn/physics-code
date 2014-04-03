@@ -332,8 +332,8 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
 	for(int k=0;k<total;++k) matrixel[k](spinout,photopol) = ret[k];
       }      
       else {cerr  << "integrator type not implemented " << integrator << endl; exit(1);}
-      cout << shellindex << " " << m << " " << spinout << " " << photopol << " " << matrixel[0](spinout,photopol) << 
-	" " << matrixel[1](spinout,photopol) << " " << matrixel[total-1](spinout,photopol) << " " << res << " " << count << endl;
+//       cout << shellindex << " " << m << " " << spinout << " " << photopol << " " << matrixel[0](spinout,photopol) << 
+// 	" " << matrixel[1](spinout,photopol) << " " << matrixel[total-1](spinout,photopol) << " " << res << " " << count << endl;
     }
   }
         

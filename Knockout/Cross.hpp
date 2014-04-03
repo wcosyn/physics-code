@@ -211,6 +211,7 @@ public:
   double getPrec() const{return prec;} /*!< precision of the integrations */
   double getSigmascreening() const{return sigmascreening;} /*!< [%] screening of sigma */
   bool getUsersigma() const{return usersigma;} /*!< has the user set sigma? */
+  TElectronKinematics * getElectron() {return &electron;} /*!< pointer to electron kinematics object */
   MeanFieldNucleusThick * getPnucl() const{return pnucl;}  /*!< pointer to nucleus object */
   
   /*! Prints a density profile for certain kinematics.

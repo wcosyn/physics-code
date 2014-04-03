@@ -59,6 +59,7 @@ class TElectronKinematics : public TObject
    * \param[out] k_out [MeV] outgoing lepton fourvector
    */
   void GetLeptonVectors(const TKinematics2to2& kin, FourVector<double> &k_in, FourVector<double> &k_out); 
+  double GetLeptonMass() const{return 0.511;} /*!< [MeV] returns lepton mass */
   
   
  protected:
