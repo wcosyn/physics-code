@@ -264,10 +264,11 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 	      +kinfactors[3]*response[3]+kinfactors[4]*(response[4]*cos(2.*phi)+extraresponse[0]*sin(2.*phi))
 	      +(kinfactors[5]*response[5]+kinfactors[6]*response[6])*cos(phi)
 	      +(kinfactors[5]*extraresponse[1]+kinfactors[6]*extraresponse[2])
-	      +(shellindex<pnucl->getPLevels()?-1.:-1.)*
+	      +(shellindex<pnucl->getPLevels()?1.:-1.)*
 	      (kinfactors[7]*response[7]+kinfactors[8]*(response[8]*sin(phi)+extraresponse[3]*cos(phi)));
-    else result=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
-	      +kinfactors[3]*response[3]+(shellindex<pnucl->getPLevels()?-1.:-1.)*kinfactors[7]*response[7]);
+//     else result=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
+// 	      +kinfactors[3]*response[3]+(shellindex<pnucl->getPLevels()?1.:-1.)*kinfactors[7]*response[7]);
+else result=2.*PI*(kinfactors[7]*response[7]));
     delete reacmodel;
 //     cout <<"mott " << mott << " " << frontfactor << endl;
     return mott*frontfactor*result/HBARC;

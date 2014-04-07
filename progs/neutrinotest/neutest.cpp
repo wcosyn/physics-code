@@ -489,7 +489,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
   }
   //fold with flux
   results[0]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
-  results[1]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
+  results[1]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
 }
 
 double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
