@@ -465,7 +465,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 //   cout << E_in << " " << omega<< " " << Q2*1.E-06 << " " << sqrt(Q2+omega*omega) << endl;
   pObs.getPlepton()->SetBeamEnergy(E_in);
 //   int shell=0;
-  for(int shell=0;shell<nucleus.getPLevels();shell++) {
+  for(int shell=0;shell<nucleus.getTotalLevels();shell++) {
     if(costhetacm<cthmax[shell]){
       TKinematics2to2 kin("","",nucleus.getMassA(),
 			  (shell<nucleus.getPLevels()? nucleus.getMassA_min_proton(): nucleus.getMassA_min_neutron())
@@ -478,9 +478,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
       }
       else{
 	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E04,0,1);
-// 	results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
-	results[0]+=result;
-	results[1]+=result;
+	results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
 	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
 	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
 	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
@@ -491,7 +489,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
   }
   //fold with flux
   results[0]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
-  results[1]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
+  results[1]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
 }
 
 double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
