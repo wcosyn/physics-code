@@ -45,7 +45,7 @@ HDRS =
 
 #-------------------------------------------------------------------------
 #		Executable file
-EFILE   = 	../../bin/neutest ../../bin/neutestint
+EFILE   = 	../../bin/neutest ../../bin/neutestint ../../bin/neutestfixEin
 EFILEST   = 	../../bin/staticneutest 
 
 #		Targets...

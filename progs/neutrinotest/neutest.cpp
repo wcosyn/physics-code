@@ -408,10 +408,10 @@ int main(int argc, char *argv[])
 //   }
 //   exit(1);
   
-//   for(int i=0;i<20;i++){
-//     double costhetacm=min+(max-min)*i/20.;
-//     for(int j=0;j<50;j++){
-//       double E_in=E_low+(E_high-E_low)*j/50.;
+//   for(int j=0;j<20;j++){
+//     double E_in=E_low+(E_high-E_low)*j/20.;
+//       for(int i=0;i<20;i++){
+// 	double costhetacm=-1.+2.*i/20.;
 //       adap_intPm(avgcross,E_in,costhetacm,obs,Nucleus,*lepton,E_out,costhetamu,current,cthmax);
 //     }
 //   }
@@ -472,7 +472,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 			  +nucleus.getExcitation()[shell],
 			  shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
       double pm=kin.GetPklab();
-      if(!kin.IsPhysical()){
+      if(!kin.IsPhysical()||kin.GetPYlab()<200.){
 	//for(int i=0;i<2;i++) results[i]+=0.;
 // 	cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << " " << kin.GetPk() << endl;
       }
@@ -482,7 +482,8 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
 	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
 	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
-	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << endl;
+	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << " " << result*(shell<nucleus.getPLevels()?
+	interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1):interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1)) << endl;
       }
     }
     

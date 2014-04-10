@@ -141,7 +141,6 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     kinfactors[7]=(k_in[0]+k_out[0])/qvec*(1.-massfactor*costhl)-leptonmass2/qvec/k_out[0]; //v_T'
     kinfactors[8]=-massfactor*sinthl/sqrt(2.); //v_TL'
     
-    
 // testing kin factors
 //     const FourVector<GammaStructure> gamma_mu=FourVector<GammaStructure>(GammaStructure(0.,0.,1.),
 // 											GammaStructure(0.,0.,0.,1.),
@@ -268,9 +267,11 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
 	      (kinfactors[7]*response[7]+kinfactors[8]*(response[8]*sin(phi)+extraresponse[3]*cos(phi)));
     else result=2.*PI*(kinfactors[0]*response[0]+kinfactors[1]*response[1]+kinfactors[2]*response[2]
 	      +kinfactors[3]*response[3]+(shellindex<pnucl->getPLevels()?1.:-1.)*kinfactors[7]*response[7]);
-// else result=2.*PI*(kinfactors[7]*response[7]);
+//  else result=2.*PI*(kinfactors[7]*response[7]);
     delete reacmodel;
 //     cout <<"mott " << mott << " " << frontfactor << endl;
+//     cout << kinfactors[3] << " " << kinfactors[7] << " " << kinfactors[0] << " " << response[3] << " " << response[7] << " " << response[0] << " " 
+//     << massfactor << " " << mott << " " << frontfactor << " " << result << endl;
     return mott*frontfactor*result/HBARC;
   }  
   //NC
