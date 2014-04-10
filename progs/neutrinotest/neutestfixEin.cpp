@@ -397,7 +397,7 @@ int main(int argc, char *argv[])
     
     //cross section in 10^-39 cm^2 GeV ^-1 per nucleon!!
     //factor 2\pi because of integration over muon polar angle
-    cout << T_mu << " " << costhetamu << " " << avgcross[0]*1.E16*2.*PI/Nucleus.getN()
+    cout << T_mu << " " << costhetamu << " " << Q2 << " " << omega << " " << x << " " << avgcross[0]*1.E16*2.*PI/Nucleus.getN()
     << " " << avgcross[1]*1.E16*2.*PI/Nucleus.getZ() << " " << count << endl;
   }
   delete lepton;
