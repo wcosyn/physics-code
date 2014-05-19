@@ -45,7 +45,7 @@ public:
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param electron has electron kinematics
-   * \return [GeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\OmegadE'd^3p_s} \f$ integrated over phi
+   * \return [GeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi
    */
   double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron);
   /*! get the average cross section
@@ -85,15 +85,17 @@ public:
   void getBonusMCresult(double &MCresult, double &modelresultpw, double &modelresultfsi, 
 			double Q2, double W, double Ein, double pr, double costhetar, bool proton, bool pw);
     
-  /*! get the average Azz observable
+  /*! get the average Azz observable or cross section ratio
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-   * \param electron has electron kinematics
+   * \param elec has electron kinematics
    * \param pw plane-wave calculation [1] or not [0]
+   * \param Azz [0] cross section or [1] Azz
    * \param Einoff off-shell energy of the nucleon interacting with the photon
    * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ integrated over phi
+   * or Azz observable
    */
-  double getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool azz, bool pw, double Einoff); 
+  double getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool Azz, bool pw, double Einoff); 
   /*! computes the results like they are presented in the Deeps data
    * \param Q2 [MeV^2] four-momentum transfer
    * \param W [MeV] invariant mass of X
@@ -101,8 +103,10 @@ public:
    * \param pr [MeV] spectator momentum
    * \param costhetar angle of spectator with q
    * \param proton DIS on proton (1) or neutron (0)
-   * \param[out] planewave [MeV^-3] plane wave result
-   * \param[out]  fsi [MeV^-3]  fsi result
+   * \param[out] Azz [] Azz plane wave result
+   * \param[out]  Azzfsi [] Azz fsi result
+   * \param[out] planewave [MeV^-3] cross section ratio plane wave result
+   * \param[out]  fsi [MeV^-3]  cross section ratio fsi result
    */
   void getDeepsAzz(double Q2, double W, double Ein, double pr, double costhetar, bool proton, 
 		    double &Azz, double &Azzfsi, double &planewave, double &fsi); 

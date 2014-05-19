@@ -24,6 +24,10 @@
  * [DistMomDistrGrid] <BR>
  * - A class that computes nucleon form factors, dirac couplings, with medium modifications (CQM or QSM) if desired. <BR>
  * [NucleonEMOperator] <BR>
+ * - A class that computes weak nucleon form factors, dirac couplings, with medium modifications (CQM or QSM) if desired. <BR>
+ * [NucleonWeakEMOperator] <BR>
+ * -A class that implements the ROMEA model for FSI based on the optical potentials from Cooper & Hana (Phys. Rev. C 80, 034605) <BR>
+ * [ROMEAGrid] <BR>
 */
 
 

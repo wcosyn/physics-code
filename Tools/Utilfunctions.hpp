@@ -14,6 +14,7 @@
 #include <sstream>
 #include <complex>
 
+
 /*! interpolation of an array
  * \param array array to interpolate
  * \param r interpolation value
@@ -22,7 +23,25 @@
  * \param offset units of rstep where the grid starts
  * \return interpolation value of the grid at r
  */
-double interpolate(const double *array, double r, double rstep,int lines, int offset);
+template <class T> T interpolate(const T *array, double r, double rstep,int lines, int offset){
+  //interpolation points is double of order
+  //rstep is set distance between known points
+  //offset indicates times rstep from where the interpolation array starts
+  //lines is number of elements in array
+
+  if(array==NULL) {
+    std::cerr <<"Array has not been initialized!!!!" << std::endl;
+    exit(1);
+  }
+  int index=int(floor(r/rstep))-offset;
+
+  if(index==lines-1) index--; // if index is at the end of the array.
+  if(index<0) index=0;
+  double a = (r-rstep*(index+1+offset))/-rstep;
+  return a*(array[index]-array[index+1]) + array[index+1];
+}
+
+
 double power(double x,int n);/*!< returns x^n */
 int power(int x,int n);/*!< returns x^n */
 /*! returns the distance between points r1 and r2

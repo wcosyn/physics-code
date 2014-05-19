@@ -57,7 +57,7 @@ public:
    * \param x [] bjorken x
    * \return [] inclusive cross section without prefactors (structure functions times momentum distribution integrated)
    */
-  void calc_Azzinc(double &Axx, double &cross, double Q2,double x);
+  void calc_Azzinc(double &Azz, double &cross, double Q2,double x);
   /*! Calculates the fsi inclusive cross section without any prefactors, just the deuteron structure functions time
    * momentum distribution
    * \param [out] fsi1 [] inclusive fsi cross section without prefactors (structure functions times momentum distribution integrated)

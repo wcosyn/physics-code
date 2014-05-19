@@ -11,12 +11,12 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
- CC      = 	icpc
-# CC      = 	g++
+#  CC      = 	icpc
+CC      = 	g++
 
 #		Flags
-# OPTFLAG	=	-O3 -fPIC
-OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
+OPTFLAG	=	-O3 -fPIC
+# OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
@@ -29,11 +29,11 @@ EFILEST   = 	../../bin/glauberteststatic
 
 #		Mathematical functions
 LIBS =	 	-lm 
-WIMLIBS = -lMePhys -lGlauber 
+WIMLIBS = -lMePhys -lGlauber -lIntegrator
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
- INCLUDEDIRS =  -I ~/Code/Tools  -I ~/Code/Glauber 
-STATICLIBS = ~/Code/lib/libGlauber.a  ~/Code/lib/libMePhys.a 
+ INCLUDEDIRS =  -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Integrator
+STATICLIBS = ~/Code/lib/libGlauber.a  ~/Code/lib/libMePhys.a  ~/Code/lib/libIntegrator.a
 
 
 #		Header files

@@ -23,6 +23,7 @@ GlauberDecayGridThick.hpp
 OneGlauberGrid.hpp
 TMFSpinor.hpp
 DistMomDistrGrid.hpp
+ROMEAGrid.hpp
 )
 
 foreach(it ${Glauber_HEADERS_HPP})
@@ -43,6 +44,10 @@ set(Glauber_HEADERS ${Glauber_HEADERS_H} ${Glauber_HEADERS_HPP})
 # dictionary
 set(Glauber_LINKDEF 
 TMFSpinorLinkDef.h
+)
+
+set(Glauber_FORT 
+global2009.f
 )
 
 
@@ -73,8 +78,8 @@ foreach(val RANGE ${len2})
 endforeach()
 
 # add the dictionary to the list of source files
-SET(Glauber_SRCS_LI ${Glauber_SRCS} ${Glauber_DICTIONARY}) 
-SET(Glauber_SRCS_ST ${Glauber_SRCS} ${Glauber_DICTIONARY_ST}) 
+SET(Glauber_SRCS_LI ${Glauber_SRCS} ${Glauber_DICTIONARY} ${Glauber_FORT}) 
+SET(Glauber_SRCS_ST ${Glauber_SRCS} ${Glauber_DICTIONARY_ST} ${Glauber_FORT}) 
 
 
 # Set the library version in the main CMakeLists.txt

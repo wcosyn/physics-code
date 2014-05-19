@@ -24,6 +24,7 @@ using namespace std;
 #include <GlauberGridThick.hpp>
 #include <GlauberDecayGridThick.hpp>
 #include <TMFSpinor.hpp>
+#include <ROMEAGrid.hpp>
 
 int main(int argc, char *argv[])
 {
@@ -43,33 +44,40 @@ int main(int argc, char *argv[])
 //   onegrid.printFsi_grid();
   
   
-  
-  MeanFieldNucleusThick CarbonThick(1,homedir);
-  complex<double> wave[4];
-  CarbonThick.getWaveFunction(wave,0, -1, 2.,0.5,1.);
-  cout << wave[0] << " " << wave[1] << " " << wave[2] << " " << wave[3] << endl;
-  cout << TMFSpinor(CarbonThick,0,-1,2.,0.5,1.) << endl;
-  CarbonThick.getWaveFunction(wave,1, 1, 1.,0.5,1.);
-  cout << wave[0] << " " << wave[1] << " " << wave[2] << " " << wave[3] << endl;
-  cout << TMFSpinor(CarbonThick,1,1,1.,0.5,1.) << endl;
-  //FastParticle proton(0, 1, 1234,0.,0.,3.,0.,homedir);
-  FastParticle proton2(0, 0, 4878,0.,0.,8.,0.,homedir);
-  proton2.printParticle();
-  GlauberGridThick gridthick(60,18,5,&CarbonThick,homedir);
-  gridthick.addParticle(proton2);
-  gridthick.printParticles();
-  gridthick.updateGrids();
-  gridthick.printFsi_src_ct_grid();
-  GlauberGrid grid(60,18,5,&CarbonThick,homedir);
+  MeanFieldNucleus Carbon(1,homedir);
+  FastParticle proton2(0, 0, 40.,0.,0.,8.,0.,homedir);
+  ROMEAGrid grid(60,18,5,&Carbon,PREC,2,ROMEAGrid::EDAD1,homedir);
   grid.addParticle(proton2);
-  grid.printParticles();
   grid.updateGrids();
-  grid.printFsi_grid();
-  OneGlauberGrid onegrid(60,18,&CarbonThick,homedir);
-  onegrid.addParticle(proton2);
-  onegrid.printParticles();
-  onegrid.updateGrids();
-  onegrid.printFsi_ct_grid();
+//   grid.printFsi_grid();
+  exit(1);
+  
+//   MeanFieldNucleusThick CarbonThick(1,homedir);
+//   complex<double> wave[4];
+//   CarbonThick.getWaveFunction(wave,0, -1, 2.,0.5,1.);
+//   cout << wave[0] << " " << wave[1] << " " << wave[2] << " " << wave[3] << endl;
+//   cout << TMFSpinor(CarbonThick,0,-1,2.,0.5,1.) << endl;
+//   CarbonThick.getWaveFunction(wave,1, 1, 1.,0.5,1.);
+//   cout << wave[0] << " " << wave[1] << " " << wave[2] << " " << wave[3] << endl;
+//   cout << TMFSpinor(CarbonThick,1,1,1.,0.5,1.) << endl;
+//   //FastParticle proton(0, 1, 1234,0.,0.,3.,0.,homedir);
+//   FastParticle proton2(0, 0, 4878,0.,0.,8.,0.,homedir);
+//   proton2.printParticle();
+//   GlauberGridThick gridthick(60,18,5,&CarbonThick,homedir);
+//   gridthick.addParticle(proton2);
+//   gridthick.printParticles();
+//   gridthick.updateGrids();
+//   gridthick.printFsi_src_ct_grid();
+//   GlauberGrid grid(60,18,5,&CarbonThick,homedir);
+//   grid.addParticle(proton2);
+//   grid.printParticles();
+//   grid.updateGrids();
+//   grid.printFsi_grid();
+//   OneGlauberGrid onegrid(60,18,&CarbonThick,homedir);
+//   onegrid.addParticle(proton2);
+//   onegrid.printParticles();
+//   onegrid.updateGrids();
+//   onegrid.printFsi_ct_grid();
 
   
   

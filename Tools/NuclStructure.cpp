@@ -8,15 +8,17 @@
 
 using namespace std;
 
+//nucleon structure parametrization from Christy & Bosted (fortran)
 extern"C"{
     void f1f2in09_(double *Z, double *A, double *QSQ, double *Wsq, double *F1, double *F2, double *rc);
 }
 
+//nucleon structure parametrization from Alekhin leading twist (fortran)
 extern"C"{
   void alekhin_(double *xb,double *q2,double PDFS[22],int *IPAR,int *ICOL);
 }
 
-
+//data structures needed in Alekhin parametrization
 extern "C"{
   extern struct{
     char homedir[128];
@@ -25,6 +27,7 @@ extern "C"{
   } dir_;
 }
 
+//nucleon structure parametrization from CTEQ (based on PDFs)
 extern "C"{
   double f2_ctq_(int *proton, double *x, double *Q2);
 }

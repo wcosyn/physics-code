@@ -66,9 +66,10 @@ public:
   double getavgStructure(TKinematics2to2 &kin, TElectronKinematics &el, double Einoff) const;
   /*! combination of all structure functions averaged over phi (angle between hadron and electron plane)
    * Off-shell produced X case here!!!  mass W is known, but differs from invariant mass 
-   * \param kin semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
+   * \param[in] kin semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
     * \param[in] el electron kinematics, see TElectronKinematics
+    * \param Wsq [MeV^2] invariant mass squared of produced X
      * \param Einoff [MeV] off-shell energy of interacting nucleon
    */
   double getavgStructure_off(TKinematics2to2 &kin, TElectronKinematics &el, double Wsq, double Einoff) const;
