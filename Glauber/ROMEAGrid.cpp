@@ -71,7 +71,7 @@ complex < double >ROMEAGrid::getFsiGridFull_interp() {
 }
 
 complex<double> ROMEAGrid::getFsiGridN_interp(const int grid){
-   if (grid==0) getFsiGridFull_interp();
+   if (grid==0) return getFsiGridFull_interp();
   else {
     cerr << "gridindex out of range" << endl;
     assert(1==0);
