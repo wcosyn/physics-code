@@ -141,7 +141,7 @@ void DQEinclusive::calc_Crossinc(double &contrib1, double &contrib2, double Q2,d
 // 	break;
 //     }
     default:{
-      cerr << "integrator not supported" << endl;
+      cerr << "integrator not supported " << integrator << endl;
       assert(1==0);
     }
   }
@@ -150,7 +150,7 @@ void DQEinclusive::calc_Crossinc(double &contrib1, double &contrib2, double Q2,d
   delete ffactorsdiff;
   double sigmamott=ALPHA*ALPHA*(1+electron.GetCosScatterAngle(Q2,nu))/
     (2.*pow(electron.GetBeamEnergy(Q2,nu)*(1-electron.GetCosScatterAngle(Q2,nu)),2.))*HBARC*HBARC*1.E07;
-    cout << sigmamott << " " << acos(electron.GetCosScatterAngle(Q2,nu))/PI*180. << " " << 2.*PI/3./MASSD*1.E03*ret[0] << endl;
+//     cout << sigmamott << " " << acos(electron.GetCosScatterAngle(Q2,nu))/PI*180. << " " << 2.*PI/3./MASSD*1.E03*ret[0] << endl;
   contrib1= 2.*PI/3./MASSD*1.E03*ret[0]*sigmamott;
   contrib2= 2.*PI/3./MASSD*1.E03*ret[1]*sigmamott;    
 }
@@ -176,6 +176,7 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
       double prnorm=sqrt(pperp*pperp+prz[it]*prz[it]);
 //       double costheta=prz[it]/prnorm;
       double Ernorm=sqrt(pperp*pperp+prz[it]*prz[it]+cross.getMassr()*cross.getMassr());
+//       cout << "pw " << it << " " << pperp << " " <<  2.*qvec*prz[it]-2.*(MASSD+nu)*Ernorm << " " << -MASSD*MASSD+Q2-2.*MASSD*nu -cross.getMassr()*cross.getMassr()+ cross.getMassi()*cross.getMassi() << endl;
       if(Ernorm<MASSD-200.){
 	FourVector<double> q(nu,0.,0.,qvec);
 	
@@ -257,7 +258,7 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 
 
 void DQEinclusive::calc_CrossincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, 
-				  int current, int integrator, int maxEval){
+				  int current, int integrator, int maxEval, bool nopt){
   
   double nu=Q2/(x*2.*MASSP);
   ffactorseq=new NucleonEMOperator(Q2,proton,ffparam);
@@ -274,6 +275,7 @@ void DQEinclusive::calc_CrossincFSI(double &fsi1, double &fsi2, double &fsi1_off
   F.x = x;
   F.current = current;
   F.tanhalfth2=electron.GetTan2HalfAngle(Q2,nu);
+  F.nopt=nopt;
   numint::mdfunction<numint::vector_d,3> mdf;
   mdf.func = &Ftor_FSI::exec;
   mdf.param = &F;
@@ -380,7 +382,8 @@ void DQEinclusive::calc_CrossincFSI(double &fsi1, double &fsi2, double &fsi1_off
 }
 
 void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt, 
-		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2){
+		      double qphi, DQEinclusive& cross, double Q2, double x, int current, 
+		      double tanhalfth2, bool nopt){
 			
   double phi1=0.;
   result=numint::vector_d(4,0.);
@@ -405,13 +408,14 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 
 
 
-  if(cross.get_prz(prz1,pperp1,Q2,nu,qvec)){ //prz evaluation is performed!!
-    if(cross.get_prz(prz2,pperp2,Q2,nu,qvec)){ //prz evaluation is performed!!
+  if(cross.get_prz(prz1,nopt?0.:pperp1,Q2,nu,qvec)){ //prz evaluation is performed!!
+    if(cross.get_prz(prz2,nopt?0.:pperp2,Q2,nu,qvec)){ //prz evaluation is performed!!
       for(size_t it1=0;it1<prz1.size();it1++){      
 	double prnorm=sqrt(pperp1*pperp1+prz1[it1]*prz1[it1]);
   //       double costheta=prz[it]/prnorm;
 	double Ernorm=sqrt(pperp1*pperp1+prz1[it1]*prz1[it1]+cross.getMassr()*cross.getMassr());
 	if(Ernorm<MASSD-200.){
+// 	cout << "1 " << it1 << " " << pperp1 << " " <<  prz1[it1] << " " << Ernorm << " " << 2.*qvec*prz1[it1]-2.*(MASSD+nu)*Ernorm << " " << -MASSD*MASSD+Q2-2.*MASSD*nu -cross.getMassr()*cross.getMassr()+ cross.getMassi()*cross.getMassi()<< endl;
 	  FourVector<double> q(nu,0.,0.,qvec);
 	  
 	  //direct term
@@ -429,6 +433,7 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 	  for(size_t it2=0;it2<prz2.size();it2++){      
 	    double Erprimenorm=sqrt(pperp2*pperp2+prz2[it2]*prz2[it2]+cross.getMassr()*cross.getMassr());
 	    if(Erprimenorm<MASSD-200.){
+// 	    cout << "2 " << it2 << " " << pperp2 << " " <<  prz2[it2] << " " << Erprimenorm << " " << 2.*qvec*prz2[it2]-2.*(MASSD+nu)*Erprimenorm << " " << -MASSD*MASSD+Q2-2.*MASSD*nu  -cross.getMassr()*cross.getMassr()+ cross.getMassi()*cross.getMassi()<< endl;
 
 	      FourVector<double> pi2(MASSD-Erprimenorm,-pperp1*cosphi1-qt*cosqphi,-qt*sinqphi,-prz2[it2]); //pi2=pD-ps2, in perp dir ps2=ps1+qt
 	      FourVector<double> pn2=pi2+q; //pn2=pi2+q
@@ -556,6 +561,7 @@ void DQEinclusive::calc_CrossincFSI_PVoff(double &fsi1_off, double &fsi2_off, do
   F.x = x;
   F.current = current;
   F.tanhalfth2=electron.GetTan2HalfAngle(Q2,nu);
+  F.nopt=1;
   numint::mdfunction<numint::vector_d,3> mdf;
   mdf.func = &Ftor_FSI::exec;
   mdf.param = &F;
@@ -660,7 +666,7 @@ void DQEinclusive::calc_CrossincFSI_PVoff(double &fsi1_off, double &fsi2_off, do
 }
 
 void DQEinclusive::FSI_PV(numint::vector_d & result, double pperp1, double qt, 
-		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2){
+		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2, bool nopt){
   
   double phi1=0.;
   result=numint::vector_d(2,0.);
@@ -855,7 +861,7 @@ bool DQEinclusive::get_prz(vector<double> &sol, double pt, double Q2, double nu,
     double p2 = (-bb-sqrt(discr))/(2.*aa);
     double Er2=sqrt(getMassr()*getMassr()+pt*pt+p2*p2);
     if(SIGN(A+B*p2)==1) sol.push_back(p2);
-//     cout << sol.size() << " " << A+B*p1 << " " << A+B*p2 << " " << Er << " " << Er2 << " " << p1 << " " << p2 << endl;
+//      cout << std::setprecision(9)<< sol.size() << " " << A+B*p1 << " " << A+B*p2 << " " << Er << " " << Er2 << " " << p1 << " " << p2 << endl;
     return 1;
   }
 }
