@@ -61,10 +61,10 @@ int quad_tr(const function<dcomplex> &f, double a, double b,
             double epsabs, double epsrel, dcomplex &result, unsigned &neval);
 int quad_tr(const function<vector_d> &f, double a, double b,
             double epsabs, double epsrel, vector_d &result, unsigned &neval, int dirty,
-            typename Convergence<vector_d>::type compare = NULL);
+             Convergence<vector_d>::type compare = NULL);
 int quad_tr(const function<vector_z> &f, double a, double b,
             double epsabs, double epsrel, vector_z &result, unsigned &neval, int dirty,
-            typename Convergence<vector_z>::type compare = NULL);
+             Convergence<vector_z>::type compare = NULL);
 
 int quad_ptr(const function<double> &f, double a, double b,
              double epsabs, double epsrel, double &result, unsigned &neval);
@@ -72,10 +72,10 @@ int quad_ptr(const function<dcomplex> &f, double a, double b,
              double epsabs, double epsrel, dcomplex &result, unsigned &neval);
 int quad_ptr(const function<vector_d> &f, double a, double b,
              double epsabs, double epsrel, vector_d &result, unsigned &neval, int dirty,
-             typename Convergence<vector_d>::type compare = NULL);
+              Convergence<vector_d>::type compare = NULL);
 int quad_ptr(const function<vector_z> &f, double a, double b,
              double epsabs, double epsrel, vector_z &result, unsigned &neval, int dirty,
-             typename Convergence<vector_z>::type compare = NULL);
+              Convergence<vector_z>::type compare = NULL);
 /**@}*/
 
 /**
@@ -102,10 +102,10 @@ int quad_romb(const function<dcomplex> &f, double a, double b,
               double epsabs, double epsrel, dcomplex &result, unsigned &neval);
 int quad_romb(const function<vector_d> &f, double a, double b,
               double epsabs, double epsrel, vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int quad_romb(const function<vector_z> &f, double a, double b,
               double epsabs, double epsrel, vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 
 int quad_promb(const function<double> &f, double a, double b,
                double epsabs, double epsrel, double &result, unsigned &neval);
@@ -113,10 +113,10 @@ int quad_promb(const function<dcomplex> &f, double a, double b,
                double epsabs, double epsrel, dcomplex &result, unsigned &neval);
 int quad_promb(const function<vector_d> &f, double a, double b,
                double epsabs, double epsrel, vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int quad_promb(const function<vector_z> &f, double a, double b,
                double epsabs, double epsrel, vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 /**@}*/
 
 /**
@@ -143,10 +143,10 @@ int quad_cc(const function<dcomplex> &f, double a, double b,
             double epsabs, double epsrel, dcomplex &result, unsigned &neval);
 int quad_cc(const function<vector_d> &f, double a, double b,
             double epsabs, double epsrel, vector_d &result, unsigned &neval, int dirty,
-            typename Convergence<vector_d>::type compare = NULL);
+             Convergence<vector_d>::type compare = NULL);
 int quad_cc(const function<vector_z> &f, double a, double b,
             double epsabs, double epsrel, vector_z &result, unsigned &neval, int dirty,
-            typename Convergence<vector_z>::type compare = NULL);
+             Convergence<vector_z>::type compare = NULL);
 
 int quad_pcc(const function<double> &f, double a, double b,
              double epsabs, double epsrel, double &result, unsigned &neval);
@@ -154,10 +154,10 @@ int quad_pcc(const function<dcomplex> &f, double a, double b,
              double epsabs, double epsrel, dcomplex &result, unsigned &neval);
 int quad_pcc(const function<vector_d> &f, double a, double b,
              double epsabs, double epsrel, vector_d &result, unsigned &neval, int dirty,
-             typename Convergence<vector_d>::type compare = NULL);
+              Convergence<vector_d>::type compare = NULL);
 int quad_pcc(const function<vector_z> &f, double a, double b,
              double epsabs, double epsrel, vector_z &result, unsigned &neval, int dirty,
-             typename Convergence<vector_z>::type compare = NULL);
+              Convergence<vector_z>::type compare = NULL);
 
 /**@}*/
 
@@ -206,28 +206,28 @@ int fubini_tr(const mdfunction<dcomplex,3> &f, const array<double,3> &a,
 int fubini_tr(const mdfunction<vector_d,1> &f, const array<double,1> &a,
               const array<double,1> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int fubini_tr(const mdfunction<vector_d,2> &f, const array<double,2> &a,
               const array<double,2> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int fubini_tr(const mdfunction<vector_d,3> &f, const array<double,3> &a,
               const array<double,3> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 
 int fubini_tr(const mdfunction<vector_z,1> &f, const array<double,1> &a,
               const array<double,1> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int fubini_tr(const mdfunction<vector_z,2> &f, const array<double,2> &a,
               const array<double,2> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int fubini_tr(const mdfunction<vector_z,3> &f, const array<double,3> &a,
               const array<double,3> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 
 int fubini_ptr(const mdfunction<double,1> &f, const array<double,1> &a,
                const array<double,1> &b, double epsabs, double epsrel,
@@ -252,28 +252,28 @@ int fubini_ptr(const mdfunction<dcomplex,3> &f, const array<double,3> &a,
 int fubini_ptr(const mdfunction<vector_d,1> &f, const array<double,1> &a,
                const array<double,1> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int fubini_ptr(const mdfunction<vector_d,2> &f, const array<double,2> &a,
                const array<double,2> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int fubini_ptr(const mdfunction<vector_d,3> &f, const array<double,3> &a,
                const array<double,3> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 
 int fubini_ptr(const mdfunction<vector_z,1> &f, const array<double,1> &a,
                const array<double,1> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int fubini_ptr(const mdfunction<vector_z,2> &f, const array<double,2> &a,
                const array<double,2> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int fubini_ptr(const mdfunction<vector_z,3> &f, const array<double,3> &a,
                const array<double,3> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 
 int fubini_tr(const mdfunction<double,4> &f, const array<double,4> &a,
               const array<double,4> &b, double epsabs, double epsrel,
@@ -298,28 +298,28 @@ int fubini_tr(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int fubini_tr(const mdfunction<vector_d,4> &f, const array<double,4> &a,
               const array<double,4> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int fubini_tr(const mdfunction<vector_d,5> &f, const array<double,5> &a,
               const array<double,5> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int fubini_tr(const mdfunction<vector_d,6> &f, const array<double,6> &a,
               const array<double,6> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 
 int fubini_tr(const mdfunction<vector_z,4> &f, const array<double,4> &a,
               const array<double,4> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int fubini_tr(const mdfunction<vector_z,5> &f, const array<double,5> &a,
               const array<double,5> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int fubini_tr(const mdfunction<vector_z,6> &f, const array<double,6> &a,
               const array<double,6> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 
 int fubini_ptr(const mdfunction<double,4> &f, const array<double,4> &a,
                const array<double,4> &b, double epsabs, double epsrel,
@@ -344,28 +344,28 @@ int fubini_ptr(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int fubini_ptr(const mdfunction<vector_d,4> &f, const array<double,4> &a,
                const array<double,4> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int fubini_ptr(const mdfunction<vector_d,5> &f, const array<double,5> &a,
                const array<double,5> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int fubini_ptr(const mdfunction<vector_d,6> &f, const array<double,6> &a,
                const array<double,6> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 
 int fubini_ptr(const mdfunction<vector_z,4> &f, const array<double,4> &a,
                const array<double,4> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int fubini_ptr(const mdfunction<vector_z,5> &f, const array<double,5> &a,
                const array<double,5> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int fubini_ptr(const mdfunction<vector_z,6> &f, const array<double,6> &a,
                const array<double,6> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 
 /**@}*/
 
@@ -411,28 +411,28 @@ int fubini_romb(const mdfunction<dcomplex,3> &f, const array<double,3> &a,
 int fubini_romb(const mdfunction<vector_d,1> &f, const array<double,1> &a,
                 const array<double,1> &b, double epsabs, double epsrel,
                 vector_d &result, unsigned &neval, int dirty,
-                typename Convergence<vector_d>::type compare = NULL);
+                 Convergence<vector_d>::type compare = NULL);
 int fubini_romb(const mdfunction<vector_d,2> &f, const array<double,2> &a,
                 const array<double,2> &b, double epsabs, double epsrel,
                 vector_d &result, unsigned &neval, int dirty,
-                typename Convergence<vector_d>::type compare = NULL);
+                 Convergence<vector_d>::type compare = NULL);
 int fubini_romb(const mdfunction<vector_d,3> &f, const array<double,3> &a,
                 const array<double,3> &b, double epsabs, double epsrel,
                 vector_d &result, unsigned &neval, int dirty,
-                typename Convergence<vector_d>::type compare = NULL);
+                 Convergence<vector_d>::type compare = NULL);
 
 int fubini_romb(const mdfunction<vector_z,1> &f, const array<double,1> &a,
                 const array<double,1> &b, double epsabs, double epsrel,
                 vector_z &result, unsigned &neval, int dirty,
-                typename Convergence<vector_z>::type compare = NULL);
+                 Convergence<vector_z>::type compare = NULL);
 int fubini_romb(const mdfunction<vector_z,2> &f, const array<double,2> &a,
                 const array<double,2> &b, double epsabs, double epsrel,
                 vector_z &result, unsigned &neval, int dirty,
-                typename Convergence<vector_z>::type compare = NULL);
+                 Convergence<vector_z>::type compare = NULL);
 int fubini_romb(const mdfunction<vector_z,3> &f, const array<double,3> &a,
                 const array<double,3> &b, double epsabs, double epsrel,
                 vector_z &result, unsigned &neval, int dirty,
-                typename Convergence<vector_z>::type compare = NULL);
+                 Convergence<vector_z>::type compare = NULL);
 
 int fubini_promb(const mdfunction<double,1> &f, const array<double,1> &a,
                  const array<double,1> &b, double epsabs, double epsrel,
@@ -457,28 +457,28 @@ int fubini_promb(const mdfunction<dcomplex,3> &f, const array<double,3> &a,
 int fubini_promb(const mdfunction<vector_d,1> &f, const array<double,1> &a,
                  const array<double,1> &b, double epsabs, double epsrel,
                  vector_d &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_d>::type compare = NULL);
+                  Convergence<vector_d>::type compare = NULL);
 int fubini_promb(const mdfunction<vector_d,2> &f, const array<double,2> &a,
                  const array<double,2> &b, double epsabs, double epsrel,
                  vector_d &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_d>::type compare = NULL);
+                  Convergence<vector_d>::type compare = NULL);
 int fubini_promb(const mdfunction<vector_d,3> &f, const array<double,3> &a,
                  const array<double,3> &b, double epsabs, double epsrel,
                  vector_d &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_d>::type compare = NULL);
+                  Convergence<vector_d>::type compare = NULL);
 
 int fubini_promb(const mdfunction<vector_z,1> &f, const array<double,1> &a,
                  const array<double,1> &b, double epsabs, double epsrel,
                  vector_z &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_z>::type compare = NULL);
+                  Convergence<vector_z>::type compare = NULL);
 int fubini_promb(const mdfunction<vector_z,2> &f, const array<double,2> &a,
                  const array<double,2> &b, double epsabs, double epsrel,
                  vector_z &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_z>::type compare = NULL);
+                  Convergence<vector_z>::type compare = NULL);
 int fubini_promb(const mdfunction<vector_z,3> &f, const array<double,3> &a,
                  const array<double,3> &b, double epsabs, double epsrel,
                  vector_z &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_z>::type compare = NULL);
+                  Convergence<vector_z>::type compare = NULL);
 
 int fubini_romb(const mdfunction<double,4> &f, const array<double,4> &a,
                 const array<double,4> &b, double epsabs, double epsrel,
@@ -503,28 +503,28 @@ int fubini_romb(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int fubini_romb(const mdfunction<vector_d,4> &f, const array<double,4> &a,
                 const array<double,4> &b, double epsabs, double epsrel,
                 vector_d &result, unsigned &neval, int dirty,
-                typename Convergence<vector_d>::type compare = NULL);
+                 Convergence<vector_d>::type compare = NULL);
 int fubini_romb(const mdfunction<vector_d,5> &f, const array<double,5> &a,
                 const array<double,5> &b, double epsabs, double epsrel,
                 vector_d &result, unsigned &neval, int dirty,
-                typename Convergence<vector_d>::type compare = NULL);
+                 Convergence<vector_d>::type compare = NULL);
 int fubini_romb(const mdfunction<vector_d,6> &f, const array<double,6> &a,
                 const array<double,6> &b, double epsabs, double epsrel,
                 vector_d &result, unsigned &neval, int dirty,
-                typename Convergence<vector_d>::type compare = NULL);
+                 Convergence<vector_d>::type compare = NULL);
 
 int fubini_romb(const mdfunction<vector_z,4> &f, const array<double,4> &a,
                 const array<double,4> &b, double epsabs, double epsrel,
                 vector_z &result, unsigned &neval, int dirty,
-                typename Convergence<vector_z>::type compare = NULL);
+                 Convergence<vector_z>::type compare = NULL);
 int fubini_romb(const mdfunction<vector_z,5> &f, const array<double,5> &a,
                 const array<double,5> &b, double epsabs, double epsrel,
                 vector_z &result, unsigned &neval, int dirty,
-                typename Convergence<vector_z>::type compare = NULL);
+                 Convergence<vector_z>::type compare = NULL);
 int fubini_romb(const mdfunction<vector_z,6> &f, const array<double,6> &a,
                 const array<double,6> &b, double epsabs, double epsrel,
                 vector_z &result, unsigned &neval, int dirty,
-                typename Convergence<vector_z>::type compare = NULL);
+                 Convergence<vector_z>::type compare = NULL);
 
 int fubini_promb(const mdfunction<double,4> &f, const array<double,4> &a,
                  const array<double,4> &b, double epsabs, double epsrel,
@@ -549,28 +549,28 @@ int fubini_promb(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int fubini_promb(const mdfunction<vector_d,4> &f, const array<double,4> &a,
                  const array<double,4> &b, double epsabs, double epsrel,
                  vector_d &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_d>::type compare = NULL);
+                  Convergence<vector_d>::type compare = NULL);
 int fubini_promb(const mdfunction<vector_d,5> &f, const array<double,5> &a,
                  const array<double,5> &b, double epsabs, double epsrel,
                  vector_d &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_d>::type compare = NULL);
+                  Convergence<vector_d>::type compare = NULL);
 int fubini_promb(const mdfunction<vector_d,6> &f, const array<double,6> &a,
                  const array<double,6> &b, double epsabs, double epsrel,
                  vector_d &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_d>::type compare = NULL);
+                  Convergence<vector_d>::type compare = NULL);
 
 int fubini_promb(const mdfunction<vector_z,4> &f, const array<double,4> &a,
                  const array<double,4> &b, double epsabs, double epsrel,
                  vector_z &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_z>::type compare = NULL);
+                  Convergence<vector_z>::type compare = NULL);
 int fubini_promb(const mdfunction<vector_z,5> &f, const array<double,5> &a,
                  const array<double,5> &b, double epsabs, double epsrel,
                  vector_z &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_z>::type compare = NULL);
+                  Convergence<vector_z>::type compare = NULL);
 int fubini_promb(const mdfunction<vector_z,6> &f, const array<double,6> &a,
                  const array<double,6> &b, double epsabs, double epsrel,
                  vector_z &result, unsigned &neval, int dirty,
-                 typename Convergence<vector_z>::type compare = NULL);
+                  Convergence<vector_z>::type compare = NULL);
 
 /**@}*/
 
@@ -616,28 +616,28 @@ int fubini_cc(const mdfunction<dcomplex,3> &f, const array<double,3> &a,
 int fubini_cc(const mdfunction<vector_d,1> &f, const array<double,1> &a,
               const array<double,1> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int fubini_cc(const mdfunction<vector_d,2> &f, const array<double,2> &a,
               const array<double,2> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int fubini_cc(const mdfunction<vector_d,3> &f, const array<double,3> &a,
               const array<double,3> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 
 int fubini_cc(const mdfunction<vector_z,1> &f, const array<double,1> &a,
               const array<double,1> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int fubini_cc(const mdfunction<vector_z,2> &f, const array<double,2> &a,
               const array<double,2> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int fubini_cc(const mdfunction<vector_z,3> &f, const array<double,3> &a,
               const array<double,3> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 
 int fubini_pcc(const mdfunction<double,1> &f, const array<double,1> &a,
                const array<double,1> &b, double epsabs, double epsrel,
@@ -662,28 +662,28 @@ int fubini_pcc(const mdfunction<dcomplex,3> &f, const array<double,3> &a,
 int fubini_pcc(const mdfunction<vector_d,1> &f, const array<double,1> &a,
                const array<double,1> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int fubini_pcc(const mdfunction<vector_d,2> &f, const array<double,2> &a,
                const array<double,2> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int fubini_pcc(const mdfunction<vector_d,3> &f, const array<double,3> &a,
                const array<double,3> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 
 int fubini_pcc(const mdfunction<vector_z,1> &f, const array<double,1> &a,
                const array<double,1> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int fubini_pcc(const mdfunction<vector_z,2> &f, const array<double,2> &a,
                const array<double,2> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int fubini_pcc(const mdfunction<vector_z,3> &f, const array<double,3> &a,
                const array<double,3> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 
 int fubini_cc(const mdfunction<double,4> &f, const array<double,4> &a,
               const array<double,4> &b, double epsabs, double epsrel,
@@ -708,28 +708,28 @@ int fubini_cc(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int fubini_cc(const mdfunction<vector_d,4> &f, const array<double,4> &a,
               const array<double,4> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int fubini_cc(const mdfunction<vector_d,5> &f, const array<double,5> &a,
               const array<double,5> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int fubini_cc(const mdfunction<vector_d,6> &f, const array<double,6> &a,
               const array<double,6> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 
 int fubini_cc(const mdfunction<vector_z,4> &f, const array<double,4> &a,
               const array<double,4> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int fubini_cc(const mdfunction<vector_z,5> &f, const array<double,5> &a,
               const array<double,5> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int fubini_cc(const mdfunction<vector_z,6> &f, const array<double,6> &a,
               const array<double,6> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 
 int fubini_pcc(const mdfunction<double,4> &f, const array<double,4> &a,
                const array<double,4> &b, double epsabs, double epsrel,
@@ -754,28 +754,28 @@ int fubini_pcc(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int fubini_pcc(const mdfunction<vector_d,4> &f, const array<double,4> &a,
                const array<double,4> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int fubini_pcc(const mdfunction<vector_d,5> &f, const array<double,5> &a,
                const array<double,5> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int fubini_pcc(const mdfunction<vector_d,6> &f, const array<double,6> &a,
                const array<double,6> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 
 int fubini_pcc(const mdfunction<vector_z,4> &f, const array<double,4> &a,
                const array<double,4> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int fubini_pcc(const mdfunction<vector_z,5> &f, const array<double,5> &a,
                const array<double,5> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int fubini_pcc(const mdfunction<vector_z,6> &f, const array<double,6> &a,
                const array<double,6> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 
 
 /**@}*/
@@ -843,52 +843,52 @@ int cube_tr(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int cube_tr(const mdfunction<vector_d,1> &f, const array<double,1> &a,
             const array<double,1> &b, double epsabs, double epsrel,
             vector_d &result, unsigned &neval, int dirty,
-            typename Convergence<vector_d>::type compare = NULL);
+             Convergence<vector_d>::type compare = NULL);
 int cube_tr(const mdfunction<vector_d,2> &f, const array<double,2> &a,
             const array<double,2> &b, double epsabs, double epsrel,
             vector_d &result, unsigned &neval, int dirty,
-            typename Convergence<vector_d>::type compare = NULL);
+             Convergence<vector_d>::type compare = NULL);
 int cube_tr(const mdfunction<vector_d,3> &f, const array<double,3> &a,
             const array<double,3> &b, double epsabs, double epsrel,
             vector_d &result, unsigned &neval, int dirty,
-            typename Convergence<vector_d>::type compare = NULL);
+             Convergence<vector_d>::type compare = NULL);
 int cube_tr(const mdfunction<vector_d,4> &f, const array<double,4> &a,
             const array<double,4> &b, double epsabs, double epsrel,
             vector_d &result, unsigned &neval, int dirty,
-            typename Convergence<vector_d>::type compare = NULL);
+             Convergence<vector_d>::type compare = NULL);
 int cube_tr(const mdfunction<vector_d,5> &f, const array<double,5> &a,
             const array<double,5> &b, double epsabs, double epsrel,
             vector_d &result, unsigned &neval, int dirty,
-            typename Convergence<vector_d>::type compare = NULL);
+             Convergence<vector_d>::type compare = NULL);
 int cube_tr(const mdfunction<vector_d,6> &f, const array<double,6> &a,
             const array<double,6> &b, double epsabs, double epsrel,
             vector_d &result, unsigned &neval, int dirty,
-            typename Convergence<vector_d>::type compare = NULL);
+             Convergence<vector_d>::type compare = NULL);
 
 int cube_tr(const mdfunction<vector_z,1> &f, const array<double,1> &a,
             const array<double,1> &b, double epsabs, double epsrel,
             vector_z &result, unsigned &neval, int dirty,
-            typename Convergence<vector_z>::type compare = NULL);
+             Convergence<vector_z>::type compare = NULL);
 int cube_tr(const mdfunction<vector_z,2> &f, const array<double,2> &a,
             const array<double,2> &b, double epsabs, double epsrel,
             vector_z &result, unsigned &neval, int dirty,
-            typename Convergence<vector_z>::type compare = NULL);
+             Convergence<vector_z>::type compare = NULL);
 int cube_tr(const mdfunction<vector_z,3> &f, const array<double,3> &a,
             const array<double,3> &b, double epsabs, double epsrel,
             vector_z &result, unsigned &neval, int dirty,
-            typename Convergence<vector_z>::type compare = NULL);
+             Convergence<vector_z>::type compare = NULL);
 int cube_tr(const mdfunction<vector_z,4> &f, const array<double,4> &a,
             const array<double,4> &b, double epsabs, double epsrel,
             vector_z &result, unsigned &neval, int dirty,
-            typename Convergence<vector_z>::type compare = NULL);
+             Convergence<vector_z>::type compare = NULL);
 int cube_tr(const mdfunction<vector_z,5> &f, const array<double,5> &a,
             const array<double,5> &b, double epsabs, double epsrel,
             vector_z &result, unsigned &neval, int dirty,
-            typename Convergence<vector_z>::type compare = NULL);
+             Convergence<vector_z>::type compare = NULL);
 int cube_tr(const mdfunction<vector_z,6> &f, const array<double,6> &a,
             const array<double,6> &b, double epsabs, double epsrel,
             vector_z &result, unsigned &neval, int dirty,
-            typename Convergence<vector_z>::type compare = NULL);
+             Convergence<vector_z>::type compare = NULL);
 
 int cube_ptr(const mdfunction<double,1> &f, const array<double,1> &a,
              const array<double,1> &b, double epsabs, double epsrel,
@@ -931,52 +931,52 @@ int cube_ptr(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int cube_ptr(const mdfunction<vector_d,1> &f, const array<double,1> &a,
              const array<double,1> &b, double epsabs, double epsrel,
              vector_d &result, unsigned &neval, int dirty,
-             typename Convergence<vector_d>::type compare = NULL);
+              Convergence<vector_d>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_d,2> &f, const array<double,2> &a,
              const array<double,2> &b, double epsabs, double epsrel,
              vector_d &result, unsigned &neval, int dirty,
-             typename Convergence<vector_d>::type compare = NULL);
+              Convergence<vector_d>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_d,3> &f, const array<double,3> &a,
              const array<double,3> &b, double epsabs, double epsrel,
              vector_d &result, unsigned &neval, int dirty,
-             typename Convergence<vector_d>::type compare = NULL);
+              Convergence<vector_d>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_d,4> &f, const array<double,4> &a,
              const array<double,4> &b, double epsabs, double epsrel,
              vector_d &result, unsigned &neval, int dirty,
-             typename Convergence<vector_d>::type compare = NULL);
+              Convergence<vector_d>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_d,5> &f, const array<double,5> &a,
              const array<double,5> &b, double epsabs, double epsrel,
              vector_d &result, unsigned &neval, int dirty,
-             typename Convergence<vector_d>::type compare = NULL);
+              Convergence<vector_d>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_d,6> &f, const array<double,6> &a,
              const array<double,6> &b, double epsabs, double epsrel,
              vector_d &result, unsigned &neval, int dirty,
-             typename Convergence<vector_d>::type compare = NULL);
+              Convergence<vector_d>::type compare = NULL);
 
 int cube_ptr(const mdfunction<vector_z,1> &f, const array<double,1> &a,
              const array<double,1> &b, double epsabs, double epsrel,
              vector_z &result, unsigned &neval, int dirty,
-             typename Convergence<vector_z>::type compare = NULL);
+              Convergence<vector_z>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_z,2> &f, const array<double,2> &a,
              const array<double,2> &b, double epsabs, double epsrel,
              vector_z &result, unsigned &neval, int dirty,
-             typename Convergence<vector_z>::type compare = NULL);
+              Convergence<vector_z>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_z,3> &f, const array<double,3> &a,
              const array<double,3> &b, double epsabs, double epsrel,
              vector_z &result, unsigned &neval, int dirty,
-             typename Convergence<vector_z>::type compare = NULL);
+              Convergence<vector_z>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_z,4> &f, const array<double,4> &a,
              const array<double,4> &b, double epsabs, double epsrel,
              vector_z &result, unsigned &neval, int dirty,
-             typename Convergence<vector_z>::type compare = NULL);
+              Convergence<vector_z>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_z,5> &f, const array<double,5> &a,
              const array<double,5> &b, double epsabs, double epsrel,
              vector_z &result, unsigned &neval, int dirty,
-             typename Convergence<vector_z>::type compare = NULL);
+              Convergence<vector_z>::type compare = NULL);
 int cube_ptr(const mdfunction<vector_z,6> &f, const array<double,6> &a,
              const array<double,6> &b, double epsabs, double epsrel,
              vector_z &result, unsigned &neval, int dirty,
-             typename Convergence<vector_z>::type compare = NULL);
+              Convergence<vector_z>::type compare = NULL);
 /**@}*/
 
 /**
@@ -1039,52 +1039,52 @@ int cube_romb(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int cube_romb(const mdfunction<vector_d,1> &f, const array<double,1> &a,
               const array<double,1> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int cube_romb(const mdfunction<vector_d,2> &f, const array<double,2> &a,
               const array<double,2> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int cube_romb(const mdfunction<vector_d,3> &f, const array<double,3> &a,
               const array<double,3> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int cube_romb(const mdfunction<vector_d,4> &f, const array<double,4> &a,
               const array<double,4> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int cube_romb(const mdfunction<vector_d,5> &f, const array<double,5> &a,
               const array<double,5> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 int cube_romb(const mdfunction<vector_d,6> &f, const array<double,6> &a,
               const array<double,6> &b, double epsabs, double epsrel,
               vector_d &result, unsigned &neval, int dirty,
-              typename Convergence<vector_d>::type compare = NULL);
+               Convergence<vector_d>::type compare = NULL);
 
 int cube_romb(const mdfunction<vector_z,1> &f, const array<double,1> &a,
               const array<double,1> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int cube_romb(const mdfunction<vector_z,2> &f, const array<double,2> &a,
               const array<double,2> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int cube_romb(const mdfunction<vector_z,3> &f, const array<double,3> &a,
               const array<double,3> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int cube_romb(const mdfunction<vector_z,4> &f, const array<double,4> &a,
               const array<double,4> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int cube_romb(const mdfunction<vector_z,5> &f, const array<double,5> &a,
               const array<double,5> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 int cube_romb(const mdfunction<vector_z,6> &f, const array<double,6> &a,
               const array<double,6> &b, double epsabs, double epsrel,
               vector_z &result, unsigned &neval, int dirty,
-              typename Convergence<vector_z>::type compare = NULL);
+               Convergence<vector_z>::type compare = NULL);
 
 int cube_promb(const mdfunction<double,1> &f, const array<double,1> &a,
                const array<double,1> &b, double epsabs, double epsrel,
@@ -1127,52 +1127,52 @@ int cube_promb(const mdfunction<dcomplex,6> &f, const array<double,6> &a,
 int cube_promb(const mdfunction<vector_d,1> &f, const array<double,1> &a,
                const array<double,1> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int cube_promb(const mdfunction<vector_d,2> &f, const array<double,2> &a,
                const array<double,2> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int cube_promb(const mdfunction<vector_d,3> &f, const array<double,3> &a,
                const array<double,3> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int cube_promb(const mdfunction<vector_d,4> &f, const array<double,4> &a,
                const array<double,4> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int cube_promb(const mdfunction<vector_d,5> &f, const array<double,5> &a,
                const array<double,5> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 int cube_promb(const mdfunction<vector_d,6> &f, const array<double,6> &a,
                const array<double,6> &b, double epsabs, double epsrel,
                vector_d &result, unsigned &neval, int dirty,
-               typename Convergence<vector_d>::type compare = NULL);
+                Convergence<vector_d>::type compare = NULL);
 
 int cube_promb(const mdfunction<vector_z,1> &f, const array<double,1> &a,
                const array<double,1> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int cube_promb(const mdfunction<vector_z,2> &f, const array<double,2> &a,
                const array<double,2> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int cube_promb(const mdfunction<vector_z,3> &f, const array<double,3> &a,
                const array<double,3> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int cube_promb(const mdfunction<vector_z,4> &f, const array<double,4> &a,
                const array<double,4> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int cube_promb(const mdfunction<vector_z,5> &f, const array<double,5> &a,
                const array<double,5> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 int cube_promb(const mdfunction<vector_z,6> &f, const array<double,6> &a,
                const array<double,6> &b, double epsabs, double epsrel,
                vector_z &result, unsigned &neval, int dirty,
-               typename Convergence<vector_z>::type compare = NULL);
+                Convergence<vector_z>::type compare = NULL);
 /**@}*/
 
 
