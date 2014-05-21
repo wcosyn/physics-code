@@ -223,7 +223,7 @@ if(hostname MATCHES ${hpcname})
   elseif (Fortran_COMPILER_NAME STREQUAL "ifort")
 	MESSAGE("--- Found Intel fortran compiler collection")
     # ifort (untested)
-    set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O3 -coarray=shared   -shared-intel  -fp-model source -unroll -pthread -ipo -xSSE4.1 -axSSE4.1,SSE4.2 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
+    set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -03 -shared-intel -fp-model source -unroll -ipo -xSSE4.1 -axSSE4.1,SSE4.2 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
     set (CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
   elseif (Fortran_COMPILER_NAME STREQUAL "g77")
     # g77
