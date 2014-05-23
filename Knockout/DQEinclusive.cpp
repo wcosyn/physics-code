@@ -969,7 +969,7 @@ double DQEinclusive::FSI_PV_pz2(double pz1, double pz2, DQEinclusive& cross,
       assert(1==0);
     }
   }
-  cout << pz1 << " " << pz2 << " " << ret[0] << endl;
+//   cout << pz1 << " " << pz2 << " " << ret[0] << endl;
 //   return ret[0];
 }
 
