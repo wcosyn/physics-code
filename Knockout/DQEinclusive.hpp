@@ -130,7 +130,7 @@ private:
    * - 4: full off-shell amplitude, no suppression 
    */
   int offshellset;
-  double minpcm;
+  double minpcm;  /*!< [MeV] minimum center of mass relative momentum for nucleon pair in the intermediate state, to check eikonal condition! */
   TDeuteron::Wavefunction *wf; /*!< pointer to deuteron wave funtion, see TDeuteron */
   TElectronKinematics electron; /*!< electron kinematis, see TElectronKinematics */
   NucleonEMOperator *ffactorseq;  /*!< nucleon form factors, see NucleonEMOperator, nucleon is equal to "proton" from constructor */
