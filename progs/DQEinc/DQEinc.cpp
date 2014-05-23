@@ -43,11 +43,11 @@ int main(int argc, char *argv[])
       fsi2+=f2;
       fsioff1+=f3;
       fsioff2+=f4;
-//       (proton?f2_2:f2_1)=Dinc.getMinpcm();
-//       Dinc.calc_CrossincFSI_PVoff(f1,f2,Q2,x,2,integrator);
-//       cout << "fsiresultoff " << x << " " << proton << " " << f1 << " " << f2 << " " << endl;
-//       fsioffPV1+=f1;
-//       fsioffPV2+=f2;
+      (proton?f2_2:f2_1)=Dinc.getMinpcm();
+      Dinc.calc_CrossincFSI_PVoff2(f1,f2,Q2,x,2,integrator,maxEval);
+      cout << "fsiresultoff " << x << " " << proton << " " << f1 << " " << f2 << " " << endl;
+      fsioffPV1+=f1;
+      fsioffPV2+=f2;
       
     }
     cout << x << " " << teller1 << " " << teller2 << " " << teller1+teller2 << " " << fsi1 << " " << fsi2 << " "

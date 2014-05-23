@@ -545,7 +545,7 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 
 
 void DQEinclusive::calc_CrossincFSI_PVoff(double &fsi1_off, double &fsi2_off, double Q2,double x, 
-				  int current, int integrator){
+				  int current, int integrator, int maxEval){
   
   double nu=Q2/(x*2.*MASSP);
   ffactorseq=new NucleonEMOperator(Q2,proton,ffparam);
@@ -576,7 +576,7 @@ void DQEinclusive::calc_CrossincFSI_PVoff(double &fsi1_off, double &fsi2_off, do
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
   switch(integrator){
     case(0):{  //numint adaptive cubature from MIT lib
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E01,2E04,ret,ccount,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E01,maxEval,ret,ccount,0);
       break;
     }
 //     case(1):{ //cuhre cubature from cuba lib
@@ -704,6 +704,12 @@ void DQEinclusive::FSI_PV(numint::vector_d & result, double pperp1, double qt,
   pvint.rescatter=&rescatter;
   pvint.f=DQEinclusive::FSI_intPV;
   
+  cross.get_prz(prz1,0.,Q2,nu,qvec);
+  cross.get_prz(prz2,0.,Q2,nu,qvec);
+  cout << prz1.size() << " " << prz2.size() << " ";
+  for(size_t i=0;i<prz1.size();i++) cout << prz1[i] << " ";
+  for(size_t i=0;i<prz2.size();i++) cout << prz2[i] << " ";
+  cout << (-MASSD*MASSD+Q2-2.*MASSD*nu+2.*(MASSD+nu)*cross.getMassr())/2./qvec << endl;
   
   if(cross.get_prz(prz1,pperp1,Q2,nu,qvec)){ //prz evaluation is performed!!
     if(cross.get_prz(prz2,pperp2,Q2,nu,qvec)){ //prz evaluation is performed!!
@@ -758,7 +764,7 @@ double DQEinclusive::PV_int1(double pz1, void * params){
 
 
 double DQEinclusive::FSI_intPV(double pz1, double pz2, double pperp1, double pperp2, double qt, double cosphi1, 
-			       double sinphi1, double cosqphi, double sinqphi, vector<double> &prz2poles,  
+			       double sinphi1, double cosqphi, double sinqphi,
 			       DQEinclusive& cross, double Q2, double x, double tanhalfth2, double qvec, double nu, int current, bool crossed,
 			       FastParticle &rescatter
 			      ){
@@ -841,6 +847,227 @@ double DQEinclusive::FSI_intPV(double pz1, double pz2, double pperp1, double ppe
   return imag(result);
   
 
+}
+
+void DQEinclusive::calc_CrossincFSI_PVoff2(double &fsi1_off, double &fsi2_off, double Q2,double x, 
+				  int current, int integrator, int maxEval){
+  
+  double nu=Q2/(x*2.*MASSP);
+  ffactorseq=new NucleonEMOperator(Q2,proton,ffparam);
+  ffactorsdiff=new NucleonEMOperator(Q2,!proton,ffparam);
+  //first we perform the regular 4d integration, inside we do the PV integrations.
+  
+  minpcm=1.E03;
+  DQEinclusive::Ftor_PVfirst F;
+  F.cross=this;
+  F.Q2 = Q2;
+  F.x = x;
+  F.current = current;
+  F.tanhalfth2=electron.GetTan2HalfAngle(Q2,nu);
+  F.maxEval=maxEval;
+  F.integrator=integrator;
+  
+  F.f=DQEinclusive::FSI_PV_pz2;
+  vector<double>prz1;
+  
+  double qvec=sqrt(Q2+pow(Q2/(2.*massi*x),2.));
+  get_prz(prz1,0.,Q2,nu,qvec);
+  cout << prz1.size() << " ";
+  for(size_t i=0;i<prz1.size();i++) cout << prz1[i] << " ";
+  cout << (-MASSD*MASSD+Q2-2.*MASSD*nu+2.*(MASSD+nu)*massr+massi*massi-massr*massr)/2./qvec << endl;
+
+  if(prz1.size()==0){
+    cerr<< "implement 0 case"<<endl;
+    assert(1==0);
+  }
+  if(prz1.size()==1)   F.pzpole=prz1[0];
+  if(prz1.size()==2) {F.pzpole=prz1[0]<prz1[1]?prz1[0]:prz1[1];}
+  if(abs(F.pzpole)>700.){    cerr<< "pole outside boundaries, implement regular integral! "<< F.pzpole << endl;
+    assert(1==0);
+  }
+
+  F.crossed=0;
+  gsl_integration_workspace * w2 
+    = gsl_integration_workspace_alloc (1E6);
+
+  double result, error;
+  gsl_function F2;
+  F2.function = &FSI_PV_pz1;
+  F2.params = &F;
+  gsl_integration_qawc (&F2, -700., 700.,F.pzpole, 1.e-08, PREC, 1E3,
+			w2, &result, &error); 
+  double sigmamott=ALPHA*ALPHA*(1+electron.GetCosScatterAngle(Q2,nu))/
+    (2.*pow(electron.GetBeamEnergy(Q2,nu)*(1-electron.GetCosScatterAngle(Q2,nu)),2.))*HBARC*HBARC*1.E07;
+  fsi1_off= 2.*PI/3./MASSD*1.E03/(64.*PI*PI*PI)*result*sigmamott;
+  F.crossed=1;
+  gsl_integration_qawc (&F2, -700., 700.,F.pzpole, 1.e-08, PREC, 1E3,
+			w2, &result, &error); 
+  fsi2_off= 2.*PI/3./MASSD*1.E03/(64.*PI*PI*PI)*result*sigmamott;
+
+  gsl_integration_workspace_free (w2);
+  
+  
+  //     cout << "fsi " << res << " " << count << endl;
+
+  
+  delete ffactorseq;
+  delete ffactorsdiff;
+  
+  return;
+}
+
+
+double DQEinclusive::FSI_PV_pz1(double pz1, void * params){
+  Ftor_PVfirst pvint = *(Ftor_PVfirst *) params;
+  pvint.var1=pz1;
+  double res=0.;
+  gsl_integration_workspace * w2 
+    = gsl_integration_workspace_alloc (1E6);
+
+  double result, error;
+  gsl_function F2;
+  F2.function = &Ftor_PVfirst::exec;
+  F2.params = &pvint;
+  gsl_integration_qawc (&F2, -700., 700.,pvint.pzpole , 1.e-08, PREC, 1E3,
+			w2, &result, &error); 
+  res=result;
+  gsl_integration_workspace_free (w2);
+  return res;
+
+}
+
+double DQEinclusive::FSI_PV_pz2(double pz1, double pz2, DQEinclusive& cross, 
+	      double Q2, double x, double tanhalfth2, int current, bool crossed, int maxEval, int integrator){
+  
+  numint::array<double,3> lower = {{0.,0.,0.}};
+  numint::array<double,3> upper = {{0.7E03,0.7E03,2.*PI}};
+  DQEinclusive::Ftor_PVfirst_inner F;
+  F.pz1=pz1;
+  F.pz2=pz2;
+  F.cross= &cross;
+  F.Q2 = Q2;
+  F.x = x;
+  F.current = current;
+  F.tanhalfth2=tanhalfth2;
+  F.crossed=crossed;
+  F.maxEval=maxEval;
+  
+  numint::mdfunction<numint::vector_d,3> mdf;
+  mdf.func = &Ftor_PVfirst_inner::exec;
+  mdf.param = &F;
+  F.f=DQEinclusive::FSI_PVfirst_perp;
+  int res=90;
+  unsigned ccount=0;
+  numint::vector_d ret = numint::vector_d(1,0.);
+  switch(integrator){
+    case(0):{  //numint adaptive cubature from MIT lib
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E01,maxEval,ret,ccount,0);
+      break;
+    }
+    default:{
+      cerr << "integrator not supported" << endl;
+      assert(1==0);
+    }
+  }
+  cout << pz1 << " " << pz2 << " " << ret[0] << endl;
+//   return ret[0];
+}
+
+  
+void DQEinclusive::FSI_PVfirst_perp(numint::vector_d & res, double pz1, double pz2, double pperp1, double qt, double qphi, DQEinclusive& cross, 
+	    double Q2, double x, int current, double tanhalfth2, bool crossed){
+  res= numint::vector_d(1,0.);
+  double phi1=0.;
+  if(pperp1<1.E-03||qt<1.E-03) { res[0]=0.; return;}
+  double cosphi1, sinphi1;
+  sincos(phi1,&sinphi1,&cosphi1);
+  double cosqphi, sinqphi;
+  sincos(qphi,&sinqphi,&cosqphi);
+  double qvec=sqrt(Q2+pow(Q2/(2.*cross.getMassi()*x),2.));
+  double nu=Q2/(2.*cross.getMassi()*x);
+  double s=(MASSD+nu)*(MASSD+nu)-qvec*qvec;
+  double pcm=sqrt(s/4.-MASSP*MASSP);
+  if(pcm<cross.getMinpcm()) cross.minpcm=pcm;
+  double chi=sqrt(s)*pcm*2.;
+  FastParticle rescatter(0,0,pcm,0.,0.,Q2,0.,"");
+
+  double pperp2=sqrt(pow(pperp1+qt*cosqphi,2.)+pow(qt*sinqphi,2.));
+
+  complex<double>result=0.;
+
+  double prnorm=sqrt(pperp1*pperp1+pz1*pz1);
+  double Ernorm=sqrt(pperp1*pperp1+pz1*pz1+cross.getMassr()*cross.getMassr());
+  if(Ernorm<MASSD-200.){
+    FourVector<double> q(nu,0.,0.,qvec);
+    
+    //direct term
+    FourVector<double> pi1(MASSD-Ernorm,-pperp1*cosphi1,-pperp1*sinphi1,-pz1); //pi=pD-ps
+    FourVector<double> pn1=pi1+q;  //pn1=pi+q
+    GammaStructure J0 = cross.getFFactorseq()->getCC(current, q, pi1, pn1)*polVector0;
+    GammaStructure Jplus = cross.getFFactorseq()->getCC(current, q, pi1, pn1)*polVectorPlus;
+    GammaStructure Jmin = cross.getFFactorseq()->getCC(current, q, pi1, pn1)*polVectorMin;
+    
+    Matrix<1,4> un1_down=TSpinor::Bar(TSpinor(pn1,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass));
+    Matrix<1,4> un1_up=TSpinor::Bar(TSpinor(pn1,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass));
+    TSpinor ui1_down(pi1,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass);
+    TSpinor ui1_up(pi1,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
+  
+    double Erprimenorm=sqrt(pperp2*pperp2+pz2*pz2+cross.getMassr()*cross.getMassr());
+    if(Erprimenorm<MASSD-200.){
+
+      FourVector<double> pi2(MASSD-Erprimenorm,-pperp1*cosphi1-qt*cosqphi,-qt*sinqphi,-pz2); //pi2=pD-ps1+qt
+      FourVector<double> pn2=pi2+q; //pn2=pi2+q
+      if(crossed) {pi2[1]*=-1.;pi2[2]*=-1.;pn2[1]*=-1.;pn2[2]*=-1.;} //transverse components opposite for crossed term
+      double t;
+      if(!crossed) t=pow(Ernorm-Erprimenorm,2.)-pow(pz1-pz2,2.)-qt*qt;
+      else pow(pn2[0]-Ernorm,2.)-pow(pn2[3]-pz1,2.)-qt*qt;
+
+      complex<double> rescatt = rescatter.scatter(t,0);
+
+      //direct term
+      GammaStructure J0prime = cross.getFFactorseq()->getCC(current, q, pi2, pn2)*polVector0;
+      GammaStructure Jplusprime = cross.getFFactorseq()->getCC(current, q, pi2, pn2)*polVectorPlus;
+      GammaStructure Jminprime = cross.getFFactorseq()->getCC(current, q, pi2, pn2)*polVectorMin;	     
+      
+      Matrix<1,4> un2_down=TSpinor::Bar(TSpinor(pn2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass));
+      Matrix<1,4> un2_up=TSpinor::Bar(TSpinor(pn2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass));
+      TSpinor ui2_down(pi2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass);
+      TSpinor ui2_up(pi2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
+            
+      //summation over all the spin indices
+      for(int spinn=-1;spinn<=1;spinn+=2){
+	for(int spini_in=-1;spini_in<=1;spini_in+=2){
+	  complex<double> currentin0=(spinn==-1?un1_down:un1_up)*J0*(spini_in==-1?ui1_down:ui1_up);
+	  complex<double> currentinplus=(spinn==-1?un1_down:un1_up)*Jplus*(spini_in==-1?ui1_down:ui1_up);
+	  complex<double> currentinmin=(spinn==-1?un1_down:un1_up)*Jmin*(spini_in==-1?ui1_down:ui1_up);
+	  for(int spini_out=-1;spini_out<=1;spini_out+=2){
+	    complex<double> currentout0=conj((spinn==-1?un2_down:un2_up)*J0prime*(spini_out==-1?ui2_down:ui2_up));
+	    complex<double> currentoutplus=conj((spinn==-1?un2_down:un2_up)*Jplusprime*(spini_out==-1?ui2_down:ui2_up));
+	    complex<double> currentoutmin=conj((spinn==-1?un2_down:un2_up)*Jminprime*(spini_out==-1?ui2_down:ui2_up));
+	    for(int M=-2;M<=2;M+=2){
+	      for(int spinr=-1;spinr<=1;spinr+=2){
+		if(!crossed) result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
+				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, 
+					TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,pz2)));
+		else result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
+				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, 
+					TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,pz2)));
+		//direct offshell
+		result*=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
+		  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*rescatt;
+	      }
+	    }	    
+	  }
+	}
+      }
+      if(!crossed) result*=1./sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-pz1/Ernorm*(MASSD+nu))
+      /abs(qvec-pz2/Erprimenorm*(MASSD+nu));
+      else result*=-MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
+      /abs(qvec-pz1/Ernorm*(MASSD+nu))/abs(qvec-pz2/Erprimenorm*(MASSD+nu));
+    }
+  }
+
+  res[0]=imag(result);
 }
 
 
