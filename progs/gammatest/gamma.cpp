@@ -9,10 +9,22 @@ using namespace std;
 #include "constants.hpp"
 #include "FourVector.h"
 #include "GammaStructure.h"
+#include "NuclStructure.hpp"
 
 int main(int argc, char *argv[]){
 
 
+  for(int i=1;i<100;i++){
+    double x=0.01*i;
+    NuclStructure F2CTEQ=NuclStructure(1,200.E06,x,0,"CTEQ");
+    NuclStructure F2SLAC=NuclStructure(1,200.E06,x,0,"SLAC");
+//     NuclStructure F2CB=NuclStructure(1,200.E06,x,0,"CB");
+    NuclStructure F2alekhin=NuclStructure(1,200.E06,x,0,"Alekhin");
+    cout << x << " " << F2CTEQ.getF2() << " " << F2SLAC.getF2() << 	" " << F2alekhin.getF2() << endl;
+    
+  }
+  exit(1);
+  
   const FourVector<GammaStructure> gamma_mu=FourVector<GammaStructure>(GammaStructure(0.,0.,1.),
 											GammaStructure(0.,0.,0.,1.),
 				      GammaStructure(0.,0.,0.,0.,1.),GammaStructure(0.,0.,0.,0.,0.,1.));

@@ -89,6 +89,30 @@ public:
   * \param Einoff [MeV] off-shell energy of interacting nucleon
    */
   double getInclStructure_off(TKinematics2to2 &kin, double Wsq, double Einoff) const;
+  /*! Deuteron F2 response functions including electron factors, split in dependence on phi spectator
+   * 
+   * \param kin [in] semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \param[in] el electron kinematics, see TElectronKinematics
+   * \param[out] ResLandT longitudinal and transverse part
+   * \param[out] ResTL TL part
+   * \param [out] ResTT TT part
+   * \param Einoff [MeV] off-shell energy of interacting nucleon
+   */
+  void getResponses(TKinematics2to2 &kin, TElectronKinematics &el, double &ResLandT, double &ResTT, double &ResTL, double Einoff) const;
+  /*! Deuteron F2 response functions including electron factors, split in dependence on phi spectator
+   * 
+   * \param kin [in] semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \param[in] el electron kinematics, see TElectronKinematics
+   * \param Wsq [MeV^2] mass of produced X squared, differs from invariant p_X^2 due to off-shellness
+   * \param[out] ResLandT longitudinal and transverse part
+   * \param[out] ResTL TL part
+   * \param [out] ResTT TT part
+   * \param Einoff [MeV] off-shell energy of interacting nucleon
+   */
+  void getResponses_off(TKinematics2to2 &kin, TElectronKinematics &el, double Wsq,
+			double &ResLandT, double &ResTT, double &ResTL, double Einoff) const;
   const std::string & getName() const{return name;}
   
 private:

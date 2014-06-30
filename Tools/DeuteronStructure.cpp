@@ -95,6 +95,30 @@ double DeuteronStructure::getStructure(TKinematics2to2 &kin, TElectronKinematics
   
 }
 
+void DeuteronStructure::getResponses(TKinematics2to2 &kin, TElectronKinematics &electron, 
+				     double &ResLandT, double &ResTT, double &ResTL, double Einoff) const{
+  double FL, FT, FTT, FTL;
+  getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
+  if(isnan(FL)) ResLandT=ResTT=ResTL=FL;
+  else{ 
+    ResLandT=(FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
+    ResTL=sqrt(kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*FTL;
+    ResTT=FTT;
+  }
+}
+
+void DeuteronStructure::getResponses_off(TKinematics2to2 &kin, TElectronKinematics &electron, double Wsq,
+				     double &ResLandT, double &ResTT, double &ResTL, double Einoff) const{
+  double FL, FT, FTT, FTL;
+  getStructureFunctions_off(kin,FL, FT, FTT, FTL, Wsq, Einoff);
+  if(isnan(FL)) ResLandT=ResTT=ResTL=FL;
+  else{ 
+    ResLandT=(FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
+    ResTL=sqrt(kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*FTL;
+    ResTT=FTT;
+  }
+}
+
 
 double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const{
   double FL, FT, FTT, FTL;
@@ -103,6 +127,7 @@ double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinemat
   return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
   
 }
+
 
 double DeuteronStructure::getavgStructure_off(TKinematics2to2 &kin, TElectronKinematics &electron, double Wsq, double Einoff) const{
   double FL, FT, FTT, FTL;

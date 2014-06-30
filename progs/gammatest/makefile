@@ -29,9 +29,9 @@ EFILE   = 	../../bin/gammatest
 
 
 #		Mathematical functions
-LIBS =	 	-lm  -lifcore
+LIBS =	 	-lm  
 WIMLIBS = -lMePhys 
-ROOT =		`$(ROOTSYS)/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  
 STATICLIBS =   ~/Code/lib/libMePhys.a   ~/Code/lib/libIntegrator.a   

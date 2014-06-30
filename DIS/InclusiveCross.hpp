@@ -55,9 +55,9 @@ public:
    * \param[out] cross [] cross section
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
-   * \return [] inclusive cross section without prefactors (structure functions times momentum distribution integrated)
+   * \param thetapol [rad] angle between virtual photon momentum and angle of deuteron polarization
    */
-  void calc_Azzinc(double &Azz, double &cross, double Q2,double x);
+  void calc_Azzinc(double &Azz, double &cross, double Q2,double x, double thetapol);
   /*! Calculates the fsi inclusive cross section without any prefactors, just the deuteron structure functions time
    * momentum distribution
    * \param [out] fsi1 [] inclusive fsi cross section without prefactors (structure functions times momentum distribution integrated)
@@ -86,8 +86,9 @@ public:
    * \param [out] fsi2 [] other fsi formula
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
+   * \param thetapol [rad] angle between virtual photon momentum and angle of deuteron polarization
    */
-  void calc_AzzincFSI(double &azz1, double&azz2, double &fsi1, double &fsi2, double Q2,double x);
+  void calc_AzzincFSI(double &azz1, double&azz2, double &fsi1, double &fsi2, double Q2,double x, double thetapol);
   /*! Calculates the fsi inclusive off-shell Azz & cross section without any prefactors, just the deuteron structure functions time
    * momentum distribution
    * \param [out] azz1 [] inclusive fsi Azz
@@ -98,8 +99,9 @@ public:
    * \param [out] fsi2 [] other fsi formula
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
+   * \param thetapol [rad] angle between virtual photon momentum and angle of deuteron polarization
    */
-  void calc_AzzincFSI_off(double &azz1, double&azz2, double &fsi1, double &fsi2, double Q2,double x);
+  void calc_AzzincFSI_off(double &azz1, double&azz2, double &fsi1, double &fsi2, double Q2,double x, double thetapol);
 
 
   /*! Calculates the fsi inclusive cross section without any prefactors, just the deuteron structure functions time
@@ -261,11 +263,12 @@ private:
     /*! integrandum function */
     static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
       Ftor_planewave &p = * (Ftor_planewave *) param;
-      p.f(ret,x[0],x[1],*p.cross,p.Q2,p.x);
+      p.f(ret,x[0],x[1],*p.cross,p.Q2,p.x,p.thetapol);
     }
     InclusiveCross *cross;/*!< pointer to InclusiveCross instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
     double x; /*!< [] Bjorken x */
+    double thetapol; /*!< [rad] angle between q vector and deuteron polarization */
     /*! integrandum 
     * \param res results
     * \param pnorm first integration variable
@@ -273,8 +276,9 @@ private:
     * \param cross instance of InclusiveCross where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param thetapol [rad] angle between q vector and deuteron polarization 
     */
-    void (*f)(numint::vector_d & res, double pnorm, double costheta, InclusiveCross& cross, double Q2, double x);
+    void (*f)(numint::vector_d & res, double pnorm, double costheta, InclusiveCross& cross, double Q2, double x, double thetapol);
   };
   
    /*! integrandum function (clean ones), Eq (19) of the paper
@@ -284,9 +288,10 @@ private:
     * \param cross instance of InclusiveCross where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param thetapol [rad] angle between q vector and deuteron polarization 
     */
   static void planewave_int(numint::vector_d & results, double pnorm, double costheta, 
-			    InclusiveCross& cross, double Q2, double x);
+			    InclusiveCross& cross, double Q2, double x, double thetapol);
    /*! integrandum function (clean ones), Eq (19) of the paper [Azz version]
     * \param results results [0=Azz, 1=cross section]
     * \param pnorm first integration variable
@@ -294,9 +299,10 @@ private:
     * \param cross instance of InclusiveCross where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param thetapol [rad] angle between q vector and deuteron polarization 
     */
   static void Azzplanewave_int(numint::vector_d & results, double pnorm, double costheta, 
-			    InclusiveCross& cross, double Q2, double x);
+			    InclusiveCross& cross, double Q2, double x, double thetapol);
  
   
   /*! struct that is used for integrators fsi on- and off-shell ones*/
@@ -305,11 +311,13 @@ private:
     /*! integrandum function */
     static void exec(const numint::array<double,4> &x, void *param, numint::vector_d &ret) {
       Ftor_FSI &p = * (Ftor_FSI *) param;
-      p.f(ret,x[0],x[1],x[2],x[3],*p.cross,p.Q2,p.x,p.it,p.it2);
+      p.f(ret,x[0],x[1],x[2],x[3],*p.cross,p.Q2,p.x,p.thetapol, p.it,p.it2);
     }
     InclusiveCross *cross;/*!< pointer to InclusiveCross instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
     double x; /*!< [] Bjorken x */
+    double thetapol; /*!< [rad] angle between q vector and deuteron polarization */
+
     size_t it; /*!< iterator for resonance */
     size_t it2; /*!< iterator for resonance */
     /*! integrandum 
@@ -321,11 +329,12 @@ private:
     * \param cross instance of  InclusiveCross object we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param thetapol [rad] angle between q vector and deuteron polarization 
     * \param it iterator for initial resonance
     * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
     */
     void (*f)(numint::vector_d & res, double pnorm, double costheta, double qt, double qphi, InclusiveCross& cross, 
-	      double Q2, double x, size_t it, size_t it2);
+	      double Q2, double x, double thetapol, size_t it, size_t it2);
   };
   
    /*! integrandum function for on-shell contribution to the FSI amplitude (Eq. (30) of the paper)
@@ -337,11 +346,12 @@ private:
     * \param cross instance of  InclusiveCross object we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param thetapol [rad] angle between q vector and deuteron polarization 
     * \param it iterator for initial resonance
     * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
     */
   static void FSI_int(numint::vector_d & results, double pnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
+		      double qphi, InclusiveCross& cross, double Q2, double x, double thetapol, size_t it, size_t it2);
    /*! integrandum function for off-shell contribution to the FSI amplitude (Eq. (33) of the paper)
     * \param results results
     * \param prt [MeV] norm of transverse spectator momentum (initial)
@@ -351,11 +361,12 @@ private:
     * \param cross instance of  InclusiveCross object we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param thetapol [rad] angle between q vector and deuteron polarization 
     * \param it iterator for initial resonance
     * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
     */
   static void FSI_int_off(numint::vector_d & results, double prt, double W, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
+		      double qphi, InclusiveCross& cross, double Q2, double x, double thetapol, size_t it, size_t it2);
  
    /*! integrandum function for on-shell contribution to the FSI amplitude (Eq. (30) of the paper)
     * \param results results
@@ -366,11 +377,12 @@ private:
     * \param cross instance of  InclusiveCross object we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param thetapol [rad] angle between q vector and deuteron polarization 
     * \param it iterator for initial resonance
     * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
     */
   static void AzzFSI_int(numint::vector_d & results, double pnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
+		      double qphi, InclusiveCross& cross, double Q2, double x, double thetapol, size_t it, size_t it2);
    /*! integrandum function for off-shell contribution to the FSI amplitude (Eq. (33) of the paper)
     * \param results results
     * \param prt [MeV] norm of transverse spectator momentum (initial)
@@ -380,11 +392,12 @@ private:
     * \param cross instance of  InclusiveCross object we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
+    * \param thetapol [rad] angle between q vector and deuteron polarization 
     * \param it iterator for initial resonance
     * \param it2 iterator for final resonance (taken equal to it in our approach, diagonal)
     */
   static void AzzFSI_int_off(numint::vector_d & results, double prt, double W, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t it, size_t it2);
+		      double qphi, InclusiveCross& cross, double Q2, double x, double thetapol, size_t it, size_t it2);
  
   /*! struct that is used for integrators fsi on- and off-shell ones for a DIS broad resonance distribution*/
   struct Ftor_FSI_distr {

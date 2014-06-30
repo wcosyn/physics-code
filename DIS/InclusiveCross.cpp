@@ -56,7 +56,7 @@ double InclusiveCross::calc_F2Dinc(double Q2,double x){
 }
 
 void InclusiveCross::planewave_int(numint::vector_d & result, double prnorm, double costheta,
-				   InclusiveCross& cross, double Q2, double x){
+				   InclusiveCross& cross, double Q2, double x, double thetapol){
   
   result=numint::vector_d(1,0.);
   if(prnorm<1.E-03) { result[0]=0.; return;}
@@ -79,7 +79,7 @@ void InclusiveCross::planewave_int(numint::vector_d & result, double prnorm, dou
 
 }
 
-void InclusiveCross::calc_Azzinc(double &Azz, double &cross, double Q2,double x){
+void InclusiveCross::calc_Azzinc(double &Azz, double &cross, double Q2,double x, double thetapol){
   
   double result;
   double prestimate=0.,cosestimate=0.;
@@ -91,6 +91,7 @@ void InclusiveCross::calc_Azzinc(double &Azz, double &cross, double Q2,double x)
   F.cross=this;
   F.Q2 = Q2;
   F.x = x;
+  F.thetapol=thetapol;
   numint::mdfunction<numint::vector_d,2> mdf;
   mdf.func = &Ftor_planewave::exec;
   mdf.param = &F;
@@ -106,7 +107,7 @@ void InclusiveCross::calc_Azzinc(double &Azz, double &cross, double Q2,double x)
 }
 
 void InclusiveCross::Azzplanewave_int(numint::vector_d & result, double prnorm, double costheta,
-				   InclusiveCross& cross, double Q2, double x){
+				   InclusiveCross& cross, double Q2, double x, double thetapol){
   
   result=numint::vector_d(2,0.);
   if(prnorm<1.E-03) { result[0]=result[1]=0.; return;}
@@ -119,23 +120,40 @@ void InclusiveCross::Azzplanewave_int(numint::vector_d & result, double prnorm, 
   double nu=Q2/(2.*cross.massi*x);
   double Wx=sqrt(MASSD*MASSD-Q2+cross.massr*cross.massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*prnorm*costheta);
   TKinematics2to2 kin("","",MASSD,cross.massr,Wx,"qsquared:wlab:pklab",Q2,nu,prnorm);
-  double structfactor=cross.structure.getavgStructure(kin,cross.electron,MASSD-Er);
-  if((abs(structfactor)<1E-09)||isnan(structfactor)||isinf(structfactor)) {result[0]=result[1]=0.; return; }
+  double structfactor=cross.structure.getInclStructure(kin,MASSD-Er);
+  if((abs(structfactor)<1E-09)||isnan(structfactor)||isinf(structfactor)) {result[0]=0.; return; }
+  double ResTandL, ResTT, ResTL;
+  cross.structure.getResponses(kin,cross.electron,ResTandL,ResTT,ResTL,MASSD-Er);
+  if((abs(ResTandL)<1E-09)||isnan(ResTandL)||isinf(ResTandL)) {result[0]=result[1]=0.; return; }
   //no phi integration, symmetry is already used in getInclStructure()
   result[1]=prnorm*prnorm*(pow(cross.wf->GetUp(prnorm),2.)+pow(cross.wf->GetWp(prnorm),2.))/(4.*PI)*(MASSD/(2.*(MASSD-Er)))*structfactor;
 //   /*if(cross.massr==MASSN) */cout << prnorm << " " << costheta << " " << result[0] << " " << result[0]/prnorm/prnorm << endl;
   double sintheta=sqrt(1.-costheta*costheta);
-  for(int M=-2;M<=2;M+=2){
+  complex<double> dens1(0.),dens2(0.),dens3(0.),dens4(0.),dens5(0.);
+  for(int spini=-1;spini<=1;spini+=2){
     for(int spinr=-1;spinr<=1;spinr+=2){
-      complex<double> wave=cross.wf->DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta,
+      complex<double> wavemin=cross.wf->DeuteronPState(-2, spini, spinr, TVector3(kin.GetPklab()*sintheta,
+								     0.,
+								     kin.GetPklab()*kin.GetCosthklab()));
+      complex<double> wavezero=cross.wf->DeuteronPState(0, spini, spinr, TVector3(kin.GetPklab()*sintheta,
+								     0.,
+								     kin.GetPklab()*kin.GetCosthklab()));
+      complex<double> waveplus=cross.wf->DeuteronPState(2, spini, spinr, TVector3(kin.GetPklab()*sintheta,
 								     0.,
 								     kin.GetPklab()*kin.GetCosthklab()));
 								    
-      result[0]+=(M==0?-2.:1.)*norm(wave);
+      dens1+=norm(wavemin)+norm(waveplus)-2.*norm(wavezero);
+      dens2+=wavemin*conj(wavezero)+wavezero*conj(wavemin)-wavezero*conj(waveplus)-waveplus*conj(wavezero);
+      dens3+=wavemin*conj(waveplus)+waveplus*conj(wavemin);
+//       dens4+=wavemin*conj(wavezero)-wavezero*conj(wavemin)-wavezero*conj(waveplus)+waveplus*conj(wavezero);
+//       dens5+=-wavemin*conj(waveplus)+waveplus*conj(wavemin);      
     }
   }
   //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
-  result[0]*=2./3.*prnorm*prnorm*(MASSD/(2.*(MASSD-Er)))*structfactor;
+  result[0]=real(1./3.*prnorm*prnorm*(MASSD/(2.*(MASSD-Er)))*(
+    (ResTandL*dens1*(1.+3.*cos(2.*thetapol))/4.)
+    +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2*ResTL)
+    +3./8.*(1.-cos(2.*thetapol))*dens3*ResTT));
   return;
   
 
@@ -179,7 +197,8 @@ void InclusiveCross::calc_F2DincFSI(double &fsi1, double &fsi2, double Q2,double
 }
 
 void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t itt, size_t it2=0){
+		      double qphi, InclusiveCross& cross, double Q2, double x, double thetapol, 
+		      size_t itt, size_t it2=0){
 			
   result=numint::vector_d(2,0.);
   if(prnorm<1.E-03||qt<1.E-03) { result[0]=result[1]=0.; return;}
@@ -262,7 +281,7 @@ void InclusiveCross::FSI_int(numint::vector_d & result, double prnorm, double co
 
 }
 
-void InclusiveCross::calc_AzzincFSI(double &Azz1, double &Azz2, double &fsi1, double &fsi2, double Q2,double x){
+void InclusiveCross::calc_AzzincFSI(double &Azz1, double &Azz2, double &fsi1, double &fsi2, double Q2,double x, double thetapol){
   
 //   double results[2];
 //   double prestimate=0.,cosestimate=0.;
@@ -279,6 +298,7 @@ void InclusiveCross::calc_AzzincFSI(double &Azz1, double &Azz2, double &fsi1, do
   F.cross=this;
   F.Q2 = Q2;
   F.x = x;
+  F.thetapol=thetapol;
   numint::mdfunction<numint::vector_d,4> mdf;
   mdf.func = &Ftor_FSI::exec;
   mdf.param = &F;
@@ -300,7 +320,7 @@ void InclusiveCross::calc_AzzincFSI(double &Azz1, double &Azz2, double &fsi1, do
 }
 
 void InclusiveCross::AzzFSI_int(numint::vector_d & result, double prnorm, double costheta, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x, size_t itt, size_t it2=0){
+		      double qphi, InclusiveCross& cross, double Q2, double x, double thetapol, size_t itt, size_t it2=0){
 			
   result=numint::vector_d(4,0.);
   if(prnorm<1.E-03||qt<1.E-03) { result[0]=result[1]=result[2]=result[3]=0.; return;}
@@ -316,11 +336,15 @@ void InclusiveCross::AzzFSI_int(numint::vector_d & result, double prnorm, double
 
   double structfactor=cross.structure.getavgStructure(kin,cross.electron,MASSD-Er);
   if((abs(structfactor)<1E-09)||isnan(structfactor)||isinf(structfactor)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
+  double ResTandL, ResTT, ResTL;
+  cross.structure.getResponses(kin,cross.electron,ResTandL,ResTT,ResTL,MASSD-Er);
+  if((abs(ResTandL)<1E-09)||isnan(ResTandL)||isinf(ResTandL)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
   //no phi integration, symmetry is already used in getInclStructure()
   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)
 	      +pow(cross.massr*cross.massr-cross.Wxprime2,2.));
-  complex<double> wave[6];
-  for(int i=0;i<6;i++){
+  complex<double> wave[12];
+  for(int i=0;i<12;i++){
+    cout << (i/4)*2-2 << " " << ((i/2)%2)*2-1 << " " << (i%2)*2-1 << endl;
     wave[i] = cross.wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
 								   prnorm*costheta)); 
   }
@@ -353,30 +377,46 @@ void InclusiveCross::AzzFSI_int(numint::vector_d & result, double prnorm, double
   if((Erprime>MASSD)/*||xprime>1*/) {result[0]=result[1]=result[2]=result[3]=0.; return;}
   double structfactor2=cross.structure.getavgStructure(kin2,cross.electron,MASSD-Erprime);
   if((abs(structfactor2)<1E-09)||isnan(structfactor2)||isinf(structfactor2)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
-  res_result[0]=res_result[1]=res_result[2]=res_result[3]=prnorm*prnorm*sqrt(structfactor*structfactor2)
+  double ResTandL2, ResTT2, ResTL2;
+  cross.structure.getResponses(kin2,cross.electron,ResTandL2,ResTT2,ResTL2,MASSD-Erprime);
+  if((abs(ResTandL2)<1E-09)||isnan(ResTandL2)||isinf(ResTandL2)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
+  res_result[0]=res_result[1]=res_result[2]=res_result[3]=prnorm*prnorm
       /(abs(kin.GetKlab()-przprime/Erprime*(MASSD+nu))*32.*PI*PI*3.)
 		*MASSD/sqrt(4.*(MASSD-Er)*Er*(MASSD-Erprime)*Erprime)*qt;
+  res_result[2]*=sqrt(structfactor*structfactor2);
+  res_result[3]*=sqrt(structfactor*structfactor2);
   //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
   //t = (ps-ps')^2
   double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
-  complex<double> wave2[6];
+  complex<double> wave2[12];
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,przprime);
-  for(int i=0;i<6;i++){
+  for(int i=0;i<12;i++){
     wave2[i] = cross.wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
   }
   complex<double> temp=0.,azztemp=0.;
-  for(int i=0;i<6;i++){
+  for(int i=0;i<12;i++){
     temp+=wave[i]*conj(wave2[i]);
-    azztemp+=((i/4)*2-2==0?-2.:1.)*wave[i]*conj(wave2[i]);
   }
+  complex<double> dens1(0.),dens2(0.),dens3(0.),dens4(0.),dens5(0.);
+  for(int i=0;i<4;i++){
+    dens1+=wave[i]*conj(wave2[i])+wave[8+i]*conj(wave2[8+i])-2.*wave[4+i]*conj(wave2[4+i]);
+    dens2+=wave[i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[i])-wave[4+i]*conj(wave2[8+i])-wave[8+i]*conj(wave2[4+i]);
+    dens3+=wave[i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[i]);
+    dens4+=wave[i]*conj(wave2[4+i])-wave[4+i]*conj(wave2[i])-wave[4+i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[4+i]);
+    dens5+=-wave[i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[i]);
+  }
+  azztemp=
+    sqrt(ResTandL*ResTandL2)*dens1*(1.+3.*cos(2.*thetapol))/4.
+    +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2*sqrt(ResTL*ResTL2))
+    +3./8.*(1.-cos(2.*thetapol))*dens3*sqrt(ResTT*ResTT2);
   cross.sigma=InclusiveCross::sigmaparam(cross.Wxprime2,kin.GetQsquared());
-  res_result[0]*= imag(cross.scatter(t)*2.*azztemp)*chi; //factor 2 due to symmetry	
-  res_result[2]*= imag(cross.scatter(t)*2.*temp)*chi; //factor 2 due to symmetry	
+  res_result[0]*= imag(cross.scatter(t)*azztemp)*chi; //factor 2 due to symmetry	
+  res_result[2]*= imag(cross.scatter(t)*temp)*chi; //factor 2 due to symmetry	
   cross.sigma=InclusiveCross::sigmaparam(cross.otherWx2,kin.GetQsquared());
   double chi2=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.otherWx2+cross.massr*cross.massr)
 	  +pow(cross.massr*cross.massr-cross.otherWx2,2.));
-  res_result[1]*=imag(cross.scatter(t)*2.*conj(azztemp))*chi2; //factor 2 due to symmetry
-  res_result[3]*=imag(cross.scatter(t)*2.*conj(temp))*chi2; //factor 2 due to symmetry
+  res_result[1]*=imag(cross.scatter(t)*conj(azztemp))*chi2; //factor 2 due to symmetry
+  res_result[3]*=imag(cross.scatter(t)*conj(temp))*chi2; //factor 2 due to symmetry
 	  
   result[0]+=res_result[0]; result[1]+= res_result[1];  
   result[2]+=res_result[2]; result[3]+= res_result[3];  
@@ -429,7 +469,7 @@ void InclusiveCross::calc_F2DincFSI_off(double &fsi1, double &fsi2, double Q2,do
 
 
 void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x,size_t itt, size_t itt2){
+		      double qphi, InclusiveCross& cross, double Q2, double x, double thetapol, size_t itt, size_t itt2){
 			
   result=numint::vector_d(2,0.);
   if((qt<1.E-03)||(prt<1.E-03)) { result[0]=result[1]=0.; return;}
@@ -555,7 +595,7 @@ void InclusiveCross::FSI_int_off(numint::vector_d & result, double prt, double W
 }
 
 
-void InclusiveCross::calc_AzzincFSI_off(double &azz1, double &azz2, double &fsi1, double &fsi2, double Q2,double x){
+void InclusiveCross::calc_AzzincFSI_off(double &azz1, double &azz2, double &fsi1, double &fsi2, double Q2,double x, double thetapol){
   
   azz1=azz2=fsi1=fsi2=0.;
   double Wmax=massi;
@@ -573,6 +613,7 @@ void InclusiveCross::calc_AzzincFSI_off(double &azz1, double &azz2, double &fsi1
   F.cross=this;
   F.Q2 = Q2;
   F.x = x;
+  F.thetapol=thetapol;
   numint::mdfunction<numint::vector_d,4> mdf;
   mdf.func = &Ftor_FSI::exec;
   mdf.param = &F;
@@ -598,7 +639,7 @@ void InclusiveCross::calc_AzzincFSI_off(double &azz1, double &azz2, double &fsi1
 
 
 void InclusiveCross::AzzFSI_int_off(numint::vector_d & result, double prt, double W, double qt, 
-		      double qphi, InclusiveCross& cross, double Q2, double x,size_t itt, size_t itt2){
+		      double qphi, InclusiveCross& cross, double Q2, double x, double thetapol, size_t itt, size_t itt2){
 			
   result=numint::vector_d(4,0.);
   if((qt<1.E-03)||(prt<1.E-03)) { result[0]=result[1]=result[2]=result[3]=0.; return;}
@@ -628,6 +669,9 @@ void InclusiveCross::AzzFSI_int_off(numint::vector_d & result, double prt, doubl
   TKinematics2to2 kin("","",MASSD,cross.massr,W,"qsquared:wlab:pklab",Q2,nu,prnorm);
   double structfactor=cross.structure.getavgStructure_off(kin,cross.electron,W*W,MASSD-Er);
   if((abs(structfactor)<1E-09)||isnan(structfactor)||isinf(structfactor)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
+  double ResTandL, ResTT, ResTL;
+  cross.structure.getResponses_off(kin,cross.electron,W*W,ResTandL,ResTT,ResTL,MASSD-Er);
+  if((abs(ResTandL)<1E-09)||isnan(ResTandL)||isinf(ResTandL)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
   //no phi integration, symmetry is already used in getInclStructure()
 
   //2nd vertex structure function part.  On-shell with W!!!
@@ -640,7 +684,10 @@ void InclusiveCross::AzzFSI_int_off(numint::vector_d & result, double prt, doubl
   TKinematics2to2 kin2("","",MASSD,cross.massr,W,"qsquared:wlab:pklab",Q2,nu,pprime);
   double structfactor2=cross.structure.getavgStructure_off(kin2,cross.electron,W*W,MASSD-Erprime);
   if((abs(structfactor2)<1E-09)||isnan(structfactor2)||isinf(structfactor2)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
-  
+  double ResTandL2, ResTT2, ResTL2;
+  cross.structure.getResponses_off(kin2,cross.electron,W*W,ResTandL2,ResTT2,ResTL2,MASSD-Erprime);
+  if((abs(ResTandL2)<1E-09)||isnan(ResTandL2)||isinf(ResTandL2)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
+
   
   
   //off-shell wave function first vertex (on-shell tilde)
@@ -652,8 +699,8 @@ void InclusiveCross::AzzFSI_int_off(numint::vector_d & result, double prt, doubl
   if((Ertilde>MASSD)){result[1]=result[0]=0.;return;}
   double costhetatilde=prztilde/prnormtilde;
   
-  complex<double> wave[6];
-  for(int i=0;i<6;i++){
+  complex<double> wave[12];
+  for(int i=0;i<12;i++){
     wave[i] = cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, 
 		TVector3(prnormtilde*sqrt(1.-costhetatilde*costhetatilde),0.,prnormtilde*costhetatilde)); 
   }
@@ -669,18 +716,30 @@ void InclusiveCross::AzzFSI_int_off(numint::vector_d & result, double prt, doubl
   double Ertildeprime=sqrt(cross.massr*cross.massr+ptildeprime*ptildeprime);
   if((Ertildeprime>MASSD)) {result[0]=result[1]=result[2]=result[3]=0.; return;}
   
-  complex<double> wave2[6];
-  for(int i=0;i<6;i++){
+  complex<double> wave2[12];
+  for(int i=0;i<12;i++){
     wave2[i] = -cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, 
       TVector3(ptildeprime*sinthetatildeprime*cosphiprime,ptildeprime*sinthetatildeprime*sinphiprime,prztildeprime));
   }
   complex<double> temp=0.,azz=0.;
-  for(int i=0;i<6;i++){
-    azz+=(((i/4)*2-2)==0?-2.:1.)*wave[i]*conj(wave2[i]);
+  for(int i=0;i<12;i++){
+//     azz+=(((i/4)*2-2)==0?-2.:1.)*wave[i]*conj(wave2[i]);
     temp+=wave[i]*conj(wave2[i]);
   }
+  complex<double> dens1(0.),dens2(0.),dens3(0.),dens4(0.),dens5(0.);
+  for(int i=0;i<4;i++){
+    dens1+=wave[i]*conj(wave2[i])+wave[8+i]*conj(wave2[8+i])-2.*wave[4+i]*conj(wave2[4+i]);
+    dens2+=wave[i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[i])-wave[4+i]*conj(wave2[8+i])-wave[8+i]*conj(wave2[4+i]);
+    dens3+=wave[i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[i]);
+    dens4+=wave[i]*conj(wave2[4+i])-wave[4+i]*conj(wave2[i])-wave[4+i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[4+i]);
+    dens5+=-wave[i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[i]);
+  }
+  azz=
+    sqrt(ResTandL*ResTandL2)*dens1*(1.+3.*cos(2.*thetapol))/4.
+    +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2*sqrt(ResTL*ResTL2))
+    +3./8.*(1.-cos(2.*thetapol))*dens3*sqrt(ResTT*ResTT2);
 
-  result[0]=result[1]=result[2]=result[3]=prt*W*sqrt(structfactor*structfactor2)/(abs(qvec-prztilde/Ertilde*(MASSD+nu))
+  result[0]=result[1]=result[2]=result[3]=prt*W/(abs(qvec-prztilde/Ertilde*(MASSD+nu))
 			*abs(qvec-prztildeprime/Ertildeprime*(MASSD+nu))*32.*PI*PI*3.)
 		      *MASSD/sqrt(4.*(MASSD-Ertilde)*Ertilde*(MASSD-Ertildeprime)*Ertildeprime)*qt;
 		      
@@ -713,7 +772,7 @@ void InclusiveCross::AzzFSI_int_off(numint::vector_d & result, double prt, doubl
 		+pow(cross.massr*cross.massr-cross.Wxprime2,2.));
   cross.sigma=InclusiveCross::sigmaparam(cross.Wxprime2,kin.GetQsquared());
   result[0]*= offshellness*imag(cross.scatter(t)*2.*azz)*chi; //factor 2 due to symmetry
-  result[2]*= offshellness*imag(cross.scatter(t)*2.*temp)*chi; //factor 2 due to symmetry
+  result[2]*= offshellness*imag(cross.scatter(t)*2.*temp*sqrt(structfactor*structfactor2))*chi; //factor 2 due to symmetry
 	
 // 	if(isnan(result[0])) cout << offshellness << " " << chi << " " << cross.scatter(t) << " " << sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime)) << endl;
 //   if(isnan(result[0])) cout << kin.GetS() << " " << kin2.GetS() << " " << pow(cross.massr+sqrt(cross.Wxprime2),2.) <<  " " << kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)
@@ -722,7 +781,7 @@ void InclusiveCross::AzzFSI_int_off(numint::vector_d & result, double prt, doubl
   double chi2=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.otherWx2+cross.massr*cross.massr)
     +pow(cross.massr*cross.massr-cross.otherWx2,2.));
   result[1]*=offshellness*imag(cross.scatter(t)*2.*conj(azz))*chi2; //factor 2 due to symmetry
-  result[3]*=offshellness*imag(cross.scatter(t)*2.*conj(temp))*chi2; //factor 2 due to symmetry
+  result[3]*=offshellness*imag(cross.scatter(t)*2.*conj(temp)*sqrt(structfactor*structfactor2))*chi2; //factor 2 due to symmetry
 
 }
 
@@ -820,7 +879,7 @@ void InclusiveCross::FSI_int_Gauss_off(numint::vector_d & result, double mass, d
 		      std::vector<double> & centrals, std::vector<double> & widths){
 
   cross.setResonance(itt,mass);
-  FSI_int_off(result,prt,W,qt,qphi,cross,Q2,x,itt,itt2);
+  FSI_int_off(result,prt,W,qt,qphi,cross,Q2,x,0.,itt,itt2);
   double coef=exp(-(mass-centrals[itt])*(mass-centrals[itt])/(2.*widths[itt]*widths[itt]))/(widths[itt]*sqrt(2.*PI));
   result[0]*=coef;
   result[1]*=coef;
@@ -922,7 +981,7 @@ void InclusiveCross::FSI_int_uniform_off(numint::vector_d & result, double mass,
 		      std::vector<double> & centrals, std::vector<double> & widths){
 
   cross.setResonance(itt,mass);
-  FSI_int_off(result,prt,W,qt,qphi,cross,Q2,x,itt,itt2);
+  FSI_int_off(result,prt,W,qt,qphi,cross,Q2,x,0.,itt,itt2);
   double coef=1./(2.*widths[itt]);
   result[0]*=coef;
   result[1]*=coef;
@@ -1030,7 +1089,7 @@ void InclusiveCross::AzzFSI_int_uniform_off(numint::vector_d & result, double ma
 		      std::vector<double> & centrals, std::vector<double> & widths){
 
   cross.setResonance(itt,mass);
-  AzzFSI_int_off(result,prt,W,qt,qphi,cross,Q2,x,itt,itt2);
+  AzzFSI_int_off(result,prt,W,qt,qphi,cross,Q2,x,0.,itt,itt2);
   double coef=1./(2.*widths[itt]);
   result[0]*=coef;
   result[1]*=coef;
