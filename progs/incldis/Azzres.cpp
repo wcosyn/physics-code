@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 //       cout << endl;
 //      }
 //     exit(1);
-    for(int i=8;i<50;i++){      
+    for(int i=(Q2>4.E05?14:8);i<50;i++){      
       double x=0.02*i;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
       double teller=0.,fsi1=0.,fsi2=0.,fsioff1=0.,fsioff2=0.,fsioffsuppr1=0.,fsioffsuppr2=0.,noemer=1.;
