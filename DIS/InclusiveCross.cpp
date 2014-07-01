@@ -120,7 +120,7 @@ void InclusiveCross::Azzplanewave_int(numint::vector_d & result, double prnorm, 
   double nu=Q2/(2.*cross.massi*x);
   double Wx=sqrt(MASSD*MASSD-Q2+cross.massr*cross.massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*prnorm*costheta);
   TKinematics2to2 kin("","",MASSD,cross.massr,Wx,"qsquared:wlab:pklab",Q2,nu,prnorm);
-  double structfactor=cross.structure.getInclStructure(kin,MASSD-Er);
+  double structfactor=cross.structure.getavgStructure(kin,cross.electron,MASSD-Er);
   if((abs(structfactor)<1E-09)||isnan(structfactor)||isinf(structfactor)) {result[0]=0.; return; }
   double ResTandL, ResTT, ResTL;
   cross.structure.getResponses(kin,cross.electron,ResTandL,ResTT,ResTL,MASSD-Er);
@@ -130,7 +130,7 @@ void InclusiveCross::Azzplanewave_int(numint::vector_d & result, double prnorm, 
 //   /*if(cross.massr==MASSN) */cout << prnorm << " " << costheta << " " << result[0] << " " << result[0]/prnorm/prnorm << endl;
   double sintheta=sqrt(1.-costheta*costheta);
   complex<double> dens1(0.),dens2(0.),dens3(0.),dens4(0.),dens5(0.);
-  for(int spini=-1;spini<=1;spini+=2){
+  for(int spini=-1;spini<=0;spini+=2){
     for(int spinr=-1;spinr<=1;spinr+=2){
       complex<double> wavemin=cross.wf->DeuteronPState(-2, spini, spinr, TVector3(kin.GetPklab()*sintheta,
 								     0.,
@@ -150,7 +150,7 @@ void InclusiveCross::Azzplanewave_int(numint::vector_d & result, double prnorm, 
     }
   }
   //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
-  result[0]=real(1./3.*prnorm*prnorm*(MASSD/(2.*(MASSD-Er)))*(
+  result[0]=real(2./3.*prnorm*prnorm*(MASSD/(2.*(MASSD-Er)))*(
     (ResTandL*dens1*(1.+3.*cos(2.*thetapol))/4.)
     +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2*ResTL)
     +3./8.*(1.-cos(2.*thetapol))*dens3*ResTT));
@@ -342,10 +342,11 @@ void InclusiveCross::AzzFSI_int(numint::vector_d & result, double prnorm, double
   //no phi integration, symmetry is already used in getInclStructure()
   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.Wxprime2+cross.massr*cross.massr)
 	      +pow(cross.massr*cross.massr-cross.Wxprime2,2.));
-  complex<double> wave[12];
-  for(int i=0;i<12;i++){
-    cout << (i/4)*2-2 << " " << ((i/2)%2)*2-1 << " " << (i%2)*2-1 << endl;
-    wave[i] = cross.wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
+  complex<double> wave[6];
+  for(int i=0;i<6;i++){
+//     cout << (i/4)*2-2 << " " << ((i/2)%2)*2-1 << " " << (i%2)*2-1 << endl;
+//     cout << (i/2)*2-2 << " " << (i%2)*2-1 << endl;
+    wave[i] = cross.wf->DeuteronPState((i/2)*2-2, -1, (i%2)*2-1, TVector3(prnorm*sqrt(1.-costheta*costheta),0.,
 								   prnorm*costheta)); 
   }
   double prt=kin.GetPklab()*sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
@@ -388,35 +389,35 @@ void InclusiveCross::AzzFSI_int(numint::vector_d & result, double prnorm, double
   //double t=2.*massr-2.*Er*Erprime+2.*prz*prz+2.*prt*pt*cos(phiprime-phi);
   //t = (ps-ps')^2
   double t=(Er-Erprime)*(Er-Erprime)-(prz-przprime)*(prz-przprime)-qt*qt;
-  complex<double> wave2[12];
+  complex<double> wave2[6];
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,przprime);
-  for(int i=0;i<12;i++){
-    wave2[i] = cross.wf->DeuteronPState((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, vecprime);
+  for(int i=0;i<6;i++){
+    wave2[i] = cross.wf->DeuteronPState((i/2)*2-2, -1, (i%2)*2-1, vecprime);
   }
   complex<double> temp=0.,azztemp=0.;
-  for(int i=0;i<12;i++){
+  for(int i=0;i<6;i++){
     temp+=wave[i]*conj(wave2[i]);
   }
   complex<double> dens1(0.),dens2(0.),dens3(0.),dens4(0.),dens5(0.);
-  for(int i=0;i<4;i++){
-    dens1+=wave[i]*conj(wave2[i])+wave[8+i]*conj(wave2[8+i])-2.*wave[4+i]*conj(wave2[4+i]);
-    dens2+=wave[i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[i])-wave[4+i]*conj(wave2[8+i])-wave[8+i]*conj(wave2[4+i]);
-    dens3+=wave[i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[i]);
-    dens4+=wave[i]*conj(wave2[4+i])-wave[4+i]*conj(wave2[i])-wave[4+i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[4+i]);
-    dens5+=-wave[i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[i]);
+  for(int i=0;i<2;i++){
+    dens1+=wave[i]*conj(wave2[i])+wave[4+i]*conj(wave2[4+i])-2.*wave[2+i]*conj(wave2[2+i]);
+    dens2+=wave[i]*conj(wave2[2+i])+wave[2+i]*conj(wave2[i])-wave[2+i]*conj(wave2[4+i])-wave[4+i]*conj(wave2[2+i]);
+    dens3+=wave[i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[i]);
+    dens4+=wave[i]*conj(wave2[2+i])-wave[2+i]*conj(wave2[i])-wave[2+i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[2+i]);
+    dens5+=-wave[i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[i]);
   }
   azztemp=
     sqrt(ResTandL*ResTandL2)*dens1*(1.+3.*cos(2.*thetapol))/4.
-    +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2*sqrt(ResTL*ResTL2))
-    +3./8.*(1.-cos(2.*thetapol))*dens3*sqrt(ResTT*ResTT2);
+    +(3./(4.*sqrt(2.))*sin(2.*thetapol)*(dens2+I_UNIT*dens4)*sqrt(ResTL*ResTL2))
+    +3./8.*(1.-cos(2.*thetapol))*(dens3-I_UNIT*dens5)*sqrt(ResTT*ResTT2);
   cross.sigma=InclusiveCross::sigmaparam(cross.Wxprime2,kin.GetQsquared());
-  res_result[0]*= imag(cross.scatter(t)*azztemp)*chi; //factor 2 due to symmetry	
-  res_result[2]*= imag(cross.scatter(t)*temp)*chi; //factor 2 due to symmetry	
+  res_result[0]*= imag(cross.scatter(t)*2.*azztemp)*chi; //factor 2 due to symmetry	
+  res_result[2]*= imag(cross.scatter(t)*2.*temp)*chi; //factor 2 due to symmetry	
   cross.sigma=InclusiveCross::sigmaparam(cross.otherWx2,kin.GetQsquared());
   double chi2=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(cross.otherWx2+cross.massr*cross.massr)
 	  +pow(cross.massr*cross.massr-cross.otherWx2,2.));
-  res_result[1]*=imag(cross.scatter(t)*conj(azztemp))*chi2; //factor 2 due to symmetry
-  res_result[3]*=imag(cross.scatter(t)*conj(temp))*chi2; //factor 2 due to symmetry
+  res_result[1]*=imag(cross.scatter(t)*2.*conj(azztemp))*chi2; //factor 2 due to symmetry
+  res_result[3]*=imag(cross.scatter(t)*2.*conj(temp))*chi2; //factor 2 due to symmetry
 	  
   result[0]+=res_result[0]; result[1]+= res_result[1];  
   result[2]+=res_result[2]; result[3]+= res_result[3];  
@@ -699,9 +700,9 @@ void InclusiveCross::AzzFSI_int_off(numint::vector_d & result, double prt, doubl
   if((Ertilde>MASSD)){result[1]=result[0]=0.;return;}
   double costhetatilde=prztilde/prnormtilde;
   
-  complex<double> wave[12];
-  for(int i=0;i<12;i++){
-    wave[i] = cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, 
+  complex<double> wave[6];
+  for(int i=0;i<6;i++){
+    wave[i] = cross.wf->DeuteronPStateOff((i/2)*2-2, -1, (i%2)*2-1, 
 		TVector3(prnormtilde*sqrt(1.-costhetatilde*costhetatilde),0.,prnormtilde*costhetatilde)); 
   }
 
@@ -716,28 +717,28 @@ void InclusiveCross::AzzFSI_int_off(numint::vector_d & result, double prt, doubl
   double Ertildeprime=sqrt(cross.massr*cross.massr+ptildeprime*ptildeprime);
   if((Ertildeprime>MASSD)) {result[0]=result[1]=result[2]=result[3]=0.; return;}
   
-  complex<double> wave2[12];
-  for(int i=0;i<12;i++){
-    wave2[i] = -cross.wf->DeuteronPStateOff((i/4)*2-2, ((i/2)%2)*2-1, (i%2)*2-1, 
+  complex<double> wave2[6];
+  for(int i=0;i<6;i++){
+    wave2[i] = -cross.wf->DeuteronPStateOff((i/2)*2-2, -1, (i%2)*2-1, 
       TVector3(ptildeprime*sinthetatildeprime*cosphiprime,ptildeprime*sinthetatildeprime*sinphiprime,prztildeprime));
   }
   complex<double> temp=0.,azz=0.;
-  for(int i=0;i<12;i++){
+  for(int i=0;i<6;i++){
 //     azz+=(((i/4)*2-2)==0?-2.:1.)*wave[i]*conj(wave2[i]);
     temp+=wave[i]*conj(wave2[i]);
   }
   complex<double> dens1(0.),dens2(0.),dens3(0.),dens4(0.),dens5(0.);
-  for(int i=0;i<4;i++){
-    dens1+=wave[i]*conj(wave2[i])+wave[8+i]*conj(wave2[8+i])-2.*wave[4+i]*conj(wave2[4+i]);
-    dens2+=wave[i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[i])-wave[4+i]*conj(wave2[8+i])-wave[8+i]*conj(wave2[4+i]);
-    dens3+=wave[i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[i]);
-    dens4+=wave[i]*conj(wave2[4+i])-wave[4+i]*conj(wave2[i])-wave[4+i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[4+i]);
-    dens5+=-wave[i]*conj(wave2[8+i])+wave[8+i]*conj(wave2[i]);
+  for(int i=0;i<2;i++){
+    dens1+=wave[i]*conj(wave2[i])+wave[4+i]*conj(wave2[4+i])-2.*wave[2+i]*conj(wave2[2+i]);
+    dens2+=wave[i]*conj(wave2[2+i])+wave[2+i]*conj(wave2[i])-wave[2+i]*conj(wave2[4+i])-wave[4+i]*conj(wave2[2+i]);
+    dens3+=wave[i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[i]);
+    dens4+=wave[i]*conj(wave2[2+i])-wave[2+i]*conj(wave2[i])-wave[2+i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[2+i]);
+    dens5+=-wave[i]*conj(wave2[4+i])+wave[4+i]*conj(wave2[i]);
   }
   azz=
     sqrt(ResTandL*ResTandL2)*dens1*(1.+3.*cos(2.*thetapol))/4.
-    +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2*sqrt(ResTL*ResTL2))
-    +3./8.*(1.-cos(2.*thetapol))*dens3*sqrt(ResTT*ResTT2);
+    +(3./(4.*sqrt(2.))*sin(2.*thetapol)*(dens2+I_UNIT*dens4)*sqrt(ResTL*ResTL2))
+    +3./8.*(1.-cos(2.*thetapol))*(dens3-I_UNIT*dens5)*sqrt(ResTT*ResTT2);
 
   result[0]=result[1]=result[2]=result[3]=prt*W/(abs(qvec-prztilde/Ertilde*(MASSD+nu))
 			*abs(qvec-prztildeprime/Ertildeprime*(MASSD+nu))*32.*PI*PI*3.)
