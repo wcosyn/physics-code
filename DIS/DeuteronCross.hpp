@@ -45,9 +45,10 @@ public:
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param electron has electron kinematics
+   * \param lc lightcone density to restore data or VNA one
    * \return [GeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi
    */
-  double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron);
+  double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron, bool lc);
   /*! get the average cross section
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
@@ -77,13 +78,17 @@ public:
    * \param costhetar angle of spectator with q
    * \param proton DIS on proton (1) or neutron (0)
    * \param pw [1] plane wave only
-   * \param[out] MCresult [MeV^-6] plane wave result using formulas from the BONUS MC simulation
-   * \param[out] modelresultpw [MeV^-6] plane wave result using our model
-   * \param[out] modelresultfsi [MeV^-6] fsi result using our model
+   * \param lc [1] lightcone or [0] VNA deuteron density to restore data
+   * \param[out] MCresult [MeV^-6] plane wave result using formulas from the BONUS MC simulation.
+   * Semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi.
+   * \param[out] modelresultpw [MeV^-6] plane wave result using our model.
+   * Semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi.
+   * \param[out] modelresultfsi [MeV^-6] fsi result using our model.
+   * Semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi.
    * 
    */
   void getBonusMCresult(double &MCresult, double &modelresultpw, double &modelresultfsi, 
-			double Q2, double W, double Ein, double pr, double costhetar, bool proton, bool pw);
+			double Q2, double W, double Ein, double pr, double costhetar, bool proton, bool pw, bool lc);
     
   /*! get the average Azz observable or cross section ratio
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>

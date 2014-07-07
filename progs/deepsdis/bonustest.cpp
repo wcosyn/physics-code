@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
   for (int i=0;i<10;i+=1){
     double costhetar=-0.9+i*0.2;
     double MCres,modelrespw, modelresfsi;
-    test.getBonusMCresult(MCres,modelrespw,modelresfsi,Q2,Wprime,Ebeam,pr,costhetar,proton,0);
+    test.getBonusMCresult(MCres,modelrespw,modelresfsi,Q2,Wprime,Ebeam,pr,costhetar,proton,0,0);
     
     Ftor F;
     F.cross = &test;
@@ -88,6 +88,6 @@ int main(int argc, char *argv[])
 void adap_avg(numint::vector_d &result, double Q2, double W, double ps, double costheta,
 	    DeuteronCross &cross,double Ebeam, bool proton){
   result=vector<double>(3,0.);  
-  cross.getBonusMCresult(result[0],result[1],result[2],Q2,W,Ebeam,ps,costheta,proton,1);
+  cross.getBonusMCresult(result[0],result[1],result[2],Q2,W,Ebeam,ps,costheta,proton,1,0);
 //   cout << Q2 << " " << W << " " << ps << " " << costheta << " " << result[0] << endl;
 }

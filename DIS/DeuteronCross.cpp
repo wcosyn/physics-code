@@ -33,7 +33,7 @@ DeuteronCross::~DeuteronCross(){
   
 }
 
-double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec){
+double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec, bool lc){
   
   double dens=momdistr.getMomDistrpw(kin); //lightcone momentum distribution
   FourVector<double> k_in, k_out;
@@ -61,7 +61,7 @@ double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec
 
 void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresultpw, double &modelresultfsi, 
 				     double Q2, double W, double Ein, double pr, double costhetar, bool proton,
-				     bool pw
+				     bool pw, bool lc
 				    ){
 
   double massi=proton? MASSP:MASSN;
@@ -99,7 +99,7 @@ void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresultpw, do
   if(Eout<0.){ /*cout << Eout << endl;*/ MCresult=modelresultpw=modelresultfsi=0.;return;}
   if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
   
-  MCresult= getavgBonus(kin,*elec)*1.E18;
+  MCresult= getavgBonus(kin,*elec,lc)*1.E18;
   modelresultpw= getavgCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
   modelresultfsi= pw? modelresultpw: getavgCross(kin,*elec,0, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
 }
