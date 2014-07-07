@@ -96,7 +96,10 @@ int main(int argc, char *argv[])
   offshellset=atoi(argv[5]);
 //   looplimit = atoi(argv[7]);
   lc=atoi(argv[6]); //lc or vna density
-  
+  double par1input=(atof(argv[7]);
+  double par2input=(atof(argv[8]);
+  double par3input=(atof(argv[9]);
+  double par4input=(atof(argv[10]);
   
   int testing = 0;
   int fNDim = 7; // number of dimensions
@@ -121,7 +124,7 @@ int main(int argc, char *argv[])
 
   // Start values of parameters
   // If you have a starting individual, you can simply use 
-  double minuitIndividual[] = {1.,1.,1.,1.,40.,8.,-0.5}; // FIXME insert your starting individual ( double array) here
+  double minuitIndividual[] = {par1input,par2input,par3input,par4input,40.,8.,-0.5}; // FIXME insert your starting individual ( double array) here
   if(offshellset==1) minuitIndividual[2]=1.2;
   if(offshellset==2) minuitIndividual[2]=8.;
   
