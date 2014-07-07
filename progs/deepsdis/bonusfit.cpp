@@ -96,10 +96,10 @@ int main(int argc, char *argv[])
   offshellset=atoi(argv[5]);
 //   looplimit = atoi(argv[7]);
   lc=atoi(argv[6]); //lc or vna density
-  double par1input=(atof(argv[7]);
-  double par2input=(atof(argv[8]);
-  double par3input=(atof(argv[9]);
-  double par4input=(atof(argv[10]);
+  double par1input=atof(argv[7]);
+  double par2input=atof(argv[8]);
+  double par3input=atof(argv[9]);
+  double par4input=atof(argv[10]);
   
   int testing = 0;
   int fNDim = 7; // number of dimensions
