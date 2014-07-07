@@ -15,17 +15,17 @@ massi(proton? MASSP:MASSN),
 momdistr(name,massi,offshellset,sigmain,betain,epsilonin,betaoffin,lambdain,looplimit),
 structure(proton,strucname)
 {
-  for(int i=0;i<200;i+=5){
-    TVector3 p(0.,0.,i);
-    double E=sqrt(p.Mag2()+MASSP*MASSP);
-    double alpha=2.*(E-p[2])/MASSD; //lightcone alpha_s=(E-p_z)/M_n
-    double pt2=p[0]*p[0]+p[1]*p[1];
-    double k=sqrt((M_NUCL*M_NUCL+pt2)/(alpha*(2.-alpha))-M_NUCL*M_NUCL); //lightcone momentum rescaling
-
-      cout << i << " " << alpha << " " << k << " " << momdistr.getMomDistrpw(p) << " " 
-	<< momdistr.getLCMomDistrpw(p)  << endl;
-  }
-  exit(1);
+//   for(int i=0;i<200;i+=5){
+//     TVector3 p(0.,0.,i);
+//     double E=sqrt(p.Mag2()+MASSP*MASSP);
+//     double alpha=2.*(E-p[2])/MASSD; //lightcone alpha_s=(E-p_z)/M_n
+//     double pt2=p[0]*p[0]+p[1]*p[1];
+//     double k=sqrt((M_NUCL*M_NUCL+pt2)/(alpha*(2.-alpha))-M_NUCL*M_NUCL); //lightcone momentum rescaling
+// 
+//       cout << i << " " << alpha << " " << k << " " << momdistr.getMomDistrpw(p) << " " 
+// 	<< momdistr.getLCMomDistrpw(p)  << endl;
+//   }
+//   exit(1);
 }
 
 
