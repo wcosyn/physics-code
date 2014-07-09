@@ -234,13 +234,13 @@ CUBATURE_LOOP(dcomplex);
   int cube_romb(const mdfunction<TYPE, N> &f, const numint::array<double,N> &a, \
                 const numint::array<double,N> &b, double epsabs, double epsrel, \
                 TYPE &result, unsigned &neval, int dirty,               \
-                typename Convergence<TYPE>::type compare) {             \
+                Convergence<TYPE>::type compare) {             \
     return _cube_romb_<TYPE,N>(f,a,b,epsabs,epsrel,result,neval,dirty,false,compare); \
   }                                                                     \
   int cube_promb(const mdfunction<TYPE, N> &f, const numint::array<double,N> &a, \
                  const numint::array<double,N> &b, double epsabs, double epsrel, \
                  TYPE &result, unsigned &neval, int dirty,              \
-                 typename Convergence<TYPE>::type compare) {            \
+                 Convergence<TYPE>::type compare) {            \
     return _cube_romb_<TYPE,N>(f,a,b,epsabs,epsrel,result,neval,dirty,true,compare); \
   }
 
