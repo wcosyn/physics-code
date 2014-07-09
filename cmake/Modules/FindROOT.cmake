@@ -124,13 +124,16 @@ IF (ROOT_FOUND)
 #    ARGS "--noldflags --noauxlibs --libs" 
     ARGS "--cflags --glibs" 
     OUTPUT_VARIABLE root_flags )
+ message("rrrooootttt " ${root_flags})
 
 #  STRING(REGEX MATCHALL "([^ ])+"  root_libs_all ${root_flags})
 #  STRING(REGEX MATCHALL "-L([^ ])+"  root_library ${root_flags})
+  string(REPLACE " " ";" root_list ${root_flags})
   if( CMAKE_Fortran_COMPILER_ID STREQUAL "GNU" )
-    LIST(REMOVE_ITEM root_flags "-limf")
+    LIST(REMOVE_ITEM root_list "-limf")
   endif()
-
+  string(REPLACE ";" " " root_flags "${root_list}")
+  message("rrrooootttt " ${root_flags})
   SET(ROOT_LIBRARIES ${root_flags})
 
   # Make variables changeble to the advanced user
