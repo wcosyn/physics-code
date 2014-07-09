@@ -114,7 +114,7 @@ int _fubini_(const mdfunction<T,N> &f, const numint::array<double,N> &a,
   (const mdfunction<TYPE,N> &f, const numint::array<double,N> &a,       \
    const numint::array<double,N> &b, double epsabs, double epsrel,      \
    TYPE &result, unsigned &neval, int dirty,                            \
-   typename Convergence<TYPE>::type compare) {                          \
+   Convergence<TYPE>::type compare) {                          \
     return _fubini_<TYPE,N>(f,a,b,epsabs,epsrel,                        \
                             result,neval,dirty,compare,quad_##CC);      \
   }                                                                     \

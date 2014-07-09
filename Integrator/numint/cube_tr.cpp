@@ -183,13 +183,13 @@ CUBATURE_LOOP(dcomplex);
   int cube_tr(const mdfunction<TYPE, N> &f, const numint::array<double,N> &a, \
               const numint::array<double,N> &b, double epsabs, double epsrel, \
               TYPE &result, unsigned &neval, int dirty,                 \
-              typename Convergence<TYPE>::type compare) {               \
+              Convergence<TYPE>::type compare) {               \
     return _cube_tr_<TYPE,N>(f,a,b,epsabs,epsrel,result,neval,dirty,false,compare); \
   }                                                                     \
   int cube_ptr(const mdfunction<TYPE, N> &f, const numint::array<double,N> &a, \
                const numint::array<double,N> &b, double epsabs, double epsrel, \
                TYPE &result, unsigned &neval, int dirty,                \
-               typename Convergence<TYPE>::type compare) {              \
+               Convergence<TYPE>::type compare) {              \
     return _cube_tr_<TYPE,N>(f,a,b,epsabs,epsrel,result,neval,0,true,compare); \
   }
 
