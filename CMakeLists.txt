@@ -122,61 +122,6 @@ if (hostname MATCHES accident OR hostname MATCHES talvin13)
 
 # endif (hostname MATCHES accident OR hostname MATCHES talvin13) 
 
-elseif (hostname MATCHES trillian)
-   MESSAGE("--- Configuring for trillian")
-   if (CMAKE_COMPILER_IS_GNUCXX)
-      MESSAGE("--- Found GNU compiler collection")
-
-#       SET(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
-#       SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
-
-      # Select flags.
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g -std=c++0x")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -std=c++0x")
-      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
-      set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
-      set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg")
-      set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g -std=c++0x")
-      set(CMAKE_C_FLAGS_RELEASE          "-O3 -std=c++0x")
-      set(CMAKE_C_FLAGS_DEBUG            "-g -O0  -fno-reorder-blocks -fno-schedule-insns -fno-inline")
-      set(CMAKE_C_FLAGS_DEBUGFULL        "-g3  -fno-inline -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common")
-      set(CMAKE_C_FLAGS_PROFILE          "-O0 -g  -pg")
-
-      
-      
-    endif (CMAKE_COMPILER_IS_GNUCXX)
-    if(${CMAKE_CXX_COMPILER} MATCHES "icpc")
-      MESSAGE("--- Found Intel compiler collection")
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0  -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -g -std=c++0x")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel -std=c++0x")
-      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
-      set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
-      set(CMAKE_CXX_FLAGS_PROFILE        "-p -O0 -fno-reorder-blocks -fno-schedule-insns -fno-inline -prof_gen")
-    endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
-
-
-  if (Fortran_COMPILER_NAME STREQUAL "gfortran")
-    # gfortran
-    set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
-    set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g")
-  elseif (Fortran_COMPILER_NAME STREQUAL "ifort")
-	MESSAGE("--- Found Intel fortran compiler collection")
-    # ifort (untested)
-    set (CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O3 -coarray=shared   -shared-intel  -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel")
-    set (CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
-  elseif (Fortran_COMPILER_NAME STREQUAL "g77")
-    # g77
-    set (CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3 -m32")
-    set (CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g -m32")
-  else (Fortran_COMPILER_NAME STREQUAL "gfortran")
-    message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
-    message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
-    message ("No optimized Fortran compiler flags are known, we just try -O2...")
-    set (CMAKE_Fortran_FLAGS_RELEASE "-O2")
-    set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
-  endif (Fortran_COMPILER_NAME STREQUAL "gfortran")
-
-
 
 # endif (hostname MATCHES trillian) 
 
@@ -192,8 +137,8 @@ if(hostname MATCHES ${hpcname})
 #       SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
 
       # Select flags.
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g -std=c++0x")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -std=c++0x")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g -std=c++11")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -std=c++11")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg")
