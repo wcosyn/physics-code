@@ -128,7 +128,7 @@ IF (ROOT_FOUND)
 #  STRING(REGEX MATCHALL "([^ ])+"  root_libs_all ${root_flags})
 #  STRING(REGEX MATCHALL "-L([^ ])+"  root_library ${root_flags})
   if( CMAKE_Fortran_COMPILER_ID STREQUAL "GNU" )
-    REMOVE_FROM_LIST(root_flags "-limf")
+    LIST(REMOVE_ITEM root_flags "-limf")
   endif()
 
   SET(ROOT_LIBRARIES ${root_flags})
