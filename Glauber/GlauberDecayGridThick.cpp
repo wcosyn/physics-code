@@ -202,7 +202,7 @@ void GlauberDecayGridThick::print_grid(int grid) {
       double costheta = -2. * j / getCthgrid() + 1.;
       for (int k = 0; k <= getPhigrid(); k++) {
         double phi = (getAllinplane()? 1. : 2.) * PI * k / getPhigrid();
-        if (isnan(phi))
+        if (std::isnan(phi))
           phi = 0.;
         setinterp(r, costheta, phi);
         complex < double >value = getFsiGridN_interp(grid); // I moved the switch statement inside this loop. As we are printing to the terminal, efficiency is of little concern.
@@ -285,7 +285,7 @@ void GlauberDecayGridThick::constructAllGrids() {
       sintheta_hit = sqrt(1. - costheta_hit * costheta_hit);
       for (int k = 0; k <= getPhigrid(); k++) {
         phi_hit = (getAllinplane()? 1. : 2.) * PI * k / getPhigrid();
-        if (isnan(phi_hit))
+        if (std::isnan(phi_hit))
           phi_hit = 0.;
         sincos(phi_hit, &sinphi_hit, &cosphi_hit);
         if (treshold[j][k] == 0) {  //if treshold is true, we're close enough to one and we don't have to compute everything again and again 
@@ -378,7 +378,7 @@ void GlauberDecayGridThick::constructCtGrid() {
       sintheta_hit = sqrt(1. - costheta_hit * costheta_hit);
       for (int k = 0; k <= getPhigrid(); k++) {
         phi_hit = (getAllinplane()? 1. : 2.) * PI * k / getPhigrid();
-        if (isnan(phi_hit))
+        if (std::isnan(phi_hit))
           phi_hit = 0.;
         sincos(phi_hit, &sinphi_hit, &cosphi_hit);
         if (treshold[j][k] == 0) {  //if treshold is true, we're close enough to one and we don't have to compute everything again and again 

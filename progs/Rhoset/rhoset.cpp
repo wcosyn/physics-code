@@ -26,7 +26,7 @@ void klaas_t(numint::vector_d & res, double nu, double t, RhoTCross & cross, dou
 //   double prx=sqrt(Erho*Erho-prz*prz-MASSRHO*MASSRHO*1.E-06);
 //   double EA=sqrt(massA*massA+prx*prx+(qvec-prz)*(qvec-prz));
 //   double z=Erho/nu;
-//   if((!isnan(prx))&&(z>0.9&&z<1.)){
+//   if((!std::isnan(prx))&&(z>0.9&&z<1.)){
 // //     cout << EA+Erho << " " << massA+nu << endl;
 //     for(int i=0;i<cross.getNrofcross();++i) res[i]=0.5*Erho/qvec;    
 //   }
@@ -51,9 +51,9 @@ void klaas_z(numint::vector_d & res, double nu, double z, RhoTCross & cross, dou
 //   double pAz=(-prho*prho+qvec*qvec+pA*pA)/(2.*qvec);
 //   double prhox=sqrt(prho*prho-prhoz*prhoz);
 //   double t = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*prhoz;
-//   if((!isnan(prhox))&&(t<-0.1&&t>-0.4)) {
+//   if((!std::isnan(prhox))&&(t<-0.1&&t>-0.4)) {
 //     for(int i=0;i<cross.getNrofcross();++i) res[i]=nu*massA*Erho/qvec;
-//     if(isnan(prhox)) cout << "Blaaa" << endl;
+//     if(std::isnan(prhox)) cout << "Blaaa" << endl;
 // //   cout << pA << " " << sqrt(prhox*prhox+pAz*pAz) << endl;
 //   }
 //   else for(int i=0;i<cross.getNrofcross();++i) res[i]=0.;

@@ -58,7 +58,7 @@ void RhoTCross::getCrosst(double *results, const double Ebeam, const double Q2, 
 //   double Erho = (pzrho*qvec-A)/nu;
 //   double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06); //pxrho defines x-axis (so only positive sqrt is considered)
 //   double prho = sqrt(Erho*Erho-MASSRHO*MASSRHO*1.E-06); //pxrho defines x-axis (so only positive sqrt is considered)
-//   if(isnan(pxrho)) pxrho=0.;
+//   if(std::isnan(pxrho)) pxrho=0.;
 //   double pAz=qvec-pzrho;
 //   double z=Erho/nu;
 //   if(z>1.||z<0.9){for(int i=0;i<nrofcross;i++) results[i]=0.;}
@@ -176,7 +176,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	//check cuts
 	if(nocuts||Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06); //pxrho defines x-axis (so only positive sqrt is considered)
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(D+E*pzrho)==SIGN(-Cx*pxrho))||pxrho==0.){ 
 	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 	    double intresults[nrofcross];
@@ -197,7 +197,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	//check cuts
 	if(nocuts||Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);//pxrho defines x-axis (so only positive sqrt is considered)
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(D+E*pzrho)==SIGN(-Cx*pxrho))||pxrho==0.){ 
 	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 	    
@@ -216,7 +216,7 @@ void RhoTCross::intPhit(const double phi, double *results, va_list ap){
 	//check cuts
 	if(nocuts||Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);//pxrho defines x-axis (so only positive sqrt is considered)
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(D+E*pzrho)==SIGN(-Cx*pxrho))||pxrho==0.){ 
 	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 	    double intresults[nrofcross];	  
@@ -248,10 +248,10 @@ void RhoTCross::getCrossz(double *results, const double Ebeam,  const double Q2,
 //   double MA=getNucleusthick().getMassA()*1.E-03;
 //   double EA=-Erho+MA+nu;
 //   double pA=sqrt(EA*EA-MA*MA);
-//   if(isnan(pA)) pA=0.;
+//   if(std::isnan(pA)) pA=0.;
 //   double pzrho = (prho*prho+qvec*qvec-pA*pA)/(2.*qvec);
 //   double pxrho=sqrt(prho*prho-pzrho*pzrho);
-//   if(isnan(pxrho)) pxrho=0.;
+//   if(std::isnan(pxrho)) pxrho=0.;
 //   double pxA=-pxrho;
 //   double pzA=qvec-pzrho;
 //   double t = -Q2+MASSRHO*MASSRHO*1.E-06-2.*Erho*nu+2.*qvec*pzrho;
@@ -368,7 +368,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	//check cuts
 	if(nocuts||(t<-0.1&&t>-0.4)){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho); //pxrho defines x-axis (so only positive sqrt is considered)     
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
 	    double intresults[nrofcross];
 	    getMomdistr(intresults,prho*1.E03,atan2(pxrho,pzrho),Q2,i,pm*1.E03,costheta,phi);
@@ -387,7 +387,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	//check cuts
 	if(nocuts||(t<-0.1&&t>-0.4)){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);//pxrho defines x-axis (so only positive sqrt is considered)  
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
 	    double intresults[nrofcross];
 	    getMomdistr(intresults,prho*1.E03,atan2(pxrho,pzrho),Q2,i,pm*1.E03,costheta,phi);
@@ -404,7 +404,7 @@ void RhoTCross::intPhiz(const double phi, double *results, va_list ap){
 	//check cuts
 	if(nocuts||(t<-0.1&&t>-0.4)){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);//pxrho defines x-axis (so only positive sqrt is considered)  	  
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
 	    double intresults[nrofcross];
 	    getMomdistr(intresults,prho*1.E03,atan2(pxrho,pzrho),Q2,i,pm*1.E03,costheta,phi);
@@ -510,7 +510,7 @@ void RhoTCross::klaas_rho_t(numint::vector_d & results, double pm, double costhe
 	//check cuts
 	if(cross.getNocuts()||Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);//pxrho defines x-axis (so only positive sqrt is considered)     
-	  if(isnan(pxrho)) pxrho=0.; //underflow
+	  if(std::isnan(pxrho)) pxrho=0.; //underflow
 	  if((SIGN(D+E*pzrho)==SIGN(-Cx*pxrho))||pxrho==0.){ 
 	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 	    double intresults[cross.getNrofcross()];
@@ -530,7 +530,7 @@ void RhoTCross::klaas_rho_t(numint::vector_d & results, double pm, double costhe
 	//check cuts
 	if(cross.getNocuts()||Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);//pxrho defines x-axis (so only positive sqrt is considered)     
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(D+E*pzrho)==SIGN(-Cx*pxrho))||pxrho==0.){ 
 	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 	    double intresults[cross.getNrofcross()];
@@ -547,7 +547,7 @@ void RhoTCross::klaas_rho_t(numint::vector_d & results, double pm, double costhe
 	//check cuts
 	if(cross.getNocuts()||Erho/nu>0.9){
 	  double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);//pxrho defines x-axis (so only positive sqrt is considered)     
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(D+E*pzrho)==SIGN(-Cx*pxrho))||pxrho==0.){ 
 	    double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 	    double intresults[cross.getNrofcross()];	  
@@ -603,7 +603,7 @@ void RhoTCross::klaas_rho_z(numint::vector_d & results, double pm, double costhe
 	//check cuts
 	if(cross.getNocuts()||(t<-0.1&&t>-0.4)){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);//pxrho defines x-axis (so only positive sqrt is considered)           
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
 	    double intresults[cross.getNrofcross()];
 	    cross.getMomdistr(intresults,prho*1.E03,atan2(pxrho,pzrho),Q2,i,pm*1.E03,costheta,phi);
@@ -622,7 +622,7 @@ void RhoTCross::klaas_rho_z(numint::vector_d & results, double pm, double costhe
 	//check cuts
 	if(cross.getNocuts()||(t<-0.1&&t>-0.4)){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);//pxrho defines x-axis (so only positive sqrt is considered)     
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
 
 	    double intresults[cross.getNrofcross()];
@@ -639,7 +639,7 @@ void RhoTCross::klaas_rho_z(numint::vector_d & results, double pm, double costhe
 	//check cuts
 	if(cross.getNocuts()||(t<-0.1&&t>-0.4)){
 	  double pxrho = sqrt(prho*prho-pzrho*pzrho);//pxrho defines x-axis (so only positive sqrt is considered)     
-	  if(isnan(pxrho)) pxrho=0.;//underflow
+	  if(std::isnan(pxrho)) pxrho=0.;//underflow
 	  if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
 	  
 	    double intresults[cross.getNrofcross()];

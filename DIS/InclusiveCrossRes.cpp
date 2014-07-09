@@ -159,8 +159,8 @@ void InclusiveCrossRes::int_costheta_incl_fsi(double costheta, double *results, 
 //   }
   double structfactor1=structure.getInclStructure(*kin1,MASSD-Er);
   double structfactor2=structure.getInclStructure(*kin2,MASSD-Er);
-  if(abs(structfactor1<1E-09)||isnan(structfactor1)) {results[0]=0.; results[1]=0.; return; }
-  if(abs(structfactor2<1E-09)||isnan(structfactor2)) {results[0]=0.; results[1]=0.; return; }
+  if(abs(structfactor1<1E-09)||std::isnan(structfactor1)) {results[0]=0.; results[1]=0.; return; }
+  if(abs(structfactor2<1E-09)||std::isnan(structfactor2)) {results[0]=0.; results[1]=0.; return; }
 //   double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*
 // 	      (getResonance_vec()[res1].getMass2()+massr*massr)+pow(massr*massr-getResonance_vec()[res1].getMass2(),2.));
   complex<double> wave[12];

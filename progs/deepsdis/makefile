@@ -29,9 +29,9 @@ EFILEST   = 	../../bin/staticdeepstest ../../bin/staticdeepsfit ../../bin/static
 
 
 #		Mathematical functions
-LIBS =	 	-lm 
+LIBS =	 	-lMinuit -lm 
 WIMLIBS = -lMePhys -lGlauber -lDIS -lKnockout -lIntegrator -lcuba
-ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore -lMinuit `gsl-config --cflags --libs`  
+ROOT =		`root-config --cflags --glibs`  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/DIS -I ~/Code/Knockout
 STATICLIBS =  ~/Code/lib/libglauber.a   ~/Code/lib/libmephys.a  ~/Code/lib/libdis.a  ~/Code/lib/libknockout.a  ~/Code/lib/libintegrator.a
