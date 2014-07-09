@@ -137,8 +137,8 @@ if(hostname MATCHES ${hpcname})
 #       SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
 
       # Select flags.
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g ")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3  ")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -g  -pg")
