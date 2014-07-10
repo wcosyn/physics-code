@@ -54,7 +54,7 @@
 
 # Try to find the MPI driver program
 find_program(MPI_COMPILER 
-  NAMES mpic++ mpicxx mpiCC mpicc
+  NAMES  mpic++ mpicxx mpiCC mpicc
   DOC "MPI compiler. Used only to detect MPI compilation flags.")
 mark_as_advanced(MPI_COMPILER)
 

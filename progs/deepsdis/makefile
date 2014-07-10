@@ -11,8 +11,8 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
-#  CC      = 	icpc
-CC      = 	g++
+ CC      = 	icpc
+# CC      = 	g++
 
 #		Flags
 OPTFLAG	=	-O3 -fPIC
@@ -29,9 +29,9 @@ EFILEST   = 	../../bin/staticdeepstest ../../bin/staticdeepsfit ../../bin/static
 
 
 #		Mathematical functions
-LIBS =	 	-lMinuit -lm 
-WIMLIBS = -lMePhys -lGlauber -lDIS -lKnockout -lIntegrator -lcuba
-ROOT =		`root-config --cflags --glibs`  
+LIBS =	 	
+WIMLIBS =   -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator -lcuba
+ROOT =		`root-config --cflags --glibs` -lMinuit2  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/DIS -I ~/Code/Knockout
 STATICLIBS =  ~/Code/lib/libglauber.a   ~/Code/lib/libmephys.a  ~/Code/lib/libdis.a  ~/Code/lib/libknockout.a  ~/Code/lib/libintegrator.a
@@ -47,6 +47,6 @@ clean:;		@rm -f *.o $(EFILE)
 #-------------------------------------------------------------------------
 .SECONDEXPANSION:
 $(EFILE):  $$(@F).cpp; 
-	@echo $(@F).cpp
-	$(CC) $(CFLAGS) $(@F).cpp $(LIBS) $(WIMLIBS) $(LDFLAGS) $(ROOT) $(LIBDIRS) $(INCLUDEDIRS) -o $@
+	@echo $(@F).cpp 
+	$(CC) -o $@ $(CFLAGS) $(@F).cpp $(LIBS) $(WIMLIBS) $(LDFLAGS) $(ROOT) $(LIBDIRS) $(INCLUDEDIRS) 
 
