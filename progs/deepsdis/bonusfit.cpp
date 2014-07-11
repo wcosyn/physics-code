@@ -65,10 +65,10 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	costheta=data::bonusdata4[Qindex][Windex][i][j][0];
       }
       else{
-	error=sqrt(pow(data::bonusdata5[Qindex][Windex][i][j][2],2.)+
-	  pow(data::bonusdata5[Qindex][Windex][i][j][2],2.));
-	result=data::bonusdata5[Qindex][Windex][i][j][1];
-	costheta=data::bonusdata5[Qindex][Windex][i][j][0];
+	error=sqrt(pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.)+
+	  pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.));
+	result=data::bonusdata5[Qindex-1][Windex][i][j][1];
+	costheta=data::bonusdata5[Qindex-1][Windex][i][j][0];
       }
       if(result!=0.){
 	double bonusMC=0., pw=0.,fsi=0.;
