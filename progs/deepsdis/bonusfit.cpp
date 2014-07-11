@@ -49,7 +49,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   double epsilon=-0.5;
   double betaoff=8.;
   double lambdain=1.2;
-  cout << npar << endl;
+//   cout << npar << endl;
   if(offshellset==1) lambdain=par[2];
   if(offshellset==2) betaoff=par[2];
   else epsilon=par[2];  //we keep epsilon fixed, didn't improve fit!
@@ -74,7 +74,8 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	double bonusMC=0., pw=0.,fsi=0.;
 	DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
 				    data::Ebeam[Beamindex], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
-	if(!std::isnan(fsi)){ f+=pow((par[i]*fsi/bonusMC-result)/error,2.); dof++;}
+	cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
+	if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[i]*fsi/bonusMC-result)/error,2.); dof++;}
       }
     }
   }
