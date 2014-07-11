@@ -35,7 +35,7 @@ DeuteronCross::~DeuteronCross(){
 
 double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec, bool lc){
   
-  double dens=momdistr.getMomDistrpw(kin); //lightcone momentum distribution
+  double dens=lc? momdistr.getLCMomDistrpw(kin) : momdistr.getMomDistrpw(kin); 
   FourVector<double> k_in, k_out;
   elec.GetLeptonVectors(kin,k_in,k_out);
   double costhetap=kin.GetCosthklab();
