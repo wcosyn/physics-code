@@ -52,7 +52,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 //   cout << npar << endl;
   if(offshellset==1) lambdain=par[2];
   if(offshellset==2) betaoff=par[2];
-  else epsilon=par[2];  //we keep epsilon fixed, didn't improve fit!
+  else epsilon=par[6];  //we keep epsilon fixed, didn't improve fit!
   DeuteronCross DeepsCross("paris",proton,"CB",par[4],par[5],epsilon,betaoff,lambdain,offshellset,1E03);
   cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << " " << par[5] << " " <<par[6] << endl;
   for(int i=startset;i<stopset;i++){
