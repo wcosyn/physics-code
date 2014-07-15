@@ -24,8 +24,8 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(GPFLAG)  #$(DBGFLAG)  #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/deepstest ../../bin/deepsfit ../../bin/bonustest ../../bin/bonusfit
-EFILEST   = 	../../bin/staticdeepstest ../../bin/staticdeepsfit ../../bin/staticbonustest ../../bin/staticbonusfit
+EFILE   = 	../../bin/deepstest ../../bin/deepsfit ../../bin/bonustest ../../bin/bonusfit ../../bin/bonusscatterfit
+EFILEST   = 	../../bin/staticdeepstest ../../bin/staticdeepsfit ../../bin/staticbonustest ../../bin/staticbonusfit ../../bin/staticbonusscatterfit
 
 
 #		Mathematical functions
@@ -37,7 +37,7 @@ ROOT =		`root-config --cflags --glibs` -lMinuit2
 STATICLIBS =  ~/Code/lib/libglauber.a   ~/Code/lib/libmephys.a  ~/Code/lib/libdis.a  ~/Code/lib/libknockout.a  ~/Code/lib/libintegrator.a
 
 #		Header files
-HDRS =		
+HDRS =		bonusdata.h bonusfits.h
 
 all:		$(EFILE)
 static:		$(EFILEST)
@@ -46,7 +46,7 @@ clean:;		@rm -f *.o $(EFILE)
 
 #-------------------------------------------------------------------------
 .SECONDEXPANSION:
-$(EFILE):  $$(@F).cpp; 
+$(EFILE):  $$(@F).cpp $(HDRS); 
 	@echo $(@F).cpp 
 	$(CC) -o $@ $(CFLAGS) $(@F).cpp $(LIBS) $(WIMLIBS) $(LDFLAGS) $(ROOT) $(LIBDIRS) $(INCLUDEDIRS) 
 

@@ -23,7 +23,7 @@ using namespace std;
 #include <constants.hpp>
 #include <DeuteronCross.hpp>
 #include "bonusdata.h"
-
+#include "bonusfits.h"
 
 //double sigmainput=40.;
 // int phiavg=1;
@@ -31,14 +31,14 @@ using namespace std;
 // int F_param=0;
 int Qindex=-1;
 int Windex=-1;
-int Beamindex=-1;
 int startset=0;
 int stopset=4;
 int offshellset=0;
 string dir;
-double *****deepsdata;
 int looplimit=-1;
 bool lc=0;
+
+double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc);
 
 void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 {
@@ -50,32 +50,39 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   double betaoff=8.;
   double lambdain=1.2;
 //   cout << npar << endl;
-  if(offshellset==1) lambdain=par[6];
-  if(offshellset==2) betaoff=par[6];
-  else epsilon=par[6];  //we keep epsilon fixed, didn't improve fit!
-  DeuteronCross DeepsCross("paris",proton,"CB",par[4],par[5],epsilon,betaoff,lambdain,offshellset,1E03);
-  cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << " " << par[5] << " " <<par[6] << endl;
+  if(offshellset==1) lambdain=par[2];
+  if(offshellset==2) betaoff=par[2];
+  else epsilon=par[2];  //we keep epsilon fixed, didn't improve fit!
+  DeuteronCross DeepsCross("paris",proton,"CB",par[0],par[1],epsilon,betaoff,lambdain,offshellset,1E03);
+  cout << "bla " << par[0] << " " << par[1] << " " << par[2]  << endl;
   for(int i=startset;i<stopset;i++){
     for(int j=0;j<10;j++){
       double error,result,costheta;
-      if(Beamindex==0){ 
+      if(Qindex>0){
 	error=sqrt(pow(data::bonusdata4[Qindex][Windex][i][j][2],2.)+
 	  pow(data::bonusdata4[Qindex][Windex][i][j][2],2.));
 	result=data::bonusdata4[Qindex][Windex][i][j][1];
 	costheta=data::bonusdata4[Qindex][Windex][i][j][0];
+	if(result!=0.){
+	  double bonusMC=0., pw=0.,fsi=0.;
+	  DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
+				      data::Ebeam[0], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
+	  cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
+	  if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((get_normfit_bonus(0,Qindex,Windex,i,offshellset,lc)
+						  *fsi/bonusMC-result)/error,2.); dof++;}
+	}
       }
-      else{
-	error=sqrt(pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.)+
-	  pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.));
-	result=data::bonusdata5[Qindex-1][Windex][i][j][1];
-	costheta=data::bonusdata5[Qindex-1][Windex][i][j][0];
-      }
+      error=sqrt(pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.)+
+	pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.));
+      result=data::bonusdata5[Qindex-1][Windex][i][j][1];
+      costheta=data::bonusdata5[Qindex-1][Windex][i][j][0];
       if(result!=0.){
 	double bonusMC=0., pw=0.,fsi=0.;
 	DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
-				    data::Ebeam[Beamindex], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
+				    data::Ebeam[1], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
 	cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
-	if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[i]*fsi/bonusMC-result)/error,2.); dof++;}
+	if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((get_normfit_bonus(0,Qindex,Windex,i,offshellset,lc)
+						*fsi/bonusMC-result)/error,2.); dof++;}
       }
     }
   }
@@ -88,46 +95,41 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 int main(int argc, char *argv[])
 {
   
-  Qindex = atoi(argv[3]); // parse from argv or something
-  Windex = atoi(argv[4]); // parse from argv or something
-  Beamindex=atoi(argv[2]);
+  Qindex = atoi(argv[2]); // parse from argv or something
+  Windex = atoi(argv[3]); // parse from argv or something
   int fixparam = atoi(argv[1]); // parse from argv or something
 //   startset=atoi(argv[4]);
 //   stopset=atoi(argv[5]);
-  offshellset=atoi(argv[5]);
+  offshellset=atoi(argv[4]);
 //   looplimit = atoi(argv[7]);
-  lc=atoi(argv[6]); //lc or vna density
-  double par1input=atof(argv[7]);
-  double par2input=atof(argv[8]);
-  double par3input=atof(argv[9]);
-  double par4input=atof(argv[10]);
+  lc=atoi(argv[5]); //lc or vna density
   
   int testing = 0;
-  int fNDim = 7; // number of dimensions
-  double fLo[] = {0.5,0.5,0.5,0.5,0.,1.,-1.}; // lower limits of params
-  double fHi[] = {5.,5.,5.,5.,100.,20.,1.}; // upper limits of params
-  char* fName[] = {"norm1", "norm2", "norm3", "norm4", "sigma_tot","beta","epsilon"};
+  int fNDim = 3; // number of dimensions
+  double fLo[] = {0.,1.,-1.}; // lower limits of params
+  double fHi[] = {100.,20.,1.}; // upper limits of params
+  char* fName[] = {"sigma_tot","beta","epsilon"};
   
   if(offshellset==1){
-    fLo[6]=0.5;
-    fHi[6]=2.;
-    fName[6]="Lambda";
+    fLo[2]=0.5;
+    fHi[2]=2.;
+    fName[2]="Lambda";
   }
   if(offshellset==2){
-    fLo[6]=1.;
-    fHi[6]=20.;
-    fName[6]="beta_off";
+    fLo[2]=1.;
+    fHi[2]=20.;
+    fName[2]="beta_off";
   }
   
-  int fBound[] = {1,1,1,1,1,1,1};
+  int fBound[] = {1,1,1};
 
   TVirtualFitter *gMinuit = TVirtualFitter::Fitter ( 0, fNDim );
 
   // Start values of parameters
   // If you have a starting individual, you can simply use 
-  double minuitIndividual[] = {par1input,par2input,par3input,par4input,40.,8.,-0.5}; // FIXME insert your starting individual ( double array) here
-  if(offshellset==1) minuitIndividual[6]=1.2;
-  if(offshellset==2) minuitIndividual[6]=8.;
+  double minuitIndividual[] = {40.,8.,-0.5}; // FIXME insert your starting individual ( double array) here
+  if(offshellset==1) minuitIndividual[2]=1.2;
+  if(offshellset==2) minuitIndividual[2]=8.;
   
   std::cout << "done" << endl;
 
@@ -371,4 +373,30 @@ int main(int argc, char *argv[])
 }
   delete gMinuit;
   return 0;
+}
+
+
+
+double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc){
+  if(lc){
+    if(offshell==3){
+      if(beamindex==0) return bonusfits::normfits_fix3_off3_lc1_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_fix3_off3_lc1_beam5[Qindex-1][Windex][psindex];
+    }
+    if(offshell==4){
+      if(beamindex==0) return bonusfits::normfits_fix3_off4_lc1_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_fix3_off4_lc1_beam5[Qindex-1][Windex][psindex];
+    }
+  }
+  else{
+    if(offshell==3){
+      if(beamindex==0) return bonusfits::normfits_fix3_off3_lc0_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_fix3_off3_lc0_beam5[Qindex-1][Windex][psindex];
+    }
+    if(offshell==4){
+      if(beamindex==0) return bonusfits::normfits_fix3_off4_lc0_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_fix3_off4_lc0_beam5[Qindex-1][Windex][psindex];
+    }
+  }
+  return 0./0.;
 }
