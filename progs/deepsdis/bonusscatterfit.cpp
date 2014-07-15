@@ -58,7 +58,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   for(int i=startset;i<stopset;i++){
     for(int j=0;j<10;j++){
       double error,result,costheta;
-      if(Qindex>0){
+      if(!((Qindex==2)&&(Windex==4))){
 	error=sqrt(pow(data::bonusdata4[Qindex][Windex][i][j][2],2.)+
 	  pow(data::bonusdata4[Qindex][Windex][i][j][2],2.));
 	result=data::bonusdata4[Qindex][Windex][i][j][1];
@@ -72,17 +72,19 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 						  *fsi/bonusMC-result)/error,2.); dof++;}
 	}
       }
-      error=sqrt(pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.)+
-	pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.));
-      result=data::bonusdata5[Qindex-1][Windex][i][j][1];
-      costheta=data::bonusdata5[Qindex-1][Windex][i][j][0];
-      if(result!=0.){
-	double bonusMC=0., pw=0.,fsi=0.;
-	DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
-				    data::Ebeam[1], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
-	cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
-	if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((get_normfit_bonus(0,Qindex,Windex,i,offshellset,lc)
-						*fsi/bonusMC-result)/error,2.); dof++;}
+      if(Qindex>0){
+	error=sqrt(pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.)+
+	  pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.));
+	result=data::bonusdata5[Qindex-1][Windex][i][j][1];
+	costheta=data::bonusdata5[Qindex-1][Windex][i][j][0];
+	if(result!=0.){
+	  double bonusMC=0., pw=0.,fsi=0.;
+	  DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
+				      data::Ebeam[1], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
+	  cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
+	  if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((get_normfit_bonus(0,Qindex,Windex,i,offshellset,lc)
+						  *fsi/bonusMC-result)/error,2.); dof++;}
+	}
       }
     }
   }
