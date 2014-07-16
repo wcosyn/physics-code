@@ -74,7 +74,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	double bonusMC=0., pw=0.,fsi=0.;
 	DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
 				    data::Ebeam[Beamindex], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
-	cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
+// 	cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
 	if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[i]*fsi/bonusMC-result)/error,2.); dof++;}
       }
     }
@@ -83,7 +83,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
   f/=(dof-npar);
 }
-
+double sigmaparam(double W, double Q2, bool Q2dep);
 
 int main(int argc, char *argv[])
 {
@@ -97,10 +97,11 @@ int main(int argc, char *argv[])
   offshellset=atoi(argv[5]);
 //   looplimit = atoi(argv[7]);
   lc=atoi(argv[6]); //lc or vna density
-  double par1input=atof(argv[7]);
-  double par2input=atof(argv[8]);
-  double par3input=atof(argv[9]);
-  double par4input=atof(argv[10]);
+//   double par1input=atof(argv[7]);
+//   double par2input=atof(argv[8]);
+//   double par3input=atof(argv[9]);
+//   double par4input=atof(argv[10]);
+  bool Q2dep=atoi(argv[7]);
   
   int testing = 0;
   int fNDim = 7; // number of dimensions
@@ -125,7 +126,8 @@ int main(int argc, char *argv[])
 
   // Start values of parameters
   // If you have a starting individual, you can simply use 
-  double minuitIndividual[] = {par1input,par2input,par3input,par4input,40.,8.,-0.5}; // FIXME insert your starting individual ( double array) here
+  double minuitIndividual[] = {1.,1.,1.,1.,sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
+    0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep),8.,-0.5}; // FIXME insert your starting individual ( double array) here
   if(offshellset==1) minuitIndividual[6]=1.2;
   if(offshellset==2) minuitIndividual[6]=8.;
   
@@ -371,4 +373,20 @@ int main(int argc, char *argv[])
 }
   delete gMinuit;
   return 0;
+}
+
+
+
+//sigma in mbarn
+double sigmaparam(double W, double Q2, bool Q2dep){
+  if(!Q2dep||Q2<1.8E06){
+      if(abs(W*W-1.232*1.232E06)<2.5E5) return 65;
+  return (25.3*1.E-06*2.3+53*(sqrt(W*W>5.76E06?5.76E06:W*W)-MASSP)*1.E-03)
+	/(1.8);
+  }
+  else{ 
+    if(abs(W*W-1.232*1.232E06)<2.5E5) return 65.*1.8E06/Q2;
+    return (25.3*1.E-06*2.3+53*(sqrt(W*W>5.76E06?5.76E06:W*W)-MASSP)*1.E-03)
+	  /(1.E-06*Q2);
+  }
 }
