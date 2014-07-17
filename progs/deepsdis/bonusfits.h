@@ -12,6 +12,15 @@ const static double normfits_fix3_off4_lc0_beam5[2][5][4];
 const static double normfits_fix3_off4_lc1_beam4[3][5][4];
 const static double normfits_fix3_off4_lc1_beam5[2][5][4];
 
+const static double normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam4[3][5][4];
+const static double normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam5[2][5][4];
+const static double normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam4[3][5][4];
+const static double normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam5[2][5][4];
+const static double normfits_sigmadeeps_fix3_off4_lc0_q2dep0_beam4[3][5][4];
+const static double normfits_sigmadeeps_fix3_off4_lc0_q2dep0_beam5[2][5][4];
+const static double normfits_sigmadeeps_fix3_off4_lc0_q2dep1_beam4[3][5][4];
+const static double normfits_sigmadeeps_fix3_off4_lc0_q2dep1_beam5[2][5][4];
+
 
 };
 //fit parameters for data normalization with all other parameters fixed, no offshell and VNA
@@ -91,7 +100,7 @@ const double bonusfits::normfits_fix3_off3_lc0_beam5[2][5][4]={
 };
 
 
-//fit parameters for data normalization with all other parameters fixed, no offshell and VNA
+//fit parameters for data normalization with all other parameters fixed, full offshell and VNA
 //Bonus data beam 4GeV
 //first index is Q^2={0.93,1.66,3.38}
 //second index is W={1.17,1.48,1.73,2.03,2.44}
@@ -245,7 +254,7 @@ const double bonusfits::normfits_fix3_off3_lc1_beam5[2][5][4]={
 };
 
 
-//fit parameters for data normalization with all other parameters fixed, no offshell and VNA
+//fit parameters for data normalization with all other parameters fixed, full offshell and VNA
 //Bonus data beam 4GeV
 //first index is Q^2={0.93,1.66,3.38}
 //second index is W={1.17,1.48,1.73,2.03,2.44}
@@ -320,6 +329,318 @@ const double bonusfits::normfits_fix3_off4_lc1_beam5[2][5][4]={
 
 },
 };
+
+//fit parameters for data normalization with all other parameters fixed,
+//no offshell and VNA, sigma taken from deeps parametrization, no Q2 dependence
+//Bonus data beam 4GeV
+//first index is Q^2={0.93,1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam4[3][5][4]={ 
+{ 
+{ 2.2037 , 2.38073 , 2.97073 , 3.53992 }
+,
+{ 1.34979 , 1.34461 , 1.38529 , 1.42484 }
+,
+{ 1.2063 , 1.1627 , 1.22731 , 1.27878 }
+,
+{ 1.25311 , 1.24573 , 1.31311 , 1.43833 }
+,
+{ 1.20858 , 1.18105 , 1.24653 , 1.39108 }
+
+},
+{ 
+{ 2.41221 , 2.62368 , 3.15212 , 3.97714 }
+,
+{ 1.47924 , 1.41239 , 1.52429 , 1.57699 }
+,
+{ 1.20316 , 1.18762 , 1.21828 , 1.20467 }
+,
+{ 1.32955 , 1.29555 , 1.38379 , 1.48116 }
+,
+{ 1.29748 , 1.2525 , 1.37089 , 1.54589 }
+
+},
+{ 
+{ 2.65697 , 2.72873 , 3.28565 , 3.31683 }
+,
+{ 1.637 , 1.68795 , 1.64426 , 1.50843 }
+,
+{ 1.18475 , 1.08228 , 1.14802 , 1.17925 }
+,
+{ 1.46409 , 1.37057 , 1.52498 , 1.64047 }
+,
+{ 1.0 , 1.0 , 1.0 , 1.0 }
+
+}
+};
+
+
+//Bonus data beam 5GeV
+//first index is Q^2={1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam5[2][5][4]={ 
+{ 
+{ 2.21317 , 2.58837 , 2.96341 , 3.91359 }
+,
+{ 1.3911 , 1.43861 , 1.48308 , 1.64547 }
+,
+{ 1.17066 , 1.17512 , 1.19305 , 1.2968 }
+,
+{ 1.23963 , 1.2655 , 1.3078 , 1.45988 }
+,
+{ 1.13432 , 1.15508 , 1.20908 , 1.38851 }
+
+},
+{ 
+{ 2.32065 , 2.78377 , 2.88701 , 3.64775 }
+,
+{ 1.60224 , 1.60267 , 1.69635 , 1.82625 }
+,
+{ 1.114 , 1.12069 , 1.11996 , 1.17597 }
+,
+{ 1.28803 , 1.35202 , 1.36256 , 1.60842 }
+,
+{ 1.24097 , 1.29254 , 1.30812 , 1.59548 }
+
+},
+};
+
+
+//fit parameters for data normalization with all other parameters fixed, full offshell and VNA,
+//sigma taken from deeps parametrization, no Q2 dependence
+//Bonus data beam 4GeV
+//first index is Q^2={0.93,1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep0_beam4[3][5][4]={ 
+{ 
+{ 2.16981 , 2.32127 , 2.84396 , 3.21137 }
+,
+{ 1.34573 , 1.33753 , 1.37414 , 1.40418 }
+,
+{ 1.20098 , 1.15383 , 1.21182 , 1.24877 }
+,
+{ 1.24563 , 1.23196 , 1.28902 , 1.38876 }
+,
+{ 1.2002 , 1.16612 , 1.22112 , 1.33859 }
+
+},
+{ 
+{ 2.37603 , 2.55839 , 3.01996 , 3.65561 }
+,
+{ 1.47513 , 1.40584 , 1.51296 , 1.55619 }
+,
+{ 1.19794 , 1.17874 , 1.20332 , 1.17847 }
+,
+{ 1.32196 , 1.28218 , 1.36011 , 1.43517 }
+,
+{ 1.2904 , 1.24461 , 1.3559 , 1.52389 }
+
+},
+{ 
+{ 2.62344 , 2.67369 , 3.20393 , 3.13536 }
+,
+{ 1.63353 , 1.68168 , 1.63327 , 1.4969 }
+,
+{ 1.18136 , 1.07586 , 1.13625 , 1.1587 }
+,
+{ 1.45979 , 1.3657 , 1.5174 , 1.62747 }
+,
+{ 1.0 , 1.0 , 1.0 , 1.0 }
+
+}
+};
+
+
+//Bonus data beam 5GeV
+//first index is Q^2={1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep0_beam5[2][5][4]={ 
+{ 
+{ 2.17911 , 2.51838 , 2.83045 , 3.58695 }
+,
+{ 1.38698 , 1.43185 , 1.47177 , 1.62351 }
+,
+{ 1.16553 , 1.16625 , 1.1784 , 1.26804 }
+,
+{ 1.23232 , 1.25173 , 1.28476 , 1.4104 }
+,
+{ 1.12593 , 1.13925 , 1.18224 , 1.32989 }
+
+},
+{ 
+{ 2.29257 , 2.72292 , 2.77898 , 3.40681 }
+,
+{ 1.59863 , 1.59607 , 1.68451 , 1.80703 }
+,
+{ 1.10972 , 1.1127 , 1.10582 , 1.15164 }
+,
+{ 1.28136 , 1.33922 , 1.34198 , 1.56199 }
+,
+{ 1.23563 , 1.28539 , 1.29835 , 1.57362 }
+
+},
+};
+
+
+//fit parameters for data normalization with all other parameters fixed, no offshell and VNA,
+//sigma taken from deeps parametrization, Q2 dependence
+//Bonus data beam 4GeV
+//first index is Q^2={0.93,1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam4[3][5][4]={ 
+{ 
+{ 2.2037 , 2.38073 , 2.97073 , 3.53992 }
+,
+{ 1.34979 , 1.34461 , 1.38529 , 1.42484 }
+,
+{ 1.2063 , 1.1627 , 1.22731 , 1.27878 }
+,
+{ 1.25311 , 1.24573 , 1.31311 , 1.43833 }
+,
+{ 1.20858 , 1.18105 , 1.24653 , 1.39108 }
+
+},
+{ 
+{ 2.41221 , 2.62368 , 3.15212 , 3.97714 }
+,
+{ 1.47924 , 1.41239 , 1.52429 , 1.57699 }
+,
+{ 1.20316 , 1.18762 , 1.21828 , 1.20467 }
+,
+{ 1.32955 , 1.29555 , 1.38379 , 1.48116 }
+,
+{ 1.29748 , 1.2525 , 1.37089 , 1.54589 }
+
+},
+{ 
+{ 2.46814 , 2.47299 , 2.86276 , 2.70894 }
+,
+{ 1.60865 , 1.6497 , 1.59556 , 1.44084 }
+,
+{ 1.15465 , 1.04667 , 1.09794 , 1.10494 }
+,
+{ 1.41188 , 1.30536 , 1.42531 , 1.48277 }
+,
+{ 1.0 , 1.0 , 1.0 , 1.0 }
+
+}
+};
+
+
+//Bonus data beam 5GeV
+//first index is Q^2={1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam5[2][5][4]={ 
+{ 
+{ 2.21317 , 2.58837 , 2.96341 , 3.91359 }
+,
+{ 1.3911 , 1.43861 , 1.48308 , 1.64547 }
+,
+{ 1.17066 , 1.17512 , 1.19305 , 1.2968 }
+,
+{ 1.23963 , 1.2655 , 1.3078 , 1.45988 }
+,
+{ 1.13432 , 1.15508 , 1.20908 , 1.38851 }
+
+},
+{ 
+{ 2.15522 , 2.52618 , 2.53191 , 3.00028 }
+,
+{ 1.57476 , 1.56672 , 1.64654 , 1.74797 }
+,
+{ 1.0861 , 1.0846 , 1.07295 , 1.10496 }
+,
+{ 1.2434 , 1.29117 , 1.28127 , 1.47257 }
+,
+{ 1.18156 , 1.20998 , 1.19308 , 1.38978 }
+
+},
+};
+
+
+//fit parameters for data normalization with all other parameters fixed, full offshell and VNA,
+//sigma taken from deeps parametrization, Q2 dependence
+//Bonus data beam 4GeV
+//first index is Q^2={0.93,1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep1_beam4[3][5][4]={ 
+{ 
+{ 2.16981 , 2.32127 , 2.84396 , 3.21137 }
+,
+{ 1.34573 , 1.33753 , 1.37414 , 1.40418 }
+,
+{ 1.20098 , 1.15383 , 1.21182 , 1.24877 }
+,
+{ 1.24563 , 1.23196 , 1.28902 , 1.38876 }
+,
+{ 1.2002 , 1.16612 , 1.22112 , 1.33859 }
+
+},
+{ 
+{ 2.37603 , 2.55839 , 3.01996 , 3.65561 }
+,
+{ 1.47513 , 1.40584 , 1.51296 , 1.55619 }
+,
+{ 1.19794 , 1.17874 , 1.20332 , 1.17847 }
+,
+{ 1.32196 , 1.28218 , 1.36011 , 1.43517 }
+,
+{ 1.2904 , 1.24461 , 1.3559 , 1.52389 }
+
+},
+{ 
+{ 2.45325 , 2.45049 , 2.83417 , 2.65632 }
+,
+{ 1.60689 , 1.64657 , 1.59015 , 1.43554 }
+,
+{ 1.15296 , 1.04354 , 1.09237 , 1.09586 }
+,
+{ 1.4098 , 1.30305 , 1.42184 , 1.47742 }
+,
+{ 1.0 , 1.0 , 1.0 , 1.0 }
+
+}
+};
+
+
+//Bonus data beam 5GeV
+//first index is Q^2={1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep1_beam5[2][5][4]={ 
+{ 
+{ 2.17911 , 2.51838 , 2.83045 , 3.58695 }
+,
+{ 1.38698 , 1.43185 , 1.47177 , 1.62351 }
+,
+{ 1.16553 , 1.16625 , 1.1784 , 1.26804 }
+,
+{ 1.23232 , 1.25173 , 1.28476 , 1.4104 }
+,
+{ 1.12593 , 1.13925 , 1.18224 , 1.32989 }
+
+},
+{ 
+{ 2.14271 , 2.50107 , 2.49162 , 2.92859 }
+,
+{ 1.57286 , 1.56343 , 1.64071 , 1.73901 }
+,
+{ 1.08401 , 1.08077 , 1.06638 , 1.09395 }
+,
+{ 1.24025 , 1.28535 , 1.27204 , 1.45304 }
+,
+{ 1.17909 , 1.20674 , 1.18901 , 1.38145 }
+
+},
+};
+
 
 
 

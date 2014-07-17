@@ -35,6 +35,8 @@ void adap_avg(numint::vector_d &, double Q2, double W, double ps, double costhet
 	    DeuteronCross &cross,double Ebeam, bool proton);
 
 double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc);
+double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc, bool q2dep);
+double sigmaparam(double W, double Q2, bool Q2dep);
 
 int main(int argc, char *argv[])
 {
@@ -46,6 +48,7 @@ int main(int argc, char *argv[])
   double sigmain = atof(argv[6]); //sigma in mb
   double betain = atof(argv[7]); //beta in GeV^-2
   bool lc = atoi(argv[8]);
+  bool q2dep = atoi(argv[9]);
   
   bool proton=0;
   double phi=0.;
@@ -53,7 +56,7 @@ int main(int argc, char *argv[])
   double Wprime = 0.5*(data::W[Windex]+data::W[Windex+1]);
   double Q2 = 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]);
   double pr = 0.5*(data::ps[pindex]+data::ps[pindex+1]);
-  DeuteronCross test("paris",proton,"CB",sigmain,betain,-0.5,8.,1.2,offshellset,1E03);
+  DeuteronCross test("paris",proton,"CB",sigmaparam(Wprime,Q2,q2dep),betain,-0.5,8.,1.2,offshellset,1E03);
 //   DeuteronCross test("paris",proton,"SLAC",36.3274,1.97948,-0.5,8.,1.2,4);
   for (int i=0;i<10;i+=1){
     double costhetar=-0.9+i*0.2;
@@ -107,7 +110,7 @@ int main(int argc, char *argv[])
   double x=Q2/(2.*massi*nu);
     
     cout << Ebeam << " " << Q2 << " " << Wprime << " " << pr << " " << costhetar << " " << x << " " << xprime << " " 
-	<< MCres/get_normfit_bonus(atoi(argv[1]),Qindex,Windex,pindex,offshellset,lc) << " " << modelrespw << " " << modelresfsi << " " << get_normfit_bonus(atoi(argv[1]),Qindex,Windex,pindex,offshellset,lc) <<  /*" " << avgcross[0] << " " << avgcross[1] << " " << count <<*/ endl;
+	<< MCres/get_normfit_sigma_deeps_bonus(atoi(argv[1]),Qindex,Windex,pindex,offshellset,lc,q2dep) << " " << modelrespw << " " << modelresfsi << " " << get_normfit_bonus(atoi(argv[1]),Qindex,Windex,pindex,offshellset,lc) <<  /*" " << avgcross[0] << " " << avgcross[1] << " " << count <<*/ endl;
   }
 }
 
@@ -142,4 +145,43 @@ double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int
     }
   }
   return 0./0.;
+}
+
+double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc, bool q2dep){
+  if(q2dep){
+    if(offshell==3){
+      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam5[Qindex-1][Windex][psindex];
+    }
+    if(offshell==4){
+      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep1_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep1_beam5[Qindex-1][Windex][psindex];
+    }
+  }
+  else{
+    if(offshell==3){
+      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam5[Qindex-1][Windex][psindex];
+    }
+    if(offshell==4){
+      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep0_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep0_beam5[Qindex-1][Windex][psindex];
+    }
+  }
+  return 0./0.;
+}
+
+
+//sigma in mbarn
+double sigmaparam(double W, double Q2, bool Q2dep){
+  if(!Q2dep||Q2<1.8E06){
+      if(abs(W*W-1.232*1.232E06)<2.5E5) return 65;
+  return (25.3*1.E-06*2.3+53*(sqrt(W*W>5.76E06?5.76E06:W*W)-MASSP)*1.E-03)
+	/(1.8);
+  }
+  else{ 
+    if(abs(W*W-1.232*1.232E06)<2.5E5) return 65.*1.8E06/Q2;
+    return (25.3*1.E-06*2.3+53*(sqrt(W*W>5.76E06?5.76E06:W*W)-MASSP)*1.E-03)
+	  /(1.E-06*Q2);
+  }
 }
