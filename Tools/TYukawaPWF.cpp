@@ -401,3 +401,6 @@ double TYukawaPWF::GetVSr(double r) const
 
   return 0;
 }
+double TYukawaPWF::getResidu() const{
+  return fC[0];
+}

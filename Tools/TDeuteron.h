@@ -75,6 +75,7 @@ class TDeuteron
     double GetVSp(double p) const { return fImplementation->GetVSp(p); } // p in [MeV]
     double Radial_r(int l, double r) const { return fImplementation->Radial_r(l,r); } // r in [fm]
     double Radial_p(int l, double p) const { return fImplementation->Radial_p(l,p); } // p in [MeV]
+    double getResidu() const; //get pole residu (for on-shell extrapolation)
   
     bool   IsRelativistic() const { return fRelativistic; }
 
@@ -134,7 +135,8 @@ class TDeuteron
   private:
     bool                         fRelativistic;   // relativistic wavefunction?
     TWavefunctionImplementation *fImplementation; //-> implementation of wavefunction
-
+    bool yukawa; //yukawa type wf?
+    
     static const double          kMd;             // deuteron mass
 
     ClassDef(Wavefunction,1); // Strangecalc wavefunction

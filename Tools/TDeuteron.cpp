@@ -90,7 +90,7 @@ const double TDeuteron::Wavefunction::kMd = 1877.05;
 //_____________________________________________________________________
 TDeuteron::Wavefunction::Wavefunction(const TString& name,
 			     const TString& title)
-  : TNamed(name,title), fRelativistic(0), fImplementation(0)
+  : TNamed(name,title), fRelativistic(0), fImplementation(0), yukawa(0)
 {
   // Default constructor is private
   // User are only allowed to use named constructors
@@ -98,14 +98,14 @@ TDeuteron::Wavefunction::Wavefunction(const TString& name,
 
 //_____________________________________________________________________
 TDeuteron::Wavefunction::Wavefunction(TRootIOCtor*)
-  : TNamed(), fRelativistic(0), fImplementation(0)
+  : TNamed(), fRelativistic(0), fImplementation(0), yukawa(0)
 {
   // ROOT I/O Constructor
 }
 
 //_____________________________________________________________________
 TDeuteron::Wavefunction::Wavefunction(const Wavefunction& rhs)
-  : TNamed(rhs), fRelativistic(rhs.fRelativistic), fImplementation(0)
+  : TNamed(rhs), fRelativistic(rhs.fRelativistic), fImplementation(0), yukawa(rhs.yukawa)
 {
   // Copy constructor
 
@@ -120,6 +120,7 @@ TDeuteron::Wavefunction& TDeuteron::Wavefunction::operator=(const Wavefunction& 
   if( this!=&rhs ) { // avoid self-assignment
     TNamed::operator=(rhs);
     fRelativistic = rhs.fRelativistic;
+    yukawa=rhs.yukawa;
     delete fImplementation;
     fImplementation = rhs.fImplementation->Clone();
   }
@@ -144,6 +145,7 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateCDBonnWavefunction()
   Wavefunction *wf = new Wavefunction("CDBonn");
 
   wf->fRelativistic = false;
+  wf->yukawa = true;
 
   static double c[11] = { +.88472985e+0,
 			  -.26408759e+0,
@@ -179,7 +181,8 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateParisWavefunction()
 
   Wavefunction *wf = new Wavefunction("Paris");
   wf->fRelativistic = false;
-
+  wf->yukawa = true;
+  
   static double c[13] = { +.88688076e-0,
 			  -.34717093e+0,
 			  -.30502380e+1,
@@ -217,7 +220,8 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateAV18Wavefunction()
   Wavefunction *wf = new Wavefunction("AV18");
 
   wf->fRelativistic = false;
-
+  wf->yukawa = true;
+  
   static double c[12] = { 0.706699E+00/Sqrt(2./Pi()),
 			  -0.169743E+00/Sqrt(2./Pi()),
 			  0.112368E+01/Sqrt(2./Pi()),
@@ -269,7 +273,8 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateAV18bWavefunction()
   Wavefunction *wf = new Wavefunction("AV18b");
 
   wf->fRelativistic = false;
-
+  wf->yukawa = true;
+  
   static double c[12] = { 0.105252223e+02/(4.*Pi()),
 			  0.124352529e+02/(4.*Pi()),
 			  -0.687541641e+02/(4.*Pi()),
@@ -387,7 +392,8 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateGrossL4Wavefunction()
   Wavefunction *wf = new Wavefunction("GrossL4");
 
   wf->fRelativistic = true;
-
+  wf->yukawa = false;
+  
   static double alpha[3] = { 45.702,   // L=0
 			     138.0,    // L=1
 			     45.702 }; // L=2
@@ -441,7 +447,8 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateGrossWJC1Wavefunction()
   Wavefunction *wf = new Wavefunction("GrossWJC1");
 
   wf->fRelativistic = true;
-
+  wf->yukawa = false;
+    
   // Table VII
   static int order[4] = { 17,   // u
 			  16,   // w
@@ -547,7 +554,8 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateGrossWJC2Wavefunction()
   Wavefunction *wf = new Wavefunction("GrossWJC2");
 
   wf->fRelativistic = true;
-
+  wf->yukawa = false;
+  
   // Table VIII
   static int order[4] = { 30,   // u
 			  18,   // w
@@ -683,6 +691,8 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateTestWavefunction()
   Wavefunction *wf = new Wavefunction("Test");
 
   wf->fRelativistic = false;
+  wf->yukawa = false;
+    
   TInterpolatingWavefunction *implementation = new TInterpolatingWavefunction;
 
   double x,q;
@@ -1096,6 +1106,20 @@ complex<double> TDeuteron::Wavefunction::DeuteronRState(const TStrangePolarizati
   // See TDeuteron::Wavefunction::DeuteronRState for more info.
   return DeuteronRState(pol.Deuteron(),pol.Nucleon(),pol1,TVector3(r1.X(),r1.Y(),r1.Z()));
 }*/
+
+
+
+double TDeuteron::Wavefunction::getResidu() const{
+  
+  if(yukawa) return dynamic_cast<TYukawaPWF *>(fImplementation)->getResidu();
+  else {
+    cerr << "not a valid wf form for pole residu extraction" << std::endl;
+    assert(1==0);
+  }
+}
+
+
+
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // TDeuteron::Polarization                                               //
@@ -1288,6 +1312,7 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateNijmegenWavefunction()
   Wavefunction *wf = new Wavefunction("Nijm93");
 
   wf->fRelativistic = false;
+  wf->yukawa = false;
   TInterpolatingWavefunction *implementation = new TInterpolatingWavefunction;
 
   static double r[839] =
@@ -2148,3 +2173,6 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateNijmegenWavefunction()
   
   return wf;
 }
+
+
+

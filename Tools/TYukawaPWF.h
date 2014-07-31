@@ -38,7 +38,8 @@ class TYukawaPWF : public TWavefunctionImplementation
   virtual double GetUpoff(const TVector3& p) const; // p in [MeV]
   virtual double GetWpoff1(const TVector3& p) const; // p in [MeV]
   virtual double GetWpoff2(double pperp2) const; // p in [MeV]
-
+  double getResidu() const; //get pole residu for on-shell extrapolation
+  
  protected:
   double Mass(int i) const;
 
