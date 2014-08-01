@@ -22,7 +22,7 @@ structure(proton,strucname)
 //     double pt2=p[0]*p[0]+p[1]*p[1];
 //     double k=sqrt((M_NUCL*M_NUCL+pt2)/(alpha*(2.-alpha))-M_NUCL*M_NUCL); //lightcone momentum rescaling
 // 
-//       cout << i << " " << alpha << " " << k << " " << momdistr.getMomDistrpw(p) << " " 
+//       cout << i << " " << alpha << " " << k << " " << pow(MASSD-E,2.)-MASSP*MASSP <<" " << momdistr.getMomDistrpw(p)/pow(momdistr.getDeuteronwf()->getResidu(),2.)*pow(i*i+0.2316*0.2316*HBARC*HBARC,2.) << " " 
 // 	<< momdistr.getLCMomDistrpw(p)  << endl;
 //   }
 //   exit(1);
@@ -56,6 +56,59 @@ double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec
   double res=2.*PI*ALPHA*ALPHA*pow(cos(thetae_transf/2.),2.)/(4.*pow(k_in_transf[0],2.)*pow(sin(thetae_transf/2.),4.))*dens
     *(F2+2.*q_transf[0]/massi*F1*pow(tan(thetae_transf/2.),2.))/q_transf[0];
   return F2==0.? 0.: res;
+  
+}
+void DeuteronCross::getBonusextrapolate(double Q2, double W, double Ein, double pr, double costhetar, bool proton, bool lc, 
+			 double xref,double norm, double Rdata, double error){
+  double massi=proton? MASSP:MASSN;
+  double massr=proton? MASSN:MASSP;
+  
+  double Er=sqrt(massr*massr+pr*pr);
+  double Einoff=MASSD-Er;
+  double massoff=sqrt(Einoff*Einoff-pr*pr);
+  
+  double xprime=Q2/(W*W-massoff*massoff+Q2);
+  
+  //calc nu
+  double prz=pr*costhetar;
+  double aaa=Einoff*Einoff-prz*prz;
+  double bbb=-Einoff*Q2/xprime;
+  double ccc=Q2*Q2/(4.*xprime*xprime)-Q2*prz*prz;
+  
+  double discr=sqrt(bbb*bbb-4.*aaa*ccc);
+  double nu1=(-bbb+discr)/(2.*aaa);
+  double nu2=(-bbb-discr)/(2.*aaa);
+  //cout << nu1 << " " << nu2 << endl;
+  double nu=nu2;
+  if(costhetar<0.) nu=nu1;
+  double qvec=sqrt(Q2+nu*nu);
+/*  double xx=Q2/2./(Einoff*nu+prz*qvec);
+  cout << xprime << " " << xx << endl;*/
+  double x=Q2/(2.*massi*nu);
+    
+  TKinematics2to2 kin("","",MASSD,MASSP,W,"qsquared:wlab:pklab",Q2,nu,pr);
+  TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
+//   DeuteronCross test(*elec,"paris",proton,"SLAC",36.3274,1.97948,-0.5,8.,1.2,4);
+  
+  double Eout=Ein-nu;
+  //unphysical kinematics!!!
+//   if(Eout<0.){ /*cout << Eout << endl;*/ MCresult=modelresultpw=modelresultfsi=0.;return;}
+//   if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
+  
+  double MCresult= getavgBonus(kin,*elec,lc)*1.E18;
+  double cross_data_extr=Rdata*MCresult/norm;
+  double y=kin.GetWlab()/elec->GetBeamEnergy(kin); 
+  double front=(4.*PI*ALPHA*ALPHA)/(x*kin.GetQsquared()*kin.GetQsquared())
+		*(1-y-(x*x*y*y*massi*massi)/kin.GetQsquared());
+  double denspw=momdistr.getMomDistrpw(kin);
+  double densfsi=momdistr.getMomDistrfsi(kin,0.);
+  double Dstrucs=structure.getavgStructure(kin,*elec,Einoff);
+//   cout << Dstrucs << endl;
+//   front*dens*Dstrucs*kin.GetEklab()*HBARC*HBARC*1.E19;
+//   modelresultpw= getavgCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
+//   modelresultfsi= pw? modelresultpw: getavgCross(kin,*elec,0, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
+// //   double residu=sqrt(2.)*c[0]*sqrt(HBARC)/PI; //[MeV^1/2]
+//   double corr = pow((massoff*massoff-massi*massi)/residu,2.) // [MeV^2]
   
 }
 

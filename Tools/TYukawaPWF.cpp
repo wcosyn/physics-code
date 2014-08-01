@@ -402,5 +402,5 @@ double TYukawaPWF::GetVSr(double r) const
   return 0;
 }
 double TYukawaPWF::getResidu() const{
-  return fC[0];
+  return fC[0]*sqrt(fgHbarc/2.)/TMath::Pi(); //MeV^1/2
 }

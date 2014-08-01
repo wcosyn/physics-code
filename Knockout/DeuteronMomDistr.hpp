@@ -107,6 +107,7 @@ public:
    * \param epsin real part of amplitude
    */  
   void setScatter(double sigmain, double betain, double epsin);
+  TDeuteron::Wavefunction *getDeuteronwf(){return wfref;}
 private:
   TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/
   TInterpolatingWavefunction wf; /*!< array of the wave function that gets interpolated */
