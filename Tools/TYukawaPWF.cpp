@@ -402,5 +402,5 @@ double TYukawaPWF::GetVSr(double r) const
   return 0;
 }
 double TYukawaPWF::getResidu() const{
-  return fC[0]*sqrt(fgHbarc/2.)/TMath::Pi(); //MeV^1/2
+  return fC[0]*sqrt(2.*fgHbarc)/TMath::Pi(); //MeV^1/2, coefficient that goes with p^2+m[0]^2, times 2 because of t/(p^2+m[0]^2) jacobian
 }

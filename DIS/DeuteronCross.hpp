@@ -46,7 +46,7 @@ public:
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param electron has electron kinematics
    * \param lc lightcone density to restore data or VNA one
-   * \return [GeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi
+   * \return [MeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi
    */
   double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron, bool lc);
   /*! get the average cross section
@@ -79,11 +79,11 @@ public:
    * \param proton DIS on proton (1) or neutron (0)
    * \param pw [1] plane wave only
    * \param lc [1] lightcone or [0] VNA deuteron density to restore data
-   * \param[out] MCresult [MeV^-6] plane wave result using formulas from the BONUS MC simulation.
+   * \param[out] MCresult [GeV^-6] plane wave result using formulas from the BONUS MC simulation.
    * Semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi.
-   * \param[out] modelresultpw [MeV^-6] plane wave result using our model.
+   * \param[out] modelresultpw [GeV^-6] plane wave result using our model.
    * Semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi.
-   * \param[out] modelresultfsi [MeV^-6] fsi result using our model.
+   * \param[out] modelresultfsi [GeV^-6] fsi result using our model.
    * Semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi.
    * 
    */
@@ -150,6 +150,7 @@ public:
   static void maint_deepsarray(double *****deepsarray);
 private:
   double massi; /*!< mass of nucleon interacting with photon */
+  std::string strucname; /*!< structure function parametrization */
 //   TElectronKinematics electron; /*!< electron kinematics */
   DeuteronMomDistr momdistr; /*!< object instance used to calculate the deuteron momentum distributions */
   DeuteronStructure structure; /*!< object used to calculate the structure functions needed in semi-inclusive deuteron scattering */

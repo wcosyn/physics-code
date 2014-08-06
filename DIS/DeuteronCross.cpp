@@ -7,13 +7,14 @@
 
 using namespace std;
 
-DeuteronCross::DeuteronCross(string name, bool proton, string strucname,
+DeuteronCross::DeuteronCross(string name, bool proton, string struc_name,
 			     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset,
 			     int looplimit
 			    ):
 massi(proton? MASSP:MASSN),
 momdistr(name,massi,offshellset,sigmain,betain,epsilonin,betaoffin,lambdain,looplimit),
-structure(proton,strucname)
+structure(proton,struc_name),
+strucname(struc_name)
 {
 //   for(int i=0;i<200;i+=5){
 //     TVector3 p(0.,0.,i);
@@ -89,26 +90,42 @@ void DeuteronCross::getBonusextrapolate(double Q2, double W, double Ein, double 
   TKinematics2to2 kin("","",MASSD,MASSP,W,"qsquared:wlab:pklab",Q2,nu,pr);
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
 //   DeuteronCross test(*elec,"paris",proton,"SLAC",36.3274,1.97948,-0.5,8.,1.2,4);
-  
+  double alphar=(Er-prz)/(MASSD/2.);
+
   double Eout=Ein-nu;
   //unphysical kinematics!!!
 //   if(Eout<0.){ /*cout << Eout << endl;*/ MCresult=modelresultpw=modelresultfsi=0.;return;}
 //   if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
   
-  double MCresult= getavgBonus(kin,*elec,lc)*1.E18;
-  double cross_data_extr=Rdata*MCresult/norm;
+  double MCresult= getavgBonus(kin,*elec,lc);
+  double cross_data_extr=Rdata*MCresult/norm; //MeV-6
+  double error_extr=error*MCresult/norm; // MeV-6
   double y=kin.GetWlab()/elec->GetBeamEnergy(kin); 
   double front=(4.*PI*ALPHA*ALPHA)/(x*kin.GetQsquared()*kin.GetQsquared())
 		*(1-y-(x*x*y*y*massi*massi)/kin.GetQsquared());
   double denspw=momdistr.getMomDistrpw(kin);
   double densfsi=momdistr.getMomDistrfsi(kin,0.);
   double Dstrucs=structure.getavgStructure(kin,*elec,Einoff);
+  double strucprefactor=structure.getavgPrefactor(kin,*elec,Einoff);
 //   cout << Dstrucs << endl;
-//   front*dens*Dstrucs*kin.GetEklab()*HBARC*HBARC*1.E19;
-//   modelresultpw= getavgCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
+//   front*dens*Dstrucs*kin.GetEklab()*1.E18;
+//   modelresultpw= getavgCross(kin,*elec,1, Einoff)*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
 //   modelresultfsi= pw? modelresultpw: getavgCross(kin,*elec,0, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
 // //   double residu=sqrt(2.)*c[0]*sqrt(HBARC)/PI; //[MeV^1/2]
-//   double corr = pow((massoff*massoff-massi*massi)/residu,2.) // [MeV^2]
+  double corr_residu = pow((massoff*massoff-massi*massi)/momdistr.getDeuteronwf()->getResidu(),2.); // [MeV^3]
+  cross_data_extr/=front*2.*Ein*Eout*x/nu*strucprefactor/corr_residu; //dimensionless
+  error_extr/=front*2.*Ein*Eout*x/nu*strucprefactor/corr_residu; //dimensionless
+  double F2pw=Dstrucs*denspw*corr_residu/strucprefactor; // dimensionless
+  double F2fsi=Dstrucs*densfsi*corr_residu/strucprefactor; //dimensionless
+  
+  NuclStructure strfunction(proton,kin.GetQsquared(),xref,0,strucname);
+  double F2ref;
+  F2ref=strfunction.getF2();
+
+  
+  cout << xprime << " " << W << " " << pr << " " << costhetar << " " 
+	<< alphar << " " << -(massoff*massoff-massi*massi)*1.E-06 << " " << F2pw << " " 
+	<< F2fsi << " " << F2ref << " " << cross_data_extr << " " << error_extr << endl;
   
 }
 
@@ -152,9 +169,9 @@ void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresultpw, do
   if(Eout<0.){ /*cout << Eout << endl;*/ MCresult=modelresultpw=modelresultfsi=0.;return;}
   if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
   
-  MCresult= getavgBonus(kin,*elec,lc)*1.E18;
-  modelresultpw= getavgCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
-  modelresultfsi= pw? modelresultpw: getavgCross(kin,*elec,0, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
+  MCresult= getavgBonus(kin,*elec,lc)*1.E18; //GeV^-6
+  modelresultpw= getavgCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in GeV-6
+  modelresultfsi= pw? modelresultpw: getavgCross(kin,*elec,0, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in GeV-6
 }
 
 double DeuteronCross::getavgCross(TKinematics2to2 &kin,TElectronKinematics &elec, bool pw, double Einoff){
