@@ -4,11 +4,11 @@
 #include "MeanFieldNucleusThick.hpp"
 #include "parser.hpp"
 #include "2bodymom.hpp"
-
+/*
 #ifndef SHAREDIR
 #define SHAREDIR "/home/camille/Code/share"
 #endif
-
+*/
 
 void halla_kinematics(int, char**);
 void hallb_kinematics(int, char**);
@@ -69,7 +69,7 @@ void hallb_kinematics(int argc, char* argv[]){
 	unsigned nevents = (unsigned) atoi(argv[2]);
 	
 	std::vector<struct Event> events;
-	MeanFieldNucleusThick nuc(MeanFieldNucleus::C,SHAREDIR);
+	MeanFieldNucleusThick nuc(MeanFieldNucleus::He,SHAREDIR);
 	HALLB::generateKinematics(events,nevents,nuc,0,1,seed);
 
 	char fname[128];

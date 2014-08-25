@@ -8,7 +8,7 @@
  */
 
 #include "MeanFieldNucleus.hpp"
-#define SHAREDIR "/home/ccolle/Code/share"
+#define SHAREDIR "/home/camille/Code/share"
 
 extern "C" {
 	void* get_MeanFieldNucleus(int nuctype) {

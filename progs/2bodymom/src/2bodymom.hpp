@@ -5,6 +5,9 @@
 
 // Some includes
 
+#ifndef TWOBODYMOM_HPP
+#define TWOBODYMOM_HPP
+
 #include <TMFSpinor.hpp>
 #include <TSpinor.h>
 #include <FourVector.h>
@@ -37,12 +40,22 @@ using std::ofstream;
 using std::stringstream;
 #include <cassert>
 #include "event.hpp"
+#include <cstdlib>
 
 // some preprocessor directives
 
 //#define SHAREDIR "/home/camille/Code/share" // for local
-#define SHAREDIR "/home/ccolle/Code/share" // for trillian
+//#define SHAREDIR "/home/ccolle/Code/share" // for trillian
 //#define SHAREDIR "/user/home/gent/vsc407/vsc40761/scratch/Code/share" // for gengar
+#ifndef SHAREDIR
+	#define SHAREDIR getShareDir()
+#endif // SHAREDIR
+
+inline std::string getShareDir(){
+	std::stringstream ss;
+	ss << getenv("HOME") << "/Code/share" ;
+	return ss.str();
+}
 
 // structs
 struct F;
@@ -60,3 +73,6 @@ void integrandum_glauber(complex<double>& res, const numint::array<double,3>& x,
 string vecString(TVector3& v);
 void printArray(MeanFieldNucleusThick&, const int*);
 void printNucleusInfo(MeanFieldNucleusThick&);
+
+
+#endif // TWOBODYMOM_HPP

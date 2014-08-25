@@ -1,7 +1,7 @@
 import ctypes
 
 
-lib = ctypes.cdll.LoadLibrary("/home/ccolle/2bodymom/src/MeanFieldNucleusWrapper.so")
+lib = ctypes.cdll.LoadLibrary("/home/camille/2bodymom/src/MeanFieldNucleusWrapper.so")
 # return types
 lib.getA.restype             = ctypes.c_int
 lib.getZ.restype             = ctypes.c_int
@@ -118,7 +118,7 @@ class MeanFieldNucleus:
 	"""
 if __name__=="__main__":
 	#print MeanFieldNucleus.names["Pb"]
-	n = MeanFieldNucleus(MeanFieldNucleus.names["Pb"])
+	n = MeanFieldNucleus(MeanFieldNucleus.names["Fe"])
 	print("getPLevels()      : {:d}".format(n.getPLevels()))
 	print("getTotalLevels()  : {:d}".format(n.getTotalLevels()))
 	print("Shell combinations: {:d}".format((n.getPLevels()+1)*n.getPLevels()/2))

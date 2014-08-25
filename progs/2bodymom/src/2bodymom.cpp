@@ -6,7 +6,7 @@
 
 int main(int argc, char** argv){
 	std::vector<struct Event> events;
-	MeanFieldNucleusThick nuc(MeanFieldNucleus::Al,SHAREDIR);
+	MeanFieldNucleusThick nuc(MeanFieldNucleus::C,SHAREDIR);
 	printf("\n***********************************************************\n");
 	printf("Assuming nucleus to be %s check this please!\n",nuc.getNucleusName().c_str());
 	printf("************************************************************\n");
@@ -103,6 +103,8 @@ void dist2bodymom_glauber(MeanFieldNucleusThick& nuc,Event& e,double& res,double
 	//FastParticle proton_pm(0,0,pm,0.,0.,SHAREDIR); // 1: 0=proton, 2: 0=not a beam particle, 3: pm= 3vector of particle, 4: hard scale, 5: decay width, 6 share dir
 	FastParticle particle_p1(e.type1,0,e.p1,0.,0.,SHAREDIR);
 	FastParticle particle_p2(e.type2,0,e.p2,0.,0.,SHAREDIR);
+	cout << "Type and mass of fast particle " << e.mass1 << " " << e.type1 << endl;
+	cout << "Type and mass of slow particle " << e.mass2 << " " << e.type2 << endl;
 	cout << "Sigmap of fast particle    " << particle_p1.getSigmap() << endl;
 	cout << "Sigman of fast particle    " << particle_p1.getSigman() << endl;
 	cout << "Sigmap of recoil particle "  << particle_p2.getSigmap() << endl;
