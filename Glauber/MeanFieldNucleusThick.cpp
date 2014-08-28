@@ -28,6 +28,11 @@ MeanFieldNucleusThick::~MeanFieldNucleusThick(){
   totaldensity=NULL;
 }
 
+/**
+ * Construct the mean densities
+ * note that these are normed to 1!
+ * so $\int \textrm{d}^{2} \Omega \int \textrm{d} r^{2} \rho(r) = 1$
+ */
 void MeanFieldNucleusThick::constructDensity(){
   if(protondensity!=NULL||neutrondensity!=NULL||totaldensity!=NULL){
     cerr<< "Warning: densities already initialized, skipping..." << endl;
@@ -61,7 +66,7 @@ void MeanFieldNucleusThick::constructDensity(){
   }
   for(int j=0;j<getWF_r_lines();j++){
     totaldensity[j]=protondensity[j];
-    protondensity[j]/=norm*getZ();
+    protondensity[j]/=norm*getZ(); /**< this norms protondensity to one! **/
   }
   if(getZ()==0){
     for(int j=0;j<getWF_r_lines();j++){
@@ -86,8 +91,8 @@ void MeanFieldNucleusThick::constructDensity(){
   }
   for(int j=0;j<getWF_r_lines();j++){
     totaldensity[j]+=neutrondensity[j];
-    neutrondensity[j]/=norm*getN();
-    totaldensity[j]/=norm*getA();
+    neutrondensity[j]/=norm*getN(); /**< this norms neutron density to one! **/
+    totaldensity[j]/=norm*getA(); /**< this norms total density to one! **/
   }    
   if(getN()==0){
     for(int j=0;j<getWF_r_lines();j++){

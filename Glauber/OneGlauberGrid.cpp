@@ -152,7 +152,14 @@ void OneGlauberGrid::intGlauberB(const double b, double *results, va_list ap){
     results[0]= results[1] = 0.;
     return;
   }
-  
+  /** \int d^2 b -> \int db b \int phi_{b} 
+   *  note that the following tricks have been applied.
+   *  (\vec{b'}-\vec{b})^{2} = b'^2 + b^2 - 2 b b' cos \phi_{b'} = ( b' - b)^{2} + 2 bb'( 1 - cos \phi) = (b' - b)^{2} + 4 bb' sin^{2} \phi/2
+   *  \phi -> 2\phi , integration boundaries change from [0,2\pi] to [0,\pi], introduce factor 2 in front 
+   *  2*\int_{0}^{\pi} d \phi exp( 4bb' sin^{2} \phi)
+   *  Split integral in [0,pi/2] and [pi/2,pi], with substitution phi -> pi - phi, one can show that 2 terms are equal ( sin(pi + phi) = - sin(phi) )
+   *  4*\int_{0}^{\pi/2} d \phi exp( 4bb' sin^{2} \phi) (this explains factor 4 in front)
+   */
   double phiint=0;
   rombergerN(this,&OneGlauberGrid::intGlauberPhi,0.,PI/2.,1,&phiint,getPrec(),3,10,pphiestimate,b,level);
   rombergerN(this,&OneGlauberGrid::intGlauberZ,bottom+1.E-08,ceiling-1.E-08,2,results,getPrec(),3,10,pthetaestimate,b, level,m);
