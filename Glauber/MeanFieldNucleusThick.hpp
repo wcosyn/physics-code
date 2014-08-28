@@ -39,11 +39,11 @@ public:
   //ALL DENSITIES ARE TIMES R^2 ALREADY!!!!!!!!!!!!
   //I REPEAT
   //ALL DENSITIES ARE TIMES R^2 ALREADY!!!!!!!!!!!!
-  double getProtonDensity(const double r) const; /*!< get Proton density for r[fm] \param r [fm] coord (spherical) \return r*r*rho_p(r), note that the density is normed to one! so $\int \textrm{d}^{2} \Omega \int \textrm{d} r^{2} \rho(r) = 1$
+  double getProtonDensity(const double r) const; /*!< get Proton density for r[fm] \param r [fm] coord (spherical) \return r*r*rho_p(r), note that the density is normed to one! so \f$\int \textrm{d}^{2} \Omega \int \textrm{d} r^{2} \rho(r) = 1\f$
 */
-  double getNeutronDensity(const double r) const;  /*!< get Neutron density for r[fm] \param r [fm] coord (spherical) \return r*r*rho_n(r), note that the density is normed to one! so $\int \textrm{d}^{2} \Omega \int \textrm{d} r^{2} \rho(r) = 1$
+  double getNeutronDensity(const double r) const;  /*!< get Neutron density for r[fm] \param r [fm] coord (spherical) \return r*r*rho_n(r), note that the density is normed to one! so \f$\int \textrm{d}^{2} \Omega \int \textrm{d} r^{2} \rho(r) = 1\f$
 */
-  double getTotalDensity(const double r) const; /*!< get Total density for r[fm] \param r [fm] coord (spherical)  \return r*r*rho(r), note that the density is normed to one! so $\int \textrm{d}^{2} \Omega \int \textrm{d} r^{2} \rho(r) = 1$
+  double getTotalDensity(const double r) const; /*!< get Total density for r[fm] \param r [fm] coord (spherical)  \return r*r*rho(r), note that the density is normed to one! so \f$\int \textrm{d}^{2} \Omega \int \textrm{d} r^{2} \rho(r) = 1\f$
 */
   /*! get proton or neutron density for r[fm] 
    *\param r [fm] coord (spherical)
