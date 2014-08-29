@@ -13,7 +13,7 @@
 
 CC=g++
 WFLAGS=-Wall -Wextra -Wshadow #-Weffc++ # You can expect to see a buttload of warnings when enabling all these flags
-CFLAGS= -O3 -std=c++0x -fPIC $(WFLAGS) `gsl-config --cflags` `root-config --cflags`
+CFLAGS= -g -std=c++0x -fPIC $(WFLAGS) `gsl-config --cflags` `root-config --cflags`
 # -Wl means pass arguments to runtime linker. -Wl is followed by comma seperated list with arguments to be passed to runtime linker
 #  This is needed because the -L, -l flags only link @compile time but not runtime! If the libraries are not in the standard library paths
 #  or LD_LIBRARY_PATH is not set we will get in trouble because the dynamic linker will (ld) will not be able to find our libs @runtime. 
@@ -21,8 +21,8 @@ CFLAGS= -O3 -std=c++0x -fPIC $(WFLAGS) `gsl-config --cflags` `root-config --cfla
 LIBS=-L$(HOME)/Code/lib -Wl,-rpath=$(HOME)/Code/lib -lcuba -lIntegrator -lGlauber -lKnockout -lMePhys `gsl-config --libs` `root-config --libs`
 INC=-I$(HOME)/Code/Tools -I$(HOME)/Code/Glauber -I$(HOME)/Code/Integrator
 
-TARGETS=sampler 2bodymom #sampler_test       # files with a main()
-OBJS=sampler_HALLA.o sampler_PRL99_072501.o sampler_HALLB.o parser.o event.o # object files for building, no main()'s here !!!
+TARGETS=sampler 2bodymom SCX_test#sampler_test       # files with a main()
+OBJS=sampler_HALLA.o sampler_PRL99_072501.o sampler_HALLB.o parser.o event.o GlauberGridThick_SCX.o # object files for building, no main()'s here !!!
 SOLIBS=MeanFieldNucleusWrapper.so
 DEPDIR:=dep
 DEPS=$(patsubst %.o, $(DEPDIR)/%.d, $(OBJS))

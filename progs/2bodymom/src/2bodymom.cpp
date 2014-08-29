@@ -52,7 +52,7 @@ struct F {
 
 	void (*f)(complex<double>& , const numint::array<double,3>&, TVector3& P,TSpinor*, TSpinor*, MeanFieldNucleusThick*, int, int,int,int);
 };
-
+/** a struct for elastic nucleon nucleon rescattering **/
 struct F_Glauber : F { 
 	static void exec(const numint::array<double,3> &x, void *param, complex<double> &ret){
 		F_Glauber &p = * (F_Glauber *) param; // cast void pointer to an struct F pointer
@@ -62,6 +62,17 @@ struct F_Glauber : F {
 	
 	void (*f)(complex<double>& , const numint::array<double,3>&, TVector3& P,TSpinor*, TSpinor*, MeanFieldNucleusThick*,int, int,int,int,GlauberGridThick*);
 };
+/** a struct for single charge exchange nucleon nucleon rescattering **/
+struct F_SCX : F {
+	static void exec(const numint::array<double,3> &x, void* param, complex<double> &ret){
+		F_SCX &p = * (F_SCX *) param;
+		p.f(ret,x,p.P,p.u_pm,p.u_ps,p.nuc,p.shellindex1,p.m1,p.shellindex2,p.m2,p.grid);
+	}
+	GlauberGridThick_SCX* grid;
+
+	void (*f)(complex<double>&, const numint::array<double,3>&, TVector3& P,TSpinor*,TSpinor*,MeanFieldNucleusThick*,int,int,int,int,GlauberGridThick_SCX* grid);
+};
+
 /** expose dist2bodymom function so that i can use it in python or whatever **/
 /*extern "C" double dist2bodymom(void* nuc,int stat,
 					 double xB,

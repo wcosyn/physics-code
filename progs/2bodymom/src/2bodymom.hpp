@@ -16,6 +16,7 @@
 #include <MeanFieldNucleusThick.hpp>
 #include <GlauberGrid.hpp>
 #include <GlauberGridThick.hpp>
+#include "GlauberGridThick_SCX.hpp"
 #include <FsiCorrelator.hpp>
 #include <string>
 using std::string;
