@@ -18,11 +18,12 @@ using std::complex;
  *  */
 class GlauberGridThick_SCX {
 	public:
-		/** make sure bpoints and zpoints are always larger than 2 plz **/
+		/** make sure both bpoints and zpoints are always larger than 2 plz **/
 		GlauberGridThick_SCX(MeanFieldNucleusThick* nuc,FastParticle& fp,int bpoints, int zpoints);
 		~GlauberGridThick_SCX();
 		void constructGlauberGrid();
 		void printGrid();
+		void printDensityGrid();
 		complex<double> calcFSI(double b,double z);
 	private:
 		MeanFieldNucleusThick* _nuc; // I use a pointer here because no copy constructor exists yet (needed because dyn. alloc. mem.)
