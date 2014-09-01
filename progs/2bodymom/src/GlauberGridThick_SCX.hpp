@@ -24,13 +24,15 @@ class GlauberGridThick_SCX {
 		void constructGlauberGrid();
 		void printGrid();
 		void printDensityGrid();
-		complex<double> calcFSI(double b,double z);
+		void calcFSI(double b,double z,complex<double>& res, complex<double>& err);
+		complex<double> getInterp(double[]); // remember r,cos\theta and \phi
 	private:
 		MeanFieldNucleusThick* _nuc; // I use a pointer here because no copy constructor exists yet (needed because dyn. alloc. mem.)
 		FastParticle _fp;
 		int _bpoints,_zpoints;
 		double _bstep,_zstep;
-		complex<double>** _grid;
+		complex<double>** _grid; /**< data goes here */
+		complex<double>** _errorGrid; /**< integrator error estimations go here */
 };
 
 

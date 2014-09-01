@@ -3,16 +3,14 @@
 
 /** integration struct 
  * ndim  = 2 (|b|,z)
- * ncomp = 2 real and imaginary piece
+ * ncomp = 1 integrand is real imaginary piece
+ * comes from prefactor (scatterFront)
  *
  * **/
 struct F_SCX {
 	static int exec(const int* ndim,const double x[],const int* ncomp, double* res,void *param){
 		struct F_SCX p = *(struct F_SCX*) param;
-		int l = p.f(res,x,p.nuc,p.fp,p.b,p.z);
-		//std::cout << " Passing result " << *res << " to integrator " << std::endl;
-		return l;
-		//return p.f(res,x,p.nuc,p.fp,p.b,p.z);
+		return p.f(res,x,p.nuc,p.fp,p.b,p.z);
 	}
 	MeanFieldNucleusThick* nuc;
 	FastParticle* fp;
@@ -23,34 +21,25 @@ struct F_SCX {
 int f_SCX_integrand(double* res, const double x[], MeanFieldNucleusThick* nuc, FastParticle* fp,const double b, const double z){
 	double bi = x[0]; // integration variable b', here in unit square
 	double zi = x[1]; // integration variable z', here in unit square
-	bi = -nuc->getRange()+bi*(2.*nuc->getRange()); // map [0,1] -> [-R,R]
+	bi = bi*nuc->getRange(); // map [0,1] -> [0,R]
 	zi = z+zi*(nuc->getRange()-z); // map [0,1] -> [z,R] (z instead of -R because of step function HS(z-z')
+	assert( bi>=0. && b>=0.); // DEBUG, remove if found to never fail
 	//std::cout << " translated unit coords " << x[0] << " and " << x[1] << " to world coords " << bi << " and " << zi << std::endl;
-	const double Jac = 2.*nuc->getRange()*(nuc->getRange()-z); // Jacobian of mapping
+	const double Jac = nuc->getRange()*(nuc->getRange()-z); // Jacobian of mapping
 	//std::cout << " z is " << z << std::endl;
 	//std::cout << " Jacobian of transformation is " << Jac << std::endl;
-	const double r  = sqrt(bi*bi + zi*zi);
+	double ri  = sqrt(bi*bi + zi*zi);
+	if (ri < 1e-12) // arbitrary value, choose close enough to zero plz (close enough as distance much smaller than the distance scale of the density
+		ri = 1e-12; // prevent division by zero in the density
 	const double betasq = (fp->getParticletype()==8) ? fp->getBeta2n() : fp->getBeta2p();
 	//std::cout << " betasq is " << betasq << std::endl;
-	//if (r>nuc->getRange()){ // outside the range, density is (practically) zero, so return zero
-	//	*res=0;
-	//} else {
-		//double dens   = (fp->getParticletype()==8) ? nuc->getNeutronDensity(r) : nuc->getProtonDensity(r); // 8 is proton, so SCX with neutron density, vice versa for 9
-		//dens /= (r>1e-15) ? dens/r/r : dens/(r+1e-12)/(r+1e-12); // second thing to prevent division by zero
-		//*res = dens;
-		//*res = Jac*bi*exp(-bi*bi/(2.*betasq))*gsl_sf_bessel_I0(bi*b/betasq)*dens; // dens divided by r^2 because dens is rho*r*r
-		//double dens = r > 1.0 ? 1.0 : 0.0;
-		//*res = Jac*1.; //exp(-(bi-b)*(bi-b)/0.0001);
-		//*res = fabs(b) < 4. ?  exp(-pow((bi-b)/4.,2))*Jac*1. : 0.;
-		if (fabs(b) < 4.)
-			*res = Jac*1.;
-		else if (fabs(b) < 8.)
-			*res = Jac*exp(-pow(bi-4.,2)/4.);
-		else
-			*res = 0.;
-		//std::cout << " exp factor is " << exp(-bi*bi/(2.*betasq)) << " bessel is " <<  gsl_sf_bessel_I0(bi*b/betasq) << " argument in bessel is " << bi*b/betasq << " dens is " << dens << " result is " << *res << std::endl;
-		//std::cout << " additional factor would be approx " << exp(-b*b/(2.*betasq)) << std::endl;
-	//}
+	if (ri>nuc->getRange()){ // outside the range, density is (practically) zero, so return zero
+		*res=0;
+	} else {
+		double dens   = (fp->getParticletype()==8) ? nuc->getNeutronDensity(ri)/ri/ri : nuc->getProtonDensity(ri)/ri/ri; // 8 is proton, so SCX with neutron density, vice versa for 9, dens divided by r^2 because dens is rho*r*r
+
+		*res = Jac*bi*exp(-bi*bi/(2.*betasq))*gsl_sf_bessel_I0(bi*b/betasq)*dens; // !!!WARNING!!! make sure both bi and b are > 0 !!!
+	}
 	return 0; // always "succes"
 }
 
@@ -64,7 +53,7 @@ GlauberGridThick_SCX::GlauberGridThick_SCX(MeanFieldNucleusThick* nuc,FastPartic
 	_grid(NULL)
 	{
 	assert(fp.getParticletype()==8 || fp.getParticletype()==9); // make sure we are getting the glauber params for p/n charge exchange!
-	_bstep = 2.*_nuc->getRange()/(_bpoints-1.); // 2*nuc.getRange because grid goes from
+	_bstep =    _nuc->getRange()/(_bpoints-1.); // 0 to nuc.getRange
 	_zstep = 2.*_nuc->getRange()/(_zpoints-1.); // -nuc.getRange() to +nuc.getRange()
 	std::cout << "#Particle type is " << fp.getParticletype() << " Beta2p is " << fp.getBeta2p() << " Beta2n is " << fp.getBeta2n() << std::endl;
 	std::cout << "#Sigmap is " << fp.getSigmap() << "  Sigman is " << fp.getSigman() << std::endl;
@@ -74,9 +63,12 @@ GlauberGridThick_SCX::GlauberGridThick_SCX(MeanFieldNucleusThick* nuc,FastPartic
 }
 
 GlauberGridThick_SCX::~GlauberGridThick_SCX(){
-	for (int bi=0; bi<_bpoints;bi++)
+	for (int bi=0; bi<_bpoints;bi++){
 		delete[] _grid[bi];
+		delete[] _errorGrid[bi];
+	}
 	delete[] _grid;
+	delete[] _errorGrid;
 }
 
 void GlauberGridThick_SCX::constructGlauberGrid(){
@@ -84,23 +76,28 @@ void GlauberGridThick_SCX::constructGlauberGrid(){
 	//std::cout << "constructing grid " << _bpoints << " by " << _zpoints << std::endl;
 	//std::cout << "steps are " << _bstep << "  " << _zstep << std::endl;
 	_grid = new complex<double>*[_bpoints];	
+	_errorGrid = new complex<double>*[_bpoints];
 	for (int bi=0; bi<_bpoints; bi++){
 		_grid[bi] = new complex<double>[_bpoints];
+		_errorGrid[bi] = new complex<double>[_bpoints];
 		for (int zi=0; zi<_zpoints; zi++){
-			double b = -_nuc->getRange()+bi*_bstep; 
+			double b = bi*_bstep; 
 			double z = -_nuc->getRange()+zi*_zstep;
-			_grid[bi][zi] = calcFSI(b,z);
+			calcFSI(b,z,_grid[bi][zi],_errorGrid[bi][zi]);
 			//std::cout << " [" << bi << ", " << zi << "] corresponding to " << b << ", " << z << " init to " << _grid[bi][zi] << std::endl;
 		}
 	}
 }
 
 void GlauberGridThick_SCX::printGrid(){ // debug function
+	std::cout << 0                 << "\t" << _nuc->getRange() << "\t" << _bpoints << std::endl;
+	std::cout << -_nuc->getRange() << "\t" << _nuc->getRange() << "\t" << _zpoints << std::endl;
 	for (int bi=0; bi<_bpoints;bi++){
 		for (int zi=0; zi<_zpoints;zi++){
-			double b = -_nuc->getRange()+bi*_bstep; 
-			double z = -_nuc->getRange()+zi*_zstep;
-			std::cout << b << "\t" << z << "\t" << _grid[bi][zi].real() << "\t" << _grid[bi][zi].imag() << std::endl;
+			//double b = -_nuc->getRange()+bi*_bstep; 
+			//double z = -_nuc->getRange()+zi*_zstep;
+			std::cout << _grid[bi][zi].real() << "\t" << _grid[bi][zi].imag() << "\t";
+			std::cout << _errorGrid[bi][zi].real() << "\t" << _errorGrid[bi][zi].imag() << std::endl;
 		}
 	}
 }
@@ -108,7 +105,7 @@ void GlauberGridThick_SCX::printGrid(){ // debug function
 void GlauberGridThick_SCX::printDensityGrid(){
 	for (int bi=0; bi<_bpoints;bi++){
 		for (int zi=0; zi<_zpoints;zi++){
-			double b = -_nuc->getRange()+bi*_bstep; 
+			double b = bi*_bstep; 
 			double z = -_nuc->getRange()+zi*_zstep;
 			double r = sqrt(b*b+z*z);
 			if (r==0.)
@@ -122,11 +119,44 @@ void GlauberGridThick_SCX::printDensityGrid(){
 	}
 }
 
+/** Interpolation of GlauberGrid.
+ *  Transform momentum to frame where mom is // z-axis
+ *  to fetch the correct fsi factor
+ *  @param x the coordinates in \f$r, \, \cos \theta\ \,\text{and} \phi$
+ *  */
+complex<double> GlauberGridThick_SCX::getInterp(double x[]){ // x is r,costheta,phi 
+	//std::cout << "# GlauberGrid got interpolation request for " << x[0] << " " << x[1] << std::endl;
+	
+	_fp.setHitcoord(x[0],x[1],sqrt(1.-x[1]*x[1]),cos(x[2]),sin(x[2]) ); // set the hitcoordinates for the fast particle
+	//std::cout << "#Interpolation for " << x[0] << ", " << x[1] << ", " << x[2] << "	
+	double z = _fp.getHitz();//x[0]*x[1]; // z = r \cos \theta
+	double b = _fp.getHitbnorm(); // |b|, always larger than one
+	double bi_t,zi_t; 
+	double bf = modf(b/_bstep,&bi_t); // (b-bmin(=0))/bstep, split into integer (bi) and fractional (bf) part
+	double zf = modf((z+_nuc->getRange())/_zstep,&zi_t); // (z-zmin(=-R))/_zstep, split into integer (zi) and fractional (zf) part
+	int bi = (int) bi_t;
+	int zi = (int) zi_t;
+	if (bi == _bpoints-1) { // take care at high end
+		bi-=1; 
+		bf =1.;
+	}
+	if (zi == _zpoints-1){ // take care at high end
+		zi-=1;
+		zf =1.;
+	}
+	const double bf_comp = 1.-bf;
+	const double zf_comp = 1.-zf;
+	//std::cout << "# converted to b,z " << b << ", " << z << " converted to indices " << bi << ", " << zi << " and f parts " << bf << ", " << zf << std::endl;
+	// interpolation first twice in z direction
+	// then once in b direction
+	return bf_comp*( zf_comp*_grid[bi][zi] + zf*_grid[bi][zi+1] ) + bf*( zf_comp*_grid[bi+1][zi] + zf*_grid[bi+1][zi+1] );
+}
+
 /**calculate the glauber grid
  * will need the proton density for neutron knockout
  * will need the neutron density for proton knockout
  */
-complex<double> GlauberGridThick_SCX::calcFSI(double b,double z){
+void GlauberGridThick_SCX::calcFSI(double b,double z,complex<double>& ret,complex<double>& err){
 	/** SET UP INTEGRATOR **/
 	/** set up integrator struct **/
 	struct F_SCX p;
@@ -145,24 +175,45 @@ complex<double> GlauberGridThick_SCX::calcFSI(double b,double z){
 	double epsabs = 1e-4;
 	int flags = 0x00;
 	int mineval = 10000;
-	int maxeval = 100000;
-	int key = 13; // 13 only available in two dimensions
+	int maxeval = 1000000;
 	char* statefile = NULL;
-	int nregions,neval,fail;
-	double* integral = new double;
-	double* error = new double;
-	double* prob = new double;
+	int neval,fail;
+	double integral;
+	double error;
+	double prob;
 	/** INTEGRATOR SET UP DONE **/
-
+	/** cuhre specific arguments **/
+	/**
+	int key = 13; // 13 only available in two dimensions
+	int nregions;	
+	
 	Cuhre(ndim,ncomp,integr,userdata,nvec,
 		epsrel,epsabs,flags,
 		mineval,maxeval,key,
 		statefile,&nregions,&neval,&fail,
-		integral,error,prob);
-	printf("# Cuhre  : res = %e, error = %e, prob = %f, neval = %d, fail = %d \n",*integral,*error,*prob,neval,fail);
+		&integral,&error,&prob);
+	printf("# Cuhre (b,z) = (%6.2f,%6.2f) : res = %e, error = %e, prob = %f, neval = %d, fail = %d \n",b,z,*integral,*error,*prob,neval,fail);
+	**/
+	
+	/** vegas specific arguments **/
+	/** vegas found to preform better than cuhre in this case **/
+	int seed=1234;
+	int nstart=10000;
+	int nincrease=10000;
+	int nbatch=10000;
+	int gridno=0;
+	
+	Vegas(ndim,ncomp,integr,userdata,nvec,
+		epsrel,epsabs,flags,seed,
+		mineval,maxeval,nstart,nincrease,
+		nbatch,gridno,statefile,&neval,
+		&fail,&integral,&error,&prob);
+	printf("# Vegas  (b,z) = (%6.2f,%6.2f) : res = %e, error = %e, prob = %f, neval = %d ,fail = %d\n",b,z,integral,error,prob,neval,fail);
+
 	complex<double> scatfront = (_fp.getParticletype() == 8) ? _fp.getScatterfront(0) : _fp.getScatterfront(1); // 8 means proton, if so scatterfront of scattering with neutron (0) else _fp is neutron, take scattering with proton (1)
 	const double betasq = (_fp.getParticletype()==8) ? _fp.getBeta2n() : _fp.getBeta2p();
-	return *integral;
-	//return 2.*M_PI*scatfront*exp(-b*b/(2.*betasq))*(*integral);	
+	const complex<double> prefac = 2.*M_PI*scatfront*exp(-b*b/(2.*betasq));
+	ret = 1.-prefac*integral;
+	err = prefac*error;
 }
 
