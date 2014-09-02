@@ -24,13 +24,17 @@ class GlauberGridThick_SCX {
 		void constructGlauberGrid();
 		void printGrid();
 		void printDensityGrid();
+		void addKnockoutParticle(int level); /**< add a knockout particle, on which no FSIs take place, only to correct for density changes */
+		void clearKnockout();
 		void calcFSI(double b,double z,complex<double>& res, complex<double>& err);
 		complex<double> getInterp(double[]); // remember r,cos\theta and \phi
+		complex<double> getInterp(numint::array<double,3>); // remember r,cos\theta and \phi
 	private:
 		MeanFieldNucleusThick* _nuc; // I use a pointer here because no copy constructor exists yet (needed because dyn. alloc. mem.)
 		FastParticle _fp;
 		int _bpoints,_zpoints;
 		double _bstep,_zstep;
+		double _pdens_fctr,_ndens_fctr; // correction for mean density if more than one particle are knocked out
 		complex<double>** _grid; /**< data goes here */
 		complex<double>** _errorGrid; /**< integrator error estimations go here */
 };

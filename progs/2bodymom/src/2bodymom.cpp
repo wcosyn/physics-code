@@ -92,14 +92,23 @@ struct F_SCX : F {
 */
 
 // MAIN FUNCTION YOU SHOULD ONLY CALL THIS ONE
-void dist2bodymom(MeanFieldNucleusThick& nuc,std::vector<struct Event>& events, std::vector<double>& data,std::vector<double>& error,bool fsi){
+void dist2bodymom(MeanFieldNucleusThick& nuc,std::vector<struct Event>& events, std::vector<double>& data,std::vector<double>& error,int fsi){
 	data.resize(events.size());
 	error.resize(events.size());
 	for (unsigned i=0; i<events.size();i++){
 		assert( nuc.getTotalLevels() > events[i].shellindex1 ); // hopefully these will catch things when you are using the wrong nucleus
 		assert( nuc.getTotalLevels() > events[i].shellindex2 ); // idem, only works if you selected the nucleus too small
 		if (events[i].status == Event::SURVIVED) { // only calculate survived events
-			(fsi) ? dist2bodymom_glauber(nuc,events[i],data[i],error[i]) : dist2bodymom_rpwia(nuc,events[i],data[i],error[i]);
+			if (fsi==0){
+				dist2bodymom_rpwia(nuc,events[i],data[i],error[i]);
+			} else if (fsi==1){
+			       	dist2bodymom_glauber(nuc,events[i],data[i],error[i]);
+			} else if (fsi==2){
+				dist2bodymom_SCX(nuc,events[i],data[i],error[i]);
+			} else {
+				std::cerr << "ERROR, unsupported FSI flag " << fsi << std::endl;
+				exit(-1);
+			}
 		} else {
 			data[i]  = 0.;
 			error[i] = 0.;
@@ -107,6 +116,89 @@ void dist2bodymom(MeanFieldNucleusThick& nuc,std::vector<struct Event>& events, 
 	}
 }
 
+void dist2bodymom_SCX(MeanFieldNucleusThick& nuc,Event& e,double& res,double& error){
+	double intgrl_res = 0.; // result of the integral we will return at the end
+	double intgrl_err = 0.;
+	// GLAUBER stuff -------------------------
+	//FastParticle proton_pm(0,0,pm,0.,0.,SHAREDIR); // 1: 0=proton, 2: 0=not a beam particle, 3: pm= 3vector of particle, 4: hard scale, 5: decay width, 6 share dir
+	
+	FastParticle particle_p1(e.type1==0? 8 : 9,0,e.p1,0.,0.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
+	FastParticle particle_p2(e.type2==0? 8 : 9,0,e.p2,0.,0.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
+	cout << "Type and mass of fast particle " << e.mass1 << " " << e.type1 << endl;
+	cout << "Type and mass of slow particle " << e.mass2 << " " << e.type2 << endl;
+	GlauberGridThick_SCX grid(&nuc,particle_p1,25,20); // the particle you pass here is the one SCX FSIs are calculated upon
+	grid.addKnockoutParticle(e.shellindex1); // add knockouts so density for SCX is adjusted 
+	grid.addKnockoutParticle(e.shellindex2); // add knockouts so density for SCX is adjusted
+	cout << "Calculating SCX grid... "; cout.flush();
+	grid.constructGlauberGrid();
+	cout << "  [DONE] " << endl; cout.flush();
+	// GLAUBER stuff END ---------------------------
+	
+	
+	// init fourvectors to construct spinors
+	// approx is neglecting the lower components
+	// this is achieved by setting vector of fourvector to zero
+	assert( e.mass1 > 0. && e.mass2 > 0.); // make sure masses are set correctly
+	FourVector<double> f_k1 = FourVector<double>(sqrt(e.mass1*e.mass1 + e.k1.Mag2()),0.,0.,0.); // set lower component manually to zero
+	FourVector<double> f_p2 = FourVector<double>(sqrt(e.mass2*e.mass2 + e.p2.Mag2()),0.,0.,0.); // set lower component manually to zero
+	
+	// prepare integration
+	numint::array<double,3> lowerb = {{0.,1.,0.}}; // r, cos(theta), phi
+	numint::array<double,3> upperb = {{nuc.getRange(),-1,2.*PI}}; // r, cos(theta), phi
+	numint::mdfunction<complex<double>,3> mdf;
+
+	// make struct and set struct parameters
+	F_SCX f;
+	f.nuc = &nuc;
+	f.f = integrandum_SCX;
+	mdf.func = &F_SCX::exec;
+	mdf.param = &f;
+	f.shellindex1 = e.shellindex1;
+	f.shellindex2 = e.shellindex2;
+	f.P = e.k1 + e.p2; // c.m. momentum
+	f.grid = &grid;
+	TSpinor::Polarization::State pol[2] = {TSpinor::Polarization::kDown,TSpinor::Polarization::kUp}; // make a list to use my beloved basic forloops
+	for (int s1=0; s1<2; s1++) // sum m_s1
+	{
+		TSpinor u_k1 = TSpinor(f_k1,e.mass1,TSpinor::Polarization(0.,0.,pol[s1]),TSpinor::kUnity);
+		f.u_pm = &u_k1;
+		for (int s2=0; s2<2; s2++) // sum m_s2
+		{
+			TSpinor u_p2 = TSpinor(f_p2,e.mass2,TSpinor::Polarization(0.,0.,pol[s2]),TSpinor::kUnity);
+			f.u_ps = &u_p2;
+			for (int m1 = -nuc.getJ_array()[e.shellindex1]; m1 <= nuc.getJ_array()[e.shellindex1]; m1+=2) // sum m1
+			{
+				// if shellindices are equal, m2 > m1 else we will have double counting!!!
+				for (int m2 = (e.shellindex1 == e.shellindex2)? m1+2 : -nuc.getJ_array()[e.shellindex2] ; m2 <= nuc.getJ_array()[e.shellindex2]; m2+=2) // Pauli principle -- never forget --
+				{
+					if ((e.shellindex1==e.shellindex2) && (m1==m2)) m2+=2; // pauli!!!
+					if (m2 > nuc.getJ_array()[e.shellindex2]) break; // we tried to change m2 because pauli but m2 is now too large
+					cout << "shellind 1 : " << setw(2) << e.shellindex1 << " shellind2 " << setw(2) <<e.shellindex2 <<" m1 : " << setw(2) << m1 << " , m2 : " << setw(2) << m2 << " pol1 : " << setw(2) << pol[s1] << " pol2: " << setw(2) << pol[s2] << endl;
+					f.m1 = m1;
+					f.m2 = m2;
+					int minEval =  20000;
+					int maxEval = 100000;
+					//unsigned count;
+					//int succes = numint::cube_adaptive(mdf,lowerb,upperb,1e-06,prec,minEval,maxEval,ret,count,0);
+					//complex<double> err(0.,0.);
+					
+					//--------- CUHRE---------------//
+					int nregions,neval,fail;
+					complex<double> ret,err,prob;
+					double epsabs = 1e-8;
+					double epsrel = 1e-4;
+					cuhre(mdf,lowerb,upperb,1,epsrel,epsabs,0x00,minEval,maxEval,11,NULL,nregions,neval,fail,ret,err,prob);
+					intgrl_res += norm(ret); // norm is abs val squared
+					intgrl_err += 2.*fabs(real( ret*conj(err) )); // basic error propagation ignoring term of err^2
+					//cout << succes << "  --  " << count << " -- " << ret << "    " << intgrl_res << endl;
+				} // m2 loop
+			} // m1 loop
+		} // s2 loop
+	} // s1 loop
+	cout << "res " << intgrl_res << "  err  " << intgrl_err << endl;
+	res   = (1./pow(2.*PI,3.))*intgrl_res;
+	error = (1./pow(2.*PI,3.))*intgrl_err;
+}
 void dist2bodymom_glauber(MeanFieldNucleusThick& nuc,Event& e,double& res,double& error){
 	double intgrl_res = 0.; // result of the integral we will return at the end
 	double intgrl_err = 0.;
@@ -303,3 +395,11 @@ void integrandum_glauber(complex<double>& res, const numint::array<double,3>& x,
 	integrandum_rwpia(rwpia,x,P,u_pm,u_ps,nuc,shellindex1,m1,shellindex2,m2);
 	res = rwpia*grid->getFsiGridFull_interp3(x[0],x[1],x[2]);
 }
+
+void integrandum_SCX(complex<double>& res, const numint::array<double,3>& x, TVector3& P, TSpinor* u_pm, TSpinor* u_ps, MeanFieldNucleusThick* nuc, int shellindex1, int m1, int shellindex2,int m2, GlauberGridThick_SCX* grid)
+{
+	complex<double> rwpia;
+	integrandum_rwpia(rwpia,x,P,u_pm,u_ps,nuc,shellindex1,m1,shellindex2,m2);
+	res = rwpia*grid->getInterp(x); // x is r,costheta,phi
+}
+

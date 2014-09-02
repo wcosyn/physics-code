@@ -63,12 +63,14 @@ struct F;
 struct F_Glauber;
 
 // work function
-void  dist2bodymom        (MeanFieldNucleusThick& nuc,std::vector<struct Event>& events,std::vector<double>& data,std::vector<double>& error,bool fsi);
+void  dist2bodymom        (MeanFieldNucleusThick& nuc,std::vector<struct Event>& events,std::vector<double>& data,std::vector<double>& error,int fsi);
 void  dist2bodymom_glauber(MeanFieldNucleusThick& nuc,struct Event& e,double& res, double& err);
 void  dist2bodymom_rpwia  (MeanFieldNucleusThick& nuc,struct Event& e,double& res, double& err);
+void  dist2bodymom_SCX    (MeanFieldNucleusThick& nuc,struct Event& e,double& res, double& err);
 
 void integrandum_rwpia(complex<double>& res, const numint::array<double,3>& x, TVector3& P, TSpinor* u_pm, TSpinor* u_ps, MeanFieldNucleusThick* nuc,int shellindex1, int m1, int shellindex2,int m2);
 void integrandum_glauber(complex<double>& res, const numint::array<double,3>& x, TVector3& P, TSpinor* u_pm, TSpinor* u_ps, MeanFieldNucleusThick* nuc, int shellindex1, int m1, int shellindex2,int m2, GlauberGridThick* grid);
+void integrandum_SCX(complex<double>& res, const numint::array<double,3>& x, TVector3& P, TSpinor* u_pm, TSpinor* u_ps, MeanFieldNucleusThick* nuc, int shellindex1, int m1, int shellindex2,int m2, GlauberGridThick_SCX* grid);
 
 // some util print functions
 string vecString(TVector3& v);
