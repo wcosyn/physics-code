@@ -16,17 +16,17 @@ momdistr(name,massi,offshellset,sigmain,betain,epsilonin,betaoffin,lambdain,loop
 structure(proton,struc_name),
 strucname(struc_name)
 {
-//   for(int i=0;i<200;i+=5){
-//     TVector3 p(0.,0.,i);
-//     double E=sqrt(p.Mag2()+MASSP*MASSP);
-//     double alpha=2.*(E-p[2])/MASSD; //lightcone alpha_s=(E-p_z)/M_n
-//     double pt2=p[0]*p[0]+p[1]*p[1];
-//     double k=sqrt((M_NUCL*M_NUCL+pt2)/(alpha*(2.-alpha))-M_NUCL*M_NUCL); //lightcone momentum rescaling
-// 
+  for(int i=0;i<200;i+=5){
+    TVector3 p(i,0.,0.);
+    double E=sqrt(p.Mag2()+MASSP*MASSP);
+    double alpha=2.*(E-p[2])/MASSD; //lightcone alpha_s=(E-p_z)/M_n
+    double pt2=p[0]*p[0]+p[1]*p[1];
+    double k=sqrt((M_NUCL*M_NUCL+pt2)/(alpha*(2.-alpha))-M_NUCL*M_NUCL); //lightcone momentum rescaling
+    cout << i << " " << alpha << " " << k << " " << momdistr.getMomDistrpw(p) << " " << momdistr.getLCMomDistrpw(p)/(2.-alpha) << endl;
 //       cout << i << " " << alpha << " " << k << " " << pow(MASSD-E,2.)-MASSP*MASSP <<" " << momdistr.getMomDistrpw(p)/pow(momdistr.getDeuteronwf()->getResidu(),2.)*pow(i*i+0.2316*0.2316*HBARC*HBARC,2.) << " " 
 // 	<< momdistr.getLCMomDistrpw(p)  << endl;
-//   }
-//   exit(1);
+  }
+  exit(1);
 }
 
 
@@ -121,7 +121,7 @@ void DeuteronCross::getBonusextrapolate(double Q2, double W, double Ein, double 
   NuclStructure strfunction(proton,kin.GetQsquared(),xref,0,strucname);
   double F2ref;
   F2ref=strfunction.getF2();
-
+//   cout << xref <<  " " << kin.GetQsquared() << " " << F2ref << endl;
   
   cout << xprime << " " << W << " " << pr << " " << costhetar << " " 
 	<< alphar << " " << -(massoff*massoff-massi*massi)*1.E-06 << " " << F2pw << " " 

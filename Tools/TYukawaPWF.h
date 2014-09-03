@@ -49,7 +49,7 @@ class TYukawaPWF : public TWavefunctionImplementation
   double  fM0;     // second mass parameter in parametrization [fm^-1]
   double *fC;      //[fOrder] parameters for s-wave [fm^1/2]
   double *fD;      //[fOrder] parameters for d-wave [fm^1/2]
-  double *fM;	//[fOrder] parameters for masses [fm^1/2]	
+  double *fM;	//[fOrder] parameters for masses [fm^-1]	
 
   ClassDef(TYukawaPWF,1); // Yukawa parametrized wavefunction
   
