@@ -21,7 +21,6 @@ GlauberGrid.hpp
 GlauberGridThick.hpp
 GlauberDecayGridThick.hpp
 OneGlauberGrid.hpp
-OneGlauberGridCE.hpp
 TMFSpinor.hpp
 DistMomDistrGrid.hpp
 ROMEAGrid.hpp
