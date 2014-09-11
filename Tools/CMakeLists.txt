@@ -7,6 +7,7 @@ set(MePhys_HEADERS_HPP
 NuclStructure.hpp
 DeuteronStructure.hpp
 Utilfunctions.hpp
+LightConeKin2to2.hpp
 )
 
 foreach(it ${MePhys_HEADERS_HPP})

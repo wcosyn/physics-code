@@ -167,6 +167,32 @@ double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinemat
   
 }
 
+double DeuteronStructure::getavgStructureLC(LightConeKin2to2 &kin) const{
+  double Einoff=kin.getA_mu()[0]-kin.getPs_mu()[0];
+  double mi_off = Einoff*Einoff-kin.getPs_norm2(); //effective mass off-shell nucleon
+  double double_piq=kin.getQ2()/kin.getXN();
+  double nuoffshell=(mi_off-massi*massi+double_piq)/(2.*massi); //(m_i+qoffshell)^2=(p_i+q)^2
+  double xoffshell=kin.getQ2()/(2.*massi*nuoffshell); //xoffshell consistent with Q^2,m_i,W
+  double W_sq=mi_off+double_piq-kin.getQ2();//W^2=(p_i+q)^2
+  double alphaq=(kin.getQ_mu()[0]+kin.getQ_mu()[3])/sqrt(2.)/kin.getPA_plus();
+  NuclStructure strfunction(proton,kin.getQ2(),xoffshell,W_sq,name);
+  double F1,F2;
+  if(!(strfunction.getName().compare("SLAC"))){
+    F2=strfunction.getF2();
+    double R=0.18;
+    F1=F2*2.*kin.getXN()/(1+R)*(pow(kin.getAlpha_i()/alphaq+1/(2.*kin.getXN()),2.)-kin.getPs_perp().Mag2()/(2.*kin.getQ2())*R);
+  }
+  else strfunction.getF(F1,F2);
+  if(std::isnan(F2)){cout << "bla " << endl;  return F2;}
+  
+  return 2.*kin.getXN()*F2/kin.getQ2()*((mi_off*mi_off+kin.getQ2()/4./pow(kin.getXN(),2.))
+	+(2*kin.getEpsilon()-1.)*pow(MASSD*MASSD+(1.-2.*kin.getZs()*kin.getXN()*kin.getQ2())/(2.*kin.getXA()*kin.getXN()),2.)
+	  /(MASSD*MASSD+kin.getQ2()/kin.getXA()/kin.getXA()))-2.*(1+kin.getEpsilon())*F1;
+  
+
+}
+
+
 double DeuteronStructure::getavgPrefactor(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const{
   double FL, FT, FTT, FTL,F2;
   getStructureFunctions(kin,FL, FT, FTT, FTL, F2,Einoff);

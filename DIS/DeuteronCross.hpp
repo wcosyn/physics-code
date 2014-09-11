@@ -14,6 +14,7 @@
 #include <TKinematics2to2.h>
 #include <DeuteronStructure.hpp>
 #include <TElectronKinematics.h>
+#include <LightConeKin2to2.hpp>
 
 #include <string>
 
@@ -46,7 +47,7 @@ public:
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param electron has electron kinematics
    * \param lc lightcone density to restore data or VNA one
-   * \return [MeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ integrated over phi
+   * \return [MeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ averaged over phi
    */
   double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron, bool lc);
   /*! get the average cross section
@@ -55,9 +56,15 @@ public:
    * \param electron has electron kinematics
    * \param pw plane-wave calculation [1] or not [0]
    * \param Einoff off-shell energy of the nucleon interacting with the photon
-   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ integrated over phi
+   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ averaged over phi
    */
   double getavgCross(TKinematics2to2 &kin, TElectronKinematics &electron, bool pw, double Einoff);
+  /*! get the average cross section in LC formalism
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \param pw plane-wave calculation [1] or not [0]
+   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ averaged over phi
+   */
+  double getavgLCCross(LightConeKin2to2 &kin, bool pw);
   /*! computes the results like they are presented in the Deeps data
    * \param Q2 [MeV^2] four-momentum transfer
    * \param W [MeV] invariant mass of X
@@ -113,7 +120,7 @@ public:
    * \param pw plane-wave calculation [1] or not [0]
    * \param Azz [0] cross section or [1] Azz
    * \param Einoff off-shell energy of the nucleon interacting with the photon
-   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ integrated over phi
+   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ averaged over phi
    * or Azz observable
    */
   double getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool Azz, bool pw, double Einoff); 

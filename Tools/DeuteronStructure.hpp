@@ -12,6 +12,7 @@
 #include "TKinematics2to2.h"
 #include "TElectronKinematics.h"
 #include <string>
+#include "LightConeKin2to2.hpp"
 
 /*! \brief A class to compute a variety of deuteron structure functions */
 class DeuteronStructure{
@@ -76,6 +77,10 @@ public:
      * \param Einoff [MeV] off-shell energy of interacting nucleon
    */
   double getavgStructure(TKinematics2to2 &kin, TElectronKinematics &el, double Einoff) const;
+  /*! combination of all structure functions averaged over phi (angle between hadron and electron plane) for LC formalism
+   * \param kin semi-exclusive gamma+D->X+N kinematics, see LightConeKin2to2 <BR>
+   */
+  double getavgStructureLC(LightConeKin2to2 &kin) const;
   /*! prefactor needed in neutron structure function extraction,
    * obtained from combination of all structure functions averaged over phi (angle between hadron and electron plane) 
    * divided by F2N

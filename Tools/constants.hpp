@@ -11,6 +11,7 @@
 #define PREC 1e-04 /*!< \def defines precision of the integrations */
 #define MASSN 939.56536 /*!< \def defines proton mass [MeV] */
 #define MASSP 938.27231 /*!< \def defines neutron mass [MeV] */
+#define MASSn 0.5*(MASSN+MASSP) /*!< \def average nucleon mass [MeV] */
 #define MASSPI 139.57 /*!< \def defines charged pion mass [MeV] */
 #define MASSRHO 775.49 /*!< \def defines rho0 mass [MeV] */
 #define HBARC 197.327  /*!< \def defines hbar*c [MeV*fm] */

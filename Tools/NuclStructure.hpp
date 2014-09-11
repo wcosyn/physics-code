@@ -12,7 +12,8 @@
  * I also added some new classes: <BR>
  * - A class that contains nucleon structure functions [NuclStructure] <BR>
  * - A class that contains deuteron structure functions [DeuteronStructure] <BR>
- * - A leptonkinematics class for neutrino scattering [TLeptonKinematics] <BR><BR>
+ * - A leptonkinematics class for neutrino scattering [TLeptonKinematics] <BR>
+ * -A class that has lightcone kinematics for a two body scattering reaction  [LightConeKin2to2] <BR><BR>
  * 
  * Utilfunctions.hpp contains a few helper functions (mostly math related)<BR>
  * --------------------------------------<BR>
@@ -59,7 +60,7 @@
   *-commented out hash functions in TKinematics.cpp<BR>
 
   *-added hypron kin vars in TKinematics.cpp: updated constructors, getters, updatekinematics<BR>
-  *-pklab: ++energycount changed naar ++anglecount<BR>
+  *-pklab: ++energycount changed to ++anglecount<BR>
   *-l1250 added pklab kinematics<BR>
   *<BR>
   *-added tan2 to Electronkin<BR>

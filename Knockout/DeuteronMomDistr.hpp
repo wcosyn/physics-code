@@ -14,6 +14,7 @@
 #include <TKinematics2to2.h>
 #include <TInterpolatingWavefunction.h>
 #include <numint/numint.hpp>
+#include <LightConeKin2to2.hpp>
 
 /*! \brief Has methods to compute a ton of deuteron momentum distributions (distorted too) */
 class DeuteronMomDistr{
@@ -59,6 +60,11 @@ public:
    * \return plane-wave momentum distribution [MeV^-3]
    */
   double getMomDistrpw(TKinematics2to2 &kin) const;
+  /*! Computes plane-wave momentum distribution in light-cone formalism, does not depend on phi
+   * \param[in] kin LC kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \return plane-wave momentum distribution [MeV^-3]
+   */
+  double getMomDistrpwLC(LightConeKin2to2 &kin) const;
   /*! Computes plane-wave Azz distribution, does not depend on phi, includes flux factor for baryon conservation
    * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
@@ -92,6 +98,11 @@ public:
    * \return distorted momentum distribution [MeV^-3]
    */
   double getMomDistrfsi(TKinematics2to2 &kin, double phi);
+  /*! Computes distorted momentum distribution for DIS production off deuteron
+   * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \return distorted momentum distribution [MeV^-3]
+   */
+  double getMomDistrfsiLC(LightConeKin2to2 &kin);
   /*! Computes distorted momentum distribution for quasi-elastic production off deuteron
    * \param pvec vector of spectator momentum
    * \param nu virtual photon energy [MeV]
@@ -120,6 +131,7 @@ private:
   double massr; /*!< [MeV] mass of spectator nucleon */
   
   double przprime; /*!< pole in the fsi amplitude */
+  double k_z_prime; /*!< pole in the fsi amplitude */
   double Wxprime2; /*!< intermediate invariant mass squared of the X in the FSI rescattering */
    /*! \param offshellset which offshell parametrization do you want to use? <BR>
    * - 0: based on off-shell mass suppression (See M. Sargsian PRC82, 014612)
@@ -161,6 +173,12 @@ private:
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    */
   void get_przprime(double pt, double Er, TKinematics2to2 & kin);
+  /*! recursive method to find the pole in the LC fsi integration, longitudinal part,
+   * also determines intermediate mass
+   * \param q_perp_prime [MeV] threevector of initial spectator LC rescaled perp momentum
+   * \param kin LC kinematics object containing the gamma+D->X+N kinematics <BR>
+   */
+  void get_k_z_prime(TVector3 &k_perp_prime, LightConeKin2to2 & kin);
   /*! gives you the scatter amplitude of the final-state interaction
    * \param t [MeV^2] momentum transfer squared
    * \return \f$ \sigma_{tot} (I+\epsilon) e^{\beta t/2} \f$
@@ -187,10 +205,31 @@ private:
 	      TKinematics2to2 &kin, int M, int spinr, double Er, double phi);
   };
   
-   /*! integrandum function (clean ones)*/
-  static void FSI_int(numint::vector_z & results, double qt, double qphi, DeuteronMomDistr &momdistr,
-		      TKinematics2to2 &kin, int M, int spinr, double Er, double phi);
+  /*! struct that is used for integrators fsi LC mom distribution*/
+  struct Ftor_FSILC {
 
+    /*! integrandum function */
+    static void exec(const numint::array<double,2> &x, void *param, numint::vector_z &ret) {
+      Ftor_FSILC &p = * (Ftor_FSILC *) param;
+      p.f(ret,x[0],x[1],*p.momdistr, *p.kin,p.M,p.spinr);
+    }
+    DeuteronMomDistr *momdistr;/*!< pointer to DeuteronMomDistr instance that contains all */
+    LightConeKin2to2 *kin; /*!< kinematics object */
+    int M; /*!< spin projection of the deuteron */
+    int spinr; /*!< spin proj of spectator */
+    /*! integrandum 
+    */
+    void (*f)(numint::vector_z & res, double qt, double qphi, DeuteronMomDistr &momdistr,
+	      LightConeKin2to2  &kin, int M, int spinr);
+  };
+  
+  
+  
+   /*! integrandum function (clean ones)*/
+  static void FSILC_int(numint::vector_z & results, double qt, double qphi, DeuteronMomDistr &momdistr,
+		      LightConeKin2to2  &kin, int M, int spinr);
+  static void FSI_int(numint::vector_z & results, double qt, double qphi, DeuteronMomDistr &momdistr,
+	                      TKinematics2to2 &kin, int M, int spinr, double Er, double phi);
   
   
 };

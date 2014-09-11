@@ -187,6 +187,18 @@ double DeuteronCross::getavgCross(TKinematics2to2 &kin,TElectronKinematics &elec
   
 }
 
+
+double DeuteronCross::getavgLCCross(LightConeKin2to2 &kin, bool pw){
+  double Q2=kin.getQ2();
+  double front=PI*MASSD*ALPHA*ALPHA*kin.getYA()*kin.getYA()/(Q2*Q2*(1.-kin.getEpsilon()));
+  double dens=pw?momdistr.getMomDistrpwLC(kin):momdistr.getMomDistrfsiLC(kin);
+  double Dstrucs=structure.getavgStructureLC(kin);
+  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getAlpha_s();
+  
+}
+
+
+
 double DeuteronCross::getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool azz, bool pw, double Einoff){
   
   double y=kin.GetWlab()/elec.GetBeamEnergy(kin); 
