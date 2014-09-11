@@ -7,6 +7,7 @@ using namespace std;
 #include "FastParticle.hpp"
 #include <constants.hpp>
 #include <Utilfunctions.hpp>
+#include <cassert>
 
 using namespace std;
 
@@ -113,13 +114,13 @@ Gamma(ggamma){
       mass = MASSPI*2.;
 //       sigma_decay_n=sigma_decay_p=sigman+sigmap;
       break;
-    case(8):
+     case(8):
       // initial proton charge exchange
       setGlauberParameters(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
-      sigman=0.11; //1.1mb = 0.11 fm^2
+      sigman=0.; //not used, prev value was 1.1mb = 0.11 fm^2
       sigmap=0.; //no PP scattering in charge exchange
-      beta2n*=0.5;
-      beta2p*=0.5;
+      beta2n = 1.74;
+      beta2p = 1.74;
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSP;     
@@ -128,9 +129,9 @@ Gamma(ggamma){
       //initial neutron charge exchange
       setGlauberParameters(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
       sigman=0.; //no NN scattering in charge exchange
-      sigmap=0.11; //1.1mb = 0.11 fm^2
-      beta2n*=0.5;
-      beta2p*=0.5;
+      sigmap=0.; //not used, prev. value was 0.11 fm^2
+      beta2n = 1.74;
+      beta2p = 1.74;
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSN;
@@ -251,10 +252,10 @@ userset(0){
      case(8):
       // initial proton charge exchange
       setGlauberParameters(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
-      sigman=0.11; //1.1mb = 0.11 fm^2
+      sigman=0.; //not used, prev value was 1.1mb = 0.11 fm^2
       sigmap=0.; //no PP scattering in charge exchange
-      beta2n*=0.5;
-      beta2p*=0.5;
+      beta2n = 1.74;
+      beta2p = 1.74;
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSP;     
@@ -263,9 +264,9 @@ userset(0){
       //initial neutron charge exchange
       setGlauberParameters(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
       sigman=0.; //no NN scattering in charge exchange
-      sigmap=0.11; //1.1mb = 0.11 fm^2
-      beta2n*=0.5;
-      beta2p*=0.5;
+      sigmap=0.; //not used, prev. value was 0.11 fm^2
+      beta2n = 1.74;
+      beta2p = 1.74;
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSN;
@@ -393,15 +394,22 @@ double FastParticle::getBetasq(int level, MeanFieldNucleus *pnucleus) const{
 
 
 complex<double> FastParticle::getScatterfront(int level, MeanFieldNucleus *pnucleus) const{
-  return getSigma(level,pnucleus)
-			  *((particletype==8||particletype==9)?(-I_UNIT):(1.-I_UNIT*getEpsilon(level,pnucleus)))
+  assert(!(particletype==8 || particletype==9)); // if this fails, you should be using getScatterfront(bool proton)
+  return getSigma(level,pnucleus)*(1.-I_UNIT*getEpsilon(level,pnucleus))
 			  /(4.*PI*getBetasq(level,pnucleus));
 }
 
 complex<double> FastParticle::getScatterfront(bool proton) const{
-  return getSigma(proton)
-			  *((particletype==8||particletype==9)?(-I_UNIT):(1.-I_UNIT*getEpsilon(proton)))
-			  /(4.*PI*getBetasq(proton));
+  if (particletype==8 || particletype==9){ // if you wonder where the below formulas come from. Ask Camille Colle, he has pdf describing everything
+	  assert( (particletype==8 && proton==false) || (particletype==9 && proton==true)); // make sure you are doing pn scattering!
+	  const double MTARG  = (particletype==8)? MASSN : MASSP; // type of target is opposite (neutron<->proton) from fastparticle 
+	  const double s      = MASSP*MASSP + MASSN*MASSN + getE()*MTARG; // calculate the s mandelstam variable. Assume frozen spectator has ~ zero momentum.
+	  const double s800   = MASSP*MASSP + MASSN*MASSN + (801.9 + MASSN)*MTARG; // s mandelstam if kinetic energy of neutron beam particle is 801.9 MeV
+	  const double B      = 3.65*sqrt( s800/s ); // fm^2
+	  return -I_UNIT*B/(4.*PI*getBetasq(0)); //*exp(I_UNIT*PI*0.5); // <- actually there is an arbitrary phase factor here!, note that this is dimless B is in fm^2 and Betasq too, beta2p and beta2n are the same here, hence we just call it with 0
+  } else {
+	  return getSigma(proton)*(1.-I_UNIT*getEpsilon(proton))/(4.*PI*getBetasq(proton));
+  }
 }
 
 double FastParticle::getCTsigma(double z) const{
