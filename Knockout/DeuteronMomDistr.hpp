@@ -175,7 +175,7 @@ private:
   void get_przprime(double pt, double Er, TKinematics2to2 & kin);
   /*! recursive method to find the pole in the LC fsi integration, longitudinal part,
    * also determines intermediate mass
-   * \param q_perp_prime [MeV] threevector of initial spectator LC rescaled perp momentum
+   * \param k_perp_prime [MeV] threevector of initial spectator LC rescaled perp momentum
    * \param kin LC kinematics object containing the gamma+D->X+N kinematics <BR>
    */
   void get_k_z_prime(TVector3 &k_perp_prime, LightConeKin2to2 & kin);

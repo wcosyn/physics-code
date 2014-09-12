@@ -77,6 +77,18 @@ public:
    */
   void getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
     double &planewave, double &fsi);
+  /*! computes the results like they are presented in the Deeps data in the LC formalism
+   * \param Q2 [MeV^2] four-momentum transfer
+   * \param W [MeV] invariant mass of X
+   * \param Ein [MeV] beam energy
+   * \param pr [MeV] spectator momentum
+   * \param costhetar angle of spectator with q
+   * \param proton DIS on proton (1) or neutron (0)
+   * \param[out] planewave [MeV^-3] plane wave result
+   * \param[out]  fsi [MeV^-3]  fsi result
+   */
+  void getDeepsresultLC(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
+    double &planewave, double &fsi);
   /*! computes the avg cross section with the formula as used in the Bonus MC (TKachenko arXiv:1402.2477)
    * \param Q2 [MeV^2] four-momentum transfer
    * \param W [MeV] invariant mass of X

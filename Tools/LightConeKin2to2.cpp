@@ -11,7 +11,7 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
 				   massA(massA_),Q2(Q2_),massN(massC_){
   A_mu=FourVector<double>(sqrt(massA*massA+vecA.Mag2()),vecA.X(),vecA.Y(),vecA.Z());
   q_mu=FourVector<double>(sqrt(vecq.Mag2()-Q2),vecq.X(),vecq.Y(),vecq.Z());
-  ps_mu=FourVector<double>(sqrt(massN*massN+vecC.Mag()),vecC.X(),vecC.Y(),vecC.Z());
+  ps_mu=FourVector<double>(sqrt(massN*massN+vecC.Mag2()),vecC.X(),vecC.Y(),vecC.Z());
   pi_mu=A_mu-ps_mu;
   X_mu=(A_mu+q_mu-ps_mu);
   massX=sqrt(X_mu*X_mu);
@@ -22,9 +22,9 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   Beam_mu=FourVector<double>(vecBeam.Mag(),vecBeam.X(),vecBeam.Y(),vecBeam.Z());
   isCollinear=0;
   
-  yA=(A_mu*Beam_mu)/(A_mu*q_mu);
+  yA=(A_mu*q_mu)/(A_mu*Beam_mu);
   xA=Q2/(A_mu*q_mu);
-  yN=(pi_mu*Beam_mu)/(pi_mu*q_mu);
+  yN=(pi_mu*q_mu)/(pi_mu*Beam_mu);
   xN=Q2/(2.*(pi_mu*q_mu));
   pA_plus=(A_mu[0]+A_mu[3])/sqrt(2.);
   pA_perp=TVector3(vecA.X(),vecA.Y(),0.);
@@ -45,7 +45,7 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
 				   massA(massA_),Q2(Q2_),massN(massC_){
   A_mu=FourVector<double>(sqrt(massA*massA+pA*pA),0.,0.,pA);
   q_mu=FourVector<double>(sqrt(vecq*vecq-Q2),0.,0.,vecq);
-  ps_mu=FourVector<double>(sqrt(massN*massN+vecC.Mag()),vecC.X(),vecC.Y(),vecC.Z());
+  ps_mu=FourVector<double>(sqrt(massN*massN+vecC.Mag2()),vecC.X(),vecC.Y(),vecC.Z());
   pi_mu=A_mu-ps_mu;
   X_mu=(A_mu+q_mu-ps_mu);
   massX=sqrt(X_mu*X_mu);
@@ -56,9 +56,9 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   Beam_mu=FourVector<double>(vecBeam.Mag(),vecBeam.X(),vecBeam.Y(),vecBeam.Z());
   isCollinear=1;
   
-  yA=(A_mu*Beam_mu)/(A_mu*q_mu);
+  yA=(A_mu*q_mu)/(A_mu*Beam_mu);
   xA=Q2/(A_mu*q_mu);
-  yN=(pi_mu*Beam_mu)/(pi_mu*q_mu);
+  yN=(pi_mu*q_mu)/(pi_mu*Beam_mu);
   xN=Q2/(2.*(pi_mu*q_mu));
   pA_plus=(A_mu[0]+A_mu[3])/sqrt(2.);
   pA_perp=TVector3(0.,0.,0.);
