@@ -69,7 +69,7 @@ void hallb_kinematics(int argc, char* argv[]){
 	unsigned nevents = (unsigned) atoi(argv[2]);
 	
 	std::vector<struct Event> events;
-	MeanFieldNucleusThick nuc(MeanFieldNucleus::He,SHAREDIR);
+	MeanFieldNucleusThick nuc(MeanFieldNucleus::C,SHAREDIR);
 	HALLB::generateKinematics(events,nevents,nuc,0,1,seed);
 
 	char fname[128];

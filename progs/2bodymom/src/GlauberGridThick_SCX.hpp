@@ -26,7 +26,8 @@ class GlauberGridThick_SCX {
 		void printDensityGrid();
 		void addKnockoutParticle(int level); /**< add a knockout particle, on which no FSIs take place, only to correct for density changes */
 		void clearKnockout();
-		void calcFSI(double b,double z,complex<double>& res, complex<double>& err);
+		void calcFSI(double b,double z,double& res,double& err);
+		complex<double> getFrontFactor();
 		complex<double> getInterp(double[]); // remember r,cos\theta and \phi
 		complex<double> getInterp(numint::array<double,3>); // remember r,cos\theta and \phi
 	private:
@@ -37,6 +38,8 @@ class GlauberGridThick_SCX {
 		double _pdens_fctr,_ndens_fctr; // correction for mean density if more than one particle are knocked out
 		complex<double>** _grid; /**< data goes here */
 		complex<double>** _errorGrid; /**< integrator error estimations go here */
+		char _filename[256]; /**< input/output file for the grid */
+		double _arbitraryPhase; /**< arbitrary phase **/
 };
 
 

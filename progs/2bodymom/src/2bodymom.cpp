@@ -99,6 +99,7 @@ void dist2bodymom(MeanFieldNucleusThick& nuc,std::vector<struct Event>& events, 
 		assert( nuc.getTotalLevels() > events[i].shellindex1 ); // hopefully these will catch things when you are using the wrong nucleus
 		assert( nuc.getTotalLevels() > events[i].shellindex2 ); // idem, only works if you selected the nucleus too small
 		if (events[i].status == Event::SURVIVED) { // only calculate survived events
+			std::cout << "#[progress] event " << i+1 << " to " << events.size() << std::endl;
 			if (fsi==0){
 				dist2bodymom_rpwia(nuc,events[i],data[i],error[i]);
 			} else if (fsi==1){
@@ -129,9 +130,6 @@ void dist2bodymom_SCX(MeanFieldNucleusThick& nuc,Event& e,double& res,double& er
 	GlauberGridThick_SCX grid(&nuc,particle_p1,25,20); // the particle you pass here is the one SCX FSIs are calculated upon
 	grid.addKnockoutParticle(e.shellindex1); // add knockouts so density for SCX is adjusted 
 	grid.addKnockoutParticle(e.shellindex2); // add knockouts so density for SCX is adjusted
-	cout << "Calculating SCX grid... "; cout.flush();
-	grid.constructGlauberGrid();
-	cout << "  [DONE] " << endl; cout.flush();
 	// GLAUBER stuff END ---------------------------
 	
 	
@@ -173,7 +171,7 @@ void dist2bodymom_SCX(MeanFieldNucleusThick& nuc,Event& e,double& res,double& er
 				{
 					if ((e.shellindex1==e.shellindex2) && (m1==m2)) m2+=2; // pauli!!!
 					if (m2 > nuc.getJ_array()[e.shellindex2]) break; // we tried to change m2 because pauli but m2 is now too large
-					cout << "shellind 1 : " << setw(2) << e.shellindex1 << " shellind2 " << setw(2) <<e.shellindex2 <<" m1 : " << setw(2) << m1 << " , m2 : " << setw(2) << m2 << " pol1 : " << setw(2) << pol[s1] << " pol2: " << setw(2) << pol[s2] << endl;
+					//cout << "shellind 1 : " << setw(2) << e.shellindex1 << " shellind2 " << setw(2) <<e.shellindex2 <<" m1 : " << setw(2) << m1 << " , m2 : " << setw(2) << m2 << " pol1 : " << setw(2) << pol[s1] << " pol2: " << setw(2) << pol[s2] << endl;
 					f.m1 = m1;
 					f.m2 = m2;
 					int minEval =  20000;
@@ -261,7 +259,7 @@ void dist2bodymom_glauber(MeanFieldNucleusThick& nuc,Event& e,double& res,double
 				{
 					if ((e.shellindex1==e.shellindex2) && (m1==m2)) m2+=2; // pauli!!!
 					if (m2 > nuc.getJ_array()[e.shellindex2]) break; // we tried to change m2 because pauli but m2 is now too large
-					cout << "shellind 1 : " << setw(2) << e.shellindex1 << " shellind2 " << setw(2) <<e.shellindex2 <<" m1 : " << setw(2) << m1 << " , m2 : " << setw(2) << m2 << " pol1 : " << setw(2) << pol[s1] << " pol2: " << setw(2) << pol[s2] << endl;
+					//cout << "shellind 1 : " << setw(2) << e.shellindex1 << " shellind2 " << setw(2) <<e.shellindex2 <<" m1 : " << setw(2) << m1 << " , m2 : " << setw(2) << m2 << " pol1 : " << setw(2) << pol[s1] << " pol2: " << setw(2) << pol[s2] << endl;
 					grid.clearKnockout();
 					grid.addKnockout(e.shellindex1,m1);
 					grid.addKnockout(e.shellindex2,m2);
@@ -333,7 +331,7 @@ void dist2bodymom_rpwia(MeanFieldNucleusThick& nuc,Event& e,double& res,double& 
 				{
 					if ((e.shellindex1==e.shellindex2) && (m1==m2)) m2+=2; // pauli!!!
 					if (m2 > nuc.getJ_array()[e.shellindex2]) break; // we tried to change m2 because pauli but m2 is now 2 large
-					cout << "shellind 1 : " << setw(2) << e.shellindex1 << " shellind2 " << setw(2) << e.shellindex2 <<" m1 : " << setw(2) << m1 << " , m2 : " << setw(2) << m2 << " pol1 : " << setw(2) << pol[s1] << " pol2: " << setw(2) << pol[s2] << endl;
+					//cout << "shellind 1 : " << setw(2) << e.shellindex1 << " shellind2 " << setw(2) << e.shellindex2 <<" m1 : " << setw(2) << m1 << " , m2 : " << setw(2) << m2 << " pol1 : " << setw(2) << pol[s1] << " pol2: " << setw(2) << pol[s2] << endl;
 					//cout << "nuc.getJarray()[" <<  shellindex1 << "] = " << nuc.getJ_array()[shellindex1] << endl;
 					//cout << "nuc.getJarray()[" <<  shellindex2 << "] = " << nuc.getJ_array()[shellindex2] << endl;
 					//cout << vecString(f.P) << endl;
