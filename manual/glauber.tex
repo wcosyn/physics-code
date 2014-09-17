@@ -25,3 +25,6 @@ The \texttt{AbstractFsiCTGrid} sets \texttt{number\textunderscore of\textundersc
 This one also overloads \texttt{fillGrids()} and \texttt{updateGrids()} to accommodate for the new ``CT'' grid next to the ``regular'' RMSGA grid defined in \texttt{AbstractFsiGrid}. Note that both these still use pure virtual function for actually calculating the grids!
 
 Declares new pure virtual function \texttt{getFsiCtGridFull\textunderscore interp()} which it uses in the interpolation functions for this grid.
+
+\subsection{MeanFieldNucleus}
+Important remark about the methods \texttt{getTotalDensity()} and similar. These methods actually return $r^{2} \rho(r)$. To convert back to $\rho(r)$ you would divide by $r^{2}$. However this is only stable to about 0.01 fm to the origin! Going closer will give you \large{HUGE} negative densities. Don't be surprised by thing like $-10^{18}$! You can for example start using raw densities $\rho(r)$ at the value returned by \texttt{getWF\char`_r\char`_step()}.
