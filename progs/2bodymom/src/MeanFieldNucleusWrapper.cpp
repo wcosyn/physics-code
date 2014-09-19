@@ -10,7 +10,7 @@
 #include "MeanFieldNucleus.hpp"
 #include "MeanFieldNucleusThick.hpp"
 #define SHAREDIR "/home/camille/Code/share"
-
+#include <iostream>
 extern "C" {
 	void* get_MeanFieldNucleus(int nuctype) { return new MeanFieldNucleus(nuctype,SHAREDIR); }
 	void del_MeanFieldNucleus(void* nuc)    { delete (MeanFieldNucleus*) nuc; }
@@ -31,6 +31,15 @@ extern "C" {
 	const int* getN_array(void* nuc)        { return ((MeanFieldNucleus*) nuc)->getN_array();}
 	const int* getJ_array(void* nuc)        { return ((MeanFieldNucleus*) nuc)->getJ_array();}
  	const int* getL_array(void* nuc)        { return ((MeanFieldNucleus*) nuc)->getL_array();}
+	void getWaveFunction(void* nuc, double* real,double* imag,int shellindex,int m,double r,double costheta,double phi){
+		std::complex<double>* wf = new std::complex<double>[4]; // because wave function hase 4 components!
+		((MeanFieldNucleus*) nuc)->getWaveFunction(wf,shellindex,m,r,costheta,phi);
+		for (int i=0; i<4;i++){
+			real[i] = wf[i].real();
+			imag[i] = wf[i].imag();
+		}
+		delete[] wf;
+	}
 	////////////////////////////////////////////////////////
 	/** MeanFieldNucleusThick specific wrappers go below **/
 	////////////////////////////////////////////////////////	

@@ -3,31 +3,33 @@
 #include "parser.hpp"
 #include "sampler.hpp"
 #include <cassert>
+#include <string>
+
+
+#define SCX_LEADING true
+#define SCX_ARB_PHASE 0.
 
 int main(int argc, char** argv){
 	std::vector<struct Event> events;
-	MeanFieldNucleusThick nuc(MeanFieldNucleus::C,SHAREDIR);
-	printf("\n***********************************************************\n");
-	printf("Assuming nucleus to be %s check this please!\n",nuc.getNucleusName().c_str());
-	printf("************************************************************\n");
 	/** input is of the format
-	 *  [./exec] [input file] [output file] [fsi]
+	 *  [./exec] [nucleus] [input file] [output file] [fsi]
 	 *  or
-	 *  [./exec] [input file] [output file] [fsi] [start] [stop]
+	 *  [./exec] [nucleus] [input file] [output file] [fsi] [start] [stop]
 	 */
-	if (argc == 4){ // second argument is file containing events
-		EventParser::read_events(argv[1],events,nuc);
-	} else if (argc == 6) { // read in only a part of the kinematics file. specify start and stop line. Also id for unique output names./exec [kinfile] [outfile] [fsi] [start] [stop]	
-		EventParser::read_events(argv[1],events,atoi(argv[4]),atoi(argv[5]),nuc);
-	} else {
+	if (!(argc==5 || argc==7)) {
 		fprintf(stderr,"Unsupported number of cmd line arguments.\n");
 		fprintf(stderr,"Expected input of the form: \n");
-		fprintf(stderr,"  $> [./exec] [input file] [output file] [fsi] \n");
+		fprintf(stderr,"  $> [./exec] [nucleus] [input file] [output file] [fsi] \n");
 		fprintf(stderr,"or\n");
-		fprintf(stderr,"  $> [./exec] [input file] [output file] [fsi] [start] [stop] \n\n");
+		fprintf(stderr,"  $> [./exec] [nucleus] [input file] [output file] [fsi] [start] [stop] \n\n");
 		exit(-1);
 	}
-	int fsi = atoi(argv[3]);
+	MeanFieldNucleusThick nuc(MeanFieldNucleus::TypeNames.at(std::string(argv[1])),SHAREDIR); // if this throws out of range you probably supplied incorrect nucleus name!
+	if (argc == 5) // second argument is file containing events
+		EventParser::read_events(argv[2],events,nuc);
+	else // read in only a part of the kinematics file. specify start and stop line. Also id for unique output names./exec [kinfile] [outfile] [fsi] [start] [stop]	
+		EventParser::read_events(argv[2],events,atoi(argv[5]),atoi(argv[6]),nuc);
+	int fsi = atoi(argv[4]);
 	std::vector<double> data;
 	std::vector<double> err;
 	// calculation
@@ -35,7 +37,7 @@ int main(int argc, char** argv){
 	//----------------------------
 	//
 	//output
-	EventParser::write_data(argv[2],data,err);
+	EventParser::write_data(argv[3],data,err);
 	//---------------------------
 }
 
@@ -127,7 +129,8 @@ void dist2bodymom_SCX(MeanFieldNucleusThick& nuc,Event& e,double& res,double& er
 	FastParticle particle_p2(e.type2==0? 8 : 9,0,e.p2,0.,0.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
 	cout << "Type and mass of fast particle " << e.mass1 << " " << e.type1 << endl;
 	cout << "Type and mass of slow particle " << e.mass2 << " " << e.type2 << endl;
-	GlauberGridThick_SCX grid(&nuc,particle_p1,25,20); // the particle you pass here is the one SCX FSIs are calculated upon
+	GlauberGridThick_SCX grid(&nuc,SCX_LEADING ? particle_p1 : particle_p2 ,25,20); // the particle you pass here is the one SCX FSIs are calculated upon
+	grid.setArbitraryPhase(SCX_ARB_PHASE);
 	grid.addKnockoutParticle(e.shellindex1); // add knockouts so density for SCX is adjusted 
 	grid.addKnockoutParticle(e.shellindex2); // add knockouts so density for SCX is adjusted
 	// GLAUBER stuff END ---------------------------

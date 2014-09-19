@@ -19,6 +19,7 @@ lib.getFinalMNeutron.restype = ctypes.c_int
 lib.getTotalDensity.restype  = ctypes.c_double
 lib.getProtonDensity.restype = ctypes.c_double
 lib.getNeutronDensity.restype= ctypes.c_double
+lib.getWaveFunction.restype  = None # is C equiv of void function
 # argument types
 lib.getA.argtype             = ctypes.c_void_p
 lib.getZ.argtype             = ctypes.c_void_p
@@ -35,7 +36,7 @@ lib.getWF_r_step.argtype     = ctypes.c_void_p
 lib.getTotalDensity.argtypes  = [ctypes.c_void_p,ctypes.c_double]
 lib.getProtonDensity.argtypes = [ctypes.c_void_p,ctypes.c_double]
 lib.getNeutronDensity.argtypes= [ctypes.c_void_p,ctypes.c_double]
-
+lib.getWaveFunction.argtypes  = [ctypes.c_void_p,ctypes.POINTER(ctypes.c_double),ctypes.POINTER(ctypes.c_double),ctypes.c_int,ctypes.c_int,ctypes.c_double,ctypes.c_double,ctypes.c_double] # times four because of 4 component wavefunctions!
 
 class MeanFieldNucleus:
 	s = ["He","C","O","Fe","Pb","Al","Cu","Au"]
@@ -122,6 +123,13 @@ class MeanFieldNucleus:
 		lib.getExcitation.restype = ctypes.POINTER(ctypes.c_double * lib.getTotalLevels(self.nuc) )
 		res = lib.getExcitation(self.nuc)
 		return [ i for i in res.contents ]
+        def getWaveFunction(self,shellindex,m,r,costheta,phi):
+                real = (ctypes.c_double * 4 )()
+                imag = (ctypes.c_double * 4 )()
+                lib.getWaveFunction(self.nuc,real,imag,shellindex,m,r,costheta,phi)
+                return map(lambda x: complex(*x),zip(real,imag))
+                
+
 class MeanFieldNucleusThick(MeanFieldNucleus):
         s = ["He","C","O","Fe","Pb","Al","Cu","Au"]
 	names = { b : a for a,b in enumerate(s) } # acts enum like, now you can construct using MeanFieldNucleus.names["C"]
@@ -138,7 +146,12 @@ class MeanFieldNucleusThick(MeanFieldNucleus):
 				'in stead of letting the Python garbage collector doing it!')
         def getTotalDensity(self,r):
             return lib.getTotalDensity(self.nuc,r)
-        
+
+    	def getTotalDensity_raw(self,r):
+	    if (r < self.getWF_r_step()): # prevent coming too close to zero
+		    r = self.getWF_r_step()
+	    return self.getTotalDensity(r)/r/r
+
         def getProtonDensity(self,r):
             return lib.getProtonDensity(self.nuc,r)
         
@@ -161,7 +174,9 @@ if __name__=="__main__":
 	print '#',n.getJ_array()
 	print '#',n.getFinalMProton()
 	print '#',n.getFinalMNeutron()
+        print n.getWaveFunction(1,1,1.,0.,0.)
 	del n
+        """
         nthick = MeanFieldNucleusThick(MeanFieldNucleus.names["C"])
         import numpy as np
         import pylab as pl
@@ -169,3 +184,4 @@ if __name__=="__main__":
         pl.plot(rr,[ nthick.getTotalDensity(r)/r/r for r in rr ])
         pl.show()
         del nthick
+        """

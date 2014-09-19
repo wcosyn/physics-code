@@ -8,12 +8,33 @@
 
 void testgrid();
 void scatterFrontScaling();
+void createGrids();
 
 int main(){
 	//scatterFrontScaling();
-	testgrid();
+	//testgrid();
+	createGrids();
 	return 0;
 }
+
+
+void createGrids(){
+	FastParticle fpp(8,0,1000.,0.,0.,0.,0.,SHAREDIR);
+	FastParticle fpn(9,0,1000.,0.,0.,0.,0.,SHAREDIR);
+	MeanFieldNucleusThick C(MeanFieldNucleusThick::C,SHAREDIR);
+	MeanFieldNucleusThick Al(MeanFieldNucleusThick::Al,SHAREDIR);
+	MeanFieldNucleusThick Fe(MeanFieldNucleusThick::Fe,SHAREDIR);
+	MeanFieldNucleusThick Pb(MeanFieldNucleusThick::Pb,SHAREDIR);
+	GlauberGridThick_SCX gCp(&C,fpp,25,20);
+	GlauberGridThick_SCX gCn(&C,fpn,25,20);
+	GlauberGridThick_SCX gAlp(&Al,fpp,25,20);
+	GlauberGridThick_SCX gAln(&Al,fpn,25,20);
+	GlauberGridThick_SCX gFep(&Fe,fpp,25,20);
+	GlauberGridThick_SCX gFen(&Fe,fpn,25,20);
+	GlauberGridThick_SCX gPbp(&Pb,fpp,25,20);
+	GlauberGridThick_SCX gPbn(&Pb,fpn,25,20);
+}
+
 void testgrid(){
 	//FastParticle fp(8,0,100,0.,0.,0.,0.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
 	//FastParticle fp(8,0,100,M_PI/4.,0.,0.,0.,SHAREDIR);

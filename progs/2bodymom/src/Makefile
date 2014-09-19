@@ -13,7 +13,9 @@
 
 CC=g++
 WFLAGS=-Wall -Wextra -Wshadow #-Weffc++ # You can expect to see a buttload of warnings when enabling all these flags
-CFLAGS= -O2 -std=c++0x -fPIC $(WFLAGS) `gsl-config --cflags` `root-config --cflags`
+CFLAGS= -O2 -std=c++11 -fPIC $(WFLAGS) `gsl-config --cflags` `root-config --cflags`
+# -fext-numeric-literals is there to allow conversion between C and C++ complex numbers
+#
 # -Wl means pass arguments to runtime linker. -Wl is followed by comma seperated list with arguments to be passed to runtime linker
 #  This is needed because the -L, -l flags only link @compile time but not runtime! If the libraries are not in the standard library paths
 #  or LD_LIBRARY_PATH is not set we will get in trouble because the dynamic linker will (ld) will not be able to find our libs @runtime. 

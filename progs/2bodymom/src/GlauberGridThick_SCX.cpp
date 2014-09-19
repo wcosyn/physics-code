@@ -60,7 +60,6 @@ GlauberGridThick_SCX::GlauberGridThick_SCX(MeanFieldNucleusThick* nuc,FastPartic
 	std::cout << "#Sigmap is " << fp.getSigmap() << "  Sigman is " << fp.getSigman() << std::endl;
 	std::cout << "#Epsilonp is " << fp.getEpsilonp() << " Epsilonn is " << fp.getEpsilonn() << std::endl;
 	std::cout << "#Scatterfront is : " << ((fp.getParticletype()==8)? fp.getScatterfront(0) : fp.getScatterfront(1)) << std::endl;
-	std::cout << "#Arbitrary phase is : " << _arbitraryPhase << std::endl;
 	std::cout << "#bsteps, zstep is " << _bstep << ", " << _zstep << " and range is " << nuc->getRange() << std::endl;
 	std::cout << "#Momentum of particle is [mag,theta,phi]: " << fp.getP() << ", " << fp.getTheta() << ", " << fp.getPhi() << std::endl;
 	sprintf(_filename,"%s/grids/GlauberGridThick_SCX_nuc%s_type%d_beta2p%.2f_beta2n%.2f_bp%d_zp%d.bin",SHAREDIR.c_str(),nuc->getNucleusName().c_str(),fp.getParticletype(),fp.getBeta2p(),fp.getBeta2n(),bpoints,zpoints);
