@@ -11,6 +11,7 @@
 
 using namespace std;
 
+const std::map<std::string,MeanFieldNucleus::Type> MeanFieldNucleus::TypeNames = MeanFieldNucleus::initTypeNames();
 //constructor
 MeanFieldNucleus::MeanFieldNucleus(const int nucleus, const string & dir){
   

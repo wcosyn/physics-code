@@ -12,7 +12,7 @@
 
 #include <string>
 #include <complex>
-
+#include <map>
 #define GRIDP 201 /*!< \def defines number of gridpoints for the Y_kappa grids*/
 
 
@@ -37,7 +37,8 @@ public:
  
   /*! An enum so we don't have to look up which nucleus corresponds to which number all the time */
   enum Type { He, C, O, Fe, Pb, Al, Cu, Au };
-
+  static const std::map<std::string,Type> TypeNames; /*!< a string to type map so you can lookup int values using strings like "C" and so on... use in constructor as MeanFieldNucleus(MeanFieldNucles::TypeNames.at("C"); (don't use [] acces op.)*/
+  static std::map<std::string,Type> initTypeNames(){ std::map<std::string,Type> m; m["He"]=He;m["C"]=C;m["O"]=O;m["Fe"]=Fe;m["Pb"]=Pb;m["Al"]=Al;m["Cu"]=Cu;m["Au"]=Au;return m;} /*!< initialise typename lookup map, use in constructor as MeanFieldNucleus(MeanFieldNucles::TypeNames.at("C"); (don't use [] acces op.) */
   const std::string getNucleusName() const {return nucleusname;} /*!< Returns a std::string with the name of the nucleus, f.i. "C" */
   int getA() const {return A;} /*!<  Returns the total number of nucleons */
   int getZ() const {return Z;} /*!< Returns the total number of protons*/
