@@ -183,7 +183,7 @@ double DeuteronCross::getavgCross(TKinematics2to2 &kin,TElectronKinematics &elec
   double dens=pw?momdistr.getMomDistrpw(kin):momdistr.getMomDistrfsi(kin,0.);
   double Dstrucs=structure.getavgStructure(kin,elec,Einoff);
 //   cout << Dstrucs << endl;
-  cout << "VNA " << front*kin.GetQsquared()*kin.GetWlab()/kin.GetKlab()/kin.GetKlab() << " " << dens*kin.GetEklab() << " " << Dstrucs/(kin.GetQsquared()*kin.GetWlab()/kin.GetKlab()/kin.GetKlab()) << endl;
+//   cout << "VNA " << front*kin.GetQsquared()*kin.GetWlab()/kin.GetKlab()/kin.GetKlab() << " " << dens*kin.GetEklab() << " " << Dstrucs/(kin.GetQsquared()*kin.GetWlab()/kin.GetKlab()/kin.GetKlab()) << endl;
   return front*dens*Dstrucs*kin.GetEklab()*HBARC*HBARC*1.E19;
   
 }
@@ -194,8 +194,8 @@ double DeuteronCross::getavgLCCross(LightConeKin2to2 &kin, bool pw){
   double front=2.*PI*ALPHA*ALPHA*kin.getYA()*kin.getYA()/(Q2*Q2*(1.-kin.getEpsilon()));
   double dens=pw?momdistr.getMomDistrpwLC(kin):momdistr.getMomDistrfsiLC(kin);
   double Dstrucs=structure.getavgStructureLC(kin);
-  cout << "LC " << front*kin.getEpsilon()*MASSD << " " << dens*kin.getAlpha_s() << " " << kin.getAlpha_s() << " " << Dstrucs/(kin.getEpsilon()*MASSD) << endl;
-  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getAlpha_s();
+//   cout << "LC " << front*kin.getEpsilon()*MASSD << " " << dens*kin.getAlpha_s()/kin.getAlpha_i() << " " << Dstrucs/(kin.getEpsilon()*MASSD) << endl;
+  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getAlpha_s()/kin.getAlpha_i();
   
 }
 
@@ -313,15 +313,15 @@ void DeuteronCross::getDeepsresultLC(double Q2, double W, double Ein, double pr,
   
   
   planewave = getavgCross(kin,*elec,1,Einoff)/*/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10*/;
-//   fsi= getavgCross(kin,*elec,0,Einoff)/*/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10*/;
+  fsi= getavgCross(kin,*elec,0,Einoff)/*/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10*/;
 
   TVector3 vecps(pr*sqrt(1-costhetar*costhetar),0.,prz);
   TVector3 veckin(Ein*sin(thetain),0.,Ein*cos(thetain));
   
   LightConeKin2to2 kinLC=LightConeKin2to2(MASSD,Q2,massr,0.,qvec,vecps,veckin);
   double planewaveLC = getavgLCCross(kinLC,1);
-//   double fsiLC = getavgLCCross(kinLC,0);
-  cout << RADTODEGR*acos(costhetar) << " " << planewave << " " << planewaveLC <</* " " << fsi << " " << fsiLC <<*/ endl;
+  double fsiLC = getavgLCCross(kinLC,0);
+  cout << RADTODEGR*acos(costhetar) << " " << planewave << " " << planewaveLC << " " << fsi << " " << fsiLC << endl;
   return;
     
 }
