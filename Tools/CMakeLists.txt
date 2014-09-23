@@ -8,6 +8,7 @@ NuclStructure.hpp
 DeuteronStructure.hpp
 Utilfunctions.hpp
 LightConeKin2to2.hpp
+He3wf.hpp
 )
 
 foreach(it ${MePhys_HEADERS_HPP})
@@ -43,7 +44,12 @@ foreach(it ${MePhys_HEADERS_H})
   set(MePhys_SRCS ${MePhys_SRCS} ${bla})
 endforeach()
 
-set(MePhys_HEADERS ${MePhys_HEADERS_H} ${MePhys_HEADERS_HPP} constants.hpp)
+set(MePhys_HEADERS ${MePhys_HEADERS_H} ${MePhys_HEADERS_HPP} constants.hpp 
+fortran.h
+f77matrx.h
+f77complx.h
+f77char.h
+)
 
 # set everything needed for the root dictonary and create the
 # dictionary
@@ -81,6 +87,9 @@ set(MePhys_FORT
 alekhin.f
 F1F209_test.f
 cteq.f
+spline.f
+clebsch.f
+getwavemod_tm.f
 )
 # MESSAGE("${CMAKE_MODULE_PATH}")
 # foreach(outfile ${MePhys_DICTIONARY}

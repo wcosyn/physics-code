@@ -13,6 +13,7 @@
  * - A class that contains nucleon structure functions [NuclStructure] <BR>
  * - A class that contains deuteron structure functions [DeuteronStructure] <BR>
  * - A leptonkinematics class for neutrino scattering [TLeptonKinematics] <BR>
+ * - A class for he3 wave functions [He3wf] <BR>
  * -A class that has lightcone kinematics for a two body scattering reaction  [LightConeKin2to2] <BR><BR>
  * 
  * Utilfunctions.hpp contains a few helper functions (mostly math related)<BR>

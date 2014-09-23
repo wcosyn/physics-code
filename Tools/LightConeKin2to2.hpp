@@ -108,4 +108,4 @@ private:
   bool isCollinear; /*!< [0] general frame, [1] collinear frame*/
 };
 /** @} */
-#endif LIGHTCONEKIN2TO2_HPP
+#endif
