@@ -95,7 +95,7 @@
    End_Html */
 ///////////////////////////////////////////////////////////////////////////
 
-#include "TMPI.h"
+// #include "TMPI.h"
 #include "TKinematics2to3.h"
 #include "TLorentzQuaternion.h"
 #include "constants.hpp"
@@ -571,7 +571,7 @@ void TKinematics2to3::SetFormat(const char* format)
      End_Html */ 
 
   if(!IsFixed()) {
-    TMPI::Cout() << "INFO in TKinematics2to3::SetFormat(const char*): "
+    std::cout << "INFO in TKinematics2to3::SetFormat(const char*): "
 		 << "Fixing all variables.\n";
     for(int i=0; i<6; ++i)
       FixVariable(i+1);
@@ -2077,7 +2077,7 @@ void TKinematics2to3::UpdateKinematics()
 	  else {
 	    if( sol1 && sol2 ) {
 	      if( fabs(roots[0]-roots[1]) > STRANGEUFLOW*fabs(roots[0]))
-		TMPI::Cout() << "WARNING in TKinematics2to3::UpdateKinematics(): "
+		std::cout << "WARNING in TKinematics2to3::UpdateKinematics(): "
 			     << "found multiple solutions. Choosing one arbitrarily.\n";
 	      eg = roots[0];
 	    }
@@ -2275,10 +2275,10 @@ void TKinematics2to3::UpdateKinematics()
 	else {
 	  if( sol1 && sol2 ) {
 	    if( fabs(roots[0]-roots[1]) > STRANGEUFLOW*fabs(roots[0]))
-	      TMPI::Cout() << "WARNING in TKinematics2to3::UpdateKinematics(): "
+	      std::cout << "WARNING in TKinematics2to3::UpdateKinematics(): "
 			   << "found multiple solutions. Choosing one arbitrarily.\n";
 	    p2 = roots[0];
-	    TMPI::Cout() << "sol1= " << roots[0] << std::endl
+	    std::cout << "sol1= " << roots[0] << std::endl
 			 << "sol2= " << roots[1] << std::endl;
 	  }
 	  else {
@@ -3072,24 +3072,24 @@ int TKinematics2to3::VariableInfo() const
 {
   // Print information on the type of independent variables and their status.
 
-  TMPI::Cout() << GetName() << ": " << GetTitle()
+  std::cout << GetName() << ": " << GetTitle()
 	       << "\n****************************************************\n";
 
   for(int var=0; var<6; ++var) {
-    TMPI::Cout() << var+1 << ": " << GetVarName(var+1) << " is ";
+    std::cout << var+1 << ": " << GetVarName(var+1) << " is ";
     
     if( fIsVar[var] )
-      TMPI::Cout() << "variable.\n"
+      std::cout << "variable.\n"
 		   << "   Range:\t\t" << fLowerLimit[var] << " <-> "
 		   << fUpperLimit[var]
 		   << "\n   Number of steps:\t" << fNumberOfSteps[var]
 		   << "\n   Current step:\t" << GetStep(var+1) << "\n";
     
     else
-      TMPI::Cout() << "fixed.\n";
+      std::cout << "fixed.\n";
   }
   
-  TMPI::Cout() << "****************************************************\n";
+  std::cout << "****************************************************\n";
 
   return GetNumberOfVariables();
 }
@@ -6487,7 +6487,7 @@ TLorentzQuaternion TKinematics2to3::BoostQuaternionFromGNcm(EAxisConvention ac) 
 //_____________________________________________________________________
 void TKinematics2to3::Help()
 {
-  TMPI::Cout() << "I can't help you! "
+  std::cout << "I can't help you! "
 	       << "In fact, can anyone?\n";
 }
 

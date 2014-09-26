@@ -38,6 +38,7 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   Ek=sqrt(k*k+massN*massN);
   k_z=(alpha_s-1)*Ek; //sign could also be taken +!!!! (check this later...)
   zs=(A_mu*ps_mu)/(A_mu*q_mu);
+  kvec=TVector3(k_perp.X(),k_perp.Y(),k_z);
 }
 
 LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_, 
@@ -72,5 +73,6 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   Ek=sqrt(k*k+massN*massN);
   k_z=(1-alpha_s)*Ek; //sign could also be taken +!!!! (check this later...)
   zs=(A_mu*ps_mu)/(A_mu*q_mu);
+  kvec=TVector3(k_perp.X(),k_perp.Y(),k_z);
 }
 

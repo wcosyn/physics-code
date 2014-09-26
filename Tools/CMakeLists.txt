@@ -34,7 +34,7 @@ TElectronKinematics.h
 pair.h
 recmosh.h
 newcoef.h
-TMPI.h
+# TMPI.h
 TKinematics2to3.h
 TKinematics2to3WithLabAngles.h
 TLeptonKinematics.h
@@ -65,7 +65,7 @@ TLorentzQuaternionLinkDef.h
 TElectronKinematicsLinkDef.h
 TKinematicsLinkDef.h
 TKinematics2to2LinkDef.h
-TMPILinkDef.h
+# TMPILinkDef.h
 TKinematics2to3LinkDef.h
 TKinematics2to3WithLabAnglesLinkDef.h
 TLeptonKinematicsLinkDef.h

@@ -37,7 +37,7 @@ separate solutions can be accessed with GetSolution(int).
 End_Html */
 ///////////////////////////////////////////////////////////////////////////
 
-#include "TMPI.h"
+// #include "TMPI.h"
 #include "TKinematics2to3WithLabAngles.h"
 #include "constants.hpp"
 #include <TLorentzRotation.h>
@@ -372,7 +372,7 @@ void TKinematics2to3WithLabAngles::UpdateKinematics()
 	else {
 	  if( sol1 && sol2 ) {
 	    if( fabs(roots[0]-roots[1]) > STRANGEUFLOW*fabs(roots[0]))
-	      TMPI::Cout() << "WARNING in TKinematics2to3::UpdateKinematics(): "
+	      std::cout << "WARNING in TKinematics2to3::UpdateKinematics(): "
 			   << "found multiple solutions. Choosing one arbitrarily.\n";
 	    eg = roots[0];
 	  }

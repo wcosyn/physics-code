@@ -1,16 +1,40 @@
 \section{Install}
-You can check out the code by doing
+You can check out the code by doing (in a dir where you want the code to end up)
 \begin{align*}
 	\texttt{\$ svn checkout https://ssftrac.ugent.be/svn/wim .}
 \end{align*}
-When first building the code make sure you already have root installed with the modules \texttt{fftw3}, \texttt{gviz}, \texttt{mathmore} and \texttt{minuit2} enabled. To build and install the code do
+When first building the code make sure you already have \texttt{root} installed 
+with the modules \texttt{fftw3}, \texttt{gviz}, \texttt{mathmore} and 
+\texttt{minuit2} enabled.  Also the \texttt{gsl} libraries need to be 
+installed. \texttt{Cmake} should give an error if this is not the case when 
+trying to build. To build and install the code do (in the dir where you checked 
+out the code)
 \begin{align*}
     & \texttt{\$ cd build} \\
-	& \texttt{\$ cmake -DCMAKE\_BUILD\_TYPE=RELEASE ..} \\
-	& \texttt{\$ make } \\
-	& \texttt{\$ make install } 
+	& \texttt{\$ cmake -DCMAKE\_CXX\_COMPILER=g++}\\
+ &\qquad \texttt{-DCMAKE\_C\_COMPILER=gcc 
+-DCMAKE\_BUILD\_TYPE=Release ..} \\
+	& \texttt{\$ make -jN}\quad [\texttt{N}= \text{number of cores you want 
+to use}]\\
+	& \texttt{\$ make install } \\
+	& \texttt{\$ make doc } 
 \end{align*}
-Note that currently \texttt{CMake} version 2.8.10 is required. This is not yet a standard module on the hpc so don't forget to do \texttt{\$> module load CMake/2.8.10} when you want to build the Code.
+If you have the intel C and C++ compilers installed, substitute \texttt{g++} 
+with \texttt{icpc} and \texttt{gcc} with \texttt{icc}.  Other build types than 
+\texttt{Release} include \texttt{Debug, Profile} (there's more, see the 
+\texttt{CMakeLists.txt} file in the main dir for those if you want to use 
+them). 
+Note that currently \texttt{CMake} version 2.8.10 is required. This is not yet a 
+standard module on the hpc so don't forget to do \texttt{\$> module load 
+CMake/2.8.10} when you want to build the Code.  If your hostname is not one of 
+the predefined ones (Wim's pc \& laptop, the HPC of UGent) you will end up 
+using the default compiler flags, which should be fine in most cases.  In case 
+you want to add your custom compiler flags, you can add an extra case in the 
+\texttt{CMakeLists.txt} file in the root dir of the code.  The last command 
+\texttt{make doc} generates the API through DoxyGen.  These can be accessed in 
+the \texttt{doc/html/index.html} file [html] or by compiling 
+\texttt{doc/latex/refman.text} [\LaTeX].
+
 \subsection{Troubleshooting}
 \begin{itemize}
 \item Error in \texttt{cmake}: ROOTSYS not set.

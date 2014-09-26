@@ -19,7 +19,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # Load some basic macros which are needed later on
 find_package(ROOT REQUIRED)
 find_package(GSL REQUIRED)
-find_package(MPI REQUIRED)
+# find_package(MPI REQUIRED)
 find_package(Fortran REQUIRED)
 find_package(Doxygen)
 #Check the compiler and set the compile and link flags

@@ -31,7 +31,7 @@ public:
    * \param ms1 [-1,1] twice the spin projection of particle 1
    * \param ms2 [-1,1] twice the spin projection of particle 2
    * \param mt1 [-1,1] twice the isospin projection of particle 1 (1 proton, -1 neutron)
-   * \param ms2 [-1,1] twice the isospin projection of particle 2 (1 proton, -1 neutron)
+   * \param mt2 [-1,1] twice the isospin projection of particle 2 (1 proton, -1 neutron)
    * \param mA [-1,1] twice the spin projection of the nucleus
    * \return [MeV^-3] returns the complex valued He3 wave function
    */
@@ -43,7 +43,7 @@ public:
    * \param ms1 [-1,1] twice the spin projection of particle 1
    * \param ms2 [-1,1] twice the spin projection of particle 2
    * \param mt1 [-1,1] twice the isospin projection of particle 1 (1 proton, -1 neutron)
-   * \param ms2 [-1,1] twice the isospin projection of particle 2 (1 proton, -1 neutron)
+   * \param mt2 [-1,1] twice the isospin projection of particle 2 (1 proton, -1 neutron)
    * \param mA [-1,1] twice the spin projection of the nucleus
    * \return [MeV^-3] returns the complex valued He3 wave function
    */
