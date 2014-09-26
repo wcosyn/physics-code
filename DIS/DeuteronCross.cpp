@@ -318,7 +318,7 @@ void DeuteronCross::getDeepsresultLC(double Q2, double W, double Ein, double pr,
   TVector3 vecps(pr*sqrt(1-costhetar*costhetar),0.,prz);
   TVector3 veckin(Ein*sin(thetain),0.,Ein*cos(thetain));
   
-  LightConeKin2to2 kinLC=LightConeKin2to2(MASSD,Q2,massr,0.,qvec,vecps,veckin);
+  LightConeKin2to2 kinLC(MASSD,Q2,massr,0.,qvec,vecps,veckin);
   double planewaveLC = getavgLCCross(kinLC,1);
   double fsiLC = getavgLCCross(kinLC,0);
   cout << RADTODEGR*acos(costhetar) << " " << planewave << " " << planewaveLC << " " << fsi << " " << fsiLC << endl;

@@ -47,11 +47,12 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   A_mu=FourVector<double>(sqrt(massA*massA+pA*pA),0.,0.,pA);
   q_mu=FourVector<double>(sqrt(vecq*vecq-Q2),0.,0.,vecq);
   ps_mu=FourVector<double>(sqrt(massN*massN+vecC.Mag2()),vecC.X(),vecC.Y(),vecC.Z());
+  cout << A_mu << " " << q_mu << " " << ps_mu << endl;
   pi_mu=A_mu-ps_mu;
   X_mu=(A_mu+q_mu-ps_mu);
   massX=sqrt(X_mu*X_mu);
   if(isnan(massX)){
-    cerr << "invalid kinematics, X has no physical mass!" << endl;
+    cerr << "invalid kinematics, X has no physical mass! " << X_mu*X_mu << endl;
     assert(1==0);
   }
   Beam_mu=FourVector<double>(vecBeam.Mag(),vecBeam.X(),vecBeam.Y(),vecBeam.Z());
@@ -76,3 +77,33 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   kvec=TVector3(k_perp.X(),k_perp.Y(),k_z);
 }
 
+LightConeKin2to2::LightConeKin2to2(LightConeKin2to2 &rhs){
+  massA=rhs.massA;
+  Q2=rhs.Q2;
+  massN=rhs.massN;
+  A_mu=rhs.A_mu;
+  q_mu=rhs.q_mu;
+  ps_mu=rhs.ps_mu;
+  pi_mu=rhs.pi_mu;
+  X_mu=rhs.X_mu;
+  massX=rhs.massX;
+  Beam_mu=rhs.Beam_mu;
+  isCollinear=rhs.isCollinear;
+  yA=rhs.yA;
+  xA=rhs.xA;
+  yN=rhs.yN;
+  xN=rhs.xN;
+  pA_plus=rhs.pA_plus;
+  pA_perp=rhs.pA_perp;
+  q_perp=rhs.q_perp;
+  ps_perp=rhs.ps_perp;
+  alpha_s=rhs.alpha_s;
+  alpha_i=rhs.alpha_i;
+  epsilon=rhs.epsilon;
+  k_perp=rhs.k_perp;
+  k=rhs.k;
+  Ek=rhs.Ek;
+  k_z=rhs.k_z;
+  zs=rhs.zs;
+  kvec=rhs.kvec;
+}

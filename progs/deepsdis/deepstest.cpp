@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
-
+#include <string>
 
 using namespace std;
 
@@ -11,6 +11,8 @@ using namespace std;
 #include <DeuteronStructure.hpp>
 #include <DeuteronMomDistr.hpp>
 #include <DeuteronCross.hpp>
+#include <He3Cross.hpp>
+#include <LightConeKin2to3.hpp>
 
 int main(int argc, char *argv[])
 {
@@ -47,4 +49,12 @@ int main(int argc, char *argv[])
 //     test.getDeepsAzz(Q2,Wprime,Ein,pr,costhetar,proton,azz,azzfsi,pw,fsi);
 //     cout << costhetar << " " << azz << " " << azzfsi << " " << pw << " " << fsi << endl;
   }
+//   TVector3 sp1(0.,200.,0.);
+//   TVector3 sp2(100.,-100.,100.);
+//   TVector3 spcm=sp1+sp2;
+//   TVector3 beam(5000.*cos(-1.),0.,5000.*sin(-1.));
+//   LightConeKin2to3 kinkin(MASSHE3,2.E06,MASSP,MASSP,0.,4.E03,sp1,sp2,beam,spcm);
+//   string a="AV18";
+//   He3Cross test2("AV18","/home/wim/Code/share","SLAC",proton);
+//   cout << test2.getCross(kinkin) << endl;
 }

@@ -7,12 +7,14 @@
  * 
  * -Has a class that describes certain resonance in the FSI with all the scattering and particle properties <BR>
  * [Resonance] <BR>
- * -Has a class that computes semi-inclusive DIS off the deuteron cross sections<BR>
+ * -Has a class that computes tagged spectator DIS off the deuteron cross sections<BR>
  * [DeuteronCross]<BR>
  * -Has a class that computes inclusive DIS off the deuteron<BR>
  * [InclusiveCross]<BR>
  * -Has a class that computes inclusive DIS off the deuteron in a N resonance model<BR>
  * [InclusiveCrossRes]<BR>
+ * -Has a class that computes tagged spectators DIS off a He3 target <BR> 
+ * [He3Cross] <BR><BR>
  * 
  */
 

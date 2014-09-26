@@ -10,7 +10,7 @@
 #ifndef DEUTERONCROSS_HPP
 #define DEUTERONCROSS_HPP
 
-#include "DeuteronMomDistr.hpp"
+#include <DeuteronMomDistr.hpp>
 #include <TKinematics2to2.h>
 #include <DeuteronStructure.hpp>
 #include <TElectronKinematics.h>
@@ -18,7 +18,7 @@
 
 #include <string>
 
-/*! \brief A class that computes semi-exclusive deuteron cross sections */
+/*! \brief A class that computes tagged spectator deuteron cross sections */
 class DeuteronCross{
   
 public:

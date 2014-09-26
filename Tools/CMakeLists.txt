@@ -8,6 +8,7 @@ NuclStructure.hpp
 DeuteronStructure.hpp
 Utilfunctions.hpp
 LightConeKin2to2.hpp
+LightConeKin2to3.hpp
 He3wf.hpp
 )
 

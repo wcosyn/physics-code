@@ -8,6 +8,7 @@ InclusiveCross.hpp
 # InclusiveCrossRes.hpp
 DeuteronCross.hpp
 Resonance.hpp
+He3Cross.hpp
 )
 
 foreach(it ${DIS_HEADERS_HPP})

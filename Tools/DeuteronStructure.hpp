@@ -81,6 +81,10 @@ public:
    * \param kin semi-exclusive gamma+D->X+N kinematics, see LightConeKin2to2 <BR>
    */
   double getavgStructureLC(LightConeKin2to2 &kin) const;
+  /*! combination of all structure functions NOT averaged over any angle for LC formalism
+   * \param kin semi-exclusive gamma+D->X+N kinematics, see LightConeKin2to2 <BR>
+   */
+  double getStructureLC(LightConeKin2to2 &kin) const;
   /*! prefactor needed in neutron structure function extraction,
    * obtained from combination of all structure functions averaged over phi (angle between hadron and electron plane) 
    * divided by F2N

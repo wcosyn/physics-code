@@ -40,6 +40,9 @@ public:
    */
   LightConeKin2to2(double massA, double Q2, double massC, double pA, double vecq, TVector3 &vecC, TVector3 &vecBeam); 
 
+  /*! Copy constructor */
+  LightConeKin2to2(LightConeKin2to2 &rhs);
+  
   double getMassA() const{return massA;} /*!<[MeV] mass hadron target */
   double getQ2() const{return Q2;} /*!< [MeV^2] Q2 virtual photon */
   double getmassN () const{return massN;} /*!<[MeV] mass spectator */

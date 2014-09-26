@@ -67,11 +67,11 @@ complex<double> He3wf::getWF(TVector3 &p1, TVector3 &p2, int ms1, int ms2, int m
   if(mA!=mA_set) {mA_set=mA; int ex=0; he3reset(&mA,&ex);}
   int ms3=mA_set-ms1-ms2;
   int mt3=1-mt1-mt2;
-  if(abs(ms1)!=1||abs(ms2)!=1||abs(ms3)!=1||abs(mt1)!=1||abs(mt2)!=1||abs(mt3)!=1) { 
+  if(abs(ms1)!=1||abs(ms2)!=1||abs(mt1)!=1||abs(mt2)!=1||abs(mt3)!=1) { 
     cerr << "something wrong with the spins or isospins" << endl; 
     assert(1==0);
-    
   }
+  if(abs(ms3)!=1) return 0.;
   double p1x=p1.X()*INVHBARC;
   double p1y=p1.Y()*INVHBARC;
   double p1z=p1.Z()*INVHBARC;
