@@ -4,10 +4,15 @@ You can check out the code by doing (in a dir where you want the code to end up)
 	\texttt{\$ svn checkout https://ssftrac.ugent.be/svn/wim .}
 \end{align*}
 When first building the code make sure you already have \texttt{root} installed 
-with the modules \texttt{fftw3}, \texttt{gviz}, \texttt{mathmore} and 
+with the modules \texttt{mathmore} and 
 \texttt{minuit2} enabled.  Also the \texttt{gsl} libraries need to be 
 installed. \texttt{Cmake} should give an error if this is not the case when 
-trying to build. To build and install the code do (in the dir where you checked 
+trying to build. During configuration, \texttt{cmake} currently doesn't check 
+the required extra \texttt{root} libraries I think.  You can do this yourself 
+by executing \texttt{\$ root-config --has-<feature>} (where you replace 
+\texttt{<feature>} with \texttt{mathmore} etc). To build the documentation you 
+also need \texttt{doxygen} and \texttt{graphviz} packages installed. To build 
+and install the code do (in the dir where you checked 
 out the code)
 \begin{align*}
     & \texttt{\$ cd build} \\
@@ -25,7 +30,7 @@ with \texttt{icpc} and \texttt{gcc} with \texttt{icc}.  Other build types than
 \texttt{CMakeLists.txt} file in the main dir for those if you want to use 
 them). 
 Note that currently \texttt{CMake} version 2.8.10 is required. This is not yet a 
-standard module on the hpc so don't forget to do \texttt{\$> module load 
+standard module on the UGent HPC so don't forget to do \texttt{\$> module load 
 CMake/2.8.10} when you want to build the Code.  If your hostname is not one of 
 the predefined ones (Wim's pc \& laptop, the HPC of UGent) you will end up 
 using the default compiler flags, which should be fine in most cases.  In case 
@@ -35,9 +40,22 @@ you want to add your custom compiler flags, you can add an extra case in the
 the \texttt{doc/html/index.html} file [html] or by compiling 
 \texttt{doc/latex/refman.text} [\LaTeX].
 
+When compiling your own programs that make use of the routines in the libraries 
+of this project, you will in general also have to link to the necessary 
+\texttt{gsl} and \texttt{root} libraries.  For examples see the makefiles that 
+can be found in all the subdirectories in the \texttt{progs} directory.  
+
+
 \subsection{Troubleshooting}
 \begin{itemize}
 \item Error in \texttt{cmake}: ROOTSYS not set.
-If you get an error like this you probably should add the path of the \texttt{root-config} script to the search path in the file \texttt{\$\{PROJECT\_SOURCE\_DIR\}/cmake/Modules/FindROOT.cmake}. This is done by adding the path to the line \texttt{SET(ROOT\_CONFIG\_SEARCHPATH /insert\_your\_path\_here)}. In my case this was \texttt{usr/local/bin}. If you don't know the location of the \texttt{root-config} executable you maybe able to find it using \texttt{\$ find /usr -name root-config}.
+If you get an error like this you probably should add the path of the 
+\texttt{root-config} script to the search path in the file 
+\texttt{\$\{PROJECT\_SOURCE\_DIR\}/cmake/Modules/FindROOT.cmake}. This is done 
+by adding the path to the line \texttt{SET(ROOT\_CONFIG\_SEARCHPATH 
+/insert\_your\_path\_here)}. In my case this was \texttt{usr/local/bin}. If you 
+don't know the location of the \texttt{root-config} executable you maybe able to 
+find it by executing \texttt{\$ which root-config}.
 \item Error \texttt{Wrong ELF class}. If you get errors mentioning ELF-class then you are probably linking 64 to 32 bit code which does not compute. Make sure you are linking to the 64 bit libraries of \texttt{root} and not the 32 bit ones. For me the 64 bit libraries were located in \texttt{/usr/local/lib/root} while the 32 bit ones were in \texttt{/usr/local/root/lib/root}. 
 \end{itemize}
+
