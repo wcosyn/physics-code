@@ -20,9 +20,9 @@
 class He3Cross{
 public:
     /*! Constructor
-   * \param wfname Deuteron wave function name, see TDeuteron
-   * \param inputdir share dir
-   * \param strucname which structure function parametrization ["CB"=Chrisy-Bosted, "SLAC", "Alekhin"]
+   * \param wfname He3 wave function name, see He3wf class constructor for possibilities ["AV18", etc.]
+   * \param inputdir share dir [full path please]
+   * \param strucname which structure function parametrization ["CB"=Chrisy-Bosted, "SLAC", "Alekhin"], see NucleonStructure
    * \param proton photon interacts with proton [1] or neutron [0]
    */
   He3Cross(std::string wfname, std::string inputdir, std::string strucname, bool proton);

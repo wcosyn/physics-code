@@ -251,7 +251,7 @@ private:
    */
   std::complex<double> scatter(double t);
   /*! gives you sigma in the parametrization we got from deeps, Q^2 dependence included
-   * return [MeV^-2] sigma
+   * \return [MeV^-2] sigma
    * \param W_sq [MeV^2] invariant mass squared of scatterer
    * \param Q2 [MeV^2] four-momentum transfer squared */
   

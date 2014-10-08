@@ -21,6 +21,7 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   }
   Beam_mu=FourVector<double>(vecBeam.Mag(),vecBeam.X(),vecBeam.Y(),vecBeam.Z());
   isCollinear=0;
+  if(vecA.Perp2()+vecq.Perp2()==0.) isCollinear=1.;  //check if this is collinear kinematics
   
   yA=(A_mu*q_mu)/(A_mu*Beam_mu);
   xA=Q2/(A_mu*q_mu);

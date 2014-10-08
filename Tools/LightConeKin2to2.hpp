@@ -45,7 +45,7 @@ public:
   
   double getMassA() const{return massA;} /*!<[MeV] mass hadron target */
   double getQ2() const{return Q2;} /*!< [MeV^2] Q2 virtual photon */
-  double getmassN () const{return massN;} /*!<[MeV] mass spectator */
+  double getMassN () const{return massN;} /*!<[MeV] mass spectator */
   double getMassX() const{return massX;} /*!<[MeV] mass undetected particle, DIS X here */
   const FourVector<double> &getA_mu() const{return A_mu;} /*!< [MeV] fourvector hadron target */
   const FourVector<double> &getQ_mu() const{return q_mu;}/*!< [MeV] fourvector virtual photon */

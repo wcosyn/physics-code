@@ -23,9 +23,9 @@ class DeuteronCross{
   
 public:
     /*! Constructor
-   * \param wfname Deuteron wave function name, see TDeuteron
+   * \param wfname Deuteron wave function name, see TDeuteron constructor for possibilities ["AV18", "Paris", etc.]
    * \param proton photon interacts with proton [1] or neutron [0]
-   * \param strucname which structure function parametrization ["CB"=Chrisy-Bosted, "SLAC", "Alekhin"]
+   * \param strucname which structure function parametrization ["CB"=Chrisy-Bosted, "SLAC", "Alekhin"], see NucleonStructure 
    * \param sigmain [mb] total rescattering cross section in FSI
    * \param betain [GeV^-2] slope parameter
    * \param epsilonin real part of scattering amplitude
@@ -50,7 +50,7 @@ public:
    * \return [MeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ averaged over phi
    */
   double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron, bool lc);
-  /*! get the average cross section
+  /*! get the average cross section in VNA formalism, only valid in lab frame
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
    * \param electron has electron kinematics
@@ -58,13 +58,37 @@ public:
    * \param Einoff off-shell energy of the nucleon interacting with the photon
    * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ averaged over phi
    */
-  double getavgCross(TKinematics2to2 &kin, TElectronKinematics &electron, bool pw, double Einoff);
-  /*! get the average cross section in LC formalism
+  double getavgVNALabCross(TKinematics2to2 &kin, TElectronKinematics &electron, bool pw, double Einoff);
+  /*! get the average cross section in LC formalism, only valid for collinear LightConeKin2to2!!!
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
-   * \param pw plane-wave calculation [1] or not [0]
-   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ averaged over phi
+   * \param pw plane-wave calculation [1] or including FWI [0]
+   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dx_AdQ^2\frac{d^3p_s}{E_s}} \f$ 
+   * averaged over phi (hadron-lepton plane angle) [see Wim's lightconeDIS.pdf note for formulas (eq. 42)]
    */
   double getavgLCCross(LightConeKin2to2 &kin, bool pw);
+  /*! get the cross section in LC formalism
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \param pw plane-wave calculation [1] or including FSI [0]
+   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dx_AdQ^2\frac{d^3p_s}{E_s}} \f$ 
+   * not(!) averaged over phi (hadron-lepton plane angle) [see Wim's lightconeDIS.pdf note for formulas (eq. 40)]
+   */
+  double getLCCross(LightConeKin2to2 &kin, bool pw);
+  /*! get the average cross section in VNA formalism, only valid for collinear LightConeKin2to2!!!
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \param pw plane-wave calculation [1] or including FWI [0]
+   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dx_AdQ^2\frac{d^3p_s}{E_s}} \f$ 
+   * averaged over phi (hadron-lepton plane angle) 
+   * [see Wim's lightconeDIS.pdf note for formulas (eq. 42), only with VNA deuteron density now]
+   */
+  double getavgVNACross(LightConeKin2to2 &kin, bool pw);
+  /*! get the cross section in VNA formalism
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * \param pw plane-wave calculation [1] or including FSI [0]
+   * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dx_AdQ^2\frac{d^3p_s}{E_s}} \f$ 
+   * not(!) averaged over phi (hadron-lepton plane angle) 
+   * [see Wim's lightconeDIS.pdf note for formulas (eq. 40), only with VNA deuteron density now]
+   */
+  double getVNACross(LightConeKin2to2 &kin, bool pw);
   /*! computes the results like they are presented in the Deeps data
    * \param Q2 [MeV^2] four-momentum transfer
    * \param W [MeV] invariant mass of X
@@ -173,6 +197,7 @@ private:
 //   TElectronKinematics electron; /*!< electron kinematics */
   DeuteronMomDistr momdistr; /*!< object instance used to calculate the deuteron momentum distributions */
   DeuteronStructure structure; /*!< object used to calculate the structure functions needed in semi-inclusive deuteron scattering */
+
 };
 /*! @} */
 #endif
