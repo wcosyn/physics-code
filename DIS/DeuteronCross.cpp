@@ -15,8 +15,7 @@ DeuteronCross::DeuteronCross(string name, bool proton, string struc_name,
 massi(proton? MASSP:MASSN),
 momdistr(name,massi,offshellset,sigmain,betain,epsilonin,betaoffin,lambdain,looplimit),
 structure(proton,struc_name),
-strucname(struc_name),
-useDeepsparam(0)
+strucname(struc_name)
 {
 //   for(int i=0;i<200;i+=5){
 //     TVector3 p(i,0.,0.);
@@ -207,11 +206,11 @@ double DeuteronCross::getavgLCCross(LightConeKin2to2 &kin, bool pw){
 
 double DeuteronCross::getLCCross(LightConeKin2to2 &kin, bool pw){
   double front=2.*pow(kin.getYA()*ALPHA/kin.getQ2(),2.);
-  double nu_lab=(kin.getS()+Q2-kin.getMassA()*kin.getMassA())/(2.*kin.getMassA());
+  double nu_lab=(kin.getS()+kin.getQ2()-kin.getMassA()*kin.getMassA())/(2.*kin.getMassA());
   double pr=sqrt(pow(kin.getPs_mu()[1]-kin.getA_mu()[1]/2.,2.)+
 		 pow(kin.getPs_mu()[2]-kin.getA_mu()[2]/2.,2.)+
 		 pow(kin.getPs_mu()[3]-kin.getA_mu()[3]/2.,2.));
-  TKinematics2to2 VNAkin("","",kin.getMassA(),kin.getMassN(),kin.getMassX(),"qsquared:wlab:pklab",Q2,nu_lab,pr);
+  TKinematics2to2 VNAkin("","",kin.getMassA(),kin.getMassN(),kin.getMassX(),"qsquared:wlab:pklab",kin.getQ2(),nu_lab,pr);
   double dens=pw?momdistr.getMomDistrpw(VNAkin):momdistr.getMomDistrfsi(VNAkin,0.);
   double Dstrucs=structure.getStructureLC(kin);
   return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getPs_mu()[0];
@@ -366,7 +365,13 @@ void DeuteronCross::getDeepsresultLC(double Q2, double W, double Ein, double pr,
   LightConeKin2to2 kinLC(MASSD,Q2,massr,0.,qvec,vecps,veckin);
   double planewaveLC = getavgLCCross(kinLC,1);
   double fsiLC = getavgLCCross(kinLC,0);
-  cout << RADTODEGR*acos(costhetar) << " " << planewave << " " << planewaveLC << " " << fsi << " " << fsiLC << endl;
+  double pwLCnoavg = getLCCross(kinLC,1);
+  double pwVNAavg=getavgVNACross(kinLC,1);
+  double fsiVNAavg=getavgVNACross(kinLC,0);
+  double pwVNAnoavg=getVNACross(kinLC,1);
+  
+  cout << RADTODEGR*acos(costhetar) << " " << planewave << " " << planewaveLC << " " << fsi << " " << fsiLC << " " << pwLCnoavg 
+  << " " <<  pwVNAavg << " " << pwVNAnoavg << " " << fsiVNAavg << endl;
   return;
     
 }
@@ -486,4 +491,8 @@ void DeuteronCross::maint_deepsarray(double *****deepsarray){
   }
   delete [] deepsarray;
   
+}
+
+void DeuteronCross::setScatter(double sigmain, double betain, double epsin){
+  momdistr.setScatter(sigmain,betain,epsin);
 }

@@ -29,15 +29,15 @@ public:
    * \param sigmain [mb] total rescattering cross section in FSI
    * \param betain [GeV^-2] slope parameter
    * \param epsilonin real part of scattering amplitude
-   * \param betaoffin [GeV^-2] off-shell beta parameter
-   * \param lambdain [GeV^2] lambda cutoff off-shell parameter
+   * \param betaoffin [GeV^-2] off-shell beta parameter when using offshellset 2
+   * \param lambdain [GeV^2] lambda cutoff off-shell parameter when using offshellset 1
    * \param offshellset  which offshell parametrization do you want to use? <BR>
    * - 0: based on off-shell mass suppression (See M. Sargsian PRC82, 014612)
    * - 1: based on dipole FF suppression with cutoff lambda (See S. Jesschonek PRC78, 014007)
    * - 2: suppression with a off-shell beta parameter
    * - 3: no off-shell amplitude, fully suppressed
    * - 4: full off-shell amplitude, no suppression 
-   * \param looplimit max number of tries in loop to get prz pole
+   * \param looplimit max number of tries in loop to get prz pole [for FSI calculation]
    */
   DeuteronCross(std::string wfname, bool proton, std::string strucname,
     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset, int looplimit);
@@ -191,6 +191,12 @@ public:
    * \param deepsarray pointer to array with deeps results
    */
   static void maint_deepsarray(double *****deepsarray);
+  /*! Set scattering parameters for FSI
+   * \param sigmain total cross section [mb]
+   * \param betain slope parameter [GeV^-2]
+   * \param epsin real part of amplitude
+   */  
+  void setScatter(double sigmain, double betain, double epsin);
 private:
   double massi; /*!< mass of nucleon interacting with photon */
   std::string strucname; /*!< structure function parametrization */

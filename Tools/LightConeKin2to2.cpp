@@ -16,7 +16,7 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   X_mu=(A_mu+q_mu-ps_mu);
   massX=sqrt(X_mu*X_mu);
   if(isnan(massX)){
-    cerr << "invalid kinematics, X has no physical mass!" << endl;
+    cerr << "invalid kinematics, X has no physical mass!" << X_mu*X_mu << endl;
     assert(1==0);
   }
   Beam_mu=FourVector<double>(vecBeam.Mag(),vecBeam.X(),vecBeam.Y(),vecBeam.Z());
@@ -48,7 +48,6 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   A_mu=FourVector<double>(sqrt(massA*massA+pA*pA),0.,0.,pA);
   q_mu=FourVector<double>(sqrt(vecq*vecq-Q2),0.,0.,vecq);
   ps_mu=FourVector<double>(sqrt(massN*massN+vecC.Mag2()),vecC.X(),vecC.Y(),vecC.Z());
-  cout << A_mu << " " << q_mu << " " << ps_mu << endl;
   pi_mu=A_mu-ps_mu;
   X_mu=(A_mu+q_mu-ps_mu);
   massX=sqrt(X_mu*X_mu);

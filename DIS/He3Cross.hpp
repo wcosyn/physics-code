@@ -21,7 +21,7 @@ class He3Cross{
 public:
     /*! Constructor
    * \param wfname He3 wave function name, see He3wf class constructor for possibilities ["AV18", etc.]
-   * \param inputdir share dir [full path please]
+   * \param inputdir share dir [full path please, else fortran code breaks for some reason]
    * \param strucname which structure function parametrization ["CB"=Chrisy-Bosted, "SLAC", "Alekhin"], see NucleonStructure
    * \param proton photon interacts with proton [1] or neutron [0]
    */
