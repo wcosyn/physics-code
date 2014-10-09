@@ -23,11 +23,10 @@ int main(int argc, char *argv[])
   TVector3 qvec=TVector3(0.,0.,10.E03);
   
   TVector3 veckin(Ein*sin(thetain),0.,Ein*cos(thetain));
-  double Q2=1.E06; //[MeV^2]
+  double Q2=0.1E06; //[MeV^2]
   
   
   LightConeKin2to2 kinLC(MASSD,Q2,MASSP,vecpd,qvec,vecps,veckin);   //constants are defined in constants.hpp
-
 
   int offshellset = 3; //no offshell, see DeuteronCross constructor
   int looplimit = 1; //fsi loop tries, see DeuteronCross constructor

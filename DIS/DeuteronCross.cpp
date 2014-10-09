@@ -231,7 +231,8 @@ double DeuteronCross::getavgVNACross(LightConeKin2to2 &kin, bool pw){
   TKinematics2to2 VNAkin("","",kin.getMassA(),kin.getMassN(),kin.getMassX(),"qsquared:wlab:pklab",Q2,nu_lab,pr);
   double dens=pw?momdistr.getMomDistrpw(VNAkin):momdistr.getMomDistrfsi(VNAkin,0.);
   double Dstrucs=structure.getavgStructureLC(kin);
-//   cout << "LC " << front*kin.getEpsilon()*MASSD << " " << dens*kin.getAlpha_s()/kin.getAlpha_i() << " " << Dstrucs/(kin.getEpsilon()*MASSD) << endl;
+//   cout << "LC " << front*kin.getEpsilon()*MASSD << " " << dens*kin.getAlpha_s()/kin.getAlpha_i() << " " << Dstrucs/(kin.getEpsilon()*MASSD) 
+//   << " " << kin.getXN() << " " << endl;
   return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getPs_mu()[0];
   
 }

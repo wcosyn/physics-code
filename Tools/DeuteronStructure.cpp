@@ -175,7 +175,8 @@ double DeuteronStructure::getavgStructureLC(LightConeKin2to2 &kin) const{
   double xoffshell=kin.getQ2()/(2.*massi*nuoffshell); //xoffshell consistent with Q^2,m_i,W
   double W_sq=mi_off2+double_piq-kin.getQ2();//W^2=(p_i+q)^2
   double alphaq=(kin.getQ_mu()[0]+kin.getQ_mu()[3])/sqrt(2.)/kin.getPA_plus()*2.;
-  NuclStructure strfunction(proton,kin.getQ2(),xoffshell,W_sq,name);
+  double x_i=kin.getQ2()/double_piq; // x'=Q^2/2pi*q
+  NuclStructure strfunction(proton,kin.getQ2(),x_i,W_sq,name);
   double F1,F2;
   if(!(strfunction.getName().compare("SLAC"))){
     F2=strfunction.getF2();
@@ -184,6 +185,7 @@ double DeuteronStructure::getavgStructureLC(LightConeKin2to2 &kin) const{
   }
   else strfunction.getF(F1,F2);
   if(std::isnan(F2)){cout << "bla " << endl;  return F2;}
+//   cout << x_i << " " << xoffshell << endl;
   return 2.*kin.getXN()*F2/kin.getQ2()*(-(mi_off2+kin.getQ2()/4./pow(kin.getXN(),2.))
 	+(2*kin.getEpsilon()+1.)*pow(MASSD*MASSD+(1.-2.*kin.getZs()*kin.getXN())*kin.getQ2()/(2.*kin.getXA()*kin.getXN()),2.)
 	  /(MASSD*MASSD+kin.getQ2()/kin.getXA()/kin.getXA()))+2.*(1-kin.getEpsilon())*F1;
@@ -199,7 +201,8 @@ double DeuteronStructure::getStructureLC(LightConeKin2to2 &kin) const{
   double xoffshell=kin.getQ2()/(2.*massi*nuoffshell); //xoffshell consistent with Q^2,m_i,W
   double W_sq=mi_off2+double_piq-kin.getQ2();//W^2=(p_i+q)^2
   double alphaq=(kin.getQ_mu()[0]+kin.getQ_mu()[3])/sqrt(2.)/kin.getPA_plus()*2.;
-  NuclStructure strfunction(proton,kin.getQ2(),xoffshell,W_sq,name);
+  double x_i=kin.getQ2()/double_piq; // x'=Q^2/2pi*q
+  NuclStructure strfunction(proton,kin.getQ2(),x_i,W_sq,name);
   double F1,F2;
   if(!(strfunction.getName().compare("SLAC"))){
     F2=strfunction.getF2();
