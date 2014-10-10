@@ -13,6 +13,7 @@ CPATH 	=	.
 #		C compilation...
 #  CC      = 	icpc
 CC      = 	g++
+PROJECTPATH 	= 	../..
 
 #		Flags
 OPTFLAG	=	-O3 -fPIC
@@ -32,9 +33,9 @@ EFILEST   = 	../../bin/staticLDRD_test
 LIBS =	 	
 WIMLIBS =   -lDIS -lKnockout -lMePhys -lIntegrator -lcuba
 ROOT =		`root-config --cflags --glibs` -lMinuit2  
- LIBDIRS = -L ~/Code/lib
- INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools -I ~/Code/DIS -I ~/Code/Knockout
-STATICLIBS =   ~/Code/lib/libmephys.a  ~/Code/lib/libdis.a  ~/Code/lib/libknockout.a  ~/Code/lib/libintegrator.a
+ LIBDIRS = -L $(PROJECTPATH)/lib
+ INCLUDEDIRS =  -I $(PROJECTPATH)/Integrator -I $(PROJECTPATH)/Tools -I $(PROJECTPATH)/DIS -I $(PROJECTPATH)/Knockout
+STATICLIBS =   $(PROJECTPATH)/lib/libmephys.a  $(PROJECTPATH)/lib/libdis.a  $(PROJECTPATH)/lib/libknockout.a  $(PROJECTPATH)/lib/libintegrator.a
 
 #		Header files
 # HDRS =		bonusdata.h bonusfits.h

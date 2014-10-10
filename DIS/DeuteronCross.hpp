@@ -42,14 +42,6 @@ public:
   DeuteronCross(std::string wfname, bool proton, std::string strucname,
     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset, int looplimit);
   ~DeuteronCross(); /*!<Destructor */
-  /*! get the average cross section like it was generated in the BONUS MC
-   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
-   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-   * \param electron has electron kinematics
-   * \param lc lightcone density to restore data or VNA one
-   * \return [MeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ averaged over phi
-   */
-  double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron, bool lc);
   /*! get the average cross section in VNA formalism, only valid in lab frame
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
@@ -99,6 +91,23 @@ public:
    * \param[out] planewave [MeV^-3] plane wave result
    * \param[out]  fsi [MeV^-3]  fsi result
    */
+  void setScatter(double sigmain, double betain, double epsin);
+private:
+  double massi; /*!< mass of nucleon interacting with photon */
+  std::string strucname; /*!< structure function parametrization */
+//   TElectronKinematics electron; /*!< electron kinematics */
+  DeuteronMomDistr momdistr; /*!< object instance used to calculate the deuteron momentum distributions */
+  DeuteronStructure structure; /*!< object used to calculate the structure functions needed in semi-inclusive deuteron scattering */
+
+  /*! get the average cross section like it was generated in the BONUS MC
+   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \param electron has electron kinematics
+   * \param lc lightcone density to restore data or VNA one
+   * \return [MeV^-6] semi-inclusive cross section \f$ \frac{d\sigma}{d\Omega dE'd^3p_s} \f$ averaged over phi
+   */
+  double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron, bool lc);
+  
   void getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
     double &planewave, double &fsi);
   /*! computes the results like they are presented in the Deeps data in the LC formalism
@@ -196,14 +205,8 @@ public:
    * \param betain slope parameter [GeV^-2]
    * \param epsin real part of amplitude
    */  
-  void setScatter(double sigmain, double betain, double epsin);
-private:
-  double massi; /*!< mass of nucleon interacting with photon */
-  std::string strucname; /*!< structure function parametrization */
-//   TElectronKinematics electron; /*!< electron kinematics */
-  DeuteronMomDistr momdistr; /*!< object instance used to calculate the deuteron momentum distributions */
-  DeuteronStructure structure; /*!< object used to calculate the structure functions needed in semi-inclusive deuteron scattering */
-
+  
+  
 };
 /*! @} */
 #endif

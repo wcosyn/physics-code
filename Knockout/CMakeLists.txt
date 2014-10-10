@@ -5,15 +5,6 @@ project(Knockout)
 # fill list of header files 
 set(Knockout_HEADERS_HPP 
 DeuteronMomDistr.hpp
-Model.hpp
-Cross.hpp
-DoubleNModel.hpp
-DoubleNCross.hpp
-RhoTCross.hpp
-RhoDeuteron.hpp
-WeakQEHadronCurrent.hpp
-WeakQECross.hpp
-DQEinclusive.hpp
 )
 
 foreach(it ${Knockout_HEADERS_HPP})
@@ -45,7 +36,7 @@ SET(Knockout_LIBRARY_PROPERTIES ${Knockout_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(Knockout SHARED ${Knockout_SRCS})
-target_link_libraries(Knockout ${LIBRARIES} MePhys Glauber Integrator)
+target_link_libraries(Knockout ${LIBRARIES} MePhys Integrator)
 set_target_properties(Knockout PROPERTIES ${Knockout_LIBRARY_PROPERTIES})
 ############### build the library #####################
 add_library(KnockoutST STATIC ${Knockout_SRCS})

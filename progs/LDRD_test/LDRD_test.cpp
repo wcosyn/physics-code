@@ -42,13 +42,13 @@ int main(int argc, char *argv[])
   DeuteronCross test(deuteronwf,proton,strucfunc,sigmain,betain,epsin,betaoffshell,lambda,offshellset,looplimit);
   
   double pwLCavg = test.getavgLCCross(kinLC,1);
-  double fsiLCavg = test.getavgLCCross(kinLC,0);
+//   double fsiLCavg = test.getavgLCCross(kinLC,0);
   double pwLCnoavg = test.getLCCross(kinLC,1);
   double pwVNAavg=test.getavgVNACross(kinLC,1);
   double fsiVNAavg=test.getavgVNACross(kinLC,0);
   double pwVNAnoavg=test.getVNACross(kinLC,1);
 
-  cout << "deuteron " << pwLCavg << " " << fsiLCavg << " " << pwLCnoavg << " " << pwVNAavg << " " << fsiVNAavg << " " << pwVNAnoavg << endl;
+  cout << "deuteron " << pwLCavg << " " << pwVNAavg <<" " << pwLCnoavg << " " << pwVNAnoavg << " " << fsiVNAavg << endl;
   
   TVector3 sp1(0.,200.,0.);
   TVector3 sp2(100.,-100.,100.);

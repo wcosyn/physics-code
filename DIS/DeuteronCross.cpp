@@ -189,10 +189,25 @@ double DeuteronCross::getavgVNALabCross(TKinematics2to2 &kin,TElectronKinematics
   
 }
 
+double DeuteronCross::getLCCross(LightConeKin2to2 &kin, bool pw){
+  if(!pw){
+    cerr << "DeuteronCross::getavgLCCross with FSI still in debugging mode. Not useable for now." << endl;
+    assert(1==0);
+  }
+  double front=2.*pow(kin.getYA()*ALPHA/kin.getQ2(),2.);
+  double dens=pw?momdistr.getMomDistrpwLC(kin):momdistr.getMomDistrfsiLC(kin);
+  double Dstrucs=structure.getStructureLC(kin);
+  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getAlpha_s()/kin.getAlpha_i();
+  
+}
 
 double DeuteronCross::getavgLCCross(LightConeKin2to2 &kin, bool pw){
   if(!kin.getIsCollinear()){
-    cout << "DeuteronCross::getavgLCCross only useable in collinear kinematics" << endl;
+    cerr << "DeuteronCross::getavgLCCross only useable in collinear kinematics" << endl;
+    assert(1==0);
+  }
+  if(!pw){
+    cerr << "DeuteronCross::getavgLCCross with FSI still in debugging mode. Not useable for now." << endl;
     assert(1==0);
   }
   double Q2=kin.getQ2();
@@ -204,7 +219,7 @@ double DeuteronCross::getavgLCCross(LightConeKin2to2 &kin, bool pw){
   
 }
 
-double DeuteronCross::getLCCross(LightConeKin2to2 &kin, bool pw){
+double DeuteronCross::getVNACross(LightConeKin2to2 &kin, bool pw){
   double front=2.*pow(kin.getYA()*ALPHA/kin.getQ2(),2.);
   double nu_lab=(kin.getS()+kin.getQ2()-kin.getMassA()*kin.getMassA())/(2.*kin.getMassA());
   double pr=sqrt(pow(kin.getPs_mu()[1]-kin.getA_mu()[1]/2.,2.)+
@@ -213,7 +228,7 @@ double DeuteronCross::getLCCross(LightConeKin2to2 &kin, bool pw){
   TKinematics2to2 VNAkin("","",kin.getMassA(),kin.getMassN(),kin.getMassX(),"qsquared:wlab:pklab",kin.getQ2(),nu_lab,pr);
   double dens=pw?momdistr.getMomDistrpw(VNAkin):momdistr.getMomDistrfsi(VNAkin,0.);
   double Dstrucs=structure.getStructureLC(kin);
-  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getPs_mu()[0];
+  return front*dens*Dstrucs*HBARC*HBARC*1.E19*sqrt(pr*pr+kin.getMassN()*kin.getMassN());
   
 }
 
@@ -233,17 +248,10 @@ double DeuteronCross::getavgVNACross(LightConeKin2to2 &kin, bool pw){
   double Dstrucs=structure.getavgStructureLC(kin);
 //   cout << "LC " << front*kin.getEpsilon()*MASSD << " " << dens*kin.getAlpha_s()/kin.getAlpha_i() << " " << Dstrucs/(kin.getEpsilon()*MASSD) 
 //   << " " << kin.getXN() << " " << endl;
-  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getPs_mu()[0];
+  return front*dens*Dstrucs*HBARC*HBARC*1.E19*sqrt(pr*pr+kin.getMassN()*kin.getMassN());
   
 }
 
-double DeuteronCross::getVNACross(LightConeKin2to2 &kin, bool pw){
-  double front=2.*pow(kin.getYA()*ALPHA/kin.getQ2(),2.);
-  double dens=pw?momdistr.getMomDistrpwLC(kin):momdistr.getMomDistrfsiLC(kin);
-  double Dstrucs=structure.getStructureLC(kin);
-  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getAlpha_s()/kin.getAlpha_i();
-  
-}
 
 
 double DeuteronCross::getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool azz, bool pw, double Einoff){
