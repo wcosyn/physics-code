@@ -40,7 +40,7 @@ SET(DIS_LIBRARY_PROPERTIES ${DIS_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(DIS SHARED ${DIS_SRCS})
-target_link_libraries(DIS ${LIBRARIES} MePhys Glauber Knockout
+target_link_libraries(DIS ${LIBRARIES} MePhys Knockout
 Integrator)
 set_target_properties(DIS PROPERTIES ${DIS_LIBRARY_PROPERTIES})
 ############### build the library #####################
