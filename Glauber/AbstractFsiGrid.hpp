@@ -2,7 +2,7 @@
  * \defgroup Glauber libGlauber: Library that contains all Glauber related classes
  * \author Wim Cosyn
  * \date 16/08/2011
- * \brief This code implements classes for the Glauber RMSGA formalism, including CT and SRC effects.
+ * \brief This module implements classes for the Glauber RMSGA formalism, including CT and SRC effects.
  * 
  * \details 
  * - It contains classes for a mean field nucleus, a mean field nucleus with densities (used in thickness calculations). <BR>
@@ -108,7 +108,7 @@ public:
   int getIntegrator() const{return integrator;} /*!< returns the integrator type */
   
   /*! add particle subject to isi/fsi, checks to see that the vector contains max one incoming particle
-   *\param newparticle pointer to instance of FastParticle you want to add*/
+   *\param[in] newparticle pointer to instance of FastParticle you want to add*/
   virtual void addParticle(FastParticle &newparticle); 
   void clearParticles(); /*!< Clear contents of isi/fsi particles vector*/
   void printParticles() const; /*!< Print contents of isi/fsi particles vector*/
@@ -184,7 +184,7 @@ public:
   bool getFilledallgrid() const{return filledallgrid;}
   
 protected:
-  virtual void setFilenames(std::string dir); /*!< set filenames of the grids \param dir dir where all input/output is located */ 
+  virtual void setFilenames(std::string dir); /*!< set filenames of the grids \param dir share dir where all input/output is located */ 
   bool filledgrid; /*!< denotes if the grid has been filled */
   bool filledallgrid; /*!< denotes if allthe (possible) grids have been filled */
   double r_hit;  /*!< r coordinate of the hard interaction point, what the grid depens on */
@@ -197,7 +197,7 @@ protected:
   std::string fsi_filename; /*!< filename for regular fsi grid */
   int number_of_grids; /*!<number of fsi grids */
   double prec; /*!< integration precision */
-  int integrator; /*!< https://www.facebook.com/*/
+  int integrator; /*!< which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy */
   
 private:
   std::string dir;  /*!< dir where all input/output is located */ 
@@ -237,5 +237,5 @@ private:
   
   
 };
-/** @} */
+/*! @} */
 #endif
