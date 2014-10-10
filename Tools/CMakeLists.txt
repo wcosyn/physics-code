@@ -32,9 +32,6 @@ TLorentzQuaternion.h
 TKinematics.h
 TKinematics2to2.h
 TElectronKinematics.h
-pair.h
-recmosh.h
-newcoef.h
 # TMPI.h
 TKinematics2to3.h
 TKinematics2to3WithLabAngles.h

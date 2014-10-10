@@ -50,6 +50,7 @@ public:
 		   double pA, double vecq, TVector3 &vecSp1, TVector3 &vecSp2, TVector3 &vecBeam, TVector3 &vecSpcm); 
   /*! Copy Constructor */
   LightConeKin2to3(LightConeKin2to3 &rhs);
+  LightConeKin2to3& operator=(LightConeKin2to3 &rhs); /*!< assignment operator */
   
   const FourVector<double> &getSp1_mu() const{return Sp1_mu;} /*!< [MeV] fourvector spectator 1 */
   const FourVector<double> &getSp2_mu() const{return Sp2_mu;}/*!< [MeV] fourvector spectator 2 */

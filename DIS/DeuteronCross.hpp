@@ -1,3 +1,17 @@
+/*! \defgroup DIS libDIS: Library that contains all classes related to DIS processes
+ * \author Wim Cosyn
+ * \date 29/08/2012
+ * \brief This code implements classes to compute DIS cross sections on deuteron
+ * 
+ * \details 
+ * 
+ * -Has a class that computes tagged spectator DIS off the deuteron cross sections<BR>
+ * [DeuteronCross]<BR>
+ * -Has a class that computes tagged spectators DIS off a He3 target <BR> 
+ * [He3Cross] <BR><BR>
+ * 
+ */
+
 /*! \file DeuteronCross.hpp 
  * \brief Contains declaration of class DeuteronCross, computes deuteron exclusive cross sections
  * \author Wim Cosyn
@@ -42,6 +56,10 @@ public:
   DeuteronCross(std::string wfname, bool proton, std::string strucname,
     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset, int looplimit);
   ~DeuteronCross(); /*!<Destructor */
+  DeuteronCross(const DeuteronCross&); /*!< Copy Constructor */
+  DeuteronCross& operator=(const DeuteronCross&); /*!< assignment operator */
+
+
   /*! get the average cross section in VNA formalism, only valid in lab frame
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
@@ -81,16 +99,11 @@ public:
    * [see Wim's lightconeDIS.pdf note for formulas (eq. 40), only with VNA deuteron density now]
    */
   double getVNACross(LightConeKin2to2 &kin, bool pw);
-  /*! computes the results like they are presented in the Deeps data
-   * \param Q2 [MeV^2] four-momentum transfer
-   * \param W [MeV] invariant mass of X
-   * \param Ein [MeV] beam energy
-   * \param pr [MeV] spectator momentum
-   * \param costhetar angle of spectator with q
-   * \param proton DIS on proton (1) or neutron (0)
-   * \param[out] planewave [MeV^-3] plane wave result
-   * \param[out]  fsi [MeV^-3]  fsi result
-   */
+    /*! Set scattering parameters for FSI
+   * \param sigmain total cross section [mb]
+   * \param betain slope parameter [GeV^-2]
+   * \param epsin real part of amplitude
+   */  
   void setScatter(double sigmain, double betain, double epsin);
 private:
   double massi; /*!< mass of nucleon interacting with photon */
@@ -108,6 +121,16 @@ private:
    */
   double getavgBonus(TKinematics2to2 &kin, TElectronKinematics &electron, bool lc);
   
+  /*! computes the results like they are presented in the Deeps data
+   * \param Q2 [MeV^2] four-momentum transfer
+   * \param W [MeV] invariant mass of X
+   * \param Ein [MeV] beam energy
+   * \param pr [MeV] spectator momentum
+   * \param costhetar angle of spectator with q
+   * \param proton DIS on proton (1) or neutron (0)
+   * \param[out] planewave [MeV^-3] plane wave result
+   * \param[out]  fsi [MeV^-3]  fsi result
+   */
   void getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
     double &planewave, double &fsi);
   /*! computes the results like they are presented in the Deeps data in the LC formalism
@@ -200,11 +223,6 @@ private:
    * \param deepsarray pointer to array with deeps results
    */
   static void maint_deepsarray(double *****deepsarray);
-  /*! Set scattering parameters for FSI
-   * \param sigmain total cross section [mb]
-   * \param betain slope parameter [GeV^-2]
-   * \param epsin real part of amplitude
-   */  
   
   
 };

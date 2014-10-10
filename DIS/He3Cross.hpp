@@ -26,6 +26,8 @@ public:
    * \param proton photon interacts with proton [1] or neutron [0]
    */
   He3Cross(std::string wfname, std::string inputdir, std::string strucname, bool proton);
+  He3Cross(const He3Cross&); /*!< Copy Constructor */
+  He3Cross& operator=(const He3Cross&); /*!< assignment operator */
   ~He3Cross(); /*!<Destructor */
   
   /*! Calculate He3 momentum distribution for a certain kinematics of the spectators

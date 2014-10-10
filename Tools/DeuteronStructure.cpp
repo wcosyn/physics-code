@@ -10,10 +10,32 @@
 using namespace std;
 
 
-DeuteronStructure::DeuteronStructure(int pr, string nm)
-:proton(pr),name(nm),massi(proton?MASSP:MASSN){
+DeuteronStructure::DeuteronStructure(const bool pr, string nm)
+:proton(pr),name(nm),massi(pr?MASSP:MASSN){
   
 }
+
+
+DeuteronStructure::DeuteronStructure(){
+}
+
+DeuteronStructure::DeuteronStructure(const DeuteronStructure& rhs){
+  proton=rhs.proton;
+  name=rhs.name;
+  massi=rhs.massi;
+}
+
+DeuteronStructure& DeuteronStructure::operator=(const DeuteronStructure& rhs){
+  if(this!=&rhs) { // avoid self-assignment
+    proton=rhs.proton;
+    name=rhs.name;
+    massi=rhs.massi;
+  }
+  return *this;
+
+  
+}
+
 
 
 void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, double &FT, double &FTT, double &FTL,double Einoff) const{

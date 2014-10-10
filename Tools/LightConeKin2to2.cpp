@@ -107,3 +107,38 @@ LightConeKin2to2::LightConeKin2to2(LightConeKin2to2 &rhs){
   zs=rhs.zs;
   kvec=rhs.kvec;
 }
+
+LightConeKin2to2& LightConeKin2to2::operator=(LightConeKin2to2 &rhs){
+ if(this!=&rhs) { // avoid self-assignment
+    massA=rhs.massA;
+    Q2=rhs.Q2;
+    massN=rhs.massN;
+    A_mu=rhs.A_mu;
+    q_mu=rhs.q_mu;
+    ps_mu=rhs.ps_mu;
+    pi_mu=rhs.pi_mu;
+    X_mu=rhs.X_mu;
+    massX=rhs.massX;
+    Beam_mu=rhs.Beam_mu;
+    isCollinear=rhs.isCollinear;
+    yA=rhs.yA;
+    xA=rhs.xA;
+    yN=rhs.yN;
+    xN=rhs.xN;
+    pA_plus=rhs.pA_plus;
+    pA_perp=rhs.pA_perp;
+    q_perp=rhs.q_perp;
+    ps_perp=rhs.ps_perp;
+    alpha_s=rhs.alpha_s;
+    alpha_i=rhs.alpha_i;
+    epsilon=rhs.epsilon;
+    k_perp=rhs.k_perp;
+    k=rhs.k;
+    Ek=rhs.Ek;
+    k_z=rhs.k_z;
+    zs=rhs.zs;
+    kvec=rhs.kvec;
+  }
+  return *this;
+  
+}

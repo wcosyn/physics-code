@@ -67,6 +67,34 @@ name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR),x(xin),Q2(Q2in),Wsq(Wsqin
 }
 
 
+
+NuclStructure::NuclStructure(const NuclStructure& rhs){
+  name=rhs.name;
+  proton=rhs.proton;
+  mass=rhs.mass;
+  dir=rhs.dir;
+  x=rhs.x;
+  Q2=rhs.Q2;
+  Wsq=rhs.Wsq;
+}
+
+NuclStructure& NuclStructure::operator=(const NuclStructure& rhs){
+  if(this!=&rhs) { // avoid self-assignment
+    name=rhs.name;
+    proton=rhs.proton;
+    mass=rhs.mass;
+    dir=rhs.dir;
+    x=rhs.x;
+    Q2=rhs.Q2;
+    Wsq=rhs.Wsq;
+  }
+  return *this;
+ 
+  
+}
+
+
+
 void NuclStructure::getF_Alekhin(double &F1, double &F2){
   if(x>1){
     F1=0.;

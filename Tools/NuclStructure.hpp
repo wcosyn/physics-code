@@ -15,6 +15,7 @@
  * - A leptonkinematics class for neutrino scattering [TLeptonKinematics] <BR>
  * - A class for he3 wave functions [He3wf] <BR>
  * -A class that has lightcone kinematics for a two body scattering reaction  [LightConeKin2to2] <BR><BR>
+ * -A class that has lightcone kinematics for a two to three body scattering reaction  [LightConeKin2to3] <BR><BR>
  * 
  * Utilfunctions.hpp contains a few helper functions (mostly math related)<BR>
  * --------------------------------------<BR>
@@ -126,6 +127,11 @@ public:
    * \param F1 F1 structure function
    * \param F2 F2 structure function
    */
+  NuclStructure(const NuclStructure&); /*!< Copy Constructor */
+  NuclStructure& operator=(const NuclStructure&); /*!< assignment operator */
+
+  
+  
   /*! Returns the F1 and F2 structure functions */
   void getF(double &F1, double &F2);
   double getF1(); /*!< returns the F1 structure function */
@@ -193,5 +199,5 @@ private:
   double getF2_CTEQ();/*!< return F2 structure function in the CTEQ parametrization */
   
 };
-/** @} */
+/*! @} */
 #endif

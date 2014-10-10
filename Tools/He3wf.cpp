@@ -55,15 +55,35 @@ He3wf::He3wf(string wf_name,string dir):mA_set(-1){
   else if(!wf_name.compare("CDBonn-TML")) strcpy(he3filename,(dir+"/he_3.cdbonn+tml4784.jmax=6.esuche.cdep_app.fad.form").c_str());
   else { cerr << "invalid name for he3 parametrisation function" << endl; assert(1==0);}
   readhe3wave(&mA_set,&usecdep);
+  he3reset(&mA_set,&usecdep);
   delete []copy;
   
   return;
 
 }
+He3wf::He3wf():mA_set(-1){
+}
+
+He3wf::He3wf(const He3wf& rhs){
+  mA_set=-1;
+  int ex=0; he3reset(&mA_set,&ex);
+}
+
+He3wf& He3wf::operator=(const He3wf& rhs){
+  if(this!=&rhs) { // avoid self-assignment
+    mA_set=-1;
+    int ex=0; he3reset(&mA_set,&ex); 
+  }
+  return *this;
   
+}
+
+
+
 complex<double> He3wf::getWF(TVector3 &p1, TVector3 &p2, int ms1, int ms2, int mt1, int mt2, int mA){
   //sanity checks
-  if(abs(mA_set)!=1) { cerr << "invalid he3 spin value" << endl; assert(1==0);}
+  int ex=0; he3reset(&mA,&ex);
+  if(abs(mA)!=1) { cerr << "invalid he3 spin value" << endl; assert(1==0);}
   if(mA!=mA_set) {mA_set=mA; int ex=0; he3reset(&mA,&ex);}
   int ms3=mA_set-ms1-ms2;
   int mt3=1-mt1-mt2;
@@ -93,7 +113,7 @@ complex<double> He3wf::getWF(TVector3 &p1, TVector3 &p2, int ms1, int ms2, int m
 
 complex<double> He3wf::getWF(double p1[3], double p2[3], int ms1, int ms2, int mt1, int mt2, int mA){
   //sanity checks
-  if(abs(mA_set)!=1) { cerr << "invalid he3 spin value" << endl; assert(1==0);}
+  if(abs(mA)!=1) { cerr << "invalid he3 spin value" << endl; assert(1==0);}
   if(mA!=mA_set) {mA_set=mA; int ex=0; he3reset(&mA,&ex);}
   int ms3=mA_set-ms1-ms2;
   int mt3=1-mt1-mt2;

@@ -1,3 +1,14 @@
+/*! \defgroup Knockout libKnockout: Library that contains all classes related to knockout cross sections, amplitudes and what not
+ * \author Wim Cosyn
+ * \date 28/08/2012
+ * \brief This code implements classes to compute cross sections and amplitudes for knockout reactions
+ * 
+ * \details 
+ * 
+ * - It contains a class to compute plane-wave and distorted momentum distributions for the deuteron <BR>
+ * [DeuteronMomDistr] <BR>
+ */
+
 /*! \file DeuteronMomDistr.hpp 
  * \brief Contains declaration of class DeuteronMomDistr, to compute deuteron momentum distributions
  * \author Wim Cosyn
@@ -38,10 +49,15 @@ public:
    */
   DeuteronMomDistr(std::string name, double massi, int offshell, double sigma, double beta, 
 		   double epsilon, double betaoff, double lambda, int looplimit);
-    /*! Constructor
+    /*! minimal Constructor
    * \param name Deuteron wave function name, see TDeuteron
    */
   DeuteronMomDistr(std::string name);
+  DeuteronMomDistr(); /*!< Default Constructor */
+  DeuteronMomDistr(const DeuteronMomDistr&); /*!< Copy Constructor */
+  DeuteronMomDistr& operator=(const DeuteronMomDistr&); /*!< assignment operator */
+
+  
   ~DeuteronMomDistr(); /*!<Destructor */
 //   /*! Computes plane-wave momentum distribution in LC formalism according to Frankfurt and Strikman, Phys.Rep.88
 //    * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
@@ -120,6 +136,7 @@ public:
   void setScatter(double sigmain, double betain, double epsin);
   TDeuteron::Wavefunction *getDeuteronwf(){return wfref;}
 private:
+  std::string wfname; /*!< name of deuteron wf parametrization, see TDeuteron for possibilities */
   TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/
   TInterpolatingWavefunction wf; /*!< array of the wave function that gets interpolated */
   double sigma;  /*!< [MeV^-2] total cross section, scattering parameter in FSI */

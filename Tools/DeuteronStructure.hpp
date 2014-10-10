@@ -25,7 +25,13 @@ public:
    * "SLAC": SLAC paramtetrization from Bodek <BR>
    * "Alekhin": leading twist parametrization by Alekhin [see PRD 68,014002], also see alekhin.f file <BR>
    */
-  DeuteronStructure(int proton, std::string name);
+  DeuteronStructure(const bool proton, std::string name);
+  
+  DeuteronStructure(); /*!< Default Constructor */
+  DeuteronStructure(const DeuteronStructure&); /*!< Copy Constructor */
+  DeuteronStructure& operator=(const DeuteronStructure&); /*!< assignment operator */
+
+  
   /*! return all four structure functions in semi-inclusive kinematics <BR>
    * For details see Phys.Rev. C84 (2011) 014601 Eqs. (24-30)
    * \param kin semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
@@ -148,7 +154,7 @@ public:
   
 private:
 //   TElectronKinematics electron; /*!< electron kinematics */
-  int proton; /*!< photon interacts with proton [1] or neutron [0] */
+  bool proton; /*!< photon interacts with proton [1] or neutron [0] */
   std::string name; /*!< string that has the structure function parametrization name */
   double massi; /*!< mass of nucleon interacting with photon */
 };

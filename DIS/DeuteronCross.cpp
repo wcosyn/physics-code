@@ -35,6 +35,26 @@ DeuteronCross::~DeuteronCross(){
   
 }
 
+DeuteronCross::DeuteronCross(const DeuteronCross& rhs){
+  massi=rhs.massi;
+  momdistr=rhs.momdistr;
+  structure=rhs.structure;
+  strucname=rhs.strucname;
+}
+
+
+DeuteronCross& DeuteronCross::operator=(const DeuteronCross& rhs){
+  if(this!=&rhs) { // avoid self-assignment
+    massi=rhs.massi;
+    momdistr=rhs.momdistr;
+    structure=rhs.structure;
+    strucname=rhs.strucname;
+  }
+  return *this;
+
+}
+
+
 double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec, bool lc){
   
   double dens=/*lc? momdistr.getLCMomDistrpw(kin) :*/ momdistr.getMomDistrpw(kin); 
