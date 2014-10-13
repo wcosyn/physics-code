@@ -35,19 +35,126 @@
 \begin{center}
 \rule{\textwidth}{2pt} \\ [-0.8\baselineskip]
 \rule{\textwidth}{1pt} \\ \vspace{8pt}
-{\Huge \textsc{Glauber ISI/FSI RMSGA C++ Project / Deuteron DIS stuff}} \\
+{\Large \textsc{Introduction to my C++ code used to compute spectator tagging 
+cross sections on light nuclei}} \\
 \vspace{10pt}
-\textsc{ -- Forever pre alpha -- } \\
-\textsc{ -- Wim Cosyn, Camille Colle -- }
+\textsc{Wim Cosyn \texttt{wim.cosyn@ugent.be}}
 \end{center}
 \rule{\textwidth}{1pt} \\ [-0.75\baselineskip]
 \rule{\textwidth}{2pt} \\ [2\baselineskip]
 
-\input{intro.tex}
+\section{Install}
+You can check out the code by doing (with \texttt{<codedir>} the directory 
+where 
+you want the code to end up)
+\begin{align*}
+	\texttt{\$ svn checkout https://ssftrac.ugent.be/svn/wim/tags/LDRD-0.01 
+<codedir>}
+\end{align*}
 
-\input{installing.tex}
+\subsection{Prerequisites}
+You need the following packages to succesfully compile and run the code:
+\begin{itemize}
+ \item \texttt{cmake}\quad version at least 2.8.10
+\item \texttt{ROOT}\quad version at least 5.00, packages \texttt{MathMore} and 
+\texttt{Minuit2} (or \texttt{Minuit}) need to be installed
+\item \texttt{gsl}
+\item \texttt{doxygen, graphviz} \quad needed to build the documentation
+\end{itemize}
+During 
+configuration, \texttt{cmake} will check all this and throw a fatal error 
+when one of these is not present.
 
-\input{integration.tex}
+\subsection{Building the libraries}
+To build 
+and install the code do (in the dir where you checked 
+out the code)
+\begin{align*}
+    & \texttt{\$ cd build} \\
+	& \texttt{\$ cmake -DCMAKE\_CXX\_COMPILER=g++}\\
+ &\qquad \texttt{-DCMAKE\_C\_COMPILER=gcc 
+-DCMAKE\_BUILD\_TYPE=Release ..} \\
+	& \texttt{\$ make -jN}\quad [\texttt{N}= \text{number of CPU cores you 
+want 
+to use during compilation}]\\
+	& \texttt{\$ make install } \\
+	& \texttt{\$ make doc } 
+\end{align*}
+If you have the intel C and C++ compilers installed and want to use those, 
+substitute \texttt{g++} 
+with \texttt{icpc} and \texttt{gcc} with \texttt{icc}.  Other build types than 
+\texttt{Release} include \texttt{Debug, Profile} (there's more, see the 
+\texttt{CMakeLists.txt} file in the \texttt{<codedir>} for those if you want to 
+use 
+them). 
+If your hostname is not one of 
+the predefined ones (my own pc \& laptop, the HPC of UGent) you will end up 
+using the default compiler flags, which should be fine in most cases.  In case 
+you want to add your custom compiler flags, you can add an extra case in the 
+\texttt{CMakeLists.txt} file in the root dir of the code.  The last command 
+(\texttt{\$ make doc}) generates the API through DoxyGen.  These can be 
+accessed in 
+the \texttt{<codedir>/doc/html/index.html} file [html] or by compiling 
+\texttt{<codedir>/doc/latex/refman.text} [\LaTeX].
 
-\input{glauber.tex}
+When compiling your own programs that make use of the routines in the libraries 
+of this project, you will in general also have to link to the necessary 
+\texttt{gsl} and \texttt{root} libraries.  For an example see the makefile 
+that is included with the example program in 
+\texttt{<codedir>/progs/LDRD\_test} (though linking to gsl is not really 
+necessary there to compile the program)
+
+
+\section{Troubleshooting}
+\begin{itemize}
+\item Error \texttt{Wrong ELF class}. If you get errors mentioning ELF-class 
+then you are probably linking 64 to 32 bit code which does not compute. Make 
+sure you are linking to the 64 bit libraries of \texttt{root} and not the 32 bit 
+ones. For me the 64 bit libraries were located in \texttt{/usr/local/lib/root} 
+while the 32 bit ones were in \texttt{/usr/local/root/lib/root}. 
+\item Other troubles? Contact me through e-mail (wim.cosyn@ugent.be)
+\end{itemize}
+
+\section{Tagged spectator DIS}
+The necessary subroutines for tagged spectator DIS off a deuteron or $^3$He 
+target can be found in the \texttt{DeuteronCross} and \texttt{He3Cross} classes 
+in the \texttt{DIS} library.  These subroutines include
+\texttt{\begin{itemize}
+\item DeuteronCross::getavgLCCross
+\item DeuteronCross::getLCCross
+\item DeuteronCross::getavgVNACross
+\item DeuteronCross::getVNACross
+\item He3Cross::getCross
+\end{itemize}}
+For the lightcone formalism, the FSI computation is currently still being 
+tested so cannot be used.  More information on these functions can be found in 
+the API (see above 
+how to generate it and where to find it).  Each of the above functions takes an 
+instance of \texttt{LightConeKin2to2} or \texttt{LightConeKine2to3} as input 
+which contains the complete kinematics of a 2 to 2 (deuteron) or 2 to 3 
+($^3$He) event.  I can write additional constructors for this class if these 
+would be more convenient to integrate them in the event generators.  Now they 
+take as input the momentum three vectors of the initial and detected particles 
+and their masses.  
+
+For the $\sigma_{\text{tot}}$ rescattering parameter in the 
+FSI, to use the value we obtained from our fits to the Deeps data, call the 
+\texttt{DeuteronCross::sigmaparam} and 
+\texttt{DeuteronCross::setScatter} functions (see API for more information).
+
+A sample program is included in \texttt{<codedir>/progs/LDRD\_test} that 
+demonstrates the usage of all the above routines.  Simply run \texttt{\$ make} 
+in that directory to compile the program.  To run it do \texttt{\$ 
+<codedir>/bin/LDRD\_test <codedir>/share}.  The output should look like this
+
+\texttt{
+deuteron 809001 703071 124961 108599 574065 88672.1
+\newline\newline
+changing sigma parameter \newline
+new sigma [mb]: 329.055 \newline
+159180 24587.5 \newline
+\newline
+He3 31.9164 \newline
+}
+
 \end{document}

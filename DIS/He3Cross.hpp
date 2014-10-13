@@ -32,15 +32,11 @@ public:
   
   /*! Calculate He3 momentum distribution for a certain kinematics of the spectators
    * \param[in] kin LightconeKin2to3 object that has all the kinematics
-   * \return [MeV-6] momentum distribution, normed so that \int d3p1 d3p2 gives 1. 
+   * \return [MeV-4] momentum distribution S(ps1,ps2) times E_sp1_lab*E_sp2_lab, normed so that \int d3p1 d3p2 S(ps1,ps2) gives 1. 
    */  
   double getDensity(LightConeKin2to3 &kin);
     /*! get the average cross section
-   * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
-   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-   * \param electron has electron kinematics
-   * \param pw plane-wave calculation [1] or not [0]
-   * \param Einoff off-shell energy of the nucleon interacting with the photon
+   * \param kin kinematics object containing the gamma+He3->X+N1+N2 kinematics <BR>
    * \return [nb/GeV^6] tagged spectators cross section \f$ \frac{d\sigma}{dx_A dQ^2 \frac{d^3p_{s_1}}{E_{s_1}}\frac{d^3p_{s_2}}{E_{s_2}}} \f$ 
    * NOT averaged over phi [see he3.pdf note for formula details]
    */

@@ -9,6 +9,8 @@
  * [DeuteronCross]<BR>
  * -Has a class that computes tagged spectators DIS off a He3 target <BR> 
  * [He3Cross] <BR><BR>
+ * -Has a class that computes inclusive DIS off the deuteron<BR>
+ * [InclusiveCross]<BR>
  * 
  */
 
@@ -105,6 +107,17 @@ public:
    * \param epsin real part of amplitude
    */  
   void setScatter(double sigmain, double betain, double epsin);
+
+
+  /*! gives you sigma in the parametrization we got from deeps, Q^2 dependence included
+   * \return [MeV^-2] sigma
+   * \param W_sq [MeV^2] invariant mass squared of scatterer
+   * \param Q2 [MeV^2] four-momentum transfer squared */  
+  static double sigmaparam(double W_sq, double Q2)  ;
+  
+  
+  
+  
 private:
   double massi; /*!< mass of nucleon interacting with photon */
   std::string strucname; /*!< structure function parametrization */
