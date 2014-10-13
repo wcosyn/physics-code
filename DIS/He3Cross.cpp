@@ -52,10 +52,10 @@ double He3Cross::getDensity(LightConeKin2to3 &kin){
       }
     }
   }
-  return result; //He3 spin average not needed, symmetry used in m_A
+  return result*sqrt((MASSn*MASSn+sp1.Mag2())*(MASSn*MASSn+sp2.Mag2())); //He3 spin average not needed, symmetry used in m_A
 }
 
 double He3Cross::getCross(LightConeKin2to3 &kin){
   return 2.*pow(kin.getYA()*ALPHA/kin.getQ2(),2.)*getDensity(kin)*strucfunc.getStructureLC(kin)
-      *kin.getSp1_mu()[0]*kin.getSp2_mu()[0]*HBARC*HBARC*1.E25;  //conversion from MeV-8 to nb/GeV-6
+      *HBARC*HBARC*1.E25;  //conversion from MeV-8 to nb/GeV-6
 }
