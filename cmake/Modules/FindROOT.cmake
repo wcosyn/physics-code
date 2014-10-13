@@ -124,7 +124,6 @@ IF (ROOT_FOUND)
 #    ARGS "--noldflags --noauxlibs --libs" 
     ARGS "--cflags --glibs" 
     OUTPUT_VARIABLE root_flags )
- message("rrrooootttt " ${root_flags})
 
 #  STRING(REGEX MATCHALL "([^ ])+"  root_libs_all ${root_flags})
 #  STRING(REGEX MATCHALL "-L([^ ])+"  root_library ${root_flags})
@@ -133,7 +132,6 @@ IF (ROOT_FOUND)
     LIST(REMOVE_ITEM root_list "-limf")
   endif()
   string(REPLACE ";" " " root_flags "${root_list}")
-  message("rrrooootttt " ${root_flags})
   SET(ROOT_LIBRARIES ${root_flags})
 
   # Make variables changeble to the advanced user
@@ -156,6 +154,28 @@ IF (ROOT_FOUND)
     PATHS ${ROOT_BINARY_DIR}
     NO_DEFAULT_PATH
     )
+
+#check if mathmore and minuit modules are available
+execute_process(COMMAND root-config --has-mathmore
+	OUTPUT_VARIABLE ROOT_MATHMORE
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND root-config --has-mathmore
+	OUTPUT_VARIABLE ROOT_MATHMORE
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND root-config --has-minuit
+	OUTPUT_VARIABLE ROOT_MINUIT
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND root-config --has-minuit2
+	OUTPUT_VARIABLE ROOT_MINUIT2
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+IF (${ROOT_MATHMORE} MATCHES "no")
+  MESSAGE( FATAL_ERROR "ROOT has to be installed with the MathMore module enabled.  Please see the ROOT documentation for details")
+ENDIF (${ROOT_MATHMORE} MATCHES "no")
+IF (${ROOT_MINUIT} MATCHES "no" AND ${ROOT_MINUIT2} MATCHES "no")
+  MESSAGE( FATAL_ERROR "ROOT has to be installed with the Minuit or Minuit2 module enabled.  Please see the ROOT documentation for details")
+ENDIF (${ROOT_MINUIT} MATCHES "no" AND ${ROOT_MINUIT2} MATCHES "no")
+
+
 
 ENDIF (ROOT_FOUND)
 
