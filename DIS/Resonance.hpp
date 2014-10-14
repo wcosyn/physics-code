@@ -1,25 +1,3 @@
-/*! \defgroup DIS libDIS: Library that contains all classes related to DIS processes
- * \author Wim Cosyn
- * \date 29/08/2012
- * \brief This code implements classes to compute DIS cross sections on deuteron
- * 
- * \details 
- * 
- * -Has a class that describes certain resonance in the FSI with all the scattering and particle properties <BR>
- * [Resonance] <BR>
- * -Has a class that computes tagged spectator DIS off the deuteron cross sections<BR>
- * [DeuteronCross]<BR>
- * -Has a class that computes inclusive DIS off the deuteron<BR>
- * [InclusiveCross]<BR>
- * -Has a class that computes inclusive DIS off the deuteron in a N resonance model<BR>
- * [InclusiveCrossRes]<BR>
- * -Has a class that computes tagged spectators DIS off a He3 target <BR> 
- * [He3Cross] <BR><BR>
- * 
- */
-
-
-
 /*! \file Resonance.hpp 
  * \brief Contains declaration of class Resonance, has particle and scattering properties
  * \author Wim Cosyn

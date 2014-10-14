@@ -25,6 +25,42 @@ NucleonWeakOperator::~NucleonWeakOperator(){
 }
 
 
+NucleonWeakOperator::NucleonWeakOperator(const NucleonWeakOperator &rhs): NucleonEMOperator(rhs){
+  charged=rhs.charged;
+  M_A=rhs.M_A;
+  r_s2=rhs.r_s2;
+  mu_s=rhs.mu_s;
+  gA_s=rhs.gA_s;
+  isopartner=rhs.isopartner;
+  GA_weak=rhs.GA_weak;
+  F1_weak=rhs.F1_weak;
+  F2_weak=rhs.F2_weak;
+  GE_weak=rhs.GE_weak;
+  GM_weak=rhs.GM_weak;
+  
+}
+
+NucleonWeakOperator & NucleonWeakOperator::operator=(const NucleonWeakOperator &rhs){
+  if(this!=&rhs) { // avoid self-assignment
+    NucleonEMOperator::operator=(rhs);
+    charged=rhs.charged;
+    M_A=rhs.M_A;
+    r_s2=rhs.r_s2;
+    mu_s=rhs.mu_s;
+    gA_s=rhs.gA_s;
+    isopartner=rhs.isopartner;
+    GA_weak=rhs.GA_weak;
+    F1_weak=rhs.F1_weak;
+    F2_weak=rhs.F2_weak;
+    GE_weak=rhs.GE_weak;
+    GM_weak=rhs.GM_weak;
+  }
+  return *this;
+
+}
+
+
+
 
 FourVector<GammaStructure> NucleonWeakOperator::getCC1_weak(const FourVector<double> &pi, const FourVector<double> &pf, 
 						     const double r, const int medium, const MeanFieldNucleusThick &nucleus) const{

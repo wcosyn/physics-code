@@ -8,7 +8,8 @@ using namespace std;
 
 DeuteronMomDistr::DeuteronMomDistr(std::string name, double mass, int offshells, double sigmain, double betain, double epsilonin,
   double betaoffin, double lambdain, int loop_limit):
-sigma(sigmain/10.*INVHBARC*INVHBARC),  //to MeV^-2
+wfname(name),
+  sigma(sigmain/10.*INVHBARC*INVHBARC),  //to MeV^-2
 beta(betain*1.E-06), // to MeV^-2
 epsilon(epsilonin),
 betaoff(betaoffin*1.E-06),// to MeV^-2
@@ -29,6 +30,7 @@ looplimit(loop_limit){
 
 //for simple case
 DeuteronMomDistr::DeuteronMomDistr(std::string name):
+wfname(name),
 sigma(0.),
 beta(0.),
 epsilon(0.),
@@ -46,6 +48,46 @@ offshellset(3){
   
     
 }
+
+DeuteronMomDistr::DeuteronMomDistr(){
+  
+}
+
+DeuteronMomDistr::DeuteronMomDistr(const DeuteronMomDistr& rhs){
+  wfname=rhs.wfname;
+  sigma=rhs.sigma;
+  beta=rhs.beta;
+  epsilon=rhs.epsilon;
+  betaoff=rhs.betaoff;
+  lambda=rhs.lambda;
+  massi=rhs.massi;
+  massr=rhs.massr;
+  przprime=rhs.przprime;
+  offshellset=rhs.przprime;
+  wfref = TDeuteron::Wavefunction::CreateWavefunction(wfname);
+  wf=rhs.wf;
+}
+
+DeuteronMomDistr& DeuteronMomDistr::operator=(const DeuteronMomDistr& rhs){
+  if(this!=&rhs) { // avoid self-assignment
+    wfname=rhs.wfname;
+    sigma=rhs.sigma;
+    beta=rhs.beta;
+    epsilon=rhs.epsilon;
+    betaoff=rhs.betaoff;
+    lambda=rhs.lambda;
+    massi=rhs.massi;
+    massr=rhs.massr;
+    przprime=rhs.przprime;
+    offshellset=rhs.przprime;
+    wfref = TDeuteron::Wavefunction::CreateWavefunction(wfname);
+    wf=rhs.wf;
+  }
+  return *this;
+  
+}
+
+
 
 
 DeuteronMomDistr::~DeuteronMomDistr(){

@@ -40,6 +40,10 @@ public:
   NucleonWeakOperator(const double Q2, const bool proton, const int para, const bool charged, const double M_A, const double r_s2,
 		    const double mu_s, const double gA_s=-0.19);
   ~NucleonWeakOperator(); /*!< Destructor */
+  NucleonWeakOperator(const NucleonWeakOperator &rhs); /*!< Copy constructor */
+  NucleonWeakOperator & operator=(const NucleonWeakOperator &rhs); /*!< assinment */
+  
+  
   double getGE_weak() const{ return GE_weak;} /*!< Gives you electric form factor */
   double getGM_weak() const{return GM_weak;} /*!< Gives you magnetic form factor */
   double getGA_weak() const{return GA_weak;} /*!< Gives you axial vector form factor */

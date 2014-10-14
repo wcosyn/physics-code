@@ -42,6 +42,7 @@ public:
 
   /*! Copy constructor */
   LightConeKin2to2(LightConeKin2to2 &rhs);
+  LightConeKin2to2& operator=(LightConeKin2to2 &rhs); /*!< assignment operator */
   
   double getMassA() const{return massA;} /*!<[MeV] mass hadron target */
   double getQ2() const{return Q2;} /*!< [MeV^2] Q2 virtual photon */

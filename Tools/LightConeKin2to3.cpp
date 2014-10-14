@@ -34,3 +34,12 @@ LightConeKin2to3::LightConeKin2to3(LightConeKin2to3 &rhs): LightConeKin2to2(rhs)
   Sp2_mu=rhs.Sp2_mu;
 }
   
+  
+LightConeKin2to3& LightConeKin2to3::operator=(LightConeKin2to3 &rhs){
+ if(this!=&rhs) { // avoid self-assignment
+    Sp1_mu=rhs.Sp1_mu;
+    Sp2_mu=rhs.Sp2_mu;
+  }
+  return *this;
+  
+}

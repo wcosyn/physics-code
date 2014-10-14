@@ -18,6 +18,19 @@ MeanFieldNucleusThick::MeanFieldNucleusThick(const int nucleus, const string & d
    
 }
 
+MeanFieldNucleusThick::MeanFieldNucleusThick(const MeanFieldNucleusThick &rhs): MeanFieldNucleus(rhs){
+  protondensity=new double[getWF_r_lines()];
+  neutrondensity=new double[getWF_r_lines()];
+  totaldensity = new double[getWF_r_lines()];
+  for(int j=0;j<getWF_r_lines();j++){
+    protondensity[j]=rhs.protondensity[j];
+    neutrondensity[j]=rhs.neutrondensity[j];
+    totaldensity[j]=rhs.totaldensity[j];
+  }
+  
+}
+
+
 MeanFieldNucleusThick::~MeanFieldNucleusThick(){
   //cout << "Cleaning up thickness nucleus..." << getInputfile() << endl;
   delete [] protondensity;

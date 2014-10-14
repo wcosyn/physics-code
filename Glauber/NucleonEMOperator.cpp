@@ -28,6 +28,39 @@ proton(prot),parametrization(para),Q2(q2){
 NucleonEMOperator::~NucleonEMOperator(){
 }
 
+NucleonEMOperator::NucleonEMOperator(const NucleonEMOperator &rhs){
+  Q2=rhs.Q2;
+  proton=rhs.proton;
+  parametrization=rhs.parametrization;
+  tau=rhs.tau;
+  GE_null=rhs.GE_null;
+  GM_null=rhs.GM_null;
+  GE=rhs.GE;
+  GM=rhs.GM;
+  F1=rhs.F1;
+  F2=rhs.F2;
+  Q2index=rhs.Q2index;
+  Q2_interp=rhs.Q2_interp;
+}
+
+NucleonEMOperator & NucleonEMOperator::operator=(const NucleonEMOperator &rhs){
+  if(this!=&rhs) { // avoid self-assignment
+    Q2=rhs.Q2;
+    proton=rhs.proton;
+    parametrization=rhs.parametrization;
+    tau=rhs.tau;
+    GE_null=rhs.GE_null;
+    GM_null=rhs.GM_null;
+    GE=rhs.GE;
+    GM=rhs.GM;
+    F1=rhs.F1;
+    F2=rhs.F2;
+    Q2index=rhs.Q2index;
+    Q2_interp=rhs.Q2_interp;
+  }
+  return *this;
+  
+}
 
 
 FourVector<GammaStructure> NucleonEMOperator::getCC1(const FourVector<double> &pi, const FourVector<double> &pf, 

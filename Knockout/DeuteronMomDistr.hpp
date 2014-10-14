@@ -42,6 +42,9 @@ public:
    * \param name Deuteron wave function name, see TDeuteron
    */
   DeuteronMomDistr(std::string name);
+  DeuteronMomDistr(); /*!< Default Constructor */
+  DeuteronMomDistr(const DeuteronMomDistr&); /*!< Copy Constructor */
+  DeuteronMomDistr& operator=(const DeuteronMomDistr&); /*!< assignment operator */
   ~DeuteronMomDistr(); /*!<Destructor */
 //   /*! Computes plane-wave momentum distribution in LC formalism according to Frankfurt and Strikman, Phys.Rep.88
 //    * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
@@ -120,6 +123,7 @@ public:
   void setScatter(double sigmain, double betain, double epsin);
   TDeuteron::Wavefunction *getDeuteronwf(){return wfref;}
 private:
+  std::string wfname; /*!< name of deuteron wf parametrization, see TDeuteron for possibilities */
   TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/
   TInterpolatingWavefunction wf; /*!< array of the wave function that gets interpolated */
   double sigma;  /*!< [MeV^-2] total cross section, scattering parameter in FSI */

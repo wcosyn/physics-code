@@ -1,3 +1,25 @@
+/*! \defgroup DIS libDIS: Library that contains all classes related to DIS processes
+ * \author Wim Cosyn
+ * \date 29/08/2012
+ * \brief This code implements classes to compute DIS cross sections on deuteron
+ * 
+ * \details 
+ * 
+ * -Has a class that describes certain resonance in the FSI with all the scattering and particle properties <BR>
+ * [Resonance] <BR>
+ * -Has a class that computes tagged spectator DIS off the deuteron cross sections<BR>
+ * [DeuteronCross]<BR>
+ * -Has a class that computes inclusive DIS off the deuteron<BR>
+ * [InclusiveCross]<BR>
+ * -Has a class that computes inclusive DIS off the deuteron in a N resonance model<BR>
+ * [InclusiveCrossRes]<BR>
+ * -Has a class that computes tagged spectators DIS off a He3 target <BR> 
+ * [He3Cross] <BR><BR>
+ * 
+ */
+
+
+
 /*! \file DeuteronCross.hpp 
  * \brief Contains declaration of class DeuteronCross, computes deuteron exclusive cross sections
  * \author Wim Cosyn
@@ -42,6 +64,10 @@ public:
   DeuteronCross(std::string wfname, bool proton, std::string strucname,
     double sigmain, double betain, double epsilonin, double betaoffin, double lambdain, int offshellset, int looplimit);
   ~DeuteronCross(); /*!<Destructor */
+  DeuteronCross(const DeuteronCross&); /*!< Copy Constructor */
+  DeuteronCross& operator=(const DeuteronCross&); /*!< assignment operator */
+
+
   /*! get the average cross section like it was generated in the BONUS MC
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
@@ -197,6 +223,14 @@ public:
    * \param epsin real part of amplitude
    */  
   void setScatter(double sigmain, double betain, double epsin);
+
+  /*! gives you sigma in the parametrization we got from deeps, Q^2 dependence included
+   * \return [MeV^-2] sigma
+   * \param W_sq [MeV^2] invariant mass squared of scatterer
+   * \param Q2 [MeV^2] four-momentum transfer squared */  
+  static double sigmaparam(double W_sq, double Q2)  ;
+   
+   
 private:
   double massi; /*!< mass of nucleon interacting with photon */
   std::string strucname; /*!< structure function parametrization */

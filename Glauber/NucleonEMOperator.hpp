@@ -34,6 +34,8 @@ public:
    */
   NucleonEMOperator(const double Q2, const bool proton, const int para);
   ~NucleonEMOperator(); /*!< Destructor */
+  NucleonEMOperator(const NucleonEMOperator &rhs); /*!< Copy Constructor */
+  NucleonEMOperator & operator=(const NucleonEMOperator &rhs); /*!< assignment operator */
   double getGE() const{ return GE;} /*!< Gives you electric form factor */
   double getGM() const{return GM;} /*!< Gives you magnetic form factor */
   double getF1() const{return F1;} /*!< Gives you F1 */

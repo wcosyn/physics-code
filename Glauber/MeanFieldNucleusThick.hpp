@@ -34,7 +34,7 @@ public:
    * \param dir std::string containing the dir were all input is located
    */
   MeanFieldNucleusThick(const int nucleus = 0, const std::string & dir = "."); 
-  
+  MeanFieldNucleusThick(const MeanFieldNucleusThick &rhs); /*!< Copy Constructor */
   ~MeanFieldNucleusThick(); /*!< Destructor */
   //ALL DENSITIES ARE TIMES R^2 ALREADY!!!!!!!!!!!!
   //I REPEAT

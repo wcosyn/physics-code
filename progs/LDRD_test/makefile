@@ -31,7 +31,7 @@ EFILEST   = 	../../bin/staticLDRD_test
 #		Mathematical functions
 LIBS =	 	
 WIMLIBS =   -lDIS -lKnockout -lMePhys -lIntegrator -lcuba
-ROOT =		`root-config --cflags --glibs` -lMinuit2  
+ROOT =		`root-config --cflags --glibs` -lMinuit2  `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/lib
  INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools -I ~/Code/DIS -I ~/Code/Knockout
 STATICLIBS =   ~/Code/lib/libmephys.a  ~/Code/lib/libdis.a  ~/Code/lib/libknockout.a  ~/Code/lib/libintegrator.a
