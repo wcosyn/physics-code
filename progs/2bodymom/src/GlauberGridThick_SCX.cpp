@@ -48,8 +48,8 @@ GlauberGridThick_SCX::GlauberGridThick_SCX(MeanFieldNucleusThick* nuc,FastPartic
 	_zpoints(zpoints),
 	_bstep(0.),
 	_zstep(0.),
-	_pdens_fctr(1.),
-	_ndens_fctr(1.),
+	_pdens_fctr(nuc->getZ()),
+	_ndens_fctr(nuc->getN()),
 	_grid(NULL),
 	_arbitraryPhase(0.)
 	{
@@ -79,16 +79,16 @@ GlauberGridThick_SCX::~GlauberGridThick_SCX(){
 void GlauberGridThick_SCX::addKnockoutParticle(int level){ // add a knockout particle, on which no FSIs take place, only to correct for density changes
 	assert(level < _nuc->getTotalLevels());
 	if (level < _nuc->getPLevels()){ // it is a proton
-		_pdens_fctr -= 1./_nuc->getZ();
+		_pdens_fctr -= 1.; ///_nuc->getZ();
 	} else {
-		_ndens_fctr -= 1./_nuc->getN();
+		_ndens_fctr -= 1.; ///_nuc->getN();
 	}
 	std::cout << "#density correction factors are (p,n) = (" << _pdens_fctr << ", " << _ndens_fctr << ") " << std::endl;
 }
 
 void GlauberGridThick_SCX::clearKnockout(){
-	_pdens_fctr = 1.;
-	_ndens_fctr = 1.;
+	_pdens_fctr = _nuc->getZ(); //1.; // because density is normed to one, we need density normed to Z
+	_ndens_fctr = _nuc->getN(); //1.; // because density is normed to one, we need density normed to N
 }
 
 complex<double> GlauberGridThick_SCX::getFrontFactor(){ // energy/density dependent constant prefactor

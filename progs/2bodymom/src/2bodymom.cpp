@@ -7,7 +7,7 @@
 
 
 #define SCX_LEADING true
-#define SCX_ARB_PHASE 0.
+#define SCX_ARB_PHASE M_PI/2. // in radians...
 
 int main(int argc, char** argv){
 	std::vector<struct Event> events;

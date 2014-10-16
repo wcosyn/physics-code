@@ -70,7 +70,7 @@ void hallb_kinematics(int argc, char* argv[]){
 	
 	std::vector<struct Event> events;
 	MeanFieldNucleusThick nuc(MeanFieldNucleus::C,SHAREDIR);
-	HALLB::generateKinematics(events,nevents,nuc,0,1,seed);
+	HALLB::generateKinematics(events,nevents,nuc,0,0,seed);
 
 	char fname[128];
 	sprintf(fname,"HALLB_%s_N%d.kin",nuc.getNucleusName().c_str(),nevents);

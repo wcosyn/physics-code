@@ -105,7 +105,7 @@ void HALLB::generateKinematics(std::vector<struct Event>& events, unsigned n, Me
 		/** Pcm **/
 		TVector3 Pcm = TVector3();	
 		get_Pcm(Pcm);
-		TVector3 k1  = TVector3(0.,0.,300. + 1200.*rand()/RAND_MAX );
+		TVector3 k1  = TVector3(0.,0.,300. + 700.*rand()/RAND_MAX );
 		/** shellindices **/
 		int shellindex1 = shell1_distribution(generator); // get a random shellindex1
 		int shellindex2 = shell2_distribution(generator); // get a random shellindex2

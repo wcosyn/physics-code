@@ -1,7 +1,7 @@
 import ctypes
 
 
-lib = ctypes.cdll.LoadLibrary("/home/camille/2bodymom/src/MeanFieldNucleusWrapper.so")
+lib = ctypes.cdll.LoadLibrary("/home/camille/Codev2/trunk/progs/2bodymom/src/MeanFieldNucleusWrapper.so")
 # return types
 lib.getA.restype             = ctypes.c_int
 lib.getZ.restype             = ctypes.c_int
@@ -169,9 +169,10 @@ if __name__=="__main__":
 	print '#',n.getExcitation()
 	print '#',n.getA()
 	print '#',n.getZ()
-	print '#',n.getN_array()
-	print '#',n.getL_array()
-	print '#',n.getJ_array()
+        print '#         : ',range(0,len(n.getN_array()))
+        print '# n array : ',n.getN_array()
+        print '# l array : ',n.getL_array()
+        print '# j array : ',n.getJ_array()
 	print '#',n.getFinalMProton()
 	print '#',n.getFinalMNeutron()
         print n.getWaveFunction(1,1,1.,0.,0.)
