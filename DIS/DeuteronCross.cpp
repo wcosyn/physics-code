@@ -35,6 +35,26 @@ DeuteronCross::~DeuteronCross(){
   
 }
 
+DeuteronCross::DeuteronCross(const DeuteronCross& rhs){
+  massi=rhs.massi;
+  momdistr=rhs.momdistr;
+  structure=rhs.structure;
+  strucname=rhs.strucname;
+}
+
+
+DeuteronCross& DeuteronCross::operator=(const DeuteronCross& rhs){
+  if(this!=&rhs) { // avoid self-assignment
+    massi=rhs.massi;
+    momdistr=rhs.momdistr;
+    structure=rhs.structure;
+    strucname=rhs.strucname;
+  }
+  return *this;
+
+}
+
+
 double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec, bool lc){
   
   double dens=/*lc? momdistr.getLCMomDistrpw(kin) :*/ momdistr.getMomDistrpw(kin); 
@@ -189,10 +209,25 @@ double DeuteronCross::getavgVNALabCross(TKinematics2to2 &kin,TElectronKinematics
   
 }
 
+double DeuteronCross::getLCCross(LightConeKin2to2 &kin, bool pw){
+  if(!pw){
+    cerr << "DeuteronCross::getavgLCCross with FSI still in debugging mode. Not useable for now." << endl;
+    assert(1==0);
+  }
+  double front=2.*pow(kin.getYA()*ALPHA/kin.getQ2(),2.);
+  double dens=pw?momdistr.getMomDistrpwLC(kin):momdistr.getMomDistrfsiLC(kin);
+  double Dstrucs=structure.getStructureLC(kin);
+  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getAlpha_s()/kin.getAlpha_i();
+  
+}
 
 double DeuteronCross::getavgLCCross(LightConeKin2to2 &kin, bool pw){
   if(!kin.getIsCollinear()){
-    cout << "DeuteronCross::getavgLCCross only useable in collinear kinematics" << endl;
+    cerr << "DeuteronCross::getavgLCCross only useable in collinear kinematics" << endl;
+    assert(1==0);
+  }
+  if(!pw){
+    cerr << "DeuteronCross::getavgLCCross with FSI still in debugging mode. Not useable for now." << endl;
     assert(1==0);
   }
   double Q2=kin.getQ2();
@@ -204,7 +239,7 @@ double DeuteronCross::getavgLCCross(LightConeKin2to2 &kin, bool pw){
   
 }
 
-double DeuteronCross::getLCCross(LightConeKin2to2 &kin, bool pw){
+double DeuteronCross::getVNACross(LightConeKin2to2 &kin, bool pw){
   double front=2.*pow(kin.getYA()*ALPHA/kin.getQ2(),2.);
   double nu_lab=(kin.getS()+kin.getQ2()-kin.getMassA()*kin.getMassA())/(2.*kin.getMassA());
   double pr=sqrt(pow(kin.getPs_mu()[1]-kin.getA_mu()[1]/2.,2.)+
@@ -213,7 +248,7 @@ double DeuteronCross::getLCCross(LightConeKin2to2 &kin, bool pw){
   TKinematics2to2 VNAkin("","",kin.getMassA(),kin.getMassN(),kin.getMassX(),"qsquared:wlab:pklab",kin.getQ2(),nu_lab,pr);
   double dens=pw?momdistr.getMomDistrpw(VNAkin):momdistr.getMomDistrfsi(VNAkin,0.);
   double Dstrucs=structure.getStructureLC(kin);
-  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getPs_mu()[0];
+  return front*dens*Dstrucs*HBARC*HBARC*1.E19*sqrt(pr*pr+kin.getMassN()*kin.getMassN());
   
 }
 
@@ -233,17 +268,10 @@ double DeuteronCross::getavgVNACross(LightConeKin2to2 &kin, bool pw){
   double Dstrucs=structure.getavgStructureLC(kin);
 //   cout << "LC " << front*kin.getEpsilon()*MASSD << " " << dens*kin.getAlpha_s()/kin.getAlpha_i() << " " << Dstrucs/(kin.getEpsilon()*MASSD) 
 //   << " " << kin.getXN() << " " << endl;
-  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getPs_mu()[0];
+  return front*dens*Dstrucs*HBARC*HBARC*1.E19*sqrt(pr*pr+kin.getMassN()*kin.getMassN());
   
 }
 
-double DeuteronCross::getVNACross(LightConeKin2to2 &kin, bool pw){
-  double front=2.*pow(kin.getYA()*ALPHA/kin.getQ2(),2.);
-  double dens=pw?momdistr.getMomDistrpwLC(kin):momdistr.getMomDistrfsiLC(kin);
-  double Dstrucs=structure.getStructureLC(kin);
-  return front*dens*Dstrucs*HBARC*HBARC*1.E19*kin.getAlpha_s()/kin.getAlpha_i();
-  
-}
 
 
 double DeuteronCross::getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, bool azz, bool pw, double Einoff){
@@ -496,4 +524,13 @@ void DeuteronCross::maint_deepsarray(double *****deepsarray){
 
 void DeuteronCross::setScatter(double sigmain, double betain, double epsin){
   momdistr.setScatter(sigmain,betain,epsin);
+}
+
+
+double DeuteronCross::sigmaparam(double W_sq, double Q2){
+  /*cout << sqrt(W_sq) << " " << 65/10.*1.8E06/Q2*INVHBARC*INVHBARC << " " << (25.3*1.E-06*2.3+53*(sqrt(W_sq>5.76E06?5.76E06:W_sq)-MASSP)*1.E-03)
+	/(1.E-05*Q2)*INVHBARC*INVHBARC << " " << endl;
+  */if(abs(W_sq-1.232*1.232E06)<2.5E5) return 65/10.*1.8E06/Q2*INVHBARC*INVHBARC;
+  return (25.3*1.E-06*2.3+53*(sqrt(W_sq>5.76E06?5.76E06:W_sq)-MASSP)*1.E-03)
+	/(1.E-05*Q2)*INVHBARC*INVHBARC;
 }

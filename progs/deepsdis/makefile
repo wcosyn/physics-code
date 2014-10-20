@@ -8,7 +8,7 @@
 VERSION =	
 
 #		Calc-path
-CPATH 	=	.
+CPATH 	=	../..
 
 #		C compilation...
  CC      = 	icpc
@@ -32,9 +32,9 @@ EFILEST   = 	../../bin/staticdeepstest ../../bin/staticdeepsfit ../../bin/static
 LIBS =	 	
 WIMLIBS =   -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator -lcuba
 ROOT =		`root-config --cflags --glibs` -lMinuit2  
- LIBDIRS = -L ~/Code/lib
- INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/DIS -I ~/Code/Knockout
-STATICLIBS =  ~/Code/lib/libglauber.a   ~/Code/lib/libmephys.a  ~/Code/lib/libdis.a  ~/Code/lib/libknockout.a  ~/Code/lib/libintegrator.a
+ LIBDIRS = -L $(CPATH)/lib
+ INCLUDEDIRS =  -I $(CPATH)/Integrator -I $(CPATH)/Tools  -I $(CPATH)/Glauber -I $(CPATH)/DIS -I $(CPATH)/Knockout
+STATICLIBS =  $(CPATH)/lib/libglauber.a   $(CPATH)/lib/libmephys.a  $(CPATH)/lib/libdis.a  $(CPATH)/lib/libknockout.a  $(CPATH)/lib/libintegrator.a
 
 #		Header files
 HDRS =		bonusdata.h bonusfits.h

@@ -25,6 +25,12 @@ public:
    * \param dir dir where the data files are located
    */
   He3wf(std::string wf_name, std::string dir); 
+  He3wf(); /*!< Default Constructor*/
+  He3wf(const He3wf&); /*!< Copy Constructor */
+  He3wf& operator=(const He3wf&); /*!< assignment operator */
+  
+  
+  
   /*! Calculate the he3 wf for a certain momentum, spin and isospin configuration
    * \param p1 [MeV] momentum of particle 1
    * \param p2 [MeV] momentum of particle 2
