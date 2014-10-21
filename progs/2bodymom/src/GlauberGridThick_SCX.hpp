@@ -27,7 +27,7 @@ class GlauberGridThick_SCX {
 		void addKnockoutParticle(int level); /**< add a knockout particle, on which no FSIs take place, only to correct for density changes */
 		void clearKnockout();
 		void calcFSI(double b,double z,double& res,double& err);
-		void setArbitraryPhase(double ph){ _arbitraryPhase = ph; }
+		void setArbitraryPhase(double ph){ _arbitraryPhase = ph; std::cout << "#arb phase set to " << ph << std::endl; }
 		complex<double> getFrontFactor();
 		complex<double> getInterp(double[]); // remember r,cos\theta and \phi
 		complex<double> getInterp(numint::array<double,3>); // remember r,cos\theta and \phi

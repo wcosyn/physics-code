@@ -7,7 +7,7 @@
 
 
 #define SCX_LEADING true
-#define SCX_ARB_PHASE M_PI/2. // in radians...
+#define SCX_ARB_PHASE 0.5*M_PI // in radians...
 
 int main(int argc, char** argv){
 	std::vector<struct Event> events;
@@ -127,12 +127,13 @@ void dist2bodymom_SCX(MeanFieldNucleusThick& nuc,Event& e,double& res,double& er
 	
 	FastParticle particle_p1(e.type1==0? 8 : 9,0,e.p1,0.,0.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
 	FastParticle particle_p2(e.type2==0? 8 : 9,0,e.p2,0.,0.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
-	cout << "Type and mass of fast particle " << e.mass1 << " " << e.type1 << endl;
-	cout << "Type and mass of slow particle " << e.mass2 << " " << e.type2 << endl;
+	cout << "# Type and mass of fast particle " << e.mass1 << " " << e.type1 << endl;
+	cout << "# Type and mass of slow particle " << e.mass2 << " " << e.type2 << endl;
 	GlauberGridThick_SCX grid(&nuc,SCX_LEADING ? particle_p1 : particle_p2 ,25,20); // the particle you pass here is the one SCX FSIs are calculated upon
 	grid.setArbitraryPhase(SCX_ARB_PHASE);
 	grid.addKnockoutParticle(e.shellindex1); // add knockouts so density for SCX is adjusted 
 	grid.addKnockoutParticle(e.shellindex2); // add knockouts so density for SCX is adjusted
+	grid.constructGlauberGrid();             // call this after you set the correct knockout particles and the arbitrary phase! 
 	// GLAUBER stuff END ---------------------------
 	
 	

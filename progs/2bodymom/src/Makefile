@@ -60,7 +60,7 @@ $(TARGETS): %: %.o $(OBJS)
 	@tput sgr0
 	$(CC) $^ $(CFLAGS) $(INC) $(LIBS) -o $@
 	@printf "\n"
-	mv $@ ../run/
+	#mv $@ ../run/
 
 
 %.o : %.cpp

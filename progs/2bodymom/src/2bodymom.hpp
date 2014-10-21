@@ -54,7 +54,7 @@ using std::stringstream;
 
 inline std::string getShareDir(){
 	std::stringstream ss;
-	ss << getenv("HOME") << "/Code/share" ;
+	ss << getenv("HOME") << "/Codev2/trunk/share" ;
 	return ss.str();
 }
 

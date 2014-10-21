@@ -64,7 +64,7 @@ GlauberGridThick_SCX::GlauberGridThick_SCX(MeanFieldNucleusThick* nuc,FastPartic
 	std::cout << "#Momentum of particle is [mag,theta,phi]: " << fp.getP() << ", " << fp.getTheta() << ", " << fp.getPhi() << std::endl;
 	sprintf(_filename,"%s/grids/GlauberGridThick_SCX_nuc%s_type%d_beta2p%.2f_beta2n%.2f_bp%d_zp%d.bin",SHAREDIR.c_str(),nuc->getNucleusName().c_str(),fp.getParticletype(),fp.getBeta2p(),fp.getBeta2n(),bpoints,zpoints);
 	std::cout << "#filename is " << _filename << std::endl;
-	constructGlauberGrid();
+	//constructGlauberGrid(); // don't call this from constructor yet. Leave up to user so that density correction and arbitrary phase can be set before construction of the grid
 }
 
 GlauberGridThick_SCX::~GlauberGridThick_SCX(){
