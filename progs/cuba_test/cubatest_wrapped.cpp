@@ -40,7 +40,7 @@ void test_suave() {
 	int maxeval = 1000000;
 	int nnew = 5000;
 	double flatness = 0.25;
-	char statefile[] = {"suave.state"};
+	char* statefile = NULL; //{"suave.state"};
 	
 	// **** OUTPUT VARIABLES ****** //
 	int nregions    = 0;
@@ -76,7 +76,7 @@ void test_vegas() {
 	int nincrease = 10000;
 	int nbatch = 50000;
 	int gridno = 0;
-	char statefile[] = {"vegas.state"};
+	char* statefile = NULL; //{"vegas.state"};
 	
 	// **** OUTPUT VARIABLES ****** //
 	int neval=0;
@@ -119,7 +119,7 @@ void test_divonne(){
 	double* xgiven = NULL;
 	int nextra = 0;
 	peakfinder_t peakfinder = 0;
-	char statefile[] = {"divonne.state"};
+	char* statefile = NULL; //{"divonne.state"};
 	
 	// **** OUTPUT VARIABLES ****** //
 	int nregions=0;
@@ -154,7 +154,7 @@ void test_cuhre(){
 	int minEval = 10000;
 	int maxEval = 1000000;
 	int key=11;
-	char statefile[] = {"cuhre.state"};
+	char* statefile = NULL; //{"cuhre.state"};
 	// **** OUTPUT VARIABLES ****** //
 	int nregions =0;
 	int neval    =0;

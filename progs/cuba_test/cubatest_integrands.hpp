@@ -53,6 +53,14 @@ void unit_sphere( const numint::array<double,N> &x, void* param, double &ret){
 	//cout << "evaluated sphere @ " << x[0] << "," << x[1] << "," << x[2] << " r = " << r << " returned " << ret << endl;
 }
 
+template<unsigned N>
+void unit_sphere_complex( const numint::array<double,N>&x, void* param, std::complex<double>& ret){
+	double r = 0.;
+	for (unsigned i=0;i<N;i++)
+		r += x[i]*x[i];
+	ret = (r>1)? std::complex<double>(0.,0.) : std::complex<double>(1.,1.);
+}
+
 // !!! assumes the typename T has a field size declared. Is ok for numint::array's and vector<...> !!!
 template<typename T, unsigned N>
 void unit_sphere_comp( const numint::array<double ,N> &x, void* param, T &ret){
