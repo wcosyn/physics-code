@@ -1,3 +1,8 @@
+//prog to fit the normalization of the bonus data
+//sigma parameters used from deeps fit
+//take scattering parameters fixed, fit norms (other strategies do not yield significant better results_)
+
+
 
 #include <TVirtualFitter.h>
 #include <TFitter.h>
@@ -59,14 +64,12 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
     for(int j=0;j<10;j++){
       double error,result,costheta;
       if(Beamindex==0){ 
-	error=sqrt(pow(data::bonusdata4[Qindex][Windex][i][j][2],2.)+
-	  pow(data::bonusdata4[Qindex][Windex][i][j][2],2.));
+	error=data::bonusdata4[Qindex][Windex][i][j][2];
 	result=data::bonusdata4[Qindex][Windex][i][j][1];
 	costheta=data::bonusdata4[Qindex][Windex][i][j][0];
       }
       else{
-	error=sqrt(pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.)+
-	  pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.));
+	error=data::bonusdata5[Qindex-1][Windex][i][j][2];
 	result=data::bonusdata5[Qindex-1][Windex][i][j][1];
 	costheta=data::bonusdata5[Qindex-1][Windex][i][j][0];
       }

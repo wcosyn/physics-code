@@ -72,7 +72,7 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   k_perp=ps_perp-alpha_s/2.*pA_perp;
   k=sqrt((massN*massN+k_perp.Mag2())/(alpha_s*alpha_i)-massN*massN);
   Ek=sqrt(k*k+massN*massN);
-  k_z=(1-alpha_s)*Ek; //sign could also be taken +!!!! (check this later...)
+  k_z=(alpha_s-1)*Ek; //sign could also be taken +!!!! (check this later...)
   zs=(A_mu*ps_mu)/(A_mu*q_mu);
   kvec=TVector3(k_perp.X(),k_perp.Y(),k_z);
 }

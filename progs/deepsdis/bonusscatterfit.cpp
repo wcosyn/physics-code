@@ -59,8 +59,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
     for(int j=0;j<10;j++){
       double error,result,costheta;
       if(!((Qindex==2)&&(Windex==4))){
-	error=sqrt(pow(data::bonusdata4[Qindex][Windex][i][j][2],2.)+
-	  pow(data::bonusdata4[Qindex][Windex][i][j][2],2.));
+	error=data::bonusdata4[Qindex][Windex][i][j][2];
 	result=data::bonusdata4[Qindex][Windex][i][j][1];
 	costheta=data::bonusdata4[Qindex][Windex][i][j][0];
 	if(result!=0.){
@@ -74,8 +73,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	}
       }
       if(Qindex>0){
-	error=sqrt(pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.)+
-	  pow(data::bonusdata5[Qindex-1][Windex][i][j][2],2.));
+	error=data::bonusdata5[Qindex-1][Windex][i][j][2];
 	result=data::bonusdata5[Qindex-1][Windex][i][j][1];
 	costheta=data::bonusdata5[Qindex-1][Windex][i][j][0];
 	if(result!=0.){
