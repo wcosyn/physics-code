@@ -20,11 +20,11 @@ CFLAGS= -O2 -std=c++11 -fPIC $(WFLAGS) `gsl-config --cflags` `root-config --cfla
 #  This is needed because the -L, -l flags only link @compile time but not runtime! If the libraries are not in the standard library paths
 #  or LD_LIBRARY_PATH is not set we will get in trouble because the dynamic linker will (ld) will not be able to find our libs @runtime. 
 #  To avoid using LD_LIBRARY_PATH we use rpath...
-LIBS=-L$(HOME)/Codev2/trunk/lib -Wl,-rpath=$(HOME)/Codev2/trunk/lib -lcuba -lIntegrator -lGlauber -lKnockout -lMePhys `gsl-config --libs` `root-config --libs`
-INC=-I$(HOME)/Codev2/trunk/Tools -I$(HOME)/Codev2/trunk/Glauber -I$(HOME)/Codev2/trunk/Integrator
+LIBS=-L$(HOME)/Code/trunk/lib -Wl,-rpath=$(HOME)/Code/trunk/lib -lcuba -lIntegrator -lGlauber -lKnockout -lMePhys `gsl-config --libs` `root-config --libs`
+INC=-I$(HOME)/Code/trunk/Tools -I$(HOME)/Code/trunk/Glauber -I$(HOME)/Code/trunk/Integrator
 
 TARGETS=sampler 2bodymom SCX_test RPWIA_toy#sampler_test       # files with a main()
-OBJS=sampler_HALLA.o sampler_PRL99_072501.o sampler_HALLB.o parser.o event.o GlauberGridThick_SCX.o # object files for building, no main()'s here !!!
+OBJS=sampler_HALLA.o sampler_PRL99_072501.o sampler_HALLB.o parser.o event.o GlauberGridThick_SCX.o GlauberGridThick_SEL.o # object files for building, no main()'s here !!!
 SOLIBS=MeanFieldNucleusWrapper.so
 DEPDIR:=dep
 DEPS=$(patsubst %.o, $(DEPDIR)/%.d, $(OBJS))

@@ -1,7 +1,7 @@
 import ctypes
 
 
-lib = ctypes.cdll.LoadLibrary("/home/camille/Codev2/trunk/progs/2bodymom/src/MeanFieldNucleusWrapper.so")
+lib = ctypes.cdll.LoadLibrary("/home/camille/Code/trunk/progs/2bodymom/src/MeanFieldNucleusWrapper.so")
 # return types
 lib.getA.restype             = ctypes.c_int
 lib.getZ.restype             = ctypes.c_int
@@ -177,12 +177,14 @@ if __name__=="__main__":
 	print '#',n.getFinalMNeutron()
         print n.getWaveFunction(1,1,1.,0.,0.)
 	del n
-        """
-        nthick = MeanFieldNucleusThick(MeanFieldNucleus.names["C"])
+        
+        nthick = MeanFieldNucleusThick(MeanFieldNucleus.names["Pb"])
         import numpy as np
         import pylab as pl
+        import scipy.integrate
+        print "integral of density is ", 4.*np.pi*scipy.integrate.quad(nthick.getTotalDensity,0,nthick.getRange(),limit=250)[0]
         rr = np.linspace(nthick.getWF_r_step(),nthick.getRange(),100)
         pl.plot(rr,[ nthick.getTotalDensity(r)/r/r for r in rr ])
         pl.show()
         del nthick
-        """
+        

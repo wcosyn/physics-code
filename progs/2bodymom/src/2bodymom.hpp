@@ -17,6 +17,7 @@
 #include <GlauberGrid.hpp>
 #include <GlauberGridThick.hpp>
 #include "GlauberGridThick_SCX.hpp"
+#include "GlauberGridThick_SEL.hpp"
 #include <FsiCorrelator.hpp>
 #include <string>
 using std::string;
@@ -54,7 +55,7 @@ using std::stringstream;
 
 inline std::string getShareDir(){
 	std::stringstream ss;
-	ss << getenv("HOME") << "/Codev2/trunk/share" ;
+	ss << getenv("HOME") << "/Code/trunk/share" ;
 	return ss.str();
 }
 
@@ -67,10 +68,12 @@ void  dist2bodymom        (MeanFieldNucleusThick& nuc,std::vector<struct Event>&
 void  dist2bodymom_glauber(MeanFieldNucleusThick& nuc,struct Event& e,double& res, double& err);
 void  dist2bodymom_rpwia  (MeanFieldNucleusThick& nuc,struct Event& e,double& res, double& err);
 void  dist2bodymom_SCX    (MeanFieldNucleusThick& nuc,struct Event& e,double& res, double& err);
+void  dist2bodymom_SEL    (MeanFieldNucleusThick& nuc,struct Event& e,double& res, double& err);
 
 void integrandum_rwpia(complex<double>& res, const numint::array<double,3>& x, TVector3& P, TSpinor* u_pm, TSpinor* u_ps, MeanFieldNucleusThick* nuc,int shellindex1, int m1, int shellindex2,int m2);
 void integrandum_glauber(complex<double>& res, const numint::array<double,3>& x, TVector3& P, TSpinor* u_pm, TSpinor* u_ps, MeanFieldNucleusThick* nuc, int shellindex1, int m1, int shellindex2,int m2, GlauberGridThick* grid);
 void integrandum_SCX(complex<double>& res, const numint::array<double,3>& x, TVector3& P, TSpinor* u_pm, TSpinor* u_ps, MeanFieldNucleusThick* nuc, int shellindex1, int m1, int shellindex2,int m2, GlauberGridThick_SCX* grid);
+void integrandum_SEL(complex<double>& res, const numint::array<double,3>& x, TVector3& P, TSpinor* u_pm, TSpinor* u_ps, MeanFieldNucleusThick* nuc, int shellindex1, int m1, int shellindex2,int m2, GlauberGridThick_SEL* grid);
 
 // some util print functions
 string vecString(TVector3& v);
