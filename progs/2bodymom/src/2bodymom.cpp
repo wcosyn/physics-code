@@ -7,8 +7,8 @@
 
 
 #define SCX_LEADING true  // leading particle for single particle SCX calculations
-#define SEL_LEADING false // leading particle for single particle SEL calculations
-#define SCX_ARB_PHASE 1.0*M_PI // in radians...
+#define SEL_LEADING true // leading particle for single particle SEL calculations
+#define SCX_ARB_PHASE 0.5*M_PI // in radians...
 
 int main(int argc, char** argv){
 	std::vector<struct Event> events;

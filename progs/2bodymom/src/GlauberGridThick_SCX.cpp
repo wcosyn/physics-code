@@ -105,11 +105,18 @@ void GlauberGridThick_SCX::constructGlauberGrid(){
 	if (!input){ // we have to write the grid!
 		file.close();
 		std::cout << "#GRID NOT FOUND " << _filename << " PREPARING TO WRITE TO IT " << std::endl;
-		file.open(_filename,std::ios::binary | std::ios::out);
-		assert( file.is_open()); // make sure the file has been opened
 	} else {
 		std::cout << "#GRID EXISTS " << _filename << " PREPARING TO READ FROM IT " << std::endl;
 		assert( file.is_open()); // make sure read file has been opened
+		// get length of file should be 2*_bpoints*_zpoints*sizeof(double), if not file is probs. corrupt, recalculate tha shizzle
+		file.seekg(0,file.end);
+		unsigned int length = file.tellg();
+		file.seekg(0,file.beg);
+		if (!(length == 2*_bpoints*_zpoints*sizeof(double))){
+			std::cout << "#GRID HAS NOT THE RIGHT SIZE, RECALCULATING! " << std::endl;
+			input = false;
+			file.close();
+		}
 	}
 	std::cout << "#filename exists? " << file << std::endl;
 	std::cout << "#constructing grid " << _bpoints << " by " << _zpoints << std::endl;
@@ -128,16 +135,30 @@ void GlauberGridThick_SCX::constructGlauberGrid(){
 				file.read((char*)&res,sizeof(double)); // read data
 				file.read((char*)&err,sizeof(double)); // read error
 			} else {
-				calcFSI(b,z,res,err);
-				file.write((char*)&res,sizeof(double)); // write data
-				file.write((char*)&err,sizeof(double)); // write error
+				calcFSI(b,z,res,err); // dont write here yet, because file will be open verry long
 			}
-			std::cout << "# frontfactor is " << getFrontFactor() << " res is " << res << " hence grid is " << getFrontFactor()*res << std::endl;
-			_grid[bi][zi]      =   -getFrontFactor()*res; // no 1 - getFrontFactor()*res because < n | 1 | p > is zero!
+			//std::cout << "# frontfactor is " << getFrontFactor() << " res is " << res << " hence grid is " << getFrontFactor()*res << std::endl;
+			_grid[bi][zi]      =   -getFrontFactor()*res; // no **1** - getFrontFactor()*res because < n | 1 | p > is zero!
 			_errorGrid[bi][zi] =    getFrontFactor()*err;
 			//std::cout << " [" << bi << ", " << zi << "] corresponding to " << b << ", " << z << " init to " << _grid[bi][zi] << std::endl;
 		}
 	}
+	/** 
+	 * write all the calculated fsi grid points
+	 *  only when they are all calculated, to minimize
+	 *  time output file is left open...
+	 **/
+	if (!input){
+		file.open(_filename,std::ios::binary | std::ios::out);
+		assert( file.is_open()); // make sure the file has been opened
+		for (int bi=0; bi<_bpoints;bi++){
+			for (int zi=0; zi<_zpoints;zi++){
+				file.write((char*)&_grid[bi][zi],sizeof(double)); // write data
+				file.write((char*)&_errorGrid[bi][zi],sizeof(double)); // write error
+			}
+		}
+	}
+	
 	assert(file.tellg()==_bpoints*_zpoints*2*sizeof(double)); // this should always be true, just to check, times 2 because data and errors are saved, if found to fail, maybe corrupt file?
 	file.close();
 }
