@@ -38,7 +38,13 @@ for line in f:
 
 print "brange", brange
 print "zrange", zrange
-print data_r
+blength = np.max(brange)-np.min(brange)
+zlength = np.max(zrange)-np.min(zrange)
+A = blength*zlength
+print "integral of data_r : ", np.mean(data_r)*A
+print "integral of data_i : ", np.mean(data_i)*A
+
+#print data_r
 
 fig = pl.figure()
 fig.suptitle("real part")

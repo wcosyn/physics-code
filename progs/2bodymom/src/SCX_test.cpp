@@ -168,6 +168,7 @@ void testIntegrand(){
 int main(){
 	//scatterFrontScaling();
 	testgrid_el();
+	//testgrid();
 	//createGrids();
 	//testIntegrand();
 	return 0;
@@ -230,7 +231,7 @@ void testgrid(){
 	FastParticle fp(8,0,1000.,0.,0.,0.,0.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
 	//FastParticle fp(8,0,100,M_PI/4.,0.,0.,0.,SHAREDIR);
 	//FastParticle fp(8,0,1397.,M_PI/2.,3.*M_PI/4.,0.,0.,SHAREDIR);
-	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::Pb,SHAREDIR);
+	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::C,SHAREDIR);
 	GlauberGridThick_SCX g(&nuc,fp,25,20);
 	g.addKnockoutParticle(nuc.getPLevels()+1);
 	g.addKnockoutParticle(nuc.getPLevels()-1);
@@ -265,8 +266,19 @@ void testgrid(){
 }
 
 void scatterFrontScaling(){
-	for (double p=0; p<1e5; p+=100){
+	for (double p=350; p<2000; p+=10){ // p is in MeV
 		FastParticle fp(8,0,p,0.,0.,0.,0.,SHAREDIR);
-		std::cout << p << "\t" <<fp.getScatterfront(0).real() << "\t" << fp.getScatterfront(0).imag() << std::endl;
+		FastParticle fpel(0,0,p,0.,0.,0.,0.,SHAREDIR);
+		std::cout << p << "\t" <<fp.getScatterfront(0).real() << "\t" << fp.getScatterfront(0).imag() << "\t";
+		std::cout << fpel.getScatterfront(0).real() << "\t" << fpel.getScatterfront(0).imag() << "\t";
+		std::cout << fpel.getScatterfront(1).real() << "\t" << fpel.getScatterfront(1).imag() << std::endl;
 	}
+	std::ofstream beta("beta_dep.dat");
+	for (double p=350; p<2000; p+=10){
+		FastParticle fp(8,0,p,0.,0.,0.,0.,SHAREDIR);
+		FastParticle fpel(0,0,p,0.,0.,0.,0.,SHAREDIR);
+		beta << p << "\t" << fp.getBetasq(0) << "\t" << fp.getBetasq(1) << "\t";
+		beta << fpel.getBetasq(0) << "\t" << fpel.getBetasq(1) << "\t" << std::endl;
+	}
+	beta.close();
 }

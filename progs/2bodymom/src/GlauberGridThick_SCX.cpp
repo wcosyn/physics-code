@@ -137,10 +137,9 @@ void GlauberGridThick_SCX::constructGlauberGrid(){
 			} else {
 				calcFSI(b,z,res,err); // dont write here yet, because file will be open verry long
 			}
-			//std::cout << "# frontfactor is " << getFrontFactor() << " res is " << res << " hence grid is " << getFrontFactor()*res << std::endl;
-			_grid[bi][zi]      =   -getFrontFactor()*res; // no **1** - getFrontFactor()*res because < n | 1 | p > is zero!
-			_errorGrid[bi][zi] =    getFrontFactor()*err;
-			//std::cout << " [" << bi << ", " << zi << "] corresponding to " << b << ", " << z << " init to " << _grid[bi][zi] << std::endl;
+			std::cout << "#>> calculated grid point " << bi << ", " << zi << "  ->  " << _bpoints << ", " << _zpoints << std::endl;
+			_grid[bi][zi] = res;
+			_errorGrid[bi][zi] = err;
 		}
 	}
 	/** 
@@ -157,10 +156,21 @@ void GlauberGridThick_SCX::constructGlauberGrid(){
 				file.write((char*)&_errorGrid[bi][zi],sizeof(double)); // write error
 			}
 		}
-	}
-	
+	}	
 	assert(file.tellg()==_bpoints*_zpoints*2*sizeof(double)); // this should always be true, just to check, times 2 because data and errors are saved, if found to fail, maybe corrupt file?
 	file.close();
+	
+	
+	/**
+	 * Now we add the energy dependent pre-factor to the grid. Grid is saved without the energy dependent
+	 * "FrontFactor"
+	 */
+	for (int bi=0;bi<_bpoints; bi++){
+		for (int zi=0;zi<_zpoints; zi++){
+			_grid[bi][zi]      = -getFrontFactor()*_grid[bi][zi];
+			_errorGrid[bi][zi] = getFrontFactor()*_errorGrid[bi][zi];
+		}
+	}
 }
 
 void GlauberGridThick_SCX::printGrid(){ // debug function
@@ -296,7 +306,7 @@ void GlauberGridThick_SCX::calcFSI(double b,double z,double& ret,double& err){
 	double prob;
 	/** INTEGRATOR SET UP DONE **/
 	/** cuhre specific arguments **/
-	
+	/*	
 	int key = 13; // 13 only available in two dimensions
 	int nregions;	
 	
@@ -307,10 +317,10 @@ void GlauberGridThick_SCX::calcFSI(double b,double z,double& ret,double& err){
 		&integral,&error,&prob);
 	//printf("# Cuhre (b,z) = (%6.2f,%6.2f) : res = %e, error = %e, prob = %f, neval = %d, fail = %d \n",b,z,*integral,*error,*prob,neval,fail);
 	
-	
+	*/
 	/** vegas specific arguments **/
 	/** vegas found to preform better than cuhre in this case **/
-	/*
+	
 	int seed=1234;
 	int nstart=10000;
 	int nincrease=20000;
@@ -323,7 +333,7 @@ void GlauberGridThick_SCX::calcFSI(double b,double z,double& ret,double& err){
 		nbatch,gridno,statefile,&neval,
 		&fail,&integral,&error,&prob);
 	//printf("# Vegas  (b,z) = (%6.2f,%6.2f) : res = %e, error = %e, prob = %f, neval = %d ,fail = %d\n",b,z,integral,error,prob,neval,fail);
-	*/
+	
 	ret = integral;
 	err = error;
 }
