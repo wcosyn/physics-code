@@ -67,7 +67,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   else epsilon=par[6];  //we keep epsilon fixed, didn't improve fit!
   DeuteronCross DeepsCross(wf,proton,strucname,par[4],sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
     0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep),epsilon,betaoff,lambdain,offshellset,1E03);
-  cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << endl;
+//   cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << endl;
   for(int i=startset;i<stopset;i++){
     for(int j=0;j<10;j++){
       double error,result,costheta;
@@ -332,7 +332,8 @@ int main(int argc, char *argv[])
   cout << Beamindex << " " << Qindex << " " << Windex << " " 
     << params[0] << " " << eparab[0] << " "
     << params[1] << " " << eparab[1] << " "
-    << params[2] << " " << eparab[2]
+    << params[2] << " " << eparab[2] << " "
+    << params[3] << " " << eparab[3] << " "
     << f << endl;
 
   
