@@ -15,16 +15,16 @@ CPATH 	=	../..
 # CC      = 	g++
 
 #		Flags
-OPTFLAG	=	-O3 -fPIC
+OPTFLAG	=	-O3 -fPIC -std=c++11
 # OPTFLAG	=	-O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel 
 STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
 WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(GPFLAG)  #$(DBGFLAG)  #$(STATIC)
+CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(DBGFLAG) #$(GPFLAG)    #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/deepstest ../../bin/deepsfit ../../bin/bonustest ../../bin/bonusfit ../../bin/bonusscatterfit ../../bin/bonusextrapolate ../../bin/bonusextrapolate2  ../../bin/parabfit
+EFILE   = 	../../bin/deepstest ../../bin/deepsfit ../../bin/bonustest ../../bin/bonusfit ../../bin/bonusscatterfit ../../bin/bonusextrapolate ../../bin/bonusextrapolate2  ../../bin/parabfit ../../bin/bonus_F2nfit
 EFILEST   = 	../../bin/staticdeepstest ../../bin/staticdeepsfit ../../bin/staticbonustest ../../bin/staticbonusfit  ../../bin/staticbonusscatterfit
 
 

@@ -12,7 +12,6 @@
 
 #include <cstdlib>
 #include <cmath>
-#include <cstring>
 #include <complex>
 #include <cstdarg>
 #include <time.h>
@@ -23,7 +22,10 @@
 #include <utility>
 #include <signal.h>
 #include <iomanip>
-using namespace std;
+// using namespace std;
+
+using std::cout;
+using std::endl;
 
 #include <constants.hpp>
 #include <DeuteronCross.hpp>
@@ -40,10 +42,15 @@ int Beamindex=-1;
 int startset=0;
 int stopset=4;
 int offshellset=0;
-string dir;
-double *****deepsdata;
+std::string dir;
 int looplimit=-1;
 bool lc=0;
+bool Q2dep=0;
+std::string wf;
+std::string strucname;
+
+double sigmaparam(double W, double Q2, bool Q2dep);
+
 
 void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 {
@@ -58,8 +65,9 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   if(offshellset==1) lambdain=par[6];
   if(offshellset==2) betaoff=par[6];
   else epsilon=par[6];  //we keep epsilon fixed, didn't improve fit!
-  DeuteronCross DeepsCross("paris",proton,"CB",par[4],par[5],epsilon,betaoff,lambdain,offshellset,1E03);
-  cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << " " << par[5] << " " <<par[6] << endl;
+  DeuteronCross DeepsCross(wf,proton,strucname,par[4],sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
+    0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep),epsilon,betaoff,lambdain,offshellset,1E03);
+  cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << endl;
   for(int i=startset;i<stopset;i++){
     for(int j=0;j<10;j++){
       double error,result,costheta;
@@ -78,7 +86,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
 				    data::Ebeam[Beamindex], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
 // 	cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
-	if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[i]*fsi/bonusMC-result)/error,2.); dof++;}
+	if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[i]*fsi/bonusMC-result)/error,2.); dof++;}
       }
     }
   }
@@ -86,53 +94,40 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
   f/=(dof-npar);
 }
-double sigmaparam(double W, double Q2, bool Q2dep);
 
 int main(int argc, char *argv[])
 {
   
-  Qindex = atoi(argv[3]); // parse from argv or something
-  Windex = atoi(argv[4]); // parse from argv or something
-  Beamindex=atoi(argv[2]);
-  int fixparam = atoi(argv[1]); // parse from argv or something
+  Qindex = atoi(argv[2]); // parse from argv or something
+  Windex = atoi(argv[3]); // parse from argv or something
+  Beamindex=atoi(argv[1]);
+//   int fixparam = atoi(argv[1]); // parse from argv or something
 //   startset=atoi(argv[4]);
 //   stopset=atoi(argv[5]);
-  offshellset=atoi(argv[5]);
+  offshellset=atoi(argv[4]);
 //   looplimit = atoi(argv[7]);
-  lc=atoi(argv[6]); //lc or vna density
+  lc=atoi(argv[5]); //lc or vna density
 //   double par1input=atof(argv[7]);
 //   double par2input=atof(argv[8]);
 //   double par3input=atof(argv[9]);
 //   double par4input=atof(argv[10]);
-  bool Q2dep=atoi(argv[7]);
+  Q2dep=atoi(argv[6]);
+  wf=argv[7];
+  strucname=argv[8];
   
   int testing = 0;
-  int fNDim = 7; // number of dimensions
-  double fLo[] = {0.5,0.5,0.5,0.5,0.,1.,-1.}; // lower limits of params
-  double fHi[] = {5.,5.,5.,5.,100.,20.,1.}; // upper limits of params
-  char* fName[] = {"norm1", "norm2", "norm3", "norm4", "sigma_tot","beta","epsilon"};
+  int fNDim = 4; // number of dimensions
+  double fLo[] = {0.5,0.5,0.5,0.5}; // lower limits of params
+  double fHi[] = {5.,5.,5.,5.}; // upper limits of params
+  char* fName[] = {"norm1", "norm2", "norm3", "norm4"};
   
-  if(offshellset==1){
-    fLo[6]=0.5;
-    fHi[6]=2.;
-    fName[6]="Lambda";
-  }
-  if(offshellset==2){
-    fLo[6]=1.;
-    fHi[6]=20.;
-    fName[6]="beta_off";
-  }
-  
-  int fBound[] = {1,1,1,1,1,1,1};
+  int fBound[] = {1,1,1,1};
 
   TVirtualFitter *gMinuit = TVirtualFitter::Fitter ( 0, fNDim );
 
   // Start values of parameters
   // If you have a starting individual, you can simply use 
-  double minuitIndividual[] = {1.,1.,1.,1.,sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
-    0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep),8.,-0.5}; // FIXME insert your starting individual ( double array) here
-  if(offshellset==1) minuitIndividual[6]=1.2;
-  if(offshellset==2) minuitIndividual[6]=8.;
+  double minuitIndividual[] = {1.,1.,1.,1.}; // FIXME insert your starting individual ( double array) here
   
   std::cout << "done" << endl;
 
@@ -166,32 +161,13 @@ int main(int argc, char *argv[])
 //   
   // Set the limits for each parameter...
   double step; // step size
-  for ( int i = 0 ; i < fNDim ; i++ )
-{
+  for ( int i = 0 ; i < fNDim ; i++ ){
     step = 0.01 * minuitIndividual[i];  // step size is 1% of value - so don't set value to 0 ;-)
     if ( step < 0 ) step *= -1; // make it positive
     else if ( step == 0.0 ) step = 1.0e-3;
     gMinuit->SetParameter ( i, fName[i], minuitIndividual[i], step, fLo[i], fHi[i] );
-}
-
-  // For testing, fix all but three parameters...
-  if (testing)
-{
-    std::cout << "Running reduced capability for testing...\n";
-    std::cout << "Fixing all but three parameters...\n";
-    for ( int i = 3 ; i < gMinuit->GetNumberTotalParameters() ; ++i )
-    {
-	  gMinuit->FixParameter ( i );
-    }
-}
-
-  std::cout << "Fixing some parameters...\n";
-  if(offshellset==2){
-    for ( int i = fNDim-fixparam-1 ; i < gMinuit->GetNumberTotalParameters()-1 ; ++i ) gMinuit->FixParameter ( i );    
   }
-  else{
-    for ( int i = fNDim-fixparam ; i < gMinuit->GetNumberTotalParameters() ; ++i ) gMinuit->FixParameter ( i );
-  }
+
   
   // Print out to verify...
   std::cout << "No. of parameters:\t\t"
@@ -329,36 +305,7 @@ int main(int argc, char *argv[])
   * Determine precise error matrix *
   * ****************************** */
 
-  /*    // Remove the limits on all parameters (if there are any)
-  // That way the error matrix can be determined correctly.
-  if (!static_cast<TFitter*>(gMinuit->GetFitter())->GetMinuit()->fLnolim) {
-  std::cout << "Removing limits...\n";
-  gMinuit->ExecuteCommand("SET LIM", arglist, 0);
-
-    // Minimize one last time...
-    // ...untill convergence is reached (max 5 times)
-  std::cout << "Refit with unbound parameters...\n";
-  arglist[0] = 7000;
-  gMinuit->ExecuteCommand("MIGRAD", arglist, 1);
-  for(int i=0; i<4 &&
-  static_cast<TFitter*>(gMinuit->GetFitter())->
-  GetMinuit()->fCstatu.CompareTo("CONVERGED ");
-  i++)
-  gMinuit->ExecuteCommand("MIGRAD", arglist, 1);
-
-    // When MIGRAD does not converge... give up!
-  if (static_cast<TFitter*>(gMinuit->GetFitter())->
-  GetMinuit()->fCstatu.CompareTo("CONVERGED "))
-{
-  std::cout << endl
-  << "**********************************************" << endl
-  << "MIGRAD did not manage to converge: we give up!" << endl
-  << "**********************************************" << endl;
-  exit(1);
-}
-} // end remove limits
-  */
-  // Calculate the covariance matrix again...
+ // Calculate the covariance matrix again...
   gMinuit->ExecuteCommand ( "MINOS", arglist, 0 );
   gMinuit->ExecuteCommand ( "SHO COV", arglist, 0 );
 
@@ -374,6 +321,22 @@ int main(int argc, char *argv[])
       matrix ( i, j ) = gMinuit->GetCovarianceMatrixElement ( i, j );
 }
 }
+  double eplus[nFreePars],eminus[nFreePars],eparab[nFreePars],globcc[nFreePars], params[nFreePars];
+  for(unsigned int i=0;i<nFreePars;++i){
+    gMinuit->GetErrors(i,eplus[i],eminus[i],eparab[i],globcc[i]);
+    params[i]=gMinuit->GetParameter(i);
+  }
+  int n=4;
+  double f;
+  Fcn(n, &f, f, params, n);
+  cout << Beamindex << " " << Qindex << " " << Windex << " " 
+    << params[0] << " " << eparab[0] << " "
+    << params[1] << " " << eparab[1] << " "
+    << params[2] << " " << eparab[2]
+    << f << endl;
+
+  
+  
   delete gMinuit;
   return 0;
 }

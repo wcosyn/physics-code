@@ -66,7 +66,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	  double bonusMC=0., pw=0.,fsi=0.;
 	  DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
 				      data::Ebeam[0], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
-	  if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((get_normfit_bonus(0,Qindex,Windex,i,offshellset,lc)
+	  if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((get_normfit_bonus(0,Qindex,Windex,i,offshellset,lc)
 						  *fsi/bonusMC-result)/error,2.); dof++;}
 	  cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << get_normfit_bonus(0,Qindex,Windex,i,offshellset,lc)
 						  *fsi/bonusMC << " " << f << endl;
@@ -80,7 +80,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	  double bonusMC=0., pw=0.,fsi=0.;
 	  DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
 				      data::Ebeam[1], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
-	  if(!std::isnan(fsi)&&!(bonusMC==0.)){ f+=pow((get_normfit_bonus(1,Qindex,Windex,i,offshellset,lc)
+	  if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((get_normfit_bonus(1,Qindex,Windex,i,offshellset,lc)
 						  *fsi/bonusMC-result)/error,2.); dof++;}
 	  cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << get_normfit_bonus(1,Qindex,Windex,i,offshellset,lc)
 						  *fsi/bonusMC << " " << f << endl;

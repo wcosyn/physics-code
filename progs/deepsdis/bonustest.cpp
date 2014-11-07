@@ -110,7 +110,10 @@ int main(int argc, char *argv[])
   double x=Q2/(2.*massi*nu);
     
     cout << Ebeam << " " << Q2 << " " << Wprime << " " << pr << " " << costhetar << " " << x << " " << xprime << " " 
-	<< MCres/get_normfit_sigma_deeps_bonus(atoi(argv[1]),Qindex,Windex,pindex,offshellset,lc,q2dep) << " " << modelrespw << " " << modelresfsi << " " << get_normfit_bonus(atoi(argv[1]),Qindex,Windex,pindex,offshellset,lc) <<  /*" " << avgcross[0] << " " << avgcross[1] << " " << count <<*/ endl;
+	<< MCres/get_normfit_sigma_deeps_bonus(atoi(argv[1]),Qindex,Windex,pindex,offshellset,lc,q2dep) << 
+	" " << modelrespw << " " << modelresfsi << " " 
+	<< get_normfit_sigma_deeps_bonus(atoi(argv[1]),Qindex,Windex,pindex,offshellset,lc,q2dep) 
+	<<  /*" " << avgcross[0] << " " << avgcross[1] << " " << count <<*/ endl;
   }
 }
 

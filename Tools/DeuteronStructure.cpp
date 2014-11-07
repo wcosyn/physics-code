@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdarg>
 #include <cstdlib>
+#include <iomanip> 
 
 using namespace std;
 
@@ -38,7 +39,8 @@ DeuteronStructure& DeuteronStructure::operator=(const DeuteronStructure& rhs){
 
 
 
-void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, double &FT, double &FTT, double &FTL,double Einoff) const{
+void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, double &FT, 
+					      double &FTT, double &FTL,double Einoff) const{
   double alphaq=(kin.GetWlab()-kin.GetKlab())/(MASSD/2.);
   double alphai=(Einoff+kin.GetPklab()*kin.GetCosthklab())/(MASSD/2.);  //vec{pi}=-vec{pr} in PW!
   double pt=kin.GetPklab()*sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
@@ -51,7 +53,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   double xtilde=kin.GetQsquared()/(2*piq);
   double nuoffshell=(mi_off-massi*massi+2.*piq)/(2.*massi); //(m_i+qoffshell)^2=(p_i+q)^2
   double xoffshell=kin.GetQsquared()/(2.*massi*nuoffshell); //xoffshell consistent with Q^2,m_i,W
-  double W_sq=mi_off+2.*piq-kin.GetQsquared();//W^2=(p_i+q)^2
+  double W_sq=pow(kin.GetHyperonMass(),2.); //mi_off+2.*piq-kin.GetQsquared();//W^2=(p_i+q)^2
   NuclStructure strfunction(proton,kin.GetQsquared(),xoffshell,W_sq,name);
   double F1,F2;
   if(!(strfunction.getName().compare("SLAC"))){
@@ -68,10 +70,10 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   if(std::isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
   FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
-  /*cout << F1 << " " << F2 << endl;
-  cout << FL << " " << FT << " " << FTT << " " << FTL << endl;
-  cout << (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT) << " " << F2*(pow(alphai/alphaq+1/(2.*xtilde),2.)+pt*pt/(2.*kin.GetQsquared()))*2.*xtilde*kin.GetWlab()/massi*(sindelta2+2.*electron.GetTan2HalfAngle(kin)/(1+0.18)) << endl;
-  */
+//   cout << std::setprecision(9)<< F1 << " " << F2 << " " << kin.GetQsquared() << " " << xoffshell << " " << W_sq << endl;
+//   cout << FL << " " << FT << " " << FTT << " " << FTL << endl;
+//   cout << (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT) << " " << F2*(pow(alphai/alphaq+1/(2.*xtilde),2.)+pt*pt/(2.*kin.GetQsquared()))*2.*xtilde*kin.GetWlab()/massi*(sindelta2+2.*electron.GetTan2HalfAngle(kin)/(1+0.18)) << endl;
+  
   return;
 }
 
@@ -89,7 +91,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   double xtilde=kin.GetQsquared()/(2*piq);
   double nuoffshell=(mi_off-massi*massi+2.*piq)/(2.*massi); //(m_i+qoffshell)^2=(p_i+q)^2
   double xoffshell=kin.GetQsquared()/(2.*massi*nuoffshell); //xoffshell consistent with Q^2,m_i,W
-  double W_sq=mi_off+2.*piq-kin.GetQsquared();//W^2=(p_i+q)^2
+  double W_sq=pow(kin.GetHyperonMass(),2.);//W^2=(p_i+q)^2
   NuclStructure strfunction(proton,kin.GetQsquared(),xoffshell,W_sq,name);
   double F1;
   if(!(strfunction.getName().compare("SLAC"))){
@@ -195,7 +197,7 @@ double DeuteronStructure::getavgStructureLC(LightConeKin2to2 &kin) const{
   double double_piq=kin.getQ2()/kin.getXN();
   double nuoffshell=(mi_off2-massi*massi+double_piq)/(2.*massi); //(m_i+qoffshell)^2=(p_i+q)^2
   double xoffshell=kin.getQ2()/(2.*massi*nuoffshell); //xoffshell consistent with Q^2,m_i,W
-  double W_sq=mi_off2+double_piq-kin.getQ2();//W^2=(p_i+q)^2
+  double W_sq=pow(kin.getMassX(),2.);//W^2=(p_i+q)^2
   double alphaq=(kin.getQ_mu()[0]+kin.getQ_mu()[3])/sqrt(2.)/kin.getPA_plus()*2.;
   double x_i=kin.getQ2()/double_piq; // x'=Q^2/2pi*q
   NuclStructure strfunction(proton,kin.getQ2(),x_i,W_sq,name);
@@ -221,7 +223,7 @@ double DeuteronStructure::getStructureLC(LightConeKin2to2 &kin) const{
   double double_piq=kin.getQ2()/kin.getXN();
   double nuoffshell=(mi_off2-massi*massi+double_piq)/(2.*massi); //(m_i+qoffshell)^2=(p_i+q)^2
   double xoffshell=kin.getQ2()/(2.*massi*nuoffshell); //xoffshell consistent with Q^2,m_i,W
-  double W_sq=mi_off2+double_piq-kin.getQ2();//W^2=(p_i+q)^2
+  double W_sq=pow(kin.getMassX(),2.);//W^2=(p_i+q)^2
   double alphaq=(kin.getQ_mu()[0]+kin.getQ_mu()[3])/sqrt(2.)/kin.getPA_plus()*2.;
   double x_i=kin.getQ2()/double_piq; // x'=Q^2/2pi*q
   NuclStructure strfunction(proton,kin.getQ2(),x_i,W_sq,name);

@@ -26,9 +26,9 @@ int main(int argc, char *argv[])
 {
   int beamindex = atoi(argv[1]);
   double Ebeam = data::Ebeam[beamindex]; //[0,1]
-  int Q2 = atof(argv[2]); //[0,2] for 4 GeV, [1,2] for 5 GeV
-  int Wprime = atof(argv[3]); //[0,4]
-  int pr = atof(argv[4]); //[0,3]
+  double Q2 = atof(argv[2]); //[0,2] for 4 GeV, [1,2] for 5 GeV
+  double Wprime = atof(argv[3]); //[0,4]
+  double pr = atof(argv[4]); //[0,3]
 
   int cosindex = atoi(argv[5]);
   double costhetar=-0.9+cosindex*0.2;

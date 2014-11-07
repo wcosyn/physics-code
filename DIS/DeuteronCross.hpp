@@ -159,7 +159,9 @@ public:
   void getBonusMCresult(double &MCresult, double &modelresultpw, double &modelresultfsi, 
 			double Q2, double W, double Ein, double pr, double costhetar, bool proton, bool pw, bool lc);
     
-  /*! computes the avg cross section with the formula as used in the Bonus MC (TKachenko arXiv:1402.2477)
+  /*! computes the F2 values used in the on-shell extrapolation procdeure 
+   *starting from the avg cross section with the formula as used in the Bonus MC (TKachenko arXiv:1402.2477)
+   * corrected with normalization from our fits
    * \param Q2 [MeV^2] four-momentum transfer
    * \param W [MeV] invariant mass of X
    * \param Ein [MeV] beam energy
@@ -175,6 +177,19 @@ public:
   void getBonusextrapolate(double Q2, double W, double Ein, double pr, double costhetar, bool proton, 
 			   bool lc, double xref, double norm, double Rdata, double error);
 
+  /*! computes the ratio to multiply the R (ratio) data used in the on-shell extrapolation procdeure 
+   *starting from the avg cross section with the formula as used in the Bonus MC (TKachenko arXiv:1402.2477)
+   * normalization correction NOT (NOT!!!) included here
+   * \param Q2 [MeV^2] four-momentum transfer
+   * \param W [MeV] invariant mass of X
+   * \param Ein [MeV] beam energy
+   * \param pr [MeV] spectator momentum
+   * \param costhetar angle of spectator with q
+   * \param proton DIS on proton (1) or neutron (0)
+   * \param lc [1] lightcone or [0] VNA deuteron density to restore data
+   */
+  double getBonus_extrapratio(double Q2, double W, double Ein, double pr, double costhetar, 
+					 bool proton, bool lc);
   /*! get the average Azz observable or cross section ratio
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon

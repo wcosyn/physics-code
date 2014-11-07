@@ -48,7 +48,7 @@
 #define M_W 80385 //W boson [MeV]
 #define COS_CAB 0.97427 //V_ud cosine of Cabbibo angle
 
-#define HOMEDIR "/home/wim/Code/share"
+#define HOMEDIR "/home/wim/Code/trunk/share"
 
 
 #endif

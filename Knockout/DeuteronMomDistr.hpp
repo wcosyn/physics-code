@@ -46,17 +46,17 @@ public:
   DeuteronMomDistr(const DeuteronMomDistr&); /*!< Copy Constructor */
   DeuteronMomDistr& operator=(const DeuteronMomDistr&); /*!< assignment operator */
   ~DeuteronMomDistr(); /*!<Destructor */
-//   /*! Computes plane-wave momentum distribution in LC formalism according to Frankfurt and Strikman, Phys.Rep.88
-//    * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
-//    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
-//    * \return plane-wave momentum distribution [MeV^-3]
-//    */
-//   double getLCMomDistrpw(TKinematics2to2 &kin) const;
-//   /*! Computes plane-wave momentum distribution in LC formalism according to Frankfurt and Strikman, Phys.Rep.88
-//   * \param p [MeV] relative momentum in deuteron rest frame
-//   * \return plane-wave momentum distribution [MeV^-3]
-//    */
-//   double getLCMomDistrpw(TVector3 p) const;
+  /*! Computes plane-wave momentum distribution in LC formalism according to Frankfurt and Strikman, Phys.Rep.88
+   * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \return plane-wave momentum distribution [MeV^-3]
+   */
+  double getLCMomDistrpw(TKinematics2to2 &kin) const;
+  /*! Computes plane-wave momentum distribution in LC formalism according to Frankfurt and Strikman, Phys.Rep.88
+  * \param p [MeV] relative momentum in deuteron rest frame
+  * \return plane-wave momentum distribution [MeV^-3]
+   */
+  double getLCMomDistrpw(TVector3 p) const;
   /*! Computes plane-wave momentum distribution, does not depend on phi, includes flux factor for baryon conservation
    * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon

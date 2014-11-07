@@ -57,7 +57,7 @@ DeuteronCross& DeuteronCross::operator=(const DeuteronCross& rhs){
 
 double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec, bool lc){
   
-  double dens=/*lc? momdistr.getLCMomDistrpw(kin) :*/ momdistr.getMomDistrpw(kin); 
+  double dens=lc? momdistr.getLCMomDistrpw(kin) : momdistr.getMomDistrpw(kin); 
   FourVector<double> k_in, k_out;
   elec.GetLeptonVectors(kin,k_in,k_out);
   double costhetap=kin.GetCosthklab();
@@ -72,7 +72,7 @@ double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec
   FourVector<double> q(kin.GetWlab(),0.,0.,kin.GetKlab());
   FourVector<double> q_transf=transf*q;
   double xtransf=kin.GetQsquared()/(2.*massi*q_transf[0]); //get modified x
-  NuclStructure nucl(massi==MASSP?1:0,kin.GetQsquared(),xtransf,0,structure.getName());
+  NuclStructure nucl(massi==MASSP?1:0,kin.GetQsquared(),xtransf,0,"CB");  //experimental MC used CB structure function parametrization
   double F1,F2;
   nucl.getF(F1,F2);
   double res=2.*PI*ALPHA*ALPHA*pow(cos(thetae_transf/2.),2.)/(4.*pow(k_in_transf[0],2.)*pow(sin(thetae_transf/2.),4.))*dens
@@ -130,15 +130,16 @@ void DeuteronCross::getBonusextrapolate(double Q2, double W, double Ein, double 
   double strucprefactor=structure.getavgPrefactor(kin,*elec,Einoff);
 //   cout << Dstrucs << endl;
 //   front*dens*Dstrucs*kin.GetEklab()*1.E18;
-//   modelresultpw= getavgCross(kin,*elec,1, Einoff)*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
-//   modelresultfsi= pw? modelresultpw: getavgCross(kin,*elec,0, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
+//   double modelresultpw= getavgVNALabCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
+//   double modelresultfsi= getavgVNALabCross(kin,*elec,0, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in MeV-6
+//   cout << modelresultpw << " " << modelresultfsi << " " << MCresult/norm*1.E18 << " " << Rdata << " " << error << endl;
 // //   double residu=sqrt(2.)*c[0]*sqrt(HBARC)/PI; //[MeV^1/2]
   double corr_residu = pow((massoff*massoff-massi*massi)/momdistr.getDeuteronwf()->getResidu(),2.); // [MeV^3]
   cross_data_extr/=front*2.*Ein*Eout*x/nu*strucprefactor/corr_residu; //dimensionless
   error_extr/=front*2.*Ein*Eout*x/nu*strucprefactor/corr_residu; //dimensionless
   double F2pw=Dstrucs*denspw*corr_residu/strucprefactor; // dimensionless
   double F2fsi=Dstrucs*densfsi*corr_residu/strucprefactor; //dimensionless
-  
+//   cout << denspw*corr_residu << " " << densfsi*corr_residu << endl;
   NuclStructure strfunction(proton,kin.GetQsquared(),xref,0,strucname);
   double F2ref;
   F2ref=strfunction.getF2();
@@ -149,6 +150,58 @@ void DeuteronCross::getBonusextrapolate(double Q2, double W, double Ein, double 
 	<< F2fsi << " " << F2ref << " " << cross_data_extr << " " << error_extr << endl;
   
 }
+
+
+double DeuteronCross::getBonus_extrapratio(double Q2, double W, double Ein, double pr, double costhetar, 
+					 bool proton, bool lc
+					){
+  double massi=proton? MASSP:MASSN;
+  double massr=proton? MASSN:MASSP;
+  
+  double Er=sqrt(massr*massr+pr*pr);
+  double Einoff=MASSD-Er;
+  double massoff=sqrt(Einoff*Einoff-pr*pr);
+  
+  double xprime=Q2/(W*W-massoff*massoff+Q2);
+  
+  //calc nu
+  double prz=pr*costhetar;
+  double aaa=Einoff*Einoff-prz*prz;
+  double bbb=-Einoff*Q2/xprime;
+  double ccc=Q2*Q2/(4.*xprime*xprime)-Q2*prz*prz;
+  
+  double discr=sqrt(bbb*bbb-4.*aaa*ccc);
+  double nu1=(-bbb+discr)/(2.*aaa);
+  double nu2=(-bbb-discr)/(2.*aaa);
+  //cout << nu1 << " " << nu2 << endl;
+  double nu=nu2;
+  if(costhetar<0.) nu=nu1;
+  double qvec=sqrt(Q2+nu*nu);
+/*  double xx=Q2/2./(Einoff*nu+prz*qvec);
+  cout << xprime << " " << xx << endl;*/
+  double x=Q2/(2.*massi*nu);
+    
+  TKinematics2to2 kin("","",MASSD,MASSP,W,"qsquared:wlab:pklab",Q2,nu,pr);
+  TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
+//   DeuteronCross test(*elec,"paris",proton,"SLAC",36.3274,1.97948,-0.5,8.,1.2,4);
+  double alphar=(Er-prz)/(MASSD/2.);
+
+  double Eout=Ein-nu;
+  //unphysical kinematics!!!
+  if(Eout<0.){ /*cout << Eout << endl;*/ return 0.;}
+  if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */return 0.;}
+  
+  double MCresult= getavgBonus(kin,*elec,lc);
+  double y=kin.GetWlab()/elec->GetBeamEnergy(kin); 
+  double front=(4.*PI*ALPHA*ALPHA)/(x*kin.GetQsquared()*kin.GetQsquared())
+		*(1-y-(x*x*y*y*massi*massi)/kin.GetQsquared());
+  double strucprefactor=structure.getavgPrefactor(kin,*elec,Einoff);
+  double corr_residu = pow((massoff*massoff-massi*massi)/momdistr.getDeuteronwf()->getResidu(),2.); // [MeV^3]
+  return MCresult/(front*2.*Ein*Eout*x/nu*strucprefactor/corr_residu);
+  
+  
+}
+
 
 void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresultpw, double &modelresultfsi, 
 				     double Q2, double W, double Ein, double pr, double costhetar, bool proton,
