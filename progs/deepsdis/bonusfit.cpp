@@ -62,11 +62,8 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   double betaoff=8.;
   double lambdain=1.2;
 //   cout << npar << endl;
-  if(offshellset==1) lambdain=par[6];
-  if(offshellset==2) betaoff=par[6];
-  else epsilon=par[6];  //we keep epsilon fixed, didn't improve fit!
-  DeuteronCross DeepsCross(wf,proton,strucname,par[4],sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
-    0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep),epsilon,betaoff,lambdain,offshellset,1E03);
+  DeuteronCross DeepsCross(wf,proton,strucname,sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
+    0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep),8.,epsilon,betaoff,lambdain,offshellset,1E03);
 //   cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << endl;
   for(int i=startset;i<stopset;i++){
     for(int j=0;j<10;j++){
@@ -85,7 +82,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	double bonusMC=0., pw=0.,fsi=0.;
 	DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
 				    data::Ebeam[Beamindex], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
-// 	cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
+	cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
 	if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[i]*fsi/bonusMC-result)/error,2.); dof++;}
       }
     }
@@ -114,7 +111,9 @@ int main(int argc, char *argv[])
   Q2dep=atoi(argv[6]);
   wf=argv[7];
   strucname=argv[8];
-  
+//   cout << Q2dep << " " << Qindex << " " << sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
+// 				   0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep) << endl;  
+//   exit(1);				    
   int testing = 0;
   int fNDim = 4; // number of dimensions
   double fLo[] = {0.5,0.5,0.5,0.5}; // lower limits of params
