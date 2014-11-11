@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 #include <cmath>
+#include <cassert>
 
 #include "bonusdata.h"
 #include "bonusfits.h"
@@ -31,7 +32,10 @@ vector<double> data_array;
 vector<double> error_array;
 
 double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc);
-double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc, bool q2dep);
+double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex,
+				     int psindex, const double array1 [3][5][4], const double array2[2][5][4]);
+double get_normfit_array(string wf, string struc, int offshell, bool lc, bool q2dep, bool pw, int beamindex,
+			 int Qindex, int Windex, int psindex);
 double sigmaparam(double W, double Q2, bool Q2dep);
 void get_data(double &data, double& error, int beamindex, int Qindex, int Windex, int psindex, int cosindex);
 
@@ -54,15 +58,19 @@ int main(int argc, char *argv[])
   int offshellset = atoi(argv[1]);
   bool q2dep = atoi(argv[2]);
 
-  bool lc=0;
+  bool lc=atoi(argv[4]);
   double betain=8.;  
   bool proton=0;
   double phi=0.;
-  string strucname="CB";
-  string wf="paris";
+  string wf=argv[5];
+  string strucname=argv[6];
+  bool pw=atoi(argv[3]);
+  
+  
   string outdir="/home/wim/Calculations/Bonus/results/parabfits/";
   ofstream generalfile;
-  generalfile.open(outdir+wf+"."+strucname+".fits.dat");
+  generalfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
+	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+".fits.dat");
   for(int Qindex=0;Qindex<3;Qindex++){
     double Q2 = 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]);
     for(int Windex=0;Windex<5;Windex++){
@@ -91,7 +99,8 @@ int main(int argc, char *argv[])
 	  double Ebeam = data::Ebeam[beamindex]; //[0,1]
 	 
 	  double result, error;
-	  double norm=get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,offshellset,lc,q2dep);
+	  double norm=get_normfit_array(wf,strucname, 
+					offshellset,lc,q2dep,pw,beamindex,Qindex,Windex,psindex);
 	  get_data(result, error, beamindex,Qindex,Windex,psindex,cosindex);
 	  double ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	  if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
@@ -105,7 +114,8 @@ int main(int argc, char *argv[])
 	  if(Qindex>0){
 	    beamindex=1;
 	    Ebeam=data::Ebeam[beamindex];
-	    norm=get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,offshellset,lc,q2dep);
+	    norm=get_normfit_array(wf,strucname, 
+					offshellset,lc,q2dep,pw,beamindex,Qindex,Windex,psindex);
 	    get_data(result, error, beamindex,Qindex,Windex,psindex,cosindex);
 	    ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	    if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
@@ -316,7 +326,10 @@ int main(int argc, char *argv[])
 // 	    " " << eparab[i] << " " << globcc[i] << endl;
 	  }
 	  ofstream myfile;
-	  myfile.open(outdir+wf+"."+strucname+".Q"+std::to_string(Qindex)+".W"+std::to_string(Windex)+".th"+std::to_string(cosindex)+".dat");
+	  myfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
+	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+
+	  ".Q"+std::to_string(Qindex)
+	    +".W"+std::to_string(Windex)+".th"+std::to_string(cosindex)+".dat");
 	  for(unsigned int i=0;i<nFreePars;++i) myfile << gMinuit->GetParameter(i) << " " << eparab[i] << " ";
 	  myfile << F2refn << " " << F2refp << endl << endl << endl;
 	  for(unsigned int i=0;i<tarray.size();i++) myfile << tarray[i] << " " << data_array[i] << " " << error_array[i] << endl;	  
@@ -370,30 +383,109 @@ double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int
   return 0./0.;
 }
 
-double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc, bool q2dep){
-  if(q2dep){
-    if(offshell==3){
-      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam5[Qindex-1][Windex][psindex];
-    }
-    if(offshell==4){
-      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep1_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep1_beam5[Qindex-1][Windex][psindex];
-    }
-  }
-  else{
-    if(offshell==3){
-      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam5[Qindex-1][Windex][psindex];
-    }
-    if(offshell==4){
-      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep0_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep0_beam5[Qindex-1][Windex][psindex];
-    }
-  }
-  return 0./0.;
+double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int psindex,
+				     const double array1 [3][5][4], const double array2[2][5][4]){
+      if(beamindex==0) return array1[Qindex][Windex][psindex];
+      else return array2[Qindex-1][Windex][psindex];
 }
 
+double get_normfit_array(string wf, string struc, int offshell, bool lc, bool q2dep, bool pw, int beamindex,
+			 int Qindex, int Windex, int psindex){
+  if(offshell==3){
+    if(wf=="paris"){
+      if(struc=="CB"){
+	if(pw){
+	  if(lc){
+	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+	      bonusfits::normfits_off3_paris_CB_off3_lc1_pw_beam4,
+	      bonusfits::normfits_off3_paris_CB_off3_lc1_pw_beam5);			      
+	  }
+	  else{
+	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+	      bonusfits::normfits_off3_paris_CB_off3_lc0_pw_beam4,
+	      bonusfits::normfits_off3_paris_CB_off3_lc0_pw_beam5);			      
+	    
+	  }
+	}
+	else{
+	  if(lc){
+	    if(q2dep){
+	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+		bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep1_beam4,
+		bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep1_beam5);			      		
+	    }
+	    else{
+	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+		bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep0_beam4,
+		bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep0_beam5);			      				
+	    }
+	  }
+	  else{
+	    if(q2dep){
+	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+		bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep1_beam4,
+		bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep1_beam5);			      		
+	    }
+	    else{
+	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+		bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep0_beam4,
+		bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep0_beam5);			      				
+	    }
+	  }
+	}
+      }
+      if(struc=="SLAC"){
+	if(pw){
+	  if(lc){
+	  }
+	  else{
+	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+	      bonusfits::normfits_off3_paris_SLAC_off3_lc0_pw_beam4,
+	      bonusfits::normfits_off3_paris_SLAC_off3_lc0_pw_beam5);			      
+	    
+	  }
+	}
+	else{
+	}
+	
+      }
+      if(struc=="Alekhin"){
+	
+      }
+    }
+    if(wf=="AV18"){
+      if(struc=="CB"){
+	if(pw){
+	  if(lc){
+	  }
+	  else{
+	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+	      bonusfits::normfits_off3_AV18_CB_off3_lc0_pw_beam4,
+	      bonusfits::normfits_off3_AV18_CB_off3_lc0_pw_beam5);			      	    
+	  }
+	}
+	else{
+	  if(lc){
+	    
+	  }
+	  else{
+	    if(q2dep){
+	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+		bonusfits::normfits_off3_AV18_CB_off3_lc0_fsi_q2dep1_beam4,
+		bonusfits::normfits_off3_AV18_CB_off3_lc0_fsi_q2dep1_beam5);			      	    	      
+	    }
+	    else{
+	      
+	    }
+	  }
+	}
+      }
+    }  
+  }
+  cerr << "not valid bonus fit set" << endl;
+  assert(1==0);
+  
+}
 
 
 //sigma in mbarn
