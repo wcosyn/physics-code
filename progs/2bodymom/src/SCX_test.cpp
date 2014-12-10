@@ -192,10 +192,10 @@ void createGrids(){
 }
 
 void testgrid_el(){
-	FastParticle fp(1,0,1000.,0.,0.,0.,0.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
+	FastParticle fp(1,0,250.,0.,0.,0.,0.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
 	//FastParticle fp(8,0,100,M_PI/4.,0.,0.,0.,SHAREDIR);
 	//FastParticle fp(8,0,1397.,M_PI/2.,3.*M_PI/4.,0.,0.,SHAREDIR);
-	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::C,SHAREDIR);
+	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::Fe,SHAREDIR);
 	GlauberGridThick_SEL g(&nuc,fp,25,20);
 	g.addKnockoutParticle(nuc.getPLevels()+1);
 	g.addKnockoutParticle(nuc.getPLevels()-1);
@@ -228,10 +228,10 @@ void testgrid_el(){
 	//g.printDensityGrid();
 }
 void testgrid(){
-	FastParticle fp(8,0,1000.,0.,0.,0.,0.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
+	FastParticle fp(8,0,250.,0.,0.,0.,0.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
 	//FastParticle fp(8,0,100,M_PI/4.,0.,0.,0.,SHAREDIR);
 	//FastParticle fp(8,0,1397.,M_PI/2.,3.*M_PI/4.,0.,0.,SHAREDIR);
-	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::C,SHAREDIR);
+	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::Fe,SHAREDIR);
 	GlauberGridThick_SCX g(&nuc,fp,25,20);
 	g.addKnockoutParticle(nuc.getPLevels()+1);
 	g.addKnockoutParticle(nuc.getPLevels()-1);

@@ -41,6 +41,8 @@ print "zrange", zrange
 blength = np.max(brange)-np.min(brange)
 zlength = np.max(zrange)-np.min(zrange)
 A = blength*zlength
+print "min/max of data_r  : ", (np.min(data_r),np.max(data_r))
+print "min/max of data_i  : ", (np.min(data_i),np.max(data_i))
 print "integral of data_r : ", np.mean(data_r)*A
 print "integral of data_i : ", np.mean(data_i)*A
 

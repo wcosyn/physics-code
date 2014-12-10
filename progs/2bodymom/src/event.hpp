@@ -20,7 +20,7 @@ struct Event {
 	double Q2;
 	double omega;
 	double mass1,mass2; // masses
-	int type1,type2; // types of knockout particles (1 proton, 2 neutron,... same convention as in FastParticle.hpp
+	int type1,type2; // types of knockout particles (0 proton, 1 neutron), is in principle deducible from shellindex[1,2]
 	int shellindex1,shellindex2;
 	TVector3 k1,q,p1,p2;
 	int status; /**< 1 means it survived the cuts, 0 means it is cut away by detector cuts, -1 means it is unphysical (energy conservation cannot be met in any way **/

@@ -19,7 +19,11 @@ struct F_SCX {
 	double b,z;
 	int (*f)(double* res, const double x[], MeanFieldNucleusThick*,FastParticle*,const double b,const double z);
 };
-
+/** This is the integrand
+ *  \int db b*|J|*rho(r')*Gamma(b-b')
+ *  namely single particle integrated
+ *  profile function
+ */
 int f_SCX_integrand(double* res, const double x[],MeanFieldNucleusThick* nuc,FastParticle* fp, const double b, const double z){
 	double bi    = x[0]; // integration variable |b'|
 	double th_bi = x[1]; // integration variable theta(b')

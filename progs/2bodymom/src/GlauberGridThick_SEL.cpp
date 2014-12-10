@@ -313,7 +313,7 @@ void GlauberGridThick_SEL::calcFSI(double b,double z,std::complex<double>& ret,s
 	double prob_n;
 	/** INTEGRATOR SET UP DONE **/
 	/** cuhre specific arguments **/
-	
+	/*	
 	int key = 13; // 13 only available in two dimensions
 	int nregions;	
 	
@@ -332,7 +332,33 @@ void GlauberGridThick_SEL::calcFSI(double b,double z,std::complex<double>& ret,s
 		mineval,maxeval,key,
 		statefile,&nregions,&neval,&fail,
 		&integral_n,&error_n,&prob_n);
+	*/
+	/** vegas specific arguments **/
+	/** vegas found to preform better than cuhre in this case **/
 	
+	int seed=1234;
+	int nstart=10000;
+	int nincrease=20000;
+	int nbatch=10000;
+	int gridno=0;
+	
+	p.f = f_SEL_integrand_p; // do elastic scattering with protons in the nucleus
+
+	Vegas(ndim,ncomp,integr,userdata,nvec,
+		epsrel,epsabs,flags,seed,
+		mineval,maxeval,nstart,nincrease,
+		nbatch,gridno,statefile,&neval,
+		&fail,&integral_p,&error_p,&prob_p);
+
+	p.f = f_SEL_integrand_n; // now do elastic scattering with neutrons
+	
+	Vegas(ndim,ncomp,integr,userdata,nvec,
+		epsrel,epsabs,flags,seed,
+		mineval,maxeval,nstart,nincrease,
+		nbatch,gridno,statefile,&neval,
+		&fail,&integral_n,&error_n,&prob_n);
+
+	//printf("# Vegas  (b,z) = (%6.2f,%6.2f) : res = %e, error = %e, prob = %f, neval = %d ,fail = %d\n",b,z,integral,error,prob,neval,fail);
 	// why two 2*dens below you ask? *2 because phi is only integrated over [0,\pi], times two due to symmetry
 	// the dens factor comes from the single scattering approximation
 	//ret = (1. - 2.*_pdens_fctr*_fp.getScatterfront(true)*integral_p )*( 1. - 2.*_ndens_fctr*_fp.getScatterfront(false)*integral_n); 
@@ -341,23 +367,5 @@ void GlauberGridThick_SEL::calcFSI(double b,double z,std::complex<double>& ret,s
 	err =      2.*_fp.getScatterfront(true)*error_p +                2.*_ndens_fctr*_fp.getScatterfront(false)*error_n;
 
 	//printf("# Cuhre (b,z) = (%6.2f,%6.2f) : res = %e, error = %e, prob = %f, neval = %d, fail = %d \n",b,z,*integral,*error,*prob,neval,fail);
-	
-	
-	/** vegas specific arguments **/
-	/** vegas found to preform better than cuhre in this case **/
-	/*
-	int seed=1234;
-	int nstart=10000;
-	int nincrease=20000;
-	int nbatch=10000;
-	int gridno=0;
-	
-	Vegas(ndim,ncomp,integr,userdata,nvec,
-		epsrel,epsabs,flags,seed,
-		mineval,maxeval,nstart,nincrease,
-		nbatch,gridno,statefile,&neval,
-		&fail,&integral,&error,&prob);
-	//printf("# Vegas  (b,z) = (%6.2f,%6.2f) : res = %e, error = %e, prob = %f, neval = %d ,fail = %d\n",b,z,integral,error,prob,neval,fail);
-	*/
 
 }

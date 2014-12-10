@@ -109,9 +109,9 @@ void EventParser::read_events(char* fname, std::vector< struct Event>& events,Me
 				e.shellindex1 = (int) tokens[16];
 				e.shellindex2 = (int) tokens[17];
 
-				// assume we are always dealing with protons for now...
-				e.type1 = (e.shellindex1 < nuc.getPLevels())? 0 : 1; // 0 is proton,
-				e.type2 = (e.shellindex2 < nuc.getPLevels())? 0 : 1; // 0 is proton
+				// neutron or proton can be determined from shell level
+				e.type1 = (e.shellindex1 < nuc.getPLevels())? 0 : 1; // 0 is proton,1 is neutron
+				e.type2 = (e.shellindex2 < nuc.getPLevels())? 0 : 1; // 0 is proton,1 is neutron
 				e.mass1 = (e.type1==0)? MASSP : MASSN;
 				e.mass2 = (e.type2==0)? MASSP : MASSN;
 				events.push_back(e);
