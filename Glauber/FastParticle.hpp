@@ -71,7 +71,13 @@ public:
   FastParticle(const FastParticle &Copy);
   ~FastParticle(); /*!< Destructor */
   FastParticle& operator=(const FastParticle&);/*!< assignment overloading */
-
+  enum Particletype { P_EL=0    , N_EL=1, 
+                      PI_PLUS=2 , PI_MIN=3, 
+                      RHO0=4    , RHO0_MCT=5,
+                      RHO0_LCT=6, DBL_PI=7,
+                      P_SCX=8   ,N_SCX=9,
+                      P_CLASS_SCX=10, N_CLASS_SCX=11 }; /*!< enum for particle types so that everythin a bit more readable */
+  
   int getParticletype() const{ return particletype;} /*!< get type of particle */
   bool getIncoming() const {return incoming;}/*!<  get if the particle is a beam particle */
   double getP() const {return p;}/*!< [MeV] get momentum */

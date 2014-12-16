@@ -116,26 +116,52 @@ Gamma(ggamma){
       break;
      case(8):
       // initial proton charge exchange
-      setGlauberParameters(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
-      sigman=0.; //not used, prev value was 1.1mb = 0.11 fm^2
-      sigmap=0.; //no PP scattering in charge exchange
-      beta2n = 1.74;
-      beta2p = 1.74;
+      //setGlauberParameters(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
+      sigman=-666.; //not used, prev value was 1.1mb = 0.11 fm^2
+      sigmap=-666.; //no PP scattering in charge exchange
+      beta2n = 1.740000;//1.74; // fm^2
+      beta2p = 1.740000;//1.74; // fm^2
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSP;     
       break;
     case(9):
       //initial neutron charge exchange
-      setGlauberParameters(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
-      sigman=0.; //no NN scattering in charge exchange
-      sigmap=0.; //not used, prev. value was 0.11 fm^2
-      beta2n = 1.74;
-      beta2p = 1.74;
+      //setGlauberParameters(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
+      sigman=-666.; //no NN scattering in charge exchange
+      sigmap=-666.; //not used, prev. value was 0.11 fm^2
+      beta2n = 1.740000;//1.74; // fm^2
+      beta2p = 1.740000;//1.74; // fm^2
       nkt_sq=0.35*0.35*9;
       lc=2*p*HBARC/1./1e06;
       mass = MASSN;
-      break;      
+      break;
+    case(P_CLASS_SCX): // Fastparticle parameters for classical CX, only use sigma's no profile functions here (no betas)
+    {
+      E = sqrt(MASSP*MASSP+p*p);
+      double MTARG  = MASSN; // type of target is opposite (neutron<->proton) from fastparticle
+      double s      = MASSP*MASSP + MASSN*MASSN + E*MTARG; // calculate the s mandelstam variable. Assume frozen spectator has ~ zero momentum.
+      double s800   = MASSP*MASSP + MASSN*MASSN + (801.9 + MASSN)*MTARG; // s mandelstam if kinetic energy of neutron beam particle is 801.9 MeV
+      sigman = 0.424*s800/s; // < add realistic value here (momentum dependent) fm^2
+      sigmap = 0.; // no SCX between two protons
+      beta2n = -666.; // not used
+      beta2p = -666.; // not used
+      mass   = MASSP;
+      break;
+    }
+    case(N_CLASS_SCX): // Fastparticle parameters for classical CX, only use sigma's no profile functions here (no betas)
+    {
+      E = sqrt(MASSN*MASSN+p*p);
+      double MTARG  = MASSP; // type of target is opposite (neutron<->proton) from fastparticle
+      double s      = MASSP*MASSP + MASSN*MASSN + E*MTARG; // calculate the s mandelstam variable. Assume frozen spectator has ~ zero momentum.
+      double s800   = MASSP*MASSP + MASSN*MASSN + (801.9 + MASSN)*MTARG; // s mandelstam if kinetic energy of neutron beam particle is 801.9 MeV
+      sigman = 0.; // no SCX between two neutrons
+      sigmap = 0.424*s800/s; // < add realistic value here (momentum dependent) fm^2
+      beta2n = -666.; // not used
+      beta2p = -666.; // not used
+      mass   = MASSN;
+      break;
+    }
     default:
       cerr << "Particle type is not yet supported!!: " << particletype << endl;
       exit(1);
@@ -146,140 +172,10 @@ Gamma(ggamma){
   
 }
 
-
-
+/** alternative constructor now using constructor delegation; needs -std=c++11 **/
 FastParticle::FastParticle(const int type, const int inc, const TVector3 &pvec, 
-			   const double hard_scale, const double Gamma, const std::string dir)
-:particletype(type),
-incoming(inc), 
-p(pvec.Mag()),
-theta(pvec.Theta()),
-costheta(pvec.CosTheta()),
-phi(pvec.Phi()),
-hardscale(hard_scale),
-sigma_decay_p(0.),
-sigma_decay_n(0.),
-userset(0){
-  //cout << "Initializing FastParticle object: ";
-  ex=sin(theta)*cos(phi);
-  ey=sin(theta)*sin(phi);
-  ez=cos(theta);
-  switch(particletype){
-    case(0):
-      //cout << "proton" << endl;
-      setGlauberParameters(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
-      nkt_sq=0.35*0.35*9;
-      lc=2*p*HBARC/1./1e06;
-      mass = MASSP;     
-      break;
-    case(1):
-      //cout <<"neutron" << endl;
-      setGlauberParameters(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
-      nkt_sq=0.35*0.35*9;
-      lc=2*p*HBARC/1./1e06;
-      mass = MASSN;
-      break;
-    case(2):
-      //cout <<"pi+" << endl;
-//       setPionGlauberData(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
-      sigmap = interpolate(sigmap_array,log10(p),0.01,151,250.);
-      beta2p = interpolate(beta2p_array,log10(p),0.01,151,250.);
-      epsilonp = interpolate(epsp_array,log10(p),0.01,151,250.);
-      sigman = interpolate(sigman_array,log10(p),0.01,151,250.);
-      beta2n = interpolate(beta2n_array,log10(p),0.01,151,250.);
-      epsilonn = interpolate(epsn_array,log10(p),0.01,151,250.);
-      nkt_sq=0.35*0.35*4;
-      lc=2*p*HBARC/0.7/1e06;
-      mass = MASSPI;
-      break;
-    case(3):
-      //cout <<"pi-" << endl;
-//       setPionGlauberData(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
-      sigmap = interpolate(sigmap_array,log10(p),0.01,151,250.);
-      beta2p = interpolate(beta2p_array,log10(p),0.01,151,250.);
-      epsilonp = interpolate(epsp_array,log10(p),0.01,151,250.);
-      sigman = interpolate(sigman_array,log10(p),0.01,151,250.);
-      beta2n = interpolate(beta2n_array,log10(p),0.01,151,250.);
-      epsilonn = interpolate(epsn_array,log10(p),0.01,151,250.);
-      nkt_sq=0.35*0.35*4;
-      lc=2*p*HBARC/0.7/1e06;
-      mass = MASSPI;
-      break;
-    case(4):
-      //cout <<"rho0" << endl;
-//       setPionGlauberData(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn,dir);
-      sigman=sigmap = (interpolate(sigman_array,log10(p),0.01,151,250.)+interpolate(sigmap_array,log10(p),0.01,151,250.))*0.5;
-      beta2n=beta2p = (interpolate(beta2n_array,log10(p),0.01,151,250.)+interpolate(beta2p_array,log10(p),0.01,151,250.))*0.5;
-      epsilonn = epsilonp = (interpolate(epsn_array,log10(p),0.01,151,250.)+interpolate(epsp_array,log10(p),0.01,151,250.))*0.5;
-      nkt_sq=0.35*0.35*4;
-      lc=2*p*HBARC/0.7/1e06;
-      mass = MASSRHO;
-      sigma_decay_n=sigma_decay_p=sigman+sigmap;
-      break;
-    case(5):
-      //cout <<"rho0 more CT" << endl;
-//       setPionGlauberData(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
-      sigman=sigmap = (interpolate(sigman_array,log10(p),0.01,151,250.)+interpolate(sigmap_array,log10(p),0.01,151,250.))*0.5;
-      beta2n=beta2p = (interpolate(beta2n_array,log10(p),0.01,151,250.)+interpolate(beta2p_array,log10(p),0.01,151,250.))*0.5;
-      epsilonn = epsilonp = (interpolate(epsn_array,log10(p),0.01,151,250.)+interpolate(epsp_array,log10(p),0.01,151,250.))*0.5;
-      nkt_sq=0.35*0.35*4;
-      lc=2*p*HBARC/0.5/1e06;
-      mass = MASSRHO;
-      sigma_decay_n=sigma_decay_p=sigman+sigmap;
-      break;
-    case(6):
-      //cout <<"rho0 less CT" << endl;
-//       setPionGlauberData(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
-      sigman=sigmap = (interpolate(sigman_array,log10(p),0.01,151,250.)+interpolate(sigmap_array,log10(p),0.01,151,250.))*0.5;
-      beta2n=beta2p = (interpolate(beta2n_array,log10(p),0.01,151,250.)+interpolate(beta2p_array,log10(p),0.01,151,250.))*0.5;
-      epsilonn = epsilonp = (interpolate(epsn_array,log10(p),0.01,151,250.)+interpolate(epsp_array,log10(p),0.01,151,250.))*0.5;
-      nkt_sq=0.35*0.35*4;
-      lc=2*p*HBARC/1./1e06;
-      mass = MASSRHO;
-      sigma_decay_n=sigma_decay_p=sigman+sigmap;
-      break;
-    case(7):
-      //cout <<"double pion" << endl;
-//       setPionGlauberData(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp,dir);
-      sigman=sigmap = (interpolate(sigman_array,log10(p),0.01,151,250.)+interpolate(sigmap_array,log10(p),0.01,151,250.));
-      beta2n=beta2p = (interpolate(beta2n_array,log10(p),0.01,151,250.)+interpolate(beta2p_array,log10(p),0.01,151,250.))*0.5;
-      epsilonn = epsilonp = (interpolate(epsn_array,log10(p),0.01,151,250.)+interpolate(epsp_array,log10(p),0.01,151,250.))*0.5;
-      nkt_sq=0.35*0.35*4;
-      lc=2*p*HBARC/1./1e06;
-      mass = MASSPI*2.;
-//       sigma_decay_n=sigma_decay_p=sigman+sigmap;
-      break;
-     case(8):
-      // initial proton charge exchange
-      setGlauberParameters(p,sigmap,beta2p,epsilonp,sigman,beta2n,epsilonn);
-      sigman=0.; //not used, prev value was 1.1mb = 0.11 fm^2
-      sigmap=0.; //no PP scattering in charge exchange
-      beta2n = 1.74;
-      beta2p = 1.74;
-      nkt_sq=0.35*0.35*9;
-      lc=2*p*HBARC/1./1e06;
-      mass = MASSP;     
-      break;
-    case(9):
-      //initial neutron charge exchange
-      setGlauberParameters(p,sigman,beta2n,epsilonn,sigmap,beta2p,epsilonp);
-      sigman=0.; //no NN scattering in charge exchange
-      sigmap=0.; //not used, prev. value was 0.11 fm^2
-      beta2n = 1.74;
-      beta2p = 1.74;
-      nkt_sq=0.35*0.35*9;
-      lc=2*p*HBARC/1./1e06;
-      mass = MASSN;
-      break;      
-    default:
-      cerr << "Particle type is not yet supported!!: " << particletype << endl;
-      exit(1);
-  }
-  E = sqrt(mass*mass+p*p);
-  decay_dil = Gamma/sqrt(1.-p*p/E*E);
-  //if(hard_scale<nkt_sq) cout << "Warning: hard scale is too low for color transparency effects for this particle, just so you know!" << endl;
-  
-}
+			   const double hard_scale, const double Gamma, const std::string dir) :
+	FastParticle::FastParticle(type,inc,pvec.Mag(),pvec.Theta(),pvec.Phi(),hard_scale,Gamma,dir) {}
 
 FastParticle::FastParticle(const FastParticle &Copy):
 particletype(Copy.getParticletype()),
