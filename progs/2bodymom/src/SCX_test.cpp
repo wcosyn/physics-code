@@ -2,6 +2,7 @@
 #include "GlauberGridThick_SCX.hpp"
 #include "GlauberGridThick_SEL.hpp"
 #include "MeanFieldNucleusThick.hpp"
+#include "ClassGridThick_SCX.hpp"
 #include "FastParticle.hpp"
 #include "event.hpp"
 #ifndef SHAREDIR
@@ -13,6 +14,8 @@ void testgrid_el();
 void scatterFrontScaling();
 void createGrids();
 void testIntegral(); // test integration routine thing for phase space unbiased stuff
+void testClass();
+void testClassScaling();
 
 /** a struct for single charge exchange nucleon nucleon rescattering **/
 struct F_SCXm {
@@ -167,11 +170,30 @@ void testIntegrand(){
 
 int main(){
 	//scatterFrontScaling();
-	testgrid_el();
+	//testgrid_el();
 	//testgrid();
 	//createGrids();
 	//testIntegrand();
+	testClass();
+	//testClassScaling();
 	return 0;
+}
+
+void testClass(){
+	FastParticle fpp(FastParticle::P_CLASS_SCX,0,100.,0.,0.,0.,0.,SHAREDIR);
+	FastParticle fpn(FastParticle::N_CLASS_SCX,0,1000.,0.,0.,0.,0.,SHAREDIR);
+	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::Pb,SHAREDIR);
+	ClassGridThick_SCX g(&nuc,&fpp,25,20);
+	g.constructGrid();
+	g.printGrid();
+}
+
+void testClassScaling(){
+	for (double p=300;p<=1500;p+=10.){
+		FastParticle fp(FastParticle::P_CLASS_SCX,0,p,0.,0.,0.,0.,SHAREDIR);
+		FastParticle fn(FastParticle::N_CLASS_SCX,0,p,0.,0.,0.,0.,SHAREDIR);
+		std::cout << p << "\t" << fp.getSigman() << "\t" << fn.getSigmap() << std::endl;
+	}
 }
 
 void createGrids(){

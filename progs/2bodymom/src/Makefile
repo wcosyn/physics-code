@@ -23,8 +23,8 @@ CFLAGS= -O2 -std=c++11 -fPIC $(WFLAGS) `gsl-config --cflags` `root-config --cfla
 LIBS=-L$(HOME)/Code/trunk/lib -Wl,-rpath=$(HOME)/Code/trunk/lib -lcuba -lIntegrator -lGlauber -lKnockout -lMePhys `gsl-config --libs` `root-config --libs`
 INC=-I$(HOME)/Code/trunk/Tools -I$(HOME)/Code/trunk/Glauber -I$(HOME)/Code/trunk/Integrator
 
-TARGETS=sampler 2bodymom SCX_test RPWIA_toy#sampler_test       # files with a main()
-OBJS=sampler_HALLA.o sampler_PRL99_072501.o sampler_HALLB.o parser.o event.o GlauberGridThick_SCX.o GlauberGridThick_SEL.o # object files for building, no main()'s here !!!
+TARGETS=sampler 2bodymom SCX_test RPWIA_toy class_SCX #sampler_test       # files with a main()
+OBJS=sampler_HALLA.o sampler_PRL99_072501.o sampler_HALLB.o parser.o event.o GlauberGridThick_SCX.o GlauberGridThick_SEL.o ClassGridThick_SCX.o # object files for building, no main()'s here !!!
 SOLIBS=MeanFieldNucleusWrapper.so
 DEPDIR:=dep
 DEPS=$(patsubst %.o, $(DEPDIR)/%.d, $(OBJS))

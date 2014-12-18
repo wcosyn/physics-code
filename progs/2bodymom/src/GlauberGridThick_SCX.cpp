@@ -129,8 +129,8 @@ void GlauberGridThick_SCX::constructGlauberGrid(){
 	_grid = new complex<double>*[_bpoints];	
 	_errorGrid = new complex<double>*[_bpoints];
 	for (int bi=0; bi<_bpoints; bi++){
-		_grid[bi] = new complex<double>[_bpoints];
-		_errorGrid[bi] = new complex<double>[_bpoints];
+		_grid[bi] = new complex<double>[_zpoints];
+		_errorGrid[bi] = new complex<double>[_zpoints];
 		for (int zi=0; zi<_zpoints; zi++){
 			double b = bi*_bstep; 
 			double z = -_nuc->getRange()+zi*_zstep;

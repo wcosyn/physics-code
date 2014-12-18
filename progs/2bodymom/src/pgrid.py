@@ -2,8 +2,31 @@ import numpy as np
 import pylab as pl
 import sys
 import matplotlib
-f = file(sys.argv[1],"r")
+#################################
+# set a bunch of plot parameters#
+#################################
 
+params = {'legend.fontsize' : 35,
+          'legend.linewidth': 2,
+          'axes.linewidth'  : 3.5,
+          'axes.labelsize'  : 30,
+          'xtick.major.pad' : 10,
+          'xtick.major.width' : 3,
+          'xtick.major.size'  : 6,
+          'ytick.major.width' : 3,
+          'ytick.major.size'  : 6,
+          'xtick.labelsize'    : 28,
+          'ytick.labelsize'    : 28,
+          'text.usetex'        : True,
+	  'font.size'          : 30,
+	  'font'               : 'serif',
+          'mathtext.default'  : 'serif:bold'}
+pl.rcParams['text.latex.preamble']=[r"\usepackage{amsmath} \usepackage{amssymb} \usepackage{amsfonts}"]
+pl.rcParams.update(params)
+pl.rc("font",family="serif")
+
+
+f = file(sys.argv[1],"r")
 i = 0
 brange = None
 zrange = None
@@ -49,10 +72,14 @@ print "integral of data_i : ", np.mean(data_i)*A
 #print data_r
 
 fig = pl.figure()
-fig.suptitle("real part")
+fig.suptitle("CX scattering probability")
+fig.subplots_adjust(bottom=0.17,left=0.15)
 ax  = fig.add_subplot(111)
-CS  = ax.contourf(brange,zrange,np.transpose(data_r),100)
+ax.contour(brange,zrange,np.transpose(data_r),100,lw=0.1)
+CS  = ax.contourf(brange,zrange,np.transpose(data_r),100)#,antialiased=False)
 pl.colorbar(CS)
+ax.set_xlabel(r"$\mathbf{b}$ [fm]")
+ax.set_ylabel(r"$\mathbf{z}$ [fm]")
 
 fig = pl.figure()
 fig.suptitle("imag part")
