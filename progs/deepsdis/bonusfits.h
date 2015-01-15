@@ -40,6 +40,10 @@ const static double normfits_off3_paris_CB_off3_lc1_fsi_q2dep1_beam4[3][5][4];
 const static double normfits_off3_paris_CB_off3_lc1_fsi_q2dep1_beam5[2][5][4];
 const static double normfits_off3_AV18_CB_off3_lc0_fsi_q2dep1_beam4[3][5][4];
 const static double normfits_off3_AV18_CB_off3_lc0_fsi_q2dep1_beam5[2][5][4];
+const static double normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam4[3][5][4];
+const static double normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[2][5][4];
+const static double normfits_off3_paris_Alekhin_off3_lc0_fsi_q2dep1_beam4[3][5][4];
+const static double normfits_off3_paris_Alekhin_off3_lc0_fsi_q2dep1_beam5[2][5][4];
 
 
 
@@ -1383,6 +1387,166 @@ const double bonusfits::normfits_off3_AV18_CB_off3_lc0_fsi_q2dep1_beam5[2][5][4]
 },
 };
 
+
+
+//fit parameters for data normalization, no offshell and VNA
+//paris wf, SLAC F2, FSI fit, deeps parameters, Q2 dependence
+//Bonus data beam 4GeV
+//first index is Q^2={0.93,1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam4[3][5][4]={ 
+{ 
+{ 2.17895 , 2.33995 , 2.96154 , 3.49905 }
+,
+{ 1.35692 , 1.35336 , 1.40003 , 1.4324 }
+,
+{ 1.21117 , 1.17391 , 1.22879 , 1.28857 }
+,
+{ 1.25321 , 1.24584 , 1.31316 , 1.43855 }
+,
+{ 1.20865 , 1.1811 , 1.24654 , 1.39114 }
+
+},
+{ 
+{ 2.39114 , 2.58473 , 3.15214 , 3.89988 }
+,
+{ 1.4874 , 1.42622 , 1.53087 , 1.58413 }
+,
+{ 1.21164 , 1.1948 , 1.22443 , 1.20978 }
+,
+{ 1.32954 , 1.29596 , 1.38382 , 1.48132 }
+,
+{ 1.29736 , 1.25252 , 1.37082 , 1.54601 }
+
+},
+{ 
+{ 2.42519 , 2.44108 , 2.8399 , 2.68707 }
+,
+{ 1.61977 , 1.65572 , 1.61152 , 1.45233 }
+,
+{ 1.16141 , 1.05718 , 1.10444 , 1.11129 }
+,
+{ 1.41205 , 1.30558 , 1.4253 , 1.48322 }
+,
+{ 1.0 , 1.0 , 1.0 , 1.0 }
+
+}
+};
+
+
+//fit parameters for data normalization, no offshell and VNA
+//paris wf, SLAC F2, FSI fit, deeps parameters, Q2 dependence
+//Bonus data beam 5GeV
+//first index is Q^2={1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[2][5][4]={ 
+{ 
+{ 2.19348 , 2.55392 , 2.96343 , 3.83474 }
+,
+{ 1.39875 , 1.45254 , 1.48965 , 1.65306 }
+,
+{ 1.17913 , 1.18242 , 1.19924 , 1.30194 }
+,
+{ 1.23972 , 1.26592 , 1.30786 , 1.45994 }
+,
+{ 1.13435 , 1.15511 , 1.2091 , 1.38853 }
+
+},
+{ 
+{ 2.11836 , 2.49819 , 2.50659 , 2.97396 }
+,
+{ 1.587 , 1.57311 , 1.66286 , 1.75939 }
+,
+{ 1.0922 , 1.0944 , 1.07915 , 1.11107 }
+,
+{ 1.24353 , 1.29143 , 1.28131 , 1.47301 }
+,
+{ 1.18158 , 1.20999 , 1.19309 , 1.38982 }
+
+},
+};
+
+
+//fit parameters for data normalization, no offshell and VNA
+//paris wf, Alekhin F2, FSI fit, deeps parameters, Q2 dependence
+//Bonus data beam 4GeV
+//first index is Q^2={0.93,1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_off3_paris_Alekhin_off3_lc0_fsi_q2dep1_beam4[3][5][4]={ 
+{ 
+{ 4.8608 , 5.0 , 5.0 , 5.0 }
+,
+{ 1.36961 , 1.3665 , 1.41394 , 1.44753 }
+,
+{ 1.26834 , 1.22955 , 1.28735 , 1.35061 }
+,
+{ 1.18719 , 1.18054 , 1.24461 , 1.36401 }
+,
+{ 1.22497 , 1.19717 , 1.26394 , 1.4119 }
+
+},
+{ 
+{ 5.0 , 5.0 , 5.0 , 5.0 }
+,
+{ 2.0353 , 1.95269 , 2.09666 , 2.17145 }
+,
+{ 1.49241 , 1.47224 , 1.50963 , 1.49282 }
+,
+{ 1.34649 , 1.31279 , 1.40239 , 1.5021 }
+,
+{ 1.37933 , 1.3306 , 1.45618 , 1.64117 }
+
+},
+{ 
+{ 5.0 , 5.0 , 5.0 , 5.0 }
+,
+{ 4.49434 , 4.59645 , 4.48381 , 4.02556 }
+,
+{ 2.22585 , 2.02863 , 2.12293 , 2.13709 }
+,
+{ 1.66925 , 1.53766 , 1.67737 , 1.74094 }
+,
+{ 1.0 , 1.0 , 1.0 , 1.0 }
+
+}
+};
+
+
+//fit parameters for data normalization, no offshell and VNA
+//paris wf, Christy Bosted F2, FSI fit, deeps parameters, Q2 dependence
+//Bonus data beam 5GeV
+//first index is Q^2={1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits::normfits_off3_paris_Alekhin_off3_lc0_fsi_q2dep1_beam5[2][5][4]={ 
+{ 
+{ 5.0 , 5.0 , 5.0 , 5.0 }
+,
+{ 1.88054 , 1.95312 , 2.00363 , 2.22504 }
+,
+{ 1.43261 , 1.43698 , 1.45779 , 1.58355 }
+,
+{ 1.24401 , 1.27055 , 1.3129 , 1.46631 }
+,
+{ 1.19336 , 1.21546 , 1.27244 , 1.46197 }
+
+},
+{ 
+{ 5.0 , 5.0 , 5.0 , 5.0 }
+,
+{ 4.22004 , 4.18315 , 4.42724 , 4.68276 }
+,
+{ 1.97692 , 1.98231 , 1.95842 , 2.01696 }
+,
+{ 1.40454 , 1.45935 , 1.44849 , 1.66744 }
+,
+{ 1.35701 , 1.38728 , 1.36683 , 1.59073 }
+
+},
+};
 
 
 

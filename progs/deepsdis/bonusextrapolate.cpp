@@ -87,8 +87,8 @@ double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int
 double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc, bool q2dep){
   if(q2dep){
     if(offshell==3){
-      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep1_beam5[Qindex-1][Windex][psindex];
+      if(beamindex==0) return bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep1_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep1_beam5[Qindex-1][Windex][psindex];
     }
     if(offshell==4){
       if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep1_beam4[Qindex][Windex][psindex];
@@ -97,8 +97,8 @@ double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int 
   }
   else{
     if(offshell==3){
-      if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_sigmadeeps_fix3_off3_lc0_q2dep0_beam5[Qindex-1][Windex][psindex];
+      if(beamindex==0) return bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep0_beam4[Qindex][Windex][psindex];
+      else return bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep0_beam5[Qindex-1][Windex][psindex];
     }
     if(offshell==4){
       if(beamindex==0) return bonusfits::normfits_sigmadeeps_fix3_off4_lc0_q2dep0_beam4[Qindex][Windex][psindex];
