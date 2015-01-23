@@ -1,5 +1,5 @@
-/*! \file NuclStructure.hpp 
- * \brief Contains declaration of class NuclStructure, contains functions to compute deuteron structure functions
+/*! \file DeuteronStructure.hpp 
+ * \brief Contains declaration of class DeuteronStructure, contains functions to compute deuteron structure functions
  * \author Wim Cosyn
  * \date 29/08/2012
  * 

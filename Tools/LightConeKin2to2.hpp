@@ -61,7 +61,7 @@ public:
   double getPA_plus() const{return pA_plus;} /*!< LC plus component of target */
   const TVector3 &getPA_perp() const{return pA_perp;} /*!< [MeV] perp component of target momentum */
   const TVector3 &getPs_perp() const{return ps_perp;} /*!< [MeV] perp component of spectator momentum */
-  const TVector3 &getQ_perp() const{return ps_perp;} /*!< [MeV] perp component of virtual photon */
+  const TVector3 &getQ_perp() const{return q_perp;} /*!< [MeV] perp component of virtual photon */
   double getAlpha_s() const{return alpha_s;} /*!< LC plus fraction of spectator 2p_s^+/p_A^+ */
   double getAlpha_i() const{return alpha_i;} /*!< LC plus fraction of struck nucleon */
   double getEpsilon() const{return epsilon;} /*!< [] longitudinal to transverse polarization ratio of virtual photon */

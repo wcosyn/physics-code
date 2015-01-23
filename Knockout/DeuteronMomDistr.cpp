@@ -299,8 +299,8 @@ double DeuteronMomDistr::getMomDistrfsiLC(LightConeKin2to2 &kin){
       result=ret[0];
 //       rombergerN(this,&DeuteronMomDistr::totdens_qt,0.,1.E03,1,&result,PREC,3,10,&qestimate, 
 // 				  &kin,M,spinr, Er,phi,&thestimate);
-      wave+=I_UNIT*kin.getAlpha_i()/(16*PI*PI*kin.getPA_plus()/**(kin.getA_mu()[0]+kin.getQ_mu()[0]
-      -kin.getA_mu()[3]-kin.getQ_mu()[3])/sqrt(2.)*/*kin.getQ_mu()[3])*result;
+      wave+=I_UNIT*kin.getAlpha_i()/(16*PI*PI*kin.getPA_plus()*(kin.getA_mu()[0]+kin.getQ_mu()[0]
+      -kin.getA_mu()[3]-kin.getQ_mu()[3])/sqrt(2.))*result;
       fsitotal+=norm(wave);
     }
   }
@@ -404,6 +404,47 @@ void DeuteronMomDistr::FSI_int(numint::vector_z & result, double qt, double qphi
 }
 
 //integration over perp LC rescaled momentum
+// void DeuteronMomDistr::FSILC_int(numint::vector_z & result, double qt, double qphi, DeuteronMomDistr &momdistr,
+// 			       LightConeKin2to2 &kin, int M, int spinr){
+//   result=numint::vector_z(1,0.);
+//   if(qt<1.E-03) { result[0]=0.; return;}
+//   
+//   
+//   TVector3 k_perp=kin.getK_perp(); //k_t
+//   TVector3 k_perp_prime=k_perp-TVector3(-qt*cos(qphi),-qt*sin(qphi),0.); //LC rescaled perp mom of initial spectator
+//   
+//   momdistr.Wxprime2=-1.;  //invariant mass X' before rescattering
+//   momdistr.get_k_z_prime(k_perp_prime,kin);
+//   if(momdistr.Wxprime2<0.) {result[0]= 0.; return;}
+//   double kprime=sqrt(k_perp_prime.Mag2()+momdistr.k_z_prime*momdistr.k_z_prime);
+// //   cout << "LC " << kprime << " " << kin.getK() << endl;
+//   if(kprime>1.E03) { result[0]=0.; return;}
+//   double Ekprime=sqrt(momdistr.massr*momdistr.massr+kprime*kprime);
+//   double alpha_s_prime=1.+momdistr.k_z_prime/Ekprime; //WATCH SIGN!!
+//   TVector3 psprime_perp=k_perp_prime+alpha_s_prime/2.*kin.getPA_perp();
+//   double prprime_plus=alpha_s_prime/2.*kin.getPA_plus();
+//   double prprime_min=(psprime_perp.Mag2()+momdistr.massr*momdistr.massr)/2./prprime_plus;
+//   double przprime=(prprime_plus-prprime_min)/sqrt(2.);
+//   double Erprime=sqrt(momdistr.massr*momdistr.massr+psprime_perp.Mag2()+przprime*przprime);
+//   double thetaprime=acos(momdistr.k_z_prime/kprime);
+//   FourVector<double> qmu=FourVector<double>(Erprime-kin.getPs_mu()[0],psprime_perp.X()-kin.getPs_perp().X(),
+// 					    psprime_perp.Y()-kin.getPs_perp().Y(),przprime-kin.getPs_mu()[3]);
+//   double t=qmu*qmu;
+// //   double t=-qt*qt;
+//   double chi=sqrt(kin.getS()*kin.getS()-2.*kin.getS()*(momdistr.Wxprime2+momdistr.massr*momdistr.massr)
+//   +pow(momdistr.massr*momdistr.massr-momdistr.Wxprime2,2.));
+//   double offshellness=0.;
+//   if(momdistr.offshellset==2) offshellness=exp((momdistr.betaoff-momdistr.beta)*t/2.);
+//   if(momdistr.offshellset==3) offshellness=0.;
+//   if(momdistr.offshellset==4) offshellness=1.;
+//   TVector3 vecprime(k_perp_prime.X(),k_perp_prime.Y(),momdistr.k_z_prime);
+//   result[0] = qt*chi*momdistr.scatter(t)*(momdistr.wf.DeuteronPState(M, -1, spinr, vecprime)
+//  	 -(offshellness*momdistr.wfref->DeuteronPStateOff(M, -1, spinr, vecprime)))
+// 	*sqrt(Ekprime);
+// }
+
+
+//integration over perp LC rescaled momentum
 void DeuteronMomDistr::FSILC_int(numint::vector_z & result, double qt, double qphi, DeuteronMomDistr &momdistr,
 			       LightConeKin2to2 &kin, int M, int spinr){
   result=numint::vector_z(1,0.);
@@ -420,13 +461,13 @@ void DeuteronMomDistr::FSILC_int(numint::vector_z & result, double qt, double qp
 //   cout << "LC " << kprime << " " << kin.getK() << endl;
   if(kprime>1.E03) { result[0]=0.; return;}
   double Ekprime=sqrt(momdistr.massr*momdistr.massr+kprime*kprime);
-  double alpha_s_prime=1.+momdistr.k_z_prime/Ekprime; //WATCH SIGN!!
+  double alpha_s_prime=1.-momdistr.k_z_prime/Ekprime; //WATCH SIGN!!..determined k_z_prime is that of non spectator nucleon!
   TVector3 psprime_perp=k_perp_prime+alpha_s_prime/2.*kin.getPA_perp();
   double prprime_plus=alpha_s_prime/2.*kin.getPA_plus();
   double prprime_min=(psprime_perp.Mag2()+momdistr.massr*momdistr.massr)/2./prprime_plus;
   double przprime=(prprime_plus-prprime_min)/sqrt(2.);
   double Erprime=sqrt(momdistr.massr*momdistr.massr+psprime_perp.Mag2()+przprime*przprime);
-  double thetaprime=acos(momdistr.k_z_prime/kprime);
+  double thetaprime=acos(-momdistr.k_z_prime/kprime);
   FourVector<double> qmu=FourVector<double>(Erprime-kin.getPs_mu()[0],psprime_perp.X()-kin.getPs_perp().X(),
 					    psprime_perp.Y()-kin.getPs_perp().Y(),przprime-kin.getPs_mu()[3]);
   double t=qmu*qmu;
@@ -437,14 +478,14 @@ void DeuteronMomDistr::FSILC_int(numint::vector_z & result, double qt, double qp
   if(momdistr.offshellset==2) offshellness=exp((momdistr.betaoff-momdistr.beta)*t/2.);
   if(momdistr.offshellset==3) offshellness=0.;
   if(momdistr.offshellset==4) offshellness=1.;
-  TVector3 vecprime(k_perp_prime.X(),k_perp_prime.Y(),momdistr.k_z_prime);
+  TVector3 vecprime(k_perp_prime.X(),k_perp_prime.Y(),-momdistr.k_z_prime);
   result[0] = qt*chi*momdistr.scatter(t)*(momdistr.wf.DeuteronPState(M, -1, spinr, vecprime)
  	 -(offshellness*momdistr.wfref->DeuteronPStateOff(M, -1, spinr, vecprime)))
 	*sqrt(Ekprime);
-  
-  
-
 }
+
+
+
 
 void DeuteronMomDistr::totdens_qt(const double qt, complex<double>* result, va_list ap){
   
@@ -528,87 +569,104 @@ void DeuteronMomDistr::get_przprime(double pt2, double Er, TKinematics2to2 & kin
   return;
 }
 
-void DeuteronMomDistr::get_k_z_prime(TVector3 &k_perp_prime, LightConeKin2to2 & kin){
-  k_z_prime=0.;
-  przprime=0.;
+// void DeuteronMomDistr::get_k_z_prime(TVector3 &k_perp_prime, LightConeKin2to2 & kin){
+//   k_z_prime=0.;
+//   przprime=0.;
 //   double factor=kin.getPA_plus()*(kin.getA_mu()[0]+kin.getQ_mu()[0]
 //       -kin.getA_mu()[3]-kin.getQ_mu()[3])/sqrt(2.);
 //   for(int i=0;i<looplimit;i++){
 //     TVector3 k_prime=TVector3(k_perp_prime.X(),k_perp_prime.Y(),k_z_prime);
-//     double Ekprime=sqrt(massr*massr+k_prime.Mag2()+k_z_prime*k_z_prime);
-//     double alpha_s_prime=1+k_z_prime/Ekprime;
+//     double Ekprime=sqrt(massr*massr+k_prime.Mag2());
+//     double alpha_s_prime=1.+k_z_prime/Ekprime;
 //     TVector3 psprime_perp=k_perp_prime+alpha_s_prime/2.*kin.getPA_perp();
 //     double prprime_plus=alpha_s_prime/2.*kin.getPA_plus();
 //     double prprime_min=(psprime_perp.Mag2()+massr*massr)/2./prprime_plus;
 //     double przprime=(prprime_plus-prprime_min)/sqrt(2.);
 //     double f_Erprime=(prprime_plus+prprime_min)/sqrt(2.);  //guess for on-shell energy of initial spectator
 //     FourVector<double> ps_prime_mu=FourVector<double>(f_Erprime,psprime_perp.X(),psprime_perp.Y(),przprime);
-// //     cout << ps_prime_mu << " " << kin.getQ_mu() << " " << kin.getA_mu() << endl;
 //     //guess for invariant mass initial X'
 //     double f_Wxprime2=(kin.getQ_mu()+kin.getA_mu()-ps_prime_mu)*(kin.getQ_mu()+kin.getA_mu()-ps_prime_mu);
 // 		      
-//     double f_k_z_prime=Ekprime/kin.getEk()*kin.getK_z()+Ekprime/factor*
+//     double f_k_z_prime=Ekprime/kin.getEk()*kin.getK_z()/*+Ekprime/factor*
 // 	((sqrt(2.)*kin.getPA_plus()+(kin.getA_mu()[0]+kin.getQ_mu()[0]
 //       +kin.getA_mu()[3]+kin.getQ_mu()[3]))*
 // 	  (kin.getPs_mu()[0]-f_Erprime-kin.getPs_mu()[3]+przprime)
-// 	  -2.*(kin.getPs_perp()-psprime_perp)*(kin.getPA_perp()+kin.getQ_perp()));  //new value for kzprime 
-//     double f_k_z_prime_ratio=	kin.getK_z()/kin.getEk()+1./factor*
+// 	  -2.*(kin.getPs_perp()-psprime_perp)*(kin.getPA_perp()+kin.getQ_perp()))*/;  //new value for kzprime 
+//     double f_k_z_prime_ratio=	kin.getK_z()/kin.getEk()/*+1./factor*
 // 	((sqrt(2.)*kin.getPA_plus()+(kin.getA_mu()[0]+kin.getQ_mu()[0]
 //       +kin.getA_mu()[3]+kin.getQ_mu()[3]))*
 // 	  (kin.getPs_mu()[0]-f_Erprime-kin.getPs_mu()[3]+przprime)
-// 	  -2.*(kin.getPs_perp()-psprime_perp)*(kin.getPA_perp()+kin.getQ_perp()));
+// 	  -2.*(kin.getPs_perp()-psprime_perp)*(kin.getPA_perp()+kin.getQ_perp()))*/;
 //     //add mass diff term if necessary
+// //     cout << i << " " << kin.getK_z() << " " << f_k_z_prime << " ";
 //     if((kin.getMassX()*kin.getMassX())>f_Wxprime2){
 //       f_k_z_prime+=(kin.getMassX()*kin.getMassX()-f_Wxprime2)*Ekprime/factor;
 //       f_k_z_prime_ratio+=(kin.getMassX()*kin.getMassX()-f_Wxprime2)/factor;
 //     }
+// //     cout << f_k_z_prime << endl;
+//     
 //     //check convergence
 //     double f_k_z_prime2=sqrt((massr*massr+k_perp_prime.Mag2())/(1./f_k_z_prime_ratio/f_k_z_prime_ratio-1.))*SIGN(f_k_z_prime_ratio);
 //     if(abs(f_k_z_prime_ratio)>1){ Wxprime2=-1.; k_z_prime=1.E04; return;}
-// 
-//     double f_Erprime2=sqrt(massr*massr+psprime_perp.Mag2()+przprime*przprime);  //guess for on-shell energy of initial spectator
-//     //guess for invariant mass initial X'
-//     double f_Wxprime22=kin.getQ_mu()[0]*kin.getQ_mu()[0]-kin.getQ_mu()[3]*kin.getQ_mu()[3]
-// 		      +pow(MASSD-f_Erprime2,2.)-kin.getPs_perp().Mag2()-przprime*przprime
-// 		      +2.*kin.getQ_mu()[0]*(MASSD-f_Erprime2)+2.*kin.getQ_mu()[3]*przprime;
-// 		      
-//     double f_przprime2=kin.getPs_mu()[3]-(kin.getQ_mu()[0]+MASSD)/kin.getQ_mu()[3]*(kin.getPs_mu()[0]-f_Erprime2);  //new value for przprime 
-//     //add mass diff term if necessary
-//     if((kin.getMassX()*kin.getMassX())>f_Wxprime22)
-//       f_przprime2-=((kin.getMassX()*kin.getMassX())-f_Wxprime22)/(2.*kin.getQ_mu()[3]);
 //     
-// //     cout << i << " " << f_k_z_prime << " " << f_k_z_prime2 << endl;
-// //     cout << i << " " << kin.getPs_mu()[3] << " " << f_przprime2 << " " << przprime << " " << f_Wxprime22 << " " << f_Wxprime2 << " " << (kin.getMassX()*kin.getMassX()) << endl;
-//     
-//     
-//     if((abs((k_z_prime-f_k_z_prime2)/f_k_z_prime2)<1e-03)) {Wxprime2= f_Wxprime2; k_z_prime = f_k_z_prime2; return;}
+//     if((abs((k_z_prime-f_k_z_prime)/f_k_z_prime)<1e-03)) {Wxprime2= f_Wxprime2; k_z_prime = f_k_z_prime; return;}
 //     //start again
-//     k_z_prime=f_k_z_prime2;
+//     k_z_prime=f_k_z_prime;
 //     Wxprime2=f_Wxprime2;  
 //   }
-  //no real convergence
-  FourVector<double> psprime(massi,0.,0.,0.);
-  double f_Wxprime2=(kin.getA_mu()+kin.getQ_mu()-psprime)*(kin.getA_mu()+kin.getQ_mu()-psprime);
-  double alphaprime=kin.getAlpha_s()-2.*(kin.getPs_mu()[0]-psprime[0])*(kin.getQ_mu()[0]+kin.getQ_mu()[3]+kin.getA_mu()[0])
-    /(kin.getPA_plus()*kin.getQ_mu()[3]);
-//     cout << kin.getAlpha_s() << " " << alphaprime << " ";
-  if((kin.getMassX()*kin.getMassX())>f_Wxprime2){
-      alphaprime-=(kin.getMassX()*kin.getMassX()-f_Wxprime2)/(kin.getPA_plus()*kin.getQ_mu()[3]);
-//       cout << alphaprime;
+// //   no real convergence
+// //   cout << endl;
+// //  k_z_prime=f_k_z_prime;//sqrt((massr*massr+k_perp_prime.Mag2())/(1./pow(alphaprime-1,2.)-1.))*SIGN(alphaprime-1);
+// //  Wxprime2=f_Wxprime2;
+// //  cout << f_Wxprime2 << " " << f_Wxprime22 << " " << alphaprime << " " << k_z_prime << endl;
+//   return;
+// }
+
+void DeuteronMomDistr::get_k_z_prime(TVector3 &k_perp_prime, LightConeKin2to2 & kin){
+  k_z_prime=0.; //k_z of INITIAL struck nucleon
+  przprime=0.;
+  double factor=kin.getPA_plus()*(kin.getQ_mu()[0]
+      -kin.getQ_mu()[3])/sqrt(2.);
+  for(int i=0;i<looplimit;i++){
+    TVector3 k_prime=TVector3(k_perp_prime.X(),k_perp_prime.Y(),-k_z_prime); //SPECTATOR 3-mom (LC)
+    double Ekprime=sqrt(massr*massr+k_prime.Mag2());
+    double alpha_s_prime=1.-k_z_prime/Ekprime;  //WATCH SIGN
+    TVector3 psprime_perp=k_perp_prime+alpha_s_prime/2.*kin.getPA_perp();
+    double prprime_plus=alpha_s_prime/2.*kin.getPA_plus();
+    double prprime_min=(psprime_perp.Mag2()+massr*massr)/2./prprime_plus;
+    double przprime=(prprime_plus-prprime_min)/sqrt(2.);
+    double f_Erprime=(prprime_plus+prprime_min)/sqrt(2.);  //guess for on-shell energy of initial spectator
+    FourVector<double> ps_prime_mu=FourVector<double>(f_Erprime,psprime_perp.X(),psprime_perp.Y(),przprime);
+    //guess for invariant mass initial X'
+    double f_Wxprime2=(kin.getQ_mu()+kin.getA_mu()-ps_prime_mu)*(kin.getQ_mu()+kin.getA_mu()-ps_prime_mu);
+		      
+    double f_k_z_prime=-Ekprime/kin.getEk()*kin.getK_z()/*-Ekprime*(kin.getQ_mu()[0]+kin.getQ_mu()[3])
+      *(kin.getPs_mu()[0]-f_Erprime-kin.getPs_mu()[3]+przprime)/factor-Ekprime/factor*2.*kin.getA_mu()*(ps_prime_mu-kin.getPs_mu())*/;  //new value for kzprime 
+    double f_k_z_prime_ratio=	-kin.getK_z()/kin.getEk();
+    //add mass diff term if necessary
+//     cout << i << " " << -kin.getK_z() << " " << f_k_z_prime << " ";
+    if((kin.getMassX()*kin.getMassX())>f_Wxprime2){
+      f_k_z_prime+=-(kin.getMassX()*kin.getMassX()-f_Wxprime2)*Ekprime/factor;
+      f_k_z_prime_ratio+=-(kin.getMassX()*kin.getMassX()-f_Wxprime2)/factor;
+    }
+//     cout << f_k_z_prime << " " << (kin.getMassX()*kin.getMassX()-f_Wxprime2)*Ekprime/factor << endl;
+    
+    //check convergence
+    double f_k_z_prime2=sqrt((massr*massr+k_perp_prime.Mag2())/(1./f_k_z_prime_ratio/f_k_z_prime_ratio-1.))*SIGN(f_k_z_prime_ratio);
+    if(abs(f_k_z_prime_ratio)>1){ Wxprime2=-1.; k_z_prime=1.E04; return;}
+    
+    if((abs((k_z_prime-f_k_z_prime)/f_k_z_prime)<1e-03)) {Wxprime2= f_Wxprime2; k_z_prime = f_k_z_prime; return;}
+    //start again
+    k_z_prime=f_k_z_prime;
+    Wxprime2=f_Wxprime2;  
   }
+//   no real convergence
 //   cout << endl;
- k_z_prime=sqrt((massr*massr+k_perp_prime.Mag2())/(1./pow(alphaprime-1,2.)-1.))*SIGN(alphaprime-1);
- Wxprime2=f_Wxprime2;
+//  k_z_prime=f_k_z_prime;//sqrt((massr*massr+k_perp_prime.Mag2())/(1./pow(alphaprime-1,2.)-1.))*SIGN(alphaprime-1);
+//  Wxprime2=f_Wxprime2;
 //  cout << f_Wxprime2 << " " << f_Wxprime22 << " " << alphaprime << " " << k_z_prime << endl;
- 
-  
-  
-  
-  
-  
   return;
 }
-
 
 
 complex<double> DeuteronMomDistr::scatter(double t){

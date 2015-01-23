@@ -65,7 +65,7 @@ public:
   double getMomDistrpw(TKinematics2to2 &kin) const;
   /*! Computes plane-wave momentum distribution in light-cone formalism, does not depend on phi
    * \param[in] kin LC kinematics object containing the gamma+D->X+N kinematics <BR>
-   * \return plane-wave momentum distribution [MeV^-3]
+   * \return plane-wave momentum distribution defined as \f$ \frac{|\psi(k)|^2 \sqrt{E_k}}{\alpha_s \alpha_i} \f$ [MeV^-3]
    */
   double getMomDistrpwLC(LightConeKin2to2 &kin) const;
   /*! Computes plane-wave Azz distribution, does not depend on phi, includes flux factor for baryon conservation

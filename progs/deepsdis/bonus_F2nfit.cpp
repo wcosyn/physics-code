@@ -446,6 +446,14 @@ double get_normfit_array(string wf, string struc, int offshell, bool lc, bool q2
 	  }
 	}
 	else{
+	  if(lc){
+	    
+	  }
+	  else{
+	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
+	      bonusfits::normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam4,
+	      bonusfits::normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam5);			      	    
+	  }
 	}
 	
       }

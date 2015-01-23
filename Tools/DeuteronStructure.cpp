@@ -70,7 +70,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   if(std::isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
   FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
-//   cout << std::setprecision(9)<< F1 << " " << F2 << " " << kin.GetQsquared() << " " << xoffshell << " " << W_sq << endl;
+//   cout << "VNAstruc " << std::setprecision(9)<< F1 << " " << F2 << " " << kin.GetQsquared() << " " << xoffshell << " " << W_sq << endl;
 //   cout << FL << " " << FT << " " << FTT << " " << FTL << endl;
 //   cout << (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT) << " " << F2*(pow(alphai/alphaq+1/(2.*xtilde),2.)+pt*pt/(2.*kin.GetQsquared()))*2.*xtilde*kin.GetWlab()/massi*(sindelta2+2.*electron.GetTan2HalfAngle(kin)/(1+0.18)) << endl;
   
@@ -108,7 +108,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   if(std::isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
   FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
-//   cout << "VNA " << F1 << " " << F2 << endl;
+//   cout << "VNAstruc " << F1 << " " << F2 << endl;
 //   cout << FL << " " << FT << " " << FTT << " " << FTL << endl;
 //   cout << (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT) << " " << F2*(pow(alphai/alphaq+1/(2.*xtilde),2.)+pt*pt/(2.*kin.GetQsquared()))*2.*xtilde*kin.GetWlab()/massi*(sindelta2+2.*electron.GetTan2HalfAngle(kin)/(1+0.18)) << endl;
   
@@ -209,6 +209,7 @@ double DeuteronStructure::getavgStructureLC(LightConeKin2to2 &kin) const{
   }
   else strfunction.getF(F1,F2);
   if(std::isnan(F2)){cout << "bla " << endl;  return F2;}
+//   cout << "LCstruc " << F1 << " " << F2 << endl;
 //   cout << x_i << " " << xoffshell << endl;
   return 2.*kin.getXN()*F2/kin.getQ2()*(-(mi_off2+kin.getQ2()/4./pow(kin.getXN(),2.))
 	+(2*kin.getEpsilon()+1.)*pow(MASSD*MASSD+(1.-2.*kin.getZs()*kin.getXN())*kin.getQ2()/(2.*kin.getXA()*kin.getXN()),2.)
