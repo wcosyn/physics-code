@@ -1,5 +1,5 @@
 //bonus data test program, test formulas from their MC, my cross section
-// generate ratios to compare with data (using scattering parameter values from fit)
+// generate ratios to compare with data (using scattering parameter values from deeps fit)
 
 #include <iostream>
 #include <cstdlib>

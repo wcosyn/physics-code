@@ -1,3 +1,7 @@
+//program to do on-shell extrapolation of F2n using the bonus data
+//we use renormalization for the data derived from our fits of the FSI model at certain kinematics
+//different strategies have been tried
+
 
 #include <TVirtualFitter.h>
 #include <TFitter.h>
@@ -38,7 +42,7 @@ double get_normfit_array(string wf, string struc, int offshell, bool lc, bool q2
 			 int Qindex, int Windex, int psindex);
 double sigmaparam(double W, double Q2, bool Q2dep);
 void get_data(double &data, double& error, int beamindex, int Qindex, int Windex, int psindex, int cosindex);
-
+double get_norm_final(bool q2dep, int beamindex,int psindex,int normset);
 
 
 void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
@@ -67,7 +71,7 @@ int main(int argc, char *argv[])
   bool pw=atoi(argv[3]);
   
   
-  string outdir="/home/wim/Calculations/Bonus/results/parabfits/";
+  string outdir="/home/wim/Calculations/Bonus/results/parabfits2/";
   ofstream generalfile;
   generalfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
 	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+".fits.dat");
@@ -99,8 +103,10 @@ int main(int argc, char *argv[])
 	  double Ebeam = data::Ebeam[beamindex]; //[0,1]
 	 
 	  double result, error;
-	  double norm=get_normfit_array(wf,strucname, 
-					offshellset,lc,q2dep,pw,beamindex,Qindex,Windex,psindex);
+// 	  double norm=get_normfit_array(wf,strucname, 
+// 					offshellset,lc,q2dep,pw,beamindex,Qindex,Windex,psindex);
+	  double norm=get_norm_final(q2dep, beamindex,psindex,0);
+	  cout << norm << endl;
 	  get_data(result, error, beamindex,Qindex,Windex,psindex,cosindex);
 	  double ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	  if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
@@ -114,8 +120,9 @@ int main(int argc, char *argv[])
 	  if(Qindex>0){
 	    beamindex=1;
 	    Ebeam=data::Ebeam[beamindex];
-	    norm=get_normfit_array(wf,strucname, 
-					offshellset,lc,q2dep,pw,beamindex,Qindex,Windex,psindex);
+// 	    norm=get_normfit_array(wf,strucname, 
+// 					offshellset,lc,q2dep,pw,beamindex,Qindex,Windex,psindex);
+	    norm=get_norm_final(q2dep, beamindex,psindex,0); 
 	    get_data(result, error, beamindex,Qindex,Windex,psindex,cosindex);
 	    ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	    if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
@@ -494,6 +501,26 @@ double get_normfit_array(string wf, string struc, int offshell, bool lc, bool q2
   assert(1==0);
   
 }
+
+double get_norm_final(bool q2dep, int beamindex,int psindex, int normset){
+  switch(normset){
+    case 0:
+      if(q2dep){
+	if(beamindex==0) return bonusfits::normfits_final_q2dep0_beam4_set0[psindex];
+	if(beamindex==1) return bonusfits::normfits_final_q2dep0_beam5_set0[psindex];
+      }
+      else{
+	if(beamindex==0) return bonusfits::normfits_final_q2dep1_beam4_set0[psindex];
+	if(beamindex==1) return bonusfits::normfits_final_q2dep1_beam5_set0[psindex];
+      }
+      break;
+    default:
+      cerr << "invalid set of norms" << endl;
+      assert(1==0);
+  }
+  return 0./0.;
+}
+
 
 
 //sigma in mbarn
