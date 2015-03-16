@@ -90,7 +90,7 @@ int main(int argc, char** argv){
 	fout = fopen(argv[3],"w");
 	if (fout != NULL){ // file was succesfully opened
 		fprintf(fout,"#[0]: no scattering [1]: leading cx [2]: recoil cx [3]: both cx");
-		fprintf(fout,"[4]: no scattering error [5]: leading cx error [6]: recoil cx error [7]: both cx error");
+		fprintf(fout,"[4]: no scattering error [5]: leading cx error [6]: recoil cx error [7]: both cx error\n");
 		for (unsigned i=0;i<events.size();i++){
 			double no_scx   = 1. - res[i][0] - res[i][1] + res[i][2];
 			double scx_p1   = res[i][0] - res[i][2]; // particle 1 scatters, 2 does not
@@ -139,7 +139,7 @@ void calculate_CX_probabilities(struct Event& event,MeanFieldNucleusThick& nuc,d
 	grid.clearParticles();
 	grid.addParticle(fp1_fsi);
 	grid.addParticle(fp2_fsi);
-	cout << "Calculating grids... "; cout.flush();
+	cout << "[GlauberGridThick::info] Calculating grids... "; cout.flush();
 	grid.updateGrids();
 	cout << "  [DONE] " << endl; cout.flush();
 	grid.clearKnockout();

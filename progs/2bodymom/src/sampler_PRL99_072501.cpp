@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cassert>
 #include "sampler.hpp"
+#include <random>
 
 /** pass a vector of events. Each shell is calculated for given shell (excitation energy)
  *  independent quantities. Only the shells that yield physical possible solutions are kept.
@@ -38,25 +39,28 @@ namespace PRL99_072501 {
 	void generateKinematics(std::vector<struct Event>& events, unsigned n,MeanFieldNucleusThick& nuc,int seed) {
 		
 		srand(seed);
-
+		std::default_random_engine generator;
+		generator.seed(seed);
+		std::uniform_int_distribution<int> shell1_distribution(0,nuc.getPLevels()-1); // i know i could use just one generator here, but hey, if you want to use proton-neutron knockout later on, things will become a lot simpler to adapt...
+		std::uniform_int_distribution<int> shell2_distribution(0,nuc.getPLevels()-1);
 		events.clear();
 		double Eei  = 4627.; // MeV
 		TVector3 ei = TVector3(0.,0.,Eei); // @ ultra relativistic E = |p|c
 		printf("Seed is : %d\n",seed);
 
 		struct sampler_logger{ // a logger to check sampling efficiency
-			sampler_logger() : tries(0), p2_choices(0), p2_invalid(0), p2_nosol(0), seed(0) {}
+			sampler_logger() : tries(0), p2_choices(0), p2_invalid(0), p2_nosol(0), accept(0), seed(0) {}
 			unsigned tries; // total number of events generated
 			unsigned p2_choices; // total number of times i had two valid solutions for p2_mag
 			unsigned p2_invalid; // total number of times p2 was invalidated by detector cuts
 			unsigned p2_nosol;   // total number of times D<0 and hence no physical solution for p2
+			unsigned accept;     // accepted number of events
 			int seed;            // seed of random generator
 		};
 		struct sampler_logger logger;
 		logger.seed = seed; // set the seed for logger
 
-		unsigned int shellIndep_counter = 0; // don't count events from same shells
-		while (shellIndep_counter < n) {
+		while (logger.accept < n) {
 			//   ------------------------   //
 			// shell independent quantities //
 			TVector3 ef     = get_ef();
@@ -72,66 +76,69 @@ namespace PRL99_072501 {
 			double ek1_ep2  = k1.Unit().Dot(e_p2); // (e_{k1} \cdot e_{p2})
 			//   -----------------------   //
 			//
-			unsigned oldNumberOfEvents = events.size(); // copy number of events before loop starts
-			for (int shellindex1 = 0; shellindex1 < nuc.getPLevels(); shellindex1++){
-				for (int shellindex2 = shellindex1; shellindex2 < nuc.getPLevels(); shellindex2++) {
-					logger.tries++;
-					struct Event ev;
-					ev.xB          = xB;
-					ev.Q2          = Q2;
-					ev.omega       = omega;
-					ev.mass1       = MASSP;
-					ev.mass2       = MASSP;
-					ev.k1          = k1;
-					ev.p1          = p1;
-					ev.q           = q;
-					ev.shellindex1 = shellindex1;
-					ev.shellindex2 = shellindex2;
+			int shellindex1 = shell1_distribution(generator); // get a random shellindex1
+			int shellindex2 = shell2_distribution(generator); // get a random shellindex2
+			logger.tries++;
 
-					double Eexc    = nuc.getExcitation()[shellindex1] + nuc.getExcitation()[shellindex2];
-					double M_Amin2 = nuc.getMassA_min_pp() + Eexc;
-						
-					double B = (omega + nuc.getMassA() - E1);
-					double A = 0.5*(M_Amin2*M_Amin2 + ev.mass2*ev.mass2 + k1.Mag2() - B*B);
+			struct Event ev;
+			ev.xB          = xB;
+			ev.Q2          = Q2;
+			ev.omega       = omega;
+			ev.mass1       = MASSP;
+			ev.mass2       = MASSP;
+			ev.k1          = k1;
+			ev.p1          = p1;
+			ev.q           = q;
+			ev.shellindex1 = shellindex1;
+			ev.shellindex2 = shellindex2;
+			ev.type1       = 0; // 0 is for proton
+			ev.type2       = 0; // 0 is for proton
 
-					double a = (ev.mass2*ev.mass2 + M_Amin2*M_Amin2 + k1.Mag2()*( 1. - ek1_ep2*ek1_ep2) - 2.*A);
-					double b = 2.*k1.Mag()*ek1_ep2*( ev.mass2*ev.mass2 - A);
-					double c = M_Amin2*M_Amin2*ev.mass2*ev.mass2 + k1.Mag2()*ev.mass2*ev.mass2 - A*A;
-					
-					double D = b*b - 4.*a*c;
-					
-					if ( D >= 0){ // found two solutions
-						double p2_1 = ( -b - sqrt(D) )/(2.*a);
-						double p2_2 = ( -b + sqrt(D) )/(2.*a);
-						double p2_mag = 0.;
-						bool accept = true;	
-						if ( validate_p2(p2_1) && !validate_p2(p2_2)) { // only first solution is within acceptance
-							p2_mag = p2_1;
-						} else if (!validate_p2(p2_1) && validate_p2(p2_2) ) { // only second solution is within acceptance
-							p2_mag = p2_2;
-						} else if (validate_p2(p2_1) && validate_p2(p2_2) ) { // both solutions are valid, make choice
-							p2_mag = std::min(p2_1,p2_2); // choose the minimum one, ideally from exp decay distr... 
-							logger.p2_choices++;
-						} else { // no solution within detector acceptance
-							accept = false;
-							logger.p2_invalid++;
-						}
-						if (accept){
-							ev.p2  = p2_mag*e_p2;
-							TVector3 Pcm = ev.k1 + ev.p2;
-							double initE  = ev.omega + nuc.getMassA();
-							double finalE = sqrt( M_Amin2*M_Amin2 + Pcm.Mag2()) + sqrt(ev.mass1*ev.mass1 + ev.p1.Mag2()) + sqrt(ev.mass2*ev.mass2 + ev.p2.Mag2());
-							assert(fabs(initE-finalE) < 1e-9); // allow energy discrepancy of 1 meV as units are MeV
-							events.push_back(ev);   // store the event
-							//printf("Difference in init and final energy: %e \n",fabs(initE-finalE));
-						}
-					} else { logger.p2_nosol++;}
-				} // shellindex2
-			} // shellindex1
-			if (events.size() > oldNumberOfEvents){ // at least one shellcombo made it trough and was appended to events.
-				shellIndep_counter++;
+			double Eexc    = nuc.getExcitation()[shellindex1] + nuc.getExcitation()[shellindex2];
+			double M_Amin2 = nuc.getMassA_min_pp() + Eexc;
+				
+			double B = (omega + nuc.getMassA() - E1);
+			double A = 0.5*(M_Amin2*M_Amin2 + ev.mass2*ev.mass2 + k1.Mag2() - B*B);
+
+			double a = (ev.mass2*ev.mass2 + M_Amin2*M_Amin2 + k1.Mag2()*( 1. - ek1_ep2*ek1_ep2) - 2.*A);
+			double b = 2.*k1.Mag()*ek1_ep2*( ev.mass2*ev.mass2 - A);
+			double c = M_Amin2*M_Amin2*ev.mass2*ev.mass2 + k1.Mag2()*ev.mass2*ev.mass2 - A*A;
+			
+			double D = b*b - 4.*a*c;
+			
+			if ( D >= 0){ // found two solutions
+				double p2_1 = ( -b - sqrt(D) )/(2.*a);
+				double p2_2 = ( -b + sqrt(D) )/(2.*a);
+				double p2_mag = 0.;
+				bool accept = true;	
+				if ( validate_p2(p2_1) && !validate_p2(p2_2)) { // only first solution is within acceptance
+					p2_mag = p2_1;
+				} else if (!validate_p2(p2_1) && validate_p2(p2_2) ) { // only second solution is within acceptance
+					p2_mag = p2_2;
+				} else if (validate_p2(p2_1) && validate_p2(p2_2) ) { // both solutions are valid, make choice
+					p2_mag = std::min(p2_1,p2_2); // choose the minimum one, ideally from exp decay distr... 
+					logger.p2_choices++;
+				} else { // no solution within detector acceptance
+					accept = false;
+					logger.p2_invalid++;
+					ev.status = Event::OUTSIDECUTS;
+				}
+				if (accept){
+					ev.p2  = p2_mag*e_p2;
+					ev.status = Event::SURVIVED;
+					TVector3 Pcm = ev.k1 + ev.p2;
+					double initE  = ev.omega + nuc.getMassA();
+					double finalE = sqrt( M_Amin2*M_Amin2 + Pcm.Mag2()) + sqrt(ev.mass1*ev.mass1 + ev.p1.Mag2()) + sqrt(ev.mass2*ev.mass2 + ev.p2.Mag2());
+					assert(fabs(initE-finalE) < 1e-9); // allow energy discrepancy of 1 meV as units are MeV
+					logger.accept++;
+					//printf("Difference in init and final energy: %e \n",fabs(initE-finalE));
+				}
+			} else { 
+				logger.p2_nosol++;
+				ev.status = Event::UNPHYSICAL;
 			}
-		} // while ( shellIndep_counter < n)
+			events.push_back(ev); // store the event, irrespective of its "status"
+		} // while ( logger.accept < n)
 
 		// write out logger info
 		char fname[128];
@@ -222,5 +229,5 @@ namespace PRL99_072501 {
 		}
 		return p;
 	}
-} // NAMESPACE HALLA
+} // NAMESPACE PRL99_072501
 

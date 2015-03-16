@@ -16,8 +16,8 @@ void prl99_072501_kinematics(int, char**);
 
 int main(int argc, char* argv[]){
 	//halla_kinematics(argc,argv);
-	hallb_kinematics(argc,argv);
-	//prl99_072501_kinematics(argc,argv);
+	//hallb_kinematics(argc,argv);
+	prl99_072501_kinematics(argc,argv);
 	return 0;
 }
 
