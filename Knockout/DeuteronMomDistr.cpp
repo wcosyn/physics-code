@@ -396,7 +396,7 @@ void DeuteronMomDistr::FSI_int(numint::vector_z & result, double qt, double qphi
   if(momdistr.offshellset==4) offshellness=1.;
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
   result[0] = qt*chi*momdistr.scatter(t)*(momdistr.wf.DeuteronPState(M, -1, spinr, vecprime)
- 	 +(offshellness*momdistr.wfref->DeuteronPStateOff(M, -1, spinr, vecprime)))
+ 	 +(offshellness*(abs(offshellness)<1.E-05?1.:momdistr.wfref->DeuteronPStateOff(M, -1, spinr, vecprime))))
 	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime));
   
   

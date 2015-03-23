@@ -9,7 +9,7 @@
 
 
 using namespace std;
-u
+
 
 DeuteronStructure::DeuteronStructure(const bool pr, string nm)
 :proton(pr),name(nm),massi(pr?MASSP:MASSN){
