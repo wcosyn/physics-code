@@ -157,7 +157,7 @@ public:
    */  
   double getElCross(TKinematics2to2 &kin, int current, double phi, int maxEval);
   /*! Computes \f$\delta(r) [fm^2]\f$ like defined in our density papers
-   * \param densr different densities [fm^-1] <BR>
+   * \param[out] densr different densities [fm^-1] <BR>
    *  [0]: RMSGA <BR>
    *  [1]: RMSGA+SRC <BR>
    *  [2]: RMSGA+CT <BR>
@@ -173,7 +173,7 @@ public:
   void getDensr(std::vector<double> &densr, const TKinematics2to2 &kin, const int shellindex, 
 		const int thick, const double r, const int maxEval);
   /*! Computes \f$\delta(r,\cos{\theta}) [fm^2]\f$ like defined in our density papers
-   * \param densr different densities [fm^-1] <BR>
+   * \param[out] densr different densities [fm^-1] <BR>
    *  [0]: RMSGA <BR>
    *  [1]: RMSGA+SRC <BR>
    *  [2]: RMSGA+CT <BR>

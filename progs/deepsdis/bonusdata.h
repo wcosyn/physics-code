@@ -28,7 +28,7 @@ const static double Ebeam[2]; /*!<beam energy values [MeV]  */
 const  double data::Q2[4]={0.76E06,1.1E06,2.23E06,4.53E06}; /*!<Q2 bin limits [GeV^2]*/
 const  double data::ps[5]={70,85,100,120,150}; /*!<spectator momentum bin limits [MeV]*/
 const  double data::W[6]={1.0E03,1.35E03,1.6E03,1.85E03,2.2E03,2.68E03}; /*!<invariant mass X bin limits [MeV]*/
-const  double data::Ebeam[2]={4.E03,5.E03}; /*!<beam energy values [MeV]  */
+const  double data::Ebeam[2]={4.223E03,5.262E03}; /*!<beam energy values [MeV]  */
 
 const double data::bonusdata4[3][5][4][10][4]={ 
 { 

@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
   
   for(int i=0;i<3;i++){
     double Q2=(data::Q2[i]+data::Q2[i+1])/2.;
-    for(int j=1;j<50;j++){
+    for(int j=1;j<60;j++){
       double Wsq=2.8E03*2.8E03-j*11.E04;
       NuclStructure s1_n(0,Q2,Wsq,1,"CB");
       NuclStructure s2_n(0,Q2,Wsq,1,"SLAC");

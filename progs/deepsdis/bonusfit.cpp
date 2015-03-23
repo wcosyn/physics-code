@@ -38,6 +38,7 @@ using std::endl;
 // int F_param=0;
 int Qindex=-1;
 int Windex=-1;
+int psindex=-1;
 int Beamindex=-1;
 int startset=0;
 int stopset=4;
@@ -65,28 +66,27 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   DeuteronCross DeepsCross(wf,proton,strucname,sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
     0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep),8.,epsilon,betaoff,lambdain,offshellset,1E03);
 //   cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << endl;
-  for(int i=startset;i<stopset;i++){
     for(int j=0;j<10;j++){
-      double error,result,costheta;
-      if(Beamindex==0){ 
-	error=data::bonusdata4[Qindex][Windex][i][j][2];
-	result=data::bonusdata4[Qindex][Windex][i][j][1];
-	costheta=data::bonusdata4[Qindex][Windex][i][j][0];
-      }
-      else{
-	error=data::bonusdata5[Qindex-1][Windex][i][j][2];
-	result=data::bonusdata5[Qindex-1][Windex][i][j][1];
-	costheta=data::bonusdata5[Qindex-1][Windex][i][j][0];
-      }
-      if(result!=0.){
-	double bonusMC=0., pw=0.,fsi=0.;
-	DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
-				    data::Ebeam[Beamindex], 0.5*(data::ps[i]+data::ps[i+1]), costheta, proton, 0, lc);
-	cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
-	if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[i]*fsi/bonusMC-result)/error,2.); dof++;}
-      }
+    double error,result,costheta;
+    if(Beamindex==0){ 
+      error=data::bonusdata4[Qindex][Windex][psindex][j][2];
+      result=data::bonusdata4[Qindex][Windex][psindex][j][1];
+      costheta=data::bonusdata4[Qindex][Windex][psindex][j][0];
+    }
+    else{
+      error=data::bonusdata5[Qindex-1][Windex][psindex][j][2];
+      result=data::bonusdata5[Qindex-1][Windex][psindex][j][1];
+      costheta=data::bonusdata5[Qindex-1][Windex][psindex][j][0];
+    }
+    if(result!=0.){
+      double bonusMC=0., pw=0.,fsi=0.;
+      DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
+				  data::Ebeam[Beamindex], 0.5*(data::ps[psindex]+data::ps[psindex+1]), costheta, proton, 0, lc);
+      cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
+      if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[psindex]*fsi/bonusMC-result)/error,2.); dof++;}
     }
   }
+  
   // Function to minimize (chi^2)
   //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
   f/=(dof-npar);
@@ -97,36 +97,37 @@ int main(int argc, char *argv[])
   
   Qindex = atoi(argv[2]); // parse from argv or something
   Windex = atoi(argv[3]); // parse from argv or something
+  psindex = atoi(argv[4]);
   Beamindex=atoi(argv[1]);
 //   int fixparam = atoi(argv[1]); // parse from argv or something
 //   startset=atoi(argv[4]);
 //   stopset=atoi(argv[5]);
-  offshellset=atoi(argv[4]);
+  offshellset=atoi(argv[5]);
 //   looplimit = atoi(argv[7]);
-  lc=atoi(argv[5]); //lc or vna density
+  lc=atoi(argv[6]); //lc or vna density
 //   double par1input=atof(argv[7]);
 //   double par2input=atof(argv[8]);
 //   double par3input=atof(argv[9]);
 //   double par4input=atof(argv[10]);
-  Q2dep=atoi(argv[6]);
-  wf=argv[7];
-  strucname=argv[8];
+  Q2dep=atoi(argv[7]);
+  wf=argv[8];
+  strucname=argv[9];
 //   cout << Q2dep << " " << Qindex << " " << sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
 // 				   0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep) << endl;  
 //   exit(1);				    
   int testing = 0;
-  int fNDim = 4; // number of dimensions
-  double fLo[] = {0.5,0.5,0.5,0.5}; // lower limits of params
-  double fHi[] = {5.,5.,5.,5.}; // upper limits of params
-  char* fName[] = {"norm1", "norm2", "norm3", "norm4"};
+  int fNDim = 1; // number of dimensions
+  double fLo[] = {0.5}; // lower limits of params
+  double fHi[] = {5.}; // upper limits of params
+  char* fName[] = {"norm"};
   
-  int fBound[] = {1,1,1,1};
+  int fBound[] = {1};
 
   TVirtualFitter *gMinuit = TVirtualFitter::Fitter ( 0, fNDim );
 
   // Start values of parameters
   // If you have a starting individual, you can simply use 
-  double minuitIndividual[] = {1.,1.,1.,1.}; // FIXME insert your starting individual ( double array) here
+  double minuitIndividual[] = {1.}; // FIXME insert your starting individual ( double array) here
   
   std::cout << "done" << endl;
 
@@ -330,9 +331,6 @@ int main(int argc, char *argv[])
   Fcn(n, &f, f, params, n);
   cout << Beamindex << " " << Qindex << " " << Windex << " " 
     << params[0] << " " << eparab[0] << " "
-    << params[1] << " " << eparab[1] << " "
-    << params[2] << " " << eparab[2] << " "
-    << params[3] << " " << eparab[3] << " "
     << f << endl;
 
   
