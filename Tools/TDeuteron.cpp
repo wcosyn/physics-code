@@ -979,6 +979,7 @@ complex<double> TDeuteron::Wavefunction::DeuteronPStateOff(int deuteronPol, int 
     cerr << "ERROR in TDeuteron::Wavefunction::DeuteronPState(TSpinor::Polarization&,"
 	 << " TVector3&&): "
 	 << "has no meaning for relativistic wave functions.\n";
+    assert(1==0);
     exit(1);
   }
   if(abs(p.Z())<1.E-09) return 0.;
