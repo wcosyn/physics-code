@@ -960,9 +960,11 @@ void TSpinor::LorentzRotation::Streamer(TBuffer &R__b)
 
     // Retrieve all GammaStructure coefficients from the buffer
     complex<double> compCoeff[16];
+    double real,imag;
     for(int i=0; i<16; ++i) {
-      R__b >> compCoeff[i].real();
-      R__b >> compCoeff[i].imag();
+      R__b >> real;
+      R__b >> imag;
+      compCoeff[i]=complex<double>(real,imag);
     }
     fTransformation 
       = GammaStructure(compCoeff[0],compCoeff[1],compCoeff[2],compCoeff[3],
