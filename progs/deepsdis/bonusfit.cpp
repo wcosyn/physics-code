@@ -82,8 +82,8 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
       double bonusMC=0., pw=0.,fsi=0.;
       DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
 				  data::Ebeam[Beamindex], 0.5*(data::ps[psindex]+data::ps[psindex+1]), costheta, proton, 0, lc);
-      cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << par[psindex]*fsi/bonusMC << " " << result << " " << error << endl;
-      if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[psindex]*fsi/bonusMC-result)/error,2.); dof++;}
+      cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << par[0]*fsi/bonusMC << " " << result << " " << error << endl;
+      if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[0]*fsi/bonusMC-result)/error,2.); dof++;}
     }
   }
   cout << endl << endl;
