@@ -55,7 +55,7 @@ double sigmaparam(double W, double Q2, bool Q2dep);
 
 void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 {
-
+  cout << endl << endl;
   f=0.;
   int dof=0.;
   bool proton=0;
@@ -82,10 +82,11 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
       double bonusMC=0., pw=0.,fsi=0.;
       DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
 				  data::Ebeam[Beamindex], 0.5*(data::ps[psindex]+data::ps[psindex+1]), costheta, proton, 0, lc);
-      cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << result << " " << f << endl;
+      cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << par[psindex]*fsi/bonusMC << " " << result << " " << error << endl;
       if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[psindex]*fsi/bonusMC-result)/error,2.); dof++;}
     }
   }
+  cout << endl << endl;
   
   // Function to minimize (chi^2)
   //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
@@ -326,7 +327,7 @@ int main(int argc, char *argv[])
     gMinuit->GetErrors(i,eplus[i],eminus[i],eparab[i],globcc[i]);
     params[i]=gMinuit->GetParameter(i);
   }
-  int n=4;
+  int n=1;
   double f;
   Fcn(n, &f, f, params, n);
   cout << Beamindex << " " << Qindex << " " << Windex << " " 

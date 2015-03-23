@@ -1,15 +1,15 @@
-#include "DeuteronStructure.hpp"
-#include "NuclStructure.hpp"
-
 #include <cmath>
 #include <iostream>
-#include <cmath>
 #include <cstdarg>
 #include <cstdlib>
 #include <iomanip> 
 
-using namespace std;
+#include "DeuteronStructure.hpp"
+#include "NuclStructure.hpp"
 
+
+using namespace std;
+u
 
 DeuteronStructure::DeuteronStructure(const bool pr, string nm)
 :proton(pr),name(nm),massi(pr?MASSP:MASSN){
