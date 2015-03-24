@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
   int testing = 0;
   int fNDim = 1; // number of dimensions
   double fLo[] = {0.5}; // lower limits of params
-  double fHi[] = {5.}; // upper limits of params
+  double fHi[] = {10.}; // upper limits of params
   char* fName[] = {"norm"};
   
   int fBound[] = {1};
