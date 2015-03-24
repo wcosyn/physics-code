@@ -1,6 +1,4 @@
-//prog to fit the normalization of the bonus data
-//sigma parameters used from deeps fit
-//take scattering parameters fixed, fit norms (other strategies do not yield significant better results_)
+//write out some of the fit parameters
 
 
 
@@ -26,97 +24,86 @@ using std::endl;
 #include "bonusfits.h"
 #include <NuclStructure.hpp>
 #include "bonusdata.h"
+#include "bonusfits2.h"
 
 int main(int argc, char *argv[])
 {
   
-  for(int i=0;i<3;i++){
-    double Q2=(data::Q2[i]+data::Q2[i+1])/2.;
-    for(int j=1;j<60;j++){
-      double Wsq=2.8E03*2.8E03-j*11.E04;
-      NuclStructure s1_n(0,Q2,Wsq,1,"CB");
-      NuclStructure s2_n(0,Q2,Wsq,1,"SLAC");
-      NuclStructure s1_p(1,Q2,Wsq,1,"CB");
-      NuclStructure s2_p(1,Q2,Wsq,1,"SLAC");
-      cout << Q2 << " " << sqrt(Wsq) << " " << s1_n.getF2() << " " << s2_n.getF2() 
-      << " " << s1_p.getF2() << " " << s2_p.getF2() << endl;
-      
-    }
-    cout << endl << endl;
-  }
-  exit(1);
+//   for(int i=0;i<3;i++){
+//     double Q2=(data::Q2[i]+data::Q2[i+1])/2.;
+//     for(int j=1;j<60;j++){
+//       double Wsq=2.8E03*2.8E03-j*11.E04;
+//       NuclStructure s1_n(0,Q2,Wsq,1,"CB");
+//       NuclStructure s2_n(0,Q2,Wsq,1,"SLAC");
+//       NuclStructure s1_p(1,Q2,Wsq,1,"CB");
+//       NuclStructure s2_p(1,Q2,Wsq,1,"SLAC");
+//       cout << Q2 << " " << sqrt(Wsq) << " " << s1_n.getF2() << " " << s2_n.getF2() 
+//       << " " << s1_p.getF2() << " " << s2_p.getF2() << endl;
+//       
+//     }
+//     cout << endl << endl;
+//   }
+//   exit(1);
   
+  cout << "#paris CB" << endl;
   for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    for(int j=0;j<3;j++){ //Q2 index
-      for(int k=0;k<5;k++){ //W index
-	cout << bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep0_beam4[j][k][i] << " ";
-	if(j>0) cout << bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep0_beam5[j-1][k][i] << " ";
-      }
-    }
-    cout << endl;
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
   }
   cout << endl << endl << endl;
 
-  for(int i=0;i<4;i++){
+  cout << "#AV18 CB" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    for(int j=0;j<3;j++){
-      for(int k=0;k<5;k++){
-	cout << bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep1_beam4[j][k][i] << " ";
-	if(j>0) cout << bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep1_beam5[j-1][k][i] << " ";
-      }
-    }
-    cout << endl;
-  }
-  cout << endl << endl << endl;
-
-  for(int i=0;i<4;i++){
-    cout << i << " ";
-    for(int j=0;j<3;j++){
-      for(int k=0;k<5;k++){
-	cout << bonusfits::normfits_off3_paris_CB_off3_lc0_pw_beam4[j][k][i] << " ";
-	if(j>0) cout << bonusfits::normfits_off3_paris_CB_off3_lc0_pw_beam5[j-1][k][i] << " ";
-      }
-    }
-    cout << endl;
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
   }
   cout << endl << endl << endl;
   
-  for(int i=0;i<4;i++){
+  cout << "#CDBonn CB" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    for(int j=0;j<3;j++){
-      for(int k=0;k<5;k++){
-	cout << bonusfits::normfits_off3_AV18_CB_off3_lc0_fsi_q2dep1_beam4[j][k][i] << " ";
-	if(j>0) cout << bonusfits::normfits_off3_AV18_CB_off3_lc0_fsi_q2dep1_beam5[j-1][k][i] << " ";
-      }
-    }
-    cout << endl;
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
   }
   cout << endl << endl << endl;
 
-
-  for(int i=0;i<4;i++){
+  cout << "#GrossWJC1 CB" << endl;    
+  for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    for(int j=0;j<3;j++){
-      for(int k=0;k<5;k++){
-	cout << bonusfits::normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam4[j][k][i] << " ";
-	if(j>0) cout << bonusfits::normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[j-1][k][i] << " ";
-      }
-    }
-    cout << endl;
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
   }
   cout << endl << endl << endl;
 
-  for(int i=0;i<4;i++){
+  cout << "#paris SLAC" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    for(int j=0;j<3;j++){
-      for(int k=0;k<5;k++){
-	cout << bonusfits::normfits_off3_paris_SLAC_off3_lc0_pw_beam4[j][k][i] << " ";
-	if(j>0) cout << bonusfits::normfits_off3_paris_SLAC_off3_lc0_pw_beam5[j-1][k][i] << " ";
-      }
-    }
-    cout << endl;
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
   }
   cout << endl << endl << endl;
+
   
 }

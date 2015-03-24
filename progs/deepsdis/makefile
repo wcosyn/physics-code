@@ -37,7 +37,7 @@ ROOT =		`root-config --cflags --glibs` -lMinuit2
 STATICLIBS =  $(CPATH)/lib/libglauber.a   $(CPATH)/lib/libmephys.a  $(CPATH)/lib/libdis.a  $(CPATH)/lib/libknockout.a  $(CPATH)/lib/libintegrator.a
 
 #		Header files
-HDRS =		bonusdata.h bonusfits.h
+HDRS =		bonusdata.h bonusfits.h bonusfits2.h
 
 all:		$(EFILE)
 static:		$(EFILEST)
