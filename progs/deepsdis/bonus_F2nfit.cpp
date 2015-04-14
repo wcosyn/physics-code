@@ -19,7 +19,7 @@
 #include <cassert>
 
 #include "bonusdata.h"
-#include "bonusfits.h"
+#include "bonusfits2.h"
 
 #include <DeuteronCross.hpp>
 #include <NuclStructure.hpp>
@@ -35,14 +35,11 @@ vector<double> tarray;
 vector<double> data_array;
 vector<double> error_array;
 
-double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc);
-double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex,
-				     int psindex, const double array1 [3][5][4], const double array2[2][5][4]);
 double get_normfit_array(string wf, string struc, int offshell, bool lc, bool q2dep, bool pw, int beamindex,
 			 int Qindex, int Windex, int psindex);
 double sigmaparam(double W, double Q2, bool Q2dep);
 void get_data(double &data, double& error, int beamindex, int Qindex, int Windex, int psindex, int cosindex);
-double get_norm_final(bool q2dep, int beamindex,int psindex,int normset);
+void get_norm_final(bool q2dep, int beamindex,int psindex,string struc, double &norm, double &errornorm);
 
 
 void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
@@ -71,7 +68,7 @@ int main(int argc, char *argv[])
   bool pw=atoi(argv[3]);
   
   
-  string outdir="/home/wim/Calculations/Bonus/results/parabfits2/";
+  string outdir="/home/wim/Calculations/Bonus/results/parabfitsApr15/";
   ofstream generalfile;
   generalfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
 	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+".fits.dat");
@@ -102,16 +99,17 @@ int main(int argc, char *argv[])
 	  int beamindex = 0;
 	  double Ebeam = data::Ebeam[beamindex]; //[0,1]
 	 
-	  double result, error;
+	  double result, error, norm, errornorm;
 // 	  double norm=get_normfit_array(wf,strucname, 
 // 					offshellset,lc,q2dep,pw,beamindex,Qindex,Windex,psindex);
-	  double norm=get_norm_final(q2dep, beamindex,psindex,0);
+	  get_norm_final(q2dep, beamindex,psindex,strucname,norm,errornorm);
 	  cout << norm << endl;
 	  get_data(result, error, beamindex,Qindex,Windex,psindex,cosindex);
 	  double ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	  if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
+	    error= error/result+errornorm/norm;
 	    result*=ratio/norm;
-	    error*=ratio/norm;
+	    error*=result;
 	    tarray.push_back(tprime*1.E-06);
 	    data_array.push_back(result);
 	    error_array.push_back(error);
@@ -122,12 +120,13 @@ int main(int argc, char *argv[])
 	    Ebeam=data::Ebeam[beamindex];
 // 	    norm=get_normfit_array(wf,strucname, 
 // 					offshellset,lc,q2dep,pw,beamindex,Qindex,Windex,psindex);
-	    norm=get_norm_final(q2dep, beamindex,psindex,0); 
+	    get_norm_final(q2dep, beamindex,psindex,strucname,norm,errornorm); 
 	    get_data(result, error, beamindex,Qindex,Windex,psindex,cosindex);
 	    ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	    if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
+	      error= error/result+errornorm/norm;
 	      result*=ratio/norm;
-	      error*=ratio/norm;
+	      error*=result;
 	      tarray.push_back(tprime*1.E-06);
 	      data_array.push_back(result);
 	      error_array.push_back(error);
@@ -364,164 +363,52 @@ int main(int argc, char *argv[])
 //   return 0;
 // }
 
-
-
-double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc){
-  if(lc){
-    if(offshell==3){
-      if(beamindex==0) return bonusfits::normfits_fix3_off3_lc1_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_fix3_off3_lc1_beam5[Qindex-1][Windex][psindex];
-    }
-    if(offshell==4){
-      if(beamindex==0) return bonusfits::normfits_fix3_off4_lc1_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_fix3_off4_lc1_beam5[Qindex-1][Windex][psindex];
-    }
-  }
-  else{
-    if(offshell==3){
-      if(beamindex==0) return bonusfits::normfits_fix3_off3_lc0_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_fix3_off3_lc0_beam5[Qindex-1][Windex][psindex];
-    }
-    if(offshell==4){
-      if(beamindex==0) return bonusfits::normfits_fix3_off4_lc0_beam4[Qindex][Windex][psindex];
-      else return bonusfits::normfits_fix3_off4_lc0_beam5[Qindex-1][Windex][psindex];
-    }
-  }
-  return 0./0.;
-}
-
-double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int psindex,
-				     const double array1 [3][5][4], const double array2[2][5][4]){
-      if(beamindex==0) return array1[Qindex][Windex][psindex];
-      else return array2[Qindex-1][Windex][psindex];
-}
-
-double get_normfit_array(string wf, string struc, int offshell, bool lc, bool q2dep, bool pw, int beamindex,
-			 int Qindex, int Windex, int psindex){
-  if(offshell==3){
-    if(wf=="paris"){
-      if(struc=="CB"){
-	if(pw){
-	  if(lc){
-	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-	      bonusfits::normfits_off3_paris_CB_off3_lc1_pw_beam4,
-	      bonusfits::normfits_off3_paris_CB_off3_lc1_pw_beam5);			      
-	  }
-	  else{
-	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-	      bonusfits::normfits_off3_paris_CB_off3_lc0_pw_beam4,
-	      bonusfits::normfits_off3_paris_CB_off3_lc0_pw_beam5);			      
-	    
-	  }
-	}
-	else{
-	  if(lc){
-	    if(q2dep){
-	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-		bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep1_beam4,
-		bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep1_beam5);			      		
-	    }
-	    else{
-	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-		bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep0_beam4,
-		bonusfits::normfits_off3_paris_CB_off3_lc1_fsi_q2dep0_beam5);			      				
-	    }
-	  }
-	  else{
-	    if(q2dep){
-	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-		bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep1_beam4,
-		bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep1_beam5);			      		
-	    }
-	    else{
-	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-		bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep0_beam4,
-		bonusfits::normfits_off3_paris_CB_off3_lc0_fsi_q2dep0_beam5);			      				
-	    }
-	  }
-	}
-      }
-      if(struc=="SLAC"){
-	if(pw){
-	  if(lc){
-	  }
-	  else{
-	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-	      bonusfits::normfits_off3_paris_SLAC_off3_lc0_pw_beam4,
-	      bonusfits::normfits_off3_paris_SLAC_off3_lc0_pw_beam5);			      
-	    
-	  }
-	}
-	else{
-	  if(lc){
-	    
-	  }
-	  else{
-	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-	      bonusfits::normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam4,
-	      bonusfits::normfits_off3_paris_SLAC_off3_lc0_fsi_q2dep1_beam5);			      	    
-	  }
-	}
-	
-      }
-      if(struc=="Alekhin"){
-	
-      }
-    }
-    if(wf=="AV18"){
-      if(struc=="CB"){
-	if(pw){
-	  if(lc){
-	  }
-	  else{
-	    return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-	      bonusfits::normfits_off3_AV18_CB_off3_lc0_pw_beam4,
-	      bonusfits::normfits_off3_AV18_CB_off3_lc0_pw_beam5);			      	    
-	  }
-	}
-	else{
-	  if(lc){
-	    
-	  }
-	  else{
-	    if(q2dep){
-	      return get_normfit_sigma_deeps_bonus(beamindex,Qindex,Windex,psindex,
-		bonusfits::normfits_off3_AV18_CB_off3_lc0_fsi_q2dep1_beam4,
-		bonusfits::normfits_off3_AV18_CB_off3_lc0_fsi_q2dep1_beam5);			      	    	      
-	    }
-	    else{
-	      
-	    }
-	  }
-	}
-      }
-    }  
-  }
-  cerr << "not valid bonus fit set" << endl;
-  assert(1==0);
-  
-}
-
-double get_norm_final(bool q2dep, int beamindex,int psindex, int normset){
-  switch(normset){
-    case 0:
-      if(q2dep){
-	if(beamindex==0) return bonusfits::normfits_final_q2dep0_beam4_set0[psindex];
-	if(beamindex==1) return bonusfits::normfits_final_q2dep0_beam5_set0[psindex];
+void get_norm_final(bool q2dep, int beamindex,int psindex, string struc, double & norm, double &errornorm){
+  if(!struc.compare("CB")){
+    if(q2dep){
+      if(beamindex==0) {
+	norm=bonusfits2::normfits_final_q2dep1_beam4_setCB[psindex];
+	errornorm=bonusfits2::errornormfits_final_q2dep1_beam4_setCB[psindex];
       }
       else{
-	if(beamindex==0) return bonusfits::normfits_final_q2dep1_beam4_set0[psindex];
-	if(beamindex==1) return bonusfits::normfits_final_q2dep1_beam5_set0[psindex];
+	norm=bonusfits2::normfits_final_q2dep1_beam5_setCB[psindex];
+	errornorm=bonusfits2::errornormfits_final_q2dep1_beam5_setCB[psindex];
       }
-      break;
-    default:
-      cerr << "invalid set of norms" << endl;
-      assert(1==0);
+    }
+    else{
+      if(beamindex==0) {
+	norm=bonusfits2::normfits_final_q2dep0_beam4_setCB[psindex];
+	errornorm=bonusfits2::errornormfits_final_q2dep0_beam4_setCB[psindex];
+      }
+      else{
+	norm=bonusfits2::normfits_final_q2dep0_beam5_setCB[psindex];
+	errornorm=bonusfits2::errornormfits_final_q2dep0_beam5_setCB[psindex];
+      }	      
+    } 
   }
-  return 0./0.;
+  if(!struc.compare("SLAC")){
+    if(q2dep){
+      if(beamindex==0) {
+	norm=bonusfits2::normfits_final_q2dep1_beam4_setSLAC[psindex];
+	errornorm=bonusfits2::errornormfits_final_q2dep1_beam4_setSLAC[psindex];
+      }
+      else{
+	norm=bonusfits2::normfits_final_q2dep1_beam5_setSLAC[psindex];
+	errornorm=bonusfits2::errornormfits_final_q2dep1_beam5_setSLAC[psindex];
+      }
+    }
+    else{
+      if(beamindex==0) {
+	norm=bonusfits2::normfits_final_q2dep0_beam4_setSLAC[psindex];
+	errornorm=bonusfits2::errornormfits_final_q2dep0_beam4_setSLAC[psindex];
+      }
+      else{
+	norm=bonusfits2::normfits_final_q2dep0_beam5_setSLAC[psindex];
+	errornorm=bonusfits2::errornormfits_final_q2dep0_beam5_setSLAC[psindex];
+      }	      
+    } 
+  }
 }
-
-
 
 //sigma in mbarn
 double sigmaparam(double W, double Q2, bool Q2dep){
@@ -539,13 +426,11 @@ double sigmaparam(double W, double Q2, bool Q2dep){
 
 void  get_data(double &data, double& error, int beamindex, int Qindex, int Windex, int psindex, int costhetaindex){
   if(beamindex==0){ 
-    error=sqrt(pow(data::bonusdata4[Qindex][Windex][psindex][costhetaindex][2],2.)+
-      pow(data::bonusdata4[Qindex][Windex][psindex][costhetaindex][2],2.));
+    error=data::bonusdata4[Qindex][Windex][psindex][costhetaindex][2];
     data=data::bonusdata4[Qindex][Windex][psindex][costhetaindex][1];
   }
   else{
-    error=sqrt(pow(data::bonusdata5[Qindex-1][Windex][psindex][costhetaindex][2],2.)+
-      pow(data::bonusdata5[Qindex-1][Windex][psindex][costhetaindex][2],2.));
+    error=data::bonusdata5[Qindex-1][Windex][psindex][costhetaindex][2];
     data=data::bonusdata5[Qindex-1][Windex][psindex][costhetaindex][1];
   }
 }

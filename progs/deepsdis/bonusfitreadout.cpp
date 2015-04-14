@@ -45,65 +45,156 @@ int main(int argc, char *argv[])
 //   }
 //   exit(1);
   
+  //norms
+  cout <<"#rows: pm setting" << endl 
+    << "#column1: Q2=3.6,W=2,Ein=4" << endl
+    << "#column2: Q2=3.6,W=2,Ein=5" << endl
+    << "#column3: Q2=3.6,W=2.4,Ein=5" << endl
+    << "#column4: Q2=1.6,W=2,Ein=4" << endl
+    << "#column5: Q2=1.6,W=2.4,Ein=4" << endl
+    << "#column6: Q2=1.6,W=2,Ein=5" << endl
+    << "#column7: Q2=1.6,W=2.4,Ein=5" << endl<<endl;
+    
   cout << "#paris CB" << endl;
   for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
-    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
-    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
-    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
-    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
-    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " "; //Q2=3.6,W=2,Ein=4
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " "; //Q2=3.6,W=2,Ein=5
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " "; //Q2=3.6,W=2.4,Ein=5
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";//Q2=1.6,W=2,Ein=4
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";//Q2=1.6,W=2.4,Ein=4
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";//Q2=1.6,W=2,Ein=5
+    cout << bonusfits2::normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;//Q2=1.6,W=2,Ein=5	
   }
   cout << endl << endl << endl;
 
   cout << "#AV18 CB" << endl;
   for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
-    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
-    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
     cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
     cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
-    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " ";
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfits_AV18_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;	
   }
   cout << endl << endl << endl;
   
   cout << "#CDBonn CB" << endl;
   for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
-    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
-    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
     cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
     cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
-    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " ";
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfits_CDBonn_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;	
   }
   cout << endl << endl << endl;
 
   cout << "#GrossWJC1 CB" << endl;    
   for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
-    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
-    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
     cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
     cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
-    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " ";
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfits_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;	
   }
   cout << endl << endl << endl;
 
   cout << "#paris SLAC" << endl;
   for(int i=0;i<4;i++){ //spectator momentum index
     cout << i << " ";
-    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " ";
-    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " ";
-    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " ";
     cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
     cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
-    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[0][4][i] << endl;	
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " ";
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;	
   }
   cout << endl << endl << endl;
+
+  //errors
+  cout <<"#rows: pm setting" << endl 
+    << "#column1: Q2=3.6,W=2,Ein=4" << endl
+    << "#column2: Q2=3.6,W=2,Ein=5" << endl
+    << "#column3: Q2=3.6,W=2.4,Ein=5" << endl
+    << "#column4: Q2=1.6,W=2,Ein=4" << endl
+    << "#column5: Q2=1.6,W=2.4,Ein=4" << endl
+    << "#column6: Q2=1.6,W=2,Ein=5" << endl
+    << "#column7: Q2=1.6,W=2.4,Ein=5" << endl<<endl;
+    
+  cout << "#paris CB" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
+    cout << i << " ";
+    cout << bonusfits2::normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " "; //Q2=3.6,W=2,Ein=4
+    cout << bonusfits2::normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " "; //Q2=3.6,W=2,Ein=5
+    cout << bonusfits2::normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " "; //Q2=3.6,W=2.4,Ein=5
+    cout << bonusfits2::normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";//Q2=1.6,W=2,Ein=4
+    cout << bonusfits2::normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";//Q2=1.6,W=2.4,Ein=4
+    cout << bonusfits2::normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";//Q2=1.6,W=2,Ein=5
+    cout << bonusfits2::normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;//Q2=1.6,W=2,Ein=5	
+  }
+  cout << endl << endl << endl;
+
+  cout << "#AV18 CB" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
+    cout << i << " ";
+    cout << bonusfits2::normfiterrors_AV18_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_AV18_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_AV18_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " ";
+    cout << bonusfits2::normfiterrors_AV18_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";
+    cout << bonusfits2::normfiterrors_AV18_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";
+    cout << bonusfits2::normfiterrors_AV18_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_AV18_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;	
+  }
+  cout << endl << endl << endl;
+  
+  cout << "#CDBonn CB" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
+    cout << i << " ";
+    cout << bonusfits2::normfiterrors_CDBonn_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_CDBonn_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_CDBonn_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " ";
+    cout << bonusfits2::normfiterrors_CDBonn_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";
+    cout << bonusfits2::normfiterrors_CDBonn_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";
+    cout << bonusfits2::normfiterrors_CDBonn_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_CDBonn_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;	
+  }
+  cout << endl << endl << endl;
+
+  cout << "#GrossWJC1 CB" << endl;    
+  for(int i=0;i<4;i++){ //spectator momentum index
+    cout << i << " ";
+    cout << bonusfits2::normfiterrors_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_GrossWJC1_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " ";
+    cout << bonusfits2::normfiterrors_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";
+    cout << bonusfits2::normfiterrors_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";
+    cout << bonusfits2::normfiterrors_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_GrossWJC1_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;	
+  }
+  cout << endl << endl << endl;
+
+  cout << "#paris SLAC" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
+    cout << i << " ";
+    cout << bonusfits2::normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " ";
+    cout << bonusfits2::normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";
+    cout << bonusfits2::normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";
+    cout << bonusfits2::normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";
+    cout << bonusfits2::normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;	
+  }
+  cout << endl << endl << endl;
+
 
   
 }
