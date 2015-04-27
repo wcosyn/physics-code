@@ -207,7 +207,7 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 
 	res1=res0=0.;
 	//summation over all the spin indices
-	for(int spinn=-1;spinn<=1;spinn+=2){
+	for(int spinn=-1;spinn<=0;spinn+=2){  //exploit parity symmetry here!
 	  for(int spini_in=-1;spini_in<=1;spini_in+=2){
 	    complex<double> currentin0=(spinn==-1?un_down:un_up)*J0*(spini_in==-1?ui_down:ui_up);
 	    complex<double> currentinplus=(spinn==-1?un_down:un_up)*Jplus*(spini_in==-1?ui_down:ui_up);
@@ -232,16 +232,17 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 		  if(Erprimenorm<MASSD-200.) res1+=real((Q2*Q2/pow(qvec,4.)*currentin0*currentout0prime
 				      +(Q2/(2.*qvec*qvec)+tanhalfth2)*(currentinmin*currentoutminprime+currentinplus*currentoutplusprime))*
 				  cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))
-				  *conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, TVector3(-pperp*cosphi,-pperp*sinphi,qvec-prz[it]))));
+				  *conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, TVector3(-pperp*cosphi,-pperp*sinphi,-prz[it]+qvec))));
 									  
 		}
 	      }
 	    }
 	  }
 	}
-	res0*=pperp*MASSD/(2.*(MASSD-Ernorm))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu));
-	//minus sign because of wave function!!
-	if(Erprimenorm<MASSD-200.) res1*=-pperp*MASSD/(2.*sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm)))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu))
+	//factors of 2 because of parity symmetry exploited
+	res0*=2.*pperp*MASSD/(2.*(MASSD-Ernorm))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu));
+	//minus sign because other nucleon is on-shell now in the wave function for cross term
+	if(Erprimenorm<MASSD-200.) res1*=-2.*pperp*MASSD/(2.*sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm)))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu))
 	  *sqrt(Erprimenorm/Ernorm);
 	result[0]+=res0;
 	result[1]+=res1;
@@ -452,11 +453,14 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 	      TSpinor ui2_up(pi2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
 	      
 	      //crossed term
-	      FourVector<double> pi2_cross(MASSD-Erprimenorm,pperp1*cosphi1+qt*cosqphi,qt*sinqphi,-prz2[it2]); //pi2=pD-ps1+qt
+	      //pr2 remains the first spectator after rescattering
+	      //it's on shell through pr2^0 integration (before sending out the photon)
+	      //prz pole puts the nucleon in the upper leg (that absorbed the photon) after the rescattering on-shell
+// 	      FourVector<double> pr2_cross(0.,pn1-qt*cosqphi,pn1-qt*sinqhi,-prz
+	      FourVector<double> pi2_cross(Erprimenorm-nu,pperp1*cosphi1+qt*cosqphi,qt*sinqphi,prz2[it2]-qvec); //pi2_cross = pr2 - qvec
 	      FourVector<double> pn2_cross=pi2_cross+q; //pn2=pi2+q
-	      double t_cross=pow(pn2_cross[0]-Ernorm,2.)-pow(pn2_cross[3]-prz1[it1],2.)-qt*qt;
-	      complex<double> crossrescatt = rescatter.scatter(t_cross,0);
-
+// 	      double t_cross=pow(pn2_cross[0]-Ernorm,2.)-pow(pn2_cross[3]-prz1[it1],2.)-qt*qt;
+// 	      complex<double> crossrescatt = rescatter.scatter(t_cross,0);
 
 	      GammaStructure J0prime_cross = cross.getFFactorsdiff()->getCC(current, q, pi2_cross,pn2_cross)*polVector0;
 	      GammaStructure Jplusprime_cross = cross.getFFactorsdiff()->getCC(current, q, pi2_cross,pn2_cross)*polVectorPlus;
@@ -469,7 +473,7 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 	      
 	      res0=res1=res2=res3=0.;
 	      //summation over all the spin indices
-	      for(int spinn=-1;spinn<=1;spinn+=2){
+	      for(int spinn=-1;spinn<=0;spinn+=2){ //exploiting parity symmetry here (see factor 2 below)
 		for(int spini_in=-1;spini_in<=1;spini_in+=2){
 		  complex<double> currentin0=(spinn==-1?un1_down:un1_up)*J0*(spini_in==-1?ui1_down:ui1_up);
 		  complex<double> currentinplus=(spinn==-1?un1_down:un1_up)*Jplus*(spini_in==-1?ui1_down:ui1_up);
@@ -479,49 +483,50 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 		    complex<double> currentout0=conj((spinn==-1?un2_down:un2_up)*J0prime*(spini_out==-1?ui2_down:ui2_up));
 		    complex<double> currentoutplus=conj((spinn==-1?un2_down:un2_up)*Jplusprime*(spini_out==-1?ui2_down:ui2_up));
 		    complex<double> currentoutmin=conj((spinn==-1?un2_down:un2_up)*Jminprime*(spini_out==-1?ui2_down:ui2_up));
-		    //cross term
-		    complex<double> currentout0_cross=conj((spinn==-1?un2_down_cross:un2_up_cross)*J0prime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
-		    complex<double> currentoutplus_cross=conj((spinn==-1?un2_down_cross:un2_up_cross)*Jplusprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
-		    complex<double> currentoutmin_cross=conj((spinn==-1?un2_down_cross:un2_up_cross)*Jminprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
-		    for(int M=-2;M<=2;M+=2){
-		      for(int spinr=-1;spinr<=1;spinr+=2){
+		    for(int spinr=-1;spinr<=1;spinr+=2){
+		  //cross term
+		      complex<double> currentout0_cross=conj((spinr==-1?un2_down_cross:un2_up_cross)*J0prime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
+		      complex<double> currentoutplus_cross=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jplusprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
+		      complex<double> currentoutmin_cross=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jminprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
+		      for(int M=-2;M<=2;M+=2){
 			complex<double> wf=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
 					*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, 
 						TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2])));
 			complex<double> wf2=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
 					*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, 
-						TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,prz2[it2])));
+						TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec)));
 			complex<double> wf_off=cross.getDeutwf()->DeuteronPStateOff(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
 					*conj(cross.getDeutwf()->DeuteronPStateOff(M, spini_out, spinr, 
 						TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2])));
 			complex<double> wf2_off=cross.getDeutwf()->DeuteronPStateOff(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
 					*conj(cross.getDeutwf()->DeuteronPStateOff(M, spini_out, spinn, 
-						TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,prz2[it2])));
+						TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec)));
 			//direct onshell
 			res0+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
 			  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*wf*directrescatt;
 			//cross onshell
 			res1+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+(Q2/(2.*qvec*qvec)+tanhalfth2)*
-			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2*crossrescatt;
+			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2*directrescatt;
 			//direct offshell
 			res2+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
 			  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*wf_off*directrescatt;
 			//cross offshell
 			res3+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+(Q2/(2.*qvec*qvec)+tanhalfth2)*
-			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2_off*crossrescatt;
+			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2_off*directrescatt;
 		      }
 		    }
 		  }
 		}
-	      }
-	      res0*=-pperp1*qt/sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
+	      }	  
+	      //factor 2 because of exploiting parity symmetry
+	      res0*=-2.*pperp1*qt/sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
 	      /abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
-	      res2*=pperp1*qt/sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
+	      res2*=2.*pperp1*qt/sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
 	      /abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
 	      //minus sign because of wave function!!
-	      res1*=pperp1*qt*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
+	      res1*=2.*pperp1*qt*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
 	      /abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))/abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
-	      res3*=-pperp1*qt*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
+	      res3*=-2.*pperp1*qt*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
 	      /abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))/abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
 	      result[0]+=imag(res0);
 	      result[1]+=imag(res1);
@@ -793,9 +798,7 @@ double DQEinclusive::FSI_intPV(double pz1, double pz2, double pperp1, double ppe
       FourVector<double> pi2(MASSD-Erprimenorm,-pperp1*cosphi1-qt*cosqphi,-qt*sinqphi,-pz2); //pi2=pD-ps1+qt
       FourVector<double> pn2=pi2+q; //pn2=pi2+q
       if(crossed) {pi2[1]*=-1.;pi2[2]*=-1.;pn2[1]*=-1.;pn2[2]*=-1.;} //transverse components opposite for crossed term
-      double t;
-      if(!crossed) t=pow(Ernorm-Erprimenorm,2.)-pow(pz1-pz2,2.)-qt*qt;
-      else pow(pn2[0]-Ernorm,2.)-pow(pn2[3]-pz1,2.)-qt*qt;
+      double t=pow(Ernorm-Erprimenorm,2.)-pow(pz1-pz2,2.)-qt*qt;
 
       complex<double> rescatt = rescatter.scatter(t,0);
 
@@ -808,25 +811,49 @@ double DQEinclusive::FSI_intPV(double pz1, double pz2, double pperp1, double ppe
       Matrix<1,4> un2_up=TSpinor::Bar(TSpinor(pn2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass));
       TSpinor ui2_down(pi2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass);
       TSpinor ui2_up(pi2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
-            
+
+      FourVector<double> pi2_cross(Erprimenorm-nu,pperp1*cosphi1+qt*cosqphi,qt*sinqphi,pz2-qvec); //pi2_cross = pr2 - qvec
+      FourVector<double> pn2_cross=pi2_cross+q; //pn2=pi2+q
+// 	      double t_cross=pow(pn2_cross[0]-Ernorm,2.)-pow(pn2_cross[3]-prz1[it1],2.)-qt*qt;
+// 	      complex<double> crossrescatt = rescatter.scatter(t_cross,0);
+
+      GammaStructure J0prime_cross = cross.getFFactorsdiff()->getCC(current, q, pi2_cross,pn2_cross)*polVector0;
+      GammaStructure Jplusprime_cross = cross.getFFactorsdiff()->getCC(current, q, pi2_cross,pn2_cross)*polVectorPlus;
+      GammaStructure Jminprime_cross = cross.getFFactorsdiff()->getCC(current, q, pi2_cross,pn2_cross)*polVectorMin;	     
+      
+      Matrix<1,4> un2_down_cross=TSpinor::Bar(TSpinor(pn2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass));
+      Matrix<1,4> un2_up_cross=TSpinor::Bar(TSpinor(pn2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass));
+      TSpinor ui2_down_cross(pi2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass);
+      TSpinor ui2_up_cross(pi2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
+      
       //summation over all the spin indices
+      //check and exploit parity symmetry!!!!
       for(int spinn=-1;spinn<=1;spinn+=2){
 	for(int spini_in=-1;spini_in<=1;spini_in+=2){
 	  complex<double> currentin0=(spinn==-1?un1_down:un1_up)*J0*(spini_in==-1?ui1_down:ui1_up);
 	  complex<double> currentinplus=(spinn==-1?un1_down:un1_up)*Jplus*(spini_in==-1?ui1_down:ui1_up);
 	  complex<double> currentinmin=(spinn==-1?un1_down:un1_up)*Jmin*(spini_in==-1?ui1_down:ui1_up);
 	  for(int spini_out=-1;spini_out<=1;spini_out+=2){
-	    complex<double> currentout0=conj((spinn==-1?un2_down:un2_up)*J0prime*(spini_out==-1?ui2_down:ui2_up));
-	    complex<double> currentoutplus=conj((spinn==-1?un2_down:un2_up)*Jplusprime*(spini_out==-1?ui2_down:ui2_up));
-	    complex<double> currentoutmin=conj((spinn==-1?un2_down:un2_up)*Jminprime*(spini_out==-1?ui2_down:ui2_up));
-	    for(int M=-2;M<=2;M+=2){
-	      for(int spinr=-1;spinr<=1;spinr+=2){
+	    for(int spinr=-1;spinr<=1;spinr+=2){
+	      complex<double> currentout0=0.,currentoutplus=0.,currentoutmin=0.;
+	      if(!crossed){
+		currentout0=conj((spinn==-1?un2_down:un2_up)*J0prime*(spini_out==-1?ui2_down:ui2_up));
+		currentoutplus=conj((spinn==-1?un2_down:un2_up)*Jplusprime*(spini_out==-1?ui2_down:ui2_up));
+		currentoutmin=conj((spinn==-1?un2_down:un2_up)*Jminprime*(spini_out==-1?ui2_down:ui2_up));
+	      }
+	      else{
+		currentout0=conj((spinr==-1?un2_down_cross:un2_up_cross)*J0prime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
+		currentoutplus=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jplusprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
+		currentoutmin=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jminprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
+	      }
+
+	      for(int M=-2;M<=2;M+=2){
 		if(!crossed) result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
 				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, 
 					TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,pz2)));
 		else result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
 				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, 
-					TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,pz2)));
+					TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-pz2+qvec)));
 		//direct offshell
 		result*=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
 		  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*rescatt;
@@ -1017,10 +1044,7 @@ void DQEinclusive::FSI_PVfirst_perp(numint::vector_d & res, double pz1, double p
 
       FourVector<double> pi2(MASSD-Erprimenorm,-pperp1*cosphi1-qt*cosqphi,-qt*sinqphi,-pz2); //pi2=pD-ps1+qt
       FourVector<double> pn2=pi2+q; //pn2=pi2+q
-      if(crossed) {pi2[1]*=-1.;pi2[2]*=-1.;pn2[1]*=-1.;pn2[2]*=-1.;} //transverse components opposite for crossed term
-      double t;
-      if(!crossed) t=pow(Ernorm-Erprimenorm,2.)-pow(pz1-pz2,2.)-qt*qt;
-      else pow(pn2[0]-Ernorm,2.)-pow(pn2[3]-pz1,2.)-qt*qt;
+      double t=pow(Ernorm-Erprimenorm,2.)-pow(pz1-pz2,2.)-qt*qt;
 
       complex<double> rescatt = rescatter.scatter(t,0);
 
@@ -1033,25 +1057,50 @@ void DQEinclusive::FSI_PVfirst_perp(numint::vector_d & res, double pz1, double p
       Matrix<1,4> un2_up=TSpinor::Bar(TSpinor(pn2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass));
       TSpinor ui2_down(pi2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass);
       TSpinor ui2_up(pi2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
-            
+
+      FourVector<double> pi2_cross(Erprimenorm-nu,pperp1*cosphi1+qt*cosqphi,qt*sinqphi,pz2-qvec); //pi2_cross = pr2 - qvec
+      FourVector<double> pn2_cross=pi2_cross+q; //pn2=pi2+q
+// 	      double t_cross=pow(pn2_cross[0]-Ernorm,2.)-pow(pn2_cross[3]-prz1[it1],2.)-qt*qt;
+// 	      complex<double> crossrescatt = rescatter.scatter(t_cross,0);
+
+      GammaStructure J0prime_cross = cross.getFFactorsdiff()->getCC(current, q, pi2_cross,pn2_cross)*polVector0;
+      GammaStructure Jplusprime_cross = cross.getFFactorsdiff()->getCC(current, q, pi2_cross,pn2_cross)*polVectorPlus;
+      GammaStructure Jminprime_cross = cross.getFFactorsdiff()->getCC(current, q, pi2_cross,pn2_cross)*polVectorMin;	     
+      
+      Matrix<1,4> un2_down_cross=TSpinor::Bar(TSpinor(pn2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass));
+      Matrix<1,4> un2_up_cross=TSpinor::Bar(TSpinor(pn2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass));
+      TSpinor ui2_down_cross(pi2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass);
+      TSpinor ui2_up_cross(pi2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
+      
+      
       //summation over all the spin indices
+      //check and exploit parity symmetry
       for(int spinn=-1;spinn<=1;spinn+=2){
 	for(int spini_in=-1;spini_in<=1;spini_in+=2){
 	  complex<double> currentin0=(spinn==-1?un1_down:un1_up)*J0*(spini_in==-1?ui1_down:ui1_up);
 	  complex<double> currentinplus=(spinn==-1?un1_down:un1_up)*Jplus*(spini_in==-1?ui1_down:ui1_up);
 	  complex<double> currentinmin=(spinn==-1?un1_down:un1_up)*Jmin*(spini_in==-1?ui1_down:ui1_up);
 	  for(int spini_out=-1;spini_out<=1;spini_out+=2){
-	    complex<double> currentout0=conj((spinn==-1?un2_down:un2_up)*J0prime*(spini_out==-1?ui2_down:ui2_up));
-	    complex<double> currentoutplus=conj((spinn==-1?un2_down:un2_up)*Jplusprime*(spini_out==-1?ui2_down:ui2_up));
-	    complex<double> currentoutmin=conj((spinn==-1?un2_down:un2_up)*Jminprime*(spini_out==-1?ui2_down:ui2_up));
-	    for(int M=-2;M<=2;M+=2){
-	      for(int spinr=-1;spinr<=1;spinr+=2){
+	    for(int spinr=-1;spinr<=1;spinr+=2){
+	      complex<double> currentout0=0.,currentoutplus=0.,currentoutmin=0.;
+	      if(!crossed){
+		currentout0=conj((spinn==-1?un2_down:un2_up)*J0prime*(spini_out==-1?ui2_down:ui2_up));
+		currentoutplus=conj((spinn==-1?un2_down:un2_up)*Jplusprime*(spini_out==-1?ui2_down:ui2_up));
+		currentoutmin=conj((spinn==-1?un2_down:un2_up)*Jminprime*(spini_out==-1?ui2_down:ui2_up));
+	      }
+	      else{
+		currentout0=conj((spinr==-1?un2_down_cross:un2_up_cross)*J0prime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
+		currentoutplus=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jplusprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
+		currentoutmin=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jminprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
+	      }
+
+	      for(int M=-2;M<=2;M+=2){
 		if(!crossed) result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
 				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, 
 					TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,pz2)));
 		else result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
 				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, 
-					TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,pz2)));
+					TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-pz2+qvec)));
 		//direct offshell
 		result*=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
 		  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*rescatt;

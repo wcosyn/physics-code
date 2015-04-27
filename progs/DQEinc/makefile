@@ -30,9 +30,9 @@ EFILE1   = 	../../bin/DQEinc
 LIBS =	 	-lm 
 WIMLIBS = -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator -lcuba
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L ~/Code/lib
- INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout -I ~/Code/DIS
-STATICLIBS =   ~/Code/lib/libDIS.a ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a ~/Code/lib/libIntegrator.a
+ LIBDIRS = -L ~/Code/trunk/lib
+ INCLUDEDIRS =  -I ~/Code/trunk/Integrator -I ~/Code/trunk/Tools  -I ~/Code/trunk/Glauber -I ~/Code/trunk/Knockout -I ~/Code/trunk/DIS
+STATICLIBS =   ~/Code/trunk/lib/libDIS.a ~/Code/trunk/lib/libKnockout.a  ~/Code/trunk/lib/libGlauber.a   ~/Code/trunk/lib/libMePhys.a ~/Code/trunk/lib/libIntegrator.a
 
 #		Header files
 HDRS =		
