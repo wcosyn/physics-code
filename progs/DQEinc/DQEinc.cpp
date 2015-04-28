@@ -24,9 +24,9 @@ int main(int argc, char *argv[])
     
     string wf = argv[2];
     
-    for(int i=0;i<10;i++){
+ /*   for(int i=0;i<10;i++){
       x=0.8+0.1*i;
-    
+ */   
       double nu=Q2/(2.*MASSP*x);
       double qvec=sqrt(Q2+nu*nu);
       
@@ -68,5 +68,5 @@ int main(int argc, char *argv[])
   //     cout << x << " " << teller << " " << noemer << " " << teller/noemer << endl;
     
       delete elec;
-    }
+//     }
 }
