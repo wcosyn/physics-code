@@ -709,18 +709,18 @@ void DQEinclusive::FSI_PV(numint::vector_d & result, double pperp1, double qt,
   pvint.rescatter=&rescatter;
   pvint.f=DQEinclusive::FSI_intPV;
   
-  cross.get_prz(prz1,0.,Q2,nu,qvec);
-  cross.get_prz(prz2,0.,Q2,nu,qvec);
+  cross.get_prz(prz1,nopt?0.:pperp1,Q2,nu,qvec);
+  cross.get_prz(prz2,nopt?0.:pperp2,Q2,nu,qvec);
   cout << prz1.size() << " " << prz2.size() << " ";
   for(size_t i=0;i<prz1.size();i++) cout << prz1[i] << " ";
   for(size_t i=0;i<prz2.size();i++) cout << prz2[i] << " ";
   cout << (-MASSD*MASSD+Q2-2.*MASSD*nu+2.*(MASSD+nu)*cross.getMassr())/2./qvec << endl;
   
-  if(cross.get_prz(prz1,pperp1,Q2,nu,qvec)){ //prz evaluation is performed!!
-    if(cross.get_prz(prz2,pperp2,Q2,nu,qvec)){ //prz evaluation is performed!!
+  if(cross.get_prz(prz1,nopt?0.:pperp1,Q2,nu,qvec)){ //prz evaluation is performed!!
+    if(cross.get_prz(prz2,nopt?0.:pperp2,Q2,nu,qvec)){ //prz evaluation is performed!!
       pvint.prz2poles = prz2;
       for(size_t it1=0;it1<prz1.size();it1++){      
-	for(int crossed=0;crossed<=1;crossed++){
+	for(int crossed=1;crossed<=1;crossed++){
 	  pvint.crossed=bool(crossed);
 	  gsl_integration_workspace * w 
 	  = gsl_integration_workspace_alloc (1E6);
@@ -813,7 +813,7 @@ double DQEinclusive::FSI_intPV(double pz1, double pz2, double pperp1, double ppe
       TSpinor ui2_up(pi2,cross.getMassi(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
 
       FourVector<double> pi2_cross(Erprimenorm-nu,pperp1*cosphi1+qt*cosqphi,qt*sinqphi,pz2-qvec); //pi2_cross = pr2 - qvec
-      FourVector<double> pn2_cross=pi2_cross+q; //pn2=pi2+q
+      FourVector<double> pn2_cross=pi2_cross+q; //pn2=pi2+q (or pr2)
 // 	      double t_cross=pow(pn2_cross[0]-Ernorm,2.)-pow(pn2_cross[3]-prz1[it1],2.)-qt*qt;
 // 	      complex<double> crossrescatt = rescatter.scatter(t_cross,0);
 
@@ -828,7 +828,7 @@ double DQEinclusive::FSI_intPV(double pz1, double pz2, double pperp1, double ppe
       
       //summation over all the spin indices
       //check and exploit parity symmetry!!!!
-      for(int spinn=-1;spinn<=1;spinn+=2){
+      for(int spinn=-1;spinn<=0;spinn+=2){
 	for(int spini_in=-1;spini_in<=1;spini_in+=2){
 	  complex<double> currentin0=(spinn==-1?un1_down:un1_up)*J0*(spini_in==-1?ui1_down:ui1_up);
 	  complex<double> currentinplus=(spinn==-1?un1_down:un1_up)*Jplus*(spini_in==-1?ui1_down:ui1_up);
@@ -846,25 +846,26 @@ double DQEinclusive::FSI_intPV(double pz1, double pz2, double pperp1, double ppe
 		currentoutplus=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jplusprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
 		currentoutmin=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jminprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
 	      }
-
+	      complex<double> wftemp=0.;
 	      for(int M=-2;M<=2;M+=2){
-		if(!crossed) result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
+		if(!crossed) wftemp+=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
 				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, 
 					TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,pz2)));
-		else result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
+		else wftemp+=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
 				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, 
 					TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-pz2+qvec)));
-		//direct offshell
-		result*=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
-		  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*rescatt;
 	      }
+	      result+=wftemp*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
+		  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*rescatt;
+	      
 	    }	    
 	  }
 	}
       }
-      if(!crossed) result*=1./sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-pz1/Ernorm*(MASSD+nu))
+      //exploited parity symmetry, hence extra factor 2
+      if(!crossed) result*=2./sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-pz1/Ernorm*(MASSD+nu))
       /abs(qvec-pz2/Erprimenorm*(MASSD+nu));
-      else result*=-MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
+      else result*=-2.*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
       /abs(qvec-pz1/Ernorm*(MASSD+nu))/abs(qvec-pz2/Erprimenorm*(MASSD+nu));
     }
   }
@@ -882,7 +883,8 @@ void DQEinclusive::calc_CrossincFSI_PVoff2(double &fsi1_off, double &fsi2_off, d
   double nu=Q2/(x*2.*MASSP);
   ffactorseq=new NucleonEMOperator(Q2,proton,ffparam);
   ffactorsdiff=new NucleonEMOperator(Q2,!proton,ffparam);
-  //first we perform the regular 4d integration, inside we do the PV integrations.
+  //first we perform the two PV integrations, inside we do the other (regular) integrations over the perp coordinates
+  //no pt dependence in the pole values for the prz now of course! (neglected).
   
   minpcm=1.E03;
   DQEinclusive::Ftor_PVfirst F;
@@ -1074,8 +1076,8 @@ void DQEinclusive::FSI_PVfirst_perp(numint::vector_d & res, double pz1, double p
       
       
       //summation over all the spin indices
-      //check and exploit parity symmetry
-      for(int spinn=-1;spinn<=1;spinn+=2){
+      //parity symmetry exploited in first summation (checkeD)
+      for(int spinn=-1;spinn<=0;spinn+=2){
 	for(int spini_in=-1;spini_in<=1;spini_in+=2){
 	  complex<double> currentin0=(spinn==-1?un1_down:un1_up)*J0*(spini_in==-1?ui1_down:ui1_up);
 	  complex<double> currentinplus=(spinn==-1?un1_down:un1_up)*Jplus*(spini_in==-1?ui1_down:ui1_up);
@@ -1093,25 +1095,26 @@ void DQEinclusive::FSI_PVfirst_perp(numint::vector_d & res, double pz1, double p
 		currentoutplus=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jplusprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
 		currentoutmin=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jminprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
 	      }
-
+	      complex<double> wftemp=0.;
 	      for(int M=-2;M<=2;M+=2){
-		if(!crossed) result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
+		if(!crossed) wftemp+=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
 				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, 
 					TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,pz2)));
-		else result=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
+		else wftemp+=cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,pz1))
 				*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, 
 					TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-pz2+qvec)));
-		//direct offshell
-		result*=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
-		  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*rescatt;
 	      }
+	      result+=wftemp*(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
+		*(currentinmin*currentoutmin+currentinplus*currentoutplus))*rescatt;
+	      
 	    }	    
 	  }
 	}
       }
-      if(!crossed) result*=1./sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-pz1/Ernorm*(MASSD+nu))
+      //extra factor of 2 because of the parity symmetry used.
+      if(!crossed) result*=2./sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-pz1/Ernorm*(MASSD+nu))
       /abs(qvec-pz2/Erprimenorm*(MASSD+nu));
-      else result*=-MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
+      else result*=-2.*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
       /abs(qvec-pz1/Ernorm*(MASSD+nu))/abs(qvec-pz2/Erprimenorm*(MASSD+nu));
     }
   }

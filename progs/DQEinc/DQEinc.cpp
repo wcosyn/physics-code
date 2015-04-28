@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     int maxEval=atoi(argv[4]);
     bool nopt=atoi(argv[7]);
     int integrator=0;
+    bool pv=atoi(argv[8]);
     
     string wf = argv[2];
     
@@ -53,7 +54,8 @@ int main(int argc, char *argv[])
 	fsioff1+=f3;
 	fsioff2+=f4;
 	(proton?f2_2:f2_1)=Dinc.getMinpcm();
-  //       Dinc.calc_CrossincFSI_PVoff2(f1,f2,Q2,x,2,integrator,maxEval);
+        if(pv) Dinc.calc_CrossincFSI_PVoff2(f1,f2,Q2,x,2,integrator,maxEval);
+	else Dinc.calc_CrossincFSI_PVoff(f1,f2,Q2,x,2,integrator,maxEval);
   //       cout << "fsiresultoff " << x << " " << proton << " " << f1 << " " << f2 << " " << endl;
   //       fsioffPV1+=f1;
   //       fsioffPV2+=f2;
