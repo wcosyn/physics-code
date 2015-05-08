@@ -149,6 +149,7 @@ void InclusiveCross::Azzplanewave_int(numint::vector_d & result, double prnorm, 
 //       dens5+=-wavemin*conj(waveplus)+waveplus*conj(wavemin);      
     }
   }
+  //polarization is along beam not along virtual photon direction so we have to include density matrix rotations
   //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
   result[0]=real(2./3.*prnorm*prnorm*(MASSD/(2.*(MASSD-Er)))*(
     (ResTandL*dens1*(1.+3.*cos(2.*thetapol))/4.)

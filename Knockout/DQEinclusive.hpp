@@ -44,18 +44,20 @@ public:
   /*! Calculates the plane-wave inclusive cross section, just the deuteron incl F_L structure function
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
-   * \param [out] contrib1 [nb/GeV] direct born cross section d\sigma/dEdOmega
-   * \param [out] contrib2 [nb/GeV] crossed born cross section d\sigma/dEdOmeg
+   * \param [out] pw [nb/GeV] born cross section d\sigma/dEdOmega [0]=direct term unpol, [1]=cross term unpol, [2]=direct term tensor pol, [3]= crossed term tensor pol
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param integrator selects type of integrator [0=adaptive cubature from MIT lib, 1=Cuhre from cuba lib, 2=suave from cuba lib,
    * 3=vegas from cuba lib, 4=divonne from cuba lib]
+   * \param thetapol [rad] angle between q and beam
    */
-  void calc_Crossinc(double &contrib1, double &contrib2, double Q2,double x, int current, int integrator);
+  void calc_Crossinc(std::vector<double>& pw, double Q2,double x, int current, int integrator, double thetpol);
   /*! Calculates the fsi (on and off) inclusive cross section d\sigma/dEdOmega
-   * \param [out] fsi1 [nb/GeV] inclusive fsi cross section d\sigma/dEdOmega
-   * \param [out] fsi2 [nb/GeV] crossed term fsi cross section d\sigma/dEdOmega
-   * \param [out] fsi1_off [nb/GeV] inclusive fsi cross section d\sigma/dEdOmega, direct term, off-shell part  
-   * \param [out] fsi2_off [nb/GeV] inclusive cross section d\sigma/dEdOmegacrossed term, off-shell part
+   * \param [out] fsi [nb/GeV] inclusive fsi cross section d\sigma/dEdOmega
+   * [0]=direct on-shell unpolarized
+   * [1]=crossed on-shell unpolarized
+   * [2]=direct off-shell unpolarized
+   * [3]=crossed off-shell unpolarized
+   * [4-7]= same as [0-3] but tensor polarized
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
@@ -63,9 +65,10 @@ public:
    * 3=vegas from cuba lib, 4=divonne from cuba lib]
    * \param maxEval max number of integrandum evaluations
    * \param nopt turns of p_t component in pr_z pole evaluation
+   * \param thetapol [rad] angle between q and beam
    */
-  void calc_CrossincFSI(double &fsi1, double &fsi2, double &fsi1_off, double &fsi2_off, double Q2,double x, int current, 
-		      int integrator, int maxEval, bool nopt);
+  void calc_CrossincFSI(std::vector<double> &fsi, double Q2,double x, int current, 
+		      int integrator, int maxEval, bool nopt, double thetapol);
 
   /*! Calculates the off-shell fsi  inclusive cross section without any prefactors, just the deuteron incl F_L structure function
    * \param [out] fsi1_off [nb/GeV] inclusive fsi cross section , direct term, off-shell part  
@@ -143,23 +146,25 @@ private:
     /*! integrandum function */
     static void exec(const numint::array<double,1> &x, void *param, numint::vector_d &ret) {
       Ftor_planewave &p = * (Ftor_planewave *) param;
-      p.f(ret,x[0],*p.cross,p.Q2,p.x,p.current,p.tanhalfth2);
+      p.f(ret,x[0],*p.cross,p.Q2,p.x,p.current,p.tanhalfth2,p.thetapol);
     }
     DQEinclusive *cross;/*!< pointer to  instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
     double x; /*!< [] Bjorken x */
     int current; /*!< CC1,CC2,CC3*/
     double tanhalfth2; /*!< electron scattering tan squared of half angle */
+    double thetapol; /*!< angle between q and beam */
     /*! integrandum 
-    * \param [out] res results
+    * \param [out] res results (cross section and Azz)
     * \param pperp [MeV] integration variable, transverse spectator momentum
     * \param cross instance of  where we perform the integration on
     * \param Q2 [MeV^2] momentum transfer 
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).  
     * \param tanhalfth2 [] squared tan half angle of scattering electron
+    * \param thetapol [rad] angle between q and beam
     */
-    void (*f)(numint::vector_d & res, double pperp, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2);
+    void (*f)(numint::vector_d & res, double pperp, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2, double thetapol);
   };
   
    /*! integrandum function
@@ -170,9 +175,10 @@ private:
     * \param x [] Bjorken x
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
     * \param tanhalfth2 [] squared tan half angle of scattering electron
+    * \param thetapol [rad] angle between q and beam
     */
   static void planewave_int(numint::vector_d & results, double pperp, 
-			    DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2);
+			    DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2, double thetapol);
   
   /*! struct that is used for integrators fsi on- and off-shell ones*/
   struct Ftor_FSI {
@@ -180,7 +186,7 @@ private:
     /*! integrandum function */
     static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
       Ftor_FSI &p = * (Ftor_FSI *) param;
-      p.f(ret,x[0],x[1],x[2],*p.cross,p.Q2,p.x,p.current,p.tanhalfth2,p.nopt);
+      p.f(ret,x[0],x[1],x[2],*p.cross,p.Q2,p.x,p.current,p.tanhalfth2,p.nopt,p.thetapol);
     }
     DQEinclusive *cross;/*!< pointer to  instance that contains all */
     double Q2; /*!< [MeV^2] momentum transfer */
@@ -188,6 +194,7 @@ private:
     int current; /*!< CC1,CC2,CC3*/
     double tanhalfth2; /*!< electron scattering tan squared of half angle */
     bool nopt; /*!< don't take the p_t component into account when evaluating the prz poles */
+    double thetapol; /*!< angle between q and beam */
     /*! integrandum 
     * \param [out] res results
     * \param pperp [MeV] integration variable, transverse spectator momentum
@@ -199,9 +206,10 @@ private:
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
     * \param tanhalfth2 [] squared tan half angle of scattering electron
     * \param nopt don't take the p_t component into account when evaluating the prz poles
+    * \param thetapol [rad] angle between q and beam
     */
     void (*f)(numint::vector_d & res, double pperp, double qt, double qphi, DQEinclusive& cross, 
-	      double Q2, double x, int current, double tanhalfth2, bool nopt);
+	      double Q2, double x, int current, double tanhalfth2, bool nopt, double thetapol);
   };
   
    /*! integrandum function for on-shell and off-shell contribution to the FSI amplitude
@@ -215,9 +223,10 @@ private:
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
     * \param tanhalfth2 [] squared tan half angle of scattering electron
     * \param nopt don't take the p_t component into account when evaluating the prz poles
+    * \param thetapol [rad] angle between q and beam
     */
   static void FSI_int(numint::vector_d & results, double pperp, double qt, 
-		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2, bool nopt);
+		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2, bool nopt, double thetapol);
   
    /*! integrandum function for off-shell direct PV calculations contribution to the FSI amplitude
     * \param [out] results results
@@ -229,9 +238,10 @@ private:
     * \param x [] Bjorken x
     * \param tanhalfth2 [] squared tan half angle of scattering electron
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
-    */
+     * \param thetapol [rad] angle between q and beam
+   */
   static void FSI_PV(numint::vector_d & results, double pperp, double qt, 
-		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2, bool nopt);
+		      double qphi, DQEinclusive& cross, double Q2, double x, int current, double tanhalfth2, bool nopt, double thetapol);
 
 
 

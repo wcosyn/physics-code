@@ -21,14 +21,12 @@ int main(int argc, char *argv[])
     bool nopt=atoi(argv[7]);
     int integrator=0;
     bool pv=atoi(argv[8]);
-    
+    bool beampol=atoi(argv[9]); //1=polarizatino along bem, 0=polarization along qvec
     string wf = argv[2];
     
- /*   for(int i=0;i<10;i++){
+    for(int i=0;i<10;i++){
       x=0.8+0.1*i;
- */   
-      double nu=Q2/(2.*MASSP*x);
-      double qvec=sqrt(Q2+nu*nu);
+    
       
 //       double Eout=Ein-nu;
 //       double sin2th=Q2/Eout/Ein/4.;
@@ -38,35 +36,61 @@ int main(int argc, char *argv[])
 
   //     cout << "q " << qvec << " " << nu << " " << Q2/4./Ein/(Ein-nu) << " " << Ein << endl;
       //TKinematics2to2 kin("","",MASSD,MASSP,Wprime,"qsquared:wlab:pklab",1.8E06,nu,pr);
-      double teller1=0.,teller2=0.,fsi1=0.,fsi2=0.,fsioff1=0.,fsioff2=0.,fsioffPV1=0.,fsioffPV2=0.,noemer=1.;
+      double pw_direct=0.,pw_cross=0.,fsi1=0.,fsi2=0.,fsioff1=0.,fsioff2=0.,fsioffPV1=0.,fsioffPV2=0.,noemer=1.;
+      //azz have to be divided by the unpolarized cross section afterwards by user!!!!
+      double azz_direct=0., azz_cross=0.,azz_fsi1=0.,azz_fsi2=0.,azz_fsioff1=0.,azz_fsioff2=0.;  
       double f2_1,f2_2;
       for(int proton=0;proton<=1;++proton){
+	
+	double nu=Q2/(2.*(proton?MASSP:MASSN)*x);
+	double qvec=sqrt(Q2+nu*nu);
+	double Eout=Ein-nu;
+	double thetae=2.*asin(sqrt(Q2/(4.*Ein*Eout)));
+	double qz=Ein-Eout*cos(thetae);
+	double qx=-Eout*sin(thetae);
+	double thetaq=atan2(qx,qz); //angle between beam and qvec
+	double thetapol=thetaq;
+	if(!beampol) thetapol=0.;
+
+	
 	DQEinclusive Dinc(proton,ffparam,wf,*elec,4);
-	double f1,f2,f3,f4;
-	Dinc.calc_Crossinc(f1,f2,Q2,x,2,integrator);
+	vector<double> pw(4,0.);
+	vector<double> fsi(8,0.);
+	Dinc.calc_Crossinc(pw,Q2,x,2,integrator,thetapol);
 // 	cout << "pwresult " << x << " " << proton << " " << f1 << " " << f2 << endl;
-	teller1+=f1;
-	teller2+=f2;
-	Dinc.calc_CrossincFSI(f1,f2,f3,f4,Q2,x,2,integrator,maxEval,nopt);
+	pw_direct+=pw[0];
+	pw_cross+=pw[1];
+	azz_direct+=pw[2];
+	azz_cross+=pw[3];
+	Dinc.calc_CrossincFSI(fsi,Q2,x,2,integrator,maxEval,nopt,thetapol);
 // 	cout << "fsiresult " << x << " " << proton << " " << f1 << " " << f2 << " " << f3 << " " << f4 << endl;
-	fsi1+=f1;
-	fsi2+=f2;
-	fsioff1+=f3;
-	fsioff2+=f4;
+	fsi1+=fsi[0];
+	fsi2+=fsi[1];
+	fsioff1+=fsi[2];
+	fsioff2+=fsi[3];
+	azz_fsi1+=fsi[4];
+	azz_fsi2+=fsi[5];
+	azz_fsioff1+=fsi[6];
+	azz_fsioff2+=fsi[7];
 	(proton?f2_2:f2_1)=Dinc.getMinpcm();
-        if(pv) Dinc.calc_CrossincFSI_PVoff2(f1,f2,Q2,x,2,integrator,maxEval);
-	else Dinc.calc_CrossincFSI_PVoff(f1,f2,Q2,x,2,integrator,maxEval);
-  //       cout << "fsiresultoff " << x << " " << proton << " " << f1 << " " << f2 << " " << endl;
-  //       fsioffPV1+=f1;
-  //       fsioffPV2+=f2;
+//         if(pv) Dinc.calc_CrossincFSI_PVoff2(f1,f2,Q2,x,2,integrator,maxEval);
+// 	else Dinc.calc_CrossincFSI_PVoff(f1,f2,Q2,x,2,integrator,maxEval);
+//       cout << "fsiresultoff " << x << " " << proton << " " << f1 << " " << f2 << " " << endl;
+//         fsioffPV1+=f1;
+//         fsioffPV2+=f2;
 	
       }
-      cout << x << " " << teller1 << " " << teller2 << " " << teller1+teller2 << " " << fsi1 << " " << fsi2 << " "
+      cout << x << " " << pw_direct << " " << pw_cross << " " << pw_direct+pw_cross << " " << fsi1 << " " << fsi2 << " "
       << fsi1+fsi2 << " " << fsioff1 << " " << fsioff2 << " " << fsioff1+fsioff2 << " " 
       << fsioffPV1 << " " << fsioffPV2 << " " << fsioffPV1+fsioffPV2 << " "<<
-      teller1+teller2+fsi1+fsi2+fsioff1+fsioff2 << " " << f2_1 << " " << f2_2 << endl;
+      pw_direct+pw_cross+fsi1+fsi2+fsioff1+fsioff2 << " " 
+      << azz_direct << " " << azz_cross << " " << azz_direct+azz_cross << " " << azz_fsi1 << " " << azz_fsi2 << " "
+      <<  azz_fsi1+ azz_fsi2 << " " <<  azz_fsioff1 << " " <<  azz_fsioff2 << " " <<  azz_fsioff1+ azz_fsioff2 << " " 
+      << azz_direct+azz_cross+ azz_fsi1+ azz_fsi2+ azz_fsioff1+ azz_fsioff2 << " " 
+      
+      << f2_1 << " " << f2_2 << endl;
   //     cout << x << " " << teller << " " << noemer << " " << teller/noemer << endl;
     
       delete elec;
-//     }
+    }
 }
