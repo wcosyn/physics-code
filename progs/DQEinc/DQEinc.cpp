@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	pw_cross+=pw[1];
 	azz_direct+=pw[2];
 	azz_cross+=pw[3];
-	Dinc.calc_CrossincFSI(fsi,Q2,x,2,integrator,maxEval,nopt,thetapol);
+// 	Dinc.calc_CrossincFSI(fsi,Q2,x,2,integrator,maxEval,nopt,thetapol);
 // 	cout << "fsiresult " << x << " " << proton << " " << f1 << " " << f2 << " " << f3 << " " << f4 << endl;
 	fsi1+=fsi[0];
 	fsi2+=fsi[1];

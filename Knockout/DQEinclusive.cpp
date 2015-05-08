@@ -205,7 +205,7 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 	TSpinor uiprime_down(piprime,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass);
 	TSpinor uiprime_up(piprime,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
 
-	res1=res0=0.;
+	res3=res2=res1=res0=0.;
 	//summation over all the spin indices
 	for(int spinn=-1;spinn<=0;spinn+=2){  //exploit parity symmetry here!
 	  for(int spini_in=-1;spini_in<=1;spini_in+=2){
@@ -223,31 +223,65 @@ void DQEinclusive::planewave_int(numint::vector_d & result, double pperp,
 		complex<double> currentoutplusprime=conj((spinr==-1?us_down:us_up)*Jplusprime*(spini_out==-1?uiprime_down:uiprime_up));
 		complex<double> currentoutminprime=conj((spinr==-1?us_down:us_up)*Jminprime*(spini_out==-1?uiprime_down:uiprime_up));
 
-		for(int M=-2;M<=2;M+=2){
+		complex<double> wavemin=cross.getDeutwf()->DeuteronPState(-2, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]));
+		complex<double> wavezero=cross.getDeutwf()->DeuteronPState(0, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]));
+		complex<double> waveplus=cross.getDeutwf()->DeuteronPState(2, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]));
+		complex<double> wavemin_out=cross.getDeutwf()->DeuteronPState(-2, spini_out, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]));
+		complex<double> wavezero_out=cross.getDeutwf()->DeuteronPState(0, spini_out, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]));
+		complex<double> waveplus_out=cross.getDeutwf()->DeuteronPState(2, spini_out, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]));
+		complex<double> wavemin_out_crossed=cross.getDeutwf()->DeuteronPState(-2, spini_out, spinn, TVector3(-pperp*cosphi,-pperp*sinphi,-prz[it]+qvec));
+		complex<double> wavezero_out_crossed=cross.getDeutwf()->DeuteronPState(0, spini_out, spinn, TVector3(-pperp*cosphi,-pperp*sinphi,-prz[it]+qvec));
+		complex<double> waveplus_out_crossed=cross.getDeutwf()->DeuteronPState(2, spini_out, spinn, TVector3(-pperp*cosphi,-pperp*sinphi,-prz[it]+qvec));
 		  
-		  //direct
-		  res0+=(M==0? -2.:1.)*real((Q2*Q2/pow(qvec,4.)*currentin0*currentout0
-				      +(Q2/(2.*qvec*qvec)+tanhalfth2)*(currentinmin*currentoutmin+currentinplus*currentoutplus))*
-				  cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))
-				  *conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))));
-		  //cross
-		  if(Erprimenorm<MASSD-200.) res1+=(M==0? -2.:1.)*real((Q2*Q2/pow(qvec,4.)*currentin0*currentout0prime
-				      +(Q2/(2.*qvec*qvec)+tanhalfth2)*(currentinmin*currentoutminprime+currentinplus*currentoutplusprime))*
-				  cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp*cosphi,pperp*sinphi,prz[it]))
-				  *conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, TVector3(-pperp*cosphi,-pperp*sinphi,-prz[it]+qvec))));
+		complex<double> dens0=wavemin*conj(wavemin_out)+waveplus*conj(waveplus_out)+wavezero*conj(wavezero_out);
+		complex<double> dens1=wavemin*conj(wavemin_out)+waveplus*conj(waveplus_out)-2.*wavezero*conj(wavezero_out);
+		complex<double> dens2=wavemin*conj(wavezero_out)+wavezero*conj(wavemin_out)-wavezero*conj(waveplus_out)-waveplus*conj(wavezero_out);
+		complex<double> dens3=wavemin*conj(waveplus_out)+waveplus*conj(wavemin_out);
+		complex<double> dens0_crossed=wavemin*conj(wavemin_out_crossed)+waveplus*conj(waveplus_out_crossed)+wavezero*conj(wavezero_out_crossed);
+		complex<double> dens1_crossed=wavemin*conj(wavemin_out_crossed)+waveplus*conj(waveplus_out_crossed)-2.*wavezero*conj(wavezero_out_crossed);
+		complex<double> dens2_crossed=wavemin*conj(wavezero_out_crossed)+wavezero*conj(wavemin_out_crossed)-wavezero*conj(waveplus_out_crossed)-waveplus*conj(wavezero_out_crossed);
+		complex<double> dens3_crossed=wavemin*conj(waveplus_out_crossed)+waveplus*conj(wavemin_out_crossed);
+		
+		double Q2overkk=Q2/qvec/qvec;
+		complex<double> TandL=  pow(Q2overkk,2.)*currentin0*currentout0
+				    +(Q2overkk/2.+tanhalfth2)*(currentinmin*currentoutmin+currentinplus*currentoutplus);
+		complex<double> TandL_crossed=  pow(Q2overkk,2.)*currentin0*currentout0prime
+				    +(Q2overkk/2.+tanhalfth2)*(currentinmin*currentoutminprime+currentinplus*currentoutplusprime);
+		complex<double> LT=-Q2overkk*sqrt((tanhalfth2+Q2overkk)/2.)*(currentin0*conj(currentoutplus-currentoutmin)+
+					(currentinplus-currentinmin)*conj(currentout0));
+		complex<double> LT_crossed=-Q2overkk*sqrt((tanhalfth2+Q2overkk)/2.)*(currentin0*conj(currentoutplusprime-currentoutminprime)+
+					(currentinplus-currentinmin)*conj(currentout0prime));
+		complex<double> TT=-Q2overkk/2.*(currentinmin*conj(currentoutplus)+currentinplus*conj(currentoutmin));
+		complex<double> TT_crossed=-Q2overkk/2.*(currentinmin*conj(currentoutplusprime)+currentinplus*conj(currentoutminprime));
+		//direct
+		res0+=real(TandL*dens0);
+		//cross
+		if(Erprimenorm<MASSD-200.) res1+=real(TandL_crossed*dens0_crossed);
+		res2+=real(TandL*dens1*(1.+3.*cos(2.*thetapol))/4.
+		      +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2*LT)
+		+3./8.*(1.-cos(2.*thetapol))*dens3*TT);
+		if(Erprimenorm<MASSD-200.) res3+=real(TandL_crossed*dens1_crossed*(1.+3.*cos(2.*thetapol))/4.
+		      +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2_crossed*LT_crossed)
+		+3./8.*(1.-cos(2.*thetapol))*dens3_crossed*TT_crossed);
 									  
-		}
 	      }
 	    }
 	  }
 	}
 	//factors of 2 because of parity symmetry exploited
 	res0*=2.*pperp*MASSD/(2.*(MASSD-Ernorm))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu));
+	res2*=2.*pperp*MASSD/(2.*(MASSD-Ernorm))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu));
 	//minus sign because other nucleon is on-shell now in the wave function for cross term
-	if(Erprimenorm<MASSD-200.) res1*=-2.*pperp*MASSD/(2.*sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm)))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu))
+	if(Erprimenorm<MASSD-200.) {
+	  res1*=-2.*pperp*MASSD/(2.*sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm)))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu))
 	  *sqrt(Erprimenorm/Ernorm);
+	  res3*=-2.*pperp*MASSD/(2.*sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm)))/2./abs(qvec-prz[it]/Ernorm*(MASSD+nu))
+	  *sqrt(Erprimenorm/Ernorm);
+	}
 	result[0]+=res0;
 	result[1]+=res1;
+	result[2]+=res2;
+	result[3]+=res3;
       }
 
     }
