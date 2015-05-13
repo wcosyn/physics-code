@@ -230,8 +230,8 @@ private:
   
   //pure virtual functions!!!
   virtual void constructAllGrids()=0; /*!< construct all grids */
-  virtual void readinFsiGrid(ifstream &infile)=0; /*!< read in all grids */
-  virtual void writeoutFsiGrid(ofstream &outfile)=0; /*!< write out all grids */
+  virtual void readinFsiGrid(std::ifstream &infile)=0; /*!< read in all grids */
+  virtual void writeoutFsiGrid(std::ofstream &outfile)=0; /*!< write out all grids */
     
   MeanFieldNucleus *pnucleus;/*!<  the pointer to the MeanFieldNucleus instance */
   

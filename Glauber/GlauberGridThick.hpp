@@ -127,10 +127,10 @@ private:
    * \param neutronphases glauberphases (for neutron scattering)
    */
   virtual void calcGlauberphasesCt(std::vector<std::complex<double> > &protonphases, std::vector<std::complex<double> > &neutronphases);
-  virtual void readinFsiGrid(ifstream &infile);  /*!< read in both the fsi(+src) and the fsi(+src)+ct grids */
-  virtual void readinFsiCtGrid(ifstream &infile); /*!< read in only the fsi(+src)+ct grids */
-  virtual void writeoutFsiGrid(ofstream &outfile); /*!< write out both the fsi(+src) and the fsi(+src)+ct grids */
-  virtual void writeoutFsiCtGrid(ofstream &outfile); /*!< write out only the fsi(+src)+ct grids */
+  virtual void readinFsiGrid(std::ifstream &infile);  /*!< read in both the fsi(+src) and the fsi(+src)+ct grids */
+  virtual void readinFsiCtGrid(std::ifstream &infile); /*!< read in only the fsi(+src)+ct grids */
+  virtual void writeoutFsiGrid(std::ofstream &outfile); /*!< write out both the fsi(+src) and the fsi(+src)+ct grids */
+  virtual void writeoutFsiCtGrid(std::ofstream &outfile); /*!< write out only the fsi(+src)+ct grids */
   
   /*! function that gets integrated over r, both fsi(+src) and fsi(+src)+ct grid output
    * \param r [fm] radial coordinate

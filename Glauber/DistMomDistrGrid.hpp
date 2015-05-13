@@ -180,15 +180,15 @@ private:
     * from the frame that was used to compute the glauberphases
     */
   void constructAllGrids(TRotation & rot); 
-  void readinRhoGrid(ifstream &infile); /*!< read in all grids */
-  void writeoutRhoGrid(ofstream &outfile); /*!< write out all grids */
+  void readinRhoGrid(std::ifstream &infile); /*!< read in all grids */
+  void writeoutRhoGrid(std::ofstream &outfile); /*!< write out all grids */
   /*! construct only the fsi+ct grids
     * \param rot TRotation if the frame of the missing momentum is different 
     * from the frame that was used to compute the glauberphases
     */
   void constructCtGrid(TRotation & rot);  
-  void readinRhoCtGrid(ifstream &infile); /*!< read in only the fsi+ct grids */
-  void writeoutRhoCtGrid(ofstream &outfile); /*!< write out only the fsi+ct grids */
+  void readinRhoCtGrid(std::ifstream &infile); /*!< read in only the fsi+ct grids */
+  void writeoutRhoCtGrid(std::ofstream &outfile); /*!< write out only the fsi+ct grids */
 
 
   /*! function that gets integrated over r, both fsi and fsi+ct grid output

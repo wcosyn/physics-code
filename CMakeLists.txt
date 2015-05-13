@@ -36,7 +36,8 @@ dugtrio
 raichu
 delcatty
 gulpin
-gligar)
+gligar
+)
 
 
 # Create a library called "libEvent" which includes the source files given in
@@ -65,7 +66,7 @@ get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
 EXEC_PROGRAM("hostname" OUTPUT_VARIABLE hostname)
 
-if (hostname MATCHES accident OR hostname MATCHES talvin13)
+if (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807)
    MESSAGE("--- Configuring for accident")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
@@ -75,7 +76,7 @@ if (hostname MATCHES accident OR hostname MATCHES talvin13)
 
       # Select flags.
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native -std=c++11")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O3 -pg ")
@@ -184,7 +185,7 @@ if(hostname MATCHES ${hpcname})
 endif(hostname MATCHES ${hpcname})
 endforeach(hpcname ${HPC_NAMES})
 
-else(hostname MATCHES accident OR hostname MATCHES talvin13) 
+else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807) 
    MESSAGE("--- default configuration")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
@@ -239,7 +240,7 @@ else(hostname MATCHES accident OR hostname MATCHES talvin13)
 
 
 # endif (hostname MATCHES gengar OR hostname MATCHES haunter) 
-endif (hostname MATCHES accident OR hostname MATCHES talvin13) 
+endif (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807) 
 
 
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR})

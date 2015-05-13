@@ -68,7 +68,7 @@ class TLorentzQuaternion : public TObject
   void Decompose(TLorentzQuaternion& rotation, TLorentzQuaternion& boost) const;
 void Decompose(double& theta, TVector3& axis, TVector3& boost) const;
 
-  friend std::ostream& operator<<(ostream&, const TLorentzQuaternion&);
+  friend std::ostream& operator<<(std::ostream&, const TLorentzQuaternion&);
 
  protected:
   void SetBoost(const double betaX, const double betaY, const double betaZ);

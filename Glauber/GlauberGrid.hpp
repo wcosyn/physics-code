@@ -85,10 +85,10 @@ private:
    * \param k grid index in phi
    */
   virtual void calcGlauberphasesCt(const int i, const int j, const int k);
-  virtual void readinFsiGrid(ifstream &infile); /*!< read in both the fsi and the fsi+ct grids */
-  virtual void readinFsiCtGrid(ifstream &infile); /*!< read in only the fsi+ct grids */
-  virtual void writeoutFsiGrid(ofstream &outfile); /*!< write out both the fsi and the fsi+ct grids */
-  virtual void writeoutFsiCtGrid(ofstream &outfile); /*!< write out only the fsi+ct grids */
+  virtual void readinFsiGrid(std::ifstream &infile); /*!< read in both the fsi and the fsi+ct grids */
+  virtual void readinFsiCtGrid(std::ifstream &infile); /*!< read in only the fsi+ct grids */
+  virtual void writeoutFsiGrid(std::ofstream &outfile); /*!< write out both the fsi and the fsi+ct grids */
+  virtual void writeoutFsiCtGrid(std::ofstream &outfile); /*!< write out only the fsi+ct grids */
   
   /*! function that gets integrated over r, both fsi and fsi+ct grid output
    * \param r [fm] radial coordinate
