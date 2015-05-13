@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
     bool beampol=atoi(argv[9]); //1=polarizatino along bem, 0=polarization along qvec
     string wf = argv[2];
     
-    for(int i=0;i<10;i++){
-      x=0.8+0.1*i;
+    for(int i=0;i<20;i++){
+      x=0.8+0.05*i;
     
       
 //       double Eout=Ein-nu;
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	pw_cross+=pw[1];
 	azz_direct+=pw[2];
 	azz_cross+=pw[3];
-// 	Dinc.calc_CrossincFSI(fsi,Q2,x,2,integrator,maxEval,nopt,thetapol);
+	Dinc.calc_CrossincFSI(fsi,Q2,x,2,integrator,maxEval,nopt,thetapol);
 // 	cout << "fsiresult " << x << " " << proton << " " << f1 << " " << f2 << " " << f3 << " " << f4 << endl;
 	fsi1+=fsi[0];
 	fsi2+=fsi[1];

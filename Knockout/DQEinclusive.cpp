@@ -423,7 +423,7 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
   double phi1=0.;
   result=numint::vector_d(8,0.);
   complex<double> res0=0.,res1=0.,res2=0.,res3=0., res4=0.,res5=0.,res6=0.,res7=0.;
-  if(pperp1<1.E-03||qt<1.E-03) { for(int i=0;i<8;i++) result[i]=0.; return;}
+  if(pperp1<1.E-03||qt<1.E-03) return;
 
   double cosphi1, sinphi1;
   sincos(phi1,&sinphi1,&cosphi1);
@@ -505,7 +505,7 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 	      TSpinor ui2_down_cross(pi2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kDoubleMass);
 	      TSpinor ui2_up_cross(pi2_cross,cross.getMassr(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kDoubleMass);
 	      
-	      res0=res1=res2=res3=0.;
+	      res0=res1=res2=res3=res4=res5=res6=res7=0.;
 	      //summation over all the spin indices
 	      for(int spinn=-1;spinn<=0;spinn+=2){ //exploiting parity symmetry here (see factor 2 below)
 		for(int spini_in=-1;spini_in<=1;spini_in+=2){
@@ -522,32 +522,110 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 		      complex<double> currentout0_cross=conj((spinr==-1?un2_down_cross:un2_up_cross)*J0prime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
 		      complex<double> currentoutplus_cross=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jplusprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
 		      complex<double> currentoutmin_cross=conj((spinr==-1?un2_down_cross:un2_up_cross)*Jminprime_cross*(spini_out==-1?ui2_down_cross:ui2_up_cross));
-		      for(int M=-2;M<=2;M+=2){
-			complex<double> wf=(M==0? -2.:1.)*cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
-					*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, 
-						TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2])));
-			complex<double> wf2=(M==0? -2.:1.)*cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
-					*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, 
-						TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec)));
-			complex<double> wf_off=(M==0? -2.:1.)*cross.getDeutwf()->DeuteronPStateOff(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
-					*conj(cross.getDeutwf()->DeuteronPStateOff(M, spini_out, spinr, 
-						TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2])));
-			complex<double> wf2_off=(M==0? -2.:1.)*cross.getDeutwf()->DeuteronPStateOff(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
-					*conj(cross.getDeutwf()->DeuteronPStateOff(M, spini_out, spinn, 
-						TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec)));
-			//direct onshell
-			res0+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
-			  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*wf*directrescatt;
-			//cross onshell
-			res1+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+(Q2/(2.*qvec*qvec)+tanhalfth2)*
-			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2*directrescatt;
-			//direct offshell
-			res2+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
-			  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*wf_off*directrescatt;
-			//cross offshell
-			res3+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+(Q2/(2.*qvec*qvec)+tanhalfth2)*
-			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2_off*directrescatt;
-		      }
+
+		      complex<double> wavemin=cross.getDeutwf()->DeuteronPState(-2, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]));
+		      complex<double> wavezero=cross.getDeutwf()->DeuteronPState(0, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]));
+		      complex<double> waveplus=cross.getDeutwf()->DeuteronPState(2, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]));
+		      
+		      complex<double> wavemin_out=cross.getDeutwf()->DeuteronPState(-2, spini_out, spinr, TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2]));
+		      complex<double> wavezero_out=cross.getDeutwf()->DeuteronPState(0, spini_out, spinr, TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2]));
+		      complex<double> waveplus_out=cross.getDeutwf()->DeuteronPState(2, spini_out, spinr, TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2]));
+
+		      complex<double> wavemin_out_crossed=cross.getDeutwf()->DeuteronPState(-2, spini_out, spinn, TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec));
+		      complex<double> wavezero_out_crossed=cross.getDeutwf()->DeuteronPState(0, spini_out, spinn, TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec));
+		      complex<double> waveplus_out_crossed=cross.getDeutwf()->DeuteronPState(2, spini_out, spinn, TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec));
+
+		      complex<double> wavemin_off=cross.getDeutwf()->DeuteronPStateOff(-2, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]));
+		      complex<double> wavezero_off=cross.getDeutwf()->DeuteronPStateOff(0, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]));
+		      complex<double> waveplus_off=cross.getDeutwf()->DeuteronPStateOff(2, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]));
+		      
+		      complex<double> wavemin_out_off=cross.getDeutwf()->DeuteronPStateOff(-2, spini_out, spinr, TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2]));
+		      complex<double> wavezero_out_off=cross.getDeutwf()->DeuteronPStateOff(0, spini_out, spinr, TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2]));
+		      complex<double> waveplus_out_off=cross.getDeutwf()->DeuteronPStateOff(2, spini_out, spinr, TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2]));
+
+		      complex<double> wavemin_out_crossed_off=cross.getDeutwf()->DeuteronPStateOff(-2, spini_out, spinn, TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec));
+		      complex<double> wavezero_out_crossed_off=cross.getDeutwf()->DeuteronPStateOff(0, spini_out, spinn, TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec));
+		      complex<double> waveplus_out_crossed_off=cross.getDeutwf()->DeuteronPStateOff(2, spini_out, spinn, TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec));
+
+		      complex<double> dens0=wavemin*conj(wavemin_out)+waveplus*conj(waveplus_out)+wavezero*conj(wavezero_out);
+		      complex<double> dens1=wavemin*conj(wavemin_out)+waveplus*conj(waveplus_out)-2.*wavezero*conj(wavezero_out);
+		      complex<double> dens2=wavemin*conj(wavezero_out)+wavezero*conj(wavemin_out)-wavezero*conj(waveplus_out)-waveplus*conj(wavezero_out);
+		      complex<double> dens3=wavemin*conj(waveplus_out)+waveplus*conj(wavemin_out);
+		      complex<double> dens0_crossed=wavemin*conj(wavemin_out_crossed)+waveplus*conj(waveplus_out_crossed)+wavezero*conj(wavezero_out_crossed);
+		      complex<double> dens1_crossed=wavemin*conj(wavemin_out_crossed)+waveplus*conj(waveplus_out_crossed)-2.*wavezero*conj(wavezero_out_crossed);
+		      complex<double> dens2_crossed=wavemin*conj(wavezero_out_crossed)+wavezero*conj(wavemin_out_crossed)-wavezero*conj(waveplus_out_crossed)-waveplus*conj(wavezero_out_crossed);
+		      complex<double> dens3_crossed=wavemin*conj(waveplus_out_crossed)+waveplus*conj(wavemin_out_crossed);
+		      
+		      complex<double> dens0_off=wavemin_off*conj(wavemin_out_off)+waveplus_off*conj(waveplus_out_off)+wavezero_off*conj(wavezero_out_off);
+		      complex<double> dens1_off=wavemin_off*conj(wavemin_out_off)+waveplus_off*conj(waveplus_out_off)-2.*wavezero_off*conj(wavezero_out_off);
+		      complex<double> dens2_off=wavemin_off*conj(wavezero_out_off)+wavezero_off*conj(wavemin_out_off)-wavezero_off*conj(waveplus_out_off)-waveplus_off*conj(wavezero_out_off);
+		      complex<double> dens3_off=wavemin_off*conj(waveplus_out_off)+waveplus_off*conj(wavemin_out_off);
+		      complex<double> dens0_crossed_off=wavemin_off*conj(wavemin_out_crossed_off)+waveplus_off*conj(waveplus_out_crossed_off)+wavezero_off*conj(wavezero_out_crossed_off);
+		      complex<double> dens1_crossed_off=wavemin_off*conj(wavemin_out_crossed_off)+waveplus_off*conj(waveplus_out_crossed_off)-2.*wavezero_off*conj(wavezero_out_crossed_off);
+		      complex<double> dens2_crossed_off=wavemin_off*conj(wavezero_out_crossed_off)+wavezero_off*conj(wavemin_out_crossed_off)-wavezero_off*conj(waveplus_out_crossed_off)-waveplus_off*conj(wavezero_out_crossed_off);
+		      complex<double> dens3_crossed_off=wavemin_off*conj(waveplus_out_crossed_off)+waveplus_off*conj(wavemin_out_crossed_off);
+
+		      double Q2overkk=Q2/qvec/qvec;
+		      complex<double> TandL=  pow(Q2overkk,2.)*currentin0*currentout0
+					  +(Q2overkk/2.+tanhalfth2)*(currentinmin*currentoutmin+currentinplus*currentoutplus);
+		      complex<double> TandL_crossed=  pow(Q2overkk,2.)*currentin0*currentout0_cross
+					  +(Q2overkk/2.+tanhalfth2)*(currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross);
+		      complex<double> LT=-Q2overkk*sqrt((tanhalfth2+Q2overkk)/2.)*(currentin0*conj(currentoutplus-currentoutmin)+
+					      (currentinplus-currentinmin)*conj(currentout0));
+		      complex<double> LT_crossed=-Q2overkk*sqrt((tanhalfth2+Q2overkk)/2.)*(currentin0*conj(currentoutplus_cross-currentoutmin_cross)+
+					      (currentinplus-currentinmin)*conj(currentout0_cross));
+		      complex<double> TT=-Q2overkk/2.*(currentinmin*conj(currentoutplus)+currentinplus*conj(currentoutmin));
+		      complex<double> TT_crossed=-Q2overkk/2.*(currentinmin*conj(currentoutplus_cross)+currentinplus*conj(currentoutmin_cross));
+		      
+		      res0+=TandL*dens0*directrescatt;
+		      res1+=TandL_crossed*dens0_crossed*directrescatt;
+		      
+		      res2+=TandL*dens0_off*directrescatt;
+		      res3+=TandL_crossed*dens0_crossed_off*directrescatt;
+		      
+		      res4+=(TandL*dens1*(1.+3.*cos(2.*thetapol))/4.
+			+(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2*LT)
+			  +3./8.*(1.-cos(2.*thetapol))*dens3*TT)*directrescatt;
+		      res5+=(TandL_crossed*dens1_crossed*(1.+3.*cos(2.*thetapol))/4.
+			    +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2_crossed*LT_crossed)
+			    +3./8.*(1.-cos(2.*thetapol))*dens3_crossed*TT_crossed)*directrescatt;
+		      res6+=(TandL*dens1_off*(1.+3.*cos(2.*thetapol))/4.
+			+(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2_off*LT)
+			  +3./8.*(1.-cos(2.*thetapol))*dens3_off*TT)*directrescatt;
+		      res7+=(TandL_crossed*dens1_crossed_off*(1.+3.*cos(2.*thetapol))/4.
+			    +(3./(4.*sqrt(2.))*sin(2.*thetapol)*dens2_crossed_off*LT_crossed)
+			    +3./8.*(1.-cos(2.*thetapol))*dens3_crossed_off*TT_crossed)*directrescatt;
+		      
+// 		      complex<double> ares0=0.,ares1=0.,ares2=0.,ares3=0.;		      
+// 		      for(int M=-2;M<=2;M+=2){
+// 			complex<double> wf=/*(M==0? -2.:1.)**/cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
+// 					*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinr, 
+// 						TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2])));
+// 			complex<double> wf2=/*(M==0? -2.:1.)**/cross.getDeutwf()->DeuteronPState(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
+// 					*conj(cross.getDeutwf()->DeuteronPState(M, spini_out, spinn, 
+// 						TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec)));
+// 			complex<double> wf_off=/*(M==0? -2.:1.)**/cross.getDeutwf()->DeuteronPStateOff(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
+// 					*conj(cross.getDeutwf()->DeuteronPStateOff(M, spini_out, spinr, 
+// 						TVector3(pperp1*cosphi1+qt*cosqphi,pperp1*sinphi1+qt*sinqphi,prz2[it2])));
+// 			complex<double> wf2_off=/*(M==0? -2.:1.)**/cross.getDeutwf()->DeuteronPStateOff(M, spini_in, spinr, TVector3(pperp1*cosphi1,pperp1*sinphi1,prz1[it1]))
+// 					*conj(cross.getDeutwf()->DeuteronPStateOff(M, spini_out, spinn, 
+// 						TVector3(-pperp1*cosphi1-qt*cosqphi,-pperp1*sinphi1-qt*sinqphi,-prz2[it2]+qvec)));
+// 			//direct onshell
+// 			ares0+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
+// 			  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*wf*directrescatt;
+// 			//cross onshell
+// 			ares1+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+(Q2/(2.*qvec*qvec)+tanhalfth2)*
+// 			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2*directrescatt;
+// 			//direct offshell
+// 			ares2+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0+(Q2/(2.*qvec*qvec)+tanhalfth2)
+// 			  *(currentinmin*currentoutmin+currentinplus*currentoutplus))*wf_off*directrescatt;
+// 			//cross offshell
+// 			ares3+=(Q2*Q2/pow(qvec,4.)*currentin0*currentout0_cross+(Q2/(2.*qvec*qvec)+tanhalfth2)*
+// 			  (currentinmin*currentoutmin_cross+currentinplus*currentoutplus_cross))*wf2_off*directrescatt;
+// 		      }
+// 		      cout << res0 << " " << res1 << " " << res2 << " " << res3 << endl;
+// 		      cout << ares0 << " " << ares1 << " " << ares2 << " " << ares3 << endl;
+
 		    }
 		  }
 		}
@@ -562,10 +640,25 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
 	      /abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))/abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
 	      res3*=-2.*pperp1*qt*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
 	      /abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))/abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
+
+	      res4*=-2.*pperp1*qt/sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
+	      /abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
+	      res5*=2.*pperp1*qt/sqrt(Ernorm*Erprimenorm)*MASSD/(2.*(MASSD-Ernorm))/abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))
+	      /abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
+	      //minus sign because of wave function!!
+	      res6*=2.*pperp1*qt*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
+	      /abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))/abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
+	      res7*=-2.*pperp1*qt*MASSD/2./sqrt((MASSD-Ernorm)*(MASSD-Erprimenorm))/sqrt(Ernorm*Erprimenorm)
+	      /abs(qvec-prz1[it1]/Ernorm*(MASSD+nu))/abs(qvec-prz2[it2]/Erprimenorm*(MASSD+nu))*chi;
+	      
 	      result[0]+=imag(res0);
 	      result[1]+=imag(res1);
 	      result[2]+=imag(res2);
 	      result[3]+=imag(res3);
+	      result[4]+=imag(res4);
+	      result[5]+=imag(res5);
+	      result[6]+=imag(res6);
+	      result[7]+=imag(res7);
 //  	      cout << "BLAAAAAAAAA " << it1<< " " << it2 << " " << result[0] << " " << res0 << endl;
 
 	    }
