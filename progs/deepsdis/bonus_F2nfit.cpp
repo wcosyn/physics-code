@@ -30,6 +30,7 @@ using std::endl;
 using std::vector;
 using std::string;
 using std::abs;
+using std::ofstream;
 
 vector<double> tarray;
 vector<double> data_array;
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
   bool pw=atoi(argv[3]);
   
   
-  string outdir="/home/wim/Calculations/Bonus/results/parabfitsApr15/";
+  string outdir="/home/wim/Calculations/Bonus/results/parabfitsMay15/";
   ofstream generalfile;
   generalfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
 	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+".fits.dat");

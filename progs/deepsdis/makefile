@@ -11,8 +11,8 @@ VERSION =
 CPATH 	=	../..
 
 #		C compilation...
- CC      = 	icpc
-# CC      = 	g++
+#  CC      = 	icpc
+CC      = 	g++
 
 #		Flags
 OPTFLAG	=	-O3 -fPIC -std=c++11
@@ -24,7 +24,7 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(DBGFLAG) #$(GPFLAG)    #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/deepstest ../../bin/deepsfit ../../bin/bonustest ../../bin/bonusfit ../../bin/bonusscatterfit ../../bin/bonusextrapolate ../../bin/bonusextrapolate2  ../../bin/parabfit ../../bin/bonus_F2nfit ../../bin/bonusfitreadout
+EFILE   = 	../../bin/deepstest ../../bin/deepsfit ../../bin/bonustest ../../bin/bonusfit ../../bin/bonusscatterfit ../../bin/bonusextrapolate ../../bin/bonusextrapolate2  ../../bin/parabfit ../../bin/bonus_F2nfit ../../bin/bonus_F2nfit_allangles ../../bin/bonusfitreadout
 EFILEST   = 	../../bin/staticdeepstest ../../bin/staticdeepsfit ../../bin/staticbonustest ../../bin/staticbonusfit  ../../bin/staticbonusscatterfit
 
 

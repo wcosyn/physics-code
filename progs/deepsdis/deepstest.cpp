@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   DeuteronCross test("paris",proton,"SLAC",sigmain,betain,-0.5,8.,1.2,offshellset,looplimit);
 //   DeuteronCross test("paris",proton,"SLAC",36.3274,1.97948,-0.5,8.,1.2,4);
   
-  for (int i=20;i<40;i+=1){
+  for (int i=0;i<40;i+=1){
     double costhetar=-0.975+i*0.05;
   
     double pw=0.,fsi=0.,azz=0.,azzfsi=0.;

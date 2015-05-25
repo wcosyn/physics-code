@@ -29,7 +29,11 @@ const static double normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam4[3][5][4];
 const static double normfits_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[2][5][4];
 const static double normfits_paris_SLAC_off3_lc0_fsi_q2dep1_beam4[1][5][4];
 const static double normfits_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[1][5][4];
-
+//
+const static double backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[3][5][4]; 
+const static double backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[2][5][4]; 
+const static double backw_normfits_paris_CB_off3_lc0_fsi_q2dep1_beam4[1][5][4]; 
+const static double backw_normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[1][5][4]; 
 
 //errors
 const static double normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[3][5][4];
@@ -56,6 +60,11 @@ const static double normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep0_beam4[3][5][4];
 const static double normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep0_beam5[2][5][4];
 const static double normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep1_beam4[1][5][4];
 const static double normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[1][5][4];
+//
+const static double backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[3][5][4]; 
+const static double backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[2][5][4]; 
+const static double backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam4[1][5][4]; 
+const static double backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam5[1][5][4]; 
 
 
 //avg final norms
@@ -79,6 +88,15 @@ const static double errornormfits_final_q2dep0_beam5_setSLAC[4];
 const static double errornormfits_final_q2dep1_beam4_setSLAC[4];
 const static double errornormfits_final_q2dep1_beam5_setSLAC[4];
 
+const static double backw_normfits_final_q2dep0_beam4_setCB[4];
+const static double backw_normfits_final_q2dep0_beam5_setCB[4];
+const static double backw_normfits_final_q2dep1_beam4_setCB[4];
+const static double backw_normfits_final_q2dep1_beam5_setCB[4];
+
+const static double backw_errornormfits_final_q2dep0_beam4_setCB[4];
+const static double backw_errornormfits_final_q2dep0_beam5_setCB[4];
+const static double backw_errornormfits_final_q2dep1_beam4_setCB[4];
+const static double backw_errornormfits_final_q2dep1_beam5_setCB[4];
 
 };
 //fit parameters for data normalization with all other parameters fixed, no offshell and VNA
@@ -1322,29 +1340,287 @@ const double bonusfits2::normfiterrors_paris_SLAC_off3_lc0_fsi_q2dep1_beam5[1][5
 },
 };
 
-
-
 const double bonusfits2::normfits_final_q2dep0_beam4_setCB[4]={1.362, 1.306, 1.431, 1.553};
-const double bonusfits2::normfits_final_q2dep0_beam5_setCB[4]={ 1.41764, 1.35961, 1.48942, 1.61698};
+const double bonusfits2::normfits_final_q2dep0_beam5_setCB[4]={1.2782666667,1.3158083333,1.43979,1.5517133333};
 const double bonusfits2::normfits_final_q2dep1_beam4_setCB[4]={1.34497, 1.2847267, 1.39834, 1.50};
-const double bonusfits2::normfits_final_q2dep1_beam5_setCB[4]={1.40, 1.33804, 1.456287, 1.5641};
+const double bonusfits2::normfits_final_q2dep1_beam5_setCB[4]={1.2375583333,1.2599916667,1.3513983333,1.4394233333};
 
 const double bonusfits2::errornormfits_final_q2dep0_beam4_setCB[4]={0.07534353,0.070155,0.08615341,0.1144788};
-const double bonusfits2::errornormfits_final_q2dep0_beam5_setCB[4]={0.07647834,0.07121875,0.08749412,0.11627092};
+const double bonusfits2::errornormfits_final_q2dep0_beam5_setCB[4]={0.0360923148,0.0374171975,0.0442548477,0.0678134329};
 const double bonusfits2::errornormfits_final_q2dep1_beam4_setCB[4]={0.07295401,0.06723349,0.08127589,0.10488717};
-const double bonusfits2::errornormfits_final_q2dep1_beam5_setCB[4]={ 0.07408323,0.06829069,0.08260624,0.1066678};
+const double bonusfits2::errornormfits_final_q2dep1_beam5_setCB[4]={0.034808963,0.0356632499,0.0414978424,0.0617132977};
 
 
 
-const double bonusfits2::normfits_final_q2dep0_beam4_setSLAC[4]={1.22278, 1.2661025, 1.2975275, 1.50991 };
-const double bonusfits2::normfits_final_q2dep0_beam5_setSLAC[4]={1.290475, 1.3358725, 1.3694325, 1.5936525};
-const double bonusfits2::normfits_final_q2dep1_beam4_setSLAC[4]={1.1970725, 1.2307475, 1.2491575, 1.4256875};
-const double bonusfits2::normfits_final_q2dep1_beam5_setSLAC[4]={1.26342, 1.298625, 1.3184275, 1.5046875};
+const double bonusfits2::normfits_final_q2dep0_beam4_setSLAC[4]={ 1.41764, 1.35961, 1.48942, 1.61698};
+const double bonusfits2::normfits_final_q2dep0_beam5_setSLAC[4]={1.3305866667,1.369745,1.4992416667,1.6161266667};
+const double bonusfits2::normfits_final_q2dep1_beam4_setSLAC[4]={1.40, 1.33804, 1.456287, 1.5641}; 
+const double bonusfits2::normfits_final_q2dep1_beam5_setSLAC[4]={1.2877183333,1.31091,1.4059283333,1.4975066667};
 
-const double bonusfits2::errornormfits_final_q2dep0_beam4_setSLAC[4]={0.03609231,0.0374172,0.04425485,0.06781343};
-const double bonusfits2::errornormfits_final_q2dep0_beam5_setSLAC[4]={0.0380266,0.03944853,0.046583,0.07126145};
-const double bonusfits2::errornormfits_final_q2dep1_beam4_setSLAC[4]={0.03480896,0.03566325,0.04149784,0.0617133};
-const double bonusfits2::errornormfits_final_q2dep1_beam5_setSLAC[4]={0.03665826,0.03757536,0.04364117,0.06475747};
+const double bonusfits2::errornormfits_final_q2dep0_beam4_setSLAC[4]={0.07647834,0.07121875,0.08749412,0.11627092};
+const double bonusfits2::errornormfits_final_q2dep0_beam5_setSLAC[4]={0.0380266001,0.039448528,0.0465829983,0.0712614508};
+const double bonusfits2::errornormfits_final_q2dep1_beam4_setSLAC[4]={ 0.07408323,0.06829069,0.08260624,0.1066678}; 
+const double bonusfits2::errornormfits_final_q2dep1_beam5_setSLAC[4]={0.036658259,0.0375753634,0.0436411666,0.0647574697};
+
+
+//fit parameters for data normalization only fitted to backward region, no offshell and VNA, no q2 dependence in fits
+//paris wf, Christy Bosted F2, FSI fit
+//Bonus data beam 4GeV
+//first index is Q^2={0.93,1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[3][5][4]={ 
+{ 
+{ 2.15164 , 2.37046 , 2.99494 , 3.30826 }
+,
+{ 1.33938 , 1.32158 , 1.41408 , 1.41164 }
+,
+{ 1.19348 , 1.16531 , 1.21458 , 1.2382 }
+,
+{ 1.2244 , 1.22718 , 1.28762 , 1.37826 }
+,
+{ 1.16572 , 1.14094 , 1.16357 , 1.24053 }
+
+},
+{ 
+{ 2.31371 , 2.55408 , 3.1296 , 3.80472 }
+,
+{ 1.49151 , 1.46424 , 1.56817 , 1.57913 }
+,
+{ 1.19138 , 1.1897 , 1.20909 , 1.1951 }
+,
+{ 1.31181 , 1.31978 , 1.35869 , 1.42717 }
+,
+{ 1.26353 , 1.23425 , 1.2669 , 1.34969 }
+
+},
+{ 
+{ 2.48865 , 2.62492 , 3.9263 , 3.63055 }
+,
+{ 1.75744 , 1.76303 , 1.69637 , 1.77964 }
+,
+{ 1.26169 , 1.11558 , 1.11272 , 1.10648 }
+,
+{ 1.4903 , 1.41993 , 1.41347 , 1.47937 }
+,
+{ 1.0 , 1.0 , 1.0 , 1.0 }
+
+}
+};
+
+
+//fit parameters for data normalization only fitted to backward region, no offshell and VNA, no q2 dependence in fits
+//paris wf, Christy Bosted F2, FSI fit
+//Bonus data beam 5GeV
+//first index is Q^2={1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[2][5][4]={ 
+{ 
+{ 2.09538 , 2.44914 , 2.90588 , 3.62451 }
+,
+{ 1.38056 , 1.49209 , 1.51138 , 1.66722 }
+,
+{ 1.16314 , 1.18583 , 1.22441 , 1.28812 }
+,
+{ 1.22792 , 1.26002 , 1.30827 , 1.40273 }
+,
+{ 1.10965 , 1.13101 , 1.16452 , 1.27156 }
+
+},
+{ 
+{ 2.29491 , 2.8514 , 2.74462 , 3.83393 }
+,
+{ 1.67787 , 1.68758 , 1.77504 , 2.00846 }
+,
+{ 1.14022 , 1.15206 , 1.09442 , 1.17333 }
+,
+{ 1.31791 , 1.37453 , 1.37025 , 1.54803 }
+,
+{ 1.23309 , 1.32665 , 1.21526 , 1.40629 }
+
+},
+};
+
+
+//fit parameters for data normalization only fitted to backward region, no offshell and VNA, q2 dependence in fits
+//paris wf, Christy Bosted F2, FSI fit
+//Bonus data beam 4GeV
+//first index is Q^2={3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep1_beam4[1][5][4]={ 
+{ 
+{ 2.32203 , 2.40308 , 3.51642 , 3.11151 }
+,
+{ 1.72888 , 1.72669 , 1.65354 , 1.71984 }
+,
+{ 1.2315 , 1.08248 , 1.06989 , 1.04883 }
+,
+{ 1.43939 , 1.36002 , 1.33144 , 1.35562 }
+,
+{ 1.0 , 1.0 , 1.0 , 1.0 }
+
+},
+};
+
+
+//fit parameters for data normalization only fitted to backward region, no offshell and VNA, q2 dependence in fits
+//paris wf, Christy Bosted F2, FSI fit
+//Bonus data beam 5GeV
+//first index is Q^2={3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[1][5][4]={ 
+{ 
+{ 2.14344 , 2.61814 , 2.45676 , 3.30916 }
+,
+{ 1.65071 , 1.65349 , 1.73037 , 1.94292 }
+,
+{ 1.11324 , 1.1185 , 1.05418 , 1.11575 }
+,
+{ 1.27475 , 1.31859 , 1.29919 , 1.44066 }
+,
+{ 1.17761 , 1.25218 , 1.12135 , 1.24872 }
+
+},
+};
+
+
+//errors on the fit parameters for data normalization, no offshell and VNA, no q2 dependence in fits
+//paris wf, Christy Bosted F2, FSI fit
+//Bonus data beam 4GeV
+//first index is Q^2={0.93,1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[3][5][4]={ 
+{ 
+{ 0.0788144 , 0.080218 , 0.110344 , 0.16726 }
+,
+{ 0.0407302 , 0.0378794 , 0.0457579 , 0.0586824 }
+,
+{ 0.0310119 , 0.0284128 , 0.0332884 , 0.0439843 }
+,
+{ 0.0248034 , 0.0234256 , 0.0278537 , 0.0383108 }
+,
+{ 0.0253495 , 0.0247646 , 0.0307906 , 0.0442026 }
+
+},
+{ 
+{ 0.0834603 , 0.086839 , 0.116945 , 0.184101 }
+,
+{ 0.0423051 , 0.0387971 , 0.0468955 , 0.0625727 }
+,
+{ 0.0281981 , 0.0257125 , 0.0303131 , 0.0388044 }
+,
+{ 0.0233442 , 0.02222 , 0.0269943 , 0.0371144 }
+,
+{ 0.0345508 , 0.0342377 , 0.0448906 , 0.0623706 }
+
+},
+{ 
+{ 0.278922 , 0.298114 , 0.420186 , 0.562348 }
+,
+{ 0.138827 , 0.135594 , 0.151407 , 0.213115 }
+,
+{ 0.0914161 , 0.081406 , 0.0921125 , 0.128666 }
+,
+{ 0.138935 , 0.137585 , 0.158802 , 0.223258 }
+,
+{ 3.0 , 3.0 , 3.0 , 3.0 }
+
+}
+};
+
+
+//errors on the fit parameters for data normalization only fitted to backward region, no offshell and VNA, no q2 dependence in fits
+//paris wf, Christy Bosted F2, FSI fit
+//Bonus data beam 5GeV
+//first index is Q^2={1.66,3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[2][5][4]={ 
+{ 
+{ 0.0845112 , 0.0923988 , 0.127002 , 0.218243 }
+,
+{ 0.0408441 , 0.0411698 , 0.0494825 , 0.0720735 }
+,
+{ 0.026585 , 0.0258977 , 0.0302315 , 0.0436761 }
+,
+{ 0.0206861 , 0.0202572 , 0.0241653 , 0.0359847 }
+,
+{ 0.0154041 , 0.0160822 , 0.0199566 , 0.0315062 }
+
+},
+{ 
+{ 0.226071 , 0.242385 , 0.326654 , 0.503048 }
+,
+{ 0.102147 , 0.102083 , 0.119092 , 0.178007 }
+,
+{ 0.0509606 , 0.0500556 , 0.0574513 , 0.0842702 }
+,
+{ 0.0425378 , 0.043268 , 0.0526929 , 0.0823711 }
+,
+{ 0.0538001 , 0.0611922 , 0.0679025 , 0.101589 }
+
+},
+};
+
+
+//errors on the fit parameters for data normalization only fitted to backward region, no offshell and VNA, q2 dependence in fits
+//paris wf, Christy Bosted F2, FSI fit
+//Bonus data beam 4GeV
+//first index is Q^2={3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam4[1][5][4]={ 
+{ 
+{ 0.260287 , 0.27351 , 0.376819 , 0.483772 }
+,
+{ 0.136568 , 0.132841 , 0.147601 , 0.205984 }
+,
+{ 0.0892285 , 0.079012 , 0.0886279 , 0.122114 }
+,
+{ 0.134228 , 0.131776 , 0.149733 , 0.204699 }
+,
+{ 3.0 , 3.0 , 3.0 , 3.0 }
+
+},
+};
+
+
+//errors on the fit parameters for data normalization only fitted to backward region, no offshell and VNA, q2 dependence in fits
+//paris wf, Christy Bosted F2, FSI fit
+//Bonus data beam 5GeV
+//first index is Q^2={3.38}
+//second index is W={1.17,1.48,1.73,2.03,2.44}
+//third index is p_s[MeV]={78,93,110,135}
+const double bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam5[1][5][4]={ 
+{ 
+{ 0.211036 , 0.22259 , 0.292473 , 0.434751 }
+,
+{ 0.100501 , 0.100047 , 0.116131 , 0.172225 }
+,
+{ 0.0497557 , 0.0486069 , 0.0553657 , 0.0802051 }
+,
+{ 0.0411412 , 0.0415229 , 0.0500127 , 0.0767788 }
+,
+{ 0.0513753 , 0.0577715 , 0.0627522 , 0.0903054 }
+
+},
+};
+
+
+const  double bonusfits2::backw_normfits_final_q2dep0_beam4_setCB[4]={1.3471,1.3737033333,1.3329933333,1.4778966667};
+const  double bonusfits2::backw_normfits_final_q2dep0_beam5_setCB[4]={1.2695516667,1.2913183333,1.3522416667,1.3931966667};
+const  double bonusfits2::backw_normfits_final_q2dep1_beam4_setCB[4]={1.29725,1.3102633333,1.25066,1.3483333333};
+const  double bonusfits2::backw_normfits_final_q2dep1_beam5_setCB[4]={1.2695516667,1.2913183333,1.3522416667,1.3931966667};
+
+const  double bonusfits2::backw_errornormfits_final_q2dep0_beam4_setCB[4]={0.0837489178,0.0828564637,0.0965434849,0.1355380697};
+const  double bonusfits2::backw_errornormfits_final_q2dep0_beam5_setCB[4]={0.0366371267,0.0396408769,0.0457425372,0.0696291288};
+const  double bonusfits2::backw_errornormfits_final_q2dep1_beam4_setCB[4]={0.0811497904,0.0796468511,0.0915857148,0.1253917209};
+const  double bonusfits2::backw_errornormfits_final_q2dep1_beam5_setCB[4]={0.0353455118,0.0378506564,0.0430735893,0.0639092886};
+
 
 
 

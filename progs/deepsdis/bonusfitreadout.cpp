@@ -44,7 +44,84 @@ int main(int argc, char *argv[])
 //     cout << endl << endl;
 //   }
 //   exit(1);
+//backward norms
+  cout <<"backward norms, q2dep0" << endl;
+  cout <<"#rows: pm setting" << endl 
+    << "#column1: Q2=3.6,W=2,Ein=4" << endl
+    << "#column2: Q2=1.6,W=2,Ein=4" << endl
+    << "#column3: Q2=1.6,W=2.4,Ein=4" << endl
+    << "#column4: Q2=3.6,W=2,Ein=5" << endl
+    << "#column5: Q2=3.6,W=2.4,Ein=5" << endl
+    << "#column6: Q2=1.6,W=2,Ein=5" << endl
+    << "#column7: Q2=1.6,W=2.4,Ein=5" << endl<<endl;
+    
+  cout << "#paris CB q2dep0" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
+    cout << i << " ";
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " "; //Q2=3.6,W=2,Ein=4
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " "; //Q2=3.6,W=2,Ein=5
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " "; //Q2=3.6,W=2.4,Ein=5
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";//Q2=1.6,W=2,Ein=4
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";//Q2=1.6,W=2.4,Ein=4
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";//Q2=1.6,W=2,Ein=5
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;//Q2=1.6,W=2,Ein=5	
+  }
+  cout << endl << endl << endl;
   
+  //errors
+  cout << "#paris CB error q2dep0" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
+    cout << i << " ";
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[2][3][i] << " "; //Q2=3.6,W=2,Ein=4
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";//Q2=1.6,W=2,Ein=4
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";//Q2=1.6,W=2.4,Ein=4
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[1][3][i] << " "; //Q2=3.6,W=2,Ein=5
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[1][4][i] << " "; //Q2=3.6,W=2.4,Ein=5
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";//Q2=1.6,W=2,Ein=5
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;//Q2=1.6,W=2,Ein=5	
+  }
+  cout << endl << endl << endl;
+
+//backward norms
+  cout <<"backward norms, q2dep1" << endl;
+  cout <<"#rows: pm setting" << endl 
+    << "#column1: Q2=3.6,W=2,Ein=4" << endl
+    << "#column2: Q2=1.6,W=2,Ein=4" << endl
+    << "#column3: Q2=1.6,W=2.4,Ein=4" << endl
+    << "#column4: Q2=3.6,W=2,Ein=5" << endl
+    << "#column5: Q2=3.6,W=2.4,Ein=5" << endl
+    << "#column6: Q2=1.6,W=2,Ein=5" << endl
+    << "#column7: Q2=1.6,W=2.4,Ein=5" << endl<<endl;
+    
+  cout << "#paris CB" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
+    cout << i << " ";
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " "; //Q2=3.6,W=2,Ein=4
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " "; //Q2=3.6,W=2,Ein=5
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " "; //Q2=3.6,W=2.4,Ein=5
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";//Q2=1.6,W=2,Ein=4
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";//Q2=1.6,W=2.4,Ein=4
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";//Q2=1.6,W=2,Ein=5
+    cout << bonusfits2::backw_normfits_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;//Q2=1.6,W=2,Ein=5	
+  }
+  cout << endl << endl << endl;
+  
+  //errors
+  cout << "#paris CB error q2dep1" << endl;
+  for(int i=0;i<4;i++){ //spectator momentum index
+    cout << i << " ";
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam4[0][3][i] << " "; //Q2=3.6,W=2,Ein=4
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][3][i] << " ";//Q2=1.6,W=2,Ein=4
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam4[1][4][i] << " ";//Q2=1.6,W=2.4,Ein=4
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][3][i] << " "; //Q2=3.6,W=2,Ein=5
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep1_beam5[0][4][i] << " "; //Q2=3.6,W=2.4,Ein=5
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][3][i] << " ";//Q2=1.6,W=2,Ein=5
+    cout << bonusfits2::backw_normfiterrors_paris_CB_off3_lc0_fsi_q2dep0_beam5[0][4][i] << endl;//Q2=1.6,W=2,Ein=5	
+  }
+  cout << endl << endl << endl;
+
+exit(1);
+
   //norms
   cout <<"#rows: pm setting" << endl 
     << "#column1: Q2=3.6,W=2,Ein=4" << endl

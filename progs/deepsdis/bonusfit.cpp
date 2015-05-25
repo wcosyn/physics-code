@@ -66,7 +66,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   DeuteronCross DeepsCross(wf,proton,strucname,sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
     0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep),8.,epsilon,betaoff,lambdain,offshellset,1E03);
 //   cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << endl;
-    for(int j=0;j<5;j++){
+    for(int j=0;j<10;j++){
     double error,result,costheta;
     if(Beamindex==0){ 
       error=data::bonusdata4[Qindex][Windex][psindex][j][2];
