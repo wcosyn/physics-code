@@ -98,6 +98,13 @@ const static double backw_errornormfits_final_q2dep0_beam5_setCB[4];
 const static double backw_errornormfits_final_q2dep1_beam4_setCB[4];
 const static double backw_errornormfits_final_q2dep1_beam5_setCB[4];
 
+//avg final norms by doing one fit over Qindex>=1 Windex>=3 bins
+const static double normfitsrig_final_q2dep1_beam4_setCB[4];
+const static double normfitsrig_final_q2dep1_beam5_setCB[4];
+const static double errornormfitsrig_final_q2dep1_beam4_setCB[4];
+const static double errornormfitsrig_final_q2dep1_beam5_setCB[4];
+
+
 };
 //fit parameters for data normalization with all other parameters fixed, no offshell and VNA
 
@@ -1362,6 +1369,10 @@ const double bonusfits2::errornormfits_final_q2dep0_beam5_setSLAC[4]={0.03802660
 const double bonusfits2::errornormfits_final_q2dep1_beam4_setSLAC[4]={ 0.07408323,0.06829069,0.08260624,0.1066678}; 
 const double bonusfits2::errornormfits_final_q2dep1_beam5_setSLAC[4]={0.036658259,0.0375753634,0.0436411666,0.0647574697};
 
+const double bonusfits2::normfitsrig_final_q2dep1_beam4_setCB[4]={1.31632,1.27867,1.37796,1.49398};
+const double bonusfits2::normfitsrig_final_q2dep1_beam5_setCB[4]={1.17569,1.20289,1.24449,1.41689};
+const double bonusfits2::errornormfitsrig_final_q2dep1_beam4_setCB[4]={0.0356311,0.0334994,0.0406974,0.054896};
+const double bonusfits2::errornormfitsrig_final_q2dep1_beam5_setCB[4]={0.0252253,0.0257965,0.0309645,0.0472194};
 
 //fit parameters for data normalization only fitted to backward region, no offshell and VNA, no q2 dependence in fits
 //paris wf, Christy Bosted F2, FSI fit

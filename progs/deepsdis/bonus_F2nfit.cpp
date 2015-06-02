@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
   string outdir="/home/wim/Calculations/Bonus/results/parabfitsMay15/";
   ofstream generalfile;
   generalfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
-	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+".fits.dat");
+	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+".fitsrig.dat");
   for(int Qindex=0;Qindex<3;Qindex++){
     double Q2 = 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]);
     for(int Windex=0;Windex<5;Windex++){
@@ -104,18 +104,20 @@ int main(int argc, char *argv[])
 // 	  double norm=get_normfit_array(wf,strucname, 
 // 					offshellset,lc,q2dep,pw,beamindex,Qindex,Windex,psindex);
 	  get_norm_final(q2dep, beamindex,psindex,strucname,norm,errornorm);
-	  cout << norm << endl;
+// 	  cout << norm << endl;
 	  get_data(result, error, beamindex,Qindex,Windex,psindex,cosindex);
 	  double ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	  if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
+// 	    cout << result << " " << error << " " << error/result << " " << norm << " " << errornorm << " " << errornorm/norm << " ";
 	    error= error/result+errornorm/norm;
 	    result*=ratio/norm;
 	    error*=result;
+// 	    cout << result <<  " " << error << " " << error/result << endl;
 	    tarray.push_back(tprime*1.E-06);
 	    data_array.push_back(result);
 	    error_array.push_back(error);
 	  }
-	  else cout << ratio << endl;
+// 	  else cout << ratio << endl;
 	  if(Qindex>0){
 	    beamindex=1;
 	    Ebeam=data::Ebeam[beamindex];
@@ -125,9 +127,11 @@ int main(int argc, char *argv[])
 	    get_data(result, error, beamindex,Qindex,Windex,psindex,cosindex);
 	    ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	    if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
+// 	      cout << result << " " << error << " " << error/result << " " << norm << " " << errornorm << " " << errornorm/norm << " ";
 	      error= error/result+errornorm/norm;
 	      result*=ratio/norm;
 	      error*=result;
+// 	      cout << result <<  " " << error << " " << error/result << endl;
 	      tarray.push_back(tprime*1.E-06);
 	      data_array.push_back(result);
 	      error_array.push_back(error);
@@ -336,7 +340,7 @@ int main(int argc, char *argv[])
 	  myfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
 	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+
 	  ".Q"+std::to_string(Qindex)
-	    +".W"+std::to_string(Windex)+".th"+std::to_string(cosindex)+".dat");
+	    +".W"+std::to_string(Windex)+".th"+std::to_string(cosindex)+".rigfit.dat");
 	  for(unsigned int i=0;i<nFreePars;++i) myfile << gMinuit->GetParameter(i) << " " << eparab[i] << " ";
 	  myfile << F2refn << " " << F2refp << endl << endl << endl;
 	  for(unsigned int i=0;i<tarray.size();i++) myfile << tarray[i] << " " << data_array[i] << " " << error_array[i] << endl;	  
@@ -368,12 +372,12 @@ void get_norm_final(bool q2dep, int beamindex,int psindex, string struc, double 
   if(!struc.compare("CB")){
     if(q2dep){
       if(beamindex==0) {
-	norm=bonusfits2::normfits_final_q2dep1_beam4_setCB[psindex];
-	errornorm=bonusfits2::errornormfits_final_q2dep1_beam4_setCB[psindex];
+	norm=bonusfits2::normfitsrig_final_q2dep1_beam4_setCB[psindex];
+	errornorm=bonusfits2::errornormfitsrig_final_q2dep1_beam4_setCB[psindex];
       }
       else{
-	norm=bonusfits2::normfits_final_q2dep1_beam5_setCB[psindex];
-	errornorm=bonusfits2::errornormfits_final_q2dep1_beam5_setCB[psindex];
+	norm=bonusfits2::normfitsrig_final_q2dep1_beam5_setCB[psindex];
+	errornorm=bonusfits2::errornormfitsrig_final_q2dep1_beam5_setCB[psindex];
       }
     }
     else{
