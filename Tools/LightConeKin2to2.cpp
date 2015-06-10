@@ -15,7 +15,7 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   pi_mu=A_mu-ps_mu;
   X_mu=(A_mu+q_mu-ps_mu);
   massX=sqrt(X_mu*X_mu);
-  if(std::isnan(massX)){
+  if(isnan(massX)){
     cerr << "invalid kinematics, X has no physical mass!" << X_mu*X_mu << endl;
     assert(1==0);
   }
@@ -51,7 +51,7 @@ LightConeKin2to2::LightConeKin2to2(double massA_, double Q2_, double massC_,
   pi_mu=A_mu-ps_mu;
   X_mu=(A_mu+q_mu-ps_mu);
   massX=sqrt(X_mu*X_mu);
-  if(std::isnan(massX)){
+  if(isnan(massX)){
     cerr << "invalid kinematics, X has no physical mass! " << X_mu*X_mu << endl;
     assert(1==0);
   }

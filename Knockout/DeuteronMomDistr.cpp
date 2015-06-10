@@ -733,7 +733,7 @@ void DeuteronMomDistr::totdens_qphi_simple(const double qphi, complex<double>* r
   przprime = p_pvec->Z()-(nu+MASSD)/qvec*(Er-sqrt(massr*massr+pt2));
   double pprime = sqrt(pt2+przprime*przprime);
   double thetaprime= acos(przprime/pprime);
-  if(std::isnan(thetaprime)) thetaprime=SIGN(przprime);
+  if(isnan(thetaprime)) thetaprime=SIGN(przprime);
   double phiprime=atan2(prt*sin(p_pvec->Phi())-qt*sin(qphi),prt*cos(p_pvec->Phi())-qt*cos(qphi));
   double Erprime=sqrt(massr*massr+pprime*pprime);
   if(Erprime>MASSD){
@@ -746,7 +746,7 @@ void DeuteronMomDistr::totdens_qphi_simple(const double qphi, complex<double>* r
   sincos(phiprime,&sinphiprime,&cosphiprime);
   double chi=sqrt(s*s-2.*s*(massother*massother+massr*massr)+pow(massr*massr-massother*massother,2.));
   TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
-  if(std::isnan(vecprime.Mag())) cout << pt2 << " " << przprime << " " << pprime << " " << thetaprime << " " << phiprime << " " << Erprime << endl;
+  if(isnan(vecprime.Mag())) cout << pt2 << " " << przprime << " " << pprime << " " << thetaprime << " " << phiprime << " " << Erprime << endl;
   *result = chi*scatter(t)*(wf.DeuteronPState(M, -1, spinr, vecprime))
 	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime));
   

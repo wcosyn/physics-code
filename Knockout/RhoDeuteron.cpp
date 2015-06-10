@@ -135,7 +135,7 @@ void RhoDeuteron::intPhit(const double phi, double *result, va_list ap){
       double tt = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
       if(nocuts||Erho/nu>0.9){
 	double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	if(!std::isnan(pxrho)){
+	if(!isnan(pxrho)){
 	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 // 	  double costhetarho = pzrho/prho;
 	double pnz = Cz-pzrho;
@@ -396,7 +396,7 @@ void RhoDeuteron::getCrosst_coh(double *result, const double Ebeam, const double
 //   double tt = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
   if(Erho/nu>0.9){
     double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-    if(std::isnan(pxrho)) pxrho=0.;
+    if(isnan(pxrho)) pxrho=0.;
     double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
     double costhetarho = pzrho/prho;
     double pDz = Cz-pzrho;
@@ -433,7 +433,7 @@ void RhoDeuteron::getCrossz_coh(double *result, const double Ebeam,  const doubl
   if(t<-0.1&&t>-0.4)
   {
     double pxrho = sqrt(prho*prho-pzrho*pzrho);
-    if(std::isnan(pxrho)) pxrho=0.;
+    if(isnan(pxrho)) pxrho=0.;
     double ss = -Q2+MASS_N*MASS_N+2.*MASS_N*nu;
     TVector3 pDvec = TVector3(-pxrho*1.E03,0.,(qvec-pzrho)*1.E03);
 //     cout << t << " " << pD*pD << " " << pxrho*pxrho+(qvec-pzrho)*(qvec-pzrho) << " " << pzrho/prho << endl;
@@ -549,7 +549,7 @@ void RhoDeuteron::klaas_rhoD_t(numint::vector_d & results, double pm, double cos
       
       if(deuteron.getNocuts()||Erho/nu>0.9){
 	double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	if(std::isnan(pxrho)) pxrho=0.; //underflow
+	if(isnan(pxrho)) pxrho=0.; //underflow
 	if((SIGN(D+E*pzrho)==SIGN(-Cx*pxrho))||pxrho==0.){ 
 	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
   // 	  double costhetarho = pzrho/prho;
@@ -577,7 +577,7 @@ void RhoDeuteron::klaas_rhoD_t(numint::vector_d & results, double pm, double cos
 	//check cuts
       if(deuteron.getNocuts()||Erho/nu>0.9){
 	double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	if(std::isnan(pxrho)) pxrho=0.;//underflow
+	if(isnan(pxrho)) pxrho=0.;//underflow
 	if((SIGN(D+E*pzrho)==SIGN(-Cx*pxrho))||pxrho==0.){ 
 	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 // 	  double costhetarho = pzrho/prho;
@@ -601,7 +601,7 @@ void RhoDeuteron::klaas_rhoD_t(numint::vector_d & results, double pm, double cos
       tt = -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
       if(deuteron.getNocuts()||Erho/nu>0.9){
 	double pxrho = sqrt(Erho*Erho-pzrho*pzrho-MASSRHO*MASSRHO*1.E-06);
-	if(std::isnan(pxrho)) pxrho=0.;//underflow
+	if(isnan(pxrho)) pxrho=0.;//underflow
 	if((SIGN(D+E*pzrho)==SIGN(-Cx*pxrho))||pxrho==0.){ 
 	  double prho = sqrt(pzrho*pzrho+pxrho*pxrho);
 // 	  double costhetarho = pzrho/prho;
@@ -659,7 +659,7 @@ void RhoDeuteron::klaas_rhoD_z(numint::vector_d & results, double pm, double cos
       double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
       if(deuteron.getNocuts()||(t<-0.1&&t>-0.4)){
 	double pxrho = sqrt(prho*prho-pzrho*pzrho);//pxrho defines x-axis (so only positive sqrt is considered)           
-	if(std::isnan(pxrho)) pxrho=0.;//underflow
+	if(isnan(pxrho)) pxrho=0.;//underflow
 	if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
 	  double front=deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,0);
 	  double intresults[2];
@@ -674,7 +674,7 @@ void RhoDeuteron::klaas_rhoD_z(numint::vector_d & results, double pm, double cos
       double t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
       if(deuteron.getNocuts()||(t<-0.1&&t>-0.4)){
 	double pxrho = sqrt(prho*prho-pzrho*pzrho);
-	if(std::isnan(pxrho)) pxrho=0.;//underflow
+	if(isnan(pxrho)) pxrho=0.;//underflow
 	if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
 	  double front=deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,0);
 	  double intresults[2];
@@ -686,7 +686,7 @@ void RhoDeuteron::klaas_rhoD_z(numint::vector_d & results, double pm, double cos
       t =  -Q2 + MASSRHO*MASSRHO*1.E-06-2*Erho*nu+2.*qvec*pzrho;
       if(deuteron.getNocuts()||(t<-0.1&&t>-0.4)){
 	double pxrho = sqrt(prho*prho-pzrho*pzrho);	  
-	if(std::isnan(pxrho)) pxrho=0.;//underflow
+	if(isnan(pxrho)) pxrho=0.;//underflow
 	if((SIGN(A-Cz*pzrho)==SIGN(Cx*pxrho))||pxrho==0.){ 
 	  double front=deuteron.getfrontfactor(qvec,Erho,prho,pzrho,s,Q2,t,En,Eoff,0);
 	  double intresults[2];

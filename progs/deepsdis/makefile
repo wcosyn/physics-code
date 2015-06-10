@@ -24,7 +24,7 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(DBGFLAG) #$(GPFLAG)    #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/deepstest ../../bin/deepsfit ../../bin/bonustest ../../bin/bonusfit ../../bin/bonusscatterfit ../../bin/bonusextrapolate ../../bin/bonusextrapolate2  ../../bin/parabfit ../../bin/bonus_F2nfit ../../bin/bonus_F2nfit_allangles ../../bin/bonusfitreadout ../../bin/bonusfit_rig
+EFILE   = 	../../bin/deepstest ../../bin/deepsfit ../../bin/bonustest ../../bin/bonusfit  ../../bin/bonusextrapolate ../../bin/bonusextrapolate2 ../../bin/bonus_F2nfit ../../bin/bonus_F2nfit_allangles ../../bin/bonusfitreadout ../../bin/bonusfit_rig
 EFILEST   = 	../../bin/staticdeepstest ../../bin/staticdeepsfit ../../bin/staticbonustest ../../bin/staticbonusfit  ../../bin/staticbonusscatterfit
 
 

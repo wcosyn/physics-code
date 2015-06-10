@@ -501,7 +501,7 @@ double TInterpolatingWavefunction::Interpolate(map<double,double>* list,
 {
   // Find the wavefunction value corresponding to 'q', by interpolating
   // between the known values found in the ordered 'list'
-  if(std::isnan(q)) return 0.;
+  if(isnan(q)) return 0.;
   if( !list || list->size()<2 ) {
     cerr << "WARNING in TInterpolatingWavefunction::Interpolate(map*,double): "
 	 << "nothing to interpolate!\n";
