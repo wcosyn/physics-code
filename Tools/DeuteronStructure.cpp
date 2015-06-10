@@ -9,7 +9,7 @@
 
 
 using namespace std;
-// using isnan;
+
 
 DeuteronStructure::DeuteronStructure(const bool pr, string nm)
 :proton(pr),name(nm),massi(pr?MASSP:MASSN){
@@ -44,7 +44,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   double alphaq=(kin.GetWlab()-kin.GetKlab())/(MASSD/2.);
   double alphai=(Einoff+kin.GetPklab()*kin.GetCosthklab())/(MASSD/2.);  //vec{pi}=-vec{pr} in PW!
   double pt=kin.GetPklab()*sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
-  if(isnan(pt)) pt=0.;
+  if(std::isnan(pt)) pt=0.;
   double cosdelta=kin.GetWlab()/kin.GetKlab();
   double sindelta2=kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab());
   double piq=(Einoff*kin.GetWlab()+kin.GetKlab()*kin.GetPklab()*kin.GetCosthklab());  //vec{pi}=-vec{pr} in PW!
@@ -62,12 +62,12 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
     F1=F2*2.*xtilde/(1+R)*(pow(alphai/alphaq+1/(2.*xtilde),2.)-pt*pt/(2.*kin.GetQsquared())*R);
   }
   else strfunction.getF(F1,F2);
-  if(isnan(F2)){cout << "bla " << endl; FL=FT=FTT=FTL=F2; return;}
-  if(isnan(F1)){FL=FT=FTT=FTL=F1; return;}
+  if(std::isnan(F2)){cout << "bla " << endl; FL=FT=FTT=FTL=F2; return;}
+  if(std::isnan(F1)){FL=FT=FTT=FTL=F1; return;}
   //cout << F1 << " " << F2 << " " << nutilde << " " << pt << " " << kin.GetCosthklab() << endl;
   FL=pow((alphai+alphaq*piq/kin.GetQsquared())*(1+cosdelta),2.)*kin.GetWlab()/nutilde*F2-kin.GetWlab()/massi*sindelta2*F1;
   FT=2.*F1+pt*pt/(massi*nutilde)*F2;
-  if(isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
+  if(std::isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
   FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
 //   cout << "VNAstruc " << std::setprecision(9)<< F1 << " " << F2 << " " << kin.GetQsquared() << " " << xoffshell << " " << W_sq << endl;
@@ -82,7 +82,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   double alphaq=(kin.GetWlab()-kin.GetKlab())/(MASSD/2.);
   double alphai=(Einoff+kin.GetPklab()*kin.GetCosthklab())/(MASSD/2.);  //vec{pi}=-vec{pr} in PW!
   double pt=kin.GetPklab()*sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
-  if(isnan(pt)) pt=0.;
+  if(std::isnan(pt)) pt=0.;
   double cosdelta=kin.GetWlab()/kin.GetKlab();
   double sindelta2=kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab());
   double piq=(Einoff*kin.GetWlab()+kin.GetKlab()*kin.GetPklab()*kin.GetCosthklab());  //vec{pi}=-vec{pr} in PW!
@@ -100,12 +100,12 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
     F1=F2*2.*xtilde/(1+R)*(pow(alphai/alphaq+1/(2.*xtilde),2.)-pt*pt/(2.*kin.GetQsquared())*R);
   }
   else strfunction.getF(F1,F2);
-  if(isnan(F2)){cout << "bla " << endl; FL=FT=FTT=FTL=F2; return;}
-  if(isnan(F1)){FL=FT=FTT=FTL=F1; return;}
+  if(std::isnan(F2)){cout << "bla " << endl; FL=FT=FTT=FTL=F2; return;}
+  if(std::isnan(F1)){FL=FT=FTT=FTL=F1; return;}
   //cout << F1 << " " << F2 << " " << nutilde << " " << pt << " " << kin.GetCosthklab() << endl;
   FL=pow((alphai+alphaq*piq/kin.GetQsquared())*(1+cosdelta),2.)*kin.GetWlab()/nutilde*F2-kin.GetWlab()/massi*sindelta2*F1;
   FT=2.*F1+pt*pt/(massi*nutilde)*F2;
-  if(isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
+  if(std::isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
   FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
 //   cout << "VNAstruc " << F1 << " " << F2 << endl;
@@ -135,8 +135,8 @@ void DeuteronStructure::getStructureFunctions_off (TKinematics2to2 &kin, double 
     F1=F2*2.*xtilde/(1+R)*(pow(alphai/alphaq+1/(2.*xtilde),2.)-pt*pt/(2.*kin.GetQsquared())*R);
   }
   else strfunction.getF(F1,F2);
-  if(isnan(F2)){FL=FT=FTT=FTL=F2; return;}
-  if(isnan(F1)){FL=FT=FTT=FTL=F1; return;}
+  if(std::isnan(F2)){FL=FT=FTT=FTL=F2; return;}
+  if(std::isnan(F1)){FL=FT=FTT=FTL=F1; return;}
   //cout << F1 << " " << F2 << " " << nutilde << " " << pt << " " << kin.GetCosthklab() << endl;
   FL=pow((alphai+alphaq*piq/kin.GetQsquared())*(1+cosdelta),2.)*kin.GetWlab()/nutilde*F2-kin.GetWlab()/massi*sindelta2*F1;
   FT=2.*F1+pt*pt/(massi*nutilde)*F2;
@@ -152,7 +152,7 @@ void DeuteronStructure::getStructureFunctions_off (TKinematics2to2 &kin, double 
 double DeuteronStructure::getStructure(TKinematics2to2 &kin, TElectronKinematics &electron, double phir, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
-  if(isnan(FL)) return FL;
+  if(std::isnan(FL)) return FL;
   return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT)
 	+sqrt(kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*cos(phir)*FTL+cos(2.*phir)*FTT;
   
@@ -162,7 +162,7 @@ void DeuteronStructure::getResponses(TKinematics2to2 &kin, TElectronKinematics &
 				     double &ResLandT, double &ResTT, double &ResTL, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
-  if(isnan(FL)) ResLandT=ResTT=ResTL=FL;
+  if(std::isnan(FL)) ResLandT=ResTT=ResTL=FL;
   else{ 
     ResLandT=(FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
     ResTL=sqrt(kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*FTL;
@@ -174,7 +174,7 @@ void DeuteronStructure::getResponses_off(TKinematics2to2 &kin, TElectronKinemati
 				     double &ResLandT, double &ResTT, double &ResTL, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions_off(kin,FL, FT, FTT, FTL, Wsq, Einoff);
-  if(isnan(FL)) ResLandT=ResTT=ResTL=FL;
+  if(std::isnan(FL)) ResLandT=ResTT=ResTL=FL;
   else{ 
     ResLandT=(FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
     ResTL=sqrt(kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*FTL;
@@ -186,7 +186,7 @@ void DeuteronStructure::getResponses_off(TKinematics2to2 &kin, TElectronKinemati
 double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
-  if(isnan(FL)) return FL;
+  if(std::isnan(FL)) return FL;
   return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
   
 }
@@ -208,7 +208,7 @@ double DeuteronStructure::getavgStructureLC(LightConeKin2to2 &kin) const{
     F1=F2*2.*kin.getXN()/(1+R)*(pow(kin.getAlpha_i()/alphaq+1/(2.*kin.getXN()),2.)-kin.getPs_perp().Mag2()/(2.*kin.getQ2())*R);
   }
   else strfunction.getF(F1,F2);
-  if(isnan(F2)){cout << "bla " << endl;  return F2;}
+  if(std::isnan(F2)){cout << "bla " << endl;  return F2;}
 //   cout << "LCstruc " << F1 << " " << F2 << endl;
 //   cout << x_i << " " << xoffshell << endl;
   return 2.*kin.getXN()*F2/kin.getQ2()*(-(mi_off2+kin.getQ2()/4./pow(kin.getXN(),2.))
@@ -235,7 +235,7 @@ double DeuteronStructure::getStructureLC(LightConeKin2to2 &kin) const{
     F1=F2*2.*kin.getXN()/(1+R)*(pow(kin.getAlpha_i()/alphaq+1/(2.*kin.getXN()),2.)-kin.getPs_perp().Mag2()/(2.*kin.getQ2())*R);
   }
   else strfunction.getF(F1,F2);
-  if(isnan(F2)){cout << "bla " << endl;  return F2;}
+  if(std::isnan(F2)){cout << "bla " << endl;  return F2;}
   return F1+(1.-kin.getYN()-mi_off2*pow(kin.getYN()*kin.getXN(),2.)/kin.getQ2())/(pow(kin.getYN(),2.)*kin.getXN())*F2;
   
 
@@ -244,7 +244,7 @@ double DeuteronStructure::getStructureLC(LightConeKin2to2 &kin) const{
 double DeuteronStructure::getavgPrefactor(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const{
   double FL, FT, FTT, FTL,F2;
   getStructureFunctions(kin,FL, FT, FTT, FTL, F2,Einoff);
-  if(isnan(FL)) return FL;
+  if(std::isnan(FL)) return FL;
   return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT)/F2;
   
 }
@@ -252,7 +252,7 @@ double DeuteronStructure::getavgPrefactor(TKinematics2to2 &kin, TElectronKinemat
 double DeuteronStructure::getavgStructure_off(TKinematics2to2 &kin, TElectronKinematics &electron, double Wsq, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions_off(kin,FL, FT, FTT, FTL, Wsq, Einoff);
-  if(isnan(FL)) return FL;
+  if(std::isnan(FL)) return FL;
   //cout << FL << " " << FT << " " << FTT << " " << FTL << " " << kin.GetQsquared() << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
   return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
   
@@ -262,7 +262,7 @@ double DeuteronStructure::getavgStructure_off(TKinematics2to2 &kin, TElectronKin
 double DeuteronStructure::getInclStructure(TKinematics2to2 &kin, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
-  if(isnan(FL)) {cout << "blaaa  " << endl; return FL;}
+  if(std::isnan(FL)) {cout << "blaaa  " << endl; return FL;}
   //cout << FL << " " << FT << " " << FTT << " " << FTL << " " << kin.GetQsquared() << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
   return FL+kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())*kin.GetWlab()/massi*FT;
   
@@ -271,7 +271,7 @@ double DeuteronStructure::getInclStructure(TKinematics2to2 &kin, double Einoff) 
 double DeuteronStructure::getInclStructure_off(TKinematics2to2 &kin, double Wsq, double Einoff) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions_off(kin,FL, FT, FTT, FTL, Wsq, Einoff);
-  if(isnan(FL)) return FL;
+  if(std::isnan(FL)) return FL;
   //cout << FL << " " << FT << " " << FTT << " " << FTL << " " << kin.GetQsquared() << " " << kin.GetKlab() << " " << kin.GetWlab() << endl;
   return FL+kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())*kin.GetWlab()/massi*FT;
   

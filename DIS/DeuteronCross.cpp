@@ -116,7 +116,7 @@ void DeuteronCross::getBonusextrapolate(double Q2, double W, double Ein, double 
   double Eout=Ein-nu;
   //unphysical kinematics!!!
 //   if(Eout<0.){ /*cout << Eout << endl;*/ MCresult=modelresultpw=modelresultfsi=0.;return;}
-//   if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
+//   if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
   
   double MCresult= getavgBonus(kin,*elec,lc);
   double cross_data_extr=Rdata*MCresult/norm; //MeV-6
@@ -189,7 +189,7 @@ double DeuteronCross::getBonus_extrapratio(double Q2, double W, double Ein, doub
   double Eout=Ein-nu;
   //unphysical kinematics!!!
   if(Eout<0.){ /*cout << Eout << endl;*/ return 0.;}
-  if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */return 0.;}
+  if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */return 0.;}
   
   double MCresult= getavgBonus(kin,*elec,lc);
   double y=kin.GetWlab()/elec->GetBeamEnergy(kin); 
@@ -241,7 +241,7 @@ void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresultpw, do
   double Eout=Ein-nu;
   //unphysical kinematics!!!
   if(Eout<0.){ /*cout << Eout << endl;*/ MCresult=modelresultpw=modelresultfsi=0.;return;}
-  if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
+  if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
   
   MCresult= getavgBonus(kin,*elec,lc)*1.E18; //GeV^-6
   modelresultpw= getavgVNALabCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in GeV-6
@@ -377,7 +377,7 @@ void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, d
   double Eout=Ein-nu;
   //unphysical kinematics!!!
   if(Eout<0.){ planewave=fsi=0.0/0.; return;}
-  if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ planewave=fsi=0.0/0.; return;}
+  if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ planewave=fsi=0.0/0.; return;}
 
   double thetain=acos((Ein*Ein+qvec*qvec-Eout*Eout)/(2.*Ein*qvec));
   double yprime=(Einoff*nu+prz*qvec)/(Ein*Einoff+Ein*cos(thetain)*pr*costhetar/*+Ein*sin(thetain)*pr*sqrt(1.-costhetar*costhetar)*/);  
@@ -429,7 +429,7 @@ void DeuteronCross::getDeepsresultLC(double Q2, double W, double Ein, double pr,
   double Eout=Ein-nu;
   //unphysical kinematics!!!
   if(Eout<0.){ planewave=fsi=0.0/0.; return;}
-  if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ planewave=fsi=0.0/0.; return;}
+  if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ planewave=fsi=0.0/0.; return;}
 
   double thetain=acos((Ein*Ein+qvec*qvec-Eout*Eout)/(2.*Ein*qvec));
   double yprime=(Einoff*nu+prz*qvec)/(Ein*Einoff+Ein*cos(thetain)*pr*costhetar/*+Ein*sin(thetain)*pr*sqrt(1.-costhetar*costhetar)*/);  
@@ -489,7 +489,7 @@ void DeuteronCross::getDeepsAzz(double Q2, double W, double Ein, double pr, doub
   double Eout=Ein-nu;
   //unphysical kinematics!!!
   if(Eout<0.){ planewave=fsi=0.0/0.; return;}
-  if(isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ planewave=fsi=0.0/0.; return;}
+  if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ planewave=fsi=0.0/0.; return;}
 
   double thetain=acos((Ein*Ein+qvec*qvec-Eout*Eout)/(2.*Ein*qvec));
   double yprime=(Einoff*nu+prz*qvec)/(Ein*Einoff+Ein*cos(thetain)*pr*costhetar/*+Ein*sin(thetain)*pr*sqrt(1.-costhetar*costhetar)*/);  
