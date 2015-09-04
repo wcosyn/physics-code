@@ -32,9 +32,9 @@ EFILE   = 	../../bin/gammatest
 LIBS =	 	-lm  
 WIMLIBS = -lMePhys 
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L ~/Code/lib
- INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  
-STATICLIBS =   ~/Code/lib/libMePhys.a   ~/Code/lib/libIntegrator.a   
+ LIBDIRS = -L ~/Code/trunk/lib
+ INCLUDEDIRS =  -I ~/Code/trunk/Integrator -I ~/Code/trunk/Tools  
+STATICLIBS =   ~/Code/trunk/lib/libMePhys.a   ~/Code/trunk/lib/libIntegrator.a   
 
 
 #		Header files

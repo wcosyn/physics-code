@@ -112,12 +112,12 @@ foreach(val RANGE ${len2})
   list(GET MePhys_LINKDEF ${val} val2)
   STRING(REGEX REPLACE "(^.*)LinkDef.h" "\\1.h" bla ${val2})
   ROOT_GENERATE_DICTIONARY("${bla}" "${val2}" "${val1}" "${INCLUDE_DIRECTORIES}")
-  ROOT_GENERATE_DICTIONARY("${bla}" "${val2}" "${val3}" "${INCLUDE_DIRECTORIES}")
+#   ROOT_GENERATE_DICTIONARY("${bla}" "${val2}" "${val3}" "${INCLUDE_DIRECTORIES}")
 endforeach()
 
 # add the dictionary to the list of source files
 SET(MePhys_SRCS_LI ${MePhys_SRCS} ${MePhys_DICTIONARY} ${MePhys_FORT}) 
-SET(MePhys_SRCS_ST ${MePhys_SRCS} ${MePhys_DICTIONARY_ST} ${MePhys_FORT}) 
+# SET(MePhys_SRCS_ST ${MePhys_SRCS} ${MePhys_DICTIONARY_ST} ${MePhys_FORT}) 
 
 
 # Set the library version in the main CMakeLists.txt
@@ -139,7 +139,7 @@ target_link_libraries(MePhys ${LIBRARIES})
 set_target_properties(MePhys PROPERTIES ${MePhys_LIBRARY_PROPERTIES})
 
 ############# build the library #####################
-add_library(MePhysST STATIC ${MePhys_SRCS_ST})
+add_library(MePhysST STATIC ${MePhys_SRCS_LI})
 target_link_libraries(MePhysST -Wl,-no-whole-archive)
 set_target_properties(MePhysST PROPERTIES OUTPUT_NAME MePhys)
 

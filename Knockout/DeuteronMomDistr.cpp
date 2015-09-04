@@ -24,7 +24,6 @@ looplimit(loop_limit){
     wf.AddUp(i,wfref->GetUp(i));
     wf.AddWp(i,wfref->GetWp(i));
   }
-  
     
 }
 

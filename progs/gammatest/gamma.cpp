@@ -14,16 +14,16 @@ using namespace std;
 int main(int argc, char *argv[]){
 
 
-  for(int i=1;i<100;i++){
-    double x=0.01*i;
-    NuclStructure F2CTEQ=NuclStructure(1,200.E06,x,0,"CTEQ");
-    NuclStructure F2SLAC=NuclStructure(1,200.E06,x,0,"SLAC");
-//     NuclStructure F2CB=NuclStructure(1,200.E06,x,0,"CB");
-    NuclStructure F2alekhin=NuclStructure(1,200.E06,x,0,"Alekhin");
-    cout << x << " " << F2CTEQ.getF2() << " " << F2SLAC.getF2() << 	" " << F2alekhin.getF2() << endl;
-    
-  }
-  exit(1);
+//   for(int i=1;i<100;i++){
+//     double x=0.01*i;
+//     NuclStructure F2CTEQ=NuclStructure(1,200.E06,x,0,"CTEQ");
+//     NuclStructure F2SLAC=NuclStructure(1,200.E06,x,0,"SLAC");
+// //     NuclStructure F2CB=NuclStructure(1,200.E06,x,0,"CB");
+//     NuclStructure F2alekhin=NuclStructure(1,200.E06,x,0,"Alekhin");
+//     cout << x << " " << F2CTEQ.getF2() << " " << F2SLAC.getF2() << 	" " << F2alekhin.getF2() << endl;
+//     
+//   }
+//   exit(1);
   
   const FourVector<GammaStructure> gamma_mu=FourVector<GammaStructure>(GammaStructure(0.,0.,1.),
 											GammaStructure(0.,0.,0.,1.),
@@ -89,6 +89,7 @@ int main(int argc, char *argv[]){
   cout << -Trace(((polVectorMin*gamma_mu)*gamma_5*(ein*gamma_mu)*(polVectorPlus*gamma_mu)*(eout*gamma_mu)).value())/denom/2. << " " 
   << tanth*sqrt(Q2/qvec/qvec+tanth*tanth) << endl;
       
-  cout << Trace((gamma_mu[0]*gamma_mu[1]*gamma_mu[2]*gamma_mu[3]*gamma_5).value()) << endl;
-      
+  cout << Trace((gamma_5*gamma_mu[0]*gamma_mu[1]*gamma_mu[2]*gamma_mu[3]).value()) << endl;
+  cout << (I_UNIT*gamma_mu[0]*gamma_mu[1]*gamma_mu[2]*gamma_mu[3]).value() << endl;
+  cout << gamma_5.value() << endl;
 }
