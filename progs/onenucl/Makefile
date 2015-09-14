@@ -13,7 +13,7 @@
 
 CC=g++
 WFLAGS=-Wall -Wextra -Wshadow #-Weffc++ # You can expect to see a buttload of warnings when enabling all these flags
-CFLAGS= -g -std=c++11 -fPIC $(WFLAGS) `gsl-config --cflags` `root-config --cflags`
+CFLAGS= -O2 -std=c++11 -fPIC $(WFLAGS) `gsl-config --cflags` `root-config --cflags`
 # -fext-numeric-literals is there to allow conversion between C and C++ complex numbers
 #
 # -Wl means pass arguments to runtime linker. -Wl is followed by comma seperated list with arguments to be passed to runtime linker
