@@ -24,6 +24,7 @@ OneGlauberGrid.hpp
 TMFSpinor.hpp
 DistMomDistrGrid.hpp
 ROMEAGrid.hpp
+ClassGridThick_SCX.hpp
 )
 
 foreach(it ${Glauber_HEADERS_HPP})
