@@ -29,7 +29,6 @@ set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 
 set(HPC_NAMES 
-gengar
 haunter
 gastly
 dugtrio 
@@ -37,6 +36,8 @@ raichu
 delcatty
 gulpin
 gligar
+golett
+phanpy
 )
 
 
@@ -66,7 +67,7 @@ get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
 EXEC_PROGRAM("hostname" OUTPUT_VARIABLE hostname)
 
-if (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807)
+if (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807 OR hostname MATCHES we05c708)
    MESSAGE("--- Configuring for accident")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
@@ -185,7 +186,7 @@ if(hostname MATCHES ${hpcname})
 endif(hostname MATCHES ${hpcname})
 endforeach(hpcname ${HPC_NAMES})
 
-else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807) 
+else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807  OR hostname MATCHES we05c708) 
    MESSAGE("--- default configuration")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
@@ -195,7 +196,7 @@ else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES 
 
       # Select flags.
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native -std=c++11")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -pg ")
@@ -240,7 +241,7 @@ else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES 
 
 
 # endif (hostname MATCHES gengar OR hostname MATCHES haunter) 
-endif (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807) 
+endif (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807  OR hostname MATCHES we05c708) 
 
 
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR})
