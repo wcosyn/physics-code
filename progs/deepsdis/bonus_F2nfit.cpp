@@ -36,6 +36,9 @@ vector<double> tarray;
 vector<double> data_array;
 vector<double> error_array;
 
+vector<double> thetavals;
+vector<double> thetasigma;
+
 double get_normfit_array(string wf, string struc, int offshell, bool lc, bool q2dep, bool pw, int beamindex,
 			 int Qindex, int Windex, int psindex);
 double sigmaparam(double W, double Q2, bool Q2dep);
@@ -50,7 +53,16 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
   for(unsigned int i=0;i<tarray.size();i++) f+=pow((par[0]*pow(tarray[i],2.)-par[1]*tarray[i]
 					  +par[2]-data_array[i])/error_array[i],2.);
-  f/=tarray.size()==npar?1:(tarray.size()-npar);
+//   f/=tarray.size()==npar?1:(tarray.size()-npar);
+}
+
+void Fcn2(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
+{
+  // Function to minimize (chi^2)
+  f= 0.; // easily minimizable function as an example...
+  //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
+  for(unsigned int i=0;i<thetavals.size();i++) f+=pow((par[0]-thetavals[i])/thetasigma[i],2.);
+//   f/=tarray.size()==npar?1:(tarray.size()-npar);
 }
 
 
@@ -69,10 +81,13 @@ int main(int argc, char *argv[])
   bool pw=atoi(argv[3]);
   
   
-  string outdir="/home/wim/Calculations/Bonus/results/parabfitsMay15/";
+  string outdir="/home/wim/Calculations/Bonus/results/parabfitsJul15/";
   ofstream generalfile;
+  ofstream sumfile;
   generalfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
 	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+".fitsrig.dat");
+  sumfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
+	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+".fitsrig_indepfit.dat");
   for(int Qindex=0;Qindex<3;Qindex++){
     double Q2 = 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]);
     for(int Windex=0;Windex<5;Windex++){
@@ -84,6 +99,8 @@ int main(int argc, char *argv[])
       double F2refn, F2refp;
       F2refn=strfunction.getF2(); 
       F2refp=strfunction2.getF2();
+      thetavals.clear();
+      thetasigma.clear();
       for(int cosindex=0;cosindex<10;cosindex++){
 	double costhetar=-0.9+cosindex*0.2;
 	tarray.clear();
@@ -109,9 +126,9 @@ int main(int argc, char *argv[])
 	  double ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	  if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
 // 	    cout << result << " " << error << " " << error/result << " " << norm << " " << errornorm << " " << errornorm/norm << " ";
-	    error= error/result+errornorm/norm;
+// 	    error= error/result+errornorm/norm;
 	    result*=ratio/norm;
-	    error*=result;
+	    error*=ratio/norm;
 // 	    cout << result <<  " " << error << " " << error/result << endl;
 	    tarray.push_back(tprime*1.E-06);
 	    data_array.push_back(result);
@@ -128,9 +145,9 @@ int main(int argc, char *argv[])
 	    ratio=test.getBonus_extrapratio(Q2,Wprime,Ebeam,ps,costhetar,proton,lc);
 	    if(abs(ratio)>1.E-09){ //unphysical points yield ratio 0
 // 	      cout << result << " " << error << " " << error/result << " " << norm << " " << errornorm << " " << errornorm/norm << " ";
-	      error= error/result+errornorm/norm;
+// 	      error= error/result+errornorm/norm;
 	      result*=ratio/norm;
-	      error*=result;
+	      error*=ratio/norm;
 // 	      cout << result <<  " " << error << " " << error/result << endl;
 	      tarray.push_back(tprime*1.E-06);
 	      data_array.push_back(result);
@@ -352,10 +369,228 @@ int main(int argc, char *argv[])
 	    << gMinuit->GetParameter(0) << " " << eparab[0] << " "
 	    << gMinuit->GetParameter(1) << " " << eparab[1] << " "
 	    << gMinuit->GetParameter(2) << " " << eparab[2] << " " << F2refn << " " << F2refp << " "
-	    << f << endl;
+	    << f/(tarray.size()-3) << endl;
+	  thetavals.push_back(gMinuit->GetParameter(2));
+	  thetasigma.push_back(eparab[2]);
 	  delete gMinuit;
 	}
       }
+      
+      
+      int testing = 0;
+      int fNDim = 1; // number of dimensions
+      int fRandomseed = 3454; // parse from argv or something
+      double fLo[] = {0.}; // lower limits of params
+      double fHi[] = {1.}; // upper limits of params
+      char* fName[] = {"F2n"};
+      
+      int fBound[] = {1,1,1};
+    
+	
+      TVirtualFitter *gMinuit2 = TVirtualFitter::Fitter ( 0, fNDim );
+    
+      // Start values of parameters
+      // If you have a starting individual, you can simply use 
+      double minuitIndividual[] = {0.2}; // FIXME insert your starting individual ( double array) here
+      std::cout << "done" << endl;
+    
+      //------------------------------------------------------------------
+      // The Minimisation section...
+    
+      std::cout << "Start minimizing...\n";
+    
+      // Initialize TMinuit via generic fitter (Minuit)
+      //TVirtualFitter::SetDefaultFitter("Minuit2"); // if you want to use minuit2
+      gMinuit2->SetFCN (  (void (*)(Int_t &, Double_t *, Double_t &, Double_t *, Int_t))   &Fcn2 );  // which function to minimise
+    
+      // ignore until ---------
+      Double_t arglist[fNDim]; // For interface to Minuit routines
+      Int_t ierflg = 0;  // ditto
+    
+      // Let Minuit produce minimal output...
+      arglist[0] = 0;
+      gMinuit2->ExecuteCommand ( "SET PRINT", arglist, 1 );
+    
+      // Set Minuit to the medium strategy
+      arglist[0] = 1;
+      gMinuit2->ExecuteCommand ( "SET STR", arglist, 1 );
+      
+      // If seed is given, set random seed.
+      // This can be any integer between 10000 and 900000000.
+      arglist[0] = (Double_t) fRandomseed; 
+      while (arglist[0] >= 900000000)  arglist[0] -= 900000000; 
+      while (arglist[0] <= 10000)  arglist[0] += 10000;
+      gMinuit2->ExecuteCommand ( "SET RAN", arglist, 1 );
+      
+      // Set the limits for each parameter...
+      double step; // step size
+      for ( int i = 0 ; i < fNDim ; i++ ){
+	step = 0.01 * minuitIndividual[i];  // step size is 1% of value - so don't set value to 0 ;-)
+	if ( step < 0 ) step *= -1; // make it positive
+	else if ( step == 0.0 ) step = 1.0e-3;
+	gMinuit2->SetParameter ( i, fName[i], minuitIndividual[i], step, fLo[i], fHi[i] );
+      }
+      
+      //   gMinuit2->FixParameter ( 1 );
+      // Print out to verify...
+      std::cout << "No. of parameters:\t\t"
+      << gMinuit2->GetNumberTotalParameters() << endl;
+      std::cout << "No. of free parameters:\t\t"
+      << gMinuit2->GetNumberFreeParameters() << endl;
+      std::cout << "Max. No. of iterations:\t\t"
+      << gMinuit2->GetMaxIterations() << endl;
+    
+      /* **************** *
+      * START MINIMIZING *
+      * **************** */
+    
+      Double_t value, verr; // value of parameter and its error
+      Int_t nFreePars = gMinuit2->GetNumberFreeParameters();// # of free parameters
+      Int_t someParsFixed = 0; // # of fixed parameters
+    
+      bool outerMinimizationLoop = true; /* Stay in outside loop untill this
+					  * flag is turned to false */
+      bool innerMinimizationLoop = true; /* Stay in inside loop untill this
+					  * flag is turned to false */
+    
+      /* The outer minimization loop:
+      * - Using command: MIGRAD
+      * - SET STRATEGY 1
+      * - max. 7000 function calls
+      * untill convergence with all
+      * parameters away from limits */
+      while ( outerMinimizationLoop ){
+    
+	/* The inner minimization loop:
+	* - Using command: MIGRAD (and SIMPLEX)
+	* - SET STRATEGY 1
+	* - max. 7000 function calls
+	* untill convergence */
+	while ( innerMinimizationLoop ){
+    
+	  // Run minimization...
+	  // ...untill convergence is reached (max 4 times)
+	  arglist[0] = 7000;
+	  gMinuit2->ExecuteCommand ( "MIGRAD", arglist, 1 );
+	  for ( int i = 0; i < 3 &&
+		static_cast<TFitter*> ( gMinuit2->GetFitter() )->
+		GetMinuit()->fCstatu.CompareTo ( "CONVERGED " );
+		i++ )
+	    gMinuit2->ExecuteCommand ( "MIGRAD", arglist, 1 );
+    
+	  // When MIGRAD converged...
+	  if(!static_cast<TFitter*> ( gMinuit2->GetFitter() )->
+		GetMinuit()->fCstatu.CompareTo ( "CONVERGED " ) ){
+	    // ...try to IMPROVE the chi-squared
+	    arglist[0] = 7000;
+	    gMinuit2->ExecuteCommand ( "IMPROVE", arglist, 1 );
+    
+	    // we exit the inner loop
+	    innerMinimizationLoop = false;
+	  }
+	  // Else...
+	  else{
+	    // ...try to find a better spot in parameter space
+	    arglist[0] = 7000;
+	    arglist[1] = 0.01;
+	    gMinuit2->ExecuteCommand ( "SIMPLEX", arglist, 2 );
+    
+	    // if SIMPLEX did not converge, we give up!
+	    if ( static_cast<TFitter*> ( gMinuit2->GetFitter() )->
+		  GetMinuit()->fCstatu.CompareTo ( "CONVERGED " ) ){
+	      std::cout << endl
+	      << "**********************************************" << endl
+	      << "MIGRAD did not manage to converge: we give up!" << endl
+	      << "**********************************************" << endl;
+	      exit ( 1 );		      
+	    }
+	  }
+	} // end inner loop
+    
+	// Check to see if any parameters are at their limits. This is
+	// done by checking whether they are within half an error unit of
+	// either limit. If they are, then fix them and run
+	// the first minimization loop again.
+	// Obviously, we do not need to perform this check for
+	// parameters without limits
+	// When MINUIT issues a warning about the covariance matrix, it
+	// is questionable to rely on the errors. Therefor we only trust
+	// the errors when the status of the error matrix is set to
+	// accurate or forced pos-def.
+	if ( !static_cast<TFitter*> ( gMinuit2->GetFitter() )->GetMinuit()->
+	      fCovmes[static_cast<TFitter*> ( gMinuit2->GetFitter() )->
+		      GetMinuit()->fISW[1]].CompareTo ( "ERROR MATRIX ACCURATE " ) ||
+	      !static_cast<TFitter*> ( gMinuit2->GetFitter() )->GetMinuit()->
+	      fCovmes[static_cast<TFitter*> ( gMinuit2->GetFitter() )->
+		      GetMinuit()->fISW[1]].CompareTo ( "ERR MATRIX NOT POS-DEF" ) ){
+	  for ( int i = 0 ; i < fNDim ; ++i ){    // loop over parameters
+	    if (fBound[i]){
+	    //if ( GetTCalc()->GetLimit ( i ).bound )   // check if bound
+	      value = gMinuit2->GetParameter ( i );
+	      verr  = gMinuit2->GetParError ( i );
+    
+	      // If the parameter is within half an error bar of one of
+	      // the limits, it should be fixed, as it may be that the
+	      // true minimum lies beyond the defined physical limit
+	      if ( TMath::Abs ( value - fLo[i] ) < verr*0.5 || // half a sigma
+		    TMath::Abs ( value - fHi[i] ) < verr*0.5 ){
+		gMinuit2->FixParameter ( i );
+		someParsFixed++;
+		std::cout << "Parameter no." << i + 1
+		<< " has been fixed: Too close to limits!\n";
+	      }
+	    } // if parameter bound
+	  } // end loop over parameters
+	} // status check error matrix
+    
+	// If some parameters had to be fixed, re-run the loop...
+	if ( someParsFixed ){
+	  someParsFixed = 0; // reset
+	  std::cout << "Some parameters fixed, rerun Migrad()...\n";
+	}
+	else outerMinimizationLoop = false; // exit outer loop
+      } // end outer loop
+  
+      // Calculate the covariance matrix again...
+      gMinuit2->ExecuteCommand ( "MINOS", arglist, 0 );
+      gMinuit2->ExecuteCommand ( "SHO COV", arglist, 0 );
+    
+      // Extract the covariance matrix (method GetCovarianceMatrix only
+      // returns a double*)
+      nFreePars = gMinuit2->GetNumberFreeParameters();
+      TMatrixT<double> matrix ( nFreePars, nFreePars );
+    
+      for ( int i = 0 ; i < nFreePars ; ++i ){
+	for ( int j = 0 ; j < nFreePars ; ++j ){
+	  matrix ( i, j ) = gMinuit2->GetCovarianceMatrixElement ( i, j );
+	}
+      }
+      cout << "\nCleaning up..." << endl;
+// 	  cout << Qindex << " " << Windex << " " << cosindex << " " << gMinuit2->GetParameter(0) << " "<< gMinuit2->GetParameter(1) << " " << gMinuit2->GetParameter(2) << endl;
+      double eplus[nFreePars],eminus[nFreePars],eparab[nFreePars],globcc[nFreePars], params[nFreePars];
+      for(unsigned int i=0;i<nFreePars;++i){
+	gMinuit2->GetErrors(i,eplus[i],eminus[i],eparab[i],globcc[i]);
+	params[i]=gMinuit2->GetParameter(i);
+// 	    cout << gMinuit2->GetParameter(i) << " " << eplus[i] << " " << eminus[i] << 
+// 	    " " << eparab[i] << " " << globcc[i] << endl;
+      }
+      int n=1;
+      double f;
+      Fcn2(n, &f, f, params, n);
+      double avgform=0.,sigmaform=0.;
+      for(size_t i=0;i<thetavals.size();i++){
+	avgform+=thetavals[i]/thetasigma[i]/thetasigma[i];
+	sigmaform+=1./thetasigma[i]/thetasigma[i];
+      }
+      avgform/=sigmaform;
+      sigmaform=sqrt(1./sigmaform);
+      sumfile << xref << " " << Q2*1.E-06 << " " << Wprime << " "
+	<< gMinuit2->GetParameter(0) << " " << eparab[0] << " " << F2refn << " " << F2refp << " "
+	<< f/(thetavals.size()-1.) << " " << avgform << " " << sigmaform << endl;
+      delete gMinuit2;
+      
+      
+      
       generalfile << endl << endl;
     }
     generalfile << endl << endl;

@@ -1371,8 +1371,8 @@ const double bonusfits2::errornormfits_final_q2dep1_beam5_setSLAC[4]={0.03665825
 
 const double bonusfits2::normfitsrig_final_q2dep1_beam4_setCB[4]={1.31632,1.27867,1.37796,1.49398};
 const double bonusfits2::normfitsrig_final_q2dep1_beam5_setCB[4]={1.17569,1.20289,1.24449,1.41689};
-const double bonusfits2::errornormfitsrig_final_q2dep1_beam4_setCB[4]={0.0356311,0.0334994,0.0406974,0.054896};
-const double bonusfits2::errornormfitsrig_final_q2dep1_beam5_setCB[4]={0.0252253,0.0257965,0.0309645,0.0472194};
+const double bonusfits2::errornormfitsrig_final_q2dep1_beam4_setCB[4]={0.00661651,0.00622069,0.00769109,0.010766};
+const double bonusfits2::errornormfitsrig_final_q2dep1_beam5_setCB[4]={0.00403927,0.00413074,0.0050231,0.00776282};
 
 //fit parameters for data normalization only fitted to backward region, no offshell and VNA, no q2 dependence in fits
 //paris wf, Christy Bosted F2, FSI fit

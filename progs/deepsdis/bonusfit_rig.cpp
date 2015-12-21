@@ -49,6 +49,7 @@ bool lc=0;
 bool Q2dep=0;
 std::string wf;
 std::string strucname;
+int dof=0;
 
 double sigmaparam(double W, double Q2, bool Q2dep);
 
@@ -57,7 +58,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 {
   cout << endl << endl;
   f=0.;
-  int dof=0.;
+  dof=0.;
   bool proton=0;
   double epsilon=-0.5;
   double betaoff=8.;
@@ -65,12 +66,12 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 //   cout << npar << endl;
 //   cout << "bla " << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << endl;
   for(int Qindex=1;Qindex<=2;Qindex++){
-    for(int Windex=(Qindex==2?4:3);Windex<=((Beamindex==0&&Qindex==2)?3:4);Windex++){
+    for(int Windex=3;Windex<=((Beamindex==0&&Qindex==2)?3:4);Windex++){
       DeuteronCross DeepsCross(wf,proton,strucname,sigmaparam(0.5*(data::W[Windex]+data::W[Windex+1]),
 	  0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),Q2dep),8.,epsilon,betaoff,lambdain,offshellset,1E03);
       for(int j=0;j<10;j++){
 	double error,result,costheta;
-	cout << Beamindex << " " << Qindex << " " << Windex << " " << j << endl;
+// 	cout << Beamindex << " " << Qindex << " " << Windex << " " << j << endl;
 	if(Beamindex==0){ 
 	  error=data::bonusdata4[Qindex][Windex][psindex][j][2];
 	  result=data::bonusdata4[Qindex][Windex][psindex][j][1];
@@ -85,17 +86,17 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	  double bonusMC=0., pw=0.,fsi=0.;
 	  DeepsCross.getBonusMCresult(bonusMC, pw, fsi, 0.5*(data::Q2[Qindex]+data::Q2[Qindex+1]),0.5*(data::W[Windex]+data::W[Windex+1]), 
 				      data::Ebeam[Beamindex], 0.5*(data::ps[psindex]+data::ps[psindex+1]), costheta, proton, 0, lc);
-	  cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << par[0]*fsi/bonusMC << " " << result << " " << error << endl;
+// 	  cout << costheta << " " << bonusMC << " " << pw << " " << fsi << " " << par[0]*fsi/bonusMC << " " << result << " " << error << endl;
 	  if(!isnan(fsi)&&!(bonusMC==0.)){ f+=pow((par[0]*fsi/bonusMC-result)/error,2.); dof++;}
 	}
       }
     }
   }
-  cout << endl << endl;
-  
+//   cout << endl << endl;
   // Function to minimize (chi^2)
   //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
-  f/=(dof-npar);
+  dof-=npar;
+  //f/=(dof-npar);
 }
 
 int main(int argc, char *argv[])
@@ -337,7 +338,7 @@ int main(int argc, char *argv[])
   Fcn(n, &f, f, params, n);
   cout << Beamindex << " " << psindex << " " 
     << params[0] << " " << eparab[0] << " "
-    << f << endl;
+    << f/dof << endl;
 
   
   
