@@ -48,5 +48,5 @@ clean:;		@rm -f *.o $(EFILE)
 .SECONDEXPANSION:
 $(EFILE):  $$(@F).cpp $(HDRS); 
 	@echo $(@F).cpp 
-	$(CC) -o $@ $(CFLAGS) $(@F).cpp $(LIBS) $(WIMLIBS) $(LDFLAGS) $(ROOT) $(LIBDIRS) $(INCLUDEDIRS) 
+	$(CC) -o $@ $(CFLAGS) $(@F).cpp $(ROOT) $(LIBS) $(WIMLIBS) $(LDFLAGS)  $(LIBDIRS) $(INCLUDEDIRS) 
 

@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
   bool pw=atoi(argv[3]);
   
   
-  string outdir="/home/wim/Calculations/Bonus/results/parabfitsJul15/";
+  string outdir="/home/wim/Calculations/Bonus/results/parabfitsDec15/";
   ofstream generalfile;
   ofstream sumfile;
   generalfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+

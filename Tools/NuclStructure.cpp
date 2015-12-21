@@ -177,6 +177,7 @@ void NuclStructure::getF_CB(double &F1, double &F2) const{
   double WSQ=Wsq*1.E-06;
   if(proton) f1f2in09_(&ONE, &ZERO, &QSQ, &WSQ, &F1, &F2, &R_CB);
   else f1f2in09_(&ZERO, &ONE, &QSQ, &WSQ, &F1, &F2, &R_CB);
+//   cout << F1 << " " << F2 << " " << QSQ << " " << WSQ << " " << 1./(1.+(WSQ-MASSN*MASSN*1.E-06)/QSQ) << endl;
   return;
 }
 

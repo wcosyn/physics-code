@@ -72,11 +72,13 @@ double DeuteronCross::getavgBonus(TKinematics2to2 &kin,TElectronKinematics &elec
   FourVector<double> q(kin.GetWlab(),0.,0.,kin.GetKlab());
   FourVector<double> q_transf=transf*q;
   double xtransf=kin.GetQsquared()/(2.*massi*q_transf[0]); //get modified x
+//   cout << "MCx " << xtransf << endl;
   NuclStructure nucl(massi==MASSP?1:0,kin.GetQsquared(),xtransf,0,"CB");  //experimental MC used CB structure function parametrization
   double F1,F2;
   nucl.getF(F1,F2);
   double res=2.*PI*ALPHA*ALPHA*pow(cos(thetae_transf/2.),2.)/(4.*pow(k_in_transf[0],2.)*pow(sin(thetae_transf/2.),4.))*dens
     *(F2+2.*q_transf[0]/massi*F1*pow(tan(thetae_transf/2.),2.))/q_transf[0];
+//   cout  << F2 << " " << F1 << " " << " " << kin.GetQsquared() << " " << xtransf << " " << res << endl; 
   return F2==0.? 0.: res;
   
 }
@@ -98,6 +100,7 @@ void DeuteronCross::getBonusextrapolate(double Q2, double W, double Ein, double 
   double ccc=Q2*Q2/(4.*xprime*xprime)-Q2*prz*prz;
   
   double discr=sqrt(bbb*bbb-4.*aaa*ccc);
+  if(std::isnan(discr)) discr=0.;
   double nu1=(-bbb+discr)/(2.*aaa);
   double nu2=(-bbb-discr)/(2.*aaa);
   //cout << nu1 << " " << nu2 << endl;
@@ -171,6 +174,7 @@ double DeuteronCross::getBonus_extrapratio(double Q2, double W, double Ein, doub
   double ccc=Q2*Q2/(4.*xprime*xprime)-Q2*prz*prz;
   
   double discr=sqrt(bbb*bbb-4.*aaa*ccc);
+  if(std::isnan(discr)) discr=0.;  
   double nu1=(-bbb+discr)/(2.*aaa);
   double nu2=(-bbb-discr)/(2.*aaa);
   //cout << nu1 << " " << nu2 << endl;
@@ -216,7 +220,7 @@ void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresultpw, do
   double massoff=sqrt(Einoff*Einoff-pr*pr);
   
   double xprime=Q2/(W*W-massoff*massoff+Q2);
-  
+//   cout << "xprime " << xprime << endl;
   //calc nu
   double prz=pr*costhetar;
   double aaa=Einoff*Einoff-prz*prz;
@@ -224,6 +228,7 @@ void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresultpw, do
   double ccc=Q2*Q2/(4.*xprime*xprime)-Q2*prz*prz;
   
   double discr=sqrt(bbb*bbb-4.*aaa*ccc);
+  if(std::isnan(discr)) discr=0.;  
   double nu1=(-bbb+discr)/(2.*aaa);
   double nu2=(-bbb-discr)/(2.*aaa);
   //cout << nu1 << " " << nu2 << endl;
@@ -360,6 +365,7 @@ void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, d
   double ccc=Q2*Q2/(4.*xprime*xprime)-Q2*prz*prz;
   
   double discr=sqrt(bbb*bbb-4.*aaa*ccc);
+  if(std::isnan(discr)) discr=0.;  
   double nu1=(-bbb+discr)/(2.*aaa);
   double nu2=(-bbb-discr)/(2.*aaa);
   //cout << nu1 << " " << nu2 << endl;
@@ -412,6 +418,7 @@ void DeuteronCross::getDeepsresultLC(double Q2, double W, double Ein, double pr,
   double ccc=Q2*Q2/(4.*xprime*xprime)-Q2*prz*prz;
   
   double discr=sqrt(bbb*bbb-4.*aaa*ccc);
+  if(std::isnan(discr)) discr=0.;  
   double nu1=(-bbb+discr)/(2.*aaa);
   double nu2=(-bbb-discr)/(2.*aaa);
   //cout << nu1 << " " << nu2 << endl;
@@ -472,6 +479,7 @@ void DeuteronCross::getDeepsAzz(double Q2, double W, double Ein, double pr, doub
   double ccc=Q2*Q2/(4.*xprime*xprime)-Q2*prz*prz;
   
   double discr=sqrt(bbb*bbb-4.*aaa*ccc);
+  if(std::isnan(discr)) discr=0.;  
   double nu1=(-bbb+discr)/(2.*aaa);
   double nu2=(-bbb-discr)/(2.*aaa);
   //cout << nu1 << " " << nu2 << endl;
