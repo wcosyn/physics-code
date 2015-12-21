@@ -34,7 +34,7 @@ WIMLIBS =   -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator -lcuba
 ROOT =		`root-config --cflags --glibs` -lMinuit2 `gsl-config --libs --cflags`
  LIBDIRS = -L $(CPATH)/lib
  INCLUDEDIRS =  -I $(CPATH)/Integrator -I $(CPATH)/Tools  -I $(CPATH)/Glauber -I $(CPATH)/DIS -I $(CPATH)/Knockout
-STATICLIBS =  $(CPATH)/lib/libglauber.a   $(CPATH)/lib/libmephys.a  $(CPATH)/lib/libdis.a  $(CPATH)/lib/libknockout.a  $(CPATH)/lib/libintegrator.a
+STATICLIBS =  $(CPATH)/lib/libGlauber.a  $(CPATH)/lib/libDIS.a   $(CPATH)/lib/libMePhys.a $(CPATH)/lib/libKnockout.a  $(CPATH)/lib/libIntegrator.a
 
 #		Header files
 HDRS =		bonusdata.h bonusfits.h bonusfits2.h
@@ -48,5 +48,5 @@ clean:;		@rm -f *.o $(EFILE)
 .SECONDEXPANSION:
 $(EFILE):  $$(@F).cpp $(HDRS); 
 	@echo $(@F).cpp 
-	$(CC) -o $@ $(CFLAGS) $(@F).cpp $(ROOT) $(LIBS) $(WIMLIBS) $(LDFLAGS)  $(LIBDIRS) $(INCLUDEDIRS) 
+	$(CC) -o $@ $(CFLAGS) $(@F).cpp $(LIBS) $(WIMLIBS) $(LDFLAGS)  $(LIBDIRS) $(ROOT)  $(INCLUDEDIRS) 
 

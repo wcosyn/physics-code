@@ -37,12 +37,13 @@ void adap_avg(numint::vector_d &, double Q2, double W, double ps, double costhet
 
 double get_normfit_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc);
 double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int psindex, int offshell, bool lc, bool q2dep);
-double get_normrig(int psindex);
+double get_normrig(int psindex, int beamindex);
 double sigmaparam(double W, double Q2, bool Q2dep);
 
 int main(int argc, char *argv[])
 {
   double Ebeam = data::Ebeam[atoi(argv[1])]; //[0,1]
+  int beamindex=atoi(argv[1]);
   int Qindex = atoi(argv[2]); //[0,2] for 4 GeV, [1,2] for 5 GeV
   int Windex = atoi(argv[3]); //[0,4]
   int pindex = atoi(argv[4]); //[0,3]
@@ -114,9 +115,9 @@ int main(int argc, char *argv[])
     double x=Q2/(2.*massi*nu);
         
         cout << Ebeam << " " << Q2 << " " << Wprime << " " << pr << " " << costhetar << " " << x << " " << xprime << " " 
-            << MCres/get_normrig(pindex) << 
+            << MCres/get_normrig(pindex,beamindex) << 
             " " << modelrespw << " " << modelresfsi << " " 
-            << get_normrig(pindex) 
+            << get_normrig(pindex,beamindex) 
             <<  /*" " << avgcross[0] << " " << avgcross[1] << " " << count <<*/ endl;
     }
   }
@@ -185,7 +186,7 @@ double get_normfit_sigma_deeps_bonus(int beamindex, int Qindex, int Windex, int 
   return 0./0.;
 }
 
-double get_normrig(int psindex){
+double get_normrig(int psindex, int beamindex){
   if(beamindex==0) return bonusfits2::normfitsrig_final_q2dep1_beam4_setCB[psindex];
   else return bonusfits2::normfitsrig_final_q2dep1_beam5_setCB[psindex];
 }

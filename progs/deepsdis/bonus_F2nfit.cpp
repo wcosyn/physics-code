@@ -604,6 +604,9 @@ int main(int argc, char *argv[])
 // }
 
 void get_norm_final(bool q2dep, int beamindex,int psindex, string struc, double & norm, double &errornorm){
+  norm=1.;
+  errornorm=0.;
+  return;
   if(!struc.compare("CB")){
     if(q2dep){
       if(beamindex==0) {
