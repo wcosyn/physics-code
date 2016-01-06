@@ -37,15 +37,18 @@ int offshellset=0;
 string dir;
 double *****deepsdata;
 int looplimit=-1;
+double Qarray[2]={1.8E06,2.8E06};
+double Warray[5]={1.25E03,1.5E03,1.73E03,2.02E03,2.4E03};
+double prarray[5]={300.,340.,390.,460.,560.};
+int dof=0;
+
+
 
 void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 {
 
   f=0.;
-  int dof=0.;
-  double Qarray[2]={1.8E06,2.8E06};
-  double Warray[5]={1.25E03,1.5E03,1.73E03,2.02E03,2.4E03};
-  double prarray[5]={300.,340.,390.,460.,560.};
+  dof=0.;
   bool proton=0;
   double epsilon=-0.5;
   double betaoff=8.;
@@ -72,7 +75,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   }
   // Function to minimize (chi^2)
   //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
-  f/=(dof-npar);
+//   f/=(dof-npar);
 }
 
 
@@ -358,6 +361,19 @@ int main(int argc, char *argv[])
       matrix ( i, j ) = gMinuit->GetCovarianceMatrixElement ( i, j );
 }
 }
+  cout << nFreePars << endl;
+  double eplus[nFreePars],eminus[nFreePars],eparab[nFreePars],globcc[nFreePars], params[nFreePars];
+  for(unsigned int i=0;i<nFreePars;++i){
+    gMinuit->GetErrors(i,eplus[i],eminus[i],eparab[i],globcc[i]);
+    params[i]=gMinuit->GetParameter(i);
+  }
+  cout << "bla" << endl;
+  int n=nFreePars;
+  double f;
+  Fcn(n, &f, f, params, n);
+  cout << Warray[Windex] << " ";
+  for(unsigned int i=0;i<nFreePars;++i) cout << params[i] << " " << eparab[i] << " ";
+  cout << f/(dof-nFreePars) << endl;
   delete gMinuit;
   cout << "\nCleaning up..." << endl;
   DeuteronCross::maint_deepsarray(deepsdata);
