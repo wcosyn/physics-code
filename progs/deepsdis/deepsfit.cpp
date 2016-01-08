@@ -76,6 +76,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   // Function to minimize (chi^2)
   //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
 //   f/=(dof-npar);
+cout << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
 }
 
 
@@ -367,15 +368,16 @@ int main(int argc, char *argv[])
     gMinuit->GetErrors(i,eplus[i],eminus[i],eparab[i],globcc[i]);
     params[i]=gMinuit->GetParameter(i);
   }
+  double paramin[3]={params[0],nFreePars>1?params[1]:8.,-0.5};
   cout << "bla" << endl;
   int n=nFreePars;
   double f;
-  Fcn(n, &f, f, params, n);
+  Fcn(n, &f, f, paramin, n);
   cout << Warray[Windex] << " ";
   for(unsigned int i=0;i<nFreePars;++i) cout << params[i] << " " << eparab[i] << " ";
-  cout << f/(dof-nFreePars) << endl;
+  cout << f/(dof-nFreePars) << " " << f << " " << dof << " " << nFreePars << endl;
   delete gMinuit;
-  cout << "\nCleaning up..." << endl;
+//   cout << "\nCleaning up..." << endl;
   DeuteronCross::maint_deepsarray(deepsdata);
   return 0;
 }
