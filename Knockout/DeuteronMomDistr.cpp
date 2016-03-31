@@ -9,7 +9,7 @@ using namespace std;
 DeuteronMomDistr::DeuteronMomDistr(std::string name, double mass, int offshells, double sigmain, double betain, double epsilonin,
   double betaoffin, double lambdain, int loop_limit):
 wfname(name),
-  sigma(sigmain/10.*INVHBARC*INVHBARC),  //to MeV^-2
+sigma(sigmain/10.*INVHBARC*INVHBARC),  //to MeV^-2
 beta(betain*1.E-06), // to MeV^-2
 epsilon(epsilonin),
 betaoff(betaoffin*1.E-06),// to MeV^-2
@@ -18,13 +18,36 @@ massi(mass),
 massr(massi==MASSP? MASSN:MASSP),
 przprime(-9999.),
 offshellset(offshells),
-looplimit(loop_limit){
+looplimit(loop_limit)
+{
   wfref = TDeuteron::Wavefunction::CreateWavefunction(name);
   for(int i=0;i<=1000;i++){
     wf.AddUp(i,wfref->GetUp(i));
     wf.AddWp(i,wfref->GetWp(i));
   }
-    
+//   double res=0.;
+//   int m=-2;
+//   for(int i=1;i<1000;i++){
+//     double p=i;
+//     for(int j=0;j<=60;j++){
+//       double costh=-1+2./60.*j;
+//       for(int k=0;k<=60;k++){
+//         double phi = 2.*PI/60.*k;
+//         double sinphi,cosphi;
+//         sincos(phi,&sinphi,&cosphi);
+//         TVector3 pmom=TVector3(p*sqrt(1-costh*costh)*cosphi,p*sqrt(1-costh*costh)*sinphi,p*costh);
+//         double temp=0.;
+//         temp+=norm(wf.DeuteronPState(m,-1,-1,pmom));
+//         temp+=norm(wf.DeuteronPState(m,-1,1,pmom));
+//         temp+=norm(wf.DeuteronPState(m,1,-1,pmom));
+//         temp+=norm(wf.DeuteronPState(m,1,1,pmom));
+//         res+=temp*p*p;
+//       }
+//     }
+//   }
+//   cout << res*2./60.*2.*PI/60. << endl;
+//   exit(1);
+//   
 }
 
 //for simple case

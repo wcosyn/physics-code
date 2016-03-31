@@ -32,6 +32,11 @@ extern "C"{
   double f2_ctq_(int *proton, double *x, double *Q2);
 }
 
+//g1N structure parametrization from GRSV ( hep-ph/0011215, grsv2000pdf_g1.f)
+extern "C"{
+  void parpol_(int *iset, double *x, double *q2, double *u, 
+               double *d, double *ub, double *db, double *st, double *gl, double *g1p, double *g1n);
+}
 
 
 NuclStructure::NuclStructure(bool pr, double var1, double var2, int switchvar, string nm="SLAC"):
@@ -348,3 +353,12 @@ label2:
 	return b;
 }
 
+
+double NuclStructure::getG1(){
+  
+  int iset=3;
+  double dummy,g1p,g1n;
+  double q2_ = Q2/1.E06;
+  parpol_(&iset, &x, &q2_, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy, &g1p, &g1n);
+  return (proton? g1p:g1n);
+}

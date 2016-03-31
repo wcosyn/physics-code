@@ -69,7 +69,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   FT=2.*F1+pt*pt/(massi*nutilde)*F2;
   if(std::isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
-  FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
+  FTL=-2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
 //   cout << "VNAstruc " << std::setprecision(9)<< F1 << " " << F2 << " " << kin.GetQsquared() << " " << xoffshell << " " << W_sq << endl;
 //   cout << FL << " " << FT << " " << FTT << " " << FTL << endl;
 //   cout << (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT) << " " << F2*(pow(alphai/alphaq+1/(2.*xtilde),2.)+pt*pt/(2.*kin.GetQsquared()))*2.*xtilde*kin.GetWlab()/massi*(sindelta2+2.*electron.GetTan2HalfAngle(kin)/(1+0.18)) << endl;
@@ -107,7 +107,7 @@ void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, 
   FT=2.*F1+pt*pt/(massi*nutilde)*F2;
   if(std::isnan(FT)) cout << F1 << " " << F2 << " " << pt << " " << piq << " " << kin.GetCosthklab() << endl;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
-  FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
+  FTL=-2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
 //   cout << "VNAstruc " << F1 << " " << F2 << endl;
 //   cout << FL << " " << FT << " " << FTT << " " << FTL << endl;
 //   cout << (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT) << " " << F2*(pow(alphai/alphaq+1/(2.*xtilde),2.)+pt*pt/(2.*kin.GetQsquared()))*2.*xtilde*kin.GetWlab()/massi*(sindelta2+2.*electron.GetTan2HalfAngle(kin)/(1+0.18)) << endl;
@@ -141,7 +141,7 @@ void DeuteronStructure::getStructureFunctions_off (TKinematics2to2 &kin, double 
   FL=pow((alphai+alphaq*piq/kin.GetQsquared())*(1+cosdelta),2.)*kin.GetWlab()/nutilde*F2-kin.GetWlab()/massi*sindelta2*F1;
   FT=2.*F1+pt*pt/(massi*nutilde)*F2;
   FTT=kin.GetWlab()*pt*pt*sindelta2/(nutilde*massi*massi*2.)*F2;
-  FTL=2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
+  FTL=-2.*(1.+cosdelta)*pt*kin.GetWlab()/(massi*nutilde)*(alphai+alphaq*piq/kin.GetQsquared())*F2;
   /*cout << F1 << " " << F2 << endl;
   cout << FL << " " << FT << " " << FTT << " " << FTL << endl;
   cout << (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT) << " " << F2*(pow(alphai/alphaq+1/(2.*xtilde),2.)+pt*pt/(2.*kin.GetQsquared()))*2.*xtilde*kin.GetWlab()/massi*(sindelta2+2.*electron.GetTan2HalfAngle(kin)/(1+0.18)) << endl;

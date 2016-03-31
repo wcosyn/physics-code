@@ -9,6 +9,7 @@ InclusiveCross.hpp
 DeuteronCross.hpp
 Resonance.hpp
 He3Cross.hpp
+Poldeut.hpp
 )
 
 foreach(it ${DIS_HEADERS_HPP})

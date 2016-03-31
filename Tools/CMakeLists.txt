@@ -91,6 +91,7 @@ cteq.f
 spline.f
 clebsch.f
 getwavemod_tm.f
+grsv2000pdf_g1.f
 )
 # MESSAGE("${CMAKE_MODULE_PATH}")
 # foreach(outfile ${MePhys_DICTIONARY}

@@ -137,7 +137,7 @@ public:
   double getF1(); /*!< returns the F1 structure function */
   double getF2(); /*!< returns the F2 structure function */
   const std::string getName() const{return name;} /*!< returns the name of the chosen parametrization */
-  
+  double getG1();
   
 private:
   std::string name; /*!< name of the paramtetrization */
