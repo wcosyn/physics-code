@@ -139,7 +139,7 @@ if(hostname MATCHES ${hpcname})
 #       SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
 
       # Select flags.
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX ")
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX -std=c++11")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
@@ -155,11 +155,13 @@ if(hostname MATCHES ${hpcname})
     endif (CMAKE_COMPILER_IS_GNUCXX)
     if(${CMAKE_CXX_COMPILER} MATCHES "icpc")
       MESSAGE("--- Found Intel compiler collection")
-      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -std=c++11 -shared-intel -fp-model source -unroll -pthread -ipo -xSSE4.1 -axSSE4.1,SSE4.2 -parallel -g -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -std=c++11 -shared-intel -fp-model source -unroll -pthread -ipo -xSSE4.1 -axSSE4.1,SSE4.2 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -std=c++11 -shared-intel -fp-model source -unroll -pthread -ipo -xSSE4.1 -axSSE4.1,SSE4.2 -parallel -g -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX -no-multibyte-chars")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -std=c++11 -shared-intel -fp-model source -unroll -pthread -ipo -xSSE4.1 -axSSE4.1,SSE4.2 -parallel -DMPICH_IGNORE_CXX_SEEK -DMPICH_SKIP_MPICXX -no-multibyte-chars")
       set(CMAKE_CXX_FLAGS_DEBUG          "-g  -std=c++11")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-p -O0 -fno-reorder-blocks -fno-schedule-insns -fno-inline -prof_gen")
+      set(CMAKE_C_FLAGS_RELEASE          "-O3 -no-multibyte-chars")
+
     endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
 
 
