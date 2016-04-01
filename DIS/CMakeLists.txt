@@ -21,7 +21,7 @@ endforeach()
 set(INCLUDE_DIRECTORIES
 ${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/Integrator" 
 "${CMAKE_SOURCE_DIR}/Tools" "${CMAKE_SOURCE_DIR}/Glauber"
-"${CMAKE_SOURCE_DIR}/Knockout")
+"${CMAKE_SOURCE_DIR}/Knockout" "${CMAKE_BINARY_DIR}/Tools") 
 include_directories( ${INCLUDE_DIRECTORIES})
 
 

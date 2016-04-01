@@ -59,6 +59,8 @@
      1          XSF(NX,NQ), XGF(NX,NQ), XG1P(NX,NQ), XG1N(NX,NQ),
      2          PARTON (NPART,NQ,NX-1), QS(NQ), XB(NX), XT(NARG), 
      3          NA(NARG), ARRF(NX+NQ) 
+      CHARACTER FILESLO*128
+      COMMON /GRSVDIR/ FILESLO
       COMMON / INTINI / IINI
       SAVE XUF, XDF, XUBF, XDBF, XSF, XGF, XG1P, XG1N, NA, ARRF
 *...BJORKEN-X AND Q**2 VALUES OF THE GRID :
@@ -106,7 +108,7 @@ C          GOTO 60
        OPEN(UNIT=22,FILE='val2000_nlo_g1.grid',STATUS='OLD')
       ELSE IF (ISET.EQ.3) THEN
        IIREAD=33       
-       OPEN(UNIT=33,FILE='std2000_lo_g1.grid',STATUS='OLD')
+       OPEN(UNIT=33,FILE=FILESLO,STATUS='OLD')
       ELSE IF (ISET.EQ.4) THEN
        IIREAD=44
        OPEN(UNIT=44,FILE='val2000_lo_g1.grid',STATUS='OLD')

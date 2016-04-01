@@ -38,6 +38,19 @@ extern "C"{
                double *d, double *ub, double *db, double *st, double *gl, double *g1p, double *g1n);
 }
 
+extern "C"{
+  extern struct{
+    char fileslo[128];
+  } grsvdir_;
+}
+
+extern "C"{
+  extern struct{
+    int iini=7;
+  } intini_;
+}
+
+
 
 NuclStructure::NuclStructure(bool pr, double var1, double var2, int switchvar, string nm="SLAC"):
 name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR){
@@ -62,6 +75,9 @@ name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR){
       exit(1);
   }
   if(!name.compare("CB")&&(Wsq>9.E06)) name="SLAC";
+  
+  
+  
   return;
 
 }
@@ -354,8 +370,11 @@ label2:
 }
 
 
-double NuclStructure::getG1(){
+double NuclStructure::getG1_grsv2000(bool proton, double x, double Q2){
   
+  strcpy(grsvdir_.fileslo,HOMEDIR);
+  strcat(grsvdir_.fileslo,"/grsv/std2000_lo_g1.grid");
+  if(intini_.iini!=1) intini_.iini=0;
   int iset=3;
   double dummy,g1p,g1n;
   double q2_ = Q2/1.E06;

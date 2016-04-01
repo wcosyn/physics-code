@@ -123,10 +123,7 @@ public:
    * "CTEQ": F2 based on the pdf's from CTEQ (code from Misak, see cteq.f file) <BR>
    */
   NuclStructure(bool proton, double Q2in, double xin, double Wsqin, std::string name);
-  /*! returns F1 and F2 in the alekhin parametrization
-   * \param F1 F1 structure function
-   * \param F2 F2 structure function
-   */
+
   NuclStructure(const NuclStructure&); /*!< Copy Constructor */
   NuclStructure& operator=(const NuclStructure&); /*!< assignment operator */
 
@@ -137,7 +134,14 @@ public:
   double getF1(); /*!< returns the F1 structure function */
   double getF2(); /*!< returns the F2 structure function */
   const std::string getName() const{return name;} /*!< returns the name of the chosen parametrization */
-  double getG1();
+  
+  /*! returns the g1 structure function from the grsv2000 parametrization (leading order,  hep-ph/0011215, Tools/grsv2000pdf_g1.f )
+   * \param proton 1=proton 0=neutron
+   * \param x Bjorken x nucleon
+   * \param Q2 [MeV^2] virtual photon four-momentum sq
+   * \return g1n structure functions
+   */
+  static double getG1_grsv2000(bool proton, double x, double Q2);
   
 private:
   std::string name; /*!< name of the paramtetrization */
@@ -173,6 +177,10 @@ private:
   double bodek(double wm, double qsq) const;
   
   
+  /*! returns F1 and F2 in the alekhin parametrization
+   * \param F1 F1 structure function
+   * \param F2 F2 structure function
+   */
   void getF_Alekhin(double &F1, double &F2);
   double getF1_Alekhin(); /*!< return F1 structure function in the Alekhin parametrization */
   double getF2_Alekhin(); /*!< return F2 structure function in the Alekhin parametrization */

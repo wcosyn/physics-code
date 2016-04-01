@@ -45,7 +45,8 @@ foreach(it ${MePhys_HEADERS_H})
   set(MePhys_SRCS ${MePhys_SRCS} ${bla})
 endforeach()
 
-set(MePhys_HEADERS ${MePhys_HEADERS_H} ${MePhys_HEADERS_HPP} constants.hpp 
+set(MePhys_HEADERS ${MePhys_HEADERS_H} ${MePhys_HEADERS_HPP} 
+# constants.hpp 
 fortran.h
 f77matrx.h
 f77complx.h
@@ -101,9 +102,20 @@ grsv2000pdf_g1.f
 # 
 # include_directories( ${CURRENT_INCLUDE_DIRECTORIES})
 set(INCLUDE_DIRECTORIES
-${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}
+${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
 )
 include_directories( ${INCLUDE_DIRECTORIES})
+
+set(SHARE_DIR "${CMAKE_SOURCE_DIR}/share")
+
+# message(${SHARE_DIR})
+
+configure_file (
+  "${CMAKE_CURRENT_SOURCE_DIR}/constants.hpp.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/constants.hpp"
+  )
+
+
 
 list(LENGTH MePhys_DICTIONARY len1)
 math(EXPR len2 "${len1} - 1")

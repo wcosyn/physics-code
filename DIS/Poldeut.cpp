@@ -56,19 +56,6 @@ Poldeut& Poldeut::operator=(const Poldeut& rhs){
 
 }
 
-void Poldeut::getDensities(double knorm, double thetak, double &rhou, double &rho_l_z, double &rho_l_x){
-
-  double U=getU(knorm);
-  double W=getW(knorm);
-  double Ek=sqrt(MASSn*MASSn+knorm*knorm);
-  double alphai=Ek+knorm*cos(thetak);
-  double factor=Ek/(alphai*alphai*4.*PI);
-  rhou=3.*(U*U+W*W)  * factor;
-  rho_l_z = 2.*(U*U+U*W/(2.*sqrt(2.))*(3.*cos(2.*thetak)+1.)+W*W/4.*(3.*cos(2.*thetak)-1.)) * factor;
-  rho_l_x = 6./4.*(sqrt(2.)*U*U+W*W)*sin(2.*thetak) * factor;
-  
-  return;
-}
 
 void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, double pt, bool proton, double &F_LSL, double &F_U){
   
@@ -102,6 +89,7 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   double knorm = sqrt(kfz*kfz+k_perp*k_perp);
   double thetak = atan2(k_perp,kfz);
   double k_plus = Ek+kfz;
+//   cout << kfz << " " << k_perp << " " << thetak << endl;
   
   double rhou, rho_l_x, rho_l_z;
   getDensities(knorm,thetak,rhou,rho_l_z,rho_l_x);
@@ -113,7 +101,7 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
 //   cout << x_nucl << endl;
   NuclStructure nucl(proton,Q2,x_nucl,0,strucname);
   double F1,F2,g1;
-  g1=nucl.getG1();
+  g1=nucl.getG1_grsv2000(proton,x,Q2);
   nucl.getF(F1,F2);
   double gamma_n = sqrt(Q2)*MASSn/(pi_mu*q_mu);
 //   cout << gamma_n << endl;
@@ -121,16 +109,15 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
 //   cout << F1 << " " << F2 << " " << g1 << " " << gamma_n << endl;
   
   FourVector<double> snz(0.5*(pi_plus+(pi_perp*pi_perp-MASSn*MASSn)/pi_plus),pi_perp,0.,0.5*(pi_plus-(pi_perp*pi_perp-MASSn*MASSn)/pi_plus));
-  snz*=1./double(MASSn);
+  snz*=1./MASSn;
   FourVector<double> snx(pi_perp/pi_plus,1.,0.,-pi_perp/pi_plus);
   
   double factor=MASSD*sqrt(1.+1./gamma_d/gamma_d)-pi_mu*el_mu;
   F_U = (epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))*rhou/3.*4*pow(2.*PI,3.);
   F_LSL = gamma_n*g1*((el_mu*snz)*rho_l_z+(el_mu*snx)*rho_l_x)*4*pow(2.*PI,3.);
 //   cout << rhou << " " << rho_l_x << " " << rho_l_z << endl;
-//   cout << (snz*snz) << " " << snz << endl;
   
-  cout << x << " " << Q2 << " " << x_nucl << " " << alpha_s << " " << pt << " " << psnorm << " " << F_U << " " << F_LSL << " " << F_LSL/F_U << endl;
+  cout << x << " " << Q2 << " " << x_nucl << " " << alpha_s << " " << pt << " " << psnorm << " " << knorm << " " << k_perp << " " << F_U << " " << F_LSL << " " << F_LSL/F_U << endl;
   
   
 }
@@ -140,10 +127,24 @@ void Poldeut::Melosh_rot(double k_perp, double k_plus, double Ek, double &rho_l_
   
   double new_rho_z= (1.-k_perp*k_perp/nom)*rho_l_z +k_perp*(k_plus+MASSn)/nom*rho_l_x;
   double new_rho_x=(1.-k_perp*k_perp/nom)*rho_l_x -k_perp*(k_plus+MASSn)/nom*rho_l_z;
-  
+//   cout << new_rho_z << " " << rho_l_z << " " << new_rho_x << " " << rho_l_x << " " << (1.-k_perp*k_perp/nom) << " " << k_perp*(k_plus+MASSn)/nom << endl;
   rho_l_z=new_rho_z;
   rho_l_x=new_rho_x;
   
   return;
 }
-  
+
+
+void Poldeut::getDensities(double knorm, double thetak, double &rhou, double &rho_l_z, double &rho_l_x){
+
+  double U=getU(knorm);
+  double W=getW(knorm);
+  double Ek=sqrt(MASSn*MASSn+knorm*knorm);
+  double alphai=Ek+knorm*cos(thetak);
+  double factor=Ek/(alphai*alphai*4.*PI);
+  rhou=3.*(U*U+W*W)  * factor;
+  rho_l_z = 2.*(U*U+U*W/(2.*sqrt(2.))*(3.*cos(2.*thetak)+1.)+W*W/4.*(3.*cos(2.*thetak)-1.)) * factor;
+  rho_l_x = 6./4.*(sqrt(2.)*U*W+W*W)*sin(2.*thetak) * factor;
+//   cout << sin(2.*thetak) << endl;
+  return;
+}
