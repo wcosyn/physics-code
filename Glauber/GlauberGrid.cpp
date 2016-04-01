@@ -455,7 +455,7 @@ void GlauberGrid::calcGlauberphasesBoth(const int i, const int j, const int k) {
         }
         else {
           complex < double >results[2] = { 0., 0. };
-          rombergerN(this, &GlauberGrid::intGlauberR, 0., getPnucleus()->getRange(), 2, results, getPrec(), 3, 8, &restimate, level, mm, &thetaestimate, &phiestimate);
+//           rombergerN(this, &GlauberGrid::intGlauberR, 0., getPnucleus()->getRange(), 2, results, getPrec(), 3, 8, &restimate, level, mm, &thetaestimate, &phiestimate);
           fsi_grid[level][mm][i][j][k] = results[0];
           fsi_ct_grid[level][mm][i][j][k] = results[1];
         }
@@ -510,7 +510,7 @@ void GlauberGrid::calcGlauberphasesCt(const int i, const int j, const int k) {
 
         else {
           complex < double >results = 0.;
-          rombergerN(this, &GlauberGrid::intGlauberR, 0., getPnucleus()->getRange(), 1, &results, getPrec(), 3, 8, &restimate, level, mm, &thetaestimate, &phiestimate);
+//           rombergerN(this, &GlauberGrid::intGlauberR, 0., getPnucleus()->getRange(), 1, &results, getPrec(), 3, 8, &restimate, level, mm, &thetaestimate, &phiestimate);
           fsi_ct_grid[level][mm][i][j][k] = results;
         }
       }
@@ -619,105 +619,105 @@ void GlauberGrid::writeoutFsiCtGrid(ofstream & outfile) {
   }
 }
 
-void GlauberGrid::intGlauberR(const double r, complex < double >*results, va_list ap) {
-  int level = va_arg(ap, int);
-  int m = va_arg(ap, int);
-  double *pthetaestimate = va_arg(ap, double *);
-  double *pphiestimate = va_arg(ap, double *);
-  //power(getPnucleus->getWave_F(level,m),2) = F(r)^2, likewise for G
-  rombergerN(this, &GlauberGrid::intGlauberCosTheta, -1., 1., 2, results, getPrec(), 3, 8, pthetaestimate, r, level, m,
-             power(getPnucleus()->getWave_F(level, r), 2), power(getPnucleus()->getWave_G(level, r), 2), pphiestimate);
-}
+// void GlauberGrid::intGlauberR(const double r, complex < double >*results, va_list ap) {
+//   int level = va_arg(ap, int);
+//   int m = va_arg(ap, int);
+//   double *pthetaestimate = va_arg(ap, double *);
+//   double *pphiestimate = va_arg(ap, double *);
+//   //power(getPnucleus->getWave_F(level,m),2) = F(r)^2, likewise for G
+//   rombergerN(this, &GlauberGrid::intGlauberCosTheta, -1., 1., 2, results, getPrec(), 3, 8, pthetaestimate, r, level, m,
+//              power(getPnucleus()->getWave_F(level, r), 2), power(getPnucleus()->getWave_G(level, r), 2), pphiestimate);
+// }
+// 
+// void GlauberGrid::intGlauberCosTheta(const double costheta, complex < double >*results, va_list ap) {
+//   double r = va_arg(ap, double);
+//   int level = va_arg(ap, int);
+//   int m = va_arg(ap, int);
+//   double Fsq = va_arg(ap, double);
+//   double Gsq = va_arg(ap, double);
+//   double *pphiestimate = va_arg(ap, double *);
+// 
+//   double sintheta = sqrt(1. - costheta * costheta);
+//   rombergerN(this, &GlauberGrid::intGlauberPhi, 0., 2. * PI, 2, results, getPrec(), 3, 5, pphiestimate, r, costheta, sintheta, level);
+// 
+//   double temp = (Fsq * getPnucleus()->getYminkappacos(level, m, costheta) + Gsq * getPnucleus()->getYkappacos(level, m, costheta));
+//   results[0] *= temp;
+//   results[1] *= temp;
+// }
 
-void GlauberGrid::intGlauberCosTheta(const double costheta, complex < double >*results, va_list ap) {
-  double r = va_arg(ap, double);
-  int level = va_arg(ap, int);
-  int m = va_arg(ap, int);
-  double Fsq = va_arg(ap, double);
-  double Gsq = va_arg(ap, double);
-  double *pphiestimate = va_arg(ap, double *);
-
-  double sintheta = sqrt(1. - costheta * costheta);
-  rombergerN(this, &GlauberGrid::intGlauberPhi, 0., 2. * PI, 2, results, getPrec(), 3, 5, pphiestimate, r, costheta, sintheta, level);
-
-  double temp = (Fsq * getPnucleus()->getYminkappacos(level, m, costheta) + Gsq * getPnucleus()->getYkappacos(level, m, costheta));
-  results[0] *= temp;
-  results[1] *= temp;
-}
-
-void GlauberGrid::intGlauberPhi(const double phi, complex < double >*results, va_list ap) {
-  double r = va_arg(ap, double);
-  double costheta = va_arg(ap, double);
-  double sintheta = va_arg(ap, double);
-  int level = va_arg(ap, int);
-
-  double cosphi, sinphi;
-  sincos(phi, &sinphi, &cosphi);
-  results[0] = 1.;
-  results[1] = 1.;
-
-  for (size_t it = 0; it < getParticles().size(); it++) {
-    double zmom = getParticles()[it].calcZ(r, costheta, sintheta, cosphi, sinphi);
-    bool check = (zmom > getParticles()[it].getHitz());
-    if (getParticles()[it].getIncoming())
-      check = !check;
-    if (check) {
-      complex < double >temp = getParticles()[it].getScatterfront(level, getPnucleus())
-        * exp(-getParticles()[it].getBdist(r, costheta, sintheta, cosphi, sinphi, zmom)
-              / (2. * getParticles()[it].getBetasq(level, getPnucleus())));
-      results[0] *= 1. - temp;
-      results[1] *= 1. - temp * getParticles()[it].getCTsigma(zmom);
-    }
-  }
-}
-
-void GlauberGrid::intGlauberRCT(const double r, complex < double >*result, va_list ap) {
-  int level = va_arg(ap, int);
-  int m = va_arg(ap, int);
-  double *pthetaestimate = va_arg(ap, double *);
-  double *pphiestimate = va_arg(ap, double *);
-  //power(getPnucleus->getWave_F(level,m),2) = F(r)^2, likewise for G
-  rombergerN(this, &GlauberGrid::intGlauberCosThetaCT, -1., 1., 1, result, getPrec(), 3, 8, pthetaestimate, r, level, m,
-             power(getPnucleus()->getWave_F(level, r), 2), power(getPnucleus()->getWave_G(level, r), 2), pphiestimate);
-}
-
-void GlauberGrid::intGlauberCosThetaCT(const double costheta, complex < double >*result, va_list ap) {
-  double r = va_arg(ap, double);
-  int level = va_arg(ap, int);
-  int m = va_arg(ap, int);
-  double Fsq = va_arg(ap, double);
-  double Gsq = va_arg(ap, double);
-  double *pphiestimate = va_arg(ap, double *);
-
-  double sintheta = sqrt(1. - costheta * costheta);
-  rombergerN(this, &GlauberGrid::intGlauberPhiCT, 0., 2. * PI, 2, result, getPrec(), 3, 5, pphiestimate, r, costheta, sintheta, level);
-
-  double temp = (Fsq * getPnucleus()->getYminkappacos(level, m, costheta) + Gsq * getPnucleus()->getYkappacos(level, m, costheta));
-  *result *= temp;
-}
-
-void GlauberGrid::intGlauberPhiCT(const double phi, complex < double >*result, va_list ap) {
-  double r = va_arg(ap, double);
-  double costheta = va_arg(ap, double);
-  double sintheta = va_arg(ap, double);
-  int level = va_arg(ap, int);
-  double cosphi, sinphi;
-  sincos(phi, &sinphi, &cosphi);
-  *result = 1.;
-
-  for (size_t it = 0; it < getParticles().size(); it++) {
-    double zmom = getParticles()[it].calcZ(r, costheta, sintheta, cosphi, sinphi);
-    bool check = (zmom > getParticles()[it].getHitz());
-    if (getParticles()[it].getIncoming())
-      check = !check;
-    if (check) {
-      *result *= 1. - getParticles()[it].getScatterfront(level, getPnucleus())
-        * exp(-getParticles()[it].getBdist(r, costheta, sintheta, cosphi, sinphi, zmom)
-              / (2. * getParticles()[it].getBetasq(level, getPnucleus())))
-        * getParticles()[it].getCTsigma(zmom);
-    }
-  }
-}
+// void GlauberGrid::intGlauberPhi(const double phi, complex < double >*results, va_list ap) {
+//   double r = va_arg(ap, double);
+//   double costheta = va_arg(ap, double);
+//   double sintheta = va_arg(ap, double);
+//   int level = va_arg(ap, int);
+// 
+//   double cosphi, sinphi;
+//   sincos(phi, &sinphi, &cosphi);
+//   results[0] = 1.;
+//   results[1] = 1.;
+// 
+//   for (size_t it = 0; it < getParticles().size(); it++) {
+//     double zmom = getParticles()[it].calcZ(r, costheta, sintheta, cosphi, sinphi);
+//     bool check = (zmom > getParticles()[it].getHitz());
+//     if (getParticles()[it].getIncoming())
+//       check = !check;
+//     if (check) {
+//       complex < double >temp = getParticles()[it].getScatterfront(level, getPnucleus())
+//         * exp(-getParticles()[it].getBdist(r, costheta, sintheta, cosphi, sinphi, zmom)
+//               / (2. * getParticles()[it].getBetasq(level, getPnucleus())));
+//       results[0] *= 1. - temp;
+//       results[1] *= 1. - temp * getParticles()[it].getCTsigma(zmom);
+//     }
+//   }
+// }
+// 
+// void GlauberGrid::intGlauberRCT(const double r, complex < double >*result, va_list ap) {
+//   int level = va_arg(ap, int);
+//   int m = va_arg(ap, int);
+//   double *pthetaestimate = va_arg(ap, double *);
+//   double *pphiestimate = va_arg(ap, double *);
+//   //power(getPnucleus->getWave_F(level,m),2) = F(r)^2, likewise for G
+//   rombergerN(this, &GlauberGrid::intGlauberCosThetaCT, -1., 1., 1, result, getPrec(), 3, 8, pthetaestimate, r, level, m,
+//              power(getPnucleus()->getWave_F(level, r), 2), power(getPnucleus()->getWave_G(level, r), 2), pphiestimate);
+// }
+// 
+// void GlauberGrid::intGlauberCosThetaCT(const double costheta, complex < double >*result, va_list ap) {
+//   double r = va_arg(ap, double);
+//   int level = va_arg(ap, int);
+//   int m = va_arg(ap, int);
+//   double Fsq = va_arg(ap, double);
+//   double Gsq = va_arg(ap, double);
+//   double *pphiestimate = va_arg(ap, double *);
+// 
+//   double sintheta = sqrt(1. - costheta * costheta);
+//   rombergerN(this, &GlauberGrid::intGlauberPhiCT, 0., 2. * PI, 2, result, getPrec(), 3, 5, pphiestimate, r, costheta, sintheta, level);
+// 
+//   double temp = (Fsq * getPnucleus()->getYminkappacos(level, m, costheta) + Gsq * getPnucleus()->getYkappacos(level, m, costheta));
+//   *result *= temp;
+// }
+// 
+// void GlauberGrid::intGlauberPhiCT(const double phi, complex < double >*result, va_list ap) {
+//   double r = va_arg(ap, double);
+//   double costheta = va_arg(ap, double);
+//   double sintheta = va_arg(ap, double);
+//   int level = va_arg(ap, int);
+//   double cosphi, sinphi;
+//   sincos(phi, &sinphi, &cosphi);
+//   *result = 1.;
+// 
+//   for (size_t it = 0; it < getParticles().size(); it++) {
+//     double zmom = getParticles()[it].calcZ(r, costheta, sintheta, cosphi, sinphi);
+//     bool check = (zmom > getParticles()[it].getHitz());
+//     if (getParticles()[it].getIncoming())
+//       check = !check;
+//     if (check) {
+//       *result *= 1. - getParticles()[it].getScatterfront(level, getPnucleus())
+//         * exp(-getParticles()[it].getBdist(r, costheta, sintheta, cosphi, sinphi, zmom)
+//               / (2. * getParticles()[it].getBetasq(level, getPnucleus())))
+//         * getParticles()[it].getCTsigma(zmom);
+//     }
+//   }
+// }
 
 void GlauberGrid::klaas_one_bound(numint::vector_z & results, double r, double costheta, double phi, GlauberGrid & grid, int level, int m) {
   double sintheta = sqrt(1. - costheta * costheta);

@@ -449,8 +449,8 @@ void GlauberDecayGridThick::calcGlauberphasesBoth(const int i, const int j, cons
       double restimate = 0., thetaestimate = 0., phiestimate = 0.;
       if (getParticles().size() == 1 && getParticles()[0].getCosTheta() == 1.) {
         double results[8] = { 0., 0., 0., 0., 0., 0., 0., 0. };
-        rombergerN(this, &GlauberDecayGridThick::intGlauberb_bound, 1.E-02, getPnucleusthick()->getRange(), 8, results,
-                   getPrec(), 3, 10, &restimate, proton, &thetaestimate, &phiestimate);
+//         rombergerN(this, &GlauberDecayGridThick::intGlauberb_bound, 1.E-02, getPnucleusthick()->getRange(), 8, results,
+//                    getPrec(), 3, 10, &restimate, proton, &thetaestimate, &phiestimate);
         fsi_grid[0][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * results[0];
         fsi_grid[1][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * results[1] * src;
         fsi_grid[2][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * results[2];
@@ -462,7 +462,7 @@ void GlauberDecayGridThick::calcGlauberphasesBoth(const int i, const int j, cons
       }
       else {
         complex < double >results[8] = { 0., 0., 0., 0., 0., 0., 0., 0. };
-        rombergerN(this, &GlauberDecayGridThick::intGlauberR, 0., getPnucleusthick()->getRange(), 8, results, getPrec(), 3, 8, &restimate, proton, &thetaestimate, &phiestimate);
+//         rombergerN(this, &GlauberDecayGridThick::intGlauberR, 0., getPnucleusthick()->getRange(), 8, results, getPrec(), 3, 8, &restimate, proton, &thetaestimate, &phiestimate);
         fsi_grid[0][proton][i][j][k] = results[0];
         fsi_grid[1][proton][i][j][k] = results[1] * src;
         fsi_grid[2][proton][i][j][k] = results[2];
@@ -546,8 +546,8 @@ void GlauberDecayGridThick::calcGlauberphasesCt(const int i, const int j, const 
       double restimate = 0., thetaestimate = 0., phiestimate = 0.;
       if (getParticles().size() == 1 && getParticles()[0].getCosTheta() == 1.) {
         double results[4] = { 0., 0., 0., 0. };
-        rombergerN(this, &GlauberDecayGridThick::intGlauberb_bound_ct, 1.E-02, getPnucleusthick()->getRange(), 6, results,
-                   getPrec(), 3, 8, &restimate, proton, &thetaestimate, &phiestimate);
+//         rombergerN(this, &GlauberDecayGridThick::intGlauberb_bound_ct, 1.E-02, getPnucleusthick()->getRange(), 6, results,
+//                    getPrec(), 3, 8, &restimate, proton, &thetaestimate, &phiestimate);
         fsi_ct_grid[0][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * results[0];
         fsi_ct_grid[1][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * results[1] * src;
         fsi_ct_grid[2][proton][i][j][k] = 1. - getParticles()[0].getScatterfront(proton) * results[2];
@@ -555,7 +555,7 @@ void GlauberDecayGridThick::calcGlauberphasesCt(const int i, const int j, const 
       }
       else {
         complex < double >results[4] = { 0., 0., 0., 0. };
-        rombergerN(this, &GlauberDecayGridThick::intGlauberRCT, 0., getPnucleusthick()->getRange(), 4, results, getPrec(), 3, 8, &restimate, proton, &thetaestimate, &phiestimate);
+//         rombergerN(this, &GlauberDecayGridThick::intGlauberRCT, 0., getPnucleusthick()->getRange(), 4, results, getPrec(), 3, 8, &restimate, proton, &thetaestimate, &phiestimate);
         fsi_ct_grid[0][proton][i][j][k] = results[0];
         fsi_ct_grid[1][proton][i][j][k] = results[1] * src;
         fsi_ct_grid[0][proton][i][j][k] = results[2];
@@ -689,115 +689,115 @@ void GlauberDecayGridThick::writeoutFsiCtGrid(ofstream & outfile) {
   }
 }
 
-void GlauberDecayGridThick::intGlauberR(const double r, complex < double >*results, va_list ap) {
-  int proton = va_arg(ap, int);
-  double *pthetaestimate = va_arg(ap, double *);
-  double *pphiestimate = va_arg(ap, double *);
-
-  getFsiCorrelator().setRinterp(r);
-  rombergerN(this, &GlauberDecayGridThick::intGlauberCosTheta, -1., 1., 8, results, getPrec(), 3, 8, pthetaestimate, r, proton, pphiestimate);
-  double dens = getPnucleusthick()->getDensity(r, proton);
-  for (int i = 0; i < 8; i++)
-    results[i] *= dens;
-}
-
-void GlauberDecayGridThick::intGlauberCosTheta(const double costheta, complex < double >*results, va_list ap) {
-  double r = va_arg(ap, double);
-  int proton = va_arg(ap, int);
-  double *pphiestimate = va_arg(ap, double *);
-
-  double sintheta = sqrt(1. - costheta * costheta);
-  double src = getFsiCorrelator().getCorrGrid_interp(costheta, proton);
-  rombergerN(this, &GlauberDecayGridThick::intGlauberPhi, 0., 2. * PI, 8, results, getPrec(), 3, 5, pphiestimate, r, costheta, sintheta, proton);
-  //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
-  results[1] *= src;
-  results[3] *= src;
-  results[5] *= src;
-  results[7] *= src;
-}
-
-void GlauberDecayGridThick::intGlauberPhi(const double phi, complex < double >*results, va_list ap) {
-  double r = va_arg(ap, double);
-  double costheta = va_arg(ap, double);
-  double sintheta = va_arg(ap, double);
-  int proton = va_arg(ap, int);
-
-  double cosphi, sinphi;
-  sincos(phi, &sinphi, &cosphi);
-  results[0] = results[2] = results[4] = results[6] = 1.;
-
-  for (size_t it = 0; it < getParticles().size(); it++) {
-    double zmom = getParticles()[it].calcZ(r, costheta, sintheta, cosphi, sinphi);
-    bool check = (zmom > getParticles()[it].getHitz());
-    if (getParticles()[it].getIncoming())
-      check = !check;
-    if (check) {
-      complex < double >temp = getParticles()[it].getScatterfront(proton)
-        * exp(-getParticles()[it].getBdist(r, costheta, sintheta, cosphi, sinphi, zmom)
-              / (2. * getParticles()[it].getBetasq(proton)));
-      results[0] *= 1. - temp;
-      results[2] *= 1. - temp * getParticles()[it].getDecay_sigma(zmom, proton);
-      results[4] *= 1. - temp * getParticles()[it].getCTsigma(zmom);
-      results[6] *= 1. - temp * getParticles()[it].getDecay_sigma(zmom, proton) * getParticles()[it].getCTsigma(zmom);
-    }
-  }
-  double gr = getFsiCorrelator().correlation(normr(r, costheta, sintheta, cosphi, sinphi, r_hit, costheta_hit, sintheta_hit, cosphi_hit, sinphi_hit));
-  results[1] = results[0] * gr;
-  results[3] = results[2] * gr;
-  results[5] = results[4] * gr;
-  results[7] = results[6] * gr;
-}
-
-void GlauberDecayGridThick::intGlauberRCT(const double r, complex < double >*results, va_list ap) {
-  int proton = va_arg(ap, int);
-  double *pthetaestimate = va_arg(ap, double *);
-  double *pphiestimate = va_arg(ap, double *);
-  getFsiCorrelator().setRinterp(r);
-  rombergerN(this, &GlauberDecayGridThick::intGlauberCosThetaCT, -1., 1., 4, results, getPrec(), 3, 8, pthetaestimate, r, proton, pphiestimate);
-  double dens = getPnucleusthick()->getDensity(r, proton);
-  for (int i = 0; i < 4; i++)
-    results[i] *= dens;
-}
-
-void GlauberDecayGridThick::intGlauberCosThetaCT(const double costheta, complex < double >*results, va_list ap) {
-  double r = va_arg(ap, double);
-  int proton = va_arg(ap, int);
-  double *pphiestimate = va_arg(ap, double *);
-
-  double sintheta = sqrt(1. - costheta * costheta);
-  double src = getFsiCorrelator().getCorrGrid_interp(costheta, proton);
-  rombergerN(this, &GlauberDecayGridThick::intGlauberPhiCT, 0., 2. * PI, 4, results, getPrec(), 3, 5, pphiestimate, r, costheta, sintheta, proton);
-  results[1] *= src;
-  results[3] *= src;
-}
-
-void GlauberDecayGridThick::intGlauberPhiCT(const double phi, complex < double >*results, va_list ap) {
-  double r = va_arg(ap, double);
-  double costheta = va_arg(ap, double);
-  double sintheta = va_arg(ap, double);
-  int proton = va_arg(ap, int);
-
-  double cosphi, sinphi;
-  sincos(phi, &sinphi, &cosphi);
-  results[0] = results[2] = 1.;
-
-  for (size_t it = 0; it < getParticles().size(); it++) {
-    double zmom = getParticles()[it].calcZ(r, costheta, sintheta, cosphi, sinphi);
-    bool check = (zmom > getParticles()[it].getHitz());
-    if (getParticles()[it].getIncoming())
-      check = !check;
-    if (check) {
-      complex < double >temp = getParticles()[it].getScatterfront(proton)
-        * exp(-getParticles()[it].getBdist(r, costheta, sintheta, cosphi, sinphi, zmom)
-              / (2. * getParticles()[it].getBetasq(proton)));
-      results[0] *= 1. - temp * getParticles()[it].getCTsigma(zmom);
-      results[2] *= 1. - temp * getParticles()[it].getDecay_sigma(zmom, proton) * getParticles()[it].getCTsigma(zmom);
-    }
-  }
-  double gr = getFsiCorrelator().correlation(normr(r, costheta, sintheta, cosphi, sinphi, r_hit, costheta_hit, sintheta_hit, cosphi_hit, sinphi_hit));
-  results[1] = results[0] * gr;
-  results[3] = results[2] * gr;
-}
+// void GlauberDecayGridThick::intGlauberR(const double r, complex < double >*results, va_list ap) {
+//   int proton = va_arg(ap, int);
+//   double *pthetaestimate = va_arg(ap, double *);
+//   double *pphiestimate = va_arg(ap, double *);
+// 
+//   getFsiCorrelator().setRinterp(r);
+// //   rombergerN(this, &GlauberDecayGridThick::intGlauberCosTheta, -1., 1., 8, results, getPrec(), 3, 8, pthetaestimate, r, proton, pphiestimate);
+//   double dens = getPnucleusthick()->getDensity(r, proton);
+//   for (int i = 0; i < 8; i++)
+//     results[i] *= dens;
+// }
+// 
+// void GlauberDecayGridThick::intGlauberCosTheta(const double costheta, complex < double >*results, va_list ap) {
+//   double r = va_arg(ap, double);
+//   int proton = va_arg(ap, int);
+//   double *pphiestimate = va_arg(ap, double *);
+// 
+//   double sintheta = sqrt(1. - costheta * costheta);
+//   double src = getFsiCorrelator().getCorrGrid_interp(costheta, proton);
+//   rombergerN(this, &GlauberDecayGridThick::intGlauberPhi, 0., 2. * PI, 8, results, getPrec(), 3, 5, pphiestimate, r, costheta, sintheta, proton);
+//   //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
+//   results[1] *= src;
+//   results[3] *= src;
+//   results[5] *= src;
+//   results[7] *= src;
+// }
+// 
+// void GlauberDecayGridThick::intGlauberPhi(const double phi, complex < double >*results, va_list ap) {
+//   double r = va_arg(ap, double);
+//   double costheta = va_arg(ap, double);
+//   double sintheta = va_arg(ap, double);
+//   int proton = va_arg(ap, int);
+// 
+//   double cosphi, sinphi;
+//   sincos(phi, &sinphi, &cosphi);
+//   results[0] = results[2] = results[4] = results[6] = 1.;
+// 
+//   for (size_t it = 0; it < getParticles().size(); it++) {
+//     double zmom = getParticles()[it].calcZ(r, costheta, sintheta, cosphi, sinphi);
+//     bool check = (zmom > getParticles()[it].getHitz());
+//     if (getParticles()[it].getIncoming())
+//       check = !check;
+//     if (check) {
+//       complex < double >temp = getParticles()[it].getScatterfront(proton)
+//         * exp(-getParticles()[it].getBdist(r, costheta, sintheta, cosphi, sinphi, zmom)
+//               / (2. * getParticles()[it].getBetasq(proton)));
+//       results[0] *= 1. - temp;
+//       results[2] *= 1. - temp * getParticles()[it].getDecay_sigma(zmom, proton);
+//       results[4] *= 1. - temp * getParticles()[it].getCTsigma(zmom);
+//       results[6] *= 1. - temp * getParticles()[it].getDecay_sigma(zmom, proton) * getParticles()[it].getCTsigma(zmom);
+//     }
+//   }
+//   double gr = getFsiCorrelator().correlation(normr(r, costheta, sintheta, cosphi, sinphi, r_hit, costheta_hit, sintheta_hit, cosphi_hit, sinphi_hit));
+//   results[1] = results[0] * gr;
+//   results[3] = results[2] * gr;
+//   results[5] = results[4] * gr;
+//   results[7] = results[6] * gr;
+// }
+// 
+// void GlauberDecayGridThick::intGlauberRCT(const double r, complex < double >*results, va_list ap) {
+//   int proton = va_arg(ap, int);
+//   double *pthetaestimate = va_arg(ap, double *);
+//   double *pphiestimate = va_arg(ap, double *);
+//   getFsiCorrelator().setRinterp(r);
+//   rombergerN(this, &GlauberDecayGridThick::intGlauberCosThetaCT, -1., 1., 4, results, getPrec(), 3, 8, pthetaestimate, r, proton, pphiestimate);
+//   double dens = getPnucleusthick()->getDensity(r, proton);
+//   for (int i = 0; i < 4; i++)
+//     results[i] *= dens;
+// }
+// 
+// void GlauberDecayGridThick::intGlauberCosThetaCT(const double costheta, complex < double >*results, va_list ap) {
+//   double r = va_arg(ap, double);
+//   int proton = va_arg(ap, int);
+//   double *pphiestimate = va_arg(ap, double *);
+// 
+//   double sintheta = sqrt(1. - costheta * costheta);
+//   double src = getFsiCorrelator().getCorrGrid_interp(costheta, proton);
+//   rombergerN(this, &GlauberDecayGridThick::intGlauberPhiCT, 0., 2. * PI, 4, results, getPrec(), 3, 5, pphiestimate, r, costheta, sintheta, proton);
+//   results[1] *= src;
+//   results[3] *= src;
+// }
+// 
+// void GlauberDecayGridThick::intGlauberPhiCT(const double phi, complex < double >*results, va_list ap) {
+//   double r = va_arg(ap, double);
+//   double costheta = va_arg(ap, double);
+//   double sintheta = va_arg(ap, double);
+//   int proton = va_arg(ap, int);
+// 
+//   double cosphi, sinphi;
+//   sincos(phi, &sinphi, &cosphi);
+//   results[0] = results[2] = 1.;
+// 
+//   for (size_t it = 0; it < getParticles().size(); it++) {
+//     double zmom = getParticles()[it].calcZ(r, costheta, sintheta, cosphi, sinphi);
+//     bool check = (zmom > getParticles()[it].getHitz());
+//     if (getParticles()[it].getIncoming())
+//       check = !check;
+//     if (check) {
+//       complex < double >temp = getParticles()[it].getScatterfront(proton)
+//         * exp(-getParticles()[it].getBdist(r, costheta, sintheta, cosphi, sinphi, zmom)
+//               / (2. * getParticles()[it].getBetasq(proton)));
+//       results[0] *= 1. - temp * getParticles()[it].getCTsigma(zmom);
+//       results[2] *= 1. - temp * getParticles()[it].getDecay_sigma(zmom, proton) * getParticles()[it].getCTsigma(zmom);
+//     }
+//   }
+//   double gr = getFsiCorrelator().correlation(normr(r, costheta, sintheta, cosphi, sinphi, r_hit, costheta_hit, sintheta_hit, cosphi_hit, sinphi_hit));
+//   results[1] = results[0] * gr;
+//   results[3] = results[2] * gr;
+// }
 
 void GlauberDecayGridThick::klaas_int_all(numint::vector_z & results, double r, double costheta, double phi, GlauberDecayGridThick & grid, int proton) {
   double sintheta = sqrt(1. - costheta * costheta);
@@ -922,133 +922,133 @@ void GlauberDecayGridThick::klaas_int_bound_ct(numint::vector_d & results, doubl
   return;
 }
 
-void GlauberDecayGridThick::intGlauberb_bound(const double b, double *results, va_list ap) {
-  int proton = va_arg(ap, int);
-  double *pthetaestimate = va_arg(ap, double *);
-  double *pphiestimate = va_arg(ap, double *);
-  double ceiling = sqrt(getPnucleus()->getRange() * getPnucleus()->getRange() - b * b);
-  double bottom;
-  //because of Heaviside function, bottom limit is z
-  if (getParticles()[0].getHitz() >= -ceiling)
-    bottom = getParticles()[0].getHitz();
-  //if limit because of data range is more limiting
-  else
-    bottom = -ceiling;
-  if (ceiling < bottom) {       //due to rounding errors
-    for (int i = 0; i < 8; i++)
-      results[i] = 0.;
-    return;
-  }
-  rombergerN(this, &GlauberDecayGridThick::intGlauberz_bound, bottom, ceiling, 8, results, getPrec(), 3, 10, pthetaestimate, b, proton, pphiestimate);
-  for (int i = 0; i < 8; i++)
-    results[i] *= b * exp(-(b * b + getParticles()[0].getHitbnorm() * getParticles()[0].getHitbnorm())
-                          / (2. * getParticles()[0].getBetasq(proton)));
-}
-
-void GlauberDecayGridThick::intGlauberz_bound(const double z, double *results, va_list ap) {
-  double b = va_arg(ap, double);
-  int proton = va_arg(ap, int);
-  double *pphiestimate = va_arg(ap, double *);
-  double r = sqrt(b * b + z * z);
-  if (r > getPnucleus()->getRange()) {
-    for (int i = 0; i < 8; i++)
-      results[i] = 0.;
-    return;
-  }
-  double costheta = z / r;
-  double sintheta = b / r;
-  double dens = getPnucleusthick()->getDensity(r, proton) / (r * r);
-  double src = getFsiCorrelator().getCorrGrid_interp(r, costheta, proton);
-  double intresults[2] = { 0., 0. };
-  rombergerN(this, &GlauberDecayGridThick::intGlauberPhi_bound, 0., 2. * PI, 2, results, getPrec(), 3, 10, pphiestimate, b, r, costheta, sintheta, proton);
-  //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
-  double ct = getParticles()[0].getCTsigma(z);
-  double decay = getParticles()[0].getDecay_sigma(z, proton);
-  results[0] = intresults[0];
-  results[1] = intresults[1] * src;
-  results[2] = results[0] * decay;
-  results[3] = results[1] * decay;
-  results[4] = results[0] * ct;
-  results[5] = results[1] * ct;
-  results[6] = results[2] * ct;
-  results[7] = results[3] * ct;
-  for (int i = 0; i < 8; i++)
-    results[i] *= dens;
-}
-
-void GlauberDecayGridThick::intGlauberPhi_bound(const double phi, double *results, va_list ap) {
-  double b = va_arg(ap, double);
-  double r = va_arg(ap, double);
-  double costheta = va_arg(ap, double);
-  double sintheta = va_arg(ap, double);
-  int proton = va_arg(ap, int);
-
-  double cosphi, sinphi;
-  sincos(phi, &sinphi, &cosphi);
-  results[0] = exp(b * getParticles()[0].getHitbnorm() * cosphi / getParticles()[0].getBetasq(proton));
-  results[1] = results[0] * getFsiCorrelator().correlation(normr(r, costheta, sintheta, cosphi, sinphi, r_hit, costheta_hit, sintheta_hit, cosphi_hit, sinphi_hit));
-
-}
-
-void GlauberDecayGridThick::intGlauberb_bound_ct(const double b, double *results, va_list ap) {
-  int proton = va_arg(ap, int);
-  double *pthetaestimate = va_arg(ap, double *);
-  double *pphiestimate = va_arg(ap, double *);
-  double ceiling = sqrt(getPnucleus()->getRange() * getPnucleus()->getRange() - b * b);
-  double bottom;
-  //because of Heaviside function, bottom limit is z
-  if (getParticles()[0].getHitz() >= -ceiling)
-    bottom = getParticles()[0].getHitz();
-  //if limit because of data range is more limiting
-  else
-    bottom = -ceiling;
-  if (ceiling < bottom) {       //due to rounding errors
-    for (int i = 0; i < 4; i++)
-      results[i] = 0.;
-    return;
-  }
-  rombergerN(this, &GlauberDecayGridThick::intGlauberz_bound_ct, bottom, ceiling, 4, results, getPrec(), 3, 8, pthetaestimate, b, proton, pphiestimate);
-  for (int i = 0; i < 4; i++)
-    results[i] *= b * exp(-(b * b + getParticles()[0].getHitbnorm() * getParticles()[0].getHitbnorm())
-                          / (2. * getParticles()[0].getBetasq(proton)));
-}
-
-void GlauberDecayGridThick::intGlauberz_bound_ct(const double z, double *results, va_list ap) {
-  double b = va_arg(ap, double);
-  int proton = va_arg(ap, int);
-  double *pphiestimate = va_arg(ap, double *);
-  double r = sqrt(b * b + z * z);
-  if (r > getPnucleus()->getRange()) {
-    for (int i = 0; i < 4; i++)
-      results[i] = 0.;
-    return;
-  }
-  double costheta = z / r;
-  double sintheta = b / r;
-  double dens = getPnucleusthick()->getDensity(r, proton);
-  double src = getFsiCorrelator().getCorrGrid_interp(r, costheta, proton);
-  double intresults = 0.;
-  rombergerN(this, &GlauberDecayGridThick::intGlauberPhi_bound, 0., 2. * PI, 1, &intresults, getPrec(), 3, 5, pphiestimate, b, r, costheta, sintheta, proton);
-  //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
-  double ct = getParticles()[0].getCTsigma(z);
-  double decay = getParticles()[0].getDecay_sigma(z, proton);
-  results[0] = intresults * ct;
-  results[1] = results[0] * src;
-  results[2] = results[0] * decay;
-  results[3] = results[1] * decay;
-  for (int i = 0; i < 4; i++)
-    results[i] *= dens / (r * r);
-}
-
-void GlauberDecayGridThick::intGlauberPhi_bound_ct(const double phi, double *results, va_list ap) {
-  double b = va_arg(ap, double);
-  double r = va_arg(ap, double);
-  double costheta = va_arg(ap, double);
-  double sintheta = va_arg(ap, double);
-  int proton = va_arg(ap, int);
-  double cosphi, sinphi;
-  sincos(phi, &sinphi, &cosphi);
-  *results = exp(b * getParticles()[0].getHitbnorm() * cosphi / getParticles()[0].getBetasq(proton))
-    * getFsiCorrelator().correlation(normr(r, costheta, sintheta, cosphi, sinphi, r_hit, costheta_hit, sintheta_hit, cosphi_hit, sinphi_hit));
-  results[0] = exp(b * getParticles()[0].getHitbnorm() * cosphi / getParticles()[0].getBetasq(proton));
-}
+// void GlauberDecayGridThick::intGlauberb_bound(const double b, double *results, va_list ap) {
+//   int proton = va_arg(ap, int);
+//   double *pthetaestimate = va_arg(ap, double *);
+//   double *pphiestimate = va_arg(ap, double *);
+//   double ceiling = sqrt(getPnucleus()->getRange() * getPnucleus()->getRange() - b * b);
+//   double bottom;
+//   //because of Heaviside function, bottom limit is z
+//   if (getParticles()[0].getHitz() >= -ceiling)
+//     bottom = getParticles()[0].getHitz();
+//   //if limit because of data range is more limiting
+//   else
+//     bottom = -ceiling;
+//   if (ceiling < bottom) {       //due to rounding errors
+//     for (int i = 0; i < 8; i++)
+//       results[i] = 0.;
+//     return;
+//   }
+//   rombergerN(this, &GlauberDecayGridThick::intGlauberz_bound, bottom, ceiling, 8, results, getPrec(), 3, 10, pthetaestimate, b, proton, pphiestimate);
+//   for (int i = 0; i < 8; i++)
+//     results[i] *= b * exp(-(b * b + getParticles()[0].getHitbnorm() * getParticles()[0].getHitbnorm())
+//                           / (2. * getParticles()[0].getBetasq(proton)));
+// }
+// 
+// void GlauberDecayGridThick::intGlauberz_bound(const double z, double *results, va_list ap) {
+//   double b = va_arg(ap, double);
+//   int proton = va_arg(ap, int);
+//   double *pphiestimate = va_arg(ap, double *);
+//   double r = sqrt(b * b + z * z);
+//   if (r > getPnucleus()->getRange()) {
+//     for (int i = 0; i < 8; i++)
+//       results[i] = 0.;
+//     return;
+//   }
+//   double costheta = z / r;
+//   double sintheta = b / r;
+//   double dens = getPnucleusthick()->getDensity(r, proton) / (r * r);
+//   double src = getFsiCorrelator().getCorrGrid_interp(r, costheta, proton);
+//   double intresults[2] = { 0., 0. };
+//   rombergerN(this, &GlauberDecayGridThick::intGlauberPhi_bound, 0., 2. * PI, 2, results, getPrec(), 3, 10, pphiestimate, b, r, costheta, sintheta, proton);
+//   //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
+//   double ct = getParticles()[0].getCTsigma(z);
+//   double decay = getParticles()[0].getDecay_sigma(z, proton);
+//   results[0] = intresults[0];
+//   results[1] = intresults[1] * src;
+//   results[2] = results[0] * decay;
+//   results[3] = results[1] * decay;
+//   results[4] = results[0] * ct;
+//   results[5] = results[1] * ct;
+//   results[6] = results[2] * ct;
+//   results[7] = results[3] * ct;
+//   for (int i = 0; i < 8; i++)
+//     results[i] *= dens;
+// }
+// 
+// void GlauberDecayGridThick::intGlauberPhi_bound(const double phi, double *results, va_list ap) {
+//   double b = va_arg(ap, double);
+//   double r = va_arg(ap, double);
+//   double costheta = va_arg(ap, double);
+//   double sintheta = va_arg(ap, double);
+//   int proton = va_arg(ap, int);
+// 
+//   double cosphi, sinphi;
+//   sincos(phi, &sinphi, &cosphi);
+//   results[0] = exp(b * getParticles()[0].getHitbnorm() * cosphi / getParticles()[0].getBetasq(proton));
+//   results[1] = results[0] * getFsiCorrelator().correlation(normr(r, costheta, sintheta, cosphi, sinphi, r_hit, costheta_hit, sintheta_hit, cosphi_hit, sinphi_hit));
+// 
+// }
+// 
+// void GlauberDecayGridThick::intGlauberb_bound_ct(const double b, double *results, va_list ap) {
+//   int proton = va_arg(ap, int);
+//   double *pthetaestimate = va_arg(ap, double *);
+//   double *pphiestimate = va_arg(ap, double *);
+//   double ceiling = sqrt(getPnucleus()->getRange() * getPnucleus()->getRange() - b * b);
+//   double bottom;
+//   //because of Heaviside function, bottom limit is z
+//   if (getParticles()[0].getHitz() >= -ceiling)
+//     bottom = getParticles()[0].getHitz();
+//   //if limit because of data range is more limiting
+//   else
+//     bottom = -ceiling;
+//   if (ceiling < bottom) {       //due to rounding errors
+//     for (int i = 0; i < 4; i++)
+//       results[i] = 0.;
+//     return;
+//   }
+//   rombergerN(this, &GlauberDecayGridThick::intGlauberz_bound_ct, bottom, ceiling, 4, results, getPrec(), 3, 8, pthetaestimate, b, proton, pphiestimate);
+//   for (int i = 0; i < 4; i++)
+//     results[i] *= b * exp(-(b * b + getParticles()[0].getHitbnorm() * getParticles()[0].getHitbnorm())
+//                           / (2. * getParticles()[0].getBetasq(proton)));
+// }
+// 
+// void GlauberDecayGridThick::intGlauberz_bound_ct(const double z, double *results, va_list ap) {
+//   double b = va_arg(ap, double);
+//   int proton = va_arg(ap, int);
+//   double *pphiestimate = va_arg(ap, double *);
+//   double r = sqrt(b * b + z * z);
+//   if (r > getPnucleus()->getRange()) {
+//     for (int i = 0; i < 4; i++)
+//       results[i] = 0.;
+//     return;
+//   }
+//   double costheta = z / r;
+//   double sintheta = b / r;
+//   double dens = getPnucleusthick()->getDensity(r, proton);
+//   double src = getFsiCorrelator().getCorrGrid_interp(r, costheta, proton);
+//   double intresults = 0.;
+//   rombergerN(this, &GlauberDecayGridThick::intGlauberPhi_bound, 0., 2. * PI, 1, &intresults, getPrec(), 3, 5, pphiestimate, b, r, costheta, sintheta, proton);
+//   //cout << r << " " << acos(costheta)*RADTODEGR << " " << getFsiCorrelator()->getRindex() << endl;
+//   double ct = getParticles()[0].getCTsigma(z);
+//   double decay = getParticles()[0].getDecay_sigma(z, proton);
+//   results[0] = intresults * ct;
+//   results[1] = results[0] * src;
+//   results[2] = results[0] * decay;
+//   results[3] = results[1] * decay;
+//   for (int i = 0; i < 4; i++)
+//     results[i] *= dens / (r * r);
+// }
+// 
+// void GlauberDecayGridThick::intGlauberPhi_bound_ct(const double phi, double *results, va_list ap) {
+//   double b = va_arg(ap, double);
+//   double r = va_arg(ap, double);
+//   double costheta = va_arg(ap, double);
+//   double sintheta = va_arg(ap, double);
+//   int proton = va_arg(ap, int);
+//   double cosphi, sinphi;
+//   sincos(phi, &sinphi, &cosphi);
+//   *results = exp(b * getParticles()[0].getHitbnorm() * cosphi / getParticles()[0].getBetasq(proton))
+//     * getFsiCorrelator().correlation(normr(r, costheta, sintheta, cosphi, sinphi, r_hit, costheta_hit, sintheta_hit, cosphi_hit, sinphi_hit));
+//   results[0] = exp(b * getParticles()[0].getHitbnorm() * cosphi / getParticles()[0].getBetasq(proton));
+// }
