@@ -551,13 +551,13 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
 	    unsigned count=0;
 	    double deeserror=0.;
 	    if(integrator==0){
-	      complex<double> results[number_of_Grids/2];
-	      double restimate=0.,thestimate=0.,phiestimate=0.;
-	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),number_of_Grids/2,
-			results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
-	      for(int l=0;l<number_of_Grids/2;l++){
-		//cout << results[l] << endl;
-		rhoctgrid[l][i][j][k]+=norm(results[l]);
+// 	      complex<double> results[number_of_Grids/2];
+// 	      double restimate=0.,thestimate=0.,phiestimate=0.;
+// 	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),number_of_Grids/2,
+// 			results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
+// 	      for(int l=0;l<number_of_Grids/2;l++){
+// 		//cout << results[l] << endl;
+// 		rhoctgrid[l][i][j][k]+=norm(results[l]);
 // 	      if(l==0) cout << i << " " << j << " " << k << " " << m << " " << ms << " " << l << " " 
 // 	      << norm(results[l]) << " "<< norm(results[l+number_of_Grids/2]) << endl;
 	      }
