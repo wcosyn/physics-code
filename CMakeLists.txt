@@ -162,7 +162,7 @@ if(hostname MATCHES ${hpcname})
       set(CMAKE_CXX_FLAGS_PROFILE        "-p -O0 -fno-reorder-blocks -fno-schedule-insns -fno-inline -prof_gen")
       set(CMAKE_C_FLAGS_RELEASE          "-O3 -no-multibyte-chars")
 
-    endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
+    endif(${CMAKE_CXX_COMPILER} MATCHES "icpc" )
 
 
   if (Fortran_COMPILER_NAME STREQUAL "gfortran")
