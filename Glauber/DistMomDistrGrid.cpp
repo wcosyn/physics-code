@@ -440,14 +440,14 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	    unsigned count=0;
 	    double deeserror=0.;
 	    if(integrator==0){
-	      complex<double> results[number_of_Grids];
-	      double restimate=0.,thestimate=0.,phiestimate=0.;
-	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),number_of_Grids,
-			results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
-	      for(int l=0;l<number_of_Grids/2;l++){
-		rhogrid[l][i][j][k]+=norm(results[l]);
-		rhoctgrid[l][i][j][k]+=norm(results[l+number_of_Grids/2]);
-	      }
+// 	      complex<double> results[number_of_Grids];
+// 	      double restimate=0.,thestimate=0.,phiestimate=0.;
+// // 	      rombergerN(this,&DistMomDistrGrid::intRhoR,0.,getPfsigrid()->getPnucleus()->getRange(),number_of_Grids,
+// // 			results,getPrec(),3,7,&restimate,m,&thestimate, &phiestimate);
+// 	      for(int l=0;l<number_of_Grids/2;l++){
+// 		rhogrid[l][i][j][k]+=norm(results[l]);
+// 		rhoctgrid[l][i][j][k]+=norm(results[l+number_of_Grids/2]);
+// 	      }
 	    }
 	    else if(integrator==2||integrator==1){
 	      numint::array<double,3> lower = {{0.,-1.,0.}};
@@ -516,8 +516,8 @@ void DistMomDistrGrid::constructpwGrid(){
     p_hit = float(i)/getInvPstep();
     double restimate=0.;
     double result;
-    rombergerN(this,&DistMomDistrGrid::intRhoRpw,0.,getPfsigrid()->getPnucleus()->getRange(),1,
-		       &result,1.E-07,3,10,&restimate);
+//     rombergerN(this,&DistMomDistrGrid::intRhoRpw,0.,getPfsigrid()->getPnucleus()->getRange(),1,
+// 		       &result,1.E-07,3,10,&restimate);
     rhopwgrid[i] = result*result*2.*getMass()/(sqrt(getMass()*getMass()+p_hit*p_hit)+getMass())*
 		    (getPfsigrid()->getPnucleus()->getJ_array()[getShellindex()]+1)/(4.*PI)*(2./PI);  //(2j+1)/(4pi)*(2/pi)
   }
@@ -614,97 +614,97 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
   }
 }
 
-void DistMomDistrGrid::intRhoR(const double r, complex<double> *results, va_list ap){
-  
-  int m = va_arg(ap,int);
-  double *pthetaestimate = va_arg(ap,double*);
-  double *pphiestimate = va_arg(ap,double*);
-  
-  
-  getPfsigrid()->setRinterp(r);
-  rombergerN(this,&DistMomDistrGrid::intRhoCosTheta,-1.,1.,number_of_Grids,
-	     results,getPrec(),3,6,pthetaestimate, m,  r, pphiestimate);
-  for(int i=0;i<number_of_Grids;i++) results[i]*=r;
-  return;
-}
-
-void DistMomDistrGrid::intRhoRCT(const double r, complex<double> *results, va_list ap){
-  
-  int m = va_arg(ap,int);
-  double *pthetaestimate = va_arg(ap,double*);
-  double *pphiestimate = va_arg(ap,double*);
-
-  getPfsigrid()->setRinterp(r);
-  rombergerN(this,&DistMomDistrGrid::intRhoCosThetaCT,-1.,1.,number_of_Grids/2,
-	     results,getPrec(),3,6,pthetaestimate, m,  r, pphiestimate);
-  for(int i=0;i<number_of_Grids/2;i++) results[i]*=r;
-  return;
-}
-
-void DistMomDistrGrid::intRhoRpw(const double r, double *result, va_list ap){
-  
-  *result= r*getPfsigrid()->getPnucleus()->getWave_G(getShellindex(),r)
-	*gsl_sf_bessel_jl(getPfsigrid()->getPnucleus()->getL_array()[getShellindex()],p_hit*r*INVHBARC);
-}
-void DistMomDistrGrid::intRhoCosTheta(const double costheta, complex<double> *results, va_list ap){
-  
-  int m = va_arg(ap,int);
-  double r = va_arg(ap,double);
-  double *pphiestimate = va_arg(ap,double*);
-  double sintheta=sqrt(1.-costheta*costheta);
-  getPfsigrid()->setCthinterp(costheta);
-  rombergerN(this,&DistMomDistrGrid::intRhoPhi,0.,2.*PI,number_of_Grids,
-	     results,getPrec(),3,6,pphiestimate, m, r, costheta, sintheta);
-  return;
-}
-
-void DistMomDistrGrid::intRhoCosThetaCT(const double costheta, complex<double> *results, va_list ap){
-  
-  int m = va_arg(ap,int);
-  double r = va_arg(ap,double);
-  double *pphiestimate = va_arg(ap,double*);
-  double sintheta=sqrt(1.-costheta*costheta);
-  getPfsigrid()->setCthinterp(costheta);
-  rombergerN(this,&DistMomDistrGrid::intRhoPhiCT,0.,2.*PI,number_of_Grids/2,
-	     results,getPrec(),3,6,pphiestimate, m, r, costheta, sintheta);
-  return;
-}
-
-
-void DistMomDistrGrid::intRhoPhi(const double phi, complex<double> *results, va_list ap){
-
-  int m = va_arg(ap,int);
-  double r = va_arg(ap,double);
-  double costheta = va_arg(ap,double);
-  double sintheta = va_arg(ap,double);
-  double cosphi,sinphi;
-  sincos(phi,&sinphi,&cosphi);
-  
-  TMFSpinor wave(*getPfsigrid()->getPnucleus(),getShellindex(),m,r,costheta,phi);
-  complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
-			  *(Upm_bar*wave);  
-
-  for(int i=0;i<number_of_Grids;i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i,phi);
-  return;
-}
-
-void DistMomDistrGrid::intRhoPhiCT(const double phi, complex<double> *results, va_list ap){
-
-  int m = va_arg(ap,int);
-  double r = va_arg(ap,double);
-  double costheta = va_arg(ap,double);
-  double sintheta = va_arg(ap,double);
-  double cosphi,sinphi;
-  sincos(phi,&sinphi,&cosphi);
-  TMFSpinor wave(*getPfsigrid()->getPnucleus(),getShellindex(),m,r,costheta,phi);
-  
-  
-  complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
-			  *(Upm_bar*wave);  
-
-  for(int i=0;i<number_of_Grids/2;i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i+number_of_Grids/2,phi);
-  return;
-}
+// void DistMomDistrGrid::intRhoR(const double r, complex<double> *results, va_list ap){
+//   
+//   int m = va_arg(ap,int);
+//   double *pthetaestimate = va_arg(ap,double*);
+//   double *pphiestimate = va_arg(ap,double*);
+//   
+//   
+//   getPfsigrid()->setRinterp(r);
+//   rombergerN(this,&DistMomDistrGrid::intRhoCosTheta,-1.,1.,number_of_Grids,
+// 	     results,getPrec(),3,6,pthetaestimate, m,  r, pphiestimate);
+//   for(int i=0;i<number_of_Grids;i++) results[i]*=r;
+//   return;
+// }
+// 
+// void DistMomDistrGrid::intRhoRCT(const double r, complex<double> *results, va_list ap){
+//   
+//   int m = va_arg(ap,int);
+//   double *pthetaestimate = va_arg(ap,double*);
+//   double *pphiestimate = va_arg(ap,double*);
+// 
+//   getPfsigrid()->setRinterp(r);
+//   rombergerN(this,&DistMomDistrGrid::intRhoCosThetaCT,-1.,1.,number_of_Grids/2,
+// 	     results,getPrec(),3,6,pthetaestimate, m,  r, pphiestimate);
+//   for(int i=0;i<number_of_Grids/2;i++) results[i]*=r;
+//   return;
+// }
+// 
+// void DistMomDistrGrid::intRhoRpw(const double r, double *result, va_list ap){
+//   
+//   *result= r*getPfsigrid()->getPnucleus()->getWave_G(getShellindex(),r)
+// 	*gsl_sf_bessel_jl(getPfsigrid()->getPnucleus()->getL_array()[getShellindex()],p_hit*r*INVHBARC);
+// }
+// void DistMomDistrGrid::intRhoCosTheta(const double costheta, complex<double> *results, va_list ap){
+//   
+//   int m = va_arg(ap,int);
+//   double r = va_arg(ap,double);
+//   double *pphiestimate = va_arg(ap,double*);
+//   double sintheta=sqrt(1.-costheta*costheta);
+//   getPfsigrid()->setCthinterp(costheta);
+//   rombergerN(this,&DistMomDistrGrid::intRhoPhi,0.,2.*PI,number_of_Grids,
+// 	     results,getPrec(),3,6,pphiestimate, m, r, costheta, sintheta);
+//   return;
+// }
+// 
+// void DistMomDistrGrid::intRhoCosThetaCT(const double costheta, complex<double> *results, va_list ap){
+//   
+//   int m = va_arg(ap,int);
+//   double r = va_arg(ap,double);
+//   double *pphiestimate = va_arg(ap,double*);
+//   double sintheta=sqrt(1.-costheta*costheta);
+//   getPfsigrid()->setCthinterp(costheta);
+//   rombergerN(this,&DistMomDistrGrid::intRhoPhiCT,0.,2.*PI,number_of_Grids/2,
+// 	     results,getPrec(),3,6,pphiestimate, m, r, costheta, sintheta);
+//   return;
+// }
+// 
+// 
+// void DistMomDistrGrid::intRhoPhi(const double phi, complex<double> *results, va_list ap){
+// 
+//   int m = va_arg(ap,int);
+//   double r = va_arg(ap,double);
+//   double costheta = va_arg(ap,double);
+//   double sintheta = va_arg(ap,double);
+//   double cosphi,sinphi;
+//   sincos(phi,&sinphi,&cosphi);
+//   
+//   TMFSpinor wave(*getPfsigrid()->getPnucleus(),getShellindex(),m,r,costheta,phi);
+//   complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
+// 			  *(Upm_bar*wave);  
+// 
+//   for(int i=0;i<number_of_Grids;i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i,phi);
+//   return;
+// }
+// 
+// void DistMomDistrGrid::intRhoPhiCT(const double phi, complex<double> *results, va_list ap){
+// 
+//   int m = va_arg(ap,int);
+//   double r = va_arg(ap,double);
+//   double costheta = va_arg(ap,double);
+//   double sintheta = va_arg(ap,double);
+//   double cosphi,sinphi;
+//   sincos(phi,&sinphi,&cosphi);
+//   TMFSpinor wave(*getPfsigrid()->getPnucleus(),getShellindex(),m,r,costheta,phi);
+//   
+//   
+//   complex<double> exp_pr=exp(-INVHBARC*pvec_hit*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT)
+// 			  *(Upm_bar*wave);  
+// 
+//   for(int i=0;i<number_of_Grids/2;i++) results[i]=exp_pr*getPfsigrid()->getFsiGridN_interp1(i+number_of_Grids/2,phi);
+//   return;
+// }
 
 
 void DistMomDistrGrid::fillGrids(TRotation & rot){
