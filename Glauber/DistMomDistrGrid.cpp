@@ -560,7 +560,7 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
 // 		rhoctgrid[l][i][j][k]+=norm(results[l]);
 // 	      if(l==0) cout << i << " " << j << " " << k << " " << m << " " << ms << " " << l << " " 
 // 	      << norm(results[l]) << " "<< norm(results[l+number_of_Grids/2]) << endl;
-	      }
+// 	      }
 	    }
 	    else if(integrator==2||integrator==1){
 	      numint::array<double,3> lower = {{0.,-1.,0.}};
