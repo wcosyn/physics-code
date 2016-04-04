@@ -522,12 +522,12 @@ void WeakQEHadronCurrent::klaas_all_amp_medium(numint::vector_z & results, doubl
   results[6*total]= exp_pr*(spinup*Jcontrplus*wave);
   results[7*total]= exp_pr*(spinup*Jcontrz*wave);
   for(int k=0;k<8;++k) for(int i=1;i<total; ++i) results[k*total+i] = results[k*total];
-  complex<double> glauberphase[total-1];
+//   complex<double> glauberphase[total-1];
 //   vector<complex<double> >phases(4,0.);
 //   dynamic_cast<GlauberGridThick *>(model.getGrid())->getFsiphaseAll(phases,r,costheta,phi);
   for(int i=0;i<(total-1);++i){
-    glauberphase[i]=model.getGrid()->getFsiGridN_interp3(i,r,costheta,phi);
-    for(int k=0;k<8;++k) results[k*total+i]*=glauberphase[i];
+    complex<double> glauberphase=model.getGrid()->getFsiGridN_interp3(i,r,costheta,phi);
+    for(int k=0;k<8;++k) results[k*total+i]*=glauberphase;
 //     for(int k=0;k<6;++k) results[k*total+i]*=phases[i];
   }
   return; 
