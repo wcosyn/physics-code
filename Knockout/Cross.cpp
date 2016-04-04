@@ -175,6 +175,8 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
 void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
 			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab){
   
+
+
   //electron kinematics
   double Q2=kin.GetQsquared();
   double qvec=kin.GetKlab();
@@ -292,11 +294,17 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
   
   //traces of density matrices with pauli matrices (+ unit matrix) are building blocks of all observables
   //see f.i. Jeschonnek PHYSICAL REVIEW C 81, 014008 (2010) Eqs (26) etc.
-  complex<double> responsespin[total_grid][6][4];
+  complex<double> ***responsespin=new complex<double> **[total_grid];
+  for(int i=0;i<total_grid;++i){
+    responsespin[i] = new complex<double>*[6];
+    for(int j=0;j<6;++j) responsespin[i][j] = new complex<double>[4];
+  }
+
   for(int i=0;i<total_grid;++i) 
     for(int j=0;j<6;++j) 
       for(int k=0;k<4;++k) responsespin[i][j][k] = Trace(responsematrix[i][j]*TSpinor::kSigmaPauli[k]);
       
+
   for(int i=0;i<total_grid;i++){
     obs[8*i] = real(kinfactors[0]*responsespin[i][0][0]+kinfactors[1]*responsespin[i][1][0])+
 		   2.*kinfactors[2]*real(responsespin[i][2][0])*cos(2.*phi)
@@ -320,6 +328,13 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
 //   for(int j=0;j<total_grid;j++) cross[j]=2.*(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
 // 		    +kinfactors[2]*response[j][2]*cos(2.*phi)+kinfactors[3]*response[j][3]*cos(phi))*mott*frontfactor/HBARC;
   delete reacmodel;
+  for(int i=0;i<total_grid;++i){
+    responsespin[i] = new complex<double>*[6];
+    for(int j=0;j<6;++j) delete [] responsespin[i][j];
+    delete [] responsespin[i];
+  }
+  delete [] responsespin;
+
 }
 
 void  Cross::getAllObs_xyz(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
