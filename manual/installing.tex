@@ -30,9 +30,13 @@ with \texttt{icpc} and \texttt{gcc} with \texttt{icc}.  Other build types than
 \texttt{Release} include \texttt{Debug, Profile} (there's more, see the 
 \texttt{CMakeLists.txt} file in the main dir for those if you want to use 
 them). 
-Note that currently \texttt{CMake} version 2.8.10 is required. This is not yet a 
-standard module on the UGent HPC so don't forget to do \texttt{\$> module load 
-CMake/2.8.10} when you want to build the Code.  If your hostname is not one of 
+Note that currently \texttt{CMake} version 2.8.10 is required.  If you want to 
+have static libraries built (the default is only dynamic ones), you can add 
+\texttt{-DSTATIC\_BUILD=yes} to the first commandline.
+% This is not yet a 
+% standard module on the UGent HPC so don't forget to do \texttt{\$> module load 
+% CMake/2.8.10} when you want to build the Code.  
+If your hostname is not one of 
 the predefined ones (Wim's pc \& laptop, the HPC of UGent) you will end up 
 using the default compiler flags, which should be fine in most cases.  In case 
 you want to add your custom compiler flags, you can add an extra case in the 

@@ -47,11 +47,15 @@ SET(Knockout_LIBRARY_PROPERTIES ${Knockout_LIBRARY_PROPERTIES}
 add_library(Knockout SHARED ${Knockout_SRCS})
 target_link_libraries(Knockout ${LIBRARIES} MePhys Glauber Integrator)
 set_target_properties(Knockout PROPERTIES ${Knockout_LIBRARY_PROPERTIES})
-############### build the library #####################
-# add_library(KnockoutST STATIC ${Knockout_SRCS})
-# target_link_libraries(KnockoutST -Wl,-no-whole-archive)
-# set_target_properties(KnockoutST PROPERTIES OUTPUT_NAME Knockout)
-
 ############### install the library ###################
 install(TARGETS Knockout DESTINATION "${CMAKE_SOURCE_DIR}/lib")
-# install(TARGETS KnockoutST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+
+
+############### build the library #####################
+if(STATIC_BUILD)
+  add_library(KnockoutST STATIC ${Knockout_SRCS})
+  target_link_libraries(KnockoutST -Wl,-no-whole-archive)
+  set_target_properties(KnockoutST PROPERTIES OUTPUT_NAME Knockout)
+  install(TARGETS KnockoutST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+endif(STATIC_BUILD)
+

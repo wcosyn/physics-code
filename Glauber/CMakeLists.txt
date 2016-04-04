@@ -98,12 +98,16 @@ SET(Glauber_LIBRARY_PROPERTIES ${Glauber_LIBRARY_PROPERTIES}
 ############### build the library #####################
 add_library(Glauber SHARED ${Glauber_SRCS_LI})
 target_link_libraries(Glauber ${LIBRARIES} MePhys Integrator)
- set_target_properties(Glauber PROPERTIES ${Glauber_LIBRARY_PROPERTIES})
-############## build the library #####################
-add_library(GlauberST STATIC ${Glauber_SRCS_LI})
-target_link_libraries(GlauberST -Wl,-no-whole-archive)
-set_target_properties(GlauberST PROPERTIES OUTPUT_NAME Glauber)
-
+set_target_properties(Glauber PROPERTIES ${Glauber_LIBRARY_PROPERTIES})
 ############### install the library ###################
 install(TARGETS Glauber DESTINATION "${CMAKE_SOURCE_DIR}/lib")
-install(TARGETS GlauberST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+
+ 
+############## build the library #####################
+if(STATIC_BUILD)
+  add_library(GlauberST STATIC ${Glauber_SRCS_LI})
+  target_link_libraries(GlauberST -Wl,-no-whole-archive)
+  set_target_properties(GlauberST PROPERTIES OUTPUT_NAME Glauber)
+  install(TARGETS GlauberST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+endif(STATIC_BUILD)
+

@@ -44,11 +44,14 @@ add_library(DIS SHARED ${DIS_SRCS})
 target_link_libraries(DIS ${LIBRARIES} MePhys Knockout
 Integrator)
 set_target_properties(DIS PROPERTIES ${DIS_LIBRARY_PROPERTIES})
-############### build the library #####################
-add_library(DISST STATIC ${DIS_SRCS})
-target_link_libraries(DISST -Wl,-no-whole-archive)
-set_target_properties(DISST PROPERTIES OUTPUT_NAME DIS)
-
 ############### install the library ###################
 install(TARGETS DIS DESTINATION "${CMAKE_SOURCE_DIR}/lib")
-install(TARGETS DISST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+
+############### build the library #####################
+if(STATIC_BUILD)
+  add_library(DISST STATIC ${DIS_SRCS})
+  target_link_libraries(DISST -Wl,-no-whole-archive)
+  set_target_properties(DISST PROPERTIES OUTPUT_NAME DIS)
+  install(TARGETS DISST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+endif(STATIC_BUILD)
+
