@@ -205,20 +205,20 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   int res=90;
   unsigned count=0;
   if(integrator==0){
-    complex<double> results[12];
-    double restimate=0.,thestimate=0.,phiestimate=0.;
-    rombergerN(this,&Model::intJR12,0.,pnucl->getRange(),12,results,getPrec(),3,8,&restimate,pw,SRC,&thestimate, &phiestimate);
-    //if(!pw) delete grid;
-    if(CT){
-      for(int j=0;j<2;++j){
-	for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i+1];
-      }
-    }
-    else{
-      for(int j=0;j<2;++j){
-	for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i];
-      }
-    }
+//     complex<double> results[12];
+//     double restimate=0.,thestimate=0.,phiestimate=0.;
+//     rombergerN(this,&Model::intJR12,0.,pnucl->getRange(),12,results,getPrec(),3,8,&restimate,pw,SRC,&thestimate, &phiestimate);
+//     //if(!pw) delete grid;
+//     if(CT){
+//       for(int j=0;j<2;++j){
+// 	for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i+1];
+//       }
+//     }
+//     else{
+//       for(int j=0;j<2;++j){
+// 	for(int i=0;i<3;i++) matrixel(j,i)=results[j*6+2*i];
+//       }
+//     }
   }
   else if(integrator==1||integrator==2){
 
@@ -305,17 +305,14 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
       else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
       int res=90;
       unsigned count=0;
-//       int total=thick?5:3; //in thickness we need 5 diff FSI results, otherwise 3
-      int total =-1;
-      if (thick) total=5; 
-      else total =3;
+      int total=thick?5:3; //in thickness we need 5 diff FSI results, otherwise 3
       if(integrator==0){
-	complex<double> results[total];
-	double restimate=0.,thestimate=0.,phiestimate=0.;
-	rombergerN(this,&Model::intJR,0.,pnucl->getRange(),total,results,getPrec(),3,8,
-		   &restimate,total,&thestimate, &phiestimate);
-	for(int k=0;k<total;++k) matrixel[k](spinout,photopol) = results[k];
-	
+// 	complex<double> results[total];
+// 	double restimate=0.,thestimate=0.,phiestimate=0.;
+// 	rombergerN(this,&Model::intJR,0.,pnucl->getRange(),total,results,getPrec(),3,8,
+// 		   &restimate,total,&thestimate, &phiestimate);
+// 	for(int k=0;k<total;++k) matrixel[k](spinout,photopol) = results[k];
+// 	
       }
       else if(integrator==1||integrator==2){
 
@@ -512,108 +509,108 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
 }
 
 
-void Model::intJR(const double r, complex<double> *results, va_list ap){
-  
-  int total = va_arg(ap,int);
-  double *pthetaestimate = va_arg(ap,double*);
-  double *pphiestimate = va_arg(ap,double*);
-
-  gridthick.setRinterp(r);
-  rombergerN(this,&Model::intJCosTheta,-1.,1.,total,results,getPrec(),3,8,pthetaestimate, r, total, pphiestimate);
-  //MFSpinor already contains a *r!!!
-  for(int i=0;i<5;++i) results[i]*=r;
-  return;
-}
-void Model::intJR12(const double r, complex<double> *results, va_list ap){
-  
-  int pw = va_arg(ap,int);
-  int SRC = va_arg(ap,int);
-  double *pthetaestimate = va_arg(ap,double*);
-  double *pphiestimate = va_arg(ap,double*);
-
-  if(!pw) grid->setRinterp(r);
-  rombergerN(this,&Model::intJCosTheta12,-1.,1.,12,results,getPrec(),3,8,pthetaestimate, pw, SRC, r, pphiestimate);
-  //MFSpinor already contains a *r!!!
-  for(int i=0;i<12;i++) results[i]*=r;
-  return;
-}
-
-void Model::intJCosTheta(const double costheta, complex<double> *results, va_list ap){
-  
-  double r = va_arg(ap,double);
-  int total = va_arg(ap,int);
-  double *pphiestimate = va_arg(ap,double*);
-  double sintheta=sqrt(1.-costheta*costheta);
-  gridthick.setCthinterp(costheta);
-  rombergerN(this,&Model::intJPhi,0.,2.*PI,total,results,getPrec(),3,8,pphiestimate, r, costheta, sintheta, total);
-  return;
-}
-void Model::intJCosTheta12(const double costheta, complex<double> *results, va_list ap){
-  
-  int pw = va_arg(ap,int);
-  int SRC = va_arg(ap,int);
-  double r = va_arg(ap,double);
-  double *pphiestimate = va_arg(ap,double*);
-  double sintheta=sqrt(1.-costheta*costheta);
-  if(!pw) grid->setCthinterp(costheta);
-  rombergerN(this,&Model::intJPhi12,0.,2.*PI,12,results,getPrec(),3,8,pphiestimate, pw, SRC, r, costheta, sintheta);
-  return;
-}
-
-void Model::intJPhi(const double phi, complex<double> *results, va_list ap){
-
-  double r = va_arg(ap,double);
-  double costheta = va_arg(ap,double);
-  double sintheta = va_arg(ap,double);
-  int total = va_arg(ap,int);
-  double cosphi,sinphi;
-  sincos(phi,&sinphi,&cosphi);
-  
-  results[total-1]= barcontract*TMFSpinor(*pnucl,shell,mm,r,costheta,phi)*
-    exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT);
-  for(int i=0;i<total-1;++i) results[i]=results[total-1]*gridthick.getFsiGridN_interp1(i,phi);
-  
-  return;
-}
-
-void Model::intJPhi12(const double phi, complex<double> *results, va_list ap){
-
-  int pw = va_arg(ap,int);
-  int SRC = va_arg(ap,int);
-  double r = va_arg(ap,double);
-  double costheta = va_arg(ap,double);
-  double sintheta = va_arg(ap,double);
-  double cosphi,sinphi;
-  sincos(phi,&sinphi,&cosphi);
-  TMFSpinor wave(*pnucl,shell,mm,r,costheta,phi);
-  complex<double> exp_pr=exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT);
-  results[1]=results[0]= barcontract0down*wave*exp_pr;
-  results[2]=results[3]= barcontractmindown*wave*exp_pr;
-  results[4]=results[5]= barcontractplusdown*wave*exp_pr;
-  results[6]=results[7]= barcontract0up*wave*exp_pr;
-  results[8]=results[9]= barcontractminup*wave*exp_pr;
-  results[10]=results[11]= barcontractplusup*wave*exp_pr;
-  if(!pw){
-    if(SRC){
-      complex<double> src=dynamic_cast<AbstractFsiGridThick *>(grid)->getFsiSrcGridFull_interp1(phi);
-      complex<double> srcct=dynamic_cast<AbstractFsiCTGridThick *>(grid)->getFsiSrcCtGridFull_interp1(phi);
-      for(int i=0;i<6;i++){
-	results[2*i]*=src;
-	results[2*i+1]*=srcct;
-      }      
-    }
-    else{
-      complex<double> fsi=grid->getFsiGridFull_interp1(phi);
-      complex<double> fsict=grid->getFsiCtGridFull_interp1(phi);
-      for(int i=0;i<6;i++){
-	results[2*i]*=fsi;
-	results[2*i+1]*=fsict;
-      }      
-    }
-  }
-  return;
-}
-
+// void Model::intJR(const double r, complex<double> *results, va_list ap){
+//   
+//   int total = va_arg(ap,int);
+//   double *pthetaestimate = va_arg(ap,double*);
+//   double *pphiestimate = va_arg(ap,double*);
+// 
+//   gridthick.setRinterp(r);
+//   rombergerN(this,&Model::intJCosTheta,-1.,1.,total,results,getPrec(),3,8,pthetaestimate, r, total, pphiestimate);
+//   //MFSpinor already contains a *r!!!
+//   for(int i=0;i<5;++i) results[i]*=r;
+//   return;
+// }
+// void Model::intJR12(const double r, complex<double> *results, va_list ap){
+//   
+//   int pw = va_arg(ap,int);
+//   int SRC = va_arg(ap,int);
+//   double *pthetaestimate = va_arg(ap,double*);
+//   double *pphiestimate = va_arg(ap,double*);
+// 
+//   if(!pw) grid->setRinterp(r);
+//   rombergerN(this,&Model::intJCosTheta12,-1.,1.,12,results,getPrec(),3,8,pthetaestimate, pw, SRC, r, pphiestimate);
+//   //MFSpinor already contains a *r!!!
+//   for(int i=0;i<12;i++) results[i]*=r;
+//   return;
+// }
+// 
+// void Model::intJCosTheta(const double costheta, complex<double> *results, va_list ap){
+//   
+//   double r = va_arg(ap,double);
+//   int total = va_arg(ap,int);
+//   double *pphiestimate = va_arg(ap,double*);
+//   double sintheta=sqrt(1.-costheta*costheta);
+//   gridthick.setCthinterp(costheta);
+//   rombergerN(this,&Model::intJPhi,0.,2.*PI,total,results,getPrec(),3,8,pphiestimate, r, costheta, sintheta, total);
+//   return;
+// }
+// void Model::intJCosTheta12(const double costheta, complex<double> *results, va_list ap){
+//   
+//   int pw = va_arg(ap,int);
+//   int SRC = va_arg(ap,int);
+//   double r = va_arg(ap,double);
+//   double *pphiestimate = va_arg(ap,double*);
+//   double sintheta=sqrt(1.-costheta*costheta);
+//   if(!pw) grid->setCthinterp(costheta);
+//   rombergerN(this,&Model::intJPhi12,0.,2.*PI,12,results,getPrec(),3,8,pphiestimate, pw, SRC, r, costheta, sintheta);
+//   return;
+// }
+// 
+// void Model::intJPhi(const double phi, complex<double> *results, va_list ap){
+// 
+//   double r = va_arg(ap,double);
+//   double costheta = va_arg(ap,double);
+//   double sintheta = va_arg(ap,double);
+//   int total = va_arg(ap,int);
+//   double cosphi,sinphi;
+//   sincos(phi,&sinphi,&cosphi);
+//   
+//   results[total-1]= barcontract*TMFSpinor(*pnucl,shell,mm,r,costheta,phi)*
+//     exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT);
+//   for(int i=0;i<total-1;++i) results[i]=results[total-1]*gridthick.getFsiGridN_interp1(i,phi);
+//   
+//   return;
+// }
+// 
+// void Model::intJPhi12(const double phi, complex<double> *results, va_list ap){
+// 
+//   int pw = va_arg(ap,int);
+//   int SRC = va_arg(ap,int);
+//   double r = va_arg(ap,double);
+//   double costheta = va_arg(ap,double);
+//   double sintheta = va_arg(ap,double);
+//   double cosphi,sinphi;
+//   sincos(phi,&sinphi,&cosphi);
+//   TMFSpinor wave(*pnucl,shell,mm,r,costheta,phi);
+//   complex<double> exp_pr=exp(-INVHBARC*pm*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)*I_UNIT);
+//   results[1]=results[0]= barcontract0down*wave*exp_pr;
+//   results[2]=results[3]= barcontractmindown*wave*exp_pr;
+//   results[4]=results[5]= barcontractplusdown*wave*exp_pr;
+//   results[6]=results[7]= barcontract0up*wave*exp_pr;
+//   results[8]=results[9]= barcontractminup*wave*exp_pr;
+//   results[10]=results[11]= barcontractplusup*wave*exp_pr;
+//   if(!pw){
+//     if(SRC){
+//       complex<double> src=dynamic_cast<AbstractFsiGridThick *>(grid)->getFsiSrcGridFull_interp1(phi);
+//       complex<double> srcct=dynamic_cast<AbstractFsiCTGridThick *>(grid)->getFsiSrcCtGridFull_interp1(phi);
+//       for(int i=0;i<6;i++){
+// 	results[2*i]*=src;
+// 	results[2*i+1]*=srcct;
+//       }      
+//     }
+//     else{
+//       complex<double> fsi=grid->getFsiGridFull_interp1(phi);
+//       complex<double> fsict=grid->getFsiCtGridFull_interp1(phi);
+//       for(int i=0;i<6;i++){
+// 	results[2*i]*=fsi;
+// 	results[2*i+1]*=fsict;
+//       }      
+//     }
+//   }
+//   return;
+// }
+// 
 
 
 void Model::klaas_one_amp(numint::vector_z & results, double r, double costheta, double phi, 

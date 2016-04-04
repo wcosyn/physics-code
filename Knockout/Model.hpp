@@ -143,45 +143,45 @@ private:
   
   int shell; /*!< what shell has the ejected nucleon */
   int mm; /*!< \f$ m_j \f$ quantum number of ejected nucleon */
-    /*! function that gets integrated over r, integral over r of matrix element
-   * \param r [fm] radial coordinate
-   * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
-   * \param ap variable parameter list
-   */
-  void intJR(const double r, std::complex<double> *results, va_list ap);
-  /*! function that gets integrated over cos(theta), integral of matrix element
-   * \param costheta [] cos of theta coordinate
-   * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
-   * \param ap variable parameter list
-   */
-  void intJCosTheta(const double costheta, std::complex<double> *results, va_list ap);
-  /*! function that gets integrated over phi, integral of matrix element
-   * \param phi [rad] phi coordinate
-   * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
-   * \param ap variable parameter list
-   */
-  void intJPhi(const double phi, std::complex<double> *results, va_list ap);
-    /*! function that gets integrated over r, computes 12 different amplitudes:
-     * 3 photon polarizations, 2 final nucleon helicities, including and excluding CT
-   * \param r [fm] radial coordinate
-   * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
-   * \param ap variable parameter list
-   */
-  void intJR12(const double r, std::complex<double> *results, va_list ap);
-  /*! function that gets integrated over cos(theta), computes 12 different amplitudes:
-     * 3 photon polarizations, 2 final nucleon helicities, including and excluding CT
-   * \param costheta [] cos of theta coordinate
-   * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
-   * \param ap variable parameter list
-   */
-  void intJCosTheta12(const double costheta, std::complex<double> *results, va_list ap);
-  /*! function that gets integrated over phi,computes 12 different amplitudes:
-     * 3 photon polarizations, 2 final nucleon helicities, including and excluding CT
-   * \param phi [rad] phi coordinate
-   * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
-   * \param ap variable parameter list
-   */
-  void intJPhi12(const double phi, std::complex<double> *results, va_list ap);
+//     /*! function that gets integrated over r, integral over r of matrix element
+//    * \param r [fm] radial coordinate
+//    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
+//    * \param ap variable parameter list
+//    */
+//   void intJR(const double r, std::complex<double> *results, va_list ap);
+//   /*! function that gets integrated over cos(theta), integral of matrix element
+//    * \param costheta [] cos of theta coordinate
+//    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
+//    * \param ap variable parameter list
+//    */
+//   void intJCosTheta(const double costheta, std::complex<double> *results, va_list ap);
+//   /*! function that gets integrated over phi, integral of matrix element
+//    * \param phi [rad] phi coordinate
+//    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
+//    * \param ap variable parameter list
+//    */
+//   void intJPhi(const double phi, std::complex<double> *results, va_list ap);
+//     /*! function that gets integrated over r, computes 12 different amplitudes:
+//      * 3 photon polarizations, 2 final nucleon helicities, including and excluding CT
+//    * \param r [fm] radial coordinate
+//    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
+//    * \param ap variable parameter list
+//    */
+//   void intJR12(const double r, std::complex<double> *results, va_list ap);
+//   /*! function that gets integrated over cos(theta), computes 12 different amplitudes:
+//      * 3 photon polarizations, 2 final nucleon helicities, including and excluding CT
+//    * \param costheta [] cos of theta coordinate
+//    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
+//    * \param ap variable parameter list
+//    */
+//   void intJCosTheta12(const double costheta, std::complex<double> *results, va_list ap);
+//   /*! function that gets integrated over phi,computes 12 different amplitudes:
+//      * 3 photon polarizations, 2 final nucleon helicities, including and excluding CT
+//    * \param phi [rad] phi coordinate
+//    * \param results result: contains the glauberphases (fsi and fsi+ct) for a gridpoint
+//    * \param ap variable parameter list
+//    */
+//   void intJPhi12(const double phi, std::complex<double> *results, va_list ap);
   
   /*! struct that is used for integrators (clean ones)*/
   struct Ftor_one {
