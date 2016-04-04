@@ -671,12 +671,12 @@ void Model::klaas_all_amp(numint::vector_z & results, double r, double costheta,
   results[4*total_grid]= exp_pr*(model.getBarcontractminup()*wave);
   results[5*total_grid]= exp_pr*(model.getBarcontractplusup()*wave);
   for(int k=0;k<6;++k) for(int i=1;i<total_grid; ++i) results[k*total_grid+i] = results[k*total_grid];
-  complex<double> glauberphase[total_grid-1];
+//   complex<double> glauberphase[total_grid-1];
 //   vector<complex<double> >phases(4,0.);
 //   dynamic_cast<GlauberGridThick *>(model.getGrid())->getFsiphaseAll(phases,r,costheta,phi);
   for(int i=0;i<(total_grid-1);++i){
-    glauberphase[i]=model.getGrid()->getFsiGridN_interp3(i,r,costheta,phi);
-    for(int k=0;k<6;++k) results[k*total_grid+i]*=glauberphase[i];
+    complex<double> glauberphase=model.getGrid()->getFsiGridN_interp3(i,r,costheta,phi);
+    for(int k=0;k<6;++k) results[k*total_grid+i]*=glauberphase;
 //     for(int k=0;k<6;++k) results[k*total_grid+i]*=phases[i];
   }
   return; 
