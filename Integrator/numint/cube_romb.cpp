@@ -8,11 +8,13 @@
  * @author k.vantournhout@gsi.de
  */
 
+
+#include <iostream>
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include <iostream>
 
 #include <numint/macros.hpp>
 #include <numint/typedef.hpp>
