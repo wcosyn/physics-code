@@ -305,7 +305,10 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
       else if(spinout==1) barcontract = TSpinor::Bar(TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr;
       int res=90;
       unsigned count=0;
-      int total=thick?5:3; //in thickness we need 5 diff FSI results, otherwise 3
+//       int total=thick?5:3; //in thickness we need 5 diff FSI results, otherwise 3
+      int total =-1;
+      if (thick) total=5; 
+      else total =3;
       if(integrator==0){
 	complex<double> results[total];
 	double restimate=0.,thestimate=0.,phiestimate=0.;
