@@ -198,17 +198,17 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
   kinfactors[3]=-Q2overkk*sqrt((tan2+Q2overkk)/2.); //v_LT
   kinfactors[4]=-1./sqrt(2)*Q2overkk*sqrt(tan2); //v_LT'
   kinfactors[5]=sqrt(tan2*(tan2+Q2overkk)); //v_T'
-  int total=thick?5:3;
-  obs=vector<double>(total*8,0.);
+  int total_grid=thick?5:3;
+  obs=vector<double>(total_grid*8,0.);
   //compute response functions
-  //for(int i=0;i<6;i++) for(int j=0;j<total;j++) response[j][i]=0.;
-  Matrix<2,2> responsematrix[total][6];
-  for(int i=0;i<total;++i) for(int j=0;j<6;++j) responsematrix[i][j]=Matrix<2,2>();
+  //for(int i=0;i<6;i++) for(int j=0;j<total_grid;j++) response[j][i]=0.;
+  Matrix<2,2> responsematrix[total_grid][6];
+  for(int i=0;i<total_grid;++i) for(int j=0;j<6;++j) responsematrix[i][j]=Matrix<2,2>();
   //we can exploit parity symmetry for half of the currents!!!
   for(int m=-pnucl->getJ_array()[shellindex];m<=0/*pnucl->getJ_array()[shellindex]*/;m+=2){
-      Matrix<2,3> J[total];
+      Matrix<2,3> J[total_grid];
       reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,medium);
-      for(int j=0;j<total;j++){
+      for(int j=0;j<total_grid;j++){
 	  //2*2 density matrices with helicities as indices
 // 	  responsematrix[j][0]+=Matrix<2,2>(norm(J[j](1,0)),
 // 					    J[j](1,0)*conj(J[j](0,0)),
@@ -292,12 +292,12 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
   
   //traces of density matrices with pauli matrices (+ unit matrix) are building blocks of all observables
   //see f.i. Jeschonnek PHYSICAL REVIEW C 81, 014008 (2010) Eqs (26) etc.
-  complex<double> responsespin[total][6][4];
-  for(int i=0;i<total;++i) 
+  complex<double> responsespin[total_grid][6][4];
+  for(int i=0;i<total_grid;++i) 
     for(int j=0;j<6;++j) 
       for(int k=0;k<4;++k) responsespin[i][j][k] = Trace(responsematrix[i][j]*TSpinor::kSigmaPauli[k]);
       
-  for(int i=0;i<total;i++){
+  for(int i=0;i<total_grid;i++){
     obs[8*i] = real(kinfactors[0]*responsespin[i][0][0]+kinfactors[1]*responsespin[i][1][0])+
 		   2.*kinfactors[2]*real(responsespin[i][2][0])*cos(2.*phi)
 		   +2.*kinfactors[3]*real(responsespin[i][4][0]-responsespin[i][3][0])*cos(phi); //total cross section
@@ -317,7 +317,7 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
     obs[8*i]*=mott*frontfactor/HBARC;
   }
   //combine everything, factor 2 because of symmetry!
-//   for(int j=0;j<total;j++) cross[j]=2.*(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
+//   for(int j=0;j<total_grid;j++) cross[j]=2.*(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
 // 		    +kinfactors[2]*response[j][2]*cos(2.*phi)+kinfactors[3]*response[j][3]*cos(phi))*mott*frontfactor/HBARC;
   delete reacmodel;
 }

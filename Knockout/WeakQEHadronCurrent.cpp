@@ -466,30 +466,30 @@ void WeakQEHadronCurrent::klaas_one_amp(numint::vector_z & results, double r, do
   
 
 void WeakQEHadronCurrent::klaas_all_amp(numint::vector_z & results, double r, double costheta, double phi, 
-			  WeakQEHadronCurrent & model, int thick, int total){
-  results=numint::vector_z(total*8,0.);
+			  WeakQEHadronCurrent & model, int thick, int total_grid){
+  results=numint::vector_z(total_grid*8,0.);
   double sintheta=sqrt(1.-costheta*costheta);
   
   double cosphi,sinphi;
   sincos(phi,&sinphi,&cosphi);
   TMFSpinor wave(*(model.getPnucleus()),model.getShell(),model.getM(),r,costheta,phi);
   complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(model.getPm()*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
-  results[0*total]= exp_pr*(model.getBarcontract0down()*wave);
-  results[1*total]= exp_pr*(model.getBarcontractmindown()*wave);
-  results[2*total]= exp_pr*(model.getBarcontractplusdown()*wave);
-  results[3*total]= exp_pr*(model.getBarcontractzdown()*wave);
-  results[4*total]= exp_pr*(model.getBarcontract0up()*wave);
-  results[5*total]= exp_pr*(model.getBarcontractminup()*wave);
-  results[6*total]= exp_pr*(model.getBarcontractplusup()*wave);
-  results[7*total]= exp_pr*(model.getBarcontractzup()*wave);
-  for(int k=0;k<8;++k) for(int i=1;i<total; ++i) results[k*total+i] = results[k*total];
-  complex<double> glauberphase[total-1];
+  results[0*total_grid]= exp_pr*(model.getBarcontract0down()*wave);
+  results[1*total_grid]= exp_pr*(model.getBarcontractmindown()*wave);
+  results[2*total_grid]= exp_pr*(model.getBarcontractplusdown()*wave);
+  results[3*total_grid]= exp_pr*(model.getBarcontractzdown()*wave);
+  results[4*total_grid]= exp_pr*(model.getBarcontract0up()*wave);
+  results[5*total_grid]= exp_pr*(model.getBarcontractminup()*wave);
+  results[6*total_grid]= exp_pr*(model.getBarcontractplusup()*wave);
+  results[7*total_grid]= exp_pr*(model.getBarcontractzup()*wave);
+  for(int k=0;k<8;++k) for(int i=1;i<total_grid; ++i) results[k*total_grid+i] = results[k*total_grid];
+  complex<double> glauberphase[total_grid-1];
 //   vector<complex<double> >phases(4,0.);
 //   dynamic_cast<GlauberGridThick *>(model.getGrid())->getFsiphaseAll(phases,r,costheta,phi);
-  for(int i=0;i<(total-1);++i){
+  for(int i=0;i<(total_grid-1);++i){
     glauberphase[i]=model.getGrid()->getFsiGridN_interp3(i,r,costheta,phi);
-    for(int k=0;k<8;++k) results[k*total+i]*=glauberphase[i];
-//     for(int k=0;k<6;++k) results[k*total+i]*=phases[i];
+    for(int k=0;k<8;++k) results[k*total_grid+i]*=glauberphase[i];
+//     for(int k=0;k<6;++k) results[k*total_grid+i]*=phases[i];
   }
   return; 
 }
