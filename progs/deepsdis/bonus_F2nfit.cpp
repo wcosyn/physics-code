@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
   bool pw=atoi(argv[3]);
   
   
-  string outdir="/home/wim/Calculations/Bonus/results/parabfitsDec15/";
+  string outdir="/home/wim/Calculations/Bonus/results/parabfitsApr16/";
   ofstream generalfile;
   ofstream sumfile;
   generalfile.open(outdir+wf+"."+strucname+".pw"+std::to_string(pw)+
@@ -358,8 +358,9 @@ int main(int argc, char *argv[])
 	  ".lc"+std::to_string(lc)+".q2dep"+std::to_string(q2dep)+".off"+std::to_string(offshellset)+
 	  ".Q"+std::to_string(Qindex)
 	    +".W"+std::to_string(Windex)+".th"+std::to_string(cosindex)+".rigfit.dat");
-	  for(unsigned int i=0;i<nFreePars;++i) myfile << gMinuit->GetParameter(i) << " " << eparab[i] << " ";
-	  myfile << F2refn << " " << F2refp << endl << endl << endl;
+// 	  for(unsigned int i=0;i<nFreePars;++i) myfile << gMinuit->GetParameter(i) << " " << eparab[i] << " ";
+// 	  myfile << F2refn << " " << F2refp << endl << endl << endl;
+          myfile << "x\ty\tdy\t#points for pole extrapolation t[GeV-2] F2(ps)[]" << endl;
 	  for(unsigned int i=0;i<tarray.size();i++) myfile << tarray[i] << " " << data_array[i] << " " << error_array[i] << endl;	  
 	  myfile.close();
 	  int n=3;

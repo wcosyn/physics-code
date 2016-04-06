@@ -47,6 +47,12 @@ set(Glauber_LINKDEF
 TMFSpinorLinkDef.h
 )
 
+foreach(it ${Glauber_LINKDEF})
+  STRING(REGEX REPLACE "(^.*)LinkDef.h" "\\1Dict_rdict.pcm" bla ${it})
+  set(Glauber_PCM ${Glauber_PCM} "${CMAKE_CURRENT_BINARY_DIR}/${bla}")
+endforeach()
+
+
 set(Glauber_FORT 
 global2009.f
 )
@@ -101,6 +107,9 @@ target_link_libraries(Glauber ${LIBRARIES} MePhys Integrator)
 set_target_properties(Glauber PROPERTIES ${Glauber_LIBRARY_PROPERTIES})
 ############### install the library ###################
 install(TARGETS Glauber DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+foreach(it ${Glauber_PCM})
+  install(FILES ${it}  DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+endforeach()
 
  
 ############## build the library #####################

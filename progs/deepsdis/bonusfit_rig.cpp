@@ -56,7 +56,7 @@ double sigmaparam(double W, double Q2, bool Q2dep);
 
 void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 {
-  cout << endl << endl;
+//   cout << endl << endl;
   f=0.;
   dof=0.;
   bool proton=0;
@@ -73,12 +73,12 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 	double error,result,costheta;
 // 	cout << Beamindex << " " << Qindex << " " << Windex << " " << j << endl;
 	if(Beamindex==0){ 
-	  error=data::bonusdata4[Qindex][Windex][psindex][j][2];
+	  error=sqrt(pow(data::bonusdata4[Qindex][Windex][psindex][j][2],2.)+pow(data::bonusdata4[Qindex][Windex][psindex][j][3],2.));
 	  result=data::bonusdata4[Qindex][Windex][psindex][j][1];
 	  costheta=data::bonusdata4[Qindex][Windex][psindex][j][0];
 	}
 	else{
-	  error=data::bonusdata5[Qindex-1][Windex][psindex][j][2];
+	  error=sqrt(pow(data::bonusdata5[Qindex-1][Windex][psindex][j][2],2.)+pow(data::bonusdata5[Qindex-1][Windex][psindex][j][3],2.));
 	  result=data::bonusdata5[Qindex-1][Windex][psindex][j][1];
 	  costheta=data::bonusdata5[Qindex-1][Windex][psindex][j][0];
 	}
