@@ -113,11 +113,13 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   FourVector<double> snx(pi_perp/pi_plus,1.,0.,-pi_perp/pi_plus);
   
   double factor=MASSD*sqrt(1.+1./gamma_d/gamma_d)-pi_mu*el_mu;
+  double ff=(epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))/F2*Ek/alpha_i/alpha_i*4.*pow(2.*PI,3.);
   F_U = (epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))*rhou/3.*4*pow(2.*PI,3.);
   F_LSL = gamma_n*g1*((el_mu*snz)*rho_l_z+(el_mu*snx)*rho_l_x)*4*pow(2.*PI,3.);
+//   cout << (el_mu*snz)*rho_l_z << " " << (el_mu*snx)*rho_l_x << " " << snz << " " << snx << endl;
 //   cout << rhou << " " << rho_l_x << " " << rho_l_z << endl;
-  
-  cout << x << " " << Q2 << " " << x_nucl << " " << alpha_s << " " << pt << " " << psnorm << " " << knorm << " " << k_perp << " " << F_U << " " << F_LSL << " " << F_LSL/F_U << endl;
+//   cout << "dd " << rhou/3./Ek*alpha_i*alpha_i*pow((MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu(),2.) << " " << (MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu()<< " " << Ek << " " << alpha_i << " " << rhou << endl;
+  cout << x << " " << Q2 << " " << x_nucl << " " << alpha_s << " " << pt << " " << psnorm << " " << knorm << " " << k_perp << " " << F_U << " " << F_LSL << " " << F_LSL/F_U << " " << (MASSn*MASSn-pi_mu*pi_mu)*1.E-06 << " " << F_U*pow((MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu(),2.)/ff << " " << F2 << endl;
   
   
 }
@@ -140,11 +142,12 @@ void Poldeut::getDensities(double knorm, double thetak, double &rhou, double &rh
   double U=getU(knorm);
   double W=getW(knorm);
   double Ek=sqrt(MASSn*MASSn+knorm*knorm);
-  double alphai=Ek+knorm*cos(thetak);
+  double t= pow(MASSD-Ek,2.)-knorm*knorm;
+  double alphai=(Ek+knorm*cos(thetak))/MASSn;
   double factor=Ek/(alphai*alphai*4.*PI);
   rhou=3.*(U*U+W*W)  * factor;
   rho_l_z = 2.*(U*U+U*W/(2.*sqrt(2.))*(3.*cos(2.*thetak)+1.)+W*W/4.*(3.*cos(2.*thetak)-1.)) * factor;
   rho_l_x = 6./4.*(sqrt(2.)*U*W+W*W)*sin(2.*thetak) * factor;
-//   cout << sin(2.*thetak) << endl;
+//   cout << alphai << " " << U*U << " " << U*W << " " << W*W << endl;
   return;
 }

@@ -12,22 +12,27 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 
-  double x=0.3;
-  double Q2=10.E06;
-  double y=0.5;
-  double alpha_s=1.;
+  double x=0.05;
+  double Q2=20.E06;
+  double y=0.4;
+  double alpha_s=atof(argv[1]);
+  x*=2-alpha_s;
 //   double pt=50.;
   bool proton=0;
   double F_LSL,F_U;
   
   
   
-  Poldeut test("AV18","Alekhin");
-  test.set_melosh(0);
-  test.set_D(0);
-  for(int i=1;i<30;i++){
-    double pt=10.+i*20;
-    pt *=-1.;
+  Poldeut test("AV18","CB");
+   test.set_melosh(atoi(argv[3]));
+  test.set_D(atoi(argv[2]));
+  for(int i=0;i<30;i++){
+    double pt=0.+i*20;
+//     pt *=-1.;
+//     test.set_D(1);
     test.calc_Double_Asymm(x,Q2,y,alpha_s,pt,proton, F_LSL, F_U);
+//     test.set_D(0);
+//     test.calc_Double_Asymm(x,Q2,y,alpha_s,pt,proton, F_LSL, F_U);
+    
   }
 }
