@@ -13,9 +13,23 @@ using namespace std;
 #include <DeuteronCross.hpp>
 #include <He3Cross.hpp>
 #include <LightConeKin2to3.hpp>
+#include <NuclStructure.hpp>
 
 int main(int argc, char *argv[])
 {
+
+  for(int i=0;i<200;i++){
+    double x_nucl=0.1+i*0.4/100.;
+    double Q2=atof(argv[1])*1.E06;
+    NuclStructure neut(0,Q2,x_nucl,0,"CB");
+    NuclStructure prot(1,Q2,x_nucl,0,"CB");
+    cout << x_nucl << " " << neut.getF2() <<  " " << prot.getF2() << " " << neut.getF2()/prot.getF2() << " " << prot.getW() << endl;
+  }
+  exit(1);
+  
+
+
+
   int Qindex = atoi(argv[1]); // parse from argv or something
   int Windex = atoi(argv[2]); // parse from argv or something
   int pindex = atoi(argv[3]);

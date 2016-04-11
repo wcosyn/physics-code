@@ -90,7 +90,7 @@
 #define NUCLSTRUCTURE_HPP
 
 #include <string>
-
+#include <cmath>
 
 /*! \brief A class for a variety of nucleon structure parametrizations.  Has Christy&Bosted / Alekhin (leading twist) / SLAC. */
 class NuclStructure{
@@ -134,6 +134,7 @@ public:
   double getF1(); /*!< returns the F1 structure function */
   double getF2(); /*!< returns the F2 structure function */
   const std::string getName() const{return name;} /*!< returns the name of the chosen parametrization */
+  double getW(){return sqrt(Wsq);} /*!< [MeV] returns the invariant mass of X*/
   
   /*! returns the g1 structure function from the grsv2000 parametrization (leading order,  hep-ph/0011215, Tools/grsv2000pdf_g1.f )
    * \param proton 1=proton 0=neutron
