@@ -221,6 +221,15 @@ void MeanFieldNucleus::setInputfile(const int nucleus, const string &dir){
   case 7: //gold
     inputfile+="au197.inp";
     break;
+  case 8: //fe54
+    inputfile+="fe54.inp";
+    break;
+  case 9: //gold
+    inputfile+="ca40.inp";
+    break;
+  case 10: //gold
+    inputfile+="ca48.inp";
+    break;
   default:
     cerr << "invalid nucleus input" << endl;
     exit(1);
@@ -255,6 +264,15 @@ void MeanFieldNucleus::setRgridfile(const int nucleus, const string &dir){
   case 7: //lead
     rgridfile+="au197.radial.bound";
     break;
+  case 8: //fe54
+    rgridfile+="fe56.radial.bound";
+    break;
+  case 9: //ca40
+    rgridfile+="ca40.radial.bound";
+    break;
+  case 10: //ca48
+    rgridfile+="ca48.radial.bound";
+    break;
   default:
     cerr << "invalid nucleus input for F&G grid file" << endl;
     exit(1);
@@ -286,6 +304,15 @@ void MeanFieldNucleus::setNucleusName(const int nucleus){
     break;
   case 7: //Au
     nucleusname= "Au";
+    break;
+  case 8: //fe54
+    nucleusname= "Fe54";
+    break;
+  case 9: //ca40
+    nucleusname= "Ca40";
+    break;
+  case 10: //ca48
+    nucleusname= "Ca48";
     break;
   default:
     cerr << "Implement Other Nucleus!" << endl;
