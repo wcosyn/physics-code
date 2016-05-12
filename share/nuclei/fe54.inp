@@ -1,10 +1,10 @@
 56 26               // mass number and proton number
 50244.42           // mass of Fe54
-51174.46            // mass of Mn55
-51174.69	// mass of Fe55
-50243.74 //mass of Cr54
-50245.12   //mass of 54Mn
-50244.42  //mass of Fe54
+49315.00           // mass of Mn53
+49318.55	// mass of Fe53
+48382.58 //mass of Cr52
+48387.29   //mass of 52Mn
+48382.58  //mass of Fe52
 7 8               // number of proton and neutron levels
 26.5 18.37 16.21 9.46 5.4 5.4 0 // excitation energy of proton levels
 31 27 22 21 17 10 8 0 // excitation energy of neutron levels

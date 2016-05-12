@@ -8,7 +8,7 @@
 VERSION =	
 
 #		Calc-path
-CPATH 	=	.
+CPATH 	=	../..
 
 #		C compilation...
 #  CC      = 	icpc
@@ -22,56 +22,29 @@ STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
 WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG)  $(DBGFLAG) $(GPFLAG)  #$(STATIC)
+CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG) $(GPFLAG)  #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/onenucl
+EFILE   = 	../../bin/JlabPAC16_calc
 EFILEST   = 	../../bin/staticonenucl
 
 
 #		Mathematical functions
-LIBS =	 	-lm  -lifcore
-WIMLIBS = -lMePhys -lGlauber -lKnockout -lIntegrator -lcuba
-ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L ~/Code/lib
- INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout
-STATICLIBS =  ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a  ~/Code/lib/libMePhys.a   ~/Code/lib/libIntegrator.a   
+LIBS =	 	
+WIMLIBS =   -lDIS -lKnockout -lGlauber -lMePhys -lIntegrator -lcuba
+ROOT =		`root-config --cflags --glibs` -lMinuit2 `gsl-config --libs --cflags`
+ LIBDIRS = -L $(CPATH)/lib
+ INCLUDEDIRS =  -I $(CPATH)/Integrator -I $(CPATH)/Tools  -I $(CPATH)/Glauber -I $(CPATH)/DIS -I $(CPATH)/Knockout
+STATICLIBS =  $(CPATH)/lib/libGlauber.a  $(CPATH)/lib/libDIS.a   $(CPATH)/lib/libMePhys.a $(CPATH)/lib/libKnockout.a  $(CPATH)/lib/libIntegrator.a
 
-
-#		Header files
-HDRS =		
-
-# root headers
-
-#		Object files
-OBJS = 	        $(HDRS:.hpp=.o)  $(CPATH)/test.o
-
-#-------------------------------------------------------------------------
-
-#		Targets...
 
 all:		$(EFILE)
 static:		$(EFILEST)
 #-------------------------------------------------------------------------
-clean:;		@rm -f $(OBJS) core*
+clean:;		@rm -f *.o $(EFILE)
 
 #-------------------------------------------------------------------------
-
-$(EFILE):	$(OBJS) $(HDRS)
-		@echo "Linking $(EFILE)..."
-		$(CC) $(CFLAGS) -o $(EFILE) $(OBJS) $(WIMLIBS) $(ROOT) $(LIBDIRS)
-$(EFILEST):	$(OBJS) $(HDRS) 
-		@echo "Linking $(EFILEST)..."
-		$(CC) $(CFLAGS) -o $(EFILEST) $(OBJS) $(STATICLIBS) $(LIBS) $(ROOT) $(LIBDIRS)
-
-
-# $(OBJS):	$(HDRS) $(HDRS2) $(DICTHDRS) $(INCHDRS)
-
-#------
-
-
-#		Rule to make objectfile
-%.o: 		%.cpp
-		@echo "Compiling..."
-		$(CC) $(CFLAGS) -c $*.cpp -o $*.o $(ROOT) $(INCLUDEDIRS)
-
+.SECONDEXPANSION:
+$(EFILE):  $$(@F).cpp $(HDRS); 
+	@echo $(@F).cpp 
+	$(CC) -o $@ $(CFLAGS) $(@F).cpp $(LIBS) $(WIMLIBS) $(LDFLAGS)  $(LIBDIRS) $(ROOT)  $(INCLUDEDIRS) 
