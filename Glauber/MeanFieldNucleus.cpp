@@ -268,10 +268,10 @@ void MeanFieldNucleus::setRgridfile(const int nucleus, const string &dir){
     rgridfile+="fe56.radial.bound";
     break;
   case 9: //ca40
-    rgridfile+="ca40.radial.bound";
+    rgridfile+="ca40.radial2.bound";
     break;
   case 10: //ca48
-    rgridfile+="ca48.radial.bound";
+    rgridfile+="ca48.radial2.bound";
     break;
   default:
     cerr << "invalid nucleus input for F&G grid file" << endl;
