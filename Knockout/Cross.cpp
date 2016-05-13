@@ -200,7 +200,7 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
   kinfactors[3]=-Q2overkk*sqrt((tan2+Q2overkk)/2.); //v_LT
   kinfactors[4]=-1./sqrt(2)*Q2overkk*sqrt(tan2); //v_LT'
   kinfactors[5]=sqrt(tan2*(tan2+Q2overkk)); //v_T'
-  int total_grid=thick?5:3;
+  const int total_grid=thick?5:3;
   obs=vector<double>(total_grid*8,0.);
   //compute response functions
   //for(int i=0;i<6;i++) for(int j=0;j<total_grid;j++) response[j][i]=0.;

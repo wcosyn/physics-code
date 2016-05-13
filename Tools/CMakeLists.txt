@@ -160,9 +160,11 @@ set_target_properties(MePhys PROPERTIES ${MePhys_LIBRARY_PROPERTIES})
 
 ############### install the library ###################
 install(TARGETS MePhys DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+IF (60000 LESS found_vers)
 foreach(it ${MePhys_PCM})
   install(FILES ${it}  DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endforeach()
+ENDIF(60000 LESS found_vers)
 
 ############# build the library #####################
 if(STATIC_BUILD)

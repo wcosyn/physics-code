@@ -107,10 +107,11 @@ target_link_libraries(Glauber ${LIBRARIES} MePhys Integrator)
 set_target_properties(Glauber PROPERTIES ${Glauber_LIBRARY_PROPERTIES})
 ############### install the library ###################
 install(TARGETS Glauber DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+IF(60000 LESS found_vers)
 foreach(it ${Glauber_PCM})
   install(FILES ${it}  DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endforeach()
-
+ENDIF(60000 LESS found_vers)
  
 ############## build the library #####################
 if(STATIC_BUILD)
