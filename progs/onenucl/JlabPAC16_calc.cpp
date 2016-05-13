@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
   double omega=atof(argv[3]);
   double pm=atof(argv[4]);
   double phi=atof(argv[5]);
+  double sharedir=argv[6]);
   phi=acos(phi);
   bool screening=0;//atoi(argv[4]);
   double scr=1.;//atof(argv[5]);
@@ -33,16 +34,16 @@ int main(int argc, char *argv[])
   
 //   string homedir="/home/wim/Code/share";
 //   cout << "bla" << endl;
-  MeanFieldNucleusThick Fe54(MeanFieldNucleus::Fe54,HOMEDIR);
-  MeanFieldNucleusThick Ca40(MeanFieldNucleus::Ca40,HOMEDIR);
-  MeanFieldNucleusThick Ca48(MeanFieldNucleus::Ca48,HOMEDIR);
+  MeanFieldNucleusThick Fe54(MeanFieldNucleus::Fe54,sharedir);
+  MeanFieldNucleusThick Ca40(MeanFieldNucleus::Ca40,sharedir);
+  MeanFieldNucleusThick Ca48(MeanFieldNucleus::Ca48,sharedir);
 
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ebeam);
   cout << Ebeam << " " << Q2 << " " << omega << " " << pm << " " << phi << " ";
   vector<Cross> obs;
-  obs.push_back(Cross(*elec,&Fe54,prec,integrator,HOMEDIR,screening,scr));
-  obs.push_back(Cross(*elec,&Ca40,prec,integrator,HOMEDIR,screening,scr));
-  obs.push_back(Cross(*elec,&Ca48,prec,integrator,HOMEDIR,screening,scr));
+  obs.push_back(Cross(*elec,&Fe54,prec,integrator,sharedir,screening,scr));
+  obs.push_back(Cross(*elec,&Ca40,prec,integrator,sharedir,screening,scr));
+  obs.push_back(Cross(*elec,&Ca48,prec,integrator,sharedir,screening,scr));
   
   for(unsigned int i=0;i<obs.size();i++){
     double cross=0.;
