@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   double omega=atof(argv[3]);
   double pm=atof(argv[4]);
   double phi=atof(argv[5]);
-  double sharedir=argv[6]);
+  string sharedir=argv[6];
   phi=acos(phi);
   bool screening=0;//atoi(argv[4]);
   double scr=1.;//atof(argv[5]);
