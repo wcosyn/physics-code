@@ -413,7 +413,7 @@ int main(int argc, char *argv[])
 	}
 	avgform/=sigmaform;
 	sigmaform=sqrt(1./sigmaform);
-	if(!isnan(avgform)) randomdistr.push_back(avgform);
+	if(!std::isnan(avgform)) randomdistr.push_back(avgform);
 // 	cout << gaan << " " << Qindex << " " << Windex << " " << avgform << " " << sigmaform << endl;
 
       }      

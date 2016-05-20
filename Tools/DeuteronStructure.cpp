@@ -37,6 +37,17 @@ DeuteronStructure& DeuteronStructure::operator=(const DeuteronStructure& rhs){
   
 }
 
+double DeuteronStructure::getLeptonSSA_sf(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const{
+  double piq=(Einoff*kin.GetWlab()+kin.GetKlab()*kin.GetPklab()*kin.GetCosthklab());  //vec{pi}=-vec{pr} in PW!
+  double nutilde=piq/massi;
+  double mi_off = Einoff*Einoff-kin.GetPklab()*kin.GetPklab(); //effective mass off-shell nucleon SQUARED
+  double xtilde=kin.GetQsquared()/(2*piq);
+  double nuoffshell=(mi_off-massi*massi+2.*piq)/(2.*massi); //(m_i+qoffshell)^2=(p_i+q)^2
+  double xoffshell=kin.GetQsquared()/(2.*massi*nuoffshell); //xoffshell consistent with Q^2,m_i,W
+  double W_sq=pow(kin.GetHyperonMass(),2.); //mi_off+2.*piq-kin.GetQsquared();//W^2=(p_i+q)^2
+  return kin.GetQsquared()*kin.GetWlab()/piq/sqrt(2.)/kin.GetKlab()*sqrt(electron.GetTan2HalfAngle(kin))*NuclStructure::getG1plusg2_grsv2000(proton,xoffshell,kin.GetQsquared());
+  
+}
 
 
 void DeuteronStructure::getStructureFunctions(TKinematics2to2 &kin, double &FL, double &FT, 

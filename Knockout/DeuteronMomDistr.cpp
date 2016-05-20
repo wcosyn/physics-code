@@ -293,6 +293,57 @@ double DeuteronMomDistr::getMomDistrfsi(TKinematics2to2 &kin, double phi){
   return fsitotal*MASSD/(2.*(MASSD-Er));
 }
 
+
+double DeuteronMomDistr::getMomDistr_y_fsi(TKinematics2to2 &kin, double phi){
+  //kaon translates to spectator nucleon
+  double fsitotal=0.;
+  double sintheta=sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab());
+  double Er=sqrt(kin.GetPklab()*kin.GetPklab()+kin.GetMesonMass()*kin.GetMesonMass());
+  for(int M=-2;M<=2;M+=2){
+    for(int spinr=-1;spinr<=1;spinr+=2){
+      //plane-wave part
+      complex<double> wavedown=wf.DeuteronPState(M, -1, spinr, TVector3(kin.GetPklab()*sintheta*cos(phi),
+								    kin.GetPklab()*sintheta*sin(phi),
+								    kin.GetPklab()*kin.GetCosthklab()));
+      complex<double> waveup=wf.DeuteronPState(M, 1, spinr, TVector3(kin.GetPklab()*sintheta*cos(phi),
+								    kin.GetPklab()*sintheta*sin(phi),
+								    kin.GetPklab()*kin.GetCosthklab()));
+      complex<double> result;
+      double qestimate=0.,thestimate=0.;
+
+      numint::array<double,2> lower = {{0.,0.}};
+      numint::array<double,2> upper = {{1.E03,2.*PI}};
+      DeuteronMomDistr::Ftor_FSI F;
+      F.momdistr=this;
+      F.kin=&kin;
+      F.M = M;
+      F.spinr=spinr;
+      F.Er = Er;
+      F.phi=phi;
+      numint::mdfunction<numint::vector_z,2> mdf;
+      mdf.func = &Ftor_FSI::exec;
+      mdf.param = &F;
+      numint::vector_z ret(2,0.);
+      F.f=DeuteronMomDistr::FSI_y_int;
+      int res=90;
+      unsigned count=0;
+    //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E03,ret,count,0);
+      result=ret[0];
+//       rombergerN(this,&DeuteronMomDistr::totdens_qt,0.,1.E03,1,&result,PREC,3,10,&qestimate, 
+// 				  &kin,M,spinr, Er,phi,&thestimate);
+      wavedown+=I_UNIT/(32.*PI*PI*kin.GetKlab()*sqrt(Er))*ret[0]/sqrt(MASSD/(2.*(MASSD-Er)));
+      waveup+=I_UNIT/(32.*PI*PI*kin.GetKlab()*sqrt(Er))*ret[0]/sqrt(MASSD/(2.*(MASSD-Er)));
+
+      fsitotal+=2.*imag(conj(waveup)*wavedown);
+    }
+  }
+  //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
+  fsitotal*=1./3.; 
+  return fsitotal*MASSD/(2.*(MASSD-Er));
+}
+
+
 double DeuteronMomDistr::getMomDistrfsiLC(LightConeKin2to2 &kin){
   //kaon translates to spectator nucleon
   double fsitotal=0.;
@@ -424,6 +475,60 @@ void DeuteronMomDistr::FSI_int(numint::vector_z & result, double qt, double qphi
   
 
 }
+
+void DeuteronMomDistr::FSI_y_int(numint::vector_z & result, double qt, double qphi, DeuteronMomDistr &momdistr,
+			       TKinematics2to2 &kin, int M, int spinr, double Er, double phi){
+  result=numint::vector_z(2,0.);
+  if(qt<1.E-03) { result[0]=result[1]=0.; return;}
+  
+  
+  double prt=kin.GetPklab()*sqrt(1.-kin.GetCosthklab()*kin.GetCosthklab()); //pr'_t
+  double pt2=prt*prt+qt*qt-2.*prt*qt*cos(qphi-phi); //perp mom of initial spectator
+
+  momdistr.Wxprime2=-1.;  //invariant mass X' before rescattering
+  momdistr.get_przprime(pt2,Er,kin);
+  if(momdistr.Wxprime2<0.) {result[0]=result[1]=0.; return;}
+  double pprime = sqrt(pt2+momdistr.przprime*momdistr.przprime);
+//   cout << "VNA " << pprime << " " << kin.GetPklab() << endl;
+  if(pprime>1.E03) { result[0]=result[1]=0.; return;}
+  double thetaprime=acos(momdistr.przprime/pprime);
+  double phiprime=atan2(prt*sin(phi)-qt*sin(qphi),prt*cos(phi)-qt*cos(qphi));
+  double Erprime=sqrt(momdistr.massr*momdistr.massr+pprime*pprime);
+  double t=(Er-Erprime)*(Er-Erprime)-(kin.GetPklab()*kin.GetCosthklab()-momdistr.przprime)
+    *(kin.GetPklab()*kin.GetCosthklab()-momdistr.przprime)-qt*qt;
+  double costhetaprime,sinthetaprime,cosphiprime,sinphiprime; 
+  sincos(thetaprime,&sinthetaprime,&costhetaprime);
+  sincos(phiprime,&sinphiprime,&cosphiprime);
+  double chi=sqrt(kin.GetS()*kin.GetS()-2.*kin.GetS()*(momdistr.Wxprime2+momdistr.massr*momdistr.massr)
+  +pow(momdistr.massr*momdistr.massr-momdistr.Wxprime2,2.));
+  double offshellness=0.;
+  if(momdistr.offshellset==0){
+    double massdiff=(MASSD-Erprime)*(MASSD-Erprime)-pprime*pprime-momdistr.massi*momdistr.massi
+      +2.*kin.GetWlab()*(MASSD-Erprime-momdistr.massi)+2.*kin.GetKlab()*momdistr.przprime;
+    offshellness=exp(momdistr.beta*massdiff);
+  }
+  if(momdistr.offshellset==1) {
+    double onshellm=kin.GetWlab()*kin.GetWlab()-kin.GetKlab()*kin.GetKlab()
+      +momdistr.massi*momdistr.massi+2.*kin.GetWlab()*momdistr.massi;
+    offshellness=pow(momdistr.lambda*momdistr.lambda-onshellm,2.)/(pow(momdistr.Wxprime2-onshellm,2.)
+    +pow(momdistr.lambda*momdistr.lambda-onshellm,2.));
+  }
+  if(momdistr.offshellset==2) offshellness=exp((momdistr.betaoff-momdistr.beta)*t/2.);
+  if(momdistr.offshellset==3) offshellness=0.;
+  if(momdistr.offshellset==4) offshellness=1.;
+  TVector3 vecprime(pprime*sinthetaprime*cosphiprime,pprime*sinthetaprime*sinphiprime,pprime*costhetaprime);
+  result[0] = qt*chi*momdistr.scatter(t)*(momdistr.wf.DeuteronPState(M, -1, spinr, vecprime)
+ 	 +(offshellness*(abs(offshellness)<1.E-05?1.:momdistr.wfref->DeuteronPStateOff(M, -1, spinr, vecprime))))
+	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime));
+  result[1] = qt*chi*momdistr.scatter(t)*(momdistr.wf.DeuteronPState(M, 1, spinr, vecprime)
+ 	 +(offshellness*(abs(offshellness)<1.E-05?1.:momdistr.wfref->DeuteronPStateOff(M, 1, spinr, vecprime))))
+	*sqrt(MASSD/(2.*(MASSD-Erprime)*Erprime));
+
+}
+
+
+
+
 
 //integration over perp LC rescaled momentum
 // void DeuteronMomDistr::FSILC_int(numint::vector_z & result, double qt, double qphi, DeuteronMomDistr &momdistr,

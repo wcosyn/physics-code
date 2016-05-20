@@ -143,6 +143,16 @@ public:
    * \return g1n structure functions
    */
   static double getG1_grsv2000(bool proton, double x, double Q2);
+
+
+  /*! returns the g1+g2 structure function using the Wandura-Wilczek relation [g1+g2=int dy/y g1(y)] from the grsv2000 parametrization (leading order,  hep-ph/0011215, Tools/grsv2000pdf_g1.f )
+   * This sum of structure functions is related to the transversity pdfs (and higher twist).
+   * \param proton 1=proton 0=neutron
+   * \param x Bjorken x nucleon
+   * \param Q2 [MeV^2] virtual photon four-momentum sq
+   * \return g1+g2 structure functions
+   */
+  static double getG1plusg2_grsv2000(bool proton, double x, double Q2);
   
 private:
   std::string name; /*!< name of the paramtetrization */

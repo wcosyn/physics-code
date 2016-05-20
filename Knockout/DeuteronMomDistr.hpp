@@ -101,7 +101,14 @@ public:
    * \return distorted momentum distribution [MeV^-3]
    */
   double getMomDistrfsi(TKinematics2to2 &kin, double phi);
-  /*! Computes distorted momentum distribution for DIS production off deuteron
+   /*! Computes distorted momentum distribution for DIS production off deuteron for the one going with the lepton SSA
+   * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \param phi angle between hadron and electron scattering plane
+   * \return distorted momentum distribution [MeV^-3]
+   */
+  double getMomDistr_y_fsi(TKinematics2to2 &kin, double phi);
+ /*! Computes distorted momentum distribution for DIS production off deuteron
    * \param[in] kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * \return distorted momentum distribution [MeV^-3]
    */
@@ -233,6 +240,8 @@ private:
   static void FSILC_int(numint::vector_z & results, double qt, double qphi, DeuteronMomDistr &momdistr,
 		      LightConeKin2to2  &kin, int M, int spinr);
   static void FSI_int(numint::vector_z & results, double qt, double qphi, DeuteronMomDistr &momdistr,
+	                      TKinematics2to2 &kin, int M, int spinr, double Er, double phi);
+  static void FSI_y_int(numint::vector_z & results, double qt, double qphi, DeuteronMomDistr &momdistr,
 	                      TKinematics2to2 &kin, int M, int spinr, double Er, double phi);
   
   

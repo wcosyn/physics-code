@@ -18,16 +18,6 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 
-  for(int i=0;i<200;i++){
-    double x_nucl=0.1+i*0.4/100.;
-    double Q2=atof(argv[1])*1.E06;
-    NuclStructure neut(0,Q2,x_nucl,0,"CB");
-    NuclStructure prot(1,Q2,x_nucl,0,"CB");
-    cout << x_nucl << " " << neut.getF2() <<  " " << prot.getF2() << " " << neut.getF2()/prot.getF2() << " " << prot.getW() << endl;
-  }
-  exit(1);
-  
-
 
 
   int Qindex = atoi(argv[1]); // parse from argv or something
@@ -60,7 +50,7 @@ int main(int argc, char *argv[])
   
     double pw=0.,fsi=0.,azz=0.,azzfsi=0.;
     test.getDeepsresult(Q2,Wprime,Ein,pr,costhetar,proton,pw,fsi);
-    cout << costhetar << " " << pw << " " << fsi << endl;
+//     cout << costhetar << " " << pw << " " << fsi << endl;
 //     test.getDeepsAzz(Q2,Wprime,Ein,pr,costhetar,proton,azz,azzfsi,pw,fsi);
 //     cout << costhetar << " " << azz << " " << azzfsi << " " << pw << " " << fsi << endl;
   }

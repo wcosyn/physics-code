@@ -150,6 +150,16 @@ public:
    */
   void getResponses_off(TKinematics2to2 &kin, TElectronKinematics &el, double Wsq,
 			double &ResLandT, double &ResTT, double &ResTL, double Einoff) const;
+                        
+  /*! gives you the lepton SSA deuteron structure function.  Goes like g1+g2 times a kinematic factor
+   * 
+  * \param kin [in] semi-exclusive gamma+D->X+N kinematics, see TKinematics2to2 <BR>
+   * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
+   * \param[in] el electron kinematics, see TElectronKinematics
+   * \param Einoff [MeV] off-shell energy of interacting nucleon
+   */
+  double getLeptonSSA_sf(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const;
+    
   const std::string & getName() const{return name;}
   
 private:

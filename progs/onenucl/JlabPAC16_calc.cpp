@@ -44,18 +44,19 @@ int main(int argc, char *argv[])
   obs.push_back(Cross(*elec,&Fe54,prec,integrator,sharedir,screening,scr));
   obs.push_back(Cross(*elec,&Ca40,prec,integrator,sharedir,screening,scr));
   obs.push_back(Cross(*elec,&Ca48,prec,integrator,sharedir,screening,scr));
-  
+  cout << endl;
   for(unsigned int i=0;i<obs.size();i++){
     double cross=0.;
     double pw=0.;
     for(int plevel=0;plevel<obs[i].getPnucl()->getPLevels();plevel++){
+      cout << i << " " << plevel << endl;
       TKinematics2to2 kin("","",obs[i].getPnucl()->getMassA(),obs[i].getPnucl()->getMassA_min_proton()+(obs[i].getPnucl()->getExcitation())[plevel]
                           ,MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
 //       cout << kin.GetPYlab() << " " << acos(kin.GetCosthYlab()) << endl;
       cross+=obs[i].getDiffCross(kin,2,thick,0,0,0,plevel,phi,maxEval,1);
       pw+=obs[i].getDiffCross(kin,2,thick,0,0,1,plevel,phi,maxEval,1);
     }
-    cout << cross << " " << pw << " " << cross/pw << " ";
+    cout << cross << " " << pw << " " << cross/pw << endl;
   }
   cout << endl;
 

@@ -381,3 +381,16 @@ double NuclStructure::getG1_grsv2000(bool proton, double x, double Q2){
   parpol_(&iset, &x, &q2_, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy, &g1p, &g1n);
   return (proton? g1p:g1n);
 }
+
+
+
+double NuclStructure::getG1plusg2_grsv2000(bool proton, double x, double Q2){
+    
+  double step=(1.-x)/100.;
+  double result=0.;
+  for(int i=0;i<=100;i++){
+    double y=x+step*i;
+    result+=NuclStructure::getG1_grsv2000(proton,y,Q2)/y;
+  }
+  return result*step;
+}
