@@ -63,8 +63,9 @@ private:
    * \param[out] rhou [MeV-3] unpolarized lightcone deuteron density (Eq C.1)
    * \param[out] rho_l_z [MeV-3] polarized lightcone deuteron density (Eq C.4)
    * \param[out] rho_l_x [MeV-3] polarized lightcone deuteron density (Eq C.5)
+   * \param[out] rho_tensor_u [MeV-3] tensor polarized lightcone density (Eq C.16)
   */
-  void getDensities(double knorm, double ktheta, double &rhou, double &rho_l_z, double &rho_l_x);
+  void getDensities(double knorm, double ktheta, double &rhou, double &rho_l_z, double &rho_l_x, double &rho_tensor_u);
   
   /*! obtain deuteron radial s_wave (normalized as int k^2 dk U(k)^2=1) 
    * \param k [MeV] relative momentum

@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
   
   
   
-  Poldeut test("AV18","CB");
+  Poldeut test("AV18","SLAC");
    test.set_melosh(atoi(argv[3]));
   test.set_D(atoi(argv[2]));
   for(int i=0;i<30;i++){

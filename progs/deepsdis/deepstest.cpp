@@ -45,6 +45,17 @@ int main(int argc, char *argv[])
   DeuteronCross test("paris",proton,"SLAC",sigmain,betain,-0.5,8.,1.2,offshellset,looplimit);
 //   DeuteronCross test("paris",proton,"SLAC",36.3274,1.97948,-0.5,8.,1.2,4);
   
+  
+//   for(int i=1;i<50;i++){
+//     double x=0.02*i;
+//     for(int j=0;j<10;j++){
+//       double Q2=1.E06*(1+j);
+//       cout << x << " " << Q2/1.E06 << " " << NuclStructure::getG1plusg2_grsv2000(0,x,Q2) << " " << NuclStructure::getG1_grsv2000(0,x,Q2) << endl;
+//     }
+//   }
+//   exit(1);
+//   
+  
   for (int i=0;i<40;i+=1){
     double costhetar=-0.975+i*0.05;
   
