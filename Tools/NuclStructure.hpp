@@ -121,6 +121,8 @@ public:
    * "SLAC": SLAC paramtetrization from Bodek <BR>
    * "Alekhin": leading twist parametrization by Alekhin [see PRD 68,014002], also see alekhin.f file <BR>
    * "CTEQ": F2 based on the pdf's from CTEQ (code from Misak, see cteq.f file) <BR>
+   * "HMRS": F2 from pdfs from unknown source (Shunzo Kumano is the source, not enough info in his code file, see hmrs-b.f) <BR>
+   * "MSTW": F2 from LO (or nlo etc) from MSTW pdfs (see mstwpdf.h & mstw.cpp) <BR>
    */
   NuclStructure(bool proton, double Q2in, double xin, double Wsqin, std::string name);
 
@@ -143,6 +145,22 @@ public:
    * \return g1n structure functions
    */
   static double getG1_grsv2000(bool proton, double x, double Q2);
+  /*! returns the sigma_L/sigma_T ratio, from SLAC fits (code from Shunzo Kumano, see R199x.f)
+   * This is the 1990 parametrization 0.1 < x < 0.9, 0.6 < Q^2 < 20 GeV^2
+   * L. W. Withlow et al., Phys. Lett. B250 194(1990)
+   * \param x Bjorken x nucleon
+   * \param Q2 [MeV^2] virtual photon four-momentum sq
+   * \return R=sigma_L/sigma_T (indicates scaling violations from Callan-Gross LT relation)
+   */
+  static double getR1990(double x, double Q2);
+  /*! returns the sigma_L/sigma_T ratio, from SLAC fits (code from Shunzo Kumano, see R199x.f)
+   * This is the 1998 parametrization 0.005 < x < 0.86, 0.5 < Q^2 < 130 GeV^2
+   * (E143) K. Abe et al., Phys. Lett B452 194 (1999)
+   * \param x Bjorken x nucleon
+   * \param Q2 [MeV^2] virtual photon four-momentum sq
+   * \return R=sigma_L/sigma_T (indicates scaling violations from Callan-Gross LT relation)
+   */
+  static double getR1998(double x, double Q2);
 
 
   /*! returns the g1+g2 structure function using the Wandura-Wilczek relation [g1+g2=int dy/y g1(y)] from the grsv2000 parametrization (leading order,  hep-ph/0011215, Tools/grsv2000pdf_g1.f )
@@ -189,33 +207,45 @@ private:
   
   
   /*! returns F1 and F2 in the alekhin parametrization
-   * \param F1 F1 structure function
-   * \param F2 F2 structure function
+   * \param[out] F1 F1 structure function
+   * \param[out] F2 F2 structure function
    */
   void getF_Alekhin(double &F1, double &F2);
   double getF1_Alekhin(); /*!< return F1 structure function in the Alekhin parametrization */
   double getF2_Alekhin(); /*!< return F2 structure function in the Alekhin parametrization */
   /*! returns F1 and F2 in the SLAC parametrization
-   * \param F1 F1 structure function
-   * \param F2 F2 structure function
+   * \param[out] F1 F1 structure function
+   * \param[out] F2 F2 structure function
    */
   void getF_SLAC(double &F1, double &F2) const;
   double getF1_SLAC() const; /*!< return F1 structure function in the SLAC parametrization */
   double getF2_SLAC() const; /*!< return F2 structure function in the SLAC parametrization */
   /*! returns F1 and F2 in the Christy & Bosted parametrization
-   * \param F1 F1 structure function
-   * \param F2 F2 structure function
+   * \param[out] F1 F1 structure function
+   * \param[out] F2 F2 structure function
    */
   void getF_CB(double &F1, double &F2) const;
   double getF1_CB() const;/*!< return F1 structure function in the Christy & Bosted parametrization */
   double getF2_CB() const;/*!< return F2 structure function in the Chrsity & Bosted parametrization */
   /*! returns F1 and F2 in the CTEQ parametrization
-   * \param F1 F1 structure function
-   * \param F2 F2 structure function
+   * \param[out] F1 F1 structure function
+   * \param[out] F2 F2 structure function
    */
   void getF_CTEQ(double &F1, double &F2);
   double getF1_CTEQ();/*!< return F1 structure function in the CTEQ parametrization */
   double getF2_CTEQ();/*!< return F2 structure function in the CTEQ parametrization */
+  
+  /*! returns F1 and F2 in the HRMS-B parametrization
+   * \param[out] F1 F1 structure function
+   * \param[out] F2 F2 structure function
+   */
+  void getF_HMRS(double &F1, double &F2);
+  
+ /*! returns F1 and F2 in the MSTW parametrization
+   * \param[out] F1 F1 structure function
+   * \param[out] F2 F2 structure function
+   */
+  void getF_MSTW(double &F1, double &F2);
   
 };
 /*! @} */

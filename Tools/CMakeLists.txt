@@ -39,6 +39,7 @@ newcoef.h
 TKinematics2to3.h
 TKinematics2to3WithLabAngles.h
 TLeptonKinematics.h
+mstwpdf.h
 )
 foreach(it ${MePhys_HEADERS_H})
   STRING(REGEX REPLACE "(^.*).h" "\\1.cpp" bla ${it})
@@ -98,6 +99,8 @@ spline.f
 clebsch.f
 getwavemod_tm.f
 grsv2000pdf_g1.f
+R199x.f
+hmrs-b.f
 )
 # MESSAGE("${CMAKE_MODULE_PATH}")
 # foreach(outfile ${MePhys_DICTIONARY}

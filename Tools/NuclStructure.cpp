@@ -5,6 +5,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <cstring>
+#include "mstwpdf.h"
 
 using namespace std;
 
@@ -38,6 +39,16 @@ extern "C"{
                double *d, double *ub, double *db, double *st, double *gl, double *g1p, double *g1n);
 }
 
+//R1990 SLAC parametrization
+extern "C"{
+  double R1990_(double *x, double *q2);
+}
+
+//R1990 SLAC parametrization
+extern "C"{
+  double R1998_(double *x, double *q2);
+}
+
 extern "C"{
   extern struct{
     char fileslo[128];
@@ -48,6 +59,23 @@ extern "C"{
   extern struct{
     int iini=7;
   } intini_;
+}
+
+//HMRS F1,2 from LO pdfs
+extern "C"{
+ double f1p_hmrs_(double *x, double *Q2);
+}
+
+extern "C"{
+ double f1n_hmrs_(double *x, double *Q2);
+}
+
+extern "C"{
+ double f2n_hmrs_(double *x, double *Q2);
+}
+
+extern "C"{
+ double f2p_hmrs_(double *x, double *Q2);
 }
 
 
@@ -217,12 +245,48 @@ double NuclStructure::getF2_CB() const{
   
 }
 
+void NuclStructure::getF_HMRS(double &F1,double &F2){
+  double q2gev=Q2*1.E-06;
+  if(proton){ F1=f1p_hmrs_(&x, &q2gev); F2=f2p_hmrs_(&x, &q2gev);}
+  else{F1=f1n_hmrs_(&x, &q2gev); F2=f2n_hmrs_(&x, &q2gev);}
+  
+}
+
+
+void NuclStructure::getF_MSTW(double &F1,double &F2){
+  double q2gev=Q2*1.E-06;
+  c_mstwpdf mstw=c_mstwpdf(string(HOMEDIR)+"mstw2008lo.00.dat");
+  mstw.update(x,q2gev);
+  double u,d,s,c,b,ubar,dbar,sbar,cbar,bbar;
+  d=mstw.parton(1,x,q2gev);
+  u=mstw.parton(2,x,q2gev);
+  s=mstw.parton(3,x,q2gev);
+  c=mstw.parton(4,x,q2gev);
+  b=mstw.parton(5,x,q2gev);
+  dbar=mstw.parton(-1,x,q2gev);
+  ubar=mstw.parton(-2,x,q2gev);
+  sbar=mstw.parton(-3,x,q2gev);
+  cbar=mstw.parton(-4,x,q2gev);
+  bbar=mstw.parton(-5,x,q2gev);
+  if(proton){ 
+    F2=1./9.*(4.*(u+ubar)+(d+dbar)+(s+sbar)+4*(c+cbar)+(b+bbar));
+    F1=1./(2.*x)/(1.+getR1998(x,Q2))*(1.+4.*MASSP*MASSP*x*x/Q2)*F2;
+  }
+  else{
+    F2=1./9.*((u+ubar)+4.*(d+dbar)+(s+sbar)+4*(c+cbar)+(b+bbar));
+    F1=1./(2.*x)/(1.+getR1998(x,Q2))*(1.+4.*MASSN*MASSN*x*x/Q2)*F2;
+  }
+}
+
+
 
 void NuclStructure::getF(double &F1, double &F2){
   if(!name.compare("SLAC")) getF_SLAC(F1,F2);
   else if(!name.compare("Alekhin")) getF_Alekhin(F1,F2);
   else if(!name.compare("CB")) getF_CB(F1,F2);
   else if(!name.compare("CTEQ")) getF_CTEQ(F1,F2);
+  else if(!name.compare("hmrs")) getF_HMRS(F1,F2);
+  else if(!name.compare("MSTW")) getF_MSTW(F1,F2);
   else { cerr << "invalid name for structure function" << endl; exit(1);}
   return;
 }
@@ -393,4 +457,14 @@ double NuclStructure::getG1plusg2_grsv2000(bool proton, double x, double Q2){
     result+=NuclStructure::getG1_grsv2000(proton,y,Q2)/y;
   }
   return result*step;
+}
+
+double NuclStructure::getR1990(double x, double Q2){
+    double q2gev=Q2*1.E-06;
+    return R1990_(&x,&q2gev);
+}
+
+double NuclStructure::getR1998(double x, double Q2){
+    double q2gev=Q2*1.E-06;
+    return R1998_(&x,&q2gev);
 }
