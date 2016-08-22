@@ -16,6 +16,30 @@ using pure virtual functions to be overloaded for actually calculating the grids
 \end{figure}
 
 An important note is that \texttt{addParticle} and \texttt{addKnockout} are seperate functions that do not call each other. This is done so you can add IFSI particles that are not knock out particles. Or you can exclude particles from contributing to the FSIs. (For example adding a knockout particle that is not actually knocked out in the process will disable the FSIs with this hypothetically knocked out particle).
+\subsection{$(\vec{b},z)$ transformation}
+Suppose we want to translate a general coordinate $\vec{r} = (r \sin \theta \cos \phi, r \sin \theta \sin \phi,r \cos \theta)$ to the impact parameter and $z$-coordinate $(\vec{b},z)$ in the coordinates system where the momentum of the particle is chosen along the $z$-axis (Figure \ref{fig:bz_transfo}). The $z$ coordinate along $\vec{e}_k$ is given by,
+\begin{align*}
+	z = \vec{r} \cdot \vec{e}_k &= r \sin \theta \cos \phi \sin \theta_k \cos \phi_k + r \sin \theta \sin \phi \sin \theta_k \sin \phi_k + r \cos \theta \cos \theta_k \\
+	&= r \sin \theta \sin \theta_k \left( \cos \phi  \cos \phi_k + \sin \phi \sin \phi_k \right) + r \cos \theta \cos \theta_k \\
+	&= r \sin \theta \sin \theta_k \cos( \phi - \phi_k) + r \cos \theta \cos \theta_k
+\end{align*}
+The vector $\vec{b}$ is now easily determined trough,
+\begin{align*}
+	\vec{r} = z \vec{e}_k + \vec{b},
+\end{align*}
+we have,
+\begin{align*}
+	b_x & = r \sin \theta \cos \phi - z \sin \theta_k \cos \phi_k \\
+	b_y & = r \sin \theta \sin \phi - z \sin \theta_k \sin \phi_k \\
+	b_z & = r \cos \theta - z \cos \theta_k
+\end{align*}
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{figs/bz_transfo.pdf}
+\caption{$(\vec{b},z)$ transformation.} \label{fig:bz_transfo}
+\end{figure}
+This is implemented exactly this way in \texttt{FastParticle::setHitcoord}.
+
 \subsection{AbstractFsiGridThick}
 The \texttt{AbstractFsiGridThick} takes a \texttt{MeanFieldNucleusThick} instead of a \texttt{MeanFieldNucleus} in its constructor. Also makes a \texttt{fsicorrelator} and sets \texttt{number\textunderscore of\textunderscore grids} to 2 and prepends ``Thick.'' to the output grid filenames.
 Declares new pure virtual function \texttt{getFsiSrcGridFull\textunderscore interp()} which it uses in the interpolation functions for this grid.
