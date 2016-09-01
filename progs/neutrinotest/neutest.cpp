@@ -288,7 +288,8 @@ struct Ftor {
 
 };
 
-  
+
+//determine boundaries of kinematics
 double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
 	      double E_in, double E_out, double costhetamu, int shell);
 double getMin(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
@@ -296,6 +297,7 @@ double getMin(double &high, double &low, MeanFieldNucleusThick &nucleus, TLepton
 double getMax(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
 	      double Q2, double omega, int shell);
 
+// integration over missing momentum
 void adap_intPm(numint::vector_d &, double E_in, double costhetacm,
 		WeakQECross& pObs, MeanFieldNucleusThick &pNucleus, TLeptonKinematics &lepton,
 		double E_out, double costhetamu, int current, double *cthmax);
@@ -327,19 +329,19 @@ int main(int argc, char *argv[])
 
   WeakQECross obs(lepton,&Nucleus,prec,integrator,homedir,charged, 1.03E03, screening, 0.);
   
-  vector<double> avgcross(2,0.); 
+  vector<double> avgcross(2,0.); //neutrino and antineutrino
   //estimates for integration bounds
   double cthmax[Nucleus.getTotalLevels()];
   double cthmin[Nucleus.getTotalLevels()];
   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cthmax[shell]=-1.;cthmin[shell]=1.;}
-  double max=-1.,min=1.;
+  double max=-1.,min=1.; //overall min and max center of mass cosine theta angles
 
   //find reasonable integration limits
   double E_low=E_out;
   double E_high=E_out;
   bool switchlow=0;
   for(int i=1;i<1000;i++){
-    double E_in=E_out+(3.E03-E_out)*0.001*i;
+    double E_in=E_out+(3.E03-E_out)*0.001*i; //possible incoming lepton energies
     double omega=E_in-E_out;
     double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
 	-lepton->GetLeptonMass()*lepton->GetLeptonMass();
@@ -472,7 +474,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 			  +nucleus.getExcitation()[shell],
 			  shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
       double pm=kin.GetPklab();
-      if(!kin.IsPhysical()||kin.GetPYlab()<200.){
+      if(!kin.IsPhysical()||kin.GetPYlab()<200.){ //final nucleon momentum too low, impose cut!
 	//for(int i=0;i<2;i++) results[i]+=0.;
 // 	cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << " " << kin.GetPk() << endl;
       }
@@ -501,16 +503,16 @@ double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLept
       -lepton.GetLeptonMass()*lepton.GetLeptonMass();
   double tempmin=500.;
   double costhmin=-1.;
-  for(int i=0;i<=1000;i++){
+  for(int i=0;i<=1000;i++){ //loop over all com angles
     TKinematics2to2 kin("","",nucleus.getMassA(),
 			(shell<nucleus.getPLevels()? nucleus.getMassA_min_proton(): nucleus.getMassA_min_neutron())
 			+nucleus.getExcitation()[shell],
 			shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,-1.+i*0.002);
-    double pm=kin.GetPklab();
+    double pm=kin.GetPklab(); //initial nucleon momentum
     if(pm<tempmin) {tempmin=pm; costhmin=-1.+i*0.002;}
   }
   //   cout << omega << " " << Q2/1.E06 << " " << omega/(2.*MASSP*omega) << " " << high << " " << low << " " << pm << endl;
-  double temptemp=costhmin;
+  double temptemp=costhmin;//com costheta value where the min initial nucl momentum is
 //   cout << costhmin << " " << tempmin << endl;
   if(tempmin<300.){
     TKinematics2to2 kin1("","",nucleus.getMassA(),
@@ -528,9 +530,10 @@ double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLept
     if(kinmin1.GetPklab()>300.) getMin(temptemp,low,nucleus,lepton,Q2,omega,shell);
 //     cout << "pm " << kinmin1.GetPklab() << " " << kin1.GetPklab() << " " << costhmin << " " << low << " " << high << endl;
   }
-  return tempmin;
+  return tempmin;//minimal initial nucleon momentum
 }
 
+//recursive function to find min costheta value so that initial nucleon momentum is low enough
 double getMin(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
 	      double Q2, double omega, int shell){
   
@@ -546,6 +549,7 @@ double getMin(double &high, double &low, MeanFieldNucleusThick &nucleus, TLepton
   else return getMin(high,low,nucleus,lepton,Q2,omega,shell);  
 }
 
+//recursive function to find max costheta value so that initial nucleon momentum is low enough
 double getMax(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
 	      double Q2, double omega, int shell){
   

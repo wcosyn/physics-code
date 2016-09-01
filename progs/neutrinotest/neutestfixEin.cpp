@@ -6,6 +6,7 @@
 //it takes some effort in finding reasonable integration limits, the rest is basically integrating the QE cross section of course
 //pretty straightforward...
 
+//version 
 
 #include <iostream>
 #include <cstdlib>
