@@ -38,9 +38,22 @@
 #include <string>
 #include <math.h>
 
-using namespace std;
+
+// using namespace std;
 
 class c_mstwpdf {
+ public:
+  c_mstwpdf(std::string filename,bool warn=false,bool fatal=true);
+  struct s_partoncontent {
+    double upv,dnv,usea,dsea,str,sbar,chm,cbar,bot,bbar,glu,phot;
+  } cont;
+  double xmin,xmax,qsqmin,qsqmax;
+  double mCharm,mBottom,alphaSQ0,alphaSMZ;
+  double distance,tolerance;
+  int alphaSorder,alphaSnfmax;
+  void update(double x,double q); // update cont
+  double parton(int flavour,double x,double q);
+  // The constructor (initialises the functions):
  private:
   const static int np=12;   // number of parton flavours
   const static int nx=64;   // number of x grid points
@@ -53,18 +66,6 @@ class c_mstwpdf {
   double parton_interpolate(int flavour,double xxx,double qqq);
   double parton_extrapolate(int flavour,double xxx,double qqq);
   bool warn,fatal;
- public:
-  struct s_partoncontent {
-    double upv,dnv,usea,dsea,str,sbar,chm,cbar,bot,bbar,glu,phot;
-  } cont;
-  double xmin,xmax,qsqmin,qsqmax;
-  double mCharm,mBottom,alphaSQ0,alphaSMZ;
-  double distance,tolerance;
-  int alphaSorder,alphaSnfmax;
-  void update(double x,double q); // update cont
-  double parton(int flavour,double x,double q);
-  // The constructor (initialises the functions):
-  c_mstwpdf(string filename,bool warn=false,bool fatal=true);
 };
 
 #endif

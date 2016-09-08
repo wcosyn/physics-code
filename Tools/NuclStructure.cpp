@@ -39,14 +39,14 @@ extern "C"{
                double *d, double *ub, double *db, double *st, double *gl, double *g1p, double *g1n);
 }
 
-//R1990 SLAC parametrization
+//r1990 SLAC parametrization
 extern "C"{
-  double R1990_(double *x, double *q2);
+  double r1990_(double *x, double *q2);
 }
 
-//R1990 SLAC parametrization
+//r1990 SLAC parametrization
 extern "C"{
-  double R1998_(double *x, double *q2);
+  double r1998_(double *x, double *q2);
 }
 
 extern "C"{
@@ -103,8 +103,14 @@ name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR){
       exit(1);
   }
   if(!name.compare("CB")&&(Wsq>9.E06)) name="SLAC";
-  
-  
+  if(!name.compare("MSTW")){
+    string file= string(HOMEDIR)+"/mstw_grids/mstw2008lo.00.dat";
+    mstw = new c_mstwpdf(file,false,true);
+    double q2gev=Q2*1.E-06;
+    mstw->update(x,q2gev);
+  }
+  else mstw=NULL;
+
   
   return;
 
@@ -112,10 +118,20 @@ name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR){
 NuclStructure::NuclStructure(bool pr, double Q2in, double xin, double Wsqin, string nm="SLAC"):
 name(nm),proton(pr), mass(pr?MASSP:MASSN),dir(HOMEDIR),x(xin),Q2(Q2in),Wsq(Wsqin){
   if(!name.compare("CB")&&(Wsq>9.E06)) name="SLAC";
+  if(!name.compare("MSTW")){
+    string file= string(HOMEDIR)+"/mstw_grids/mstw2008lo.00.dat";
+    mstw = new c_mstwpdf(file,false,true);
+    double q2gev=Q2*1.E-06;
+    mstw->update(x,q2gev);
+  }
+  else mstw=NULL;
   
 }
 
 
+NuclStructure::~NuclStructure(){
+  if(mstw) delete mstw;
+}
 
 NuclStructure::NuclStructure(const NuclStructure& rhs){
   name=rhs.name;
@@ -254,28 +270,28 @@ void NuclStructure::getF_HMRS(double &F1,double &F2){
 
 
 void NuclStructure::getF_MSTW(double &F1,double &F2){
-  double q2gev=Q2*1.E-06;
-  c_mstwpdf mstw=c_mstwpdf(string(HOMEDIR)+"mstw2008lo.00.dat");
-  mstw.update(x,q2gev);
   double u,d,s,c,b,ubar,dbar,sbar,cbar,bbar;
-  d=mstw.parton(1,x,q2gev);
-  u=mstw.parton(2,x,q2gev);
-  s=mstw.parton(3,x,q2gev);
-  c=mstw.parton(4,x,q2gev);
-  b=mstw.parton(5,x,q2gev);
-  dbar=mstw.parton(-1,x,q2gev);
-  ubar=mstw.parton(-2,x,q2gev);
-  sbar=mstw.parton(-3,x,q2gev);
-  cbar=mstw.parton(-4,x,q2gev);
-  bbar=mstw.parton(-5,x,q2gev);
+  double q2gev=Q2*1.E-06;
+
+  d=mstw->parton(1,x,q2gev);
+  u=mstw->parton(2,x,q2gev);
+  s=mstw->parton(3,x,q2gev);
+  c=mstw->parton(4,x,q2gev);
+  b=mstw->parton(5,x,q2gev);
+  dbar=mstw->parton(-1,x,q2gev);
+  ubar=mstw->parton(-2,x,q2gev);
+  sbar=mstw->parton(-3,x,q2gev);
+  cbar=mstw->parton(-4,x,q2gev);
+  bbar=mstw->parton(-5,x,q2gev);
   if(proton){ 
     F2=1./9.*(4.*(u+ubar)+(d+dbar)+(s+sbar)+4*(c+cbar)+(b+bbar));
-    F1=1./(2.*x)/(1.+getR1998(x,Q2))*(1.+4.*MASSP*MASSP*x*x/Q2)*F2;
+    F1=1./(2.*x)/(1.+getr1998(x,Q2))*(1.+4.*MASSP*MASSP*x*x/Q2)*F2;
   }
   else{
     F2=1./9.*((u+ubar)+4.*(d+dbar)+(s+sbar)+4*(c+cbar)+(b+bbar));
-    F1=1./(2.*x)/(1.+getR1998(x,Q2))*(1.+4.*MASSN*MASSN*x*x/Q2)*F2;
+    F1=1./(2.*x)/(1.+getr1998(x,Q2))*(1.+4.*MASSN*MASSN*x*x/Q2)*F2;
   }
+//   cout << x << " " << q2gev << " " << F1 << " " << F2 << endl;
 }
 
 
@@ -285,7 +301,7 @@ void NuclStructure::getF(double &F1, double &F2){
   else if(!name.compare("Alekhin")) getF_Alekhin(F1,F2);
   else if(!name.compare("CB")) getF_CB(F1,F2);
   else if(!name.compare("CTEQ")) getF_CTEQ(F1,F2);
-  else if(!name.compare("hmrs")) getF_HMRS(F1,F2);
+  else if(!name.compare("HMRS")) getF_HMRS(F1,F2);
   else if(!name.compare("MSTW")) getF_MSTW(F1,F2);
   else { cerr << "invalid name for structure function" << endl; exit(1);}
   return;
@@ -459,12 +475,12 @@ double NuclStructure::getG1plusg2_grsv2000(bool proton, double x, double Q2){
   return result*step;
 }
 
-double NuclStructure::getR1990(double x, double Q2){
+double NuclStructure::getr1990(double x, double Q2){
     double q2gev=Q2*1.E-06;
-    return R1990_(&x,&q2gev);
+    return r1990_(&x,&q2gev);
 }
 
-double NuclStructure::getR1998(double x, double Q2){
+double NuclStructure::getr1998(double x, double Q2){
     double q2gev=Q2*1.E-06;
-    return R1998_(&x,&q2gev);
+    return r1998_(&x,&q2gev);
 }

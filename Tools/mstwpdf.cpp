@@ -32,6 +32,8 @@
 
 #include "mstwpdf.h"
 
+using namespace std;
+
 int locate(double xx[],int n,double x)
   // returns an integer j such that x lies inbetween xx[j] and xx[j+1].
   // unit offset of increasing ordered array xx assumed.
@@ -242,7 +244,7 @@ c_mstwpdf::c_mstwpdf(string filename,bool warn_in,bool fatal_in)
   
   // The name of the file to open is stored in 'filename'.
   // Line below can be commented out if you don't want this message.
-  cout << "Reading PDF grid from " << filename << endl;
+//   cout << "Reading PDF grid from " << filename << endl;
   ifstream data_file;
   data_file.open(filename.c_str());
 

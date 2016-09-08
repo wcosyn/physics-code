@@ -91,6 +91,7 @@
 
 #include <string>
 #include <cmath>
+class c_mstwpdf; //forward declaration
 
 /*! \brief A class for a variety of nucleon structure parametrizations.  Has Christy&Bosted / Alekhin (leading twist) / SLAC. */
 class NuclStructure{
@@ -109,8 +110,10 @@ public:
    * "SLAC": SLAC paramtetrization from Bodek <BR>
    * "Alekhin": leading twist parametrization by Alekhin [see PRD 68,014002], also see alekhin.f file <BR>
    * "CTEQ": F2 based on the pdf's from CTEQ (code from Misak, see cteq.f file) <BR>
+   * "HMRS": F2 from pdfs from unknown source (Shunzo Kumano is the source, not enough info in his code file, see hmrs-b.f) <BR>
+   * "MSTW": F2 from LO (or nlo etc) from MSTW pdfs (see mstwpdf.h & mstw.cpp) <BR>
    */
-  NuclStructure(bool proton, double var1, double var2, int switchvar, std::string name);
+  NuclStructure(const bool proton, double var1, double var2, int switchvar, std::string name);
   /*! Constructor 
    * \param proton proton [1] or neutron [0]
    * \param Q2in [MeV^2] Q^2 of the virtual photon
@@ -124,11 +127,11 @@ public:
    * "HMRS": F2 from pdfs from unknown source (Shunzo Kumano is the source, not enough info in his code file, see hmrs-b.f) <BR>
    * "MSTW": F2 from LO (or nlo etc) from MSTW pdfs (see mstwpdf.h & mstw.cpp) <BR>
    */
-  NuclStructure(bool proton, double Q2in, double xin, double Wsqin, std::string name);
+  NuclStructure(const bool proton, double Q2in, double xin, double Wsqin, std::string name);
 
   NuclStructure(const NuclStructure&); /*!< Copy Constructor */
   NuclStructure& operator=(const NuclStructure&); /*!< assignment operator */
-
+  ~NuclStructure(); /*!< Destructor */
   
   
   /*! Returns the F1 and F2 structure functions */
@@ -137,6 +140,7 @@ public:
   double getF2(); /*!< returns the F2 structure function */
   const std::string getName() const{return name;} /*!< returns the name of the chosen parametrization */
   double getW(){return sqrt(Wsq);} /*!< [MeV] returns the invariant mass of X*/
+  bool getProton() const{return proton;}
   
   /*! returns the g1 structure function from the grsv2000 parametrization (leading order,  hep-ph/0011215, Tools/grsv2000pdf_g1.f )
    * \param proton 1=proton 0=neutron
@@ -144,7 +148,7 @@ public:
    * \param Q2 [MeV^2] virtual photon four-momentum sq
    * \return g1n structure functions
    */
-  static double getG1_grsv2000(bool proton, double x, double Q2);
+  static double getG1_grsv2000(const bool proton, double x, double Q2);
   /*! returns the sigma_L/sigma_T ratio, from SLAC fits (code from Shunzo Kumano, see R199x.f)
    * This is the 1990 parametrization 0.1 < x < 0.9, 0.6 < Q^2 < 20 GeV^2
    * L. W. Withlow et al., Phys. Lett. B250 194(1990)
@@ -152,7 +156,7 @@ public:
    * \param Q2 [MeV^2] virtual photon four-momentum sq
    * \return R=sigma_L/sigma_T (indicates scaling violations from Callan-Gross LT relation)
    */
-  static double getR1990(double x, double Q2);
+  static double getr1990(double x, double Q2);
   /*! returns the sigma_L/sigma_T ratio, from SLAC fits (code from Shunzo Kumano, see R199x.f)
    * This is the 1998 parametrization 0.005 < x < 0.86, 0.5 < Q^2 < 130 GeV^2
    * (E143) K. Abe et al., Phys. Lett B452 194 (1999)
@@ -160,7 +164,7 @@ public:
    * \param Q2 [MeV^2] virtual photon four-momentum sq
    * \return R=sigma_L/sigma_T (indicates scaling violations from Callan-Gross LT relation)
    */
-  static double getR1998(double x, double Q2);
+  static double getr1998(double x, double Q2);
 
 
   /*! returns the g1+g2 structure function using the Wandura-Wilczek relation [g1+g2=int dy/y g1(y)] from the grsv2000 parametrization (leading order,  hep-ph/0011215, Tools/grsv2000pdf_g1.f )
@@ -170,7 +174,7 @@ public:
    * \param Q2 [MeV^2] virtual photon four-momentum sq
    * \return g1+g2 structure functions
    */
-  static double getG1plusg2_grsv2000(bool proton, double x, double Q2);
+  static double getG1plusg2_grsv2000(const bool proton, double x, double Q2);
   
 private:
   std::string name; /*!< name of the paramtetrization */
@@ -180,6 +184,7 @@ private:
   double x; /*!< Bjorken x */
   double Q2; /*!< [MeV^2] Q^2 of the virtual photon */
   double Wsq; /*!< [MeV^2] invariant mass squared W^2 */
+  c_mstwpdf *mstw;
   
   /*! proton F2 SLAC parametrization
    * \param massi [GeV] initial mass, off-shell
