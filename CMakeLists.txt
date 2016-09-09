@@ -198,8 +198,8 @@ else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES 
 
       # Select flags.
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native -std=c++11")
-      set(CMAKE_CXX_FLAGS_DEBUG          "-g")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native -std=gnu11")
+      set(CMAKE_CXX_FLAGS_DEBUG          "-g -std=gnu11")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -pg ")
       set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g")

@@ -92,7 +92,6 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
     
 
   res=numint::vector_d(3,0.);
-
  /* res[0]=res[1]=res[2]=pow(wfref->GetWp(knorm),2.)+pow(wfref->GetUp(knorm),2.)*knorm*knorm;
   cout << knorm << " " << costh << endl;
   return;
@@ -130,7 +129,7 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
     F1n=F2n/2./xoffshell/(R+1)*(1+gamma*gamma);
   }
   else {str_p.getF(F1p,F2p); str_n.getF(F1n,F2n);}
-  F2p=F2n=0.;
+//   F2p=F2n=0.;
   double factor=(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*(6*costh*costh-2.)+knorm*knorm/piq*(F2p+F2n)*sinth2*sinth2;
   
   factor*=3./4./(1.+gamma*gamma)*knorm*knorm/(1.+knorm*costh/Es) /*/2./(1.-(Es-knorm*costh)/MASSD)*/;
@@ -139,7 +138,7 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   res[1]*=factor;
   res[2]*=factor;
 //   if(std::isnan(res[0]))  cout << knorm<< " " << costh << " " << xoffshell << " " << W_sq << " " << lowerlimit << " " << endl;
-   
+//   cout << knorm << " " << costh << " " << F2p << " " << F2n << endl;
     
     
     
