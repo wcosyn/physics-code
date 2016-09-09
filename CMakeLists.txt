@@ -78,7 +78,7 @@ if (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES w
       # Select flags.
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g")
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native -std=c++11")
-      set(CMAKE_CXX_FLAGS_DEBUG          "-g")
+      set(CMAKE_CXX_FLAGS_DEBUG          "-g -std=c++11")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O3 -pg ")
       set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g")
@@ -94,7 +94,7 @@ if (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES w
       MESSAGE("--- Found Intel compiler collection")
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0  -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel -g")
       set(CMAKE_CXX_FLAGS_RELEASE        "-O3  -std=c++11 -shared-intel -fp-model source -unroll -pthread -ipo -xsse4.2 -parallel")
-      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0")
+      set(CMAKE_CXX_FLAGS_DEBUG          "-g -O0 -std=c++11")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-p -O0  -no-ipo")
     endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")

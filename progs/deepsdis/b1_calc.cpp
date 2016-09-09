@@ -23,7 +23,17 @@ int main(int argc, char *argv[])
   
   TDeuteron::Wavefunction *wfref;
   wfref = TDeuteron::Wavefunction::CreateWavefunction(wf);
-
+//   for(int i=1;i<100;i++){
+//     double x=0.01*i;
+//     NuclStructure s1(1,Q2,x,0,"SLAC");
+//     NuclStructure s2(1,Q2,x,0,"HMRS");
+//     cout << x << " " << s1.getF1() << " " << s2.getF1() << " " << s1.getF2() << " " << s2.getF2() << endl;
+//   }
+//   exit(1);
+    
+  
+  
+  
   struct Ftor_b1 {
 
     /*! integrandum function */
@@ -49,6 +59,7 @@ int main(int argc, char *argv[])
     double nu=Q2/(2.*MASSD*x);
     double qvec=sqrt(Q2+nu*nu);
     double gamma=sqrt(Q2)/nu;
+//     double gamma=0.;
     
     numint::array<double,2> lower = {{0.,-1.}};
     numint::array<double,2> upper = {{600.,1.}};
@@ -86,9 +97,9 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   cout << knorm << " " << costh << endl;
   return;
  */ 
-  res[0]=wfref->GetUp(knorm)*wfref->GetWp(knorm)/sqrt(2.)-pow(wfref->GetWp(knorm),2.)/4.;
-  res[1]=wfref->GetUp(knorm)*wfref->GetWp(knorm)/sqrt(2.);
-  res[2]=-pow(wfref->GetWp(knorm),2.)/4.;
+  res[0]=wfref->GetUp(knorm)*wfref->GetWp(knorm)/sqrt(2.)+pow(wfref->GetWp(knorm),2.)/4.;  // UW/sqrt(2)+W^2/4
+  res[1]=wfref->GetUp(knorm)*wfref->GetWp(knorm)/sqrt(2.); // UW/sqrt(2)
+  res[2]=pow(wfref->GetWp(knorm),2.)/4.; // W*W/4  
  
   double sinth2=1.-costh*costh;
   double Es=sqrt(MASSn*MASSn+knorm*knorm);
@@ -111,16 +122,18 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   NuclStructure str_n(0,Q2,xtilde,W_sq,nuclstruc);
 //   cout << knorm << " " << costh << " " <<  x << " " << xoffshell << " " << sqrt(W_sq) << " " << Q2 << " " << nuoffshell << " " << sqrt(mi_off) << " " << Einoff << endl;
   double F1p,F2p,F1n,F2n;
-  if(!(str_p.getName().compare("SLAC"))){
+  if(!(str_p.getName().compare("SLAC"))||!(str_p.getName().compare("CTEQ"))){
     F2p=str_p.getF2();
     F2n=str_n.getF2();
-    double R=0.18;
+    double R=NuclStructure::getr1998(x,Q2);
     F1p=F2p/2./xoffshell/(R+1)*(1+gamma*gamma);
     F1n=F2n/2./xoffshell/(R+1)*(1+gamma*gamma);
   }
-  else {str_p.getF(F1p,F2p); str_p.getF(F1n,F2n);}
-  double factor=(-2.*(F1p+F1n)+2.*(F2p+F2n)/piq*pow(MASSD*sqrt(1.+gamma*gamma)/gamma-(qvec*Es+nu*knorm*costh)/sqrt(Q2),2.))*(6*costh*costh-2.)+knorm*knorm/piq*(F2p+F2n)*sinth2*sinth2;
-  factor*=-3./4./(1.+gamma*gamma)*knorm*knorm;
+  else {str_p.getF(F1p,F2p); str_n.getF(F1n,F2n);}
+  F2p=F2n=0.;
+  double factor=(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*(6*costh*costh-2.)+knorm*knorm/piq*(F2p+F2n)*sinth2*sinth2;
+  
+  factor*=3./4./(1.+gamma*gamma)*knorm*knorm/(1.+knorm*costh/Es) /*/2./(1.-(Es-knorm*costh)/MASSD)*/;
   
   res[0]*=factor;
   res[1]*=factor;
