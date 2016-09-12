@@ -5,6 +5,7 @@ project(MePhys)
 # fill list of header files 
 set(MePhys_HEADERS_HPP 
 NuclStructure.hpp
+NucleonStructure.hpp
 DeuteronStructure.hpp
 Utilfunctions.hpp
 LightConeKin2to2.hpp
