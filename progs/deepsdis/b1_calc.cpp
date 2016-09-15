@@ -1,3 +1,7 @@
+//calculate b1 from the tagged structure functions
+
+//calculate Azz from tagged structure functions, accounting for virtual photon angle etc.
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
@@ -14,13 +18,14 @@ using namespace std;
 
 
 void k_int(numint::vector_d & res, double knorm, double kcosth, TDeuteron::Wavefunction *wfref,
-          double Q2, double x, double nu, double qvec, double gamma, NucleonStructure &strp);
+          double Q2, double x, double nu, double qvec, double gamma, double eps, double thetaq, NucleonStructure &strp);
 
 
 int main(int argc, char *argv[])
 {
-  double Q2 = atof(argv[1])*1.E06; // parse from argv or something
+  double Q2 = atof(argv[1])*1.E06; 
   string wf = argv[2];
+  double Ein= atof(argv[4])*1.E03; //beam energy in GeV
   string nuclstruc = argv[3];
   
   TDeuteron::Wavefunction *wfref;
@@ -41,7 +46,7 @@ int main(int argc, char *argv[])
     /*! integrandum function */
     static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
       Ftor_b1 &p = * (Ftor_b1 *) param;
-      p.f(ret,x[0],x[1], p.wfref,p.Q2,p.x,p.nu,p.qvec,p.gamma,p.strp);
+      p.f(ret,x[0],x[1], p.wfref,p.Q2,p.x,p.nu,p.qvec,p.gamma,p.eps,p.thetaq,p.strp);
     }
     TDeuteron::Wavefunction *wfref;
     double Q2;
@@ -49,12 +54,14 @@ int main(int argc, char *argv[])
     double nu;
     double qvec;
     double gamma;
+    double eps;
+    double thetaq;
     NucleonStructure strp;
     
     
     
     void (*f)(numint::vector_d & res, double knorm, double kcosth, TDeuteron::Wavefunction *wfref,
-              double Q2, double x, double nu, double qvec, double gamma, NucleonStructure &strp);
+              double Q2, double x, double nu, double qvec, double gamma, double eps, double thetaq, NucleonStructure &strp);
   };
   
   for(int i=1;i<80;i++){
@@ -63,54 +70,66 @@ int main(int argc, char *argv[])
     double qvec=sqrt(Q2+nu*nu);
     double gamma=sqrt(Q2)/nu;
 //     double gamma=0.;
-    
-    NucleonStructure stp(nuclstruc);
+    double Eout=Ein-nu;
+    double y=nu/Ein;
+    if(y<1.){
+      double eps=(1-y-gamma*gamma*y*y/4.)/(1-y+y*y/2+gamma*gamma*y*y/4.);
+      double thetae=asin(sqrt(Q2/4/Ein/Eout))*2;
+      double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);
 
-    numint::array<double,2> lower = {{0.,-1.}};
-    numint::array<double,2> upper = {{600.,1.}};
-    Ftor_b1 F;
-    F.wfref=wfref;
-    F.Q2=Q2;
-    F.x=x;
-    F.nu=nu;
-    F.qvec=qvec;
-    F.gamma=gamma;
-    F.strp=strp;
-    
-    double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
-    strp.getF_xQ(F1p,F2p,1,2.*x,Q2);  
-    strp.getF_xQ(F1n,F2n,0,2.*x,Q2);  
+      
+      
+      
+      
+      NucleonStructure stp(nuclstruc);
 
-    numint::mdfunction<numint::vector_d,2> mdf;
-    mdf.func = &Ftor_b1::exec;
-    mdf.param = &F;
-    numint::vector_d ret(5,0.);
-    F.f=k_int;
-    int res=90;
-    unsigned count=0;
-//     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0);
-    cout << 2.*x << " " << ret[0] << " " << ret[1] << " " << ret[2] << " " << ret[3] << " " << 4.*(F1n+F1p) << endl;
+      numint::array<double,2> lower = {{0.,-1.}};
+      numint::array<double,2> upper = {{600.,1.}};
+      Ftor_b1 F;
+      F.wfref=wfref;
+      F.Q2=Q2;
+      F.x=x;
+      F.nu=nu;
+      F.qvec=qvec;
+      F.gamma=gamma;
+      F.eps=eps;
+      F.thetaq=thetaq;
+      F.strp=strp;
+      
+      double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
+      strp.getF_xQ(F1p,F2p,1,x*MASSD/MASSn,Q2);  
+      strp.getF_xQ(F1n,F2n,0,x*MASSD/MASSn,Q2);  
 
+      numint::mdfunction<numint::vector_d,2> mdf;
+      mdf.func = &Ftor_b1::exec;
+      mdf.param = &F;
+      numint::vector_d ret(12,0.);
+      F.f=k_int;
+      int res=90;
+      unsigned count=0;
+  //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0);
+      cout << 2.*x << " " << ret[0] << " " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] << endl;
+    }    
     
   }
 }
 
 void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefunction *wfref,
-	      double Q2, double x, double nu, double qvec, double gamma,
+	      double Q2, double x, double nu, double qvec, double gamma, double eps, double thetaq,
               NucleonStructure &strp){
     
   
-  res=numint::vector_d(5,0.);
+  res=numint::vector_d(12,0.);
  /* res[0]=res[1]=res[2]=pow(wfref->GetWp(knorm),2.)+pow(wfref->GetUp(knorm),2.)*knorm*knorm;
   cout << knorm << " " << costh << endl;
   return;
  */ 
-  res[0]=wfref->GetUp(knorm)*wfref->GetWp(knorm)/sqrt(2.)+pow(wfref->GetWp(knorm),2.)/4.;  // UW/sqrt(2)+W^2/4
-  res[1]=wfref->GetUp(knorm)*wfref->GetWp(knorm)/sqrt(2.); // UW/sqrt(2)
-  res[2]=pow(wfref->GetWp(knorm),2.)/4.; // W*W/4  
-  res[3]=pow(wfref->GetWp(knorm),2.)+pow(wfref->GetUp(knorm),2.);
- 
+  double dens_tensor_tot = wfref->GetUp(knorm)*wfref->GetWp(knorm)/sqrt(2.)+pow(wfref->GetWp(knorm),2.)/4.;  // UW/sqrt(2)+W^2/4
+  double dens_tensor_SD  = wfref->GetUp(knorm)*wfref->GetWp(knorm)/sqrt(2.); // UW/sqrt(2)
+  double dens_tensor_DD = pow(wfref->GetWp(knorm),2.)/4.; // W*W/4  
+  double dens_U = pow(wfref->GetWp(knorm),2.)+pow(wfref->GetUp(knorm),2.);
+
   double sinth2=1.-costh*costh;
   
   
@@ -138,45 +157,39 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   
   double piq=(Einoff*nu+ps_z*qvec);  //vec{pi}=-vec{pr} in PW!
   double nutilde=piq/MASSn;
-//   double mi_off = Einoff*Einoff-knorm*knorm; //effective mass off-shell nucleon SQUARED
   double xtilde=Q2/(2*piq);
-//   if(xtilde>1.) cout << xtilde << " " << lowerlimit << " " << costh << " " << 2.*piq+Einoff*Einoff-ps_norm*ps_norm-Q2 << " " << sqrt(2.*(Einoff*nu+ps_norm*lowerlimit*qvec)+Einoff*Einoff-ps_norm*ps_norm-Q2) << endl;
-//   double nuoffshell=(mi_off-MASSn*MASSn+2.*piq)/(2.*MASSn); //(m_i+qoffshell)^2=(p_i+q)^2
-//   double xoffshell=Q2/(2.*MASSn*nuoffshell); //xoffshell consistent with Q^2,m_i,W
-//   double W_sq=-Q2+2.*piq+mi_off;
-//   cout << x << " " << knorm << " " << costh << " " << W_sq << " " << lowerlimit << " " << -(-W_sq-Q2+pow(MASSD-Es,2.)-knorm*knorm+2.*(MASSD-Es)*Q2/(2.*MASSD*x))/(2.*qvec*knorm) << endl;
-//   if(W_sq<0.){ res[0]=res[1]=res[2]=0.; return;}
-//   NuclStructure str_p(1,Q2,xtilde,W_sq,nuclstruc);
-//   NuclStructure str_n(0,Q2,xtilde,W_sq,nuclstruc);
-//   cout << knorm << " " << costh << " " <<  x << " " << xoffshell << " " << sqrt(W_sq) << " " << Q2 << " " << nuoffshell << " " << sqrt(mi_off) << " " << Einoff << endl;
   double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
-//   if(!(str_p.getName().compare("SLAC"))||!(str_p.getName().compare("CTEQ"))){
-//     F2p=str_p.getF2();
-//     F2n=str_n.getF2();
-//     double R=NuclStructure::getr1998(x,Q2);
-//     F1p=F2p/2./xoffshell/(R+1)*(1+gamma*gamma);
-//     F1n=F2n/2./xoffshell/(R+1)*(1+gamma*gamma);
-//   }
-//   else {str_p.getF(F1p,F2p); str_n.getF(F1n,F2n);}
   strp.getF_xQ(F1p,F2p,1,xtilde,Q2);  
   strp.getF_xQ(F1n,F2n,0,xtilde,Q2);  
-  F2p=F2n=0.;
+//   F2p=F2n=0.;
   double factor=(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*(6*costh*costh-2.)+knorm*knorm/piq*(F2p+F2n)*sinth2*sinth2;
+
+  double F_U_T = (2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_U;
+  double F_U_L = (-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec+nu*ps_z)/sqrt(Q2),2.)/piq)*dens_U;
+  double F_tensor_T = -sqrt(3./2.)*(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*(6.*costh*costh-2.);
+  double F_tensor_L = -sqrt(3./2.)*(-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec+nu*ps_z)/sqrt(Q2),2.)/piq)*dens_tensor_tot*(6.*costh*costh-2.);
+  double F_tensor_cosphi = 2.*sqrt(6.)*(2.*knorm*sqrt(sinth2)/piq*(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec+nu*ps_z)/sqrt(Q2))*(F2p+F2n))*dens_tensor_tot*costh*sqrt(sinth2);
+  double F_tensor_cos2phi = -sqrt(3./2.)*(knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*sinth2;
   
   //last factor is normalization for lightcone 1/alpha_i converted to k momentum (k is spectator momentum here, be careful with signs!)
   factor*=3./4./(1.+gamma*gamma)*knorm*knorm/alpha_i /*/2./(1.-(Es-knorm*costh)/MASSD)*/; 
-//   cout << knorm << " " << costh << " " << xtilde << " " << piq << " " << alpha_i << " " << Es << " " << ps_z << endl;
-//   exit(1);
-  res[0]*=factor;
-  res[1]*=factor;
-  res[2]*=factor;
-  res[3]*=(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*knorm*knorm/alpha_i; //F_T deuteron
-//   res[3]*=2.*(F1n+F1p)*knorm*knorm/alpha_i;
-  res[4]=res[3];
-//   if(std::isnan(res[0]))  cout << knorm<< " " << costh << " " << xoffshell << " " << W_sq << " " << lowerlimit << " " << endl;
-//   cout << knorm << " " << costh << " " << F2p << " " << F2n << endl;
+
+  res[0]=dens_tensor_tot*factor;
+  res[1]=dens_tensor_SD*factor;
+  res[2]=dens_tensor_DD *factor;
+  res[3]=-sqrt(3./8.)/(1.+gamma*gamma)*knorm*knorm/alpha_i*(F_tensor_T+F_tensor_cos2phi); //b1
     
-    
+  res[4]=F_tensor_T*knorm*knorm/alpha_i;
+  res[5]=F_tensor_L*knorm*knorm/alpha_i;
+  res[6]=F_tensor_cosphi*knorm*knorm/alpha_i;
+  res[7]=F_tensor_cos2phi*knorm*knorm/alpha_i;
+  
+  res[8]=F_U_T*knorm*knorm/alpha_i;
+  res[9]=F_U_L*knorm*knorm/alpha_i;
+  
+  res[10]=(0.25+0.75*cos(thetaq))*(res[4]+eps*res[5])+0.75*sin(2*thetaq)*sqrt(2.*eps*(1.+eps))*res[6]+0.75*(1.-cos(2.*thetaq))*eps*res[7];
+  res[11]=res[8]+eps*res[9];
+  
     
     
 }
