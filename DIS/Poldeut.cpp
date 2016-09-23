@@ -73,8 +73,8 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   
   double nu = 2.*Q2/MASSD/x;
   double qvec = sqrt(Q2+nu*nu);
-  FourVector<double> q_mu(nu,0.,0.,qvec);
-  FourVector<double> el_mu(qvec,0.,0.,nu);
+  FourVector<double> q_mu(nu,0.,0.,-qvec);
+  FourVector<double> el_mu(qvec,0.,0.,-nu);
   el_mu*=1./sqrt(Q2); //longitudinal basis vector
   FourVector<double> et_mu(0.,1.,0.,0.);
   
@@ -98,7 +98,7 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   
   double x_nucl = Q2/2./(pi_mu*q_mu);
 //   cout << pi_mu << " " << q_mu << endl;
-//   cout << x_nucl << endl;
+//    cout << x_nucl << " " << pi_mu endl;
   NuclStructure nucl(proton,Q2,x_nucl,0,strucname);
   double F1,F2,g1,g1pg2;
   g1=NuclStructure::getG1_grsv2000(proton,x,Q2);
@@ -114,11 +114,11 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   snz*=1./MASSn;
   FourVector<double> snx(pi_perp/pi_plus,1.,0.,-pi_perp/pi_plus);
   
-  double factor=MASSD*sqrt(1.+1./gamma_d/gamma_d)-pi_mu*el_mu;
+  double factor=MASSD*sqrt(1.+1./gamma_d/gamma_d)-ps_mu*el_mu;
   double ff=(epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))/F2*Ek/alpha_i/alpha_i*4.*pow(2.*PI,3.);
-  F_U = (epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))*rhou/3.*4*pow(2.*PI,3.);
-  F_LSL = -gamma_n*(((el_mu*snz)*g1pg2-q_mu*snz/(pi_mu*q_mu)*(MASSD*sqrt(1-gamma_d*gamma_d)/gamma_d-el_mu*ps_mu)*(g1pg2-g1))*rho_l_z+((el_mu*snx)*g1pg2-q_mu*snx/(pi_mu*q_mu)*(MASSD*sqrt(1-gamma_d*gamma_d)/gamma_d-el_mu*ps_mu)*(g1pg2-g1))*rho_l_x)*4*pow(2.*PI,3.);
-  double F_UTLL = (epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))*rho_tensor_u*4*pow(2.*PI,3.);
+  F_U = (epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))*rhou;
+  F_LSL = gamma_n*(((el_mu*snz)*g1pg2-q_mu*snz/(pi_mu*q_mu)*factor*(g1pg2-g1))*rho_l_z+((el_mu*snx)*g1pg2-q_mu*snx/(pi_mu*q_mu)*factor*(g1pg2-g1))*rho_l_x);
+  double F_UTLL = -(epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))*rho_tensor_u;
 //   cout << (el_mu*snz)*rho_l_z << " " << (el_mu*snx)*rho_l_x << " " << snz << " " << snx << endl;
 //   cout << rhou << " " << rho_l_x << " " << rho_l_z << endl;
 //   cout << "dd " << rhou/3./Ek*alpha_i*alpha_i*pow((MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu(),2.) << " " << (MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu()<< " " << Ek << " " << alpha_i << " " << rhou << endl;
@@ -139,7 +139,7 @@ void Poldeut::Melosh_rot(double k_perp, double k_plus, double Ek, double &rho_l_
   return;
 }
 
-
+//densities include C factor defined in the paper
 void Poldeut::getDensities(double knorm, double thetak, double &rhou, double &rho_l_z, double &rho_l_x, double &rho_tensor_u){
 
   
@@ -160,15 +160,15 @@ void Poldeut::getDensities(double knorm, double thetak, double &rhou, double &rh
   double U=getU(knorm);
   double W=getW(knorm);
   
-  TVector3 k(knorm*sin(thetak),0,knorm*cos(thetak));
-  double dens0=0.,densplus=0.,densmin=0.;
-  for(int i1=-1;i1<=1;i1+=2){
-    for(int i2=-1;i2<=1;i2+=2){
-      dens0+=norm(wf.DeuteronPState(0,i1,i2,k));
-      densplus+=norm(wf.DeuteronPState(2,i1,i2,k));
-      densmin+=norm(wf.DeuteronPState(-2,i1,i2,k));
-    }
-  }
+//   TVector3 k(knorm*sin(thetak),0,knorm*cos(thetak));
+//   double dens0=0.,densplus=0.,densmin=0.;
+//   for(int i1=-1;i1<=1;i1+=2){
+//     for(int i2=-1;i2<=1;i2+=2){
+//       dens0+=norm(wf.DeuteronPState(0,i1,i2,k));
+//       densplus+=norm(wf.DeuteronPState(2,i1,i2,k));
+//       densmin+=norm(wf.DeuteronPState(-2,i1,i2,k));
+//     }
+//   }
 //   cout << dens0 << " " << densplus << " " << densmin << endl;
     
 
@@ -176,11 +176,11 @@ void Poldeut::getDensities(double knorm, double thetak, double &rhou, double &rh
   double Ek=sqrt(MASSn*MASSn+knorm*knorm);
   double t= pow(MASSD-Ek,2.)-knorm*knorm;
   double alphai=(Ek+knorm*cos(thetak))/MASSn;
-  double factor=Ek/(alphai*alphai*4.*PI);
-  rhou=3.*(U*U+W*W)  * factor;
+  double factor=Ek/(alphai*alphai*4.*PI)*4.*pow(2.*PI,3.);
+  rhou=(U*U+W*W)  * factor;
   rho_l_z = 2.*(U*U-U*W/(2.*sqrt(2.))*(3.*cos(2.*thetak)+1.)+W*W/4.*(3.*cos(2.*thetak)-1.)) * factor;
-  rho_l_x = 6./4.*(-sqrt(2.)*U*W+W*W)*sin(2.*thetak) * factor;
-  rho_tensor_u = -sqrt(3./2.)*(U*W/sqrt(2.)+W*W/4.)*(3.*cos(2.*thetak)+1)*factor;
+  rho_l_x = 3./2.*(-sqrt(2.)*U*W+W*W)*sin(2.*thetak) * factor;
+  rho_tensor_u = sqrt(3./2.)*(U*W/sqrt(2.)+W*W/4.)*(3.*cos(2.*thetak)+1)*factor;
 //   cout << rhou/factor/4./PI << " " << dens0+densplus+densmin << endl;
 //   cout << rho_tensor_u/factor/4./PI/sqrt(3./2.)*3. << " " << densplus+densmin-2.*dens0 << " " << rho_tensor_u/factor/4./PI/sqrt(3./2.)*3./(densplus+densmin-2.*dens0) << endl;
 //   cout << alphai << " " << U*U << " " << U*W << " " << W*W << endl;

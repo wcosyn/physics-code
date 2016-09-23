@@ -23,10 +23,11 @@ void k_int(numint::vector_d & res, double knorm, double kcosth, TDeuteron::Wavef
 
 int main(int argc, char *argv[])
 {
-  double Q2 = atof(argv[1])*1.E06; 
-  string wf = argv[2];
-  double Ein= atof(argv[4])*1.E03; //beam energy in GeV
-  string nuclstruc = argv[3];
+  double Q2 = atof(argv[2])*1.E06; 
+  string wf = argv[3];
+  double Ein= atof(argv[5])*1.E03; //beam energy in GeV
+  string nuclstruc = argv[4];
+   double x=atof(argv[1])/2.;
   
   TDeuteron::Wavefunction *wfref;
   wfref = TDeuteron::Wavefunction::CreateWavefunction(wf);
@@ -64,63 +65,75 @@ int main(int argc, char *argv[])
               double Q2, double x, double nu, double qvec, double gamma, double eps, double thetaq, NucleonStructure &strp);
   };
   
-  for(int i=1;i<80;i++){
-    double x=0.0125*i;
-    double nu=Q2/(2.*MASSD*x);
-    double qvec=sqrt(Q2+nu*nu);
-    double gamma=sqrt(Q2)/nu;
+  double nu=Q2/(2.*MASSD*x);
+  double qvec=sqrt(Q2+nu*nu);
+  double gamma=sqrt(Q2)/nu;
 //     double gamma=0.;
-    double Eout=Ein-nu;
-    double y=nu/Ein;
-    if(y<1.){
-      double eps=(1-y-gamma*gamma*y*y/4.)/(1-y+y*y/2+gamma*gamma*y*y/4.);
-      double thetae=asin(sqrt(Q2/4/Ein/Eout))*2;
-      double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);
+  double Eout=Ein-nu;
+  double y=nu/Ein;
+  if(y<1.){
+    double eps=(1-y-gamma*gamma*y*y/4.)/(1-y+y*y/2+gamma*gamma*y*y/4.);
+    double thetae=asin(sqrt(Q2/4/Ein/Eout))*2;
+    double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);
 
-      
-      
-      
-      
-      NucleonStructure stp(nuclstruc);
-
-      numint::array<double,2> lower = {{0.,-1.}};
-      numint::array<double,2> upper = {{600.,1.}};
-      Ftor_b1 F;
-      F.wfref=wfref;
-      F.Q2=Q2;
-      F.x=x;
-      F.nu=nu;
-      F.qvec=qvec;
-      F.gamma=gamma;
-      F.eps=eps;
-      F.thetaq=thetaq;
-      F.strp=strp;
-      
-      double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
-//       strp.getF_xQ(F1p,F2p,1,x*MASSD/MASSn,Q2);  
-//       strp.getF_xQ(F1n,F2n,0,x*MASSD/MASSn,Q2);  
-
-      numint::mdfunction<numint::vector_d,2> mdf;
-      mdf.func = &Ftor_b1::exec;
-      mdf.param = &F;
-      numint::vector_d ret(12,0.);
-      F.f=k_int;
-      int res=90;
-      unsigned count=0;
-  //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0);
-      cout << 2.*x << " " << ret[0] << " " <<   ret[1] << " " << ret[2] << /*" " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] <<*/ endl;
-      //ret[0] b1 total
-      //ret[1] b1 sd
-      //ret[2] b1 dd
-      //ret[3] b1 total check
-      //ret[4-7] tensor struc functions
-      //ret[8-9] F1,F2
-      //ret[10-11] azz nom, denom
-      
-    }    
     
-  }
+    
+    
+    
+    NucleonStructure stp(nuclstruc);
+
+    numint::array<double,2> lower = {{0.,-1.}};
+    numint::array<double,2> upper = {{600.,1.}};
+    Ftor_b1 F;
+    F.wfref=wfref;
+    F.Q2=Q2;
+    F.x=x;
+    F.nu=nu;
+    F.qvec=qvec;
+    F.gamma=gamma;
+    F.eps=eps;
+    F.thetaq=thetaq;
+    F.strp=strp;
+    
+    double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
+      strp.getF_xQ(F1p,F2p,1,x*MASSD/MASSn,Q2);  
+      strp.getF_xQ(F1n,F2n,0,x*MASSD/MASSn,Q2);  
+
+    numint::mdfunction<numint::vector_d,2> mdf;
+    mdf.func = &Ftor_b1::exec;
+    mdf.param = &F;
+    numint::vector_d ret(12,0.);
+    F.f=k_int;
+    int res=90;
+    unsigned count=0;
+//     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0);
+    
+    double R=NucleonStructure::getr1998(x,Q2);
+    double kap=1+gamma*gamma;
+
+    double term1=(1.+3.*cos(2*thetaq))*(2.*(1-eps)*kap-gamma*gamma/3./kap+eps*(kap*kap+kap+1)*2/3/kap);
+    double term2=sin(2.*thetaq)*sqrt(2.*eps*(1+eps))*gamma*(kap+2)/kap;
+    double term3=(1-2.*cos(2.*thetaq))*eps*gamma*gamma/kap;
+
+    double factor=1./8./(1+eps*R)*(term1+term2+term3);
+
+    
+    
+    //x_N | b1 | b1_EPW from F_UT/F_TT ratio | b1 from azz hermes way | b1 from azz improved approx way | azz
+    cout << 2.*x << " " << ret[0] << " " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. 
+      << " " << sqrt(2./3.)*ret[10]/ret[11]/factor*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] << " " << ret[8]/2. << " " << 2.*(F1p+F1n) << endl;
+    //ret[0] b1 total
+    //ret[1] b1 sd
+    //ret[2] b1 dd
+    //ret[3] b1 total check
+    //ret[4-7] tensor struc functions
+    //ret[8-9] FL,FT
+    //ret[10-11] azz nom, denom
+    
+  }    
+    
+  
 }
 
 void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefunction *wfref,
@@ -169,7 +182,7 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
   strp.getF_xQ(F1p,F2p,1,xtilde,Q2);  
   strp.getF_xQ(F1n,F2n,0,xtilde,Q2);  
-  F1p=F1n=0.;
+//   F1p=F1n=0.;
   double factor=(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*(6*costh*costh-2.)+knorm*knorm/piq*(F2p+F2n)*sinth2*sinth2;
 
   double F_U_T = (2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_U;
@@ -180,7 +193,7 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   double F_tensor_cos2phi = -sqrt(3./2.)*(knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*sinth2;
   
   //last factor is normalization for lightcone 1/alpha_i converted to k momentum (k is spectator momentum here, be careful with signs!)
-  factor*=3./4.*knorm*knorm/alpha_i /*/2./(1.-(Es-knorm*costh)/MASSD)*/; 
+  factor*=3./4./(1+gamma*gamma)*knorm*knorm/alpha_i /*/2./(1.-(Es-knorm*costh)/MASSD)*/; 
 
   res[0]=dens_tensor_tot*factor;
   res[1]=dens_tensor_SD*factor;

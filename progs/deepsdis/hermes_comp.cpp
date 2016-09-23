@@ -39,9 +39,9 @@ int main(int argc, char *argv[])
   
   double R_b=R;
   
-  double term1=(1.+3.*cos(2*thetaq))*(2.*(1-eps)*kap-gamma*gamma/3./kap*(1+R_b)+eps*(kap*kap+kap+1)*2*(1+R_b)/3/kap);
-  double term2=3.*sin(2.*thetaq)*sqrt(2.*eps*(1+eps))*gamma*(kap+2)*(1+R_b)/3./kap;
-  double term3=3.*(1-2.*cos(2.*thetaq))*eps*gamma*gamma*(1+R_b)/3/kap;
+  double term1=(1.+3.*cos(2*thetaq))*(2.*(1-eps)*kap-gamma*gamma/3./kap+eps*(kap*kap+kap+1)*2/3/kap);
+  double term2=sin(2.*thetaq)*sqrt(2.*eps*(1+eps))*gamma*(kap+2)/kap;
+  double term3=(1-2.*cos(2.*thetaq))*eps*gamma*gamma/kap;
 
   double factor=1./8./(1+eps*R)*(term1+term2+term3);
 
