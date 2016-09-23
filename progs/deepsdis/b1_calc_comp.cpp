@@ -122,7 +122,8 @@ int main(int argc, char *argv[])
     
     //x_N | b1 | b1_EPW from F_UT/F_TT ratio | b1 from azz hermes way | b1 from azz improved approx way | azz
     cout << 2.*x << " " << ret[0] << " " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. 
-      << " " << sqrt(2./3.)*ret[10]/ret[11]/factor*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] << " " << ret[8]/2. << " " << 2.*(F1p+F1n) << endl;
+      << " " << sqrt(2./3.)*ret[10]/ret[11]/factor*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] << " " << ret[8]/2. << " " << 2.*(F1p+F1n) << " " 
+      << factor << " " << ret[4] << " " << ret[5] << " " << ret[6] << " " << ret[7] << " " << ret[10] << " " << eps << " " << thetaq*RADTODEGR << endl;
     //ret[0] b1 total
     //ret[1] b1 sd
     //ret[2] b1 dd
@@ -186,10 +187,10 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   double factor=(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*(6*costh*costh-2.)+knorm*knorm/piq*(F2p+F2n)*sinth2*sinth2;
 
   double F_U_T = (2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_U;
-  double F_U_L = (-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec+nu*ps_z)/sqrt(Q2),2.)/piq)*dens_U;
+  double F_U_L = (-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2),2.)/piq)*dens_U;
   double F_tensor_T = -sqrt(3./2.)*(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*(6.*costh*costh-2.);
-  double F_tensor_L = -sqrt(3./2.)*(-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec+nu*ps_z)/sqrt(Q2),2.)/piq)*dens_tensor_tot*(6.*costh*costh-2.);
-  double F_tensor_cosphi = 2.*sqrt(6.)*(2.*knorm*sqrt(sinth2)/piq*(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec+nu*ps_z)/sqrt(Q2))*(F2p+F2n))*dens_tensor_tot*costh*sqrt(sinth2);
+  double F_tensor_L = -sqrt(3./2.)*(-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2),2.)/piq)*dens_tensor_tot*(6.*costh*costh-2.);
+  double F_tensor_cosphi = 2.*sqrt(6.)*(2.*knorm*sqrt(sinth2)/piq*(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2))*(F2p+F2n))*dens_tensor_tot*costh*sqrt(sinth2);
   double F_tensor_cos2phi = -sqrt(3./2.)*(knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*sinth2;
   
   //last factor is normalization for lightcone 1/alpha_i converted to k momentum (k is spectator momentum here, be careful with signs!)
