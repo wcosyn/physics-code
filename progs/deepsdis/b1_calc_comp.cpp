@@ -118,13 +118,27 @@ int main(int argc, char *argv[])
 
     double factor=1./8./(1+eps*R)*(term1+term2+term3);
 
+    double A=-sqrt(3./8.)/(1.+gamma*gamma)*(ret[4]+ret[7]);
+    double D=-sqrt(6.)*ret[7]/gamma/gamma;
+    double C=(-sqrt(6.)*ret[6]/gamma-2.*D)/(1.+gamma*gamma);
+    double B=(2.*(1+gamma*gamma)*A-(1.+gamma*gamma)*C-D-sqrt(3./2.)*ret[5])/pow(1.+gamma*gamma,2.);
+
+
+    double b1=A;
+    double b2=x*(B+C+D);
+    double b3=x*(B+C-2.*D)/3.;
+    double b4=x*(B-2.*C+D)/3.;
     
     
-    //x_N | b1 | b1_EPW from F_UT/F_TT ratio | b1 from azz hermes way | b1 from azz improved approx way | azz
-    cout << 2.*x << " " << ret[0] << " " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. 
+    //x_N | b1 | b1_EPW from F_UT/F_TT ratio | b1 from azz hermes way | b1 from azz improved approx way | azz | F_T/2 | sum F1*2 | extra mult factor from azz to b1 | 
+    // F_TL | F_TT | F_Tcosphi | F_Tcos2phi | azz nom | eps | thetaq
+    cout << setprecision(4) << 2.*x << " " << ret[0] << " " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. 
       << " " << sqrt(2./3.)*ret[10]/ret[11]/factor*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] << " " << ret[8]/2. << " " << 2.*(F1p+F1n) << " " 
-      << factor << " " << ret[4] << " " << ret[5] << " " << ret[6] << " " << ret[7] << " " << ret[10] << " " << eps << " " << thetaq*RADTODEGR << endl;
-    //ret[0] b1 total
+      << factor << " " << ret[4]/ret[10] << " " << ret[8]/ret[11] << " "<< eps << " " << thetaq*RADTODEGR << " " << ret[12] << " " << ret[13] << " " << ret[14] << " " << ret[15] << " " << ret[13]/2./x/ret[12] << " " << gamma << endl;
+    cout << b1 << " " << b2 << " " << b3 << " " << b4 << endl;
+      
+      
+      //ret[0] b1 total
     //ret[1] b1 sd
     //ret[2] b1 dd
     //ret[3] b1 total check
@@ -193,6 +207,7 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   double F_tensor_cosphi = 2.*sqrt(6.)*(2.*knorm*sqrt(sinth2)/piq*(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2))*(F2p+F2n))*dens_tensor_tot*costh*sqrt(sinth2);
   double F_tensor_cos2phi = -sqrt(3./2.)*(knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*sinth2;
   
+ 
   //last factor is normalization for lightcone 1/alpha_i converted to k momentum (k is spectator momentum here, be careful with signs!)
   factor*=3./4./(1+gamma*gamma)*knorm*knorm/alpha_i /*/2./(1.-(Es-knorm*costh)/MASSD)*/; 
 
@@ -211,6 +226,7 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   
   res[10]=(0.25+0.75*cos(thetaq))*(res[4]+eps*res[5])+0.75*sin(2*thetaq)*sqrt(2.*eps*(1.+eps))*res[6]+0.75*(1.-cos(2.*thetaq))*eps*res[7];
   res[11]=res[8]+eps*res[9];
+  
   
     
     
