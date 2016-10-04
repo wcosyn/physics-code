@@ -40,7 +40,6 @@ golett
 phanpy
 )
 
-
 # Create a library called "libEvent" which includes the source files given in
 # the array .
 # The extension is already found.  Any number of sources could be listed here.
@@ -58,6 +57,7 @@ link_directories( ${LINK_DIRECTORIES})
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
+set(CMAKE_INSTALL_RPATH "${CMAKE_SOURCE_DIR}/lib")
 
 set(LIBRARIES ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES} ${MPI_LIBRARIES} ${Fortran_LIBRARIES})
 # MESSAGE(${LIBRARIES})
@@ -67,7 +67,7 @@ get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
 EXEC_PROGRAM("hostname" OUTPUT_VARIABLE hostname)
 
-if (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807 OR hostname MATCHES we05c708)
+if (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807 OR hostname MATCHES we05c708 OR hostname MATCHES we05c700 )
    MESSAGE("--- Configuring for accident")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
@@ -198,14 +198,14 @@ else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES 
 
       # Select flags.
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3  -g")
-      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native -std=gnu11")
-      set(CMAKE_CXX_FLAGS_DEBUG          "-g -std=gnu11")
+      set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -march=native -mtune=native -std=c++11")
+      set(CMAKE_CXX_FLAGS_DEBUG          "-g -std=c++11")
       set(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3  -fno-inline -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-exceptions -fno-check-new -fno-common")
       set(CMAKE_CXX_FLAGS_PROFILE        "-O0 -pg ")
-      set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g")
+      set(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O3  -g ")
       set(CMAKE_C_FLAGS_RELEASE          "-O3  -march=native -mtune=native")
-      set(CMAKE_C_FLAGS_DEBUG            "-g")
-      set(CMAKE_C_FLAGS_DEBUGFULL        "-g3  -fno-inline -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common")
+      set(CMAKE_C_FLAGS_DEBUG            "-g ")
+      set(CMAKE_C_FLAGS_DEBUGFULL        "-g3  -fno-inline -Wno-long-long -std=iso9899:1990 -Wundef -Wcast-align -Werror-implicit-function-declaration -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -Wformat-security -Wmissing-format-attribute -fno-common ")
       set(CMAKE_C_FLAGS_PROFILE          "-O0  -pg ")
 
       
@@ -243,7 +243,7 @@ else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES 
 
 
 # endif (hostname MATCHES gengar OR hostname MATCHES haunter) 
-endif (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807  OR hostname MATCHES we05c708) 
+endif (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807  OR hostname MATCHES we05c708 OR hostname MATCHES we05c700 ) 
 
 
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR})
