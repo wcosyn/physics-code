@@ -1,7 +1,7 @@
 #include "WeakQEHadronCurrent.hpp"
 #include <TSpinor.h>
 #include <TMFSpinor.hpp>
-#include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 
 using namespace std;
 

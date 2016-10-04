@@ -7,6 +7,7 @@ using namespace std;
 
 #include "GlauberGrid.hpp"
 #include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 
 //constructor, calls abstractfsigrid's constructor
 GlauberGrid::GlauberGrid(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleus * pnucl,

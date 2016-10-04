@@ -63,12 +63,22 @@ set(LIBRARIES ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES} ${MPI_LIBRARIES} $
 # MESSAGE(${LIBRARIES})
 enable_language (Fortran)
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
-
+set(CMAKE_COMPILER_IS_CLANGCXX 0)
+set(CMAKE_COMPILER_IS_CLANGCC 0)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")	 	
+  set(CMAKE_COMPILER_IS_GNUCXX 1)
+  set(CMAKE_COMPILER_IS_CLANGCXX 1)
+endif()
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  set(CMAKE_COMPILER_IS_GNUCC 1)
+  set(CMAKE_COMPILER_IS_CLANGCC 1)
+endif()
 
 EXEC_PROGRAM("hostname" OUTPUT_VARIABLE hostname)
 
-if (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807 OR hostname MATCHES we05c708 OR hostname MATCHES we05c700 )
-   MESSAGE("--- Configuring for accident")
+
+if (hostname MATCHES we05c807 OR hostname MATCHES we05c708 OR hostname MATCHES we05c700)
+   MESSAGE("--- Configuring for machine in our group")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
 
@@ -120,12 +130,6 @@ if (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES w
     set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
   endif (Fortran_COMPILER_NAME STREQUAL "gfortran")
 
-
-
-# endif (hostname MATCHES accident OR hostname MATCHES talvin13) 
-
-
-# endif (hostname MATCHES trillian) 
 
 #supercomputer config
 elseif (hostname MATCHES .os)
@@ -188,7 +192,7 @@ if(hostname MATCHES ${hpcname})
 endif(hostname MATCHES ${hpcname})
 endforeach(hpcname ${HPC_NAMES})
 
-else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807  OR hostname MATCHES we05c708) 
+else(hostname MATCHES we05c807  OR hostname MATCHES we05c708 OR hostname MATCHES we05c700) 
    MESSAGE("--- default configuration")
    if (CMAKE_COMPILER_IS_GNUCXX)
       MESSAGE("--- Found GNU compiler collection")
@@ -243,7 +247,7 @@ else(hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES 
 
 
 # endif (hostname MATCHES gengar OR hostname MATCHES haunter) 
-endif (hostname MATCHES accident OR hostname MATCHES talvin13 OR hostname MATCHES we05c807  OR hostname MATCHES we05c708 OR hostname MATCHES we05c700 ) 
+endif (hostname MATCHES we05c807  OR hostname MATCHES we05c708 OR hostname MATCHES we05c700 ) 
 
 
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR})

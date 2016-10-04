@@ -5,6 +5,7 @@
 #include <OneGlauberGrid.hpp>
 #include <GlauberGridThick.hpp>
 #include <TMFSpinor.hpp>
+#include <AuxFunction.hpp>
 
 using namespace std;
 

@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 using namespace std;
 
 DeuteronMomDistr::DeuteronMomDistr(std::string name, double mass, int offshells, double sigmain, double betain, double epsilonin,

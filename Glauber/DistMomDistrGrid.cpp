@@ -9,6 +9,7 @@ using namespace std;
 #include "AbstractFsiCTGrid.hpp"
 #include <constants.hpp>
 #include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 #include <FourVector.h>
 #include <Matrix.h>
 #include <TSpinor.h>

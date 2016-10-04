@@ -1,5 +1,5 @@
 #include "RhoDeuteron.hpp"
-#include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 #include <FastParticle.hpp>
 #define MASS_N (MASSP+MASSN)*0.5E-03
 

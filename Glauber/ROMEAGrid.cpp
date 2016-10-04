@@ -8,6 +8,7 @@ using namespace std;
 
 #include "ROMEAGrid.hpp"
 #include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 
 //optical potentials from most recent Cooper, Hama parametrizations (Phys.Rev. C80 (2009) 034605)
 extern"C"{

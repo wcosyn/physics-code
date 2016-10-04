@@ -1,6 +1,6 @@
 #include "Model.hpp"
 #include <TMFSpinor.hpp>
-#include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 
 using namespace std;
 

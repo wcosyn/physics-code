@@ -48,6 +48,7 @@ foreach(it ${MePhys_HEADERS_H})
 endforeach()
 
 set(MePhys_HEADERS ${MePhys_HEADERS_H} ${MePhys_HEADERS_HPP} 
+AuxFunction.hpp
 # constants.hpp 
 fortran.h
 f77matrx.h

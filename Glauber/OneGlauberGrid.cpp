@@ -6,6 +6,7 @@ using namespace std;
 
 #include "OneGlauberGrid.hpp"
 #include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 
 //constructor, calls glaubergrid's constructor
 OneGlauberGrid::OneGlauberGrid(const int r_grid, const int cth_grid, MeanFieldNucleus *pnucl, 

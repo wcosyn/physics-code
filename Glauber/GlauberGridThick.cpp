@@ -8,6 +8,7 @@ using namespace std;
 
 #include "GlauberGridThick.hpp"
 #include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 
 //constructor, calls abstractfsigrid's constructor
 GlauberGridThick::GlauberGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick * pnucl,

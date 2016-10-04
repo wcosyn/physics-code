@@ -1,5 +1,6 @@
 #include "DQEinclusive.hpp"
 #include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 #include <gsl/gsl_poly.h>
 #include <TSpinor.h>
 #include <FourVector.h>

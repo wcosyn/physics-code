@@ -7,6 +7,7 @@ using namespace std;
 
 #include "GlauberDecayGridThick.hpp"
 #include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 
 //constructor, calls abstractfsigrid's constructor
 GlauberDecayGridThick::GlauberDecayGridThick(const int r_grid, const int cth_grid, const int phi_grid, MeanFieldNucleusThick * pnucl,

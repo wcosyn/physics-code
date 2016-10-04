@@ -10,7 +10,7 @@ using namespace std;
 #include <GlauberGrid.hpp>
 #include <OneGlauberGrid.hpp>
 #include <GlauberGridThick.hpp>
-#include <Utilfunctions.hpp>
+#include <AuxFunction.hpp>
 
 void intr(const double r, double *result, va_list ap);
 void intcostheta(const double r, double *result, va_list ap);
