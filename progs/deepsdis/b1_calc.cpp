@@ -28,8 +28,9 @@ int main(int argc, char *argv[])
   double Ein= atof(argv[4])*1.E03; //beam energy in GeV
   string nuclstruc = argv[3];
   
-  TDeuteron::Wavefunction *wfref;
-  wfref = TDeuteron::Wavefunction::CreateWavefunction(wf);
+
+
+
 //   for(int i=1;i<100;i++){
 //     double x=0.01*i;
 //     NuclStructure s1(1,Q2,x,0,"SLAC");
@@ -38,7 +39,15 @@ int main(int argc, char *argv[])
 //   }
 //   exit(1);
   NucleonStructure strp(nuclstruc);
-  
+//   double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
+//   for(int i=1;i<100;i++){
+//     double xx=i*0.01;
+//     strp.getF_xQ(F1p,F2p,1,xx,Q2);  
+//     strp.getF_xQ(F1n,F2n,0,xx,Q2);  
+//     cout << xx << " " << Q2*1.E-06 << " " << F2p << " " << F2n << " " << (F1p+F1n)*0.5 << endl;
+//   }
+//   exit(1);
+//   
   
   
   struct Ftor_b1 {
@@ -72,7 +81,7 @@ int main(int argc, char *argv[])
 //     double gamma=0.;
     double Eout=Ein-nu;
     double y=nu/Ein;
-    if(y<1.){
+    if(/*y<1.*/1){
       double eps=(1-y-gamma*gamma*y*y/4.)/(1-y+y*y/2+gamma*gamma*y*y/4.);
       double thetae=asin(sqrt(Q2/4/Ein/Eout))*2;
       double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);
@@ -166,10 +175,13 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   double piq=(Einoff*nu+ps_z*qvec);  //vec{pi}=-vec{pr} in PW!
   double nutilde=piq/MASSn;
   double xtilde=Q2/(2*piq);
+//   xtilde=2.*x/alpha_i;
   double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
-  strp.getF_xQ(F1p,F2p,1,xtilde,Q2);  
-  strp.getF_xQ(F1n,F2n,0,xtilde,Q2);  
-  F1p=F1n=0.;
+  if(xtilde<1.){
+    strp.getF_xQ(F1p,F2p,1,xtilde,Q2);  
+    strp.getF_xQ(F1n,F2n,0,xtilde,Q2);  
+  }
+//   F1p=F1n=0.;
   double factor=(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*(6*costh*costh-2.)+knorm*knorm/piq*(F2p+F2n)*sinth2*sinth2;
 
   double F_U_T = (2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_U;

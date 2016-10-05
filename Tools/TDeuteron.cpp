@@ -174,6 +174,42 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateCDBonnWavefunction()
 }
 
 //_____________________________________________________________________
+TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateCDBonn87Wavefunction()
+{
+//  R. Machleidt, K. Holinde, C. Elster, 
+//  Phys. Rept. 149 (1987) 1-89. See pages 64-68.
+
+  Wavefunction *wf = new Wavefunction("CDBonn87");
+
+  wf->fRelativistic = false;
+  wf->yukawa = true;
+
+  static double c[11] = { +0.90457337E+00,
+			  -0.35058661E+00,
+			  -0.17635927E+00,
+			  -0.10418261E+02,
+			  +0.45089439E+02,
+			  -0.14861947E+03,
+			  +0.31779642E+03,
+			  -0.37496518E+03,
+			  +0.22560032E+03,
+			  -0.54858290E+02,
+			  0. };
+  static double d[11] = { +0.24133026E-01,
+			  -0.64430531E+00,
+			  + 0.51093352E+00,
+			  -0.54419065E+01,
+			  +0.15872034E+02,
+			  -0.14742981E+02,
+			  +0.44956539E+01,
+			  -0.71152863E-01,
+			  0., 0., 0.};
+  
+  wf->fImplementation = new TYukawaPWF(11,0.231609,.9,c,d);
+
+  return wf;  
+}
+//_____________________________________________________________________
 TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateParisWavefunction()
 {
   // Non-relativistic deuteron wavefunction generated with the Paris potential.
@@ -729,6 +765,8 @@ TDeuteron::Wavefunction* TDeuteron::Wavefunction::CreateWavefunction(const TStri
 
   if(!name.CompareTo("cdbonn",TString::kIgnoreCase))
     wf = CreateCDBonnWavefunction();
+  else if(!name.CompareTo("cdbonn87",TString::kIgnoreCase))
+    wf = CreateCDBonn87Wavefunction();
   else if(!name.CompareTo("paris",TString::kIgnoreCase))
     wf = CreateParisWavefunction();
   else if(!name.CompareTo("av18",TString::kIgnoreCase))

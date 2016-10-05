@@ -51,6 +51,7 @@ class TDeuteron
 
     // named constructors
     static Wavefunction *CreateCDBonnWavefunction(); // user owns Wavefunction
+    static Wavefunction *CreateCDBonn87Wavefunction(); // user owns Wavefunction
     static Wavefunction *CreateParisWavefunction();  // user owns Wavefunction
     static Wavefunction *CreateAV18Wavefunction(); // user owns Wavefunction
     static Wavefunction *CreateAV18bWavefunction(); // user owns Wavefunction

@@ -260,19 +260,19 @@ void NucleonStructure::getF_HMRS(double &F1,double &F2, const bool proton, const
 
 void NucleonStructure::getF_MSTW(double &F1,double &F2,const bool proton, const double x, const double Q2) const{
   double u,d,s,c,b,ubar,dbar,sbar,cbar,bbar;
-  double q2gev=Q2*1.E-06;
-  mstw->update(x,q2gev);
+  double qgev=sqrt(Q2*1.E-06);
+  mstw->update(x,qgev);
 
-  d=mstw->parton(1,x,q2gev);
-  u=mstw->parton(2,x,q2gev);
-  s=mstw->parton(3,x,q2gev);
-  c=mstw->parton(4,x,q2gev);
-  b=mstw->parton(5,x,q2gev);
-  dbar=mstw->parton(-1,x,q2gev);
-  ubar=mstw->parton(-2,x,q2gev);
-  sbar=mstw->parton(-3,x,q2gev);
-  cbar=mstw->parton(-4,x,q2gev);
-  bbar=mstw->parton(-5,x,q2gev);
+  d=mstw->parton(1,x,qgev);
+  u=mstw->parton(2,x,qgev);
+  s=mstw->parton(3,x,qgev);
+  c=mstw->parton(4,x,qgev);
+  b=mstw->parton(5,x,qgev);
+  dbar=mstw->parton(-1,x,qgev);
+  ubar=mstw->parton(-2,x,qgev);
+  sbar=mstw->parton(-3,x,qgev);
+  cbar=mstw->parton(-4,x,qgev);
+  bbar=mstw->parton(-5,x,qgev);
   if(proton){ 
     F2=1./9.*(4.*(u+ubar)+(d+dbar)+(s+sbar)+4*(c+cbar)+(b+bbar));
     F1=1./(2.*x)/(1.+getr1998(x,Q2))*(1.+4.*MASSP*MASSP*x*x/Q2)*F2;

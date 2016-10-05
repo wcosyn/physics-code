@@ -49,6 +49,7 @@ looplimit(loop_limit)
 //   cout << res*2./60.*2.*PI/60. << endl;
 //   exit(1);
 //   
+
 }
 
 //for simple case
