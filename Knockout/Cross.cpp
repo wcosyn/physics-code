@@ -151,7 +151,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   //compute response functions
   for(int i=0;i<6;i++) for(int j=0;j<total;j++) response[j][i]=0.;
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
-    Matrix<2,3> J[total];
+    Matrix<2,3> *J = new Matrix<2,3>[total];
     reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,0);
   //only half of the m values due to parity symmetry, careful!!! 
     for(int i=0;i<1;i++){
@@ -164,6 +164,8 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
 	response[j][5]+=0.;//norm(J[j](i,2))-norm(J[j](i,1)); //W_T'
       }
     }
+    delete [] J;
+
   }
   //combine everything, factor 2 because of symmetry!
   for(int j=0;j<total;j++) cross[j]=2.*(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
@@ -205,11 +207,13 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
   obs=vector<double>(total_grid*8,0.);
   //compute response functions
   //for(int i=0;i<6;i++) for(int j=0;j<total_grid;j++) response[j][i]=0.;
-  Matrix<2,2> responsematrix[total_grid][6];
+  Matrix<2,2> **responsematrix = new Matrix<2,2>*[total_grid];
+  for(int i=0;i<total_grid;i++) responsematrix[i]= new Matrix<2,2>[6];
+
   for(int i=0;i<total_grid;++i) for(int j=0;j<6;++j) responsematrix[i][j]=Matrix<2,2>();
   //we can exploit parity symmetry for half of the currents!!!
   for(int m=-pnucl->getJ_array()[shellindex];m<=0/*pnucl->getJ_array()[shellindex]*/;m+=2){
-      Matrix<2,3> J[total_grid];
+      Matrix<2,3> *J = new Matrix<2,3>[total_grid];
       reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,medium);
       for(int j=0;j<total_grid;j++){
 	  //2*2 density matrices with helicities as indices
@@ -291,6 +295,8 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
 	
 	
       }
+  
+      delete [] J;
   }
   
   //traces of density matrices with pauli matrices (+ unit matrix) are building blocks of all observables
@@ -300,11 +306,18 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
 //     responsespin[i] = new complex<double>*[6];
 //     for(int j=0;j<6;++j) responsespin[i][j] = new complex<double>[4];
 //   }
-  complex<double> responsespin[total_grid][6][4];
+  complex<double> ***responsespin = new complex<double>**[total_grid];
+  for(int i=0;i<total_grid;i++){
+    responsespin[i]=new complex<double>*[6];
+    for(int j=0;j<6;j++) responsespin[i][j]=new complex<double>[4];
+  }
+  
   for(int i=0;i<total_grid;++i) 
     for(int j=0;j<6;++j) 
       for(int k=0;k<4;++k) responsespin[i][j][k] = Trace(responsematrix[i][j]*TSpinor::kSigmaPauli[k]);
-      
+  
+  for(int i=0;i<total_grid;i++) delete [] responsematrix[i];
+  delete[] responsematrix;
 
   for(int i=0;i<total_grid;i++){
     obs[8*i] = real(kinfactors[0]*responsespin[i][0][0]+kinfactors[1]*responsespin[i][1][0])+
@@ -329,12 +342,11 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
 //   for(int j=0;j<total_grid;j++) cross[j]=2.*(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
 // 		    +kinfactors[2]*response[j][2]*cos(2.*phi)+kinfactors[3]*response[j][3]*cos(phi))*mott*frontfactor/HBARC;
   delete reacmodel;
-//   for(int i=0;i<total_grid;++i){
-//     responsespin[i] = new complex<double>*[6];
-//     for(int j=0;j<6;++j) delete [] responsespin[i][j];
-//     delete [] responsespin[i];
-//   }
-//   delete [] responsespin;
+  for(int i=0;i<total_grid;++i){
+    for(int j=0;j<6;++j) delete [] responsespin[i][j];
+    delete [] responsespin[i];
+  }
+  delete [] responsespin;
 
 }
 
