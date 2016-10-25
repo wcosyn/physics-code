@@ -27,7 +27,7 @@ CFLAGS	=	$(OPTFLAG) $(WFLAG) # $(DBGFLAG) #$(GPFLAG)  #$(STATIC)
 
 #		Mathematical functions
 LIBS =	 	-lm
-WIMLIBS = -lMePhys -lGlauber -lKnockout -lIntegrator -lcuba
+WIMLIBS = -lMePhys -lGlauber -lKnockout -lIntegrator 
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/trunk/lib
  INCLUDEDIRS =  -I ~/Code/trunk/Integrator -I ~/Code/trunk/Tools  -I ~/Code/trunk/Glauber -I ~/Code/trunk/Knockout
