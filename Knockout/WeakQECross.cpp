@@ -41,50 +41,110 @@ WeakQECross::~WeakQECross(){
   
 }
 
-// double WeakQECross::getElWeakQECross(TKinematics2to2 &kin, int current, double phi, int maxEval, bool phi_int,
-// 				    bool neutrino, bool proton){
-//   double Q2=kin.GetQsquared();
-//   double qvec=kin.GetKlab();
-//   double Q2overkk=Q2/qvec/qvec;
-//   //double tan2=electron.GetTan2HalfAngle(kin);
-//   reacmodel=new WeakQEHadronCurrent(pnucl,prec,integrator,homedir,maxEval,charged, 
-// 				    M_A, getUsersigma(), gA_s, r_s2, mu_s,getSigmascreening());
-// 
-//   int numb_of_resp;
-//   double kinfactors[numb_of_resp];
-//   double response[numb_of_resp];
-//   
-//   //compute response[0] functions
-//   for(int i=0;i<numb_of_resp;i++) response[i]=0.;
-//   for(int spinin=-1;spinin<=1;spinin+=2){
-//     for(int spinout=-1;spinout<=1;spinout+=2){
-//       complex<double> jmin=reacmodel->getFreeMatrixEl(kin,proton, current, spinin,spinout,-1);
-//       complex<double> j0=reacmodel->getFreeMatrixEl(kin,proton,current, spinin,spinout,0);
-//       complex<double> jplus=reacmodel->getFreeMatrixEl(kin,proton,current, spinin,spinout,1);
-//       complex<double> jz=reacmodel->getFreeMatrixEl(kin,proton,current, spinin,spinout,3);
-// //       cout << jmin << " " << j0 << " " << jplus << endl;
-// //       response[0]+=norm(j0);
-// //       response[1]+=norm(jmin)+norm(jplus);
-// //       response[2]+=2.*real(conj(jplus)*jmin);
-// //       response[3]+=2.*real(conj(j0)*(jplus-jmin));
-//     }
-//   }
-//   
-//   double Einon=sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetKlab()*kin.GetKlab()
-//    +kin.GetPYlab()*kin.GetPYlab()-2.*kin.GetPYlab()*kin.GetKlab()*kin.GetCosthYlab());
-//   //average incoming proton spin
-// //   response[0]/=2.;
-// //   response[1]/=2.;
-// //   response[2]/=2.;
-// //   response[3]/=2.;
-//   delete reacmodel;
-//   //combine everything
-//   return 1.;
-// //   kin.GetPYlab()*mott*kin.GetHyperonMass()*kin.GetHyperonMass()/(Einon)*(kinfactors[0]*response[0][0]
-// // 	  +kinfactors[1]*response[0][1]+kinfactors[2]*response[0][2]*cos(2.*phi)+kinfactors[3]*response[0][3]*cos(phi));
-// //   
-// }
+double WeakQECross::getElWeakQECross(double Q2, double E_in, int current, double phi, int maxEval, bool phi_int,
+ 				    bool neutrino, bool proton){
 
+   double omega=0.5*(MASSP*MASSP-MASSN*MASSN+Q2)/MASSP;
+   double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
+   //double Q2overkk=Q2/qvec/qvec;
+   //double tan2=electron.GetTan2HalfAngle(kin);
+   reacmodel=new WeakQEHadronCurrent(pnucl,prec,integrator,homedir,maxEval,charged, 
+ 				    M_A, getUsersigma(), gA_s, r_s2, mu_s,getSigmascreening());
+ 
+   int numb_of_resp=5;
+   double kinfactors[numb_of_resp];
+   double response[numb_of_resp];
+   for(int i=0;i<numb_of_resp;i++) {response[i]=0; kinfactors[i]=0;}
+   
+   //compute response[0] functions
+   for(int i=0;i<numb_of_resp;i++) response[i]=0.;
+   for(int spinin=-1;spinin<=1;spinin+=2){
+     for(int spinout=-1;spinout<=1;spinout+=2){
+       complex<double> j0=reacmodel->getFreeMatrixEl(Q2,proton,current, spinin,spinout,0);
+       complex<double> j1=reacmodel->getFreeMatrixEl(Q2,proton,current, spinin,spinout,1);
+       complex<double> j2=reacmodel->getFreeMatrixEl(Q2,proton,current, spinin,spinout,2);
+       complex<double> j3=reacmodel->getFreeMatrixEl(Q2,proton,current, spinin,spinout,3);
+//     cout << "current " << spinout << " " << j0 << " " << j1 << " " << j2 << " " << j3 << endl;
+       response[0]+=norm(j0);
+       response[1]+=-2.*real(conj(j0)*j3);    // *.2 because double counting in crosssection
+       response[2]+=norm(j3);
+       response[3]+=norm(j1)+norm(j2);
+       if(neutrino)  response[4]+=2.*imag(conj(j1)*j2);  // *.2 because double counting in cs
+       if(!neutrino) response[4]-=2.*imag(conj(j1)*j2);
+     }
+   }
+// cout<<"Response "<<response[0]<<" "<<response[1]<<" "<<response[2]<<" "<<response[3]<<" "<<response[4]<<endl;
+   double mmu=lepton->GetLeptonMass();   
+   double eps=E_in;       
+   double eeps=eps-omega;
+   double kk=sqrt(eeps*eeps-mmu*mmu);
+   double delta2=mmu*mmu/abs(Q2);
+   double rho=abs(Q2)/(qvec*qvec);  
+   double rrho=qvec/(2.*eps-omega);                
+   double tan2theta=abs(Q2)/((eeps+eps)*(eps+eeps)-qvec*qvec);
+   //kinematical factors
+   kinfactors[0]=1.-delta2*tan2theta;
+   kinfactors[1]=omega/qvec+delta2/rrho*tan2theta;     
+   kinfactors[2]=omega*omega/(qvec*qvec)+(1.+2.*omega/(qvec*rrho)+rho*delta2)*delta2*tan2theta;
+   kinfactors[3]=tan2theta+0.5*rho-delta2*(omega/qvec+0.5*rho*rrho*delta2)*tan2theta/rrho;  
+   kinfactors[4]=(1.-omega*rrho*delta2/qvec)*tan2theta/rrho;      
+// cout<<"Kinfactors "<<kinfactors[0]<<" "<<kinfactors[1]<<" "<<kinfactors[2]<<" "<<kinfactors[3]<<" "<<kinfactors[4]<<endl;
+   double cross=0;
+   for(int i=0;i<=4;i++) cross+=kinfactors[i]*response[i];
+   cross*=G_FERMI*G_FERMI*0.975*0.975/(2*PI*PI)*kk*eeps*cos(atan(sqrt(tan2theta)))*cos(atan(sqrt(tan2theta)));
+// cout<<"Factors "<<kk<<" "<<eeps<<" "<<cos(atan(sqrt(tan2theta)))<<" "<<cos(atan(sqrt(tan2theta)))<<endl;
+   if (phi_int) cross*=phi;
+   
+   delete reacmodel;
+   
+   return cross;
+   
+ }
+
+/*
+double WeakQECross::getElWeakQECross(TKinematics2to2 &kin, int current, double phi, int maxEval, bool phi_int,
+ 				    bool neutrino, bool proton){
+   double Q2=kin.GetQsquared();
+   double qvec=kin.GetKlab();
+   double Q2overkk=Q2/qvec/qvec;
+   //double tan2=electron.GetTan2HalfAngle(kin);
+   reacmodel=new WeakQEHadronCurrent(pnucl,prec,integrator,homedir,maxEval,charged, 
+ 				    M_A, getUsersigma(), gA_s, r_s2, mu_s,getSigmascreening());
+ 
+   int numb_of_resp;
+   double kinfactors[numb_of_resp];
+   double response[numb_of_resp];
+   
+   //compute response[0] functions
+   for(int i=0;i<numb_of_resp;i++) response[i]=0.;
+   for(int spinin=-1;spinin<=1;spinin+=2){
+     for(int spinout=-1;spinout<=1;spinout+=2){
+       complex<double> jmin=reacmodel->getFreeMatrixEl(kin,proton, current, spinin,spinout,-1);
+       complex<double> j0=reacmodel->getFreeMatrixEl(kin,proton,current, spinin,spinout,0);
+       complex<double> jplus=reacmodel->getFreeMatrixEl(kin,proton,current, spinin,spinout,1);
+       complex<double> jz=reacmodel->getFreeMatrixEl(kin,proton,current, spinin,spinout,3);
+ //       cout << jmin << " " << j0 << " " << jplus << endl;
+       response[0]+=norm(j0);
+       response[1]+=norm(jmin)+norm(jplus);
+       response[2]+=2.*real(conj(jplus)*jmin);
+       response[3]+=2.*real(conj(j0)*(jplus-jmin));
+     }
+   }
+   
+   double Einon=sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetKlab()*kin.GetKlab()
+    +kin.GetPYlab()*kin.GetPYlab()-2.*kin.GetPYlab()*kin.GetKlab()*kin.GetCosthYlab());
+   //average incoming proton spin
+ //   response[0]/=2.;
+ //   response[1]/=2.;
+ //   response[2]/=2.;
+ //   response[3]/=2.;
+   delete reacmodel;
+   //combine everything
+   return 1.;
+//   kin.GetPYlab()*mott*kin.GetHyperonMass()*kin.GetHyperonMass()/(Einon)*(kinfactors[0]*response[0][0]
+// 	  +kinfactors[1]*response[0][1]+kinfactors[2]*response[0][2]*cos(2.*phi)+kinfactors[3]*response[0][3]*cos(phi));
+//   
+ } */
 
 double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
 			   double phi, int maxEval, bool lab, bool phi_int){

@@ -20,10 +20,12 @@ Cross::~Cross(){
 }
 
 double Cross::getElCross(TKinematics2to2 &kin, int current, double phi, int maxEval){
+  //electron kinematics 
   double Q2=kin.GetQsquared();
   double qvec=kin.GetKlab();
   double Q2overkk=Q2/qvec/qvec;
   double tan2=electron.GetTan2HalfAngle(kin);
+  //mott cross section
   mott=(ALPHA*ALPHA*(electron.GetCosScatterAngle(kin)+1.)*pow(electron.GetBeamEnergy(kin)-kin.GetWlab(),2.))/Q2/Q2*2.;
   reacmodel=new Model(pnucl,prec,integrator,homedir,maxEval,getUsersigma(),getSigmascreening());
 
@@ -41,14 +43,15 @@ double Cross::getElCross(TKinematics2to2 &kin, int current, double phi, int maxE
       complex<double> j0=reacmodel->getFreeMatrixEl(kin,current, spinin,spinout,0);
       complex<double> jplus=reacmodel->getFreeMatrixEl(kin,current, spinin,spinout,1);
 //       cout << jmin << " " << j0 << " " << jplus << endl;
-      response[0][0]+=norm(j0);
-      response[0][1]+=norm(jmin)+norm(jplus);
+      response[0][0]+=norm(j0); //longitudinal one R_L
+      response[0][1]+=norm(jmin)+norm(jplus); //transverse one R_T
       response[0][2]+=2.*real(conj(jplus)*jmin);
       response[0][3]+=2.*real(conj(j0)*(jplus-jmin));
     }
   }
   
   double Einon=sqrt(kin.GetHyperonMass()*kin.GetHyperonMass()+kin.GetKlab()*kin.GetKlab()+kin.GetPYlab()*kin.GetPYlab()-2.*kin.GetPYlab()*kin.GetKlab()*kin.GetCosthYlab());
+   //average incoming proton spin
   response[0][0]/=2.;
   response[0][1]/=2.;
   response[0][2]/=2.;

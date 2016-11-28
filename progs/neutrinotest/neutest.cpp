@@ -19,6 +19,8 @@ using namespace std;
 #include <TLeptonKinematics.h>
 #include <WeakQECross.hpp>
 #include <Utilfunctions.hpp>
+//headers for integration 
+#include <numint/numint.hpp>
 
 //starts at E=25 MeV with a delta of 25 MeV
 const double MiniBooNE_antineut_flux_norm[] = {
@@ -306,10 +308,10 @@ void adap_intPm(numint::vector_d &, double E_in, double costhetacm,
 int main(int argc, char *argv[])
 {
 //   double Q2=atof(argv[1])*1.E06;
-  double T_mu=atof(argv[1]);
+  double T_mu=atof(argv[1]); // muon kinetic energy in MeV
   double costhetamu=atof(argv[2]);
   bool screening=0;//atoi(argv[4]);
-  int nucleus=1;//atoi(argv[6]);
+  int nucleus=1;//atoi(argv[6]);                     
   double prec=1.E-05;//atof(argv[7]);
   int integrator=2;//
   int fluxintegrator=atoi(argv[3]);
@@ -320,7 +322,7 @@ int main(int argc, char *argv[])
   
 //   double omega=Q2/(2.*MASSP*Bjx);
   
-  string homedir=argv[4];//"/home/wim/Code/share";
+  string homedir=HOMEDIR;//"/home/wim/Code/share";
 
   MeanFieldNucleusThick Nucleus(nucleus,homedir);
   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithCosScatterAngle(TLeptonKinematics::muon,costhetamu);
@@ -358,7 +360,7 @@ int main(int argc, char *argv[])
       //anything above 300 MeV contribution will be negligible
       if(getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell)<300.){ 
 	if(!switchlow){
-	  cout<< E_in << " " << kin.GetPklab() << " " << shell << endl;
+//	  cout<< E_in << " " << kin.GetPklab() << " " << shell << endl;
 	  switchlow=1;
 	  E_low=E_in;
 	}
@@ -372,11 +374,11 @@ int main(int argc, char *argv[])
       }
     }
   }
-  cout << E_low << " " << E_high << " " << min << " " << max << endl;
+/*  cout << E_low << " " << E_high << " " << min << " " << max << endl;
   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;}
   cout << endl << endl << endl;
   if(min>=max)   cout << T_mu << " " << costhetamu << " " << 0.
-  << " " << 0. << " " << 0 << endl;
+  << " " << 0. << " " << 0 << endl; */
 
   
   //test for comparison with pascal
@@ -441,12 +443,12 @@ int main(int argc, char *argv[])
   
   F.f=adap_intPm;
   unsigned count=0;
-  if(!fluxintegrator) numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,avgcross,count,0);
+  if(!fluxintegrator) numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,avgcross,count,0); //1.E-20,1.E-03
   else numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-03,2E02,2E04,avgcross,count,0);
    
   //cross section in 10^-39 cm^2 GeV ^-1 per nucleon!!
   //factor 2\pi because of integration over muon polar angle
-  cout << endl << endl << endl;
+//cout << endl << endl << endl;
   cout << T_mu << " " << costhetamu << " " << avgcross[0]*1.E16*2.*PI/Nucleus.getN()
   << " " << avgcross[1]*1.E16*2.*PI/Nucleus.getZ() << " " << count << endl;
   
@@ -481,11 +483,11 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
       else{
 	double result=pObs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E04,0,1);
 	results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
-	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
-	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << " " << result*(shell<nucleus.getPLevels()?
-	interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1):interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1)) << endl;
+//	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+//	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+//	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
+//	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << " " << result*(shell<nucleus.getPLevels()?
+//	interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1):interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1)) << endl;
       }
     }
     

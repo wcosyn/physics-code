@@ -112,7 +112,7 @@ public:
    * \param proton reaction on a proton [1] or neutron [0]
    * \return differential cross section [dimensionless]
    */  
-  double getElWeakQECross(TKinematics2to2 &kin, int current, double phi, int maxEval, bool phi_int,
+  double getElWeakQECross(double Q2, double E_in, int current, double phi, int maxEval, bool phi_int,
 			   bool neutrino, bool proton);
   
   double getPrec() const{return prec;} /*!< precision of the integrations */

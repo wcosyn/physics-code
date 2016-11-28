@@ -15,7 +15,7 @@ CPATH 	=	.
 CC      = 	g++
 
 #		Flags
- OPTFLAG	=	-O3 -fPIC
+ OPTFLAG	=	-O3 -fPIC -std=c++11
 # OPTFLAG	=	-E -O3 -fPIC -shared-intel -fp-model source -unroll -pthread -ipo -xsse3 -parallel 
 
 STATIC  =	--static
@@ -23,15 +23,15 @@ DBGFLAG	=	-g
 GPFLAG  = 	-pg
 WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG) # $(DBGFLAG) #$(GPFLAG)  #$(STATIC)
-
+HOME    = /home/philiphacker
 
 #		Mathematical functions
 LIBS =	 	-lm
 WIMLIBS = -lMePhys -lGlauber -lKnockout -lIntegrator 
-ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L ~/Code/trunk/lib
- INCLUDEDIRS =  -I ~/Code/trunk/Integrator -I ~/Code/trunk/Tools  -I ~/Code/trunk/Glauber -I ~/Code/trunk/Knockout
-STATICLIBS =  ~/Code/trunk/lib/libKnockout.a  ~/Code/trunk/lib/libGlauber.a  ~/Code/trunk/lib/libMePhys.a   ~/Code/trunk/lib/libIntegrator.a   
+ROOT =		`root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
+ LIBDIRS = -L$(HOME)/Code/lib
+ INCLUDEDIRS =  -I$(HOME)/Code/Integrator -I$(HOME)/Code/Tools  -I$(HOME)/Code/Glauber -I $(HOME)/Code/Knockout
+STATICLIBS =  $(HOME)/Code/lib/libKnockout.a  $(HOME)/Code/lib/libGlauber.a  $(HOME)/Code/lib/libMePhys.a   $(HOME)/Code/lib/libIntegrator.a   
 
 
 #		Header files
@@ -59,7 +59,7 @@ clean:;		@rm -f *.o $(EFILE)
 .SECONDEXPANSION:
 $(EFILE):  $$(@F).cpp; 
 	@echo $(@F).cpp
-	$(CC) $(CFLAGS) $(@F).cpp $(LIBS) $(WIMLIBS) $(LDFLAGS) $(ROOT) $(LIBDIRS) $(INCLUDEDIRS) -o $@
+	$(CC) $(CFLAGS) $(@F).cpp $(LIBDIRS) $(LIBS) $(WIMLIBS) $(LDFLAGS) $(ROOT) $(INCLUDEDIRS) -o $@
 
 # $(EFILE):; @echo $(@F).cpp
 

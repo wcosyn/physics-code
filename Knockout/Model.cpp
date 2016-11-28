@@ -28,13 +28,14 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
   //kaon is residual A-1 nucleus
   double costheta=tk.GetCosthYlab();
   double sintheta=sqrt(1.-costheta*costheta);
-  double pout=tk.GetPYlab();
-  double qvec = tk.GetKlab();
-  double Eout = sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pout*pout);
-  double pin = sqrt(qvec*qvec+pout*pout-2.*pout*qvec*costheta);
-  double Ein = sqrt(pin*pin+tk.GetHyperonMass()*tk.GetHyperonMass());
+  double pout=tk.GetPYlab(); //momentum final nucleon
+  double qvec = tk.GetKlab(); //virtual photon momentum
+  double Eout = sqrt(tk.GetHyperonMass()*tk.GetHyperonMass()+pout*pout); //energy final nucleon
+  double pin = sqrt(qvec*qvec+pout*pout-2.*pout*qvec*costheta); //momentum initial nucleon
+  double Ein = sqrt(pin*pin+tk.GetHyperonMass()*tk.GetHyperonMass()); //energy initial nucleon
 /*  double wbar = Eout-Ein;
   double Q2bar = qvec*qvec-wbar*wbar;*/
+// polarization four vectors of the virtual photon
   static FourVector<complex<double> > polVectorPlus(0.,
                                                     -1./sqrt(2.),
                                                     complex<double>(0.,-1./sqrt(2.)),
@@ -45,11 +46,11 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
                                                    0.);
   static FourVector<complex<double> > polVector0(1.,0.,0.,0.);
   //Frame has z-axis along q!!!
-  FourVector<double> q(tk.GetWlab(),0.,0.,qvec);
-  FourVector<double> pf(Eout,pout*sintheta,0.,pout*costheta);
-  FourVector<double> Pin(Ein,pf[1],0.,pf[3]-q[3]); 
+  FourVector<double> q(tk.GetWlab(),0.,0.,qvec); //photon fourvector
+  FourVector<double> pf(Eout,pout*sintheta,0.,pout*costheta); //final nucleon fourvector
+  FourVector<double> Pin(Ein,pf[1],0.,pf[3]-q[3]);  //initial nucleon fourvector
   J= new NucleonEMOperator(tk.GetQsquared(),1,0);
-  GammaStructure Jcontr;
+  GammaStructure Jcontr; //nucleon-photon vertex contracted with the polarization fourvector of the photon
   if(photonpol==0)  Jcontr = J->getCC(current, q, Pin, pf, 0.,0,*pnucl)*polVector0;
   else if(photonpol==-1) Jcontr= J->getCC(current, q, Pin, pf, 0.,0,*pnucl)*polVectorMin;
   else if(photonpol==1) Jcontr=J->getCC(current, q, Pin, pf, 0.,0,*pnucl)*polVectorPlus;

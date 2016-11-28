@@ -105,7 +105,7 @@ public:
    * \param photonpol polarization of the photon (-1,0, +1, or z(3))
    * \return [dimensionless] off-shell amplitude
    */
-  std::complex<double> getFreeMatrixEl(TKinematics2to2 &tk, bool proton, int current, int spinin, int spinout, int photonpol);
+  std::complex<double> getFreeMatrixEl(double Q2, bool proton, int current, int spinin, int spinout, int photonpol);
   double getPrec() const{return prec;} /*!< returns precision in the integrations */
   bool getUsersigma() const{return usersigma;} /*!< returns 1 if user has changed sigma with some screening */
   double getSigmascreening() const{return sigmascreening;} /*!< [%] returns screening change to sigma */
