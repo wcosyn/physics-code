@@ -166,16 +166,13 @@ int main(int argc, char *argv[])
 
   //find reasonable integration limits
   double T_mu=0;
-  double E_low;
-  double E_high;
+  double E_low=15000;
+  double E_high=0;
   double E_out;
-  for(int j=0;j<=10;j++){ //loop over T_mu
+  for(int j=0;j<=0;j++){ //loop over T_mu
     cout << j << "/100" << endl;
     T_mu=100*j;    
     E_out=T_mu+massmu;
-    E_low=E_out;
-    E_high=E_out;
-    bool switchlow=0;
     for(int i=1;i<1000;i++){
     
 			/*    
@@ -206,13 +203,8 @@ int main(int argc, char *argv[])
 	
         //anything above 300 MeV contribution will be negligible
         if(getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell)<300.){ 
-          if(E_in<E_low){  // && !switchlow ??
-//	          cout<< E_in << " " << kin.GetPklab() << " " << shell << endl;
-//	          switchlow=1;
-	          E_low=E_in;
-	        }
-	        else if(E_in>E_high) E_high=E_in;
-//        	cout << shell << " " << kin.GetPklab() <<" " << cthmin[shell] << " " << cthmax[shell] << endl;
+          if(E_in<E_low && E_in>1500.)  E_low=E_in;
+	        if(E_in>E_high) E_high=E_in;
 	        if(max<tempmax) max=tempmax;
 	        if(min>tempmin) min=tempmin;
 	        if(cthmax[shell]<tempmax) cthmax[shell]=tempmax;
@@ -223,11 +215,6 @@ int main(int argc, char *argv[])
       }
     }
   }  
-  
-/*	min=-1;           //for Q2=0.3
-  max=-0.808716;
-  Tmin=100;
-  Tmax=2800; */
   
   cout << endl;
   cout << "min=" << min << "   max=" << max << endl;
@@ -292,12 +279,13 @@ int main(int argc, char *argv[])
   F.f=adap_intPm;
   count=0;
   if(!fluxintegrator) numint::cube_romb(mdf,lower,upper,1.E-18,1.E-01,avgcross,count,0); //1.E-20,1.E-03
-  else numint::cube_adaptive(mdf,lower,upper,1.E-18,1.E-01,2E02,2E04,avgcross,count,0);
+  else numint::cube_adaptive(mdf,lower,upper,1.E-16,1.,2E02,2E04,avgcross,count,0);
    
   //cross section in 10^-39 cm^2 GeV ^-1 per nucleon!!
   //factor 2\pi because of integration over muon polar angle
   //cout << endl << endl << endl;
   cout << "Crosssection C: " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " [1E-39 cm2/GeV2]" << endl;
+  
   cout << Q2 << " " << avgcross[0]*1.E19*2.*PI/Nucleus.getN()
   << " " << (avgcross[1]+2.*avgcrossH[0])*1.E19*2.*PI/(Nucleus.getZ()+2.) << " " << count << endl << endl;
 
@@ -310,7 +298,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, doub
 	
 //if(E_out<E_in && E_in>0.25*Q2/MASSP+0.5*sqrt(0.25*Q2*Q2/(MASSP*MASSP)+Q2+massmu*massmu)) {
 	TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
-        WeakQECross pobs(lepton,&nucleus,prec,integrator,homedir,charged,1.03E03,screening,0.);  
+  WeakQECross pobs(lepton,&nucleus,prec,integrator,homedir,charged,1.03E03,screening,0.);  
         
   results=numint::vector_d(2,0.);
   //we can fix the vector boson kinematics
@@ -343,7 +331,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, doub
         double jcb;
         double Enu=(MASSN*MASSN-(MASSP-30.)*(MASSP-30.)-lepton->GetLeptonMass()*lepton->GetLeptonMass()+2.*(MASSP-30.)*E_out)
                    /(2.*(MASSP-30.-E_out+pm*costhetamu));
-        jcb=2.*Enu*(1.+(pm*(E_out-pm*costhetamu))/(MASSP-30.-E_out+pm*costhetamu));
+        jcb=2.*Enu*(1.+(E_out-pm*costhetamu)/(MASSP-30.-E_out+pm*costhetamu));
         result/=jcb;      
 //	      cout << "Jacobian C " << jcb << endl;
   
@@ -360,7 +348,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, doub
   results[0]*=interpolate(Minerva_nu_flux,E_in,500,20,0);
   results[1]*=interpolate(Minerva_anu_flux,E_in,500,20,0);
 //}
-//  else {results[0]=0; results[1]=0;}
+//else {results[0]=0; results[1]=0;}
   
 }
 
@@ -382,7 +370,7 @@ void int_hydr(numint::vector_d & result, double E_in,
   crossHanu/=jcb;
  
   result=numint::vector_d(1,0.); 
-  result[0]=crossHanu*interpolate(Minerva_anu_flux,E_in,500,20,1);
+  result[0]=crossHanu*interpolate(Minerva_anu_flux,E_in,500,20,0);
 } 
 
 double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
