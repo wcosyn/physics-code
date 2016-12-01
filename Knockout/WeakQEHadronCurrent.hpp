@@ -96,14 +96,14 @@ public:
    * \param medium medium modifications (0=none, 1=QCM, 2=CQSM)
    */
   void getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,4> *results, int shellindex, int m, int current, int thick, int medium);
-   /*! Computes the off-shell amplitude \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu u(\vec{p}_m,m_i) \f$
-   * \param tk contains the hadron kinematics
+   /*! Computes the on-shell amplitude \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu u(0,m_i) \f$
+   * \param Q2 [MeV^2] virtual photon Q-squared
    * \param proton [1] proton or [0] neutron
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param spinin spin \f$ m_i \f$ of the initial nucleon times TWO!!! (-1 or +1)
    * \param spinout spin \f$ m_f \f$ of the outgoing nucleon times TWO!!! (-1 or +1)
    * \param photonpol polarization of the photon (-1,0, +1, or z(3))
-   * \return [dimensionless] off-shell amplitude
+   * \return [dimensionless] on-shell amplitude
    */
   std::complex<double> getFreeMatrixEl(double Q2, bool proton, int current, int spinin, int spinout, int photonpol);
   double getPrec() const{return prec;} /*!< returns precision in the integrations */

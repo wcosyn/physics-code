@@ -25,10 +25,6 @@ WeakQEHadronCurrent::~WeakQEHadronCurrent(){
 
 complex<double> WeakQEHadronCurrent::getFreeMatrixEl(double Q2, bool proton, 
 						     int current, int spinin, int spinout, int photonpol){
-  //to translate the 2to2kinematics language to our particles:
-  //p is A
-  //hyperon Y is fast final nucleon
-  //kaon is residual A-1 nucleus
   double costheta=1.;
   double sintheta=0.;
   double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSN;
