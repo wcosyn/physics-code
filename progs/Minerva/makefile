@@ -45,7 +45,7 @@ HDRS =
 
 #-------------------------------------------------------------------------
 #		Executable file
-EFILE   = 	../../bin/minerva 
+EFILE   = 	../../bin/minerva ../../bin/crosstest
 
 #		Targets...
 
