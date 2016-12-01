@@ -31,7 +31,7 @@ complex<double> WeakQEHadronCurrent::getFreeMatrixEl(double Q2, bool proton,
   //kaon is residual A-1 nucleus
   double costheta=1.;
   double sintheta=0.;
-  double omega=0.5*(MASSP*MASSP-MASSN*MASSN+Q2)/MASSP;
+  double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSN;
   double qvec = sqrt(omega*omega+Q2);
   double pout = qvec;
   double Eout = sqrt(MASSN*MASSN+pout*pout);

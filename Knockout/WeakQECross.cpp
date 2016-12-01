@@ -44,7 +44,7 @@ WeakQECross::~WeakQECross(){
 double WeakQECross::getElWeakQECross(double Q2, double E_in, int current, double phi, int maxEval, bool phi_int,
  				    bool neutrino, bool proton){
 
-   double omega=0.5*(MASSP*MASSP-MASSN*MASSN+Q2)/MASSP;
+   double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSN;
    double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
    //double Q2overkk=Q2/qvec/qvec;
    //double tan2=electron.GetTan2HalfAngle(kin);
@@ -92,6 +92,7 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, int current, double
    double cross=0;
    for(int i=0;i<=4;i++) cross+=kinfactors[i]*response[i];
    cross*=G_FERMI*G_FERMI*0.975*0.975/(2*PI*PI)*kk*eeps*cos(atan(sqrt(tan2theta)))*cos(atan(sqrt(tan2theta)));
+   cross*=HBARC*HBARC;
 // cout<<"Factors "<<kk<<" "<<eeps<<" "<<cos(atan(sqrt(tan2theta)))<<" "<<cos(atan(sqrt(tan2theta)))<<endl;
    if (phi_int) cross*=phi;
    

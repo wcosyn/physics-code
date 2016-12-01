@@ -246,6 +246,7 @@ int main(int argc, char *argv[])
 
   // find minimum E_in
   double EminH=0.25*Q2/MASSP+0.5*sqrt(0.25*Q2*Q2/(MASSP*MASSP)+Q2+massmu*massmu);
+  if (EminH<1500.) EminH=1500.;
   cout << "EminH: " << EminH << endl;
   numint::array<double,1> lowerH = {{EminH}};  
   numint::array<double,1> upperH = {{10000.}};
@@ -301,11 +302,8 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, doub
   double costhetamu=(-Q2-massmu*massmu+2.*E_in*E_out)/(2.*E_in*sqrt(E_out*E_out-massmu*massmu));
 //cout << "Costhetamu " << costhetamu << endl;
   
-  if(costhetamu<1 && costhetamu>-1) {
+  if(costhetamu<1 && costhetamu>-1 && omega>0) {
       
-  //if(E_out<E_in && E_in<(massmu*massmu-Q2)/(2*E_out-sqrt(E_out*E_out-massmu*massmu)) &&
-  //   E_in>(massmu*massmu-Q2)/(2*E_out-sqrt(E_out*E_out+massmu*massmu)))
-  //{
     TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
     WeakQECross pobs(lepton,&nucleus,prec,integrator,homedir,charged,1.03E03,screening,0.);  
           
