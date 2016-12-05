@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
   double E_high=E_out;
   bool switchlow=0;
   for(int i=1;i<1000;i++){
-    double E_in=E_out+(3.E03-E_out)*0.001*i; //possible incoming lepton energies
+    double E_in=E_out+(10.E03-E_out)*0.001*i; //possible incoming lepton energies
     double omega=E_in-E_out;
     double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
 	-lepton->GetLeptonMass()*lepton->GetLeptonMass();
@@ -179,6 +179,12 @@ int main(int argc, char *argv[])
       }
     }
   }
+  if (E_low<1500.) E_low=1500.;
+    
+  cout << endl;
+  cout << "min=" << min << "   max=" << max << endl;
+  cout << "E_low=" << E_low << "  E_high=" << E_high << endl << endl;
+
 
   //Normalize flux
   normalize(Minerva_nu_flux,500);
@@ -210,9 +216,9 @@ int main(int argc, char *argv[])
    
   //cross section in 10^-39 cm^2 GeV ^-1 per nucleon!!
   //factor 2\pi because of integration over muon polar angle
-//cout << endl << endl << endl;
+  //cout << endl << endl << endl;
   cout << T_mu << " " << costhetamu << " " << avgcross[0]*1.E16*2.*PI/Nucleus.getN()
-  << " " << avgcross[1]*1.E16*2.*PI/Nucleus.getZ() << " " << count << endl;
+  << " " << avgcross[1]*1.E16*2.*PI/Nucleus.getZ() << " " << E_low << " " << E_high << " " << count << endl;
   
   delete lepton;
 
@@ -227,7 +233,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
   //we can fix the vector boson kinematics
   double omega=E_in-E_out;
   double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton.GetLeptonMass()*lepton.GetLeptonMass()/(E_out*E_out))*costhetamu)
-      -lepton.GetLeptonMass()*lepton.GetLeptonMass();
+         -lepton.GetLeptonMass()*lepton.GetLeptonMass();
 //   cout << E_in << " " << omega<< " " << Q2*1.E-06 << " " << sqrt(Q2+omega*omega) << endl;
   pObs.getPlepton()->SetBeamEnergy(E_in);
 //   int shell=0;

@@ -163,6 +163,7 @@ int main(int argc, char *argv[])
   double E_low=15000;
   double E_high=0;
   
+  
   //find reasonable integration limits
   double T_mu=0;
   double E_out;  
@@ -210,7 +211,7 @@ int main(int argc, char *argv[])
       }
     }
   }  
-  if(E_low<1500.) E_low=1500.;
+  if(E_low<1500.) E_low=1500.;  
   
   cout << endl;
   cout << "min=" << min << "   max=" << max << endl;
@@ -312,9 +313,8 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, doub
           +nucleus.getExcitation()[shell],
           shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
         double pm=sqrt(E_out*E_out-massmu*massmu);
-        if(!kin.IsPhysical()||kin.GetPYlab()<200.){ //final nucleon momentum too low, impose cut!
-  //      for(int i=0;i<2;i++) results[i]+=0.;
-  //     	cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << " " << kin.GetPk() << endl;
+        if(!kin.IsPhysical()||kin.GetPYlab()<200.||kin.GetPklab()>300.){ //final nucleon momentum too low, impose cut!
+          for(int i=0;i<2;i++) results[i]+=0.;
         }
         else{
           double result=pobs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E03,0,1);   // prec..2E04
