@@ -150,7 +150,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   kinfactors[4]=-1./sqrt(2)*Q2overkk*sqrt(tan2);
   kinfactors[5]=sqrt(tan2*(tan2+Q2overkk));
   
-  int total=thick?5:3;
+  const int total=thick?5:3;
   //compute response functions
   for(int i=0;i<6;i++) for(int j=0;j<total;j++) response[j][i]=0.;
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){

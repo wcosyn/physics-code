@@ -19,8 +19,6 @@ Model::~Model(){
   
 }
 
-
-
 complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spinin, int spinout, int photonpol){
   //to translate the 2to2kinematics language to our particles:
   //p is A
@@ -39,7 +37,7 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
   static FourVector<complex<double> > polVectorPlus(0.,
                                                     -1./sqrt(2.),
                                                     complex<double>(0.,-1./sqrt(2.)),
-                                                 0.);
+                                                    0.);
   static FourVector<complex<double> > polVectorMin(0.,
                                                    1./sqrt(2.),
                                                    complex<double>(0.,-1./sqrt(2.)),
@@ -80,8 +78,8 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
   }
   else {cerr << "invalid spinout " << spinout << endl; exit(1);}
   
-  
 }
+
 
 // complex<double> Model::getMatrixEl(TKinematics2to2 &tk, int spinout, int photonpol, int shellindex, 
 // 				   int m, int CT, int pw, int current, int SRC, int thick){

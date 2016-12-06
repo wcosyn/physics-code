@@ -27,7 +27,7 @@ complex<double> WeakQEHadronCurrent::getFreeMatrixEl(double Q2, bool proton,
 						     int current, int spinin, int spinout, int photonpol){
   double costheta=1.;
   double sintheta=0.;
-  double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSN;
+  double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSP;
   double qvec = sqrt(omega*omega+Q2);
   double pout = qvec;
   double Eout = sqrt(MASSN*MASSN+pout*pout);

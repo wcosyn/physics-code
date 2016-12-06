@@ -44,7 +44,7 @@ WeakQECross::~WeakQECross(){
 double WeakQECross::getElWeakQECross(double Q2, double E_in, int current, double phi, int maxEval, bool phi_int,
  				    bool neutrino, bool proton){
 
-   double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSN;
+   double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSP;
    double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
    //double Q2overkk=Q2/qvec/qvec;
    //double tan2=electron.GetTan2HalfAngle(kin);
