@@ -212,6 +212,7 @@ int main(int argc, char *argv[])
     }
   }  
   if(E_low<1500.) E_low=1500.;  
+  if(E_high<E_low) E_high=E_low;
   
   cout << endl;
   cout << "min=" << min << "   max=" << max << endl;
