@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
   bool charged=1;
   int current=2;
   
-  string homedir=HOMEDIR;//argv[3];   //"/home/wim/Code/share";
+  string homedir=argv[3];   //"/home/wim/Code/share";
 
   MeanFieldNucleusThick Nucleus(nucleus,homedir);
   
