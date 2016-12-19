@@ -12,6 +12,7 @@ using namespace std;
 #include <Utilfunctions.hpp>
 //headers for integration 
 #include <numint/numint.hpp>
+#include <numint/numint2Cuba.hpp>
 
 const double massmu = 105.6583715;
 
@@ -140,7 +141,7 @@ int main(int argc, char *argv[])
   double costhetamu; //=atof(argv[1]);
   bool screening=0;//atoi(argv[4]);
   int nucleus=1;//atoi(argv[6]);                     
-  double prec=1.E-03;//atof(argv[7]);   //1.E-5
+  double prec=1.E-05;//atof(argv[7]);   //1.E-5
   int integrator=2;//
   int fluxintegrator=atoi(argv[2]);
 //int thick=0;//atoi(argv[9]);
@@ -148,7 +149,7 @@ int main(int argc, char *argv[])
   bool charged=1;
   int current=2;
   
-  string homedir=HOMEDIR;   //"/home/wim/Code/share";
+  string homedir=argv[3];   //"/home/wim/Code/share";
 
   MeanFieldNucleusThick Nucleus(nucleus,homedir);
   
@@ -198,7 +199,7 @@ int main(int argc, char *argv[])
 	      double tempmax=-1., tempmin=1.;
 	
         //anything above 300 MeV contribution will be negligible
-        if(getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell)<300.){ 
+        if(getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell)<500.){ 
           if(E_in<E_low)  E_low=E_in;
 	        if(E_in>E_high) E_high=E_in;
 	        if(max<tempmax) max=tempmax;
@@ -214,10 +215,14 @@ int main(int argc, char *argv[])
   if(E_low<1500.) E_low=1500.;  
   if(E_high<E_low) E_high=E_low;
   
+  //min=-1;   max=1;
+  //Tmin=100;  Tmax=7100;
+  //E_low=1500;  E_high=7413.36;
   cout << endl;
   cout << "min=" << min << "   max=" << max << endl;
   cout << "Tmin=" << Tmin << "  Tmax=" << Tmax << endl;
   cout << "E_low=" << E_low << "  E_high=" << E_high << endl << endl;
+//  for(int i=0;i<4;i++) {cthmax[i]=1.;cthmin[i]=-1;}
 
   //Normalize flux
   normalize(Minerva_nu_flux,500);
@@ -277,14 +282,31 @@ int main(int argc, char *argv[])
   
   F.f=adap_intPm;
   count=0;
-  if(!fluxintegrator) numint::cube_romb(mdf,lower,upper,1.E-20,1.E-01,avgcross,count,0); //1.E-20,1.E-03
-  else numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-01,2E02,2E04,avgcross,count,0);
+  string stf=homedir+"statefileminerva";
+  ostringstream qstr;
+  qstr << Q2;
+  string qst=qstr.str();
+  stf+=qst;
+  char statefile[1024];
+  strncpy(statefile,stf.c_str(),sizeof(statefile));
+  statefile[sizeof(statefile)-1]=0;
+  int nregions,fail,countt;
+  vector<double> err(2,0.);
+  vector<double> prob(2,0.);
+  cout << "start integration C" << endl;
+  if(fluxintegrator==0) numint::vegas( mdf, lower,upper,0, 1.E-01, 1.E-25,2,123,100, 500,1000, 500, 1000, 0,statefile,countt,fail,avgcross,err,prob ); 
+  if(fluxintegrator==1) numint::cuhre( mdf, lower,upper,0, 1.E-01, 1.E-25,2,100, 500,11, statefile,nregions,countt,fail,avgcross,err,prob ); 
+  if(fluxintegrator==2) numint::cube_romb(mdf,lower,upper,1.E-25,1.E-01,avgcross,count,0); //1.E-20,1.E-03
+  if(fluxintegrator==3) numint::cube_adaptive(mdf,lower,upper,1.E-25,1.E-03,2E02,2E04,avgcross,count,0);
+  count=countt;
+
    
   //factor 2\pi because of integration over muon polar angle
-  cout << "Crosssection C: " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " [1E-39 cm2/GeV2]" << endl << endl;
+//  cout << "Crosssection C: " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " [1E-39 cm2/GeV2]" << endl << endl;
   
   cout << Q2 << " " << avgcross[0]*1.E19*2.*PI/Nucleus.getN()
-  << " " << (avgcross[1]+2.*avgcrossH[0])*1.E19*2.*PI/(Nucleus.getZ()+2.) << " " << count << endl << endl;
+  << " " << (avgcross[1]+2.*avgcrossH[0])*1.E19*2.*PI/(Nucleus.getZ()+2.) << " " 
+  << avgcrossH[0]*1.E19*2.*PI << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " "  << count << endl;
 
 }
 
@@ -292,17 +314,17 @@ int main(int argc, char *argv[])
 void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, double E_out,
 	 MeanFieldNucleusThick &nucleus, int current, double *cthmax, double Q2,
 	 double prec, int integrator, string homedir, int maxEval, bool charged, bool screening){	  
-	
+ cout << "integrandum " << E_in << " " << costhetacm  << " " << E_out << endl;	
   double omega=E_in-E_out;  
   double costhetamu=(-Q2-massmu*massmu+2.*E_in*E_out)/(2.*E_in*sqrt(E_out*E_out-massmu*massmu));
 //cout << "Costhetamu " << costhetamu << endl;
-  
+
+  results=numint::vector_d(2,0.);  
+
   if(costhetamu<1 && costhetamu>-1 && omega>0) {
       
     TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
     WeakQECross pobs(lepton,&nucleus,prec,integrator,homedir,charged,1.03E03,screening,0.);  
-          
-    results=numint::vector_d(2,0.);
     
     //we can fix the vector boson kinematics
     pobs.getPlepton()->SetBeamEnergy(E_in);
@@ -314,12 +336,12 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, doub
           +nucleus.getExcitation()[shell],
           shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
         double pm=sqrt(E_out*E_out-massmu*massmu);
-        if(!kin.IsPhysical()||kin.GetPYlab()<200.||kin.GetPklab()>300.){ //final nucleon momentum too low, impose cut!
-          for(int i=0;i<2;i++) results[i]+=0.;
+        if(!kin.IsPhysical()||kin.GetPYlab()<200.||kin.GetPklab()>500.){ //final nucleon momentum too low, impose cut!
+          for(int i=0;i<2;i++) results[i]+=0.;	
         }
         else{
-          double result=pobs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E03,0,1);   // prec..2E04
-  //	  			cout << "Result " << result << endl;
+          double result=pobs.getDiffWeakQECross(kin,current,1,0,0,1,shell,0.,2E04,0,1);   // prec..2E04
+// 	  			cout << "Result " << result << endl;
 
           //Jacobian    
           double jcb;
@@ -330,11 +352,10 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, doub
   //      cout << "Jacobian C " << jcb << endl;
     
           results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
-          //  << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+           //cout << shell  << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
           //	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
           //	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
-          //	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << " " << result*(shell<nucleus.getPLevels()?
-          //	interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1):interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1)) << endl;
+          //	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << endl;
         }
       }  
     }
@@ -377,31 +398,31 @@ double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLept
       -lepton.GetLeptonMass()*lepton.GetLeptonMass();
   double tempmin=500.;
   double costhmin=-1.;
-  for(int i=0;i<=1000;i++){ //loop over all com angles
+  for(int i=0;i<=100;i++){ //loop over all com angles
     TKinematics2to2 kin("","",nucleus.getMassA(),
 			(shell<nucleus.getPLevels()? nucleus.getMassA_min_proton(): nucleus.getMassA_min_neutron())
 			+nucleus.getExcitation()[shell],
-			shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,-1.+i*0.002);
+			shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,-1.+i*0.02);
     double pm=kin.GetPklab(); //initial nucleon momentum
-    if(pm<tempmin) {tempmin=pm; costhmin=-1.+i*0.002;}
+    if(pm<tempmin) {tempmin=pm; costhmin=-1.+i*0.02;}
   }
   //   cout << omega << " " << Q2/1.E06 << " " << omega/(2.*MASSP*omega) << " " << high << " " << low << " " << pm << endl;
   double temptemp=costhmin;//com costheta value where the min initial nucl momentum is
   //   cout << costhmin << " " << tempmin << endl;
-  if(tempmin<300.){
+  if(tempmin<500.){
     TKinematics2to2 kin1("","",nucleus.getMassA(),
 			(shell<nucleus.getPLevels()? nucleus.getMassA_min_proton(): nucleus.getMassA_min_neutron())
 			+nucleus.getExcitation()[shell],
 			shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,1.);
     high=1;
-    if(kin1.GetPklab()>300.) high=getMax(high,temptemp,nucleus,lepton,Q2,omega,shell);
+    if(kin1.GetPklab()>500.) high=getMax(high,temptemp,nucleus,lepton,Q2,omega,shell);
     temptemp=costhmin;
     TKinematics2to2 kinmin1("","",nucleus.getMassA(),
 			(shell<nucleus.getPLevels()? nucleus.getMassA_min_proton(): nucleus.getMassA_min_neutron())
 			+nucleus.getExcitation()[shell],
 			shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,-1.);
     low=-1.;
-    if(kinmin1.GetPklab()>300.) getMin(temptemp,low,nucleus,lepton,Q2,omega,shell);
+    if(kinmin1.GetPklab()>500.) getMin(temptemp,low,nucleus,lepton,Q2,omega,shell);
 //     cout << "pm " << kinmin1.GetPklab() << " " << kin1.GetPklab() << " " << costhmin << " " << low << " " << high << endl;
   }
   return tempmin;//minimal initial nucleon momentum
@@ -417,7 +438,7 @@ double getMin(double &high, double &low, MeanFieldNucleusThick &nucleus, TLepton
 		      shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,(high+low)/2.);
   double pm=kin.GetPklab();
 //   cout << omega << " " << Q2/1.E06 << " " << omega/(2.*MASSP*omega) << " " << high << " " << low << " " << pm << endl;
-  if(pm<300.) high=(high+low)/2.;
+  if(pm<500.) high=(high+low)/2.;
   else low=(high+low)/2.;
   if((high-low)<1.E-04) { return high;}
   else return getMin(high,low,nucleus,lepton,Q2,omega,shell);  
@@ -433,7 +454,7 @@ double getMax(double &high, double &low, MeanFieldNucleusThick &nucleus, TLepton
 		      shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:costhkcm",Q2,omega,(high+low)/2.);
   double pm=kin.GetPklab();
 //   cout << omega << " " << Q2/1.E06 << " " << omega/(2.*MASSP*omega) << " " << high << " " << low << " " << pm << endl;
-  if(pm<300.) low=(high+low)/2.;
+  if(pm<500.) low=(high+low)/2.;
   else high=(high+low)/2.;
   if((high-low)<1.E-04) { return low;}
   else return getMax(high,low,nucleus,lepton,Q2,omega,shell);  
