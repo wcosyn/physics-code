@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
   bool charged=1;
   int current=2;
   
-  string homedir=argv[3];   //"/home/wim/Code/share";
+  string homedir=HOMEDIR;//argv[3];   //"/home/wim/Code/share";
 
   MeanFieldNucleusThick Nucleus(nucleus,homedir);
   
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
     cout << j << "/100" << endl;
     T_mu=100*j;    
     E_out=T_mu+massmu;
-    for(int i=1;i<1000;i++){
+    for(int i=0;i<=1000;i++){
     
 //    double E_in=E_out+(3.E03-E_out)*0.001*i; //possible incoming lepton energies
 //    costhetamu=(1.-((Q2+massmu*massmu)/(2.*E_in*E_out)))/sqrt(1.-(massmu*massmu)/(E_out*E_out));
@@ -218,11 +218,11 @@ int main(int argc, char *argv[])
   //min=-1;   max=1;
   //Tmin=100;  Tmax=7100;
   //E_low=1500;  E_high=7413.36;
+//   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;cthmin[shell]=-1.;cthmax[shell]=1.;}
   cout << endl;
   cout << "min=" << min << "   max=" << max << endl;
   cout << "Tmin=" << Tmin << "  Tmax=" << Tmax << endl;
   cout << "E_low=" << E_low << "  E_high=" << E_high << endl << endl;
-//  for(int i=0;i<4;i++) {cthmax[i]=1.;cthmin[i]=-1;}
 
   //Normalize flux
   normalize(Minerva_nu_flux,500);
@@ -254,10 +254,10 @@ int main(int argc, char *argv[])
   FH.f=int_hydr;
   vector<double> avgcrossH(1,0.); 
   unsigned count=0;
-  if(!fluxintegrator) numint::cube_romb(mdfH,lowerH,upperH,1.E-20,1.E-03,avgcrossH,count,0); //1.E-20,1.E-03
-  else numint::cube_adaptive(mdfH,lowerH,upperH,1.E-20,1.E-03,2E02,2E04,avgcrossH,count,0); 
+  if(!fluxintegrator) numint::cube_romb(mdfH,lowerH,upperH,1.E-30,1.E-03,avgcrossH,count,0); //1.E-20,1.E-03
+  else numint::cube_adaptive(mdfH,lowerH,upperH,1.E-30,1.E-03,2E02,4E04,avgcrossH,count,0); 
   
-  cout << "Crosssection H: " << avgcrossH[0]*1.E19*2.*PI << " [1E-39 cm2/GeV2]" << endl << endl;
+  cout << "Crosssection H: " << avgcrossH[0]*1.E19*2.*PI << " [1E-39 cm2/GeV2]" <<  " "<< count << endl << endl;
   
   //initialize object -- Carbon
   Ftor F;
@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
 
    
   //factor 2\pi because of integration over muon polar angle
-//  cout << "Crosssection C: " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " [1E-39 cm2/GeV2]" << endl << endl;
+  cout << "Crosssection C: " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " [1E-39 cm2/GeV2] " << count << endl << endl;
   
   cout << Q2 << " " << avgcross[0]*1.E19*2.*PI/Nucleus.getN()
   << " " << (avgcross[1]+2.*avgcrossH[0])*1.E19*2.*PI/(Nucleus.getZ()+2.) << " " 
@@ -317,11 +317,10 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, doub
  cout << "integrandum " << E_in << " " << costhetacm  << " " << E_out << endl;	
   double omega=E_in-E_out;  
   double costhetamu=(-Q2-massmu*massmu+2.*E_in*E_out)/(2.*E_in*sqrt(E_out*E_out-massmu*massmu));
-//cout << "Costhetamu " << costhetamu << endl;
 
   results=numint::vector_d(2,0.);  
 
-  if(costhetamu<1 && costhetamu>-1 && omega>0) {
+  if(abs(costhetamu)<=1. && omega>0.) {
       
     TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
     WeakQECross pobs(lepton,&nucleus,prec,integrator,homedir,charged,1.03E03,screening,0.);  
@@ -349,8 +348,8 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm, doub
                     /(2.*(MASSP-30.-E_out+pm*costhetamu));
           jcb=2.*pm*Enu*(1.+(E_out-pm*costhetamu)/(MASSP-30.-E_out+pm*costhetamu));
           result/=jcb;      
-  //      cout << "Jacobian C " << jcb << endl;
-    
+//           cout << E_in << " " << costhetacm << " " << E_out << " " << omega << " " <<  shell << " " << kin.GetPYlab() << " " << kin.GetPklab() << " " << result << endl;
+          
           results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
            //cout << shell  << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
           //	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
