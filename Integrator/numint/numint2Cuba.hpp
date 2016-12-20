@@ -159,7 +159,7 @@ struct mdf2cuba<std::vector<T>,N >{
 template<typename T, unsigned N>
 void cuhre( const mdfunction<T,N> &f, const numint::array<double, N> &a,
            const numint::array<double,N> &b,int nvec, double epsrel, double epsabs,int flags,
-           int minEval, int maxEval,int key, char* statefile,int &nregions, int &neval, int &fail, T &result, T &err, T &prob ){
+           int minEval, int maxEval,int key, const char* statefile,int &nregions, int &neval, int &fail, T &result, T &err, T &prob ){
   
   struct mdf2cuba<T,N> F;
   F.f = f; // set the integrand
@@ -193,7 +193,7 @@ void divonne( const mdfunction<T,N> &f, const numint::array<double, N> &a,
            const numint::array<double,N> &b,int nvec, double epsrel, double epsabs,int flags, int seed,
            int minEval, int maxEval,int key1, int key2, int key3, int maxpass, double border, double maxchisq,
            double mindeviation, int ngiven, int ldxgiven,double *xgiven, int nextra, peakfinder_t peakfinder,
-           char* statefile,int &nregions, int &neval, int &fail, T &result,T &err,T &prob ){
+           const char* statefile,int &nregions, int &neval, int &fail, T &result,T &err,T &prob ){
   
   struct mdf2cuba<T,N> F;
   F.f = f; // set the integrand
@@ -225,7 +225,7 @@ void divonne( const mdfunction<T,N> &f, const numint::array<double, N> &a,
 template<typename T, unsigned N>
 void suave( const mdfunction<T,N> &f, const numint::array<double, N> &a,
            const numint::array<double,N> &b,int nvec, double epsrel, double epsabs,int flags, int seed,
-           int minEval, int maxEval,int nnew, double flatness, char* statefile, int &nregions, int &neval, int &fail, T &result,T &err, T &prob ){
+           int minEval, int maxEval,int nnew, double flatness, const char* statefile, int &nregions, int &neval, int &fail, T &result,T &err, T &prob ){
   
   struct mdf2cuba<T,N> F;
   F.f = f; // set the integrand
@@ -256,7 +256,7 @@ void suave( const mdfunction<T,N> &f, const numint::array<double, N> &a,
 template<typename T, unsigned N>
 void vegas( const mdfunction<T,N> &f, const numint::array<double, N> &a,
            const numint::array<double,N> &b,int nvec, double epsrel, double epsabs,int flags, int seed,
-           int minEval, int maxEval,int nstart, int nincrease, int nbatch, int gridno,char* statefile, int &neval, int &fail, T &result,T &err, T &prob ){
+           int minEval, int maxEval,int nstart, int nincrease, int nbatch, int gridno,const char* statefile, int &neval, int &fail, T &result,T &err, T &prob ){
   
   struct mdf2cuba<T,N> F;
   F.f = f; // set the integrand
