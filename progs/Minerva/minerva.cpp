@@ -287,15 +287,12 @@ int main(int argc, char *argv[])
   qstr << Q2;
   string qst=qstr.str();
   stf+=qst;
-  char statefile[1024];
-  strncpy(statefile,stf.c_str(),sizeof(statefile));
-  statefile[sizeof(statefile)-1]=0;
   int nregions,fail,countt;
   vector<double> err(2,0.);
   vector<double> prob(2,0.);
   cout << "start integration C" << endl;
-  if(fluxintegrator==0) numint::vegas( mdf, lower,upper,0, 1.E-01, 1.E-25,2,123,100, 500,1000, 500, 1000, 0,statefile,countt,fail,avgcross,err,prob ); 
-  if(fluxintegrator==1) numint::cuhre( mdf, lower,upper,0, 1.E-01, 1.E-25,2,100, 500,11, statefile,nregions,countt,fail,avgcross,err,prob ); 
+  if(fluxintegrator==0) numint::vegas( mdf, lower,upper,0, 1.E-01, 1.E-25,2,123,100, 500,1000, 500, 1000, 0,(stf+"vegas").c_str(),countt,fail,avgcross,err,prob ); 
+  if(fluxintegrator==1) numint::cuhre( mdf, lower,upper,0, 1.E-01, 1.E-25,2,100, 500,11, (stf+"cuhre").c_str(),nregions,countt,fail,avgcross,err,prob ); 
   if(fluxintegrator==2) numint::cube_romb(mdf,lower,upper,1.E-25,1.E-01,avgcross,count,0); //1.E-20,1.E-03
   if(fluxintegrator==3) numint::cube_adaptive(mdf,lower,upper,1.E-25,1.E-03,2E02,2E04,avgcross,count,0);
   count=countt;
