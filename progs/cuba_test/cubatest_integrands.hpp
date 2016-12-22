@@ -34,11 +34,13 @@ int hyper_gauss(const int* ndim, const double x[], const int* ncomp, double *f, 
 	return 0;
 }
 
+// fills all the components with unit sphere integrand
 int unit_sphere(const int* ndim, const double x[], const int* ncomp, double *f, void* userdata) {
 	double r2 = 0.;
 	for (int i=0; i<*ndim; i++)
 		r2 += (2.*x[i]-1.)*(2.*x[i]-1);
-	f[0] = pow(2,*ndim)*((r2 < 1.)? 1. : 0.);
+    for (int i=0;i <*ncomp; i++)
+	    f[i] = pow(2,*ndim)*((r2 < 1.)? 1. : 0.);
 	return 0;
 }
 

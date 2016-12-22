@@ -19,7 +19,7 @@ int main()
 
 void test_vegas() {
 	int ndim = 4;
-	int ncomp =1;
+	int ncomp =2;
 	//integrand_t integrand = &hyper_lin; //hypercube; //&my_integrand;
 	integrand_t integrand = &unit_sphere;
 	void* userdata = NULL;
@@ -29,7 +29,7 @@ void test_vegas() {
 	int flags = 0b00000000; // see manual what each bit means
 	int seed = 9875661;
 	int mineval = 10000;
-	int maxeval = 1000000;
+	int maxeval = 100000;
 	int nstart = 1000;
 	int nincrease = 10000;
 	int nbatch = 20000;
@@ -37,15 +37,22 @@ void test_vegas() {
 	char statefile[123] = {"vegas.state"};
 	int neval = 0;
 	int fail = 0;
-	double* integral = new double;
-	double* error = new double;
-	double* prob = new double;
+	double* integral = new double[ncomp];
+	double* error = new double[ncomp];
+	double* prob = new double[ncomp];
 	Vegas(ndim,ncomp,integrand,userdata,nvec,
 		epsrel,epsabs,flags,seed,
 		mineval,maxeval,nstart,nincrease,
 		nbatch,gridno,statefile,&neval,
 		&fail,integral,error,prob);
-	printf("Vegas  : res = %f, error = %e, prob = %f, neval = %d ,fail = %d\n",*integral,*error,*prob,neval,fail);
+    printf("Vegas  : neval = %d ,fail = %d\n",neval,fail);
+    for (int nc=0;nc<ncomp;nc++){
+        printf(" >  component[%d] , result = %6.2e, error = %6.2e, fail = %.2f\n",nc,integral[nc],error[nc],prob[nc]);
+    }
+    printf("\n");
+    delete[] integral;
+    delete[] error;
+    delete[] prob;
 }
 
 
@@ -56,7 +63,7 @@ void test_vegas() {
 
 void test_cuhre() {
 	int ndim = 4;
-	int ncomp = 1;
+	int ncomp = 2;
 	//integrand_t integrand = &hyper_lin; //hypercube; // &my_integrand;
 	//integrand_t integrand = &hyper_gauss;
 	integrand_t integrand = &unit_sphere;
@@ -66,27 +73,34 @@ void test_cuhre() {
 	double epsabs = 1e-4;
 	int flags = 0x00;
 	int mineval = 10000;
-	int maxeval = 1000000;
+	int maxeval = 100000;
 	int key = 9;
-	char statefile[100] = {"cuhre.state"};
+	char statefile[] = {"cuhre.state"};
 	int nregions = 0;
 	int neval = 0;
 	int fail = 0;
-	double* integral = new double;
-	double* error = new double;
-	double* prob = new double;
+	double* integral = new double[ncomp];
+	double* error = new double[ncomp];
+	double* prob = new double[ncomp];
 	
 	Cuhre(ndim,ncomp,integrand,userdata,nvec,
 		epsrel,epsabs,flags,
 		mineval,maxeval,key,
 		statefile,&nregions,&neval,&fail,
 		integral,error,prob);
-	printf("Cuhre  : res = %f, error = %e, prob = %f, neval = %d, fail = %d \n",*integral,*error,*prob,neval,fail);
+	printf("Cuhre  : neval = %d, fail = %d \n",neval,fail);
+    for (int nc=0;nc<ncomp;nc++){
+        printf(" >  component[%d] , result = %6.2e, error = %6.2e, fail = %.2f\n",nc,integral[nc],error[nc],prob[nc]);
+    }
+    printf("\n");
+    delete[] integral;
+    delete[] error;
+    delete[] prob;
 }
 
 void test_divonne() {
 	int ndim = 4;
-	int ncomp = 1;
+	int ncomp = 5;
 	integrand_t integrand = &unit_sphere;
 	void *userdata=NULL;
 	int nvec = 1;
@@ -95,7 +109,7 @@ void test_divonne() {
 	int flags = 0x00;
 	int seed  = 1235488;
 	int mineval = 10000;
-	int maxeval = 1000000;
+	int maxeval = 100000;
 	int key1 = 1;
 	int key2 = 1;
 	int key3 = 1;
@@ -112,9 +126,9 @@ void test_divonne() {
 	int nregions = 0;
 	int neval = 0;
 	int fail = 0;
-	double* integral = new double;
-	double* error = new double;
-	double* prob = new double;
+	double* integral = new double[ncomp];
+	double* error = new double[ncomp];
+	double* prob = new double[ncomp];
 	
 	Divonne(ndim,ncomp,integrand,userdata,nvec,
 		epsrel,epsabs,flags,seed,
@@ -124,12 +138,19 @@ void test_divonne() {
 		statefile,&nregions,&neval,&fail,
 		integral,error,prob);
 
-	printf("Divonne: res = %f, error = %e, prob = %f, neval = %d, fail = %d \n",*integral,*error,*prob,neval,fail);
+	printf("Divonne: neval = %d, fail = %d \n",neval,fail);
+    for (int nc=0;nc<ncomp;nc++){
+        printf(" >  component[%d] , result = %6.2e, error = %6.2e, fail = %.2f\n",nc,integral[nc],error[nc],prob[nc]);
+    }
+    printf("\n");
+    delete[] integral;
+    delete[] error;
+    delete[] prob;
 }
 
 void test_suave(){
 	int ndim = 4;
-	int ncomp = 1;
+	int ncomp = 2;
 	integrand_t integrand = &unit_sphere; //&hypercube;
 	void* userdata = NULL;
 	int nvec=1;
@@ -138,16 +159,16 @@ void test_suave(){
 	int flags = 0x00;
 	int seed = 6667;
 	int mineval = 10000;
-	int maxeval = 1000000;
+	int maxeval = 100000;
 	int nnew = 5000;
 	double flatness = 0.25;
 	char statefile[100] = {"suave.state"};
 	int nregions=0;
 	int neval=0;
 	int fail=0;
-	double* integral = new double;
-	double* error = new double;
-	double* prob = new double;
+	double* integral = new double[ncomp];
+	double* error = new double[ncomp];
+	double* prob = new double[ncomp];
 
 	Suave(ndim,ncomp,integrand,userdata,nvec,
 		epsrel,epsabs,flags,seed,mineval,
@@ -155,8 +176,12 @@ void test_suave(){
 		&nregions,&neval,&fail,integral,
 		error,prob);
 
-	printf("Suave  : res = %f, error = %e, prob = %f, neval = %d, fail = %d \n",*integral,*error,*prob,neval,fail);
-	delete integral;
-	delete error;
-	delete prob;
+	printf("Suave  : neval = %d, fail = %d \n",neval,fail);
+    for (int nc=0;nc<ncomp;nc++){
+        printf(" >  component[%d] , result = %6.2e, error = %6.2e, fail = %.2f\n",nc,integral[nc],error[nc],prob[nc]);
+    }
+    printf("\n");
+    delete[] integral;
+    delete[] error;
+    delete[] prob;
 }
