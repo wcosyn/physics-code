@@ -10,7 +10,7 @@
 
 CC     = g++
 EXTRAFLAGS = #-Wall -Wextra -Weffc++
-CFLAGS = -O3 $(EXTRAFLAGS) `gsl-config --cflags` `root-config --cflags`
+CFLAGS = -O2 -std=c++11 $(EXTRAFLAGS) `gsl-config --cflags` `root-config --cflags`
 INC    = -I$(HOME)/Code/trunk/Tools -I$(HOME)/Code/trunk/Integrator
 LIBS   = -L$(HOME)/Code/trunk/lib -lcuba -lIntegrator `gsl-config --libs` `root-config --libs`
 
