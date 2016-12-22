@@ -1,7 +1,7 @@
 /*
 	stddecl.h
 		declarations common to all Cuba routines
-		last modified 17 Sep 13 th
+		last modified 11 Apr 14 th
 */
 
 
@@ -13,7 +13,7 @@
 #endif
 
 #define _BSD_SOURCE
-#define _XOPEN_SOURCE
+#define _SVID_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -158,9 +158,13 @@ void *alloca (size_t);
 #ifdef MLVERSION
 #define ML_ONLY(...) __VA_ARGS__
 #define ML_NOT(...)
+#define InitWorker(t)
+#define ExitWorker(t)
 #else
 #define ML_ONLY(...)
 #define ML_NOT(...) __VA_ARGS__
+#define InitWorker(t) t->initfun = cubaini.initfun, t->exitfun = NULL
+#define ExitWorker(t) if( t->exitfun ) t->exitfun(cubaini.exitarg)
 
 #ifdef HAVE_FORK
 #undef FORK_ONLY
@@ -308,11 +312,13 @@ typedef const count ccount;
 #define PREFIX(s) ll##s
 #define NUMBER "%lld"
 #define NUMBER7 "%7lld"
+#define NUMBER_MAX LLONG_MAX
 typedef long long int number;
 #else
 #define PREFIX(s) s
 #define NUMBER "%d"
 #define NUMBER7 "%7d"
+#define NUMBER_MAX INT_MAX
 typedef int number;
 #endif
 typedef const number cnumber;

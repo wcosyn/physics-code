@@ -1,3 +1,38 @@
+18 Apr 14:
+
+- Fixed uninitialized variable in update of Apr 11 that could lead
+  to a potential segfault in Divonne.
+
+
+11 Apr 14:
+
+- Added invocation of worker init/exit functions also for the master
+  whenever the number of samples is too small to be distributed.
+
+
+21 Mar 14:
+
+- Fixed glitch in Sobol quasi-random numbers for the long long int
+  versions introduced in the last update (forgotten typecast).
+
+
+18 Mar 14:
+
+- Fixed infinite loop in Sobol quasi-random numbers for maxeval
+  values >~ 2^30 (32-bit versions) or 2^62 (64-bit 'll' versions).
+
+
+22 Jan 14:
+
+- Removed 'Chop' from the Mathematica sampling procedure, which would
+  introduce an absolute lower scale for integrals quite close to zero.
+
+
+8 Jan 14:
+
+- Restricted detection of Qt to version 4.
+
+
 18 Dec 13:
 
 - Minor fixes in the MacOS build of partview (thanks to Hong Xu).

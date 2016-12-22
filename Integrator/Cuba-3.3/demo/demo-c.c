@@ -52,14 +52,14 @@ static int Integrand(const int *ndim, const double xx[],
 #else
   f = (rsq < 1) ? 1 : 0;
 #endif
-
+  ff[1]=ff[0];
   return 0;
 }
 
 /*********************************************************************/
 
 #define NDIM 3
-#define NCOMP 1
+#define NCOMP 2
 #define USERDATA NULL
 #define NVEC 1
 #define EPSREL 1e-3

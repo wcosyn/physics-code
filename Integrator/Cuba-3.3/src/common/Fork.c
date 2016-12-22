@@ -3,7 +3,7 @@
 		the parallel sampling routine
 		for the C versions of the Cuba routines
 		by Thomas Hahn
-		last modified 25 Sep 13 th
+		last modified 18 Apr 14 th
 */
 
 #define MINSLICE 10
@@ -15,8 +15,6 @@ typedef struct {
   VES_ONLY(count iter;)
   DIV_ONLY(int phase SHM_ONLY(, shmid);)
 } Slice;
-
-workerini cubaini;
 
 #if defined HAVE_SHMGET && (defined SUAVE || defined DIVONNE)
 #define FRAMECOPY
@@ -35,6 +33,18 @@ fprintf(stderr, TERM_BLUE ROUTINE " worker %d(%d): " s TERM_RESET, core, getpid(
 #define WORKER(s, ...)
 #endif
 
+#ifdef LOW_LEVEL_DEBUG
+#define TERM_GREEN "\e[32m"
+#define TERM_MAGENTA "\e[35m"
+#define READ(s, ...) \
+fprintf(stderr, TERM_GREEN ROUTINE " pid %d: read " s TERM_RESET, getpid(), ##__VA_ARGS__)
+#define WRITE(s, ...) \
+fprintf(stderr, TERM_MAGENTA ROUTINE " pid %d: write " s TERM_RESET, getpid(), ##__VA_ARGS__)
+#else
+#define READ(s, ...)
+#define WRITE(s, ...)
+#endif
+
 /*********************************************************************/
 
 #ifndef MSG_WAITALL
@@ -48,6 +58,7 @@ static inline int readsock(int fd, void *data, size_t n)
   size_t remain = n;
   do got = recv(fd, data, remain, MSG_WAITALL);
   while( got > 0 && (data += got, remain -= got) > 0 );
+  READ("%lu bytes at %p from fd %d", n, data, fd);
   return got;
 }
 
@@ -57,6 +68,7 @@ static inline int writesock(int fd, const void *data, size_t n)
   size_t remain = n;
   do got = send(fd, data, remain, MSG_WAITALL);
   while( got > 0 && (data += got, remain -= got) > 0 );
+  WRITE("%lu bytes at %p to fd %d", n, data, fd);
   return got;
 }
 
@@ -261,8 +273,6 @@ static void DoChild(This *t, cint core, cint fd)
     MemAlloc(t->frame, t->nframe*SAMPLESIZE);
 #endif
 
-  if( cubaini.initfun ) cubaini.initfun(cubaini.initarg);
-
   while( readsock(fd, &slice, sizeof slice) ) {
     number n = slice.n;
     DIV_ONLY(t->phase = slice.phase;)
@@ -339,7 +349,7 @@ static void DoChild(This *t, cint core, cint fd)
   }
 
   WORKER("wrapping up");
-  if( cubaini.exitfun ) cubaini.exitfun(cubaini.exitarg);
+  ExitWorker(t);
 
   exit(0);
 }
