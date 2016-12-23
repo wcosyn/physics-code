@@ -95,9 +95,10 @@ int main(int argc, char *argv[])
       F.strp=strp;
       
       double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
-//       strp.getF_xQ(F1p,F2p,1,x*MASSD/MASSn,Q2);  
-//       strp.getF_xQ(F1n,F2n,0,x*MASSD/MASSn,Q2);  
-
+      if(x<0.5){
+        strp.getF_xQ(F1p,F2p,1,x*MASSD/MASSn,Q2);  
+        strp.getF_xQ(F1n,F2n,0,x*MASSD/MASSn,Q2);  
+      }
       numint::mdfunction<numint::vector_d,2> mdf;
       mdf.func = &Ftor_b1::exec;
       mdf.param = &F;
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
       unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
       res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0);
-      cout << 2.*x << " " << ret[0] << " " <<   ret[1] << " " << ret[2] << " " << ret[3] << /*" " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] <<*/ endl;
+      cout << 2.*x << " " << ret[0] << " " <<   ret[1] << " " << ret[2] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << /*" " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] <<*/ endl;
       //ret[0] b1 total
       //ret[1] b1 sd
       //ret[2] b1 dd
@@ -223,8 +224,8 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   
   //last factor is normalization for lightcone 1/alpha_i converted to k momentum (k is spectator momentum here, be careful with signs!)
   alpha_i=1.;
-//   gamma=0.;
-  factor*=3./4.*knorm*knorm/alpha_i/(1+gamma*gamma) /*/2./(1.-(Es-knorm*costh)/MASSD)*/; 
+   gamma=0.;
+  factor*=3./4.*knorm*knorm/alpha_i/(1+gamma*gamma); // /(1.-(Ek+knorm*costh)/MASSD); 
 
   res[0]=dens_tensor_tot*factor;  // without 1+ gamma^2 factor!
   res[1]=dens_tensor_SD*factor;

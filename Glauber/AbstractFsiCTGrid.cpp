@@ -88,7 +88,7 @@ void AbstractFsiCTGrid::fillGrids(){
     }
     //we have to calc the grid
     else{
-      cout << "Constructing FSI+CT grid" << endl;
+//       cout << "Constructing FSI+CT grid" << endl;
       constructCtGrid(); // ! pure virtual
       filledctgrid=filledallgrid=1;
       //write it out now too
@@ -126,7 +126,7 @@ void AbstractFsiCTGrid::updateGrids(){
       infile2.close();
     }
     else{
-      cout << "Constructing FSI+CT grid" << endl;
+//       cout << "Constructing FSI+CT grid" << endl;
       constructCtGrid();
       filledctgrid=filledallgrid=1;
       ofstream outfile(fsi_ct_filename.c_str(),ios::out|ios::binary);
