@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
   int ptype=atoi(argv[12]);
 //   int maxEval2 = atoi(argv[11]);
   string homedir=argv[13];
-  double Ebeam = 5.014;
+  double Ebeam = 4.023;
   
 
   RhoTCross test = RhoTCross(nucleus,330,homedir,nocuts,1,usersigma,prec,2,maxEval,p_dil,ptype);  
