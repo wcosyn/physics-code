@@ -9,7 +9,7 @@ Model.hpp
 Cross.hpp
 DoubleNModel.hpp
 DoubleNCross.hpp
-# RhoTCross.hpp
+RhoTCross.hpp
 # RhoDeuteron.hpp
 WeakQEHadronCurrent.hpp
 WeakQECross.hpp

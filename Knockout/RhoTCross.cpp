@@ -443,8 +443,8 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
     distgridmap[key]=DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid[shell],1.E-03,2,5E04,0.,homedir);
 //     distgridmap.insert(pair<double,DistMomDistrGrid>(key,DistMomDistrGrid(shell, pmax, 30,20,5,pfsigrid[shell],1.E-03,2,2E04,0.,homedir)));
     distgridmap[key].updateGrids(pfsigrid[shell],shell,rot);
-    distgridmap[key].printRho_grid(0);
-    cout << endl << endl;
+//     distgridmap[key].printRho_grid(0);
+//     cout << endl << endl;
     it=distgridmap.find(key);
   }
   else distgridmap[key].updateGrids(pfsigrid[shell],shell,rot);

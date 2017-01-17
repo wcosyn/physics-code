@@ -42,7 +42,7 @@ double Cross::getElCross(TKinematics2to2 &kin, int current, double phi, int maxE
       complex<double> jmin=reacmodel->getFreeMatrixEl(kin,current, spinin,spinout,-1);
       complex<double> j0=reacmodel->getFreeMatrixEl(kin,current, spinin,spinout,0);
       complex<double> jplus=reacmodel->getFreeMatrixEl(kin,current, spinin,spinout,1);
-//       cout << jmin << " " << j0 << " " << jplus << endl;
+//        cout << spinin << " " << " " << spinout << " " << jmin << " " << j0 << " " << jplus << endl;
       response[0][0]+=norm(j0); //longitudinal one R_L
       response[0][1]+=norm(jmin)+norm(jplus); //transverse one R_T
       response[0][2]+=2.*real(conj(jplus)*jmin);
@@ -100,7 +100,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
       Matrix<2,3> J;
       reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current, SRC, thick);
       for(int i=0;i<2;i++){ //only polarization, other one follows from parity symmetry!!
-// 	  cout << i << " " << m << " " << J(i,0) << " " << J(i,1) << " " <<  J(i,2) << endl;
+//  	  cout << i << " " << m << " " << J(i,0) << " " << J(i,1) << " " <<  J(i,2) << endl;
 	response[0][0]+=norm(J(i,0));
 	response[0][1]+=norm(J(i,1))+norm(J(i,2));
 	response[0][2]+=2.*real(conj(J(i,2))*J(i,1));
