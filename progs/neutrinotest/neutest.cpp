@@ -331,7 +331,7 @@ int main(int argc, char *argv[])
   
 //   double omega=Q2/(2.*MASSP*Bjx);
   
-  string homedir=argv[7];//"/home/wim/Code/share";
+  string homedir=argv[8];//"/home/wim/Code/share";
 
   MeanFieldNucleusThick Nucleus(nucleus,homedir);
   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithCosScatterAngle(TLeptonKinematics::muon,costhetamu); 
