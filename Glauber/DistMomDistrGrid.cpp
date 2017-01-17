@@ -337,7 +337,7 @@ void DistMomDistrGrid::setFilenames(string homedir){
   
 
 void DistMomDistrGrid::printRhopw_grid(){
-  cout << "Printing plane-wave momentum array for " << endl;
+  cout << "Printing plane-wave momentum array for " << getRho_Filename() << endl;
 //   double tot = 0.;
   for(int i=0; i<=getPgrid(); i++){
     double p = float(i)/getInvPstep();
@@ -511,14 +511,14 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 
 //calc both fsi and fsi+ct grid
 void DistMomDistrGrid::constructpwGrid(){
-  //cout << "Constructing pw momentum distribution" << endl;
+//   cout << "Constructing pw momentum distribution" << endl;
   //fill the arrays!
   for(int i=0; i<=getPgrid(); i++){
     p_hit = float(i)/getInvPstep();
     double restimate=0.;
     double result;
-//     rombergerN(this,&DistMomDistrGrid::intRhoRpw,0.,getPfsigrid()->getPnucleus()->getRange(),1,
-// 		       &result,1.E-07,3,10,&restimate);
+    rombergerN(this,&DistMomDistrGrid::intRhoRpw,0.,getPfsigrid()->getPnucleus()->getRange(),1,
+		       &result,1.E-07,3,10,&restimate);
     rhopwgrid[i] = result*result*2.*getMass()/(sqrt(getMass()*getMass()+p_hit*p_hit)+getMass())*
 		    (getPfsigrid()->getPnucleus()->getJ_array()[getShellindex()]+1)/(4.*PI)*(2./PI);  //(2j+1)/(4pi)*(2/pi)
   }
@@ -642,11 +642,11 @@ void DistMomDistrGrid::constructCtGrid(TRotation & rot){
 //   return;
 // }
 // 
-// void DistMomDistrGrid::intRhoRpw(const double r, double *result, va_list ap){
-//   
-//   *result= r*getPfsigrid()->getPnucleus()->getWave_G(getShellindex(),r)
-// 	*gsl_sf_bessel_jl(getPfsigrid()->getPnucleus()->getL_array()[getShellindex()],p_hit*r*INVHBARC);
-// }
+void DistMomDistrGrid::intRhoRpw(const double r, double *result, va_list ap){
+  
+  *result= r*getPfsigrid()->getPnucleus()->getWave_G(getShellindex(),r)
+	*gsl_sf_bessel_jl(getPfsigrid()->getPnucleus()->getL_array()[getShellindex()],p_hit*r*INVHBARC);
+}
 // void DistMomDistrGrid::intRhoCosTheta(const double costheta, complex<double> *results, va_list ap){
 //   
 //   int m = va_arg(ap,int);
