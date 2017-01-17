@@ -18,7 +18,7 @@ using namespace std;
 
 //run ./pionest [nucleus] [one doublepion=0, two pions=1] 
 //estimates effect of taking collinear pions in rho transparency calculations
-
+//we start from 3 GeV rho along z axis, which can decay to two pions...
 
 void intpm(numint::vector_d & res, double pm, double costheta, double phi, DistMomDistrGrid **pgrid, int totshells){
   res=numint::vector_d(1,0.);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
   cout << thetapi*RADTODEGR << endl;
   
   
-  if(ppion<4){
+  if(ppion<4){ //2 pion decay  (1) both pions 
     GlauberGridThick grid = GlauberGridThick(60,18,5,&nucl,prec,integrator,homedir);
     FastParticle pion1(2, 0, ppi,0.,0.,3.,0.,homedir);
     FastParticle pion2(3, 0, ppi,thetapi,0.,3.,0.,homedir);
@@ -63,12 +63,12 @@ int main(int argc, char *argv[])
     for(int i=0;i<nucl.getTotalLevels();i++){
       pgrid[i] = new DistMomDistrGrid(i, 300., 30,20,5,&grid,1.E-03,2,5E04,0.,homedir);
       TRotation rot;
-      rot.Rotate(0.,TVector3(0.,1.,0.));
+      rot.Rotate(0.,TVector3(0.,1.,0.)); //no rotation...
       pgrid[i]->updateGrids(&grid,i,rot);
       pgrid[i]->printRho_grid(0);
     }
   }
-  if(ppion==4){
+  if(ppion==4){ //second way of including 2 pions
     double Erho=sqrt(MASSRHO*MASSRHO+prho*prho);
     double beta=-prho/Erho;
     double gamma=1./sqrt(1-beta*beta);
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
       pgrid[i]->printRho_grid(0);
     }  
   }
-  if(ppion==0){
+  if(ppion==0){ //one compound particle (rho-like) containing two pions
     OneGlauberGrid grid = OneGlauberGrid(60,18,&nucl,prec,integrator,homedir);
     FastParticle rhopion(7, 0, ppi,0.,0.,3.,0.,homedir);
     grid.clearParticles();

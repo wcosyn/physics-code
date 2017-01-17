@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
       //ret[2] b1 dd
       //ret[3] b1 total check
       //ret[4-7] tensor struc functions
-      //ret[8-9] F1,F2
+      //ret[8-9] FUUT,FUUL
       //ret[10-11] azz nom, denom
       
 
@@ -223,8 +223,8 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   double F_tensor_cos2phi = -sqrt(3./2.)*(knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*sinth2;
   
   //last factor is normalization for lightcone 1/alpha_i converted to k momentum (k is spectator momentum here, be careful with signs!)
-  alpha_i=1.;
-   gamma=0.;
+//   alpha_i=1.;
+//    gamma=0.;
   factor*=3./4.*knorm*knorm/alpha_i/(1+gamma*gamma); // /(1.-(Ek+knorm*costh)/MASSD); 
 
   res[0]=dens_tensor_tot*factor;  // without 1+ gamma^2 factor!
