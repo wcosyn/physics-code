@@ -8,12 +8,13 @@ using namespace std;
 
 
 WeakQEHadronCurrent::WeakQEHadronCurrent(MeanFieldNucleusThick *pnucleus, double precision, int integr, string dir,
-	      int max_Eval, bool cc, double M_A_in, bool user_sigma, double gA_s_in, double r_s2_in, 
+	      int max_Eval, bool cc, double M_A_in, bool user_sigma, bool enable_ROMEA_in, double gA_s_in, double r_s2_in, 
 	      double mu_s_in, double sigma_screening)
 :pnucl(pnucleus), prec(precision), integrator(integr), homedir(dir), maxEval(max_Eval),
-charged(cc), M_A(M_A_in), usersigma(user_sigma), gA_s(gA_s_in), r_s2(r_s2_in), mu_s(mu_s_in), sigmascreening(sigma_screening),
+charged(cc), M_A(M_A_in), usersigma(user_sigma), gA_s(gA_s_in), r_s2(r_s2_in), mu_s(mu_s_in), sigmascreening(sigma_screening), enable_ROMEA(enable_ROMEA_in),
 gridthick(GlauberGridThick(120,36,5,pnucleus,precision,2,dir)),
-onegrid(OneGlauberGrid(120,36,pnucleus,precision,2,dir)){
+onegrid(OneGlauberGrid(120,36,pnucleus,precision,2,dir)),
+romgrid(ROMEAGrid(120,36,5,pnucleus,precision,2,ROMEAGrid::fit_type::DEMOCRATICFIT1,dir)){
 }
 
 
@@ -118,13 +119,16 @@ void WeakQEHadronCurrent::getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> & matrixe
   if(!pw){
     FastParticle nucleon(charged?proton:!proton, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
     if(getUsersigma()) nucleon.setScreening(getSigmascreening());
-    if(SRC||thick) grid = &gridthick;
-    else grid = &onegrid;
+    if(enable_ROMEA) grid=&romgrid;
+    else{
+      if(SRC||thick) grid = &gridthick;
+      else grid = &onegrid;
+    }
     grid->clearParticles();
     grid->addParticle(nucleon);
-    grid->updateGrids();
     grid->clearKnockout();
     grid->addKnockout(shellindex,m);    
+    grid->updateGrids();
   }
   GammaStructure Jcontr0, Jcontrmin, Jcontrplus, Jcontrz;
   FourVector<double> q(tk.GetWlab(),-tk.GetKlab()*sintheta,0.,tk.GetKlab()*costheta);
@@ -186,7 +190,6 @@ void WeakQEHadronCurrent::getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> & matrixe
 //   cout << shellindex << " " << m << " ";
 //   for(int i=0;i<6;i++) cout << matrixel(i/3,i%3) << " ";
 //   cout << res << " " << count << endl << endl;
-  
   delete J;
 }
 
@@ -455,7 +458,9 @@ void WeakQEHadronCurrent::klaas_one_amp(numint::vector_z & results, double r, do
     }
     else{
       complex<double> fsi=model.getGrid()->getFsiGridFull_interp3(r,costheta,phi);
-      complex<double> fsict=model.getGrid()->getFsiCtGridFull_interp3(r,costheta,phi);
+      complex<double> fsict(0.);
+      if(model.getEnable_ROMEA()) fsict=fsi;
+      else fsict=dynamic_cast<AbstractFsiCTGrid *>(model.getGrid())->getFsiCtGridFull_interp3(r,costheta,phi);
       for(int i=0;i<8;i++){
 	results[2*i]*=fsi;
 	results[2*i+1]*=fsict;

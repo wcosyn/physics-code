@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
+#include <cassert>
 
 #include "FsiCorrelator.hpp"
 #include <Utilfunctions.hpp>
@@ -32,6 +33,10 @@ corr_rgrid(rgrid),corr_cthgrid(cthgrid),corr_phigrid(6),pnucleus(inputnucleus)
   ifstream infile(corrfilename.c_str(),ios::in|ios::binary);
   //check if object has been created sometime earlier and read it in
   if(infile.is_open()){
+    if(infile.peek() == std::ifstream::traits_type::eof()){
+      cerr << "File is empty " << corrfilename << endl;
+      assert(1==0);
+    }
     //cout << "Reading in correlation grids from memory: " << corrfilename << endl;
     for(int i=0;i<corr_rgrid;i++){
       for(int j=0;j<corr_cthgrid;j++){

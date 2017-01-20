@@ -12,10 +12,10 @@
 using namespace std;
 
 WeakQECross::WeakQECross(TElectronKinematics *elec, MeanFieldNucleusThick *pnucleus, double precision, int integr,
-	     string dir, bool cc, double M_A_in, bool user_sigma, double gA_s_in, double r_s2_in, 
+	     string dir, bool cc, double M_A_in, bool user_sigma, bool enable_ROMEA_in,double gA_s_in, double r_s2_in, 
 	      double mu_s_in, double sigma_screening)
 :homedir(dir),electron(elec),pnucl(pnucleus),reacmodel(NULL), prec(precision),integrator(integr),
-charged(cc), M_A(M_A_in), usersigma(user_sigma), gA_s(gA_s_in), r_s2(r_s2_in), mu_s(mu_s_in), sigmascreening(sigma_screening){
+charged(cc), M_A(M_A_in), usersigma(user_sigma), gA_s(gA_s_in), r_s2(r_s2_in), mu_s(mu_s_in), sigmascreening(sigma_screening), enable_ROMEA(enable_ROMEA_in){
   if(cc){
      cerr << "ERROR in WeakQECross::constructor "
 	<< "invalid, use TLeptonKinematics constructor for a CC process.\n";
@@ -25,10 +25,10 @@ charged(cc), M_A(M_A_in), usersigma(user_sigma), gA_s(gA_s_in), r_s2(r_s2_in), m
 
 WeakQECross::WeakQECross(TLeptonKinematics *lep, 
 			 MeanFieldNucleusThick *pnucleus, double precision, int integr,
-	     string dir, bool cc, double M_A_in, bool user_sigma, double gA_s_in, double r_s2_in, 
+	     string dir, bool cc, double M_A_in, bool user_sigma,bool enable_ROMEA_in, double gA_s_in, double r_s2_in, 
 	      double mu_s_in, double sigma_screening)
 :homedir(dir),lepton(lep),pnucl(pnucleus),reacmodel(NULL), prec(precision),integrator(integr),
-charged(cc), M_A(M_A_in), usersigma(user_sigma), gA_s(gA_s_in), r_s2(r_s2_in), mu_s(mu_s_in), sigmascreening(sigma_screening){
+charged(cc), M_A(M_A_in), usersigma(user_sigma), gA_s(gA_s_in), r_s2(r_s2_in), mu_s(mu_s_in), sigmascreening(sigma_screening), enable_ROMEA(enable_ROMEA_in){
   if(!cc){
      cerr << "ERROR in WeakQECross::constructor "
 	<< "invalid, use TElectronKinematics constructor for a NC process.\n";
@@ -49,7 +49,7 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, int current, double
    //double Q2overkk=Q2/qvec/qvec;
    //double tan2=electron.GetTan2HalfAngle(kin);
    reacmodel=new WeakQEHadronCurrent(pnucl,prec,integrator,homedir,maxEval,charged, 
- 				    M_A, getUsersigma(), gA_s, r_s2, mu_s,getSigmascreening());
+ 				    M_A, getUsersigma(),enable_ROMEA , gA_s, r_s2, mu_s,getSigmascreening());
  
    int numb_of_resp=5;
    double kinfactors[numb_of_resp];
@@ -164,8 +164,10 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
   double frontfactor=lab? (kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
       /abs(kin.GetEklab()+kin.GetEYlab()*(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
 	    kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPkcm()/(8*pow(PI,3.)*kin.GetW());
+  
+  //we only pass enable_ROMEA as 1 if the momentum is low enough, otherwise glauber is ok!
   reacmodel=new WeakQEHadronCurrent(pnucl,prec,integrator,homedir,maxEval,charged, 
-				    M_A, getUsersigma(), gA_s, r_s2, mu_s,getSigmascreening());
+				    M_A, getUsersigma(), enable_ROMEA&&(kin.GetPYlab()<500.), gA_s, r_s2, mu_s,getSigmascreening());
   
   //CC
   if(charged){

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <gsl/gsl_sf_bessel.h>
+#include <cassert>
 
 using namespace std;
 
@@ -366,6 +367,11 @@ void DistMomDistrGrid::printRho_grid(int gridindex){
   
 //readin fsi grid
 void DistMomDistrGrid::readinRhoGrid(ifstream &infile){
+  if(infile.peek() == std::ifstream::traits_type::eof()){
+    cerr << "File is empty " << rho_filename << endl;
+    assert(1==0);
+  }
+  
   for(int i=0;i<number_of_Grids/2;i++){
     for(int j=0;j<(getPgrid()+1);j++){
       for(int k=0;k<(getCthgrid()+1);k++){
@@ -377,6 +383,11 @@ void DistMomDistrGrid::readinRhoGrid(ifstream &infile){
 }
   
 void DistMomDistrGrid::readinRhoCtGrid(ifstream &infile){
+  if(infile.peek() == std::ifstream::traits_type::eof()){
+    cerr << "File is empty " << rhoct_filename << endl;
+    assert(1==0);
+  }
+  
   for(int i=0;i<number_of_Grids/2;i++){
     for(int j=0;j<(getPgrid()+1);j++){
       for(int k=0;k<(getCthgrid()+1);k++){

@@ -18,6 +18,7 @@
 #include <TVector3.h>
 #include <GlauberGridThick.hpp>
 #include <OneGlauberGrid.hpp>
+#include <ROMEAGrid.hpp>
 #include <numint/numint.hpp>
 #include <TSpinor.h>
 
@@ -42,9 +43,10 @@ public:
    * \param r_s2 [fm^2] strange contrib to F1weak
    * \param mu_s [] strange contrib to F2weak
    * \param sigma_screening [%] screening change of sigma
+   * \param enable_ROMEA enable ROMEA FSI for slow nucleons...
    */
   WeakQEHadronCurrent(MeanFieldNucleusThick *pnucleus, double prec, int integrator, std::string dir, int max_Eval,
-	bool charged, double M_A_in, bool user_sigma, double gA_s=-0.19, double r_s2=0., 
+	bool charged, double M_A_in, bool user_sigma, bool enable_ROMEA, double gA_s=-0.19, double r_s2=0., 
 	double mu_s=0., double sigma_screening=0.);
   ~WeakQEHadronCurrent(); /*!< Destructor */
   
@@ -109,11 +111,14 @@ public:
   double getPrec() const{return prec;} /*!< returns precision in the integrations */
   bool getUsersigma() const{return usersigma;} /*!< returns 1 if user has changed sigma with some screening */
   double getSigmascreening() const{return sigmascreening;} /*!< [%] returns screening change to sigma */
-  AbstractFsiCTGrid *getGrid() const{return grid;}
+  AbstractFsiGrid *getGrid() const{return grid;}
   GlauberGridThick *getThickGrid() {return &gridthick;}
+  OneGlauberGrid *getOneGrid() {return &onegrid;}
+  ROMEAGrid *getROMEAGrid() {return &romgrid;}
   int getShell() const{return shell;}
   int getM() const{return mm;}
   int getIntegrator() const{return integrator;}
+  bool getEnable_ROMEA() const{return enable_ROMEA;}
   MeanFieldNucleusThick* getPnucleus() {return pnucl;}
   const Matrix<1,4> & getBarcontract0up() const{return barcontract0up;}
   const Matrix<1,4> & getBarcontractminup() const{return barcontractminup;}
@@ -130,7 +135,7 @@ public:
 private:
   double prec; /*!< precision in the integrations */
   int integrator; /*!< choice of integrator */
-  AbstractFsiCTGrid *grid; /*!< pointer to Glauber Grid */
+  AbstractFsiGrid *grid; /*!< pointer to Glauber Grid */
   MeanFieldNucleusThick *pnucl; /*!<  pointer to nucleus */
   NucleonWeakOperator *J; /*!<  pointer to nucleon formfactor instance */
   Matrix<1,4> barcontract; /*!< intermediate contraction of bar spinor with 4*4 current  */
@@ -147,8 +152,10 @@ private:
   bool charged; /*!< neutral weak current [0] or charged [1] */
   bool usersigma; /*!< has the user set some screening to sigma */
   double sigmascreening; /*!< [%] screening effect to sigma */
+  bool enable_ROMEA; /*!< enable ROMEA FSI for slow nucleons instead of Glauber.. */
   GlauberGridThick gridthick; /*!< grid for calc with thickness */
   OneGlauberGrid onegrid; /*!< grid for calc without thickness */
+  ROMEAGrid romgrid; /*!< grid for slow nucleons (ROMEA formalism) */
   int maxEval; /*!< max Evals in integrations */
   double gA_s; /*!< [] strange contrib to G_A */
   double mu_s; /*!< [] strange contrib to F2_weak */

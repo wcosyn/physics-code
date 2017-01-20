@@ -9,6 +9,7 @@
 #define ROMEAGRID_H
 
 #include <cstdarg>
+#include <fstream>
 
 #include "AbstractFsiGrid.hpp"
 #include <numint/numint.hpp>
@@ -19,9 +20,9 @@
  * Typically an object that is an instance from this class is operated as follows.<BR>
  * 1. Initialize object with constructor ROMEAGrid()<BR>
  * 2. Add all particles subject to ISI/FSI with addParticle() [only nucleons here!] <BR>
- * 3. Call fillGrids() or updateGrids() <BR>
- * 4. Add particles that are knocked out from nucleus  (using addKnockout()
-)<BR>
+ * 3. Add particles that are knocked out from nucleus  (using addKnockout() 
+), DO THIS BEFORE STEP 4, otherwise you will be computing for the wrong nucleus...<BR>
+ * 4. Call fillGrids() or updateGrids() <BR>
  *  5. Interpolate grid for a certain point or print the grid or whatever... 
 (use getFsiGridFull_interp3() for instance) <BR>
  */
@@ -109,8 +110,8 @@ private:
    * \param k grid index in phi
    */
   virtual void calcROMEAphase(const int i, const int j, const int k); 
-  virtual void readinFsiGrid(ifstream &infile); /*!< read in both the fsi grid */
-  virtual void writeoutFsiGrid(ofstream &outfile); /*!< write out both the fsi grid */
+  virtual void readinFsiGrid(std::ifstream &infile); /*!< read in both the fsi grid */
+  virtual void writeoutFsiGrid(std::ofstream &outfile); /*!< write out both the fsi grid */
   
   
   /*! struct that is used for integrators */

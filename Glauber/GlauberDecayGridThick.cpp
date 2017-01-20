@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <complex>
+#include <cassert>
 
 using namespace std;
 
@@ -620,6 +621,11 @@ void GlauberDecayGridThick::calcGlauberphasesCt(const int i, const int j, const 
 
 //readin fsi grid
 void GlauberDecayGridThick::readinFsiGrid(ifstream & infile) {
+  if(infile.peek() == std::ifstream::traits_type::eof()){
+    cerr << "File is empty " << getFsi_Filename() << endl;
+    assert(1==0);
+  }
+  
   if (fsi_grid != NULL) {
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 2; j++) {
@@ -641,6 +647,11 @@ void GlauberDecayGridThick::readinFsiGrid(ifstream & infile) {
 
 //readin fsi+ct grid
 void GlauberDecayGridThick::readinFsiCtGrid(ifstream & infile) {
+  if(infile.peek() == std::ifstream::traits_type::eof()){
+    cerr << "File is empty " << getFsi_Filename() << endl;
+    assert(1==0);
+  }
+  
   if (fsi_ct_grid != NULL) {
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 2; j++) {

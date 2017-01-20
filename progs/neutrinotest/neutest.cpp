@@ -329,16 +329,19 @@ int main(int argc, char *argv[])
   double min_final_nucl_mom=atof(argv[5]);
   int pw=atoi(argv[6]); //1 is plane-wave, 0 is with FSI
   
+  bool enable_ROMEA=atoi(argv[8]);
+  if(pw==1) enable_ROMEA=0; //no FSI if calculating the pw cross section...
+  
 //   double omega=Q2/(2.*MASSP*Bjx);
   
-  string homedir=argv[8];//"/home/wim/Code/share";
+  string homedir=argv[9];//"/home/wim/Code/share";
 
   MeanFieldNucleusThick Nucleus(nucleus,homedir);
   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithCosScatterAngle(TLeptonKinematics::muon,costhetamu); 
 
   double E_out=T_mu+lepton->GetLeptonMass();
 
-  WeakQECross obs(lepton,&Nucleus,prec,integrator,homedir,charged, 1.03E03, screening, 0.);
+  WeakQECross obs(lepton,&Nucleus,prec,integrator,homedir,charged, 1.03E03, screening,enable_ROMEA, 0.);
   
   vector<double> avgcross(2,0.); //neutrino and antineutrino
   //estimates for integration bounds

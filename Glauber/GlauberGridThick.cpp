@@ -3,6 +3,7 @@
 #include <fstream>
 #include <complex>
 #include <adaptive/cubature.h>
+#include <cassert>
 
 using namespace std;
 
@@ -780,6 +781,10 @@ void GlauberGridThick::calcGlauberphasesCt(std::vector < std::complex < double >
 
 //readin fsi grid
 void GlauberGridThick::readinFsiGrid(ifstream & infile) {
+  if(infile.peek() == std::ifstream::traits_type::eof()){
+    cerr << "File is empty " << getFsi_Filename() << endl;
+    assert(1==0);
+  }
   if (fsi_grid != NULL) {
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 2; j++) {
@@ -801,6 +806,10 @@ void GlauberGridThick::readinFsiGrid(ifstream & infile) {
 
 //readin fsi+ct grid
 void GlauberGridThick::readinFsiCtGrid(ifstream & infile) {
+  if(infile.peek() == std::ifstream::traits_type::eof()){
+    cerr << "File is empty " << getFsi_Ct_Filename() << endl;
+    assert(1==0);
+  }
   if (fsi_ct_grid != NULL) {
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 2; j++) {

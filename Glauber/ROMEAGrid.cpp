@@ -112,6 +112,9 @@ void ROMEAGrid::print_grid(int gridindex){
 void ROMEAGrid::setFilenames(string dir) {
   AbstractFsiGrid::setFilenames(dir + "ROMEA.");
   fsi_filename.insert(fsi_filename.size()-4,".fit"+to_string(fit));
+  size_t found = fsi_filename.find(".sigma");
+  size_t found2 = fsi_filename.find(".",found+1);
+  fsi_filename.erase(found,found2-found);
 }
 
 //calc both fsi and fsi+ct grid
@@ -211,6 +214,11 @@ void ROMEAGrid::constructAllGrids() {
 
 //readin fsi grid
 void ROMEAGrid::readinFsiGrid(ifstream & infile) {
+  if(infile.peek() == std::ifstream::traits_type::eof()){
+    cerr << "File is empty " << getFsi_Filename() << endl;
+    assert(1==0);
+  }
+  
   if (fsi_grid != NULL) {
     for (int k = 0; k < (getRgrid() + 1); k++) {
       for (int l = 0; l < (getCthgrid() + 1); l++) {
@@ -248,6 +256,7 @@ void ROMEAGrid::calcROMEAphase(const int i, const int j, const int k) {
   double deeserror = 0.;
   if (integrator == 1 || integrator == 2) {
     fsi_grid[i][j][k] = 1.;
+    //we loop over all ejected particles
     for (size_t it = 0; it < getParticles().size(); it++) {	    
       numint::array < double, 1 > lower = { {getParticles()[it].getHitz()} };
       numint::array < double, 1 > upper = { {getPnucleus()->getRange()} };
@@ -267,7 +276,7 @@ void ROMEAGrid::calcROMEAphase(const int i, const int j, const int k) {
 	res = numint::cube_romb(mdf, lower, upper, 1.E-12, prec, ret, count, 0);
       else
 	res = numint::cube_adaptive(mdf, lower, upper, 1.E-12, prec, 2E02,2E06, ret, count, 0);
-      cout << i << " " << j << " " << k << " " << real(ret[0]) << " " << imag(ret[0]) << endl;
+//       cout << i << " " << j << " " << k << " " << real(ret[0]) << " " << imag(ret[0]) << endl;
       fsi_grid[i][j][k] *= exp(-I_UNIT*getParticles()[it].getMass()/getParticles()[it].getP()*ret[0]/HBARC);
     }
     

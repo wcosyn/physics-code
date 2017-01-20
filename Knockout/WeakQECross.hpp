@@ -37,9 +37,10 @@ public:
    * \param r_s2 [fm^2] strange contrib to F1weak
    * \param mu_s [] strange contrib to F2weak
    * \param sigma_screening [%] how much do you want to change the sigma value
+   * \param enable_ROMEA enable ROMEA FSI for slow nucleons
    */
   WeakQECross(TLeptonKinematics *lepton, MeanFieldNucleusThick *pnucl, 
-	double prec, int integrator, std::string dir, bool charged, double M_A_in, bool user_sigma,
+	double prec, int integrator, std::string dir, bool charged, double M_A_in, bool user_sigma, bool enable_ROMEA,
 	double gA_s=-0.19, double r_s2=0., 
 	double mu_s=0., double sigma_screening=0.);
     /*! Constructor for weak neutral current processes
@@ -55,9 +56,10 @@ public:
    * \param r_s2 [fm^2] strange contrib to F1weak
    * \param mu_s [] strange contrib to F2weak
    * \param sigma_screening [%] how much do you want to change the sigma value
+   * \param enable_ROMEA enable ROMEA FSI for slow nucleons
    */
   WeakQECross(TElectronKinematics *elec, MeanFieldNucleusThick *pnucl, 
-	double prec, int integrator, std::string dir, bool charged, double M_A_in, bool user_sigma,
+	double prec, int integrator, std::string dir, bool charged, double M_A_in, bool user_sigma, bool enable_ROMEA,
 	double gA_s=-0.19, double r_s2=0., 
 	double mu_s=0., double sigma_screening=0.);
   ~WeakQECross(); /*!< Destructor */
@@ -141,7 +143,8 @@ private:
   double mu_s; /*!< [] strange contrib to F2_weak */
   double r_s2; /*!< [fm^2] strange contrib to F1_weak */
   double M_A; /*!< [MeV] axial mass value */
-
+  bool enable_ROMEA; /*!< enable ROMEA FSI for slow nucleons */
+  
   WeakQEHadronCurrent *reacmodel; /*!< class object that computes the amplitudes */
 
 };
