@@ -22,16 +22,16 @@ STATIC  =	--static
 DBGFLAG	=	-g
 GPFLAG  = 	-pg
 WFLAG   = 	-Wall
-CFLAGS	=	$(OPTFLAG) $(WFLAG) # $(DBGFLAG) #$(GPFLAG)  #$(STATIC)
-HOME    = /home/philiphacker
+CFLAGS	=	$(OPTFLAG) $(WFLAG)  $(DBGFLAG) #$(GPFLAG)  #$(STATIC)
+HOME    = /home/wim
 
 #		Mathematical functions
 LIBS =	 	-lm
 WIMLIBS = -lMePhys -lGlauber -lKnockout -lIntegrator 
 ROOT =		`root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L$(HOME)/Code/lib
- INCLUDEDIRS =  -I$(HOME)/Code/Integrator -I$(HOME)/Code/Tools  -I$(HOME)/Code/Glauber -I $(HOME)/Code/Knockout
-STATICLIBS =  $(HOME)/Code/lib/libKnockout.a  $(HOME)/Code/lib/libGlauber.a  $(HOME)/Code/lib/libMePhys.a   $(HOME)/Code/lib/libIntegrator.a   
+ LIBDIRS = -L$(HOME)/Code/trunk/lib
+ INCLUDEDIRS =  -I$(HOME)/Code/trunk/Integrator -I$(HOME)/Code/trunk/Tools  -I$(HOME)/Code/trunk/Glauber -I $(HOME)/Code/trunk/Knockout
+STATICLIBS =  $(HOME)/Code/trunk/lib/libKnockout.a  $(HOME)/Code/trunk/lib/libGlauber.a  $(HOME)/Code/trunk/lib/libMePhys.a   $(HOME)/Code/trunk/lib/libIntegrator.a   
 
 
 #		Header files

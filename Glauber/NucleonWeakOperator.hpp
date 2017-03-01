@@ -108,7 +108,7 @@ public:
   FourVector<GammaStructure> getCC3_weak(const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf,
 				    const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
   
-  /*! computes the dirac foton-bound nucleon coupling according to a CC description of De Forest et al.
+  /*! computes the dirac foton-bound nucleon coupling according to a CC description of De Forest et al. with medium modifications
    * \param current which CC of De Forest [1=CC1, 2=CC2, 3=CC3]
    * \param [in] q [MeV] photon momentum fourvector
    * \param [in] pi [MeV] initial nucleon momentum fourvector
@@ -121,6 +121,14 @@ public:
   FourVector<GammaStructure> getCC_weak(const int current, const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf, 
 				   const double r, const int medium, const MeanFieldNucleusThick &nucleus) const;
 
+ /*! computes the dirac foton-bound nucleon coupling according to a CC description of De Forest et al.
+   * \param current which CC of De Forest [1=CC1, 2=CC2, 3=CC3]
+   * \param [in] q [MeV] photon momentum fourvector
+   * \param [in] pi [MeV] initial nucleon momentum fourvector
+   * \param [in] pf [MeV] final nucleon momentum fourvector
+   * \return fourvector of dirac matrices with CC1 coupling to nucleon
+   */
+  FourVector<GammaStructure> getCC_weak(const int current, const FourVector<double> &q, const FourVector<double> &pi, const FourVector<double> &pf) const;
   /*! computes the dirac weak axial bound nucleon coupling 
    * \param [in] q [MeV] photon momentum fourvector
    * \return fourvector of dirac matrices with axial coupling to nucleon

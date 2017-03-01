@@ -25,7 +25,7 @@ WFLAG   = 	-Wall
 CFLAGS	=	$(OPTFLAG) $(WFLAG)  #$(DBGFLAG) $(GPFLAG)  #$(STATIC)
 
 #		Executable file
-EFILE   = 	../../bin/JlabPAC16_calc
+EFILE   = 	../../bin/JlabPAC16_calc ../../bin/test
 EFILEST   = 	../../bin/staticonenucl
 
 

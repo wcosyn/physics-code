@@ -19,6 +19,7 @@ NucleonEMOperator(q2,prot,para),charged(charge),M_A(M_A_in),r_s2(r_s2_in),mu_s(m
   setF2_weak();
   setGE_weak();
   setGM_weak();
+  if(charged) tau=Q2/4./MASSP/MASSN;
 }
 
 NucleonWeakOperator::~NucleonWeakOperator(){
@@ -103,6 +104,43 @@ switch(current){
   }
 }
 
+FourVector<GammaStructure> NucleonWeakOperator::getCC_weak(const int current, const FourVector<double>& q, 
+						    const FourVector<double>& pi, const FourVector<double>& pf) const{
+switch(current){
+    case(1):
+      return getGM_weak()*gamma_mu-getF2_weak()/(2.*(proton?MASSn:MASSn))*(pi+pf)*Id;
+      break;
+    case(2):
+      return gamma_mu*getF1_weak()+getF2_weak()/(4.*(proton?MASSn:MASSn))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
+      break;
+    case(3):
+      return getF1_weak()/(2.*(proton?MASSn:MASSn))*(pi+pf)*Id 
+    + getGM_weak()/(4.*(proton?MASSn:MASSn))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
+      break;
+    default:
+      cerr << "Current operator not supported " << current << endl;
+      exit(1);
+  }
+/*  
+switch(current){
+    case(1):
+      return getGM_weak()*gamma_mu-getF2_weak()/(2.*(proton?MASSP:MASSN))*(pi+pf)*Id;
+      break;
+    case(2):
+      return gamma_mu*getF1_weak()+getF2_weak()/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
+      break;
+    case(3):
+      return getF1_weak()/(2.*(proton?MASSP:MASSN))*(pi+pf)*Id 
+    + getGM_weak()/(4.*(proton?MASSP:MASSN))*((gamma_mu*q)*gamma_mu-gamma_mu*(gamma_mu*q));
+      break;
+    default:
+      cerr << "Current operator not supported " << current << endl;
+      exit(1);
+  }*/
+  
+}
+
+
 FourVector<GammaStructure> NucleonWeakOperator::getAxial(const FourVector<double> &q) const{
  return +getGA_weak()*gamma_5mu-getGP_weak()*gamma_5*q; //-gamma^mu*gamma5G_A - q^mu gamma5 GP
 }
@@ -120,7 +158,7 @@ void NucleonWeakOperator::setGA_weak(){
     GA_weak=gA_null*Get_dipole_mass(Q2,M_A);
   }
   else
-    GA_weak=(gA_s+(proton? 1.:-1.)*gA_null)*0.5*Get_dipole_mass(Q2,M_A);
+    GA_weak=(-gA_s+(proton? 1.:-1.)*gA_null)*0.5*Get_dipole_mass(Q2,M_A);
   //G_P should not contribute for neutral currents (prop to lepton mass)
   GP_weak=2.*(proton? MASSP:MASSN)*GA_weak/(MASSPI*MASSPI+Q2)*(1.-MASSPI*MASSPI/(M_A*M_A)); 
 

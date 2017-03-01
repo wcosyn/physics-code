@@ -103,19 +103,17 @@ public:
   void getAllDiffWeakQECross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
 		       int shellindex, int thick, double phi, int maxEval, bool lab, bool phi_int, bool neutrino);
 
-  /*! Computes the off-shell (nu,lN) cross section for certain kinematics <BR>
-   * What is denoted as \f$ K \sigma_{ep} \f$ in the literature
+  /*! Computes the on-shell nucleon weak interaction cross section for certain kinematics <BR>
+   * See Wim Cosyn's neutrino notes (pdf and scanned ones), also PHYSICAL REVIEW C 71, 065501.
+   * 
    * \param kin contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
-   * \param phi angle between lepton and hadron plane
-   * \param maxEval max # of evaluations in integrations
-   * \param phi_int integrated over phi (angle between lepton and hadron plane)?
-   * \param neutrino [1] neutrino or [0] antineutrino
    * \param proton reaction on a proton [1] or neutron [0]
-   * \return differential cross section [dimensionless]
+   * \param charged [0] Z boson [1] W boson
+   * \param M_A [MeV] axial mass
+   * \return differential cross section d\sigma/d\Omega_l' [fm^2]
    */  
-  double getElWeakQECross(double Q2, double E_in, int current, double phi, int maxEval, bool phi_int,
-			   bool neutrino, bool proton);
+  static double getElWeakQECross(double Q2, double E_in, int current, bool proton, bool charged, double M_A);
   
   double getPrec() const{return prec;} /*!< precision of the integrations */
   double getSigmascreening() const{return sigmascreening;} /*!< [%] screening of sigma */

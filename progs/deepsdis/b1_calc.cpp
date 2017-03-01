@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
       unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
       res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0);
-      cout << 2.*x << " " << ret[0] << " " <<   ret[1] << " " << ret[2] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << /*" " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] <<*/ endl;
+      cout << 2.*x << " " << ret[0] << " " <<   ret[1] << " " << ret[2] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << " " << 1./(1+gamma*gamma) <</*" " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] <<*/ endl;
       //ret[0] b1 total
       //ret[1] b1 sd
       //ret[2] b1 dd

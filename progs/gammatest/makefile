@@ -30,10 +30,10 @@ EFILE   = 	../../bin/gammatest
 
 #		Mathematical functions
 LIBS =	 	-lm  
-WIMLIBS = -lMePhys 
+WIMLIBS = -lMePhys -lGlauber -lKnockout
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
  LIBDIRS = -L ~/Code/trunk/lib
- INCLUDEDIRS =  -I ~/Code/trunk/Integrator -I ~/Code/trunk/Tools  
+ INCLUDEDIRS =  -I ~/Code/trunk/Integrator -I ~/Code/trunk/Tools -I ~/Code/trunk/Knockout -I ~/Code/trunk/Glauber
 STATICLIBS =   ~/Code/trunk/lib/libMePhys.a   ~/Code/trunk/lib/libIntegrator.a   
 
 

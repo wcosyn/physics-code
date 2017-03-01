@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   int thick=1;//atoi(argv[9]);
   int maxEval=20000;//atoi(argv[10]);
   
-  string homedir="/home/wim/Code/share";
+  string homedir=HOMEDIR;
 
   MeanFieldNucleusThick Carbon(nucleus,homedir);
   TKinematics2to2 kin("","",Carbon.getMassA(),Carbon.getMassA_min_proton(),MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
@@ -51,7 +51,6 @@ int main(int argc, char *argv[])
   double free=obs.getElCross(kin,2,0.,2E03)*HBARC*HBARC;
   vector<double> cross;
 
-  
 // comparison with pascal's code (input_compare_onenucl.dat input file) 
 //  ../../bin/onenucl 1696000.0 851.5 190.0 with dutta beam inq
 //   double crossp=obs.getDiffCross(kin, 2, 0, 0, 0, 1, 1, 0.,2E05,1);

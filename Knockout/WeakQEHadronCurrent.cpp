@@ -24,16 +24,19 @@ WeakQEHadronCurrent::~WeakQEHadronCurrent(){
 
 
 
-complex<double> WeakQEHadronCurrent::getFreeMatrixEl(double Q2, bool proton, 
+complex<double> WeakQEHadronCurrent::getFreeMatrixEl(double Q2, bool proton, bool charged, double M_A,
 						     int current, int spinin, int spinout, int photonpol){
-  double costheta=1.;
-  double sintheta=0.;
-  double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSP;
+  double massin=(proton?MASSP:MASSN);
+  double massout=(charged?(proton?MASSN:MASSP):(proton?MASSP:MASSN));  
+  
+//   massin=massout=MASSn;
+  
+  double omega=0.5*(massout*massout-massin*massin+Q2)/massin;
   double qvec = sqrt(omega*omega+Q2);
   double pout = qvec;
-  double Eout = sqrt(MASSN*MASSN+pout*pout);
+  double Eout = sqrt(massout*massout+pout*pout);
   double pin = 0.;  // sqrt(qvec*qvec+pout*pout-2.*pout*qvec*costheta);
-  double Ein = MASSP;
+  double Ein = massin;
 /*double wbar = Eout-Ein;
   double Q2bar = qvec*qvec-wbar*wbar;*/
   static FourVector<complex<double> > polVector0(1.,0.,0.,0.);
@@ -42,17 +45,18 @@ complex<double> WeakQEHadronCurrent::getFreeMatrixEl(double Q2, bool proton,
   static FourVector<complex<double> > polVector3(0.,0.,0.,1.);
   //Frame has z-axis along q!!!
   FourVector<double> q(omega,0.,0.,qvec);
-  FourVector<double> pf(Eout,pout*sintheta,0.,pout*costheta);
+  FourVector<double> pf(Eout,0.,0.,pout);
   FourVector<double> Pin(Ein,pf[1],0.,pf[3]-q[3]); 
 //cout << "q:" << q << endl;
 //cout << "pf:" << pf << endl;
 //cout << "Pin:" << Pin << endl;
-  J= new NucleonWeakOperator(Q2,proton,0,charged,M_A,r_s2,mu_s,gA_s);
+  NucleonWeakOperator J(Q2,proton,0,charged,M_A,0.,0.,0.);
   GammaStructure Jcontr;
-  if(photonpol==0)      Jcontr= J->getCC_weak(current, q, Pin, pf, 0.,0,*pnucl)*polVector0;
-  else if(photonpol==1) Jcontr=-J->getCC_weak(current, q, Pin, pf, 0.,0,*pnucl)*polVector1;
-  else if(photonpol==2) Jcontr=-J->getCC_weak(current, q, Pin, pf, 0.,0,*pnucl)*polVector2;
-  else if(photonpol==3) Jcontr=-J->getCC_weak(current, q, Pin, pf, 0.,0,*pnucl)*polVector3;//minus sign to get J^z!!!
+  
+  if(photonpol==0)      Jcontr=  (J.getCC_weak(current, q, Pin, pf)+  J.getAxial(q))*polVector0;
+  else if(photonpol==1) Jcontr=- (J.getCC_weak(current, q, Pin, pf)+  J.getAxial(q))*polVector1;
+  else if(photonpol==2) Jcontr=- (J.getCC_weak(current, q, Pin, pf)+  J.getAxial(q))*polVector2;
+  else if(photonpol==3) Jcontr=- (J.getCC_weak(current, q, Pin, pf)+  J.getAxial(q))*polVector3;//minus sign to get J^z!!!
   
 //   cout << "out " << Jcontr << endl;
   /*cout << "spinorout " << TSpinor(pf,tk.GetHyperonMass(),TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity) << endl;
@@ -63,20 +67,20 @@ complex<double> WeakQEHadronCurrent::getFreeMatrixEl(double Q2, bool proton,
   cout << "pout " << pf << endl;
   cout << "kin " << pout << " " << qvec << " " << pin << " " << tk.GetHyperonMass() << endl;
  */ 
-  delete J;
+//   delete J;
   //contract everything
   if(spinout==-1){
-    if(spinin==-1) return TSpinor::Bar(TSpinor(pf,MASSN,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr*
-		      TSpinor(Pin,MASSN,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity);
-    else if(spinin==1) return TSpinor::Bar(TSpinor(pf,MASSN,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr*
-		      TSpinor(Pin,MASSN,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity);
+    if(spinin==-1) return TSpinor::Bar(TSpinor(pf,massout,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr*
+		      TSpinor(Pin,massin,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity);
+    else if(spinin==1) return TSpinor::Bar(TSpinor(pf,massout,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity))*Jcontr*
+		      TSpinor(Pin,massin,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity);
     else {cerr << "invalid spinin " << spinin << endl; exit(1);}
   }
   else if(spinout==1){
-    if(spinin==-1) return TSpinor::Bar(TSpinor(pf,MASSN,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr*
-		      TSpinor(Pin,MASSN,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity);
-    else if(spinin==1) return TSpinor::Bar(TSpinor(pf,MASSN,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr*
-		      TSpinor(Pin,MASSN,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity);
+    if(spinin==-1) return TSpinor::Bar(TSpinor(pf,massout,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr*
+		      TSpinor(Pin,massin,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kDown),TSpinor::kUnity);
+    else if(spinin==1) return TSpinor::Bar(TSpinor(pf,massout,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity))*Jcontr*
+		      TSpinor(Pin,massin,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity);
     else {cerr << "invalid spinin " << spinin << endl; exit(1);}
   }
   else {cerr << "invalid spinout " << spinout << endl; exit(1);}

@@ -11,8 +11,8 @@ VERSION =
 CPATH 	=	.
 
 #		C compilation...
-  CC      = 	icpc
-#  CC      = 	g++
+#   CC      = 	icpc
+ CC      = 	g++
 
 #		Flags
 #  OPTFLAG	=	-O3 -fPIC
@@ -31,9 +31,9 @@ EFILEST   = 	../../bin/rhofixstatic
 LIBS =	 	-lm  
 WIMLIBS = -lKnockout -lGlauber -lMePhys -lIntegrator
 ROOT =		`$(ROOTSYS)/bin/root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L ~/Code/lib
- INCLUDEDIRS =  -I ~/Code/Integrator -I ~/Code/Tools  -I ~/Code/Glauber -I ~/Code/Knockout 
-STATICLIBS =   ~/Code/lib/libKnockout.a  ~/Code/lib/libGlauber.a   ~/Code/lib/libMePhys.a ~/Code/lib/libIntegrator.a
+ LIBDIRS = -L ~/Code/trunk/lib
+ INCLUDEDIRS =  -I ~/Code/trunk/Integrator -I ~/Code/trunk/Tools  -I ~/Code/trunk/Glauber -I ~/Code/trunk/Knockout 
+STATICLIBS =   ~/Code/trunk/lib/libKnockout.a  ~/Code/trunk/lib/libGlauber.a   ~/Code/trunk/lib/libMePhys.a ~/Code/trunk/lib/libIntegrator.a
 
 
 #		Header files

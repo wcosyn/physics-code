@@ -10,6 +10,10 @@ using namespace std;
 #include "FourVector.h"
 #include "GammaStructure.h"
 #include "NuclStructure.hpp"
+#include "WeakQECross.hpp"
+#include "TLeptonKinematics.h"
+#include <MeanFieldNucleusThick.hpp>
+
 
 int main(int argc, char *argv[]){
 
@@ -34,18 +38,52 @@ int main(int argc, char *argv[]){
   
   
   double Ein=4454.;
-  double Q2=1.9E06;
-  double x=1.2;
-  double mp=938.272;
+  double Q2=0.9E06;
+  double x=1.;
+  double mp=MASSn;//938.272;
   double nu=Q2/(2.*mp*x);
   double qvec=sqrt(Q2+nu*nu);
   double Eout=Ein-nu;
-  double thetae=2.*asin(sqrt(Q2/(4.*Ein*Eout)));
+  double mmu=105.;
+  double pout=sqrt(Eout*Eout-mmu*mmu);
+  double zeta=pout/Eout;
+//   cout << zeta << " " << nu << " " << Eout << " " << pout << endl;
+  double thetae=acos((1.-(Q2+mmu*mmu)/(2.*Ein*Eout))/zeta);
+//   cout << Q2 << " " << 2.*Ein*Eout*(1-zeta*cos(thetae))-mmu*mmu <<  endl;;
+  
   double tanth=tan(thetae/2.);
-  double kx=sqrt(Q2/qvec/qvec*Ein*Eout*pow(cos(thetae/2.),2.));
-  double kz=Q2/(2.*qvec)+nu*Ein/qvec;
-  double kprimez=-Q2/(2.*qvec)+nu*Eout/qvec;
+//   double kx=sqrt(Q2/qvec/qvec*Ein*Eout*pow(cos(thetae/2.),2.));
+//   double kz=Q2/(2.*qvec)+nu*Ein/qvec;
+//   double kprimez=-Q2/(2.*qvec)+nu*Eout/qvec;
   double denom=4.*Ein*Eout*pow(cos(thetae/2.),2.);
+//   
+  
+  double kx=zeta*Ein*Eout*sin(thetae)/qvec;
+  double kz=(Q2+mmu*mmu)/2/qvec+nu*Ein/qvec;
+  double kprimez=(-Q2+mmu*mmu)/2/qvec+nu*Eout/qvec;
+  
+  double tanPRC=Q2/(pow(Ein+Eout,2.)-qvec*qvec);
+  double delta=mmu/sqrt(Q2);
+  double rho=Q2/qvec/qvec;
+  double rho2=qvec/(Ein+Eout);
+  
+  double ratio=(pow(Ein+Eout,2.)-qvec*qvec)/2./Ein/Eout;
+  
+  double vlPRC=1-delta*delta*tanPRC;
+  double vllPRC=nu*nu/qvec/qvec+(1+2.*nu/qvec/rho2+rho*delta*delta)*delta*delta*tanPRC;
+  double vtPRC =tanPRC+rho/2.-delta*delta/rho2*(nu/qvec+rho*rho2*delta*delta/2.)*tanPRC;
+  double vtprimePRC=1./rho2*(1.-nu*rho2/qvec*delta*delta)*tanPRC;
+  
+//   cout << vtprimePRC*ratio << " " << (Ein+Eout)/qvec*(1.-zeta*cos(thetae))-mmu*mmu/qvec/Eout << endl;
+  double M_A=1.03E03;
+  string homedir="/home/wim/Code/trunk/share/";
+  MeanFieldNucleusThick Nucleus(1,homedir);
+  TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,Ein);
+//   WeakQECross obs(lepton,&Nucleus,1.E-03,2,homedir,1, 1.03E03, 0., 0.);  
+  double crossHanu=WeakQECross::getElWeakQECross(Q2,Ein,2,1,1,M_A);
+  cout << crossHanu << endl;
+
+  exit(1);
   
   FourVector<complex<double> > q(nu,0.,0.,qvec);
   FourVector<complex<double> > ein(Ein,kx,0.,kz);
