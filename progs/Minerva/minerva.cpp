@@ -107,13 +107,12 @@ struct FtorH {  //Hydrogen
 
   static void exec(const numint::array<double,1> &x, void *param, numint::vector_d &ret) {
     FtorH &p = * (FtorH *) param;
-    p.f(ret,x[0],p.current,p.Q2,p.charged);
+    p.f(ret,x[0],p.Q2,p.charged);
   }
   int current;
   double Q2;
   bool charged;
-  void (*f)(numint::vector_d &, double E_in, int current, double Q2,
-             bool charged);
+  void (*f)(numint::vector_d &, double E_in, double Q2, bool charged);
 
 }; 
 
@@ -132,8 +131,7 @@ void adap_intPm(numint::vector_d &, double E_in, double costhetacm, double E_out
                 double max_initial_nucl_mom, double min_final_nucl_mom, int pw);
 
 //integration for Hydrogen
-void int_hydr(numint::vector_d &, double E_in,
-              int current, double Q2,bool charged);
+void int_hydr(numint::vector_d &, double E_in,double Q2,bool charged);
 
 void normalize(double flux[], double dx){
   double sum=0;
@@ -397,19 +395,22 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
 }
 
 void int_hydr(numint::vector_d & result, double E_in, 
-              int current, double Q2, bool charged){
+              double Q2, bool charged){
     
   double omega=0.5*(MASSP*MASSP-MASSN*MASSN+Q2)/MASSP;  
   double E_out=E_in-omega;
   
   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
-  double crossHanu=WeakQECross::getElWeakQECross(Q2,E_in,current,0,charged,1.03E03);
+  double crossHanu=WeakQECross::getElWeakQECross(Q2,E_in,1,charged,1.03E03,1);
+  
+  //Jacobian is taken care of in the function above!  so code below is obsolete.
   
   //Jacobian from d\costheta_mu to dQ2    
-  double jcb=2.*E_in*sqrt(E_out*E_out-lepton->GetLeptonMass()*lepton->GetLeptonMass());
+//   double pmu=sqrt(E_out*E_out-lepton->GetLeptonMass()*lepton->GetLeptonMass());
+//   double jcb=2.*pmu*pmu*E_in*MASSP/(E_in*E_out*(1.-(Q2+massmu*massmu)*E_out/(2.*E_in*E_out*pmu))-(MASSP+E_in)*pmu);
 //	cout << "Jacobian H " << jcb << endl;
-  crossHanu/=jcb;
- 
+//   crossHanu/=abs(jcb);
+  
   result=numint::vector_d(1,0.); 
   result[0]=crossHanu*interpolate(Minerva_anu_flux,E_in,500,20,0);
   delete lepton;

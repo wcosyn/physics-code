@@ -106,15 +106,32 @@ public:
   /*! Computes the on-shell nucleon weak interaction cross section for certain kinematics <BR>
    * See Wim Cosyn's neutrino notes (pdf and scanned ones), also PHYSICAL REVIEW C 71, 065501.
    * 
-   * \param kin contains the hadron kinematics
+   * \param Q2 [MeV^2] virtual photon Q^2
+   * \param E_in [MeV] incoming lepton energy
+   * \param proton reaction on a proton [1] or neutron [0]
+   * \param charged [0] Z boson [1] W boson
+   * \param M_A [MeV] axial mass
+   * \param Q2diff [0] d\sigma/d\Omega_l' [fm^2] [1]  d\sigma/dQ^2dphi_l' [fm^2/MeV^2] result.
+   * \return differential cross section d\sigma/d\Omega_l' [fm^2] or d\sigma/dQ^2dphi_l' [fm^2/MeV^2]
+   */  
+  static double getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, bool Q2diff);
+  
+ /*! Computes the weak interaction cross section in the relativistic Fermi Gass approximation for certain kinematics <BR>
+  * Computation is PER NUCLEON, multiply with appropriate front factors where necessary!! <BR>
+   * See  PHYSICAL REVIEW C 71, 065501 app. C for formulas
+   * 
+   * \param Q2 [MeV^2] virtual photon Q^2
+   * \param E_in [MeV] incoming lepton energy
+   * \param omega [MeV] energy transfer
+   * \param k_Fermi [MeV] Fermi momentum
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param proton reaction on a proton [1] or neutron [0]
    * \param charged [0] Z boson [1] W boson
    * \param M_A [MeV] axial mass
-   * \return differential cross section d\sigma/d\Omega_l' [fm^2]
+   * \param Q2diff [0] d\sigma/d\Omega_l' [fm^2] [1]  d\sigma/dQ^2dphi_l' [fm^2/MeV^2] result.
+   * \return differential cross section d\sigma/d\Omega_l' [fm^2] or d\sigma/dQ^2dphi_l' [fm^2/MeV^2]
    */  
-  static double getElWeakQECross(double Q2, double E_in, int current, bool proton, bool charged, double M_A);
-  
+  static double getRFGWeakQECross(double Q2, double E_in, double omega, double k_Fermi, bool proton, bool charged, double M_A, bool Q2diff);
   double getPrec() const{return prec;} /*!< precision of the integrations */
   double getSigmascreening() const{return sigmascreening;} /*!< [%] screening of sigma */
   bool getUsersigma() const{return usersigma;} /*!< has the user set sigma? */

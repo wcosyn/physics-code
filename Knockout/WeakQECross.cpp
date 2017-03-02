@@ -42,7 +42,7 @@ WeakQECross::~WeakQECross(){
   
 }
 
-double WeakQECross::getElWeakQECross(double Q2, double E_in, int current, bool proton, bool charged, double M_A){
+double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, bool Q2diff){
 
   double massin=(proton?MASSP:MASSN);
   double massout=(charged?(proton?MASSN:MASSP):(proton?MASSP:MASSN));
@@ -127,27 +127,26 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, int current, bool p
     //check between explicit calculation and shortcut formulas of G. Megias thesis.  Careful to distinguish between vector and axial currents 
     //small differences because of nucleon masses (not taken equal etc.)
     //purely vector check VV
-//     cout << response[0] << " " << 1./Q2overkk*pow(J.getGE_weak(),2.) << endl;
-//     cout << response[3] << " " << Q2/2./massin/massout*pow(J.getGM_weak(),2.) << endl << endl;
+/*    cout << response[0] << " " << 1./Q2overkk*pow(J.getGE_weak(),2.) << endl;
+    cout << response[3] << " " << Q2/2./massin/massout*pow(J.getGM_weak(),2.) << endl << endl;
     
     //purely axial check AA
-//     cout << response[0] << " " << GA2prime*omega*omega/Q2 << endl;
-//     cout << response[1] << " " << -2.*omega*qvec/Q2*GA2prime << endl;
-//     cout << response[2] << " " << qvec*qvec/Q2*GA2prime << endl;
-//     cout << response[3] << " " << 2.*(1+Q2/4./massin/massout)*pow(J.getGA_weak(),2.) << endl;
+    cout << response[0] << " " << GA2prime*omega*omega/Q2 << " " << omega/2./sqrt(massin*massout)*GA2prime << endl;
+    cout << response[1] << " " << -2.*omega*qvec/Q2*GA2prime << " " << -2.*qvec/2./sqrt(massin*massout)*GA2prime << endl;
+    cout << response[2] << " " << qvec*qvec/Q2*GA2prime << " " << (1+Q2/4./massin/massout)*GA2prime << endl;
+    cout << response[3] << " " << 2.*(1+Q2/4./massin/massout)*pow(J.getGA_weak(),2.) << endl;
     
     //VA check
-//     cout << response[4] << " " << -4.*sqrt(Q2/4./massin/massout*(1.+Q2/4./massin/massout))*J.getGM_weak()*J.getGA_weak() << endl;
-//     cout << endl << endl;
-    
-    
+    cout << response[4] << " " << -4.*sqrt(Q2/4./massin/massout*(1.+Q2/4./massin/massout))*J.getGM_weak()*J.getGA_weak() << endl;
+    cout << endl << endl;
+    cout << J.getGA_weak() << " " << sqrt(GA2prime) << endl;
+ */   
     cross=(kinfactors2[0]-2.*omega/qvec*kinfactors2[1]+pow(omega/qvec,2.)*kinfactors2[2])* 1./Q2overkk*pow(J.getGE_weak(),2.)  //V_L W^00 [[G. Megias thesis 2.118]]
           +kinfactors2[3]*(Q2/2./massin/massout*pow(J.getGM_weak(),2.)+2.*(1+Q2/4./massin/massout)*pow(J.getGA_weak(),2.)) //V_TT (R_VV_TT + R_AA_TT)
           +(proton?+1.:-1.)*kinfactors2[4]*(-4.*qvec/2./sqrt(massin*massout)*J.getGM_weak()*J.getGA_weak()) // hv_T' R_va_T'
-          +kinfactors2[0]*omega/2./sqrt(massin*massout)*GA2prime
-          -kinfactors2[1]*2.*qvec/2./sqrt(massin*massout)*GA2prime
-          +kinfactors2[2]*(1+Q2/4./massin/massout)*GA2prime;
-          ;
+          +(kinfactors2[0]-2.*qvec/omega*kinfactors2[1]+pow(qvec/omega,2.)*kinfactors2[2])*omega/2./sqrt(massin*massout)*GA2prime;
+    
+ 
           
 //     double cross2=0.;
 //     for(int i=0;i<5;i++) cross2+=kinfactors2[i]*response[i];  //sign of T' term taken care of in response!
@@ -165,6 +164,9 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, int current, bool p
 //     cout << cross << " " << cross2 << " " << (Q2/M_W/M_W+1.) << endl;
     
     // cout<<"Factors "<<kk<<" "<<E_out<<" "<<cos(atan(sqrt(tan2theta)))<<" "<<cos(atan(sqrt(tan2theta)))<<endl;*/
+
+    if(Q2diff) cross/=abs(2.*kk*kk*E_in*massin/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/kk*E_out-(massin+E_in)*kk)); // Jacobian to d\sigma/dQ^2
+//     cout << kk << " " << E_in << " " << E_out << " " << massin << " " << (1.-(Q2+leptonmass2)/(2.*E_in*E_out))/kk*E_out << endl;
   }
 
  
@@ -176,10 +178,126 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, int current, bool p
   
   
 //   delete reacmodel;
-
   return cross;
 
 }
+
+
+double WeakQECross::getRFGWeakQECross(double Q2, double E_in, double omega, double k_Fermi, bool proton, bool charged, double M_A, bool Q2diff){
+
+  double massin=(proton?MASSP:MASSN);
+  double massout=(charged?(proton?MASSN:MASSP):(proton?MASSP:MASSN));
+  
+//   massin=massout=MASSn;
+  
+//   double omega=0.5*(massout*massout-massin*massin+Q2)/massin;
+  double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
+  double Q2overkk=Q2/qvec/qvec;
+  double E_out=E_in-omega;
+  double Q=sqrt(Q2);
+  double cross=0.;
+  //double Q2overkk=Q2/qvec/qvec;
+  //double tan2=electron.GetTan2HalfAngle(kin);
+
+  int numb_of_resp=5;
+  double kinfactors[numb_of_resp];
+  double response[numb_of_resp];
+  for(int i=0;i<numb_of_resp;i++) {response[i]=0; kinfactors[i]=0;}
+
+  //prefactors for Fermi Gas, scaling variables etc.
+  
+  double lambda=omega/2./sqrt(massin*massout);
+  double kappa=qvec/2./sqrt(massin*massout);
+  double tau=Q2/4./massin/massout;
+  
+  double xi=sqrt(1.+k_Fermi*k_Fermi/massin/massout)-1.;
+  double psi=pow(lambda-tau,2.)/(xi*((1.+lambda)*tau+kappa*sqrt(tau*(1.+tau))));
+  if(abs(psi)>1.) return 0.;
+  
+  double scaling=3./4.*(1-psi*psi)*xi/(sqrt(massin*massout)*pow(k_Fermi,3.)*kappa);
+  
+  
+  //W interaction
+  if(charged){
+  
+    double leptonmass2=TLeptonKinematics::massmu*TLeptonKinematics::massmu;
+    double kk=sqrt(E_out*E_out-leptonmass2);
+    double delta2=leptonmass2/abs(Q2);
+    double rho=abs(Q2)/(qvec*qvec);  
+    double rrho=qvec/(E_in+E_out);                
+    double tan2theta=abs(Q2)/((E_out+E_in)*(E_in+E_out)-qvec*qvec);
+
+    double massfactor=sqrt(1.-leptonmass2/E_out/E_out);
+    
+    
+    
+    double costhl=(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/massfactor;
+    double sinthl=sqrt(1.-costhl*costhl);
+  
+    kinfactors[0]=1.+massfactor*costhl+2.*leptonmass2*omega/E_out/M_W/M_W
+	+leptonmass2*pow(omega/M_W/M_W,2.)*(1.-massfactor*costhl); //v_L (part corresponding with unbroken current)
+    kinfactors[1] = -leptonmass2/qvec/E_out - leptonmass2/M_W/M_W/qvec*(omega*(1.-massfactor*costhl)+Q2/E_out)
+      -omega/qvec*leptonmass2*pow(Q/M_W/M_W,2.)*(1-massfactor*costhl); //second contrib to v_L, mix z,0
+    kinfactors[2] = leptonmass2/qvec/qvec*pow(1.+Q2/M_W/M_W,2.)*(1-massfactor*costhl); //third contrib to v_L, z*z
+    kinfactors[3]=1.-massfactor*costhl+E_in*E_out/qvec/qvec*massfactor*massfactor*sinthl*sinthl; //v_T
+    kinfactors[4]=(E_in+E_out)/qvec*(1.-massfactor*costhl)-leptonmass2/qvec/E_out; //v_T'
+  
+    double temp1=kinfactors[2]-2.*omega/qvec*kinfactors[1]+omega*omega/qvec/qvec*kinfactors[0];
+    double temp2=omega/qvec*kinfactors[0]-kinfactors[1];
+    
+    kinfactors[1]=temp2;
+    kinfactors[2]=temp1;
+  
+    
+    NucleonWeakOperator J(Q2,proton,0,charged,M_A,0.,0.,0.);
+      
+    double GA2prime = pow(J.getGA_weak()-Q2/2./sqrt(massin*massout)*J.getGP_weak(),2.);
+
+    double delta=tau/kappa/kappa*xi*(1-psi*psi)*(kappa*sqrt(1+1./tau)+xi/3.*(1-psi*psi));
+
+    double UCC_V=kappa*kappa/tau*(4.*pow(J.getGE_weak(),2.)+(pow(2.*J.getGE_weak(),2.)+tau*pow(2.*J.getGM_weak(),2.)/(1+tau)*delta));    
+    double UCC_A_c=kappa*kappa/tau*delta*pow(J.getGA_weak(),2.);
+    
+    double UCC_A_nc=+lambda*lambda/tau*GA2prime;
+
+    double UT_V=8.*tau*pow(J.getGM_weak(),2.)+(pow(2.*J.getGE_weak(),2.)+tau*pow(2.*J.getGM_weak(),2.)/(1+tau)*delta);
+    double UT_A=(2.*(1+tau)+delta)*pow(J.getGA_weak(),2.);
+    
+    double UTprime=4.*J.getGA_weak()*J.getGM_weak()*sqrt(tau*(1.+tau))*(1+sqrt(tau/(1+tau))*xi*(1-psi*psi)/2./kappa);
+    
+    
+    cross=(kinfactors[0]-2.*omega/qvec*kinfactors[1]+pow(omega/qvec,2.)*kinfactors[2])* (UCC_V+UCC_A_c)
+          +(kinfactors[0]-2.*qvec/omega*kinfactors[1]+pow(qvec/omega,2.)*kinfactors[2])* (UCC_A_nc)
+          +kinfactors[3]*(UT_V+UT_A) 
+          +(proton?+1.:-1.)*kinfactors[4]*UTprime; // CHECK SIGN!!!!
+          
+
+    cross*=massfactor*pow(G_FERMI*COS_CAB*E_out/(Q2/M_W/M_W+1.)/PI/2.,2.); //sigma mott-like part
+    cross/=1.+E_in/massin*(1.-massfactor*costhl); //recoil factor
+    
+    cross*=HBARC*HBARC; // to units fm^2.
+    
+
+    if(Q2diff) cross/=abs(2.*kk*kk*E_in*massin/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/kk*E_out-(massin+E_in)*kk)); // Jacobian to d\sigma/dQ^2
+  }
+
+ 
+ //Z interaction still to add!
+  else{
+    cerr << "neutral current interaction still to be implemented!!" << endl;
+    assert(1==0);    
+  }
+  
+  
+//   delete reacmodel;
+  return cross;
+
+}
+
+
+
+
+
 
 /*
 double WeakQECross::getElWeakQECross(TKinematics2to2 &kin, int current, double phi, int maxEval, bool phi_int,

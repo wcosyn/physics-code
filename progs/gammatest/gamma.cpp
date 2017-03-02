@@ -37,14 +37,14 @@ int main(int argc, char *argv[]){
   const GammaStructure gamma_5(0.,1.);
   
   
-  double Ein=4454.;
+  double Ein=1000.;
   double Q2=0.9E06;
   double x=1.;
-  double mp=MASSn;//938.272;
-  double nu=Q2/(2.*mp*x);
+  double mp=MASSP;//938.272;
+  double nu=(Q2+MASSN*MASSN-MASSP*MASSP)/(2.*mp*x);
   double qvec=sqrt(Q2+nu*nu);
   double Eout=Ein-nu;
-  double mmu=105.;
+  double mmu=105.6583715;
   double pout=sqrt(Eout*Eout-mmu*mmu);
   double zeta=pout/Eout;
 //   cout << zeta << " " << nu << " " << Eout << " " << pout << endl;
@@ -80,8 +80,15 @@ int main(int argc, char *argv[]){
   MeanFieldNucleusThick Nucleus(1,homedir);
   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,Ein);
 //   WeakQECross obs(lepton,&Nucleus,1.E-03,2,homedir,1, 1.03E03, 0., 0.);  
-  double crossHanu=WeakQECross::getElWeakQECross(Q2,Ein,2,1,1,M_A);
-  cout << crossHanu << endl;
+  
+//   for(int i=0;i<200;i++){
+    Q2=1.E06;
+    double crossHanu=WeakQECross::getElWeakQECross(Q2,Ein,1,1,M_A,1);
+    crossHanu*=2.*PI*1.E19; //units 10^-39 cm^2/GeV^2
+    double omega=(Q2+MASSN*MASSN-MASSP*MASSP)/(2.*mp*x);
+
+    cout << omega << " " << Q2 << " " << crossHanu << endl;
+//   }
 
   exit(1);
   
