@@ -70,10 +70,13 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   FourVector<double> pi_mu = pd_mu - ps_mu;
   double pi_plus=pd_plus-ps_plus;
   double pi_perp = -pt;
+  double pi_min=(MASSn*MASSn+pt*pt)/pi_plus;
+  FourVector<double> pi_mu_onshell((pi_plus + pi_min)*0.5,-pt,0.,(pi_plus - pi_min)*0.5);
   
   double nu = 2.*Q2/MASSD/x;
   double qvec = sqrt(Q2+nu*nu);
   FourVector<double> q_mu(nu,0.,0.,-qvec);
+  FourVector<double> q_onshell = q_mu+pi_mu-pi_mu_onshell;
   FourVector<double> el_mu(qvec,0.,0.,-nu);
   el_mu*=1./sqrt(Q2); //longitudinal basis vector
   FourVector<double> et_mu(0.,1.,0.,0.);
@@ -96,7 +99,7 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   
   if(melosh) Melosh_rot(k_perp, k_plus, Ek, rho_l_z, rho_l_x);
   
-  double x_nucl = Q2/2./(pi_mu*q_mu);
+  double x_nucl = Q2/2./(pi_mu_onshell*q_onshell);
 //   cout << pi_mu << " " << q_mu << endl;
 //    cout << x_nucl << " " << pi_mu endl;
   NuclStructure nucl(proton,Q2,x_nucl,0,strucname);
@@ -105,7 +108,7 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   g1pg2=NuclStructure::getG1plusg2_grsv2000(proton,x,Q2);
 //   cout << g1 << " " << g1pg2 << " " << g1pg2-g1 << endl;
   nucl.getF(F1,F2);
-  double gamma_n = sqrt(Q2)*MASSn/(pi_mu*q_mu);
+  double gamma_n = sqrt(Q2)*MASSn/(pi_mu_onshell*q_onshell);
 //   cout << gamma_n << endl;
   F1=(1+gamma_n*gamma_n)/(1.+0.18)/(2.*x_nucl)*F2;
 //   cout << F1 << " " << F2 << " " << g1 << " " << gamma_n << endl;
@@ -115,10 +118,10 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   FourVector<double> snx(pi_perp/pi_plus,1.,0.,-pi_perp/pi_plus);
   
   double factor=MASSD*sqrt(1.+1./gamma_d/gamma_d)-ps_mu*el_mu;
-  double ff=(epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))/F2*Ek/alpha_i/alpha_i*4.*pow(2.*PI,3.);
-  F_U = (epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))*rhou;
-  F_LSL = gamma_n*(((el_mu*snz)*g1pg2-q_mu*snz/(pi_mu*q_mu)*factor*(g1pg2-g1))*rho_l_z+((el_mu*snx)*g1pg2-q_mu*snx/(pi_mu*q_mu)*factor*(g1pg2-g1))*rho_l_x);
-  double F_UTLL = -(epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu*q_mu))+(2.*F1+pt*pt/(pi_mu*q_mu)*F2))*rho_tensor_u;
+  double ff=(epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu_onshell*q_onshell))+(2.*F1+pt*pt/(pi_mu_onshell*q_onshell)*F2))/F2*Ek/alpha_i/alpha_i*4.*pow(2.*PI,3.);
+  F_U = (epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu_onshell*q_onshell))+(2.*F1+pt*pt/(pi_mu_onshell*q_onshell)*F2))*rhou;
+  F_LSL = gamma_n*(((el_mu*snz)*g1pg2-q_onshell*snz/(pi_mu_onshell*q_onshell)*factor*(g1pg2-g1))*rho_l_z+((el_mu*snx)*g1pg2-q_onshell*snx/(pi_mu_onshell*q_onshell)*factor*(g1pg2-g1))*rho_l_x);
+  double F_UTLL = -(epsilon*(-2.*F1+factor*factor*2.*F2/(pi_mu_onshell*q_onshell))+(2.*F1+pt*pt/(pi_mu_onshell*q_onshell)*F2))*rho_tensor_u;
 //   cout << (el_mu*snz)*rho_l_z << " " << (el_mu*snx)*rho_l_x << " " << snz << " " << snx << endl;
 //   cout << rhou << " " << rho_l_x << " " << rho_l_z << endl;
 //   cout << "dd " << rhou/3./Ek*alpha_i*alpha_i*pow((MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu(),2.) << " " << (MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu()<< " " << Ek << " " << alpha_i << " " << rhou << endl;

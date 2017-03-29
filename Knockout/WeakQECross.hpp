@@ -128,8 +128,8 @@ public:
    * \param proton reaction on a proton [1] or neutron [0]
    * \param charged [0] Z boson [1] W boson
    * \param M_A [MeV] axial mass
-   * \param Q2diff [0] d\sigma/d\Omega_l' [fm^2] [1]  d\sigma/dQ^2dphi_l' [fm^2/MeV^2] result.
-   * \return differential cross section d\sigma/d\Omega_l' [fm^2] or d\sigma/dQ^2dphi_l' [fm^2/MeV^2]
+   * \param Q2diff [0] d\sigma/d\Omega_l'dTmu [fm^2/MeV] [1]  d\sigma/dQ^2dphi_l'dTmu [fm^2/MeV^3] result.
+   * \return differential cross section d\sigma/d\Omega_l'dTmu [fm^2/MeV] or d\sigma/dQ^2dphi_l'dTmu [fm^2/MeV^3]
    */  
   static double getRFGWeakQECross(double Q2, double E_in, double omega, double k_Fermi, bool proton, bool charged, double M_A, bool Q2diff);
   double getPrec() const{return prec;} /*!< precision of the integrations */

@@ -214,7 +214,7 @@ double WeakQECross::getRFGWeakQECross(double Q2, double E_in, double omega, doub
   double psi=pow(lambda-tau,2.)/(xi*((1.+lambda)*tau+kappa*sqrt(tau*(1.+tau))));
   if(abs(psi)>1.) return 0.;
   
-  double scaling=3./4.*(1-psi*psi)*xi/(sqrt(massin*massout)*pow(k_Fermi,3.)*kappa);
+  double scaling=3./4.*(1-psi*psi)*xi/(sqrt(massin*massout)*pow(k_Fermi/sqrt(massin*massout),3.)*kappa);
   
   
   //W interaction
