@@ -124,11 +124,18 @@ int main(int argc, char *argv[])
       double C=(-sqrt(6.)*ret[6]/gamma-2.*D)/(1.+gamma*gamma);
       double B=(2.*(1+gamma*gamma)*A-(1.+gamma*gamma)*C-D-sqrt(3./2.)*ret[5])/pow(1.+gamma*gamma,2.);
 
-
-      double b1=A;
-      double b2=x*(B+C+D);
-      double b3=x*(B+C-2.*D)/3.;
-      double b4=x*(B-2.*C+D)/3.;
+    double b1=A;
+    double b2=x*(B+C+D);
+    double b3=x*(B+C-2.*D)/3.;
+    double b4=x*(B-2.*C+D)/3.;
+    
+    
+    //q | x_N |  thetaq | b1 | b1_EPW from F_UT/F_TT ratio | b1 from azz hermes way | b1 from azz improved approx way | azz | F_T/2 | sum F1*2 | extra mult factor from azz to b1 | 
+    //F_TT/angle corrected nominateor | F_UT / F_UT+epsF_UL | eps | gamma | b1-4
+    cout << setprecision(4) <<  " " << qvec << " " << 2.*x << " "  << thetaq*RADTODEGR << " " << sqrt(2./3.)*ret[10]/ret[11] << " " << ret[0] << " " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. 
+      << " " << sqrt(2./3.)*ret[10]/ret[11]/factor*2.*(F1p+F1n)*-3./2. << " " <<ret[8]/2. << " " << 2.*(F1p+F1n) << " " 
+      << factor << " " << ret[4]/ret[10] << " " << ret[8]/ret[11] << " "<< eps << " "<< b1 << " " << b2 << " " << b3 << " " << b4
+      << " " << b2/2./x/b1 << " " << gamma << endl;
       
       
       //x_N | b1 | b1_EPW from F_UT/F_TT ratio | b1 from azz hermes way | b1 from azz improved approx way | azz | F_T/2 | sum F1*2 | extra mult factor from azz to b1 | 
