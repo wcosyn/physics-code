@@ -95,7 +95,7 @@ struct Ftor {  //Carbon
   double max_initial_nucl_mom;
   double min_final_nucl_mom;
   int pw;
-  void (*f)(numint::vector_d &, double E_in, double costhetacm, double E_out, 
+  void (*f)(numint::vector_d &, double omega, double costhetacm, double E_out, 
             MeanFieldNucleusThick &pNucleus, int current, double *cthmax, double Q2,
             double prec, int integrator, string homedir, int maxEval, bool charged, bool screening,
             double max_initial_nucl_mom, double min_final_nucl_mom, int pw
@@ -116,6 +116,21 @@ struct FtorH {  //Hydrogen
 
 }; 
 
+
+struct FtorRFG {  //Hydrogen
+
+  static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
+    FtorRFG &p = * (FtorRFG *) param;
+    p.f(ret,x[0],x[1],p.Q2,p.charged);
+  }
+  int current;
+  double Q2;
+  bool charged;
+  void (*f)(numint::vector_d &, double omega, double E_out, double Q2, bool charged);
+
+}; 
+
+
 //determine boundaries of kinematics
 double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
 	      double E_in, double E_out, double costhetamu, int shell, double max_initial_nucl_mom, double min_final_nucl_mom);
@@ -132,6 +147,8 @@ void adap_intPm(numint::vector_d &, double E_in, double costhetacm, double E_out
 
 //integration for Hydrogen
 void int_hydr(numint::vector_d &, double E_in,double Q2,bool charged);
+
+void int_RFG(numint::vector_d &, double omega,double E_out, double Q2,bool charged);
 
 void normalize(double flux[], double dx){
   double sum=0;
@@ -163,70 +180,72 @@ int main(int argc, char *argv[])
 
   MeanFieldNucleusThick Nucleus(nucleus,homedir);
   
+  for(int i=1;i<100;i++){
+  Q2=0.02*i*1.E06;
+  
   vector<double> avgcross(2,0.); //neutrino and antineutrino
   //estimates for integration bounds
   double cthmax[Nucleus.getTotalLevels()];
   double cthmin[Nucleus.getTotalLevels()];
   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cthmax[shell]=-1.;cthmin[shell]=1.;}
   double max=-1.,min=1.; //overall min and max center of mass cosine theta angles
-  double Tmax=0;
-  double Tmin=10000;
+  double Eoutmax=0;
+  double Eoutmin=10000;
   double E_low=15000;
   double E_high=0;
   double omega_low=1.E04;
   double omega_hi=0.;
   
-  //find reasonable integration limits
-//   for(int j=0;j<=100;j++){ //loop over T_mu
-// //     cout << j << "/100" << endl;
-//     double T_mu=(1.E04-massmu)*0.01*j;    
-//     double E_out=T_mu+massmu;
-//     double p_out=sqrt(E_out*E_out-massmu*massmu);
-//     //physical limits so that costhetamu is between -1 and 1
-//     double E_in_low = (Q2+massmu*massmu)/2./(E_out+p_out);
-//     double E_in_hi = (Q2+massmu*massmu)/2./(E_out-p_out);
-//     if(E_in_low>10000.||E_in_hi<1500.){} //outside considered incoming neutrino energies, so don't bother
-//     else{
-//       for(int i=0;i<=100;i++){
-//         if(E_in_low<1500.) E_in_low=1500.;
-//         if(E_in_hi>1.E04) E_in_hi=1.E04;
-//         double E_in=E_in_low+(E_in_hi-E_in_low)*1.E-02*i;
-//         double costhetamu=(-Q2-massmu*massmu+2.*E_in*E_out)/(2.*E_in*sqrt(E_out*E_out-massmu*massmu));
-//         double omega=E_in-E_out;
-//         TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
-//         
-//         for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
-//           
-//           //anything above 500 MeV contribution will be negligible
-//           double tempmax=-1., tempmin=1.;
-//           if(getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell,max_initial_nucl_mom,min_final_nucl_mom)<max_initial_nucl_mom){ 
-//             if(E_in<E_low)  E_low=E_in;
-//             if(E_in>E_high) E_high=E_in;
-//             if(max<tempmax) max=tempmax;
-//             if(min>tempmin) min=tempmin;
-//             if(cthmax[shell]<tempmax) cthmax[shell]=tempmax;
-//             if(cthmin[shell]>tempmin) cthmin[shell]=tempmin;
-//             if(Tmax<T_mu) Tmax=T_mu;
-//             if(Tmin>T_mu) Tmin=T_mu;
-//             if(omega>omega_hi) omega_hi=omega;
-//             if(omega<omega_low) omega_low=omega;
-//             
-// //               cout << E_in << " " << E_out << " " << tempmin << " " << tempmax << " " << pm_min << endl;
-//           }
-//         }
-//       }
-//     }  
-//   }
-//   if(E_low<1500.) E_low=1500.;  
-//   if(E_high<E_low) E_high=E_low;
-//   
-//   //min=-1;   max=1;
-//   //Tmin=100;  Tmax=7100;
-//   //E_low=1500;  E_high=7413.36;
-// //   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;cthmin[shell]=-1.;cthmax[shell]=1.;}
+//   find reasonable integration limits
+  for(int j=0;j<=100;j++){ //loop over T_mu
+//     cout << j << "/100" << endl;
+    double E_out=(1.E04-massmu)*0.01*j;    
+    double p_out=sqrt(E_out*E_out-massmu*massmu);
+    //physical limits so that costhetamu is between -1 and 1
+    double E_in_low = (Q2+massmu*massmu)/2./(E_out+p_out);
+    double E_in_hi = (Q2+massmu*massmu)/2./(E_out-p_out);
+    if(E_in_low>10000.||E_in_hi<1500.){} //outside considered incoming neutrino energies, so don't bother
+    else{
+      for(int i=0;i<=100;i++){
+        if(E_in_low<1500.) E_in_low=1500.;
+        if(E_in_hi>1.E04) E_in_hi=1.E04;
+        double E_in=E_in_low+(E_in_hi-E_in_low)*1.E-02*i;
+        double costhetamu=(-Q2-massmu*massmu+2.*E_in*E_out)/(2.*E_in*sqrt(E_out*E_out-massmu*massmu));
+        double omega=E_in-E_out;
+        TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
+        
+        for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
+          
+          //anything above 500 MeV contribution will be negligible
+          double tempmax=-1., tempmin=1.;
+          if(getBound(tempmax,tempmin,Nucleus,*lepton,E_in,E_out,costhetamu,shell,max_initial_nucl_mom,min_final_nucl_mom)<max_initial_nucl_mom){ 
+            if(E_in<E_low)  E_low=E_in;
+            if(E_in>E_high) E_high=E_in;
+            if(max<tempmax) max=tempmax;
+            if(min>tempmin) min=tempmin;
+            if(cthmax[shell]<tempmax) cthmax[shell]=tempmax;
+            if(cthmin[shell]>tempmin) cthmin[shell]=tempmin;
+            if(Eoutmax<E_out) Eoutmax=E_out;
+            if(Eoutmin>E_out) Eoutmin=E_out;
+            if(omega>omega_hi) omega_hi=omega;
+            if(omega<omega_low) omega_low=omega;
+            
+//               cout << E_in << " " << E_out << " " << tempmin << " " << tempmax << " " << pm_min << endl;
+          }
+        }
+      }
+    }  
+  }
+  if(E_low<1500.) E_low=1500.;  
+  if(E_high<E_low) E_high=E_low;
+  
+  //min=-1;   max=1;
+  //Tmin=100;  Tmax=7100;
+  //E_low=1500;  E_high=7413.36;
+//   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;cthmin[shell]=-1.;cthmax[shell]=1.;}
 //   cout << endl;
 //   cout << "min=" << min << "   max=" << max << endl;
-//   cout << "Tmin=" << Tmin << "  Tmax=" << Tmax << endl;
+//   cout << "Eoutmin=" << Eoutmin << "  Eoutmax=" << Eoutmax << endl;
 //   cout << "omega_low=" << omega_low << " " << "  omega_high=" << omega_hi << endl;
 //   cout << "E_low=" << E_low << "  E_high=" << E_high << endl << endl;
 // //   exit(1);
@@ -237,40 +256,62 @@ int main(int argc, char *argv[])
  
   //initialize object -- Hydrogen
   
-  for(int i=0;i<200;i++){
-    Q2=i*0.01*1.E06;
     
-    FtorH FH;
-    FH.current=current;
-    FH.Q2=Q2;
-    FH.charged=charged;
+  FtorH FH;
+  FH.current=current;
+  FH.Q2=Q2;
+  FH.charged=charged;
 
-    numint::mdfunction<numint::vector_d,1> mdfH;
-    mdfH.func = &FtorH::exec;
-    mdfH.param = &FH;
+  numint::mdfunction<numint::vector_d,1> mdfH;
+  mdfH.func = &FtorH::exec;
+  mdfH.param = &FH;
 
-    // find minimum E_in
-    double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSP;
-    double qvec=sqrt(Q2+omega*omega);
-  //   double EminH=0.25*Q2/MASSP+0.5*sqrt(0.25*Q2*Q2/(MASSP*MASSP)+Q2+massmu*massmu);
-    double EminH=omega;
-    if (EminH<1500.) EminH=1500.;
+  // find minimum E_in
+  double omega=0.5*(MASSN*MASSN-MASSP*MASSP+Q2)/MASSP;
+  double qvec=sqrt(Q2+omega*omega);
+//   double EminH=0.25*Q2/MASSP+0.5*sqrt(0.25*Q2*Q2/(MASSP*MASSP)+Q2+massmu*massmu);
+  double EminH=omega;
+  if (EminH<1500.) EminH=1500.;
 //     cout << "EminH: " << EminH << endl;
-    numint::array<double,1> lowerH = {{EminH}};  
-    numint::array<double,1> upperH = {{10000.}};
-    
-    FH.f=int_hydr;
-    vector<double> avgcrossH(1,0.); 
-    unsigned count=0;
-    if(!fluxintegrator) numint::cube_romb(mdfH,lowerH,upperH,1.E-30,1.E-03,avgcrossH,count,0); //1.E-20,1.E-03
-    else numint::cube_adaptive(mdfH,lowerH,upperH,1.E-30,1.E-03,2E02,4E04,avgcrossH,count,0); 
-    
-  //   cout << "Crosssection H: " << Q2 << " " << avgcrossH[0]*1.E19*2.*PI << " [1E-39 cm2/GeV2]" <<  " "<< count << endl; //2pi because of integration over scattered lepton angle
-    cout << Q2 << " " << avgcrossH[0]*1.E19*2.*PI << endl;
-  }
-  exit(1);
+  numint::array<double,1> lowerH = {{EminH}};  
+  numint::array<double,1> upperH = {{10000.}};
   
-  //initialize object -- Carbon
+  FH.f=int_hydr;
+  vector<double> avgcrossH(2,0.); 
+  unsigned count=0;
+  if(!fluxintegrator) numint::cube_romb(mdfH,lowerH,upperH,1.E-30,1.E-03,avgcrossH,count,0); //1.E-20,1.E-03
+  else numint::cube_adaptive(mdfH,lowerH,upperH,1.E-30,1.E-03,2E02,4E04,avgcrossH,count,0); 
+  
+//   cout << "Crosssection H: " << Q2 << " " << avgcrossH[0]*1.E19*2.*PI << " [1E-39 cm2/GeV2]" <<  " "<< count << endl; //2pi because of integration over scattered lepton angle
+//   cout << Q2 << " " << avgcrossH[0]*1.E19*2.*PI << " " << avgcrossH[1]*1.E19*2.*PI  << endl;
+
+
+//RFG calculation
+  FtorRFG FRFG;
+  
+  FRFG.current=current;
+  FRFG.Q2=Q2;
+  FRFG.charged=charged;
+  
+  numint::mdfunction<numint::vector_d,2> mdfRFG;
+  mdfRFG.func = &FtorRFG::exec;
+  mdfRFG.param = &FRFG;
+
+  numint::array<double,2> lowerRFG = {{omega_low,Eoutmin}};
+  numint::array<double,2> upperRFG = {{omega_hi,Eoutmax}};
+  
+  FRFG.f=int_RFG;
+  vector<double> avgcrossRFG(2,0.); 
+  count=0;
+  if(!fluxintegrator) numint::cube_romb(mdfRFG,lowerRFG,upperRFG,1.E-30,1.E-03,avgcrossRFG,count,0); //1.E-20,1.E-03
+  else numint::cube_adaptive(mdfRFG,lowerRFG,upperRFG,1.E-30,1.E-03,2E02,4E04,avgcrossRFG,count,0); 
+  
+//   cout << "Crosssection H: " << Q2 << " " << avgcrossH[0]*1.E19*2.*PI << " [1E-39 cm2/GeV2]" <<  " "<< count << endl; //2pi because of integration over scattered lepton angle
+    cout << Q2*1.E-06 << " " << avgcrossH[0]*1.E19*2.*PI << " " << avgcrossH[1]*1.E19*2.*PI << " " << avgcrossRFG[0]*1.E19*2.*PI << " " << avgcrossRFG[1]*1.E19*2.*PI  << endl;
+  }
+
+  
+ /* //initialize object -- Carbon
   Ftor F;
   F.pNucleus = &Nucleus;
   F.current=current;
@@ -291,11 +332,11 @@ int main(int argc, char *argv[])
   mdf.param = &F;
 
 //unsigned neval = 0;
-  numint::array<double,3> lower = {{omega_low,min,Tmin+massmu}};
-  numint::array<double,3> upper = {{omega_hi,max,Tmax+massmu}};
+  numint::array<double,3> lower = {{omega_low,min,Eoutmin}};
+  numint::array<double,3> upper = {{omega_hi,max,Eoutmax}};
   
   F.f=adap_intPm;
-  unsigned count=0;
+  count=0;
   string stf=homedir+"/statefile/minerva";
   ostringstream qstr;
   qstr << Q2;
@@ -328,7 +369,7 @@ int main(int argc, char *argv[])
    
   //factor 2\pi because of integration over muon polar angle
   cout << "Crosssection C: " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " [1E-39 cm2/GeV2] " << count << " " << countt<< endl << endl;
-  
+ */ 
 //   cout << Q2 << " " << avgcross[0]*1.E19*2.*PI/Nucleus.getN()
 //   << " " << (avgcross[1]+2.*avgcrossH[0])*1.E19*2.*PI/(Nucleus.getZ()+2.) << " " 
 //   << avgcrossH[0]*1.E19*2.*PI << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " "  << count << " " << countt << endl;
@@ -401,7 +442,8 @@ void int_hydr(numint::vector_d & result, double E_in,
   double E_out=E_in-omega;
   
   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
-  double crossHanu=WeakQECross::getElWeakQECross(Q2,E_in,1,charged,1.03E03,1);
+  double crossHanu_p=WeakQECross::getElWeakQECross(Q2,E_in,1,charged,1.03E03,1);
+  double crossHanu_n=WeakQECross::getElWeakQECross(Q2,E_in,0,charged,1.03E03,1);
   
   //Jacobian is taken care of in the function above!  so code below is obsolete.
   
@@ -411,10 +453,34 @@ void int_hydr(numint::vector_d & result, double E_in,
 //	cout << "Jacobian H " << jcb << endl;
 //   crossHanu/=abs(jcb);
   
-  result=numint::vector_d(1,0.); 
-  result[0]=crossHanu*interpolate(Minerva_anu_flux,E_in,500,20,0);
+  result=numint::vector_d(2,0.); 
+  result[0]=crossHanu_p*interpolate(Minerva_anu_flux,E_in,500,20,0);
+  result[1]=crossHanu_n*interpolate(Minerva_nu_flux,E_in,500,20,0);
   delete lepton;
 } 
+
+
+void int_RFG(numint::vector_d & result, double omega,double E_out, double Q2,bool charged){
+    
+  result=numint::vector_d(2,0.);  
+  double E_in=omega+E_out;
+  if(E_in<1.5E03 || E_in>10.E03)  {return;}
+  double costhetamu=(-Q2-massmu*massmu+2.*E_in*E_out)/(2.*E_in*sqrt(E_out*E_out-massmu*massmu));
+  if(abs(costhetamu)>1.) {return;}
+  
+  TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
+  double kf=228.;
+  bool Pauli=1.;
+  double crossRFG_p=0,crossRFG_n=0.;
+  WeakQECross::getRFGWeakQECross(crossRFG_p,crossRFG_n,Q2, E_in, omega,kf,1,1.03E03,1,Pauli);
+//   cout << omega << " " << E_out << " " << crossRFG_p << " " << crossRFG_n << endl;
+  
+  result=numint::vector_d(2,0.); 
+  result[0]=crossRFG_p*interpolate(Minerva_anu_flux,E_in,500,20,0);
+  result[1]=crossRFG_n*interpolate(Minerva_nu_flux,E_in,500,20,0);
+  delete lepton;
+} 
+
 
 double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
 	      double E_in, double E_out, double costhetamu, int shell, double max_initial_nucl_mom, double min_final_nucl_mom){

@@ -20,9 +20,9 @@
  * 
  * The symmetry means we can seperate two integrations, greatly speeding up the calculation
  * The integration can be split up due to the fact that the density is phi independent, e.g.
- * \rho(\vec{b},z) = \rho(|\vec{b}|,z)
+ * \f$ \rho(\vec{b},z) = \rho(|\vec{b}|,z) \f$
  * hence the phi integration (angle between b' and b) can be integrated seperately from the 
- * integration over |\vec{b}| and z
+ * integration over \f$|\vec{b}| \f$ and z
  *
  * Typically an object that is an instance from this class is operated as follows.<BR>
  * 1. Initialize object with constructor OneGlauberGrid()<BR>

@@ -32,7 +32,7 @@ public:
   
   /*! Calculate He3 momentum distribution for a certain kinematics of the spectators
    * \param[in] kin LightconeKin2to3 object that has all the kinematics
-   * \return [MeV-4] momentum distribution S(ps1,ps2) times E_sp1_lab*E_sp2_lab, normed so that \int d3p1 d3p2 S(ps1,ps2) gives 1. 
+   * \return [MeV-4] momentum distribution S(ps1,ps2) times E_sp1_lab*E_sp2_lab, normed so that \f$ \int d3p1 d3p2 S(ps1,ps2) = 1 \f$. 
    */  
   double getDensity(LightConeKin2to3 &kin);
     /*! get the average cross section

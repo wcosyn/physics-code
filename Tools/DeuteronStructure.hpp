@@ -158,7 +158,7 @@ public:
    * \param[in] el electron kinematics, see TElectronKinematics
    * \param Einoff [MeV] off-shell energy of interacting nucleon
    */
-  double getLeptonSSA_sf(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const;
+  double getLeptonSSA_sf(TKinematics2to2 &kin, TElectronKinematics &el, double Einoff) const;
     
   const std::string & getName() const{return name;}
   

@@ -113,15 +113,15 @@ public:
    * \return distorted momentum distribution [MeV^-3]
    */
   double getMomDistrfsiLC(LightConeKin2to2 &kin);
-//   /*! Computes distorted momentum distribution for quasi-elastic production off deuteron
-//    * \param pvec vector of spectator momentum
-//    * \param nu virtual photon energy [MeV]
-//    * \param qvec virtual photon momentum [MeV]
-//    * \param s invariant mass of reaction [MeV^2]
-//    * \param massother mass of other particle involved in the FSI [MeV]
-//    * \return distorted momentum distribution [MeV^-3]
-//    */
-//   double getMomDistrfsi(TVector3 pvec, double nu, double qvec, double s, double massother);
+  /*! Computes distorted momentum distribution for quasi-elastic production off deuteron
+   * \param pvec vector of spectator momentum
+   * \param nu virtual photon energy [MeV]
+   * \param qvec virtual photon momentum [MeV]
+   * \param s invariant mass of reaction [MeV^2]
+   * \param massother mass of other particle involved in the FSI [MeV]
+   * \return distorted momentum distribution [MeV^-3]
+   */
+  double getMomDistrfsi(TVector3 pvec, double nu, double qvec, double s, double massother);
   /*! Set scattering parameters for FSI
    * \param sigmain total cross section [mb]
    * \param betain slope parameter [GeV^-2]
@@ -164,18 +164,18 @@ private:
    * \param ap variable parameter list
    */
   void totdens_qphi(const double qphi, std::complex<double>* result, va_list ap);
-//   /*! function that gets integrated over q_t (perpendicular to photon momentum)
-//    * \param qt [MeV] momentum transfer component perpendicular to photon momentum 
-//    * \param result result: contains fsi part of quasi-elastic momentum distribution
-//    * \param ap variable parameter list
-//    */
-//   void totdens_qt_simple(const double qt, std::complex<double>* result, va_list ap);
-//    /*! function that gets integrated over q_phi (perpendicular to photon momentum)
-//    * \param qphi [] azimuthal angle of momentum transfer in fsi perpendicular to photon momentum 
-//    * \param result result: contains fsi part of QE distorted momentum distribution
-//    * \param ap variable parameter list
-//    */
-//   void totdens_qphi_simple(const double qphi, std::complex<double>* result, va_list ap);
+  /*! function that gets integrated over q_t (perpendicular to photon momentum)
+   * \param qt [MeV] momentum transfer component perpendicular to photon momentum 
+   * \param result result: contains fsi part of quasi-elastic momentum distribution
+   * \param ap variable parameter list
+   */
+  void totdens_qt_simple(const double qt, std::complex<double>* result, va_list ap);
+   /*! function that gets integrated over q_phi (perpendicular to photon momentum)
+   * \param qphi [] azimuthal angle of momentum transfer in fsi perpendicular to photon momentum 
+   * \param result result: contains fsi part of QE distorted momentum distribution
+   * \param ap variable parameter list
+   */
+  void totdens_qphi_simple(const double qphi, std::complex<double>* result, va_list ap);
   /*! recursive method to find the pole in the fsi integration, longitudinal part,
    * also determines intermediate mass
    * \param pt [MeV] final transverse spectator momentum

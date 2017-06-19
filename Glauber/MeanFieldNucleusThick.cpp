@@ -44,7 +44,7 @@ MeanFieldNucleusThick::~MeanFieldNucleusThick(){
 /**
  * Construct the mean densities
  * note that these are normed to 1!
- * so $\int \textrm{d}^{2} \Omega \int \textrm{d} r^{2} \rho(r) = 1$
+ * so \f$ \int d^{2} \Omega \int \textrm{d} r^{2} \rho(r) = 1 \f$
  */
 void MeanFieldNucleusThick::constructDensity(){
   if(protondensity!=NULL||neutrondensity!=NULL||totaldensity!=NULL){

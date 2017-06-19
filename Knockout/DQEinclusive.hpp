@@ -44,15 +44,15 @@ public:
   /*! Calculates the plane-wave inclusive cross section, just the deuteron incl F_L structure function
    * \param Q2 [MeV^2] Q^2 of virtual photon
    * \param x [] bjorken x
-   * \param [out] pw [nb/GeV] born cross section d\sigma/dEdOmega [0]=direct term unpol, [1]=cross term unpol, [2]=direct term tensor pol, [3]= crossed term tensor pol
+   * \param [out] pw [nb/GeV] born cross section \f$ d\sigma/dEdOmega \f$ [0]=direct term unpol, [1]=cross term unpol, [2]=direct term tensor pol, [3]= crossed term tensor pol
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param integrator selects type of integrator [0=adaptive cubature from MIT lib, 1=Cuhre from cuba lib, 2=suave from cuba lib,
    * 3=vegas from cuba lib, 4=divonne from cuba lib]
    * \param thetapol [rad] angle between q and beam
    */
-  void calc_Crossinc(std::vector<double>& pw, double Q2,double x, int current, int integrator, double thetpol);
-  /*! Calculates the fsi (on and off) inclusive cross section d\sigma/dEdOmega
-   * \param [out] fsi [nb/GeV] inclusive fsi cross section d\sigma/dEdOmega
+  void calc_Crossinc(std::vector<double>& pw, double Q2,double x, int current, int integrator, double thetapol);
+  /*! Calculates the fsi (on and off) inclusive cross section \f$ d\sigma/dEdOmega \f$
+   * \param [out] fsi [nb/GeV] inclusive fsi cross section \f$ d\sigma/dEdOmega \f$
    * [0]=direct on-shell unpolarized
    * [1]=crossed on-shell unpolarized
    * [2]=direct off-shell unpolarized
@@ -238,6 +238,7 @@ private:
     * \param x [] Bjorken x
     * \param tanhalfth2 [] squared tan half angle of scattering electron
     * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+    * \param nopt [1] include transverse momentum in the pole evaluation [0] or not
      * \param thetapol [rad] angle between q and beam
    */
   static void FSI_PV(numint::vector_d & results, double pperp, double qt, 

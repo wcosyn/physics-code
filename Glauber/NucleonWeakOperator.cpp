@@ -14,12 +14,12 @@ NucleonWeakOperator::NucleonWeakOperator(){
 NucleonWeakOperator::NucleonWeakOperator(const double q2, const bool prot, const int para, const bool charge,
 					 const double M_A_in, const double r_s2_in, const double mu_s_in, const double gA_s_in):
 NucleonEMOperator(q2,prot,para),charged(charge),M_A(M_A_in),r_s2(r_s2_in),mu_s(mu_s_in),gA_s(gA_s_in),isopartner(q2,!prot,para){
+  if(charged) tau=Q2/4./MASSP/MASSN;
   setGA_weak();
   setF1_weak();
   setF2_weak();
   setGE_weak();
   setGM_weak();
-  if(charged) tau=Q2/4./MASSP/MASSN;
 }
 
 NucleonWeakOperator::~NucleonWeakOperator(){
@@ -142,7 +142,7 @@ switch(current){
 
 
 FourVector<GammaStructure> NucleonWeakOperator::getAxial(const FourVector<double> &q) const{
- return +getGA_weak()*gamma_5mu-getGP_weak()*gamma_5*q; //-gamma^mu*gamma5G_A - q^mu gamma5 GP
+ return +getGA_weak()*gamma_5mu-getGP_weak()/(2.*sqrt(MASSP*MASSN))*gamma_5*q; //-gamma^mu*gamma5G_A - q^mu gamma5 GP
 }
 
 
@@ -153,14 +153,14 @@ double NucleonWeakOperator::Get_dipole_mass(const double Q2, const double M) con
 }
 
 void NucleonWeakOperator::setGA_weak(){
-  double gA_null=1.262;
+  double gA_null=1.2695;
   if(charged){
     GA_weak=gA_null*Get_dipole_mass(Q2,M_A);
   }
   else
     GA_weak=(-gA_s+(proton? 1.:-1.)*gA_null)*0.5*Get_dipole_mass(Q2,M_A);
   //G_P should not contribute for neutral currents (prop to lepton mass)
-  GP_weak=2.*(proton? MASSP:MASSN)*GA_weak/(MASSPI*MASSPI+Q2)*(1.-MASSPI*MASSPI/(M_A*M_A)); 
+  GP_weak=4.*MASSP*MASSN*GA_weak/(MASSPI*MASSPI+Q2)*(1.-MASSPI*MASSPI/(M_A*M_A)); 
 
 }
 
