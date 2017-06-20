@@ -121,7 +121,7 @@ void WeakQEHadronCurrent::getMatrixEl(TKinematics2to2 &tk, Matrix<2,4> & matrixe
   J= new NucleonWeakOperator(tk.GetQsquared(),proton,0,charged,M_A,r_s2,mu_s,gA_s);
   //in fastparticle outgoing nucleon (0=proton,1=neutron)!! changes for CC
   if(!pw){
-    FastParticle nucleon(charged?proton:!proton, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+    FastParticle nucleon(charged?proton:!proton, 0, tk.GetPYlab(),0.,0.,1.,0.,homedir);  //we ignore CT effects, so just put the hardscale to 1. GeV^2 here...
     if(getUsersigma()) nucleon.setScreening(getSigmascreening());
     if(enable_ROMEA) grid=&romgrid;
     else{
@@ -213,7 +213,7 @@ void WeakQEHadronCurrent::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,4> *m
   shell=shellindex;
   mm=m;
   J= new NucleonWeakOperator(tk.GetQsquared(),proton,0,charged,M_A,r_s2,mu_s,gA_s);
-  FastParticle nucleon(charged?proton:!proton, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+  FastParticle nucleon(charged?proton:!proton, 0, tk.GetPYlab(),0.,0.,1.,0.,homedir);//ignore hard scale again, just put equal to 1.
   if(getUsersigma()) nucleon.setScreening(getSigmascreening());
   //careful!! we compute in a frame with p_f along z-axis, so have to rotate the photon polarization 4-vectors!
   FourVector<std::complex<double> > polVectorPlus = FourVector< complex<double> >(0.,
@@ -296,7 +296,7 @@ void WeakQEHadronCurrent::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,4> *matri
   shell=shellindex;
   mm=m;
   J= new NucleonWeakOperator(tk.GetQsquared(),proton,0,charged,M_A,r_s2,mu_s,gA_s);
-  FastParticle nucleon(charged?proton:!proton, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+  FastParticle nucleon(charged?proton:!proton, 0, tk.GetPYlab(),0.,0.,1.,0.,homedir);//ignore hard scale again, just put equal to 1.
   if(getUsersigma()) nucleon.setScreening(getSigmascreening());
   
   if(thick) grid = &gridthick;
