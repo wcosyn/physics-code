@@ -8,7 +8,7 @@
 VERSION =	
 
 #		Calc-path
-CPATH 	=	.
+HOME 	=	/home/wim/Code/trunk
 
 #		C compilation...
 #  CC      = 	icpc
@@ -29,9 +29,9 @@ CFLAGS	=	$(OPTFLAG) $(WFLAG) #$(DBGFLAG) #$(GPFLAG)  #$(STATIC)
 LIBS =	 	-lm
 WIMLIBS = -lMePhys -lGlauber -lKnockout -lIntegrator -lcuba
 ROOT =		`root-config --cflags --glibs` -lMathMore `gsl-config --cflags --libs`  
- LIBDIRS = -L$(HOME)/Code/trunk/lib
- INCLUDEDIRS =  -I$(HOME)/Code/trunk/Integrator -I$(HOME)/Code/trunk/Tools  -I$(HOME)/Code/trunk/Glauber -I $(HOME)/Code/trunk/Knockout
-STATICLIBS =  $(HOME)/Code/trunk/lib/libKnockout.a  $(HOME)/Code/trunk/lib/libGlauber.a  $(HOME)/Code/trunk/lib/libMePhys.a   $(HOME)/Code/trunk/lib/libIntegrator.a   
+ LIBDIRS = -L$(HOME)/lib
+ INCLUDEDIRS =  -I$(HOME)/Integrator -I$(HOME)/Tools  -I$(HOME)/Glauber -I $(HOME)/Knockout
+STATICLIBS =  $(HOME)/lib/libKnockout.a  $(HOME)/lib/libGlauber.a  $(HOME)/lib/libMePhys.a   $(HOME)/lib/libIntegrator.a   
 
 
 #		Header files
@@ -45,7 +45,7 @@ HDRS =
 
 #-------------------------------------------------------------------------
 #		Executable file
-EFILE   = 	../../bin/minerva ../../bin/crosstest ../../bin/minibooneQ2 
+EFILE   = 	../../bin/minerva ../../bin/crosstest ../../bin/minibooneQ2 ../../bin/minibooneQ2QE
 
 #		Targets...
 
