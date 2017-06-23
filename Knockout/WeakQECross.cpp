@@ -42,7 +42,7 @@ WeakQECross::~WeakQECross(){
   
 }
 
-double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, bool Q2diff){
+double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, int Q2diff){
 
   double massin=(proton?MASSP:MASSN);
   double massout=(charged?(proton?MASSN:MASSP):(proton?MASSP:MASSN));
@@ -51,11 +51,11 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
   
   double omega=0.5*(massout*massout-massin*massin+Q2)/massin;
   double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
-  double Q2overkk=Q2/qvec/qvec;
+  double Q2overp_out=Q2/qvec/qvec;
   double E_out=E_in-omega;
   double Q=sqrt(Q2);
   double cross=0.;
-  //double Q2overkk=Q2/qvec/qvec;
+  //double Q2overp_out=Q2/qvec/qvec;
   //double tan2=electron.GetTan2HalfAngle(kin);
 
   int numb_of_resp=5;
@@ -67,7 +67,7 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
   if(charged){
   
     double leptonmass2=TLeptonKinematics::massmu*TLeptonKinematics::massmu;
-    double kk=sqrt(E_out*E_out-leptonmass2);
+    double p_out=sqrt(E_out*E_out-leptonmass2);
     double delta2=leptonmass2/abs(Q2);
     double rho=abs(Q2)/(qvec*qvec);  
     double rrho=qvec/(E_in+E_out);                
@@ -127,7 +127,7 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
     //check between explicit calculation and shortcut formulas of G. Megias thesis.  Careful to distinguish between vector and axial currents 
     //small differences because of nucleon masses (not taken equal etc.)
     //purely vector check VV
-/*    cout << response[0] << " " << 1./Q2overkk*pow(J.getGE_weak(),2.) << endl;
+/*    cout << response[0] << " " << 1./Q2overp_out*pow(J.getGE_weak(),2.) << endl;
     cout << response[3] << " " << Q2/2./massin/massout*pow(J.getGM_weak(),2.) << endl << endl;
     
     //purely axial check AA
@@ -141,7 +141,7 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
     cout << endl << endl;
     cout << J.getGA_weak() << " " << sqrt(GA2prime) << endl;
  */   
-    cross=(kinfactors2[0]-2.*omega/qvec*kinfactors2[1]+pow(omega/qvec,2.)*kinfactors2[2])* 1./Q2overkk*pow(J.getGE_weak(),2.)  //V_L W^00 [[G. Megias thesis 2.118]]
+    cross=(kinfactors2[0]-2.*omega/qvec*kinfactors2[1]+pow(omega/qvec,2.)*kinfactors2[2])* 1./Q2overp_out*pow(J.getGE_weak(),2.)  //V_L W^00 [[G. Megias thesis 2.118]]
           +kinfactors2[3]*(Q2/2./massin/massout*pow(J.getGM_weak(),2.)+2.*(1+Q2/4./massin/massout)*pow(J.getGA_weak(),2.)) //V_TT (R_VV_TT + R_AA_TT)
           +(proton?+1.:-1.)*kinfactors2[4]*(-4.*qvec/2./sqrt(massin*massout)*J.getGM_weak()*J.getGA_weak()) // hv_T' R_va_T'
           +(kinfactors2[0]-2.*qvec/omega*kinfactors2[1]+pow(qvec/omega,2.)*kinfactors2[2])*omega/2./sqrt(massin*massout)*GA2prime;
@@ -163,10 +163,22 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
 //     cross2*=HBARC*HBARC;
 //     cout << cross << " " << cross2 << " " << (Q2/M_W/M_W+1.) << endl;
     
-    // cout<<"Factors "<<kk<<" "<<E_out<<" "<<cos(atan(sqrt(tan2theta)))<<" "<<cos(atan(sqrt(tan2theta)))<<endl;*/
+    // cout<<"Factors "<<p_out<<" "<<E_out<<" "<<cos(atan(sqrt(tan2theta)))<<" "<<cos(atan(sqrt(tan2theta)))<<endl;*/
 
-    if(Q2diff) cross/=abs(2.*kk*kk*E_in*massin/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/kk*E_out-(massin+E_in)*kk)); // Jacobian to d\sigma/dQ^2
-//     cout << kk << " " << E_in << " " << E_out << " " << massin << " " << (1.-(Q2+leptonmass2)/(2.*E_in*E_out))/kk*E_out << endl;
+    if(Q2diff==1) cross/=abs(2.*p_out*p_out*E_in*massin/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out-(massin+E_in)*p_out)); // Jacobian to d\sigma/dQ^2
+    
+    if(Q2diff==2){ //jacobian to d\sigma\dQ^2_QE
+      double masss=massin-34.;
+      double EnuQE=(2.*masss*E_out-(masss*masss+leptonmass2-massout*massout))/2./(masss-E_out*(1-massfactor*costhl));
+      double dEmu_over_dcosmu = E_in*p_out*p_out/(p_out*(E_in+massin)-costhl*E_out*E_in);
+      double dEnuQE=masss*dEmu_over_dcosmu/(masss-E_out+p_out*costhl) - EnuQE/(masss-E_out+p_out*costhl)*((E_out/p_out*costhl-1.)*dEmu_over_dcosmu + p_out);
+      double Jac=2.*EnuQE*((1.-E_out/p_out*costhl)*dEmu_over_dcosmu-p_out) +2.*(E_out-p_out*costhl)*dEnuQE;
+//       cout << "elfun " << EnuQE << " " << costhl << " " << E_out << " " << E_in << " " << omega << endl;
+//       cout << Jac << " " << 2.*p_out*p_out*E_in*massin/(E_in*E_out*costhl-(massin+E_in)*p_out) << endl;
+      cross/=abs(Jac);
+    }
+    
+//     cout << p_out << " " << E_in << " " << E_out << " " << massin << " " << (1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out << endl;
   }
 
  
@@ -183,7 +195,7 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
 }
 
 
-void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2, double E_in, double omega, double k_Fermi, bool charged, double M_A, bool Q2diff, bool Pauli_blocking){
+void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2, double E_in, double omega, double k_Fermi, bool charged, double M_A, int Q2diff, bool Pauli_blocking){
 
   double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
   double Q2overkk=Q2/qvec/qvec;
@@ -246,6 +258,7 @@ void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2,
    
     
     double costhl=(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/massfactor;
+    if(abs(abs(costhl)-1.)<1.E-09) {  costhl=1.;} //underflow protection
     double sinthl=sqrt(1.-costhl*costhl);
   
     kinfactors[0]=1.+massfactor*costhl+2.*leptonmass2*omega/E_out/M_W/M_W
@@ -282,17 +295,27 @@ void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2,
           +kinfactors[3]*(UT_V+UT_A);
     presult = cross-kinfactors[4]*UTprime; 
     nresult = cross+kinfactors[4]*UTprime; 
-          
     presult*=massfactor*pow(G_FERMI*COS_CAB*E_out/(Q2/M_W/M_W+1.)/PI/2.,2.); //sigma mott-like part
     nresult*=massfactor*pow(G_FERMI*COS_CAB*E_out/(Q2/M_W/M_W+1.)/PI/2.,2.); //sigma mott-like part
     
     presult*=HBARC*HBARC*totscaling; // to units fm^2.
     nresult*=HBARC*HBARC*totscaling; // to units fm^2.
 
-    if(Q2diff){ 
-      presult/=abs(2.*p_out*p_out*E_in*MASSP/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out-(MASSP+E_in)*p_out)); // Jacobian to d\sigma/dQ^2
-      nresult/=abs(2.*p_out*p_out*E_in*MASSN/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out-(MASSN+E_in)*p_out)); // Jacobian to d\sigma/dQ^2
+    if(Q2diff==1){ 
+      presult/=2.*E_in*p_out; // Jacobian to d\sigma/dQ^2
+      nresult/=2.*E_in*p_out; // Jacobian to d\sigma/dQ^2
     }
+    if(Q2diff==2){
+      double massin=MASSn-34.;
+      double massout=MASSn;
+      double EnuQE=(2.*massin*E_out-(massin*massin+leptonmass2-massout*massout))/2./(massin-E_out*(1-massfactor*costhl));
+      double Q2QE=-leptonmass2+2.*EnuQE*(E_out-p_out*costhl);
+      double Jac = -2.*EnuQE*p_out*massin/(massin-E_out+p_out*costhl);
+//       cout << Jac << " " << -2.*E_in*p_out << endl;
+      presult/=abs(Jac);
+      nresult/=abs(Jac);
+    }
+ 
   }
 
  
