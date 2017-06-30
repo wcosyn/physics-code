@@ -9,6 +9,7 @@
 #include <constants.hpp>
 #include <GammaStructure.h>
 #include <NucleonWeakOperator.hpp>
+#include <Utilfunctions.hpp>
 
 using namespace std;
 
@@ -47,7 +48,7 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
   double massin=(proton?MASSP:MASSN);
   double massout=(charged?(proton?MASSN:MASSP):(proton?MASSP:MASSN));
   
-//   massin=massout=MASSn;
+  if(Q2diff==2) massin=massout=MASSn;
   
   double omega=0.5*(massout*massout-massin*massin+Q2)/massin;
   double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
@@ -78,6 +79,8 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
     
     
     double costhl=(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/massfactor;
+    if(abs(costhl)>1.) return 0.;
+    if(abs(abs(costhl)-1.)<1.E-09) {  costhl=1.*SIGN(costhl);} //underflow protection
     double sinthl=sqrt(1.-costhl*costhl);
 
 //     kinfactors[0]=1.-delta2*tan2theta;
@@ -173,12 +176,15 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
       double dEmu_over_dcosmu = E_in*p_out*p_out/(p_out*(E_in+massin)-costhl*E_out*E_in);
       double dEnuQE=masss*dEmu_over_dcosmu/(masss-E_out+p_out*costhl) - EnuQE/(masss-E_out+p_out*costhl)*((E_out/p_out*costhl-1.)*dEmu_over_dcosmu + p_out);
       double Jac=2.*EnuQE*((1.-E_out/p_out*costhl)*dEmu_over_dcosmu-p_out) +2.*(E_out-p_out*costhl)*dEnuQE;
-//       cout << "elfun " << EnuQE << " " << costhl << " " << E_out << " " << E_in << " " << omega << endl;
+//        cout << "elfun " << EnuQE << " " << costhl << " " << E_out << " " << E_in << " " << omega << endl;
 //       cout << Jac << " " << 2.*p_out*p_out*E_in*massin/(E_in*E_out*costhl-(massin+E_in)*p_out) << endl;
       cross/=abs(Jac);
+
     }
-    
 //     cout << p_out << " " << E_in << " " << E_out << " " << massin << " " << (1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out << endl;
+//     if(isnan(cross)){ cout << costhl << " " << abs(2.*p_out*p_out*E_in*massin/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out-(massin+E_in)*p_out)) << endl;
+//       for(int i=0;i<5;i++) cout << kinfactors2[i] << endl;
+//     }
   }
 
  
@@ -258,7 +264,7 @@ void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2,
    
     
     double costhl=(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/massfactor;
-    if(abs(abs(costhl)-1.)<1.E-09) {  costhl=1.;} //underflow protection
+    if(abs(abs(costhl)-1.)<1.E-09) {  costhl=1.*SIGN(costhl);} //underflow protection
     double sinthl=sqrt(1.-costhl*costhl);
   
     kinfactors[0]=1.+massfactor*costhl+2.*leptonmass2*omega/E_out/M_W/M_W
