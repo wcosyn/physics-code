@@ -1,3 +1,9 @@
+//We calculate the single differential dsigma/dQ2_QE cross sections for free nucleon, RFG, carbon.
+//Q2_QE is the experimental Q2 that is used to obtain a Q2 from a T_mu cos_mu event.  This gives rise to nasty jacobians that need to be taken into account
+
+
+//run like minibooneQ2QE Q2QE [GeV^2] fluxintegrator [see l595 for options] max initial momentum [MeV] min initial momentum [MeV] plane wave or not [bool] ROMEA in fsi [bool] sharedir [str] 
+ 
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
@@ -379,7 +385,7 @@ int main(int argc, char *argv[])
   double max=-1.,min=1.; //overall min and max center of mass cosine theta angles
   double E_out_max=0;
   double E_out_min=10000;
-  double E_low=15000;
+  double E_low=3000;
   double E_high=0;
   double omega_low=3.E03;
   double omega_hi=0.;
@@ -595,8 +601,8 @@ int main(int argc, char *argv[])
            (stf+"divonne").c_str(),nregions, countt, fail, avgcross,err,prob );
   
   //factor 2\pi because of integration over muon polar angle
-  cout << Q2QE*1.E-6 << " " << avgcross[0]*1.E19*2.*PI/Nucleus.getN()
-  << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " " << count << endl;
+  cout << Q2QE*1.E-6 << " " << avgcrossH[0]*1.E19*2.*PI << " " << avgcrossH[1]*1.E19*2.*PI << " " << avgcrossRFG[0]*1.E19*2.*PI << " " << avgcrossRFG[1]*1.E19*2.*PI << " " <<  
+    avgcross[0]*1.E19*2.*PI/Nucleus.getN() << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " " << count << endl;
 
 }
 
@@ -620,7 +626,7 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
   if(abs(costhetamu)<=1.) {
     
     double Q2=-massmu*massmu+2.*E_in*(E_out-p_out*costhetamu);  //this is the real Q2
-    cout << Q2 << " " << Q2QE << endl;
+//     cout << Q2 << " " << Q2QE << endl;
     TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
     WeakQECross pobs(lepton,&nucleus,prec,integrator,homedir,charged,1.03E03,screening,0.);  
     
