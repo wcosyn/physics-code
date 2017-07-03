@@ -271,7 +271,7 @@ struct Ftor {  //Carbon
   static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
     Ftor &p = * (Ftor *) param;
     p.f(ret,x[0],x[1],x[2],*p.pNucleus,p.current,p.cthmax,p.Q2,
-        p.prec,p.integrator,p.homedir,p.maxEval,p.charged,p.screening,
+        p.prec,p.integrator,p.homedir,p.maxEval,p.charged,p.screening,p.enable_romea,
         p.max_initial_nucl_mom,p.min_final_nucl_mom,p.pw
        );
   }
@@ -285,13 +285,14 @@ struct Ftor {  //Carbon
   int maxEval;
   bool charged;
   bool screening;
+  bool enable_romea;
   double max_initial_nucl_mom;
   double min_final_nucl_mom;
   int pw;
   int maxEvalweakamp;
   void (*f)(numint::vector_d &, double E_omega, double costhetacm, double E_in, 
             MeanFieldNucleusThick &pNucleus, int current, double *cthmax, double Q2,
-            double prec, int integrator, string homedir, int maxEval, bool charged, bool screening,
+            double prec, int integrator, string homedir, int maxEval, bool charged, bool screening, bool enable_romea,
             double max_initial_nucl_mom, double min_final_nucl_mom, int pw
            );
 
@@ -343,7 +344,7 @@ double getMax(double &high, double &low, MeanFieldNucleusThick &nucleus, TLepton
 // integration over missing momentum + over T_mu(=E_out+C)
 void adap_intPm(numint::vector_d &, double omega, double costhetacm, double E_in,
 		            MeanFieldNucleusThick &pNucleus,int current, double *cthmax, double Q2,
-		            double prec, int integrator, string homedir, int maxEval, bool charged, bool screening,
+		            double prec, int integrator, string homedir, int maxEval, bool charged, bool screening, bool enable_romea,
                             double max_initial_nucl_mom, double min_final_nucl_mom, int pw
                );
 
@@ -365,7 +366,8 @@ int main(int argc, char *argv[])
   double max_initial_nucl_mom=atof(argv[3]);
   double min_final_nucl_mom=atof(argv[4]);
   int pw=atoi(argv[5]); //1 is plane-wave, 0 is with FSI
-  bool Pauli = atoi(argv[6]);
+  bool Pauli = 1;
+  bool enable_romea = atoi(argv[6]);
   
   string homedir=argv[7];   //"/home/wim/Code/share";
 
@@ -465,7 +467,7 @@ int main(int argc, char *argv[])
   }  
   if(E_high>3.E03) E_high=3.E03;
   if(E_low>E_high) E_low=E_high;
-  for(int i=0;shell<Nucleus.getTotalLevels();shell++) {
+  for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
     cthmax[shell]=1.;cthmin[shell]=-1.;
   }
   max=1.;min=-1.;
@@ -550,6 +552,7 @@ int main(int argc, char *argv[])
   F.maxEval=maxEval;
   F.charged=charged;
   F.screening=screening;
+  F.enable_romea = enable_romea;
   F.min_final_nucl_mom=min_final_nucl_mom;
   F.max_initial_nucl_mom=max_initial_nucl_mom;
   F.pw=pw;
@@ -599,7 +602,8 @@ int main(int argc, char *argv[])
 //integrandum
 void adap_intPm(numint::vector_d & results, double omega, double costhetacm, double E_in,
 	 MeanFieldNucleusThick &nucleus, int current, double *cthmax, double Q2,
-	 double prec, int integrator, string homedir, int maxEval, bool charged, bool screening, double max_initial_nucl_mom, 
+	 double prec, int integrator, string homedir, int maxEval, bool charged, bool screening,
+         bool enable_romea, double max_initial_nucl_mom, 
                 double min_final_nucl_mom, int pw){	  
 
   results=numint::vector_d(2,0.);
@@ -610,7 +614,7 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
   if(abs(costhetamu)<=1. /*&& omega>0*/) {
       
     TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
-    WeakQECross pobs(lepton,&nucleus,prec,integrator,homedir,charged,1.03E03,screening,0.);  
+    WeakQECross pobs(lepton,&nucleus,prec,integrator,homedir,charged,1.03E03,screening,enable_romea);  
     
 
     for(int shell=0;shell<nucleus.getTotalLevels();shell++) {
