@@ -465,6 +465,15 @@ int main(int argc, char *argv[])
   }  
   if(E_high>3.E03) E_high=3.E03;
   if(E_low>E_high) E_low=E_high;
+  for(int i=0;shell<Nucleus.getTotalLevels();shell++) {
+    cthmax[shell]=1.;cthmin[shell]=-1.;
+  }
+  max=1.;min=-1.;
+  omega_low=1.E-03;
+  omega_hi=3.E03-massmu-1.E-03;
+  E_low=1.E-03;
+  E_high=3.E03;
+  
 //   cout << endl;
 //   cout << "min=" << min << "   max=" << max << endl;
 //   cout << "Eoutmin=" << E_out_min << "  Eoutmax=" << E_out_max << endl;
