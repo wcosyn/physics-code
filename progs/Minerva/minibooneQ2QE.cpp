@@ -375,6 +375,7 @@ int main(int argc, char *argv[])
   int pw=atoi(argv[5]); //1 is plane-wave, 0 is with FSI
   bool Pauli = 1;
   bool enable_romea = atoi(argv[6]);
+  if(pw==1) enable_ROMEA=0; //no FSI if calculating the pw cross section...
   
   string homedir=argv[7];   //"/home/wim/Code/share";
 
