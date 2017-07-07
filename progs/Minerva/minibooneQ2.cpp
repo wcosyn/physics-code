@@ -356,7 +356,7 @@ int main(int argc, char *argv[])
 //   double costhetamu; //=atof(argv[1]);
   bool screening=0;//atoi(argv[4]);
   int nucleus=1;//atoi(argv[6]);                     
-  double prec=1.E-05;//atof(argv[7]);   //1.E-5
+  double prec=1.E-04;//atof(argv[7]);   //1.E-5
   int integrator=2;//
   int fluxintegrator=atoi(argv[2]);
 //int thick=0;//atoi(argv[9]);

@@ -363,7 +363,7 @@ int main(int argc, char *argv[])
 //   double costhetamu; //=atof(argv[1]);
   bool screening=0;//atoi(argv[4]);
   int nucleus=1;//atoi(argv[6]);                     
-  double prec=1.E-05;//atof(argv[7]);   //1.E-5
+  double prec=1.E-04;//atof(argv[7]);   //1.E-5
   int integrator=2;//
   int fluxintegrator=atoi(argv[2]);
 //int thick=0;//atoi(argv[9]);
@@ -489,16 +489,16 @@ int main(int argc, char *argv[])
   }  
   if(E_high>3.E03) E_high=3.E03;
   if(E_low>E_high) E_low=E_high;
-//   cout << endl;
-//   cout << "min=" << min << "   max=" << max << endl;
-//   cout << "Eoutmin=" << E_out_min << "  Eoutmax=" << E_out_max << endl;
-//   cout << "omega_low=" << omega_low << " " << "  omega_high=" << omega_hi << endl;
-//   cout << "E_low=" << E_low << "  E_high=" << E_high << endl << endl;
-// 
-//   cout << "E_muH_low=" << E_muH_low << "  E_muH_hi=" << E_muH_hi << endl << endl;
-//   
-//   cout << "E_RFG_out_min=" << E_RFG_out_min << "  E_RFG_out_max=" << E_RFG_out_max << endl;
-//   cout << "omega_RFG_low=" << omega_RFG_low <<"  omega_RFG_hi=" << omega_RFG_hi << endl << endl;
+  cout << endl;
+  cout << "min=" << min << "   max=" << max << endl;
+  cout << "Eoutmin=" << E_out_min << "  Eoutmax=" << E_out_max << endl;
+  cout << "omega_low=" << omega_low << " " << "  omega_high=" << omega_hi << endl;
+  cout << "E_low=" << E_low << "  E_high=" << E_high << endl << endl;
+
+  cout << "E_muH_low=" << E_muH_low << "  E_muH_hi=" << E_muH_hi << endl << endl;
+  
+  cout << "E_RFG_out_min=" << E_RFG_out_min << "  E_RFG_out_max=" << E_RFG_out_max << endl;
+  cout << "omega_RFG_low=" << omega_RFG_low <<"  omega_RFG_hi=" << omega_RFG_hi << endl << endl;
 //   E_muH_low=massmu+1.E-03;
 //   E_muH_hi=3.E03;
 //   omega_RFG_hi=3.E03-massmu-1.E-03;
