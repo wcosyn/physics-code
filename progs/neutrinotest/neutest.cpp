@@ -272,12 +272,66 @@ const double MiniBooNE_neut_flux_norm[] = {
 };
 
 
+double Minerva_nu_flux[] = {
+2.57268e-06,
+6.5321e-06,
+1.69721e-05,
+2.51453e-05,
+3.31235e-05,
+4.07319e-05,
+4.27611e-05,
+3.41954e-05,
+2.04086e-05,
+1.10596e-05,
+6.78507e-06,
+4.86896e-06,
+3.94903e-06,
+3.34018e-06,
+2.90956e-06,
+2.5465e-06,
+2.28787e-06,
+2.04961e-06,
+1.85345e-06,
+1.69827e-06,
+};
+
+double Minerva_anu_flux[] = {
+2.32864e-06,
+6.25619e-06,
+1.60002e-05,
+2.295e-05,
+2.99316e-05,
+3.61717e-05,
+3.64453e-05,
+2.82484e-05,
+1.62189e-05,
+8.36204e-06,
+4.95442e-06,
+3.39086e-06,
+2.56585e-06,
+2.08784e-06,
+1.74572e-06,
+1.46005e-06,
+1.2336e-06,
+1.07991e-06,
+9.67436e-07,
+8.7012e-07,
+};
+
+void normalize(double flux[], double dx){
+  double sum=0;
+  for(int i=0;i<20;i++) sum+=flux[i]*dx;
+  for(int i=0;i<20;i++) flux[i]/=sum;
+  };
+
+
   //integration struct
 struct Ftor {
 
   static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
     Ftor &p = * (Ftor *) param;
-    p.f(ret,x[0],x[1],*p.pObs,*p.pNucleus,*p.lepton,p.E_out,p.costhetamu,p.current,p.cthmax,p.max_initial_nucl_mom,p.min_final_nucl_mom,p.pw,p.maxEvalweakamp);
+    p.f(ret,x[0],x[1],*p.pObs,*p.pNucleus,*p.lepton,p.E_out,p.costhetamu,p.current,p.cthmax,
+        p.max_initial_nucl_mom,p.min_final_nucl_mom,p.pw,p.maxEvalweakamp,p.exp);
   }
   WeakQECross *pObs;
   MeanFieldNucleusThick *pNucleus;
@@ -290,9 +344,11 @@ struct Ftor {
   double min_final_nucl_mom;
   int pw;
   int maxEvalweakamp;
+  string exp;
   void (*f)(numint::vector_d &, double Ein, double costhetacm,
 	    WeakQECross& pObs, MeanFieldNucleusThick &pNucleus, TLeptonKinematics &lepton,
-	double E_out, double costhetamu, int current, double *cthmax, double max_initial_nucl_mom, double min_final_nucl_mom, int pw, int maxEvalweakamp);
+	double E_out, double costhetamu, int current, double *cthmax, double max_initial_nucl_mom, double min_final_nucl_mom,
+        int pw, int maxEvalweakamp, string exp);
 
 };
 
@@ -308,7 +364,8 @@ double getMax(double &high, double &low, MeanFieldNucleusThick &nucleus, TLepton
 // integration over missing momentum
 void adap_intPm(numint::vector_d &, double E_in, double costhetacm,
 		WeakQECross& pObs, MeanFieldNucleusThick &pNucleus, TLeptonKinematics &lepton,
-		double E_out, double costhetamu, int current, double *cthmax, double max_initial_nucl_mom, double min_final_nucl_mom, int pw, int maxEvalweakamp);
+		double E_out, double costhetamu, int current, double *cthmax, double max_initial_nucl_mom, 
+                double min_final_nucl_mom, int pw, int maxEvalweakamp, string exp);
 
 
 int main(int argc, char *argv[])
@@ -334,7 +391,8 @@ int main(int argc, char *argv[])
   
 //   double omega=Q2/(2.*MASSP*Bjx);
   
-  string homedir=argv[9];//"/home/wim/Code/share";
+  string exp=argv[9]; //"miniboone" "minerva" "t2k"
+  string homedir=argv[10];//"/home/wim/Code/share";
 
   MeanFieldNucleusThick Nucleus(nucleus,homedir);
   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithCosScatterAngle(TLeptonKinematics::muon,costhetamu); 
@@ -350,11 +408,23 @@ int main(int argc, char *argv[])
   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cthmax[shell]=-1.;cthmin[shell]=1.;}
   double max=-1.,min=1.; //overall min and max center of mass cosine theta angles
 
+  double minbeam=0., maxbeam=0.; //different beam energy intervals for the different experiments
+  
+  if(!exp.compare("miniboone")) { maxbeam=3.E03;}
+  if(!exp.compare("minerva")) { 
+    minbeam=1.5E03; 
+    maxbeam=10.E03;
+    normalize(Minerva_nu_flux,500);
+    normalize(Minerva_anu_flux,500);
+  }
+  
+  if(!exp.compare("t2k")) { }  //still to implement!
+    
   //find reasonable integration limits
   double E_low=E_out;
   double E_high=0.;
   for(int i=1;i<1000;i++){
-    double E_in=E_out+(3.E03-E_out)*0.001*i; //possible incoming lepton energies, start from lowest value up to max incoming
+    double E_in=E_out+(maxbeam-E_out)*0.001*i; //possible incoming lepton energies, start from lowest value up to max incoming
     double omega=E_in-E_out;
     double Q2=2.*E_in*E_out*(1.-sqrt(1.-lepton->GetLeptonMass()*lepton->GetLeptonMass()/(E_out*E_out))*costhetamu)
 	-lepton->GetLeptonMass()*lepton->GetLeptonMass();
@@ -381,6 +451,8 @@ int main(int argc, char *argv[])
       }
     }
   }
+  if(E_low<minbeam) E_low=minbeam;
+  if(E_high>maxbeam) E_high=maxbeam;
   cout << E_low << " " << E_high << " " << min << " " << max << endl;
   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cout << shell << " " << cthmax[shell] << " " << cthmin[shell] << endl;}
   cout << endl << endl << endl;
@@ -440,6 +512,7 @@ int main(int argc, char *argv[])
   F.max_initial_nucl_mom=max_initial_nucl_mom;
   F.pw=pw;
   F.maxEvalweakamp=maxEvalweakamp;
+  F.exp=exp;
   
   numint::mdfunction<numint::vector_d,2> mdf;
   mdf.func = &Ftor::exec;
@@ -468,7 +541,7 @@ int main(int argc, char *argv[])
 void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 		WeakQECross& pObs, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,
 		double E_out, double costhetamu, int current, double *cthmax, double max_initial_nucl_mom, 
-                double min_final_nucl_mom, int pw, int maxEvalweakamp){
+                double min_final_nucl_mom, int pw, int maxEvalweakamp, string exp){
 		  
   results=numint::vector_d(2,0.);
   //we can fix the vector boson kinematics
@@ -496,15 +569,21 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
         cout << shell << " " << E_in <<  " " << costhetacm << " "  << kin.GetCosthklab() << " " 
 	<< kin.GetCosthYlab() << " " << kin.GetPklab() << " " << kin.GetPYlab() 
 	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
-	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << " " << result*(shell<nucleus.getPLevels()?
-	interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1):interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1)) << endl;
+	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << endl;
       }
     }
     
   }
-  //fold with flux
-  results[0]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
-  results[1]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
+
+  if(!exp.compare("miniboone")){
+    results[0]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
+    results[1]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
+  }
+  if(!exp.compare("minerva")){
+    results[0]*=interpolate(Minerva_nu_flux,E_in,500,20,0);
+    results[1]*=interpolate(Minerva_anu_flux,E_in,500,20,0);
+  }
+  
 }
 
 double getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, TLeptonKinematics &lepton,

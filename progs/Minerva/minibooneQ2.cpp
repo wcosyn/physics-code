@@ -265,6 +265,59 @@ const double MiniBooNE_neut_flux_norm[] = {
 };
 
 
+double Minerva_nu_flux[] = {
+2.57268e-06,
+6.5321e-06,
+1.69721e-05,
+2.51453e-05,
+3.31235e-05,
+4.07319e-05,
+4.27611e-05,
+3.41954e-05,
+2.04086e-05,
+1.10596e-05,
+6.78507e-06,
+4.86896e-06,
+3.94903e-06,
+3.34018e-06,
+2.90956e-06,
+2.5465e-06,
+2.28787e-06,
+2.04961e-06,
+1.85345e-06,
+1.69827e-06,
+};
+
+double Minerva_anu_flux[] = {
+2.32864e-06,
+6.25619e-06,
+1.60002e-05,
+2.295e-05,
+2.99316e-05,
+3.61717e-05,
+3.64453e-05,
+2.82484e-05,
+1.62189e-05,
+8.36204e-06,
+4.95442e-06,
+3.39086e-06,
+2.56585e-06,
+2.08784e-06,
+1.74572e-06,
+1.46005e-06,
+1.2336e-06,
+1.07991e-06,
+9.67436e-07,
+8.7012e-07,
+};
+
+void normalize(double flux[], double dx){
+  double sum=0;
+  for(int i=0;i<20;i++) sum+=flux[i]*dx;
+  for(int i=0;i<20;i++) flux[i]/=sum;
+  };
+
+
 //integration struct 
 struct Ftor {  //Carbon
 
@@ -272,7 +325,7 @@ struct Ftor {  //Carbon
     Ftor &p = * (Ftor *) param;
     p.f(ret,x[0],x[1],x[2],*p.pNucleus,p.current,p.cthmax,p.Q2,
         p.prec,p.integrator,p.homedir,p.maxEval,p.charged,p.screening,p.enable_romea,
-        p.max_initial_nucl_mom,p.min_final_nucl_mom,p.pw
+        p.max_initial_nucl_mom,p.min_final_nucl_mom,p.pw, p.exp
        );
   }
   MeanFieldNucleusThick *pNucleus;
@@ -290,10 +343,11 @@ struct Ftor {  //Carbon
   double min_final_nucl_mom;
   int pw;
   int maxEvalweakamp;
+  string exp;
   void (*f)(numint::vector_d &, double E_omega, double costhetacm, double E_in, 
             MeanFieldNucleusThick &pNucleus, int current, double *cthmax, double Q2,
             double prec, int integrator, string homedir, int maxEval, bool charged, bool screening, bool enable_romea,
-            double max_initial_nucl_mom, double min_final_nucl_mom, int pw
+            double max_initial_nucl_mom, double min_final_nucl_mom, int pw, string exp
            );
 
 };
@@ -302,12 +356,14 @@ struct FtorH {  //Hydrogen
 
   static void exec(const numint::array<double,1> &x, void *param, numint::vector_d &ret) {
     FtorH &p = * (FtorH *) param;
-    p.f(ret,x[0],p.Q2,p.charged);
+    p.f(ret,x[0],p.Q2,p.charged,p.maxbeam,p.exp);
   }
   int current;
   double Q2;
   bool charged;
-  void (*f)(numint::vector_d &, double E_out, double Q2, bool charged);
+  double maxbeam;
+  string exp;
+  void (*f)(numint::vector_d &, double E_out, double Q2, bool charged, double maxbeam, string exp);
 
 }; 
 
@@ -316,21 +372,23 @@ struct FtorRFG {  //Hydrogen
 
   static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
     FtorRFG &p = * (FtorRFG *) param;
-    p.f(ret,x[0],x[1],p.Q2,p.charged,p.Pauli);
+    p.f(ret,x[0],x[1],p.Q2,p.charged,p.Pauli,p.maxbeam,p.exp);
   }
   int current;
   double Q2;
   bool charged;
   bool Pauli;
-  void (*f)(numint::vector_d &, double omega, double E_out, double Q2, bool charged, bool Pauli);
+  double maxbeam;
+  string exp;
+  void (*f)(numint::vector_d &, double omega, double E_out, double Q2, bool charged, bool Pauli, double maxbeam, string exp);
 
 }; 
 
 
 //integration for Hydrogen
-void int_hydr(numint::vector_d &, double E_out,double Q2QE,bool charged);
+void int_hydr(numint::vector_d &, double E_out,double Q2,bool charged, double maxbeam, string exp);
 
-void int_RFG(numint::vector_d &, double omega,double E_out, double Q2QE,bool charged, bool Pauli);
+void int_RFG(numint::vector_d &, double omega,double E_out, double Q2,bool charged, bool Pauli, double maxbeam, string exp);
 
 
 //determine boundaries of kinematics
@@ -345,7 +403,7 @@ double getMax(double &high, double &low, MeanFieldNucleusThick &nucleus, TLepton
 void adap_intPm(numint::vector_d &, double omega, double costhetacm, double E_in,
 		            MeanFieldNucleusThick &pNucleus,int current, double *cthmax, double Q2,
 		            double prec, int integrator, string homedir, int maxEval, bool charged, bool screening, bool enable_romea,
-                            double max_initial_nucl_mom, double min_final_nucl_mom, int pw
+                            double max_initial_nucl_mom, double min_final_nucl_mom, int pw, string exp
                );
 
 
@@ -370,7 +428,8 @@ int main(int argc, char *argv[])
   bool enable_romea = atoi(argv[6]);
   if(pw==1) enable_romea=0; //no FSI if calculating the pw cross section...
   
-  string homedir=argv[7];   //"/home/wim/Code/share";
+  string exp=argv[7]; // possibilities "miniboone", "minerva", "t2k"
+  string homedir=argv[8];   //"/home/wim/Code/share";
 
   MeanFieldNucleusThick Nucleus(nucleus,homedir);
   
@@ -381,25 +440,40 @@ int main(int argc, char *argv[])
   double cthmin[Nucleus.getTotalLevels()];
   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {cthmax[shell]=-1.;cthmin[shell]=1.;}
   double max=-1.,min=1.; //overall min and max center of mass cosine theta angles
-  double E_out_max=0;
-  double E_out_min=10000;
-  double E_low=3000;
-  double E_high=0;
-  double omega_low=3.E03;
-  double omega_hi=0.;
-  double E_muH_low=3.E03;
-  double E_muH_hi=0.;
-  double E_RFG_out_max=0;
-  double E_RFG_out_min=3.E03;
-  double omega_RFG_low=3.E03;
-  double omega_RFG_hi=0.;
+  
+  double minbeam=0., maxbeam=0.; //different beam energy intervals for the different experiments
+  
+  if(!exp.compare("miniboone")) { maxbeam=3.E03;}
+  if(!exp.compare("minerva")) { 
+    minbeam=1.5E03; 
+    maxbeam=10.E03;
+    normalize(Minerva_nu_flux,500);
+    normalize(Minerva_anu_flux,500);
+  }
+  
+  if(!exp.compare("t2k")) { }  //still to implement!
+  
+  //setting up variables dat will determine integration limits
+  double E_out_max=minbeam;
+  double E_out_min=maxbeam;
+  double E_low=maxbeam;
+  double E_high=minbeam;
+  double omega_low=maxbeam;
+  double omega_hi=minbeam;
+  double E_muH_low=maxbeam;
+  double E_muH_hi=minbeam;
+  double E_RFG_out_max=minbeam;
+  double E_RFG_out_min=maxbeam;
+  double omega_RFG_low=maxbeam;
+  double omega_RFG_hi=minbeam;
   
   
   
-  //find reasonable integration limits
+  //find reasonable integration limits by scanning kinematics and 
+  //making sure nucleons have "reasonable" momenta, lepton kinematics are physical etc.
   for(int j=0;j<=100;j++){ //loop over T_mu
 //   cout << j << "/100" << endl;
-    double E_out=(3.E03-massmu-1.E-03)/100.*j+massmu+1.E-03;
+    double E_out=(maxbeam-massmu-1.E-03)/100.*j+massmu+1.E-03;
     double p_out=sqrt(E_out*E_out-massmu*massmu);
     //physical limits so that costhetamu is between -1 and 1
     double E_in_low = (Q2+massmu*massmu)/2./(E_out+p_out);
@@ -409,19 +483,19 @@ int main(int argc, char *argv[])
     //hydrogen piece
     double E_nu_H_n = (Q2+MASSP*MASSP-MASSN*MASSN)/2./MASSN+E_out;
     double E_nu_H_p = (Q2+MASSN*MASSN-MASSP*MASSP)/2./MASSP+E_out;
-    if (E_nu_H_p>E_out&&E_nu_H_p<3.E03&&E_nu_H_p<E_in_hi&&E_nu_H_p>E_in_low){
+    if (E_nu_H_p>E_out&&E_nu_H_p<maxbeam&&E_nu_H_p<E_in_hi&&E_nu_H_p>E_in_low){
       if(E_out>E_muH_hi) E_muH_hi = E_out;
       if(E_out<E_muH_low) E_muH_low = E_out;
     }
-    if (E_nu_H_n>E_out&&E_nu_H_n<3.E03&&E_nu_H_n<E_in_hi&&E_nu_H_n>E_in_low){
+    if (E_nu_H_n>E_out&&E_nu_H_n<maxbeam&&E_nu_H_n<E_in_hi&&E_nu_H_n>E_in_low){
       if(E_out>E_muH_hi) E_muH_hi = E_out;
       if(E_out<E_muH_low) E_muH_low = E_out;
     }
 //     cout << j << " " << E_out << " " << E_nu_H_n << " " << E_nu_H_p << " " << E_in_hi << " " << E_in_low << " " << E_muH_low << " " << E_muH_hi << endl;
-    if(E_in_low>3000.||E_in_low>E_in_hi){} //outside considered incoming neutrino energies, so don't bother
+    if(E_in_low>maxbeam||E_in_low>E_in_hi){} //outside considered incoming neutrino energies, so don't bother
     else{
       for(int i=0;i<=100;i++){
-        if(E_in_hi>3000.) E_in_hi=3000.;
+        if(E_in_hi>maxbeam) E_in_hi=maxbeam;
         double E_in=E_in_low+(E_in_hi-E_in_low)*1.E-02*i;
         double costhetamu=(-Q2-massmu*massmu+2.*E_in*E_out)/(2.*E_in*p_out);
         double omega=E_in-E_out;
@@ -466,38 +540,27 @@ int main(int argc, char *argv[])
       }
     }
   }  
-  if(E_high>3.E03) E_high=3.E03;
+  if(E_high>maxbeam) E_high=maxbeam;
+  if(E_low<minbeam) E_low=minbeam;
+  if(E_muH_low<minbeam) E_muH_low=minbeam;
   if(E_low>E_high) E_low=E_high;
-//   for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
-//     cthmax[shell]=1.;cthmin[shell]=-1.;
-//   }
-//   max=1.;min=-1.;
-//   omega_low=1.E-03;
-//   omega_hi=3.E03-massmu-1.E-03;
-//   E_low=1.E-03;
-//   E_high=3.E03;
+  cout << endl;
+  cout << "min=" << min << "   max=" << max << endl;
+  cout << "Eoutmin=" << E_out_min << "  Eoutmax=" << E_out_max << endl;
+  cout << "omega_low=" << omega_low << " " << "  omega_high=" << omega_hi << endl;
+  cout << "E_low=" << E_low << "  E_high=" << E_high << endl << endl;
+
+  cout << "E_muH_low=" << E_muH_low << "  E_muH_hi=" << E_muH_hi << endl << endl;
   
-//   cout << endl;
-//   cout << "min=" << min << "   max=" << max << endl;
-//   cout << "Eoutmin=" << E_out_min << "  Eoutmax=" << E_out_max << endl;
-//   cout << "omega_low=" << omega_low << " " << "  omega_high=" << omega_hi << endl;
-//   cout << "E_low=" << E_low << "  E_high=" << E_high << endl << endl;
-// 
-//   cout << "E_muH_low=" << E_muH_low << "  E_muH_hi=" << E_muH_hi << endl << endl;
-//   
-//   cout << "E_RFG_out_min=" << E_RFG_out_min << "  E_RFG_out_max=" << E_RFG_out_max << endl;
-//   cout << "omega_RFG_low=" << omega_RFG_low <<"  omega_RFG_hi=" << omega_RFG_hi << endl << endl;
-//   E_muH_low=massmu+1.E-03;
-//   E_muH_hi=3.E03;
-//   omega_RFG_hi=3.E03-massmu-1.E-03;
-//   omega_RFG_low=1.E-03;
-//   E_RFG_out_max=3.E03;
-//   E_RFG_out_min=massmu+1.E-03;
+  cout << "E_RFG_out_min=" << E_RFG_out_min << "  E_RFG_out_max=" << E_RFG_out_max << endl;
+  cout << "omega_RFG_low=" << omega_RFG_low <<"  omega_RFG_hi=" << omega_RFG_hi << endl << endl;
   
   FtorH FH;
   FH.current=current;
   FH.Q2=Q2;
   FH.charged=charged;
+  FH.exp=exp;
+  FH.maxbeam=maxbeam;
 
   numint::mdfunction<numint::vector_d,1> mdfH;
   mdfH.func = &FtorH::exec;
@@ -523,6 +586,8 @@ int main(int argc, char *argv[])
   FRFG.Q2=Q2;
   FRFG.charged=charged;
   FRFG.Pauli = Pauli;
+  FRFG.maxbeam=maxbeam;
+  FRFG.exp=exp;
   
   numint::mdfunction<numint::vector_d,2> mdfRFG;
   mdfRFG.func = &FtorRFG::exec;
@@ -557,6 +622,7 @@ int main(int argc, char *argv[])
   F.min_final_nucl_mom=min_final_nucl_mom;
   F.max_initial_nucl_mom=max_initial_nucl_mom;
   F.pw=pw;
+  F.exp=exp;
 
   numint::mdfunction<numint::vector_d,3> mdf;
   mdf.func = &Ftor::exec;
@@ -600,18 +666,18 @@ int main(int argc, char *argv[])
 
 }
 
-//integrandum
+//integrandum carbon
 void adap_intPm(numint::vector_d & results, double omega, double costhetacm, double E_in,
 	 MeanFieldNucleusThick &nucleus, int current, double *cthmax, double Q2,
 	 double prec, int integrator, string homedir, int maxEval, bool charged, bool screening,
          bool enable_romea, double max_initial_nucl_mom, 
-                double min_final_nucl_mom, int pw){	  
+                double min_final_nucl_mom, int pw, string exp){	  
 
   results=numint::vector_d(2,0.);
   double E_out = E_in-omega;
   double p_out=sqrt(E_out*E_out-massmu*massmu);
   double costhetamu=(-Q2-massmu*massmu+2.*E_in*E_out)/(2.*E_in*p_out);
-  if(/*E_in>3.E03||E_in<0.*/E_out<0.) { return;}
+  if(/*E_in>maxbeam||E_in<minbeam*/E_out<0.) { return;}
   if(abs(costhetamu)<=1. /*&& omega>0*/) {
       
     TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
@@ -639,66 +705,77 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
            cout << shell << " " << E_in <<  " " << costhetacm << " " << p_out << " "  << kin.GetCosthklab()<< " " 
           	<< kin.GetCosthYlab() << " " << kin.GetPklab() << " " << kin.GetPYlab() 
           	<< " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
-          	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result << " " << result*(shell<nucleus.getPLevels()?
-          	interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1):interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1)) << endl;
+          	<< kin.GetXb()*nucleus.getMassA()/MASSP << " " << result <<  endl;
         }
       }  
     }
     //fold with flux
-
-    results[0]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
-    results[1]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
+    if(!exp.compare("miniboone")){
+      results[0]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
+      results[1]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
+    }
+    if(!exp.compare("minerva")){
+      results[0]*=interpolate(Minerva_nu_flux,E_in,500,20,0);
+      results[1]*=interpolate(Minerva_anu_flux,E_in,500,20,0);
+    }
+    
     delete lepton;
   }
   else {results[0]=0; results[1]=0; /*cout << "unphys " << omega << " " << costhetacm << " " << E_out << " " << E_in << " " << 0. << " " << 0. << endl;*/}
 
 }
 
-//integrandum hydrongen
-void int_hydr(numint::vector_d & result, double E_out, 
-              double Q2, bool charged){
+//integrandum hydrogen
+void int_hydr(numint::vector_d & results, double E_out, 
+              double Q2, bool charged, double maxbeam, string exp){
     
-  result=numint::vector_d(2,0.);  
+  results=numint::vector_d(2,0.);  
 //   if(abs(costhetamu)>1.) {/*cout << "costheta" << endl;*/ cout << E_out << " " << result[0] << " " << result[1] << endl; return;}
   double E_in_n=(Q2+MASSP*MASSP-MASSN*MASSN)/2./MASSN+E_out;
   double E_in_p=(Q2+MASSN*MASSN-MASSP*MASSP)/2./MASSP+E_out;
   
   
-//   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
-  double crossHanu_p=WeakQECross::getElWeakQECross(Q2,E_in_p,1,charged,1.03E03,1);
-  double crossHanu_n=WeakQECross::getElWeakQECross(Q2,E_in_n,0,charged,1.03E03,1);
+  results[0]=WeakQECross::getElWeakQECross(Q2,E_in_p,1,charged,1.03E03,1);
+  results[1]=WeakQECross::getElWeakQECross(Q2,E_in_n,0,charged,1.03E03,1);
   
-  
-  result=numint::vector_d(2,0.); 
-  result[0]=E_in_p>3.E03? 0: crossHanu_p*interpolate(MiniBooNE_antineut_flux_norm,E_in_p,25,120,1);
-  result[1]=E_in_n>3.E03? 0: crossHanu_n*interpolate(MiniBooNE_neut_flux_norm,E_in_n,25,120,1);
+  if(!exp.compare("miniboone")){
+    results[0]*=E_in_p>maxbeam? 0. : interpolate(MiniBooNE_antineut_flux_norm,E_in_p,25,120,1);
+    results[1]*=E_in_n>maxbeam? 0. : interpolate(MiniBooNE_neut_flux_norm,E_in_n,25,120,1);
+  }
+  if(!exp.compare("minerva")){
+    results[0]*=E_in_p>maxbeam? 0. : interpolate(Minerva_anu_flux,E_in_p,500,20,0);
+    results[1]*=E_in_n>maxbeam? 0. : interpolate(Minerva_nu_flux,E_in_n,500,20,0);
+  }
+
 //   if(isnan(result[1])) {cout << E_out << " " << E_in_n << " " << crossHanu_n << " " << interpolate(MiniBooNE_neut_flux_norm,E_in_n,25,120,1) << " " << Q2 << endl; exit(1);}
 //    cout << E_out << " " << result[0] << " " << result[1] << " " << E_in_p << " " << E_in_n << " " <<  interpolate(MiniBooNE_antineut_flux_norm,E_in_p,25,120,1) << " " << interpolate(MiniBooNE_neut_flux_norm,E_in_n,25,120,1) <<endl;
-//   delete lepton;
 } 
 
 
-void int_RFG(numint::vector_d & result, double omega,double E_out, double Q2,bool charged, bool Pauli){
+void int_RFG(numint::vector_d & results, double omega,double E_out, double Q2,bool charged, bool Pauli, double maxbeam, string exp){
     
-  result=numint::vector_d(2,0.);  
+  results=numint::vector_d(2,0.);  
   double E_in=omega+E_out;
-  if(E_in>3.E03)  {return;}
+  if(E_in>maxbeam)  {return;}
   double p_out = sqrt(E_out*E_out-massmu*massmu);
   double costhetamu = (-Q2-massmu*massmu+2.*E_in*E_out)/(2.*E_in*p_out);
 
   if(abs(costhetamu)>1.) {/*cout << "costheta" << endl;*/ return;}
 
-  TLeptonKinematics *lepton = TLeptonKinematics::CreateWithBeamEnergy(TLeptonKinematics::muon,E_in);
   double kf=228.;
-  double crossRFG_p=0,crossRFG_n=0.;
-  WeakQECross::getRFGWeakQECross(crossRFG_p,crossRFG_n,Q2, E_in, omega,kf,1,1.03E03,1,Pauli);
+  WeakQECross::getRFGWeakQECross(results[0],results[1],Q2, E_in, omega,kf,1,1.03E03,1,Pauli);
 //   cout << omega << " " << E_out << " " << crossRFG_p << " " << crossRFG_n << endl;
   
-  result=numint::vector_d(2,0.); 
-  result[0]=crossRFG_p*interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
-  result[1]=crossRFG_n*interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
+  if(!exp.compare("miniboone")){
+    results[0]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
+    results[1]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
+  }
+  if(!exp.compare("minerva")){
+    results[0]*=interpolate(Minerva_anu_flux,E_in,500,20,0);
+    results[1]*=interpolate(Minerva_nu_flux,E_in,500,20,0);
+  }
+    
 //   if(isnan(result[0])) { cout << omega << " " << E_out << " " << crossRFG_p << " " << interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1) << endl; exit(1);}
-  delete lepton;
 } 
 
 
