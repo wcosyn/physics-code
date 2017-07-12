@@ -1,12 +1,22 @@
+// Program that computes single differential cross sections for QE neutrino nucleus scattering
 //We calculate the single differential dsigma/dQ2_QE cross sections for free nucleon, RFG, carbon.
 //Q2_QE is the experimental Q2 that is used to obtain a Q2 from a T_mu cos_mu event.  This gives rise to nasty jacobians that need to be taken into account
 
+// Can be used for different experiments, Miniboone and minerva kinematics currently implemented, T2K will be added as well
 
-//run like minibooneQ2QE Q2QE [GeV^2] fluxintegrator [see l595 for options] max initial momentum [MeV] min initial momentum [MeV] plane wave or not [bool] ROMEA in fsi [bool] sharedir [str] 
- 
+//run like
+// > minibooneQ2QE [Q2 in GeV^2] [integration algorithm for flux integration (see around line 680 for options)] 
+//  [max initial nucl momentun in MeV] [min final nucl momentum in MeV] [plane wave 1 or not 0] [ROMEA 1 or not 0 in fsi]
+// [experiment "miniboone", "minerva", "t2k"] [sharedir]
+
+// example for plane wave calculation for miniboone
+// > minibooneQ2QE 0.1 3 500. 200. 1 0 miniboone ~/Code/trunk/share  
+
+
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
+#include <cassert>
 
 using namespace std;
 
@@ -318,6 +328,176 @@ double Minerva_anu_flux[] = {
 8.7012e-07,
 };
 
+//starts at E=25 MeV with a delta of 25 MeV (up to 2 GeV)
+const double t2k_neut_flux_norm[] = {
+1.93448341e-05 , 
+4.73717519e-05 , 
+7.85287411e-05 , 
+0.000113062088 , 
+0.00015156703 , 
+0.000195039029 , 
+0.000244842988 , 
+0.000302692788 , 
+0.000370712689 , 
+0.000449333806 , 
+0.000550624798 , 
+0.000665154366 , 
+0.000786867808 , 
+0.000913024822 , 
+0.0010442721 , 
+0.0011845812 , 
+0.00134127948 , 
+0.00149808032 , 
+0.00166478462 , 
+0.0018066637 , 
+0.00190126372 , 
+0.00193840358 , 
+0.00192018773 , 
+0.00186097308 , 
+0.00178742153 , 
+0.001663081 , 
+0.00157644483 , 
+0.00149002427 , 
+0.00138141611 , 
+0.00124332379 , 
+0.00108355703 , 
+0.000925001164 , 
+0.000805689255 , 
+0.000693591835 , 
+0.000593686244 , 
+0.000506177836 , 
+0.000431251246 , 
+0.000369091227 , 
+0.000319913263 , 
+0.00028389183 , 
+0.000261221954 , 
+0.000233985265 , 
+0.000208616329 , 
+0.000187916841 , 
+0.000172995147 , 
+0.000163368924 , 
+0.000156893278 , 
+0.000149771076 , 
+0.000136594026 , 
+0.000128640575 , 
+0.000120574245 , 
+0.000113174974 , 
+0.00010683274 , 
+0.000101629652 , 
+9.72680791e-05 , 
+9.31220275e-05 , 
+8.81857559e-05 , 
+8.37010448e-05 , 
+8.03965158e-05 , 
+7.77693131e-05 , 
+7.54089269e-05 , 
+7.29561943e-05 , 
+7.01442623e-05 , 
+6.67268469e-05 , 
+6.25807952e-05 , 
+6.06924914e-05 , 
+5.85271009e-05 , 
+5.65464397e-05 , 
+5.49454853e-05 , 
+5.36113585e-05 , 
+5.21643451e-05 , 
+4.98963309e-05 , 
+4.58528993e-05 , 
+4.5811852e-05 , 
+4.46727099e-05 , 
+4.31230728e-05 , 
+4.16350085e-05 , 
+4.04137681e-05 , 
+3.94183044e-05 , 
+3.83715305e-05
+};
+
+
+const double t2k_aneut_flux_norm[] = {
+1.88499998e-05 , 
+4.61599993e-05 , 
+7.6520002e-05 , 
+0.000110170004 , 
+0.000147690007 , 
+0.000190050006 , 
+0.000238580003 , 
+0.000294950005 , 
+0.000361229992 , 
+0.000437840004 , 
+0.000536539999 , 
+0.000648139976 , 
+0.000766740006 , 
+0.000889669987 , 
+0.00101756002 , 
+0.00115428003 , 
+0.00130697002 , 
+0.00145976001 , 
+0.00162220001 , 
+0.00176044996 , 
+0.00185263006 , 
+0.00188881997 , 
+0.00187107001 , 
+0.00181337004 , 
+0.00174169999 , 
+0.00162054005 , 
+0.00153611996 , 
+0.00145191001 , 
+0.00134607998 , 
+0.00121152005 , 
+0.00105584005 , 
+0.000901339983 , 
+0.000785080018 , 
+0.000675850024 , 
+0.000578499981 , 
+0.000493230007 , 
+0.000420219993 , 
+0.000359650003 , 
+0.000311729993 , 
+0.000276629988 , 
+0.000254540006 , 
+0.000228000004 , 
+0.000203279997 , 
+0.000183109994 , 
+0.000168569997 , 
+0.000159190007 , 
+0.000152880006 , 
+0.000145939994 , 
+0.000133099995 , 
+0.000125349994 , 
+0.000117490003 , 
+0.000110280002 , 
+0.0001041 , 
+9.90300032e-05 , 
+9.47799999e-05 , 
+9.07400026e-05 , 
+8.5929998e-05 , 
+8.15599997e-05 , 
+7.83400028e-05 , 
+7.57800008e-05 , 
+7.34799978e-05 , 
+7.10899985e-05 , 
+6.83499966e-05 , 
+6.50200018e-05 , 
+6.09800009e-05 , 
+5.91399985e-05 , 
+5.70299999e-05 , 
+5.51000012e-05 , 
+5.35399995e-05 , 
+5.22400005e-05 , 
+5.083e-05 , 
+4.86200006e-05 , 
+4.46800004e-05 , 
+4.46400009e-05 , 
+4.35299989e-05 , 
+4.20200013e-05 , 
+4.05700011e-05 , 
+3.93800001e-05 , 
+3.84099985e-05 , 
+3.73900002e-05
+};
+
+
+
 void normalize(double flux[], double dx){
   double sum=0;
   for(int i=0;i<20;i++) sum+=flux[i]*dx;
@@ -451,12 +631,16 @@ int main(int argc, char *argv[])
   double minbeam=0., maxbeam=0.; //different beam energy intervals for the different experiments
   
   if(!exp.compare("miniboone")) { maxbeam=3.E03;}
-  if(!exp.compare("minerva")) { 
+  else if(!exp.compare("minerva")) { 
     minbeam=1.5E03; 
     maxbeam=10.E03;
     normalize(Minerva_nu_flux,500);
     normalize(Minerva_anu_flux,500);
-  }
+  }  
+  else if(!exp.compare("t2k")) { maxbeam=2.E02; }  //still to implement!
+  else {cerr << "invalid experiment name chosen" << endl << "Choose either miniboone, minerva or t2k" << endl; assert(1==0);}
+  
+  
   
   if(!exp.compare("t2k")) { }  //still to implement!
  //setting up variables dat will determine integration limits
@@ -742,10 +926,15 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
       results[0]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
       results[1]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
     }
-    if(!exp.compare("minerva")){
+    else if(!exp.compare("minerva")){
       results[0]*=interpolate(Minerva_nu_flux,E_in,500,20,0);
       results[1]*=interpolate(Minerva_anu_flux,E_in,500,20,0);
     }
+    else if(!exp.compare("t2k")){
+      results[0]*=interpolate(t2k_neut_flux_norm,E_in,25,80,1);
+      results[1]*=interpolate(t2k_aneut_flux_norm,E_in,25,80,1);
+    }
+    else assert(1==0);
     
     delete lepton;
   }
@@ -778,10 +967,15 @@ void int_hydr(numint::vector_d & results, double E_out,
     results[0]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
     results[1]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
   }
-  if(!exp.compare("minerva")){
-    results[0]*=interpolate(Minerva_anu_flux,E_in,500,20,0);
-    results[1]*=interpolate(Minerva_nu_flux,E_in,500,20,0);
+  else if(!exp.compare("minerva")){
+    results[0]*=interpolate(Minerva_nu_flux,E_in,500,20,0);
+    results[1]*=interpolate(Minerva_anu_flux,E_in,500,20,0);
   }
+  else if(!exp.compare("t2k")){
+    results[0]*=interpolate(t2k_neut_flux_norm,E_in,25,80,1);
+    results[1]*=interpolate(t2k_aneut_flux_norm,E_in,25,80,1);
+  }
+  else assert(1==0);
 
 //   cout << E_out << " " << result[0] << " " << result[1] << endl;
 } 
@@ -809,10 +1003,15 @@ void int_RFG(numint::vector_d & results, double omega,double E_out, double Q2QE,
     results[0]*=interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1);
     results[1]*=interpolate(MiniBooNE_neut_flux_norm,E_in,25,120,1);
   }
-  if(!exp.compare("minerva")){
-    results[0]*=interpolate(Minerva_anu_flux,E_in,500,20,0);
-    results[1]*=interpolate(Minerva_nu_flux,E_in,500,20,0);
+  else if(!exp.compare("minerva")){
+    results[0]*=interpolate(Minerva_nu_flux,E_in,500,20,0);
+    results[1]*=interpolate(Minerva_anu_flux,E_in,500,20,0);
   }
+  else if(!exp.compare("t2k")){
+    results[0]*=interpolate(t2k_neut_flux_norm,E_in,25,80,1);
+    results[1]*=interpolate(t2k_aneut_flux_norm,E_in,25,80,1);
+  }
+  else assert(1==0);
     
 } 
 
