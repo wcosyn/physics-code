@@ -75,6 +75,8 @@ add_library(IntegratorST STATIC ${INTEGRATOR_SRCS})
 target_link_libraries(IntegratorST -Wl,-no-whole-archive)
 set_target_properties(IntegratorST PROPERTIES OUTPUT_NAME Integrator)
 
+set(LIBRARIES ${LIBRARIES} Integrator)
+
 ############### install the library ###################
 install(TARGETS Integrator DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 install(TARGETS IntegratorST DESTINATION "${CMAKE_SOURCE_DIR}/lib")

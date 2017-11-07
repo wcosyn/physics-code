@@ -21,7 +21,7 @@ endforeach()
 set(INCLUDE_DIRECTORIES
 ${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/Integrator" 
 "${CMAKE_SOURCE_DIR}/Tools" "${CMAKE_SOURCE_DIR}/Glauber"
-"${CMAKE_SOURCE_DIR}/Knockout" "${CMAKE_BINARY_DIR}/Tools") 
+"${CMAKE_SOURCE_DIR}/Knockout") 
 include_directories( ${INCLUDE_DIRECTORIES})
 
 
@@ -41,8 +41,7 @@ SET(DIS_LIBRARY_PROPERTIES ${DIS_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(DIS SHARED ${DIS_SRCS})
-target_link_libraries(DIS ${LIBRARIES} MePhys Knockout
-Integrator)
+target_link_libraries(DIS ${LIBRARIES})
 set_target_properties(DIS PROPERTIES ${DIS_LIBRARY_PROPERTIES})
 ############### install the library ###################
 install(TARGETS DIS DESTINATION "${CMAKE_SOURCE_DIR}/lib")
@@ -55,3 +54,4 @@ if(STATIC_BUILD)
   install(TARGETS DISST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endif(STATIC_BUILD)
 
+set(LIBRARIES ${LIBRARIES} DIS)

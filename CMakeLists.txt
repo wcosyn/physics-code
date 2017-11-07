@@ -260,12 +260,24 @@ IF(XIAR)
 ENDIF(XIAR)
 MARK_AS_ADVANCED(XIAR)
 
+# set(INCLUDE_DIRECTORIES
+# ${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/Integrator" 
+# "${CMAKE_SOURCE_DIR}/Tools" "${CMAKE_SOURCE_DIR}/Glauber"
+# "${CMAKE_SOURCE_DIR}/Knockout") 
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/Integrator 
+${CMAKE_SOURCE_DIR}/Tools ${CMAKE_SOURCE_DIR}/Glauber
+${CMAKE_SOURCE_DIR}/Knockout) 
+# include_directories(${INCLUDE_DIRECTORIES}) 
+message(${INCLUDE_DIRECTORIES})
+
 
 add_subdirectory(Integrator)
 add_subdirectory(Tools)
 add_subdirectory(Glauber)
 add_subdirectory(Knockout)
 add_subdirectory(DIS)
+add_subdirectory(progs)
 
 if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)
@@ -275,6 +287,8 @@ if(DOXYGEN_FOUND)
   COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
 endif()
+
+
 
 message(${CMAKE_CXX_FLAGS_RELEASE})
 # message(${CMAKE_Fortran_FLAGS_RELEASE})

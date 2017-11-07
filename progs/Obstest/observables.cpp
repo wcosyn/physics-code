@@ -1,15 +1,6 @@
-/*! \mainpage Glauber ISI/FSI RMSGA C++ Project
- * \author Wim Cosyn
- * \date 16/08/2011
- * \brief This code implements classes for the Glauber RMSGA formalism, including CT and SRC effects.
- * 
- * \details 
- * - It contains classes for a mean field nucleus, a mean field nucleus with densities (used in thickness calculations). <BR>
- * - A class for correlated FSI calculations containing all the needed functions and a grid for the gamma functions. <BR>
- * - Four abstract classes (one for a general FSI grid, one that adds a CT grid, one for a general thickness FSI grid and one that adds a thickness CT grid). <BR>
- * - Two glauber classes : one without thickness, one with (also adds SRC to the ISI/FSI). <BR>
- * - A special class for the glauber grid of one particle, exploiting the symmetry along the z-axis (no phi dependence).  <BR>
-*/
+//test program for quasi-elastic polarized observables
+//used for the paper with eli for Mainz medium modification of FF
+
 #include <iostream>
 #include <cstdlib>
 
@@ -28,7 +19,7 @@ using namespace std;
 #include <Utilfunctions.hpp>
 #include <NucleonEMOperator.hpp>
 
-//run ./onenucl [Q2 [MeV^2]] [omega] [missing momentum]
+//run ./observables [Q2 [MeV^2]] [omega] [missing momentum]
 int main(int argc, char *argv[])
 {
 //   double Ein=atof(argv[1]);
@@ -94,7 +85,7 @@ int main(int argc, char *argv[])
   int thick=1;//atoi(argv[9]);
   int maxEval=20000;//atoi(argv[10]);
   
-  string homedir="/home/wim/Code/share";
+  string homedir=HOMEDIR;
   MeanFieldNucleusThick Carbon(nucleus,homedir);
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
   
