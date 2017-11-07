@@ -27,6 +27,7 @@ find_package(Doxygen)
 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #to create compile_commands.json file used in vs code
 
 set(HPC_NAMES 
 haunter
