@@ -1,0 +1,24 @@
+build/
+doc/
+lib/
+Tools/constants.hpp
+manual/*.pdf
+
+# get rid of mac folder info files
+#
+.DS_Store
+
+# get rid of backups on ubuntu, often suffixed by tilde ~
+#
+*~
+# get rid of .aux, .log files of latex builds
+#
+*.aux
+*.log
+# ignore compiled python modules
+#
+*.pyc
+
+# ignore .orig files from indentation
+# using astyle
+*.orig
