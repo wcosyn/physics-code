@@ -44,17 +44,17 @@ phanpy
 # Create a library called "libEvent" which includes the source files given in
 # the array .
 # The extension is already found.  Any number of sources could be listed here.
-set(INCLUDE_DIRECTORIES
-${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS} ${MPI_INCLUDE_PATH}
-)
+# set(INCLUDE_DIRECTORIES
+# ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS} ${MPI_INCLUDE_PATH}
+# )
 
-include_directories( ${INCLUDE_DIRECTORIES})
+# include_directories(${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS} ${MPI_INCLUDE_PATH})
 
-set(LINK_DIRECTORIES
-${ROOT_LIBRARY_DIR} ${GSL_LIBRARY_DIRS}
-)
+# set(LINK_DIRECTORIES
+# ${ROOT_LIBRARY_DIR} ${GSL_LIBRARY_DIRS}
+# )
  
-link_directories( ${LINK_DIRECTORIES})
+# link_directories( ${LINK_DIRECTORIES})
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
@@ -62,7 +62,9 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_SOURCE_DIR}/lib")
 set(CMAKE_INSTALL_NAME_DIR "${CMAKE_SOURCE_DIR}/lib")
 set(CMAKE_BUILD_WITH_INSTALL_RPATH 1)
 
-set(LIBRARIES ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES} ${MPI_LIBRARIES} ${Fortran_LIBRARIES})
+# set(LIBRARIES ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES} ${MPI_LIBRARIES} ${Fortran_LIBRARIES})
+# message("${ROOT_LIBRARIES}")
+
 # MESSAGE(${LIBRARIES})
 enable_language (Fortran)
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
@@ -253,7 +255,7 @@ else(hostname MATCHES we05c807  OR hostname MATCHES we05c708 OR hostname MATCHES
 endif (hostname MATCHES we05c807  OR hostname MATCHES we05c708 OR hostname MATCHES we05c700 ) 
 
 
-set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR})
+# set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR})
 FIND_PROGRAM(XIAR xiar)
 IF(XIAR)
   SET(CMAKE_AR "${XIAR}")
@@ -265,19 +267,19 @@ MARK_AS_ADVANCED(XIAR)
 # "${CMAKE_SOURCE_DIR}/Tools" "${CMAKE_SOURCE_DIR}/Glauber"
 # "${CMAKE_SOURCE_DIR}/Knockout") 
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/Integrator 
-${CMAKE_SOURCE_DIR}/Tools ${CMAKE_SOURCE_DIR}/Glauber
-${CMAKE_SOURCE_DIR}/Knockout) 
-# include_directories(${INCLUDE_DIRECTORIES}) 
-message(${INCLUDE_DIRECTORIES})
+# include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/Integrator 
+# ${CMAKE_SOURCE_DIR}/Tools ${CMAKE_SOURCE_DIR}/Glauber
+# ${CMAKE_SOURCE_DIR}/Knockout) 
+# # include_directories(${INCLUDE_DIRECTORIES}) 
+# message(${INCLUDE_DIRECTORIES})
 
 
 add_subdirectory(Integrator)
 add_subdirectory(Tools)
-add_subdirectory(Glauber)
-add_subdirectory(Knockout)
-add_subdirectory(DIS)
-add_subdirectory(progs)
+# add_subdirectory(Glauber)
+# add_subdirectory(Knockout)
+# add_subdirectory(DIS)
+# add_subdirectory(progs)
 
 if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)
