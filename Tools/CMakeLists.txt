@@ -121,7 +121,7 @@ SET(MePhys_LIBRARY_PROPERTIES ${MePhys_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(MePhys SHARED ${MePhys_SRCS_LI})
-target_include_directories(MePhys PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(MePhys PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
 target_link_libraries(MePhys ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES})
 set_target_properties(MePhys PROPERTIES ${MePhys_LIBRARY_PROPERTIES})
 
@@ -136,7 +136,7 @@ ENDIF(60000 LESS found_vers)
 ############# build the library #####################
 if(STATIC_BUILD)
   add_library(MePhysST STATIC ${MePhys_SRCS_LI})
-  target_include_directories(MePhysST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+  target_include_directories(MePhysST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
   target_link_libraries(MePhysST -Wl,-no-whole-archive)
   set_target_properties(MePhysST PROPERTIES OUTPUT_NAME MePhys)
   install(TARGETS MePhysST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
