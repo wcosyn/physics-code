@@ -1,3 +1,6 @@
+//testcode for the two nucleon code.  Never used seriously as far as I can remember...
+//apparently uses things from maarten's code for the relative wf of the 2 struck nucleons...
+
 #include <iostream>
 #include <cstdlib>
 
@@ -17,7 +20,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
   
-  string homedir="/home/wim/Code";
+  string homedir=HOMEDIR;
   int shellindex1=0;
   int shellindex2=2;
   bool corr=atoi(argv[1]);
@@ -29,7 +32,7 @@ int main(int argc, char *argv[])
   cout << kin.GetNumberOfSolutions() << " " << kin.GetMd() << " " << kin.GetMn() << " " << kin.GetMk() << " " << kin.GetMy() << endl;
   cout << kin.GetNumberOfSolutions() << " " << kin.GetPn() << " " << kin.GetPk() << " " << kin.GetPy() << endl;
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(4627.);
-  DoubleNCross obs(*elec,&Carbon,homedir);
+  DoubleNCross obs(*elec,&Carbon,1.E-03,2,homedir);
   double cross=obs.getDiffCross(kin,0,0,0,corr,shellindex1,shellindex2,0.);
   delete elec;
   return 0;

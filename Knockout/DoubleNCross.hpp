@@ -21,7 +21,7 @@ public:
    * \param elec contains all the electron kinematics
    * \param pnucl pointer to a MF nucleus instance
    * \param prec precision you want in the integrations
-   * \param integrator which integrator (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
+   * \param integrator which integrator for the glauber grids (0:Wim's romberg fubini sort of thing, 1:Klaas thingy, 2:adaptive MIT thingy
    * \param dir std::string that contains dir with all input, should be the ./share subdir of the project!
    */
   DoubleNCross(TElectronKinematics &elec, MeanFieldNucleusThick *pnucl, double prec, int integrator, std::string dir);
