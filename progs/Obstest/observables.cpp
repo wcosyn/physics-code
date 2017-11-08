@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 		,MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
     if(kin.IsPhysical()&&kin.GetPYlab()<801.6&&kin.GetPYlab()>534.4){
         Cross obs(*elec,&Carbon,prec,integrator,homedir,screening,scr);
-      double free0=obs.getElCross(kin,2,0.)*HBARC*HBARC;
+      double free0=obs.getElCross(kin,2,0.,maxEval)*HBARC*HBARC;
 //       obs.printDensity_profile(kin,shell,thick,maxEval);
       
       vector<double> observ;
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
       cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR 
       << " " << -kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
       
-      double free180=obs.getElCross(kin,2,PI)*HBARC*HBARC;
+      double free180=obs.getElCross(kin,2,PI,maxEval)*HBARC*HBARC;
       obs.getAllObs_xyz(observ,kin,2,shell,thick,medium,PI,maxEval,1);
       for(int i=0;i<5;i+=4) cout << observ[i*8] << " " << observ[i*8+3] << " " << observ[i*8+5] << " " << observ[i*8+7]<< " ";
       cout << free180*1.E-09 << endl;

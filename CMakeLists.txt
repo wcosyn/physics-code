@@ -41,20 +41,8 @@ golett
 phanpy
 )
 
-# Create a library called "libEvent" which includes the source files given in
-# the array .
-# The extension is already found.  Any number of sources could be listed here.
-# set(INCLUDE_DIRECTORIES
-# ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS} ${MPI_INCLUDE_PATH}
-# )
 
-# include_directories(${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS} ${MPI_INCLUDE_PATH})
-
-# set(LINK_DIRECTORIES
-# ${ROOT_LIBRARY_DIR} ${GSL_LIBRARY_DIRS}
-# )
  
-# link_directories( ${LINK_DIRECTORIES})
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
@@ -63,7 +51,6 @@ set(CMAKE_INSTALL_NAME_DIR "${CMAKE_SOURCE_DIR}/lib")
 set(CMAKE_BUILD_WITH_INSTALL_RPATH 1)
 
 
-# MESSAGE(${LIBRARIES})
 enable_language (Fortran)
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 set(CMAKE_COMPILER_IS_CLANGCXX 0)
@@ -267,7 +254,7 @@ add_subdirectory(Tools)
 add_subdirectory(Glauber)
 add_subdirectory(Knockout)
 add_subdirectory(DIS)
-# add_subdirectory(progs)
+add_subdirectory(progs)
 
 if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)

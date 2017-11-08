@@ -122,7 +122,7 @@ SET(MePhys_LIBRARY_PROPERTIES ${MePhys_LIBRARY_PROPERTIES}
 ############### build the library #####################
 add_library(MePhys SHARED ${MePhys_SRCS_LI})
 target_include_directories(MePhys PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-# target_link_libraries(MePhys)
+target_link_libraries(MePhys ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES})
 set_target_properties(MePhys PROPERTIES ${MePhys_LIBRARY_PROPERTIES})
 
 ############### install the library ###################

@@ -37,8 +37,7 @@
                 "${workspaceRoot}/Glauber",
                 "${workspaceRoot}/DIS",
                 "${workspaceRoot}/Knockout",
-                "${workspaceRoot}/Integrator",
-                "/usr/include/c++/6"
+                "${workspaceRoot}/Integrator"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
@@ -54,8 +53,7 @@
                     "${workspaceRoot}/Glauber",
                     "${workspaceRoot}/DIS",
                     "${workspaceRoot}/Knockout",
-                    "${workspaceRoot}/Integrator",
-                    "/usr/include/c++/6"
+                    "${workspaceRoot}/Integrator"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
