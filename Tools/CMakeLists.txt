@@ -2,64 +2,39 @@ project(MePhys)
 
 
 
-# fill list of header hpp files 
-set(MePhys_HEADERS_HPP 
-NuclStructure.hpp
-NucleonStructure.hpp
-DeuteronStructure.hpp
-Utilfunctions.hpp
-LightConeKin2to2.hpp
-LightConeKin2to3.hpp
-He3wf.hpp
+# fill list of cpp files
+set(MePhys_SRCS ${MePhys_SRCS}
+NuclStructure.cpp
+NucleonStructure.cpp
+DeuteronStructure.cpp
+Utilfunctions.cpp
+LightConeKin2to2.cpp
+LightConeKin2to3.cpp
+He3wf.cpp
+TCstPWF.cpp
+TDeuteron.cpp
+TGrossPWF.cpp
+TInterpolatingWavefunction.cpp
+TWavefunctionImplementation.cpp
+TYukawaPWF.cpp
+Matrix.cpp
+GammaStructure.cpp
+FourVector.cpp
+TSpinor.cpp
+TLorentzQuaternion.cpp
+TKinematics.cpp
+TKinematics2to2.cpp
+TElectronKinematics.cpp
+pair.cpp
+recmosh.cpp
+newcoef.cpp
+# TMPI.cpp
+TKinematics2to3.cpp
+TKinematics2to3WithLabAngles.cpp
+TLeptonKinematics.cpp
+mstwpdf.cpp
 )
 
-#get the source files
-foreach(it ${MePhys_HEADERS_HPP})
-  STRING(REGEX REPLACE "(^.*).hpp" "\\1.cpp" bla ${it})
-  set(MePhys_SRCS ${MePhys_SRCS} ${bla})
-endforeach()
-
-#fill list of h files
-set(MePhys_HEADERS_H 
-TCstPWF.h
-TDeuteron.h
-TGrossPWF.h
-TInterpolatingWavefunction.h
-TWavefunctionImplementation.h
-TYukawaPWF.h
-Matrix.h
-GammaStructure.h
-FourVector.h
-TSpinor.h
-TLorentzQuaternion.h
-TKinematics.h
-TKinematics2to2.h
-TElectronKinematics.h
-pair.h
-recmosh.h
-newcoef.h
-# TMPI.h
-TKinematics2to3.h
-TKinematics2to3WithLabAngles.h
-TLeptonKinematics.h
-mstwpdf.h
-)
-
-#get the cpp files from the h files
-foreach(it ${MePhys_HEADERS_H})
-  STRING(REGEX REPLACE "(^.*).h" "\\1.cpp" bla ${it})
-  set(MePhys_SRCS ${MePhys_SRCS} ${bla})
-endforeach()
-
-#add some more header files (that don't have a cpp file)
-set(MePhys_HEADERS ${MePhys_HEADERS_H} ${MePhys_HEADERS_HPP} 
-AuxFunction.hpp
-# constants.hpp 
-fortran.h
-f77matrx.h
-f77complx.h
-f77char.h
-)
 
 # set everything needed for the root dictonary and create the
 # dictionary
@@ -92,7 +67,7 @@ foreach(it ${MePhys_LINKDEF})
   set(MePhys_PCM ${MePhys_PCM} "${CMAKE_CURRENT_BINARY_DIR}/${bla}")
 endforeach()
 
-
+#fortran source files
 set(MePhys_FORT 
 alekhin.f
 F1F209_test.f
@@ -166,5 +141,3 @@ if(STATIC_BUILD)
   set_target_properties(MePhysST PROPERTIES OUTPUT_NAME MePhys)
   install(TARGETS MePhysST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endif(STATIC_BUILD)
-
-set(LIBRARIES ${LIBRARIES} MePhys)

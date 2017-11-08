@@ -62,8 +62,6 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_SOURCE_DIR}/lib")
 set(CMAKE_INSTALL_NAME_DIR "${CMAKE_SOURCE_DIR}/lib")
 set(CMAKE_BUILD_WITH_INSTALL_RPATH 1)
 
-# set(LIBRARIES ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES} ${MPI_LIBRARIES} ${Fortran_LIBRARIES})
-# message("${ROOT_LIBRARIES}")
 
 # MESSAGE(${LIBRARIES})
 enable_language (Fortran)
@@ -262,23 +260,13 @@ IF(XIAR)
 ENDIF(XIAR)
 MARK_AS_ADVANCED(XIAR)
 
-# set(INCLUDE_DIRECTORIES
-# ${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/Integrator" 
-# "${CMAKE_SOURCE_DIR}/Tools" "${CMAKE_SOURCE_DIR}/Glauber"
-# "${CMAKE_SOURCE_DIR}/Knockout") 
-
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/Integrator 
-# ${CMAKE_SOURCE_DIR}/Tools ${CMAKE_SOURCE_DIR}/Glauber
-# ${CMAKE_SOURCE_DIR}/Knockout) 
-# # include_directories(${INCLUDE_DIRECTORIES}) 
-# message(${INCLUDE_DIRECTORIES})
 
 
 add_subdirectory(Integrator)
 add_subdirectory(Tools)
-# add_subdirectory(Glauber)
-# add_subdirectory(Knockout)
-# add_subdirectory(DIS)
+add_subdirectory(Glauber)
+add_subdirectory(Knockout)
+add_subdirectory(DIS)
 # add_subdirectory(progs)
 
 if(DOXYGEN_FOUND)
