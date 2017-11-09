@@ -6,7 +6,11 @@
 //it takes some effort in finding reasonable integration limits, the rest is basically integrating the QE cross section of course
 //pretty straightforward...
 
-//averaged over the miniboone bins in outgoing muon kin energy and angle.
+//averaged over the miniboone bins in outgoing muon kin energy and angle.  This only makes a noticeable difference compared to unintegrated central kinematics for the very 
+//forward bin (costhetamu closest to 1)
+
+//in the most recent calculations we use ddiff executable and do trapezoid over 3 bin values (edges + center), is accurate enough.  
+
 
 #include <iostream>
 #include <cstdlib>

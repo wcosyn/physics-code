@@ -70,7 +70,7 @@ SET(INTEGRATOR_LIBRARY_PROPERTIES ${INTEGRATOR_LIBRARY_PROPERTIES}
 ############### build the library #####################
 add_library(Integrator SHARED ${INTEGRATOR_SRCS})
 target_include_directories(Integrator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(Integrator ${LIBRARIES})
+# target_link_libraries(Integrator ${LIBRARIES})
 set_target_properties(Integrator PROPERTIES ${INTEGRATOR_LIBRARY_PROPERTIES})
 install(TARGETS Integrator DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 

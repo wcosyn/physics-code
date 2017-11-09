@@ -53,7 +53,6 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_SOURCE_DIR}/lib")
 set(CMAKE_INSTALL_NAME_DIR "${CMAKE_SOURCE_DIR}/lib")
 set(CMAKE_BUILD_WITH_INSTALL_RPATH 1)
 
-
 enable_language (Fortran)
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 set(CMAKE_COMPILER_IS_CLANGCXX 0)

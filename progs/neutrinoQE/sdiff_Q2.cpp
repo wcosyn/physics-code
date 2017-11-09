@@ -553,7 +553,7 @@ struct FtorH {  //Hydrogen
 }; 
 
 
-struct FtorRFG {  //Hydrogen
+struct FtorRFG {  //Relativistic Fermi Gas
 
   static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
     FtorRFG &p = * (FtorRFG *) param;

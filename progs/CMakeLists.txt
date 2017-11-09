@@ -9,3 +9,4 @@ add_subdirectory(RhoTransparency)  #several programs used to compute rho transpa
 add_subdirectory(poldeut) #program for testing lightfront deuteron spectator tagging code
 add_subdirectory(pionprog) #program that wrote out pion glauber parameters
 add_subdirectory(pionestimate) #program that estimated uncertainties caused by rho decay to 2 pions in rho transparency calculations
+add_subdirectory(neutrinoQE) #set of programs to compute neutrino QE double differential and single differential cross sections, relativistic mean field, relativistic fermi gas, nucleon and nucleus
