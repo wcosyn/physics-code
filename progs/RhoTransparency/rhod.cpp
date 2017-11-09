@@ -1,3 +1,5 @@
+//MPI program to compute deuteron rho cross sections, output never used for transparency calculations
+
 #include <iostream>
 #include <cstdlib>
 
@@ -24,7 +26,7 @@ int main(int argc, char *argv[])
   double **results = new double*[n];  
   for(int i=0;i<n;i++) results[i] = new double[NROFRES];
 
-  RhoDeuteron test = RhoDeuteron("paris",400,nocuts);
+  RhoDeuteron test = RhoDeuteron("paris",400,nocuts,2,1.E-04,1E04,0);
   
   for(int i=TMPI::Rank(); i<n; i += TMPI::NumberOfProcesses() ) {
     int j = i/11;

@@ -56,6 +56,10 @@ TKinematics2to3WithLabAnglesLinkDef.h
 TLeptonKinematicsLinkDef.h
 )
 
+if(MPI_ENABLED)
+  set(MePhys_SRCS ${MePhys_SRCS} TMPI.cpp)
+  set(MePhys_LINKDEF ${MePhys_LINKDEF} TMPILinkDef.h)
+endif()
 
 foreach(it ${MePhys_LINKDEF})
   STRING(REGEX REPLACE "(^.*)LinkDef.h" "\\1Dict.cpp" bla ${it})
@@ -89,6 +93,9 @@ configure_file (
   "${CMAKE_CURRENT_SOURCE_DIR}/constants.hpp"
   )
 
+#this is a bit ugly but I don't see another way right now to make clear to the root generate dictionary function it depends on the MePhys lib too...
+#Should probably throw out all these dict shit since noone will ever use it.
+set(DicInc ${CMAKE_CURRENT_SOURCE_DIR} ${MPI_INCLUDE_PATH})
 
 #generate the root dictionaries
 list(LENGTH MePhys_DICTIONARY len1)
@@ -97,7 +104,7 @@ foreach(val RANGE ${len2})
   list(GET MePhys_DICTIONARY ${val} val1)
   list(GET MePhys_LINKDEF ${val} val2)
   STRING(REGEX REPLACE "(^.*)LinkDef.h" "\\1.h" bla ${val2})
-  ROOT_GENERATE_DICTIONARY("${bla}" "${val2}" "${val1}" "${CMAKE_CURRENT_SOURCE_DIR}")
+  ROOT_GENERATE_DICTIONARY("${bla}" "${val2}" "${val1}" "${DicInc}")
 endforeach()
 
 
@@ -121,8 +128,11 @@ SET(MePhys_LIBRARY_PROPERTIES ${MePhys_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(MePhys SHARED ${MePhys_SRCS_LI})
-target_include_directories(MePhys PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
+target_include_directories(MePhys PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${MPI_INCLUDE_PATH} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
 target_link_libraries(MePhys ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES})
+if(MPI_ENABLED)
+target_link_libraries(MePhys ${MPI_LIBRARIES})
+endif()
 set_target_properties(MePhys PROPERTIES ${MePhys_LIBRARY_PROPERTIES})
 
 ############### install the library ###################
@@ -136,7 +146,7 @@ ENDIF(60000 LESS found_vers)
 ############# build the library #####################
 if(STATIC_BUILD)
   add_library(MePhysST STATIC ${MePhys_SRCS_LI})
-  target_include_directories(MePhysST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
+  target_include_directories(MePhysST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${MPI_INCLUDE_PATH} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
   target_link_libraries(MePhysST -Wl,-no-whole-archive)
   set_target_properties(MePhysST PROPERTIES OUTPUT_NAME MePhys)
   install(TARGETS MePhysST DESTINATION "${CMAKE_SOURCE_DIR}/lib")

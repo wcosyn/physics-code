@@ -1,3 +1,5 @@
+//single node program to compute deuteron rho cross sections, output never used for transparency calculations
+
 #include <iostream>
 #include <cstdlib>
 
@@ -86,7 +88,7 @@ int main(int argc, char *argv[])
     mdf.param = &F;
     F.f=torz?klaas_t:klaas_z;
     if(integrator==1) res = numint::cube_romb(mdf,lower,upper,1.E-12,1.E-03,ret,count,0);
-    else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,1.E-03,1e05,ret,count,0);
+    else res = numint::cube_adaptive(mdf,lower,upper,1.E-12,1.E-03,1e02,1e05,ret,count,0);
     cout << Q2 << " ";
     for (int l=0;l<2;l++) cout << ret[l] << " ";
     cout << count << " " << res << endl;

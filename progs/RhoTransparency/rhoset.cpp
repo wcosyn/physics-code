@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
   double prec=atof(argv[11]);
   int ptype=atoi(argv[12]);
 //   int maxEval2 = atoi(argv[11]);
-  string homedir=argv[13];
+  string homedir=HOMEDIR;
   double Ebeam = 4.023;
   
 

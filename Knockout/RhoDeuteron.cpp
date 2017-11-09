@@ -1,6 +1,7 @@
 #include "RhoDeuteron.hpp"
 #include <AuxFunction.hpp>
 #include <FastParticle.hpp>
+#include <Utilfunctions.hpp>
 #define MASS_N (MASSP+MASSN)*0.5E-03
 
 using namespace std;
@@ -33,8 +34,8 @@ void RhoDeuteron::getCrosst(double *result, const double Ebeam, const double Q2,
   unsigned count=0;
   if(integrator==0){
     double pmestimate=0.,cthestimate=0.,phiestimate=0.;
-    rombergerN(this,&RhoDeuteron::intPmt,0.,pmax*1.E-03,2,
-		result,PREC,3,7,&pmestimate,Q2,nu,qvec,t,&cthestimate, &phiestimate);
+    // rombergerN(this,&RhoDeuteron::intPmt,0.,pmax*1.E-03,2,
+		// result,PREC,3,7,&pmestimate,Q2,nu,qvec,t,&cthestimate, &phiestimate);
   }
   else if(integrator==1||integrator==2){
     numint::vector_d ret(2,0.);
@@ -77,8 +78,8 @@ void RhoDeuteron::intPmt(const double pm, double *result, va_list ap){
     return;
   }
   double EN = sqrt(MASS_N*MASS_N+pm*pm);
-  rombergerN(this,&RhoDeuteron::intCosThetat,-1.,1.,2,
-	    result,PREC,3,7,pcthestimate, pm, Q2,nu,qvec,t,EN,pphiestimate);
+  // rombergerN(this,&RhoDeuteron::intCosThetat,-1.,1.,2,
+	//     result,PREC,3,7,pcthestimate, pm, Q2,nu,qvec,t,EN,pphiestimate);
     for(int i=0;i<2;i++) result[i]*=2.*pm*pm;
   
 }
@@ -93,8 +94,8 @@ void RhoDeuteron::intCosThetat(const double costheta, double *result, va_list ap
   double *pphiestimate = va_arg(ap,double*);
   
   double sintheta = sqrt(1.-costheta*costheta);
-  rombergerN(this,&RhoDeuteron::intPhit,0.,PI,2,
-	    result,PREC,3,7,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,t,EN);
+  // rombergerN(this,&RhoDeuteron::intPhit,0.,PI,2,
+	//     result,PREC,3,7,pphiestimate,pm, costheta, sintheta, Q2,nu,qvec,t,EN);
  
 }
 

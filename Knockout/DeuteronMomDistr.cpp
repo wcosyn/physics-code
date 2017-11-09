@@ -2,6 +2,7 @@
 
 #define MASS_N (MASSP+MASSN)*0.5
 
+#include <cassert>
 #include <cmath>
 #include <Utilfunctions.hpp>
 #include <AuxFunction.hpp>
@@ -804,7 +805,10 @@ complex<double> DeuteronMomDistr::scatter(double t){
 
 //all in MeV!
 //quasi-elastic fsi
-// double DeuteronMomDistr::getMomDistrfsi(TVector3 pvec, double nu, double qvec, double s, double massother){
+double DeuteronMomDistr::getMomDistrfsi(TVector3 pvec, double nu, double qvec, double s, double massother){
+
+  assert(1==0);
+  cerr << "fucntion DeuteronMomDistr::getMomDistrfsi(TVector3 pvec, double nu, double qvec, double s, double massother) is not implemented any more" << endl;
 //   double fsitotal=0.;
 //   double Er=sqrt(pvec.Mag2()+massr*massr);
 //   for(int M=-2;M<=2;M+=2){
@@ -822,7 +826,7 @@ complex<double> DeuteronMomDistr::scatter(double t){
 //   //cout << kin.GetMesonMass() << " " << kin.GetPklab() << " " << kin.GetCosthklab() << endl;
 //   fsitotal*=2./3.;
 //   return fsitotal*MASSD/(2.*(MASSD-Er));
-// }
+}
 // 
 // 
 // void DeuteronMomDistr::totdens_qt_simple(const double qt, complex<double>* result, va_list ap){

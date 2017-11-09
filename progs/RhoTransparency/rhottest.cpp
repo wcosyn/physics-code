@@ -1,3 +1,5 @@
+//test program for rho transparency calculations.  USes MPI.  Never used for proper calculations as far as I can remember...
+
 #include <iostream>
 #include <cstdlib>
 
@@ -23,7 +25,7 @@ int main(int argc, char *argv[])
   double **results = new double*[n];  
   for(int i=0;i<n;i++) results[i] = new double[NROFRES];
 
-  RhoTCross test = RhoTCross(nucleus,400,argv[7],nocuts,0,0.);
+  RhoTCross test = RhoTCross(nucleus,400.,HOMEDIR,nocuts,0,0.,1.E-02,2,1E04,0.,4);
   
   for(int i=TMPI::Rank(); i<n; i += TMPI::NumberOfProcesses() ) {
     int j = i/4;

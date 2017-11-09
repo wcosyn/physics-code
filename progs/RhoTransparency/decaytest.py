@@ -1,3 +1,6 @@
+#script used to test kinematics for rho decay
+
+
 import math
 import numpy as np
 import pylab as p

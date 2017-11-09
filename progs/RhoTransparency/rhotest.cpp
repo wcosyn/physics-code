@@ -1,15 +1,5 @@
-/*! \mainpage Glauber ISI/FSI RMSGA C++ Project
- * \author Wim Cosyn
- * \date 16/08/2011
- * \brief This code implements classes for the Glauber RMSGA formalism, including CT and SRC effects.
- * 
- * \details 
- * - It contains classes for a mean field nucleus, a mean field nucleus with densities (used in thickness calculations). <BR>
- * - A class for correlated FSI calculations containing all the needed functions and a grid for the gamma functions. <BR>
- * - Four abstract classes (one for a general FSI grid, one that adds a CT grid, one for a general thickness FSI grid and one that adds a thickness CT grid). <BR>
- * - Two glauber classes : one without thickness, one with (also adds SRC to the ISI/FSI). <BR>
- * - A special class for the glauber grid of one particle, exploiting the symmetry along the z-axis (no phi dependence).  <BR>
-*/
+//program used to test Rho glauber grids and distorted momentum distributions used in the cross section calculations
+
 #include <iostream>
 #include <cstdlib>
 
@@ -25,11 +15,12 @@ using namespace std;
 #include <GlauberDecayGridThick.hpp>
 #include <DistMomDistrGrid.hpp>
 #include <TMFSpinor.hpp>
+#include <TRotation.h>
 
 int main(int argc, char *argv[])
 {
   
-  string homedir="/home/wim/Code/share";
+  string homedir=HOMEDIR;
 // 
 //   MeanFieldNucleusThick CarbonThick(3,homedir);
 //   FastParticle rho(4, 0, 2220,0.,0.,1.1,145.,homedir);
@@ -89,7 +80,7 @@ int main(int argc, char *argv[])
    
   MeanFieldNucleusThick FeThick(3,homedir);
   FastParticle rho(4, 0, 2340,0.,0.,1.0,145.,homedir);
-  GlauberDecayGridThick gridthick(60,20,5,&FeThick,homedir);  
+  GlauberDecayGridThick gridthick(60,20,5,&FeThick,2,1.E-04,homedir);  
   gridthick.addParticle(rho);
   //gridthick.printParticles();
   gridthick.updateGrids();
@@ -98,14 +89,16 @@ int main(int argc, char *argv[])
   //   cout << gridthick.getNumber_of_grids() << endl;
    DistMomDistrGrid** pdistgrid = new DistMomDistrGrid*[FeThick.getTotalLevels()];
    for(int i=0;i<FeThick.getTotalLevels();i++){
-     pdistgrid[i] = new DistMomDistrGrid(i, 400., 30,20,5,&gridthick,homedir);
+     pdistgrid[i] = new DistMomDistrGrid(i, 400., 30,20,5,&gridthick,1.E-03,2,1E04,0.,homedir);
    }
    for(int i=0;i<=400;i+=10){
      double p=i;
      double tot =0.,totpw=0.;
 //      cout << p << " "; 
      for(int shell=0;shell<FeThick.getTotalLevels();shell++){
-         pdistgrid[shell]->updateGrids(&gridthick,shell);
+      TRotation rot;
+      rot.Rotate(0.,TVector3(0.,1.,0.));
+         pdistgrid[shell]->updateGrids(&gridthick,shell,rot);
 	 double pw = pdistgrid[shell]->getRhopwGridFull_interp(p);
 	 double fsi = pdistgrid[shell]->getRhoGridFull_interp3(0, p, 1., 0.);
 	 tot+=fsi;
