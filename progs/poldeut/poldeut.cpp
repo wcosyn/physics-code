@@ -1,3 +1,5 @@
+//test program for the light-front polarized deuteron code
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

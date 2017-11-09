@@ -1,15 +1,5 @@
-/*! \mainpage Glauber ISI/FSI RMSGA C++ Project
- * \author Wim Cosyn
- * \date 16/08/2011
- * \brief This code implements classes for the Glauber RMSGA formalism, including CT and SRC effects.
- * 
- * \details 
- * - It contains classes for a mean field nucleus, a mean field nucleus with densities (used in thickness calculations). <BR>
- * - A class for correlated FSI calculations containing all the needed functions and a grid for the gamma functions. <BR>
- * - Four abstract classes (one for a general FSI grid, one that adds a CT grid, one for a general thickness FSI grid and one that adds a thickness CT grid). <BR>
- * - Two glauber classes : one without thickness, one with (also adds SRC to the ISI/FSI). <BR>
- * - A special class for the glauber grid of one particle, exploiting the symmetry along the z-axis (no phi dependence).  <BR>
-*/
+//program computes A(e,e'p) cross section.  Used for several calculations (Monaghan's paper for instance)
+
 #include <iostream>
 #include <cstdlib>
 

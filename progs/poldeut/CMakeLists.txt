@@ -1,0 +1,12 @@
+project(poldeut)
+
+add_executable(poldeut poldeut.cpp )
+target_link_libraries(poldeut DIS MePhys)
+
+if(NOT BUILD_PROGS)
+set_target_properties(poldeut PROPERTIES EXCLUDE_FROM_ALL 1)
+endif()
+
+if(BUILD_PROGS)
+install(TARGETS poldeut DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+endif()

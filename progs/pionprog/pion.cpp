@@ -1,3 +1,5 @@
+//small program that outputs glauber parameters for pions
+
 #include <iostream>
 #include <cstdlib>
 #include <string>
