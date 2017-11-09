@@ -1,15 +1,5 @@
-/*! \mainpage Glauber ISI/FSI RMSGA C++ Project
- * \author Wim Cosyn
- * \date 16/08/2011
- * \brief This code implements classes for the Glauber RMSGA formalism, including CT and SRC effects.
- * 
- * \details 
- * - It contains classes for a mean field nucleus, a mean field nucleus with densities (used in thickness calculations). <BR>
- * - A class for correlated FSI calculations containing all the needed functions and a grid for the gamma functions. <BR>
- * - Four abstract classes (one for a general FSI grid, one that adds a CT grid, one for a general thickness FSI grid and one that adds a thickness CT grid). <BR>
- * - Two glauber classes : one without thickness, one with (also adds SRC to the ISI/FSI). <BR>
- * - A special class for the glauber grid of one particle, exploiting the symmetry along the z-axis (no phi dependence).  <BR>
-*/
+//program used to do some transparency calculations for Or et al. for a proposal.
+
 #include <iostream>
 #include <cstdlib>
 
@@ -32,11 +22,11 @@ void adap_intPm(numint::vector_d &, double costhetacm,Cross* pObs, MeanFieldNucl
 		double Q2, double omega, int current, double *cthmax);
 
 
-//run ./transp [nucleon] [Q2,GeV^2] [Ein, MeV] [thetae, degr] [thickness] [sharedir]
+//run ./transp [nucleus] [Q2,GeV^2] [Ein, MeV] [thetae, degr] [thickness] [current] [precision in integration] [userset FSI sigma] [screening sigma value]
 int main(int argc, char *argv[])
 {
   
-  string homedir=argv[10];
+  string homedir=HOMEDIR;
   double Q2=atof(argv[2])*1.E06;
   double Ein=atof(argv[3]);
   double thetae=atof(argv[4])*DEGRTORAD;
