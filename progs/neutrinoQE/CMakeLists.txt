@@ -9,13 +9,13 @@ target_link_libraries(neutestfixEin Knockout Glauber MePhys)
 add_executable(neutestint neutestint.cpp )
 target_link_libraries(neutestint Knockout Glauber MePhys)
 
-find_library(CUBA_LIB cuba HINTS ${CMAKE_SOURCE_DIR}/lib)
+
 
 add_executable(sdiff_Q2 sdiff_Q2.cpp )
-target_link_libraries(sdiff_Q2 Knockout Glauber MePhys ${CUBA_LIB})
+target_link_libraries(sdiff_Q2 Knockout Glauber MePhys ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
 
 add_executable(sdiff_Q2QE sdiff_Q2QE.cpp )
-target_link_libraries(sdiff_Q2QE Knockout Glauber MePhys ${CUBA_LIB})
+target_link_libraries(sdiff_Q2QE Knockout Glauber MePhys ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
 
 
 if(NOT BUILD_PROGS)

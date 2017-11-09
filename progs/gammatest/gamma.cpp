@@ -1,3 +1,6 @@
+//program that checked some gamma matrix expressions
+//also explicit reductions of some response functions etc. in quasi-elastic scattering through traces and so on.
+
 #include <iostream>
 #include <cstdlib>
 

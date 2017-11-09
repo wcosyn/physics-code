@@ -1,3 +1,5 @@
+//small program to compute momentum distribution of the relatifistic MF densities
+
 #include <iostream>
 #include <cstdlib>
 

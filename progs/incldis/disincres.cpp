@@ -1,3 +1,5 @@
+//program calculates F2D inclusive with FSI (three resonance regions), see PhysRevC.89.014612 for details
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

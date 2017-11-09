@@ -1,3 +1,6 @@
+//program to calculate FSI effects in inclusive QE deuteron scattering
+// this is work in progress with the double PV part needing work
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

@@ -1,3 +1,5 @@
+//program that calculates FSI for resonance region for Azz observable in DIS
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

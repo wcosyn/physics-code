@@ -252,7 +252,7 @@ double dist2bodymom(MeanFieldNucleus& nuc, int shellindex1, int shellindex2, TVe
 					complex<double> ret;
 					int maxEval = 10000;
 					unsigned count;
-					int succes = numint::cube_adaptive(mdf,lowerb,upperb,1e-06,prec,maxEval,ret,count,0);	
+					int succes = numint::cube_adaptive(mdf,lowerb,upperb,1e-06,prec,1E02,maxEval,ret,count,0);	
 					intgrl_res += norm(ret);
 					assert(succes==0);
 					//cout << succes << "  --  " << count << " -- " << ret << "    " << intgrl_res << endl;
@@ -272,7 +272,7 @@ void integrandum(complex<double>& res, const numint::array<double,3>& x, TVector
 	//TVector3 R(); // convert spherical x[] array coordinates to a cartesian vector
 	//R.SetMagThetaPhi(x[0],acos(x[1]),x[2]); // acos because x[1] is cos(theta)
 	//double PR = P*R;
-	res = exp(-std::I_UNIT*INVHBARC*PR)*TSpinor::Bar(*u_pm)*TMFSpinor(*nuc,shellindex1,m1,x[0],x[1],x[2])*TSpinor::Bar(*u_ps)*TMFSpinor(*nuc,shellindex2,m2,x[0],x[1],x[2]); // Wavefunctions already defined with factor r, so no r^2 that would appear from jacobian, no sin(theta) because we integrate over d(cos(theta))
+	res = exp(-I_UNIT*INVHBARC*PR)*TSpinor::Bar(*u_pm)*TMFSpinor(*nuc,shellindex1,m1,x[0],x[1],x[2])*TSpinor::Bar(*u_ps)*TMFSpinor(*nuc,shellindex2,m2,x[0],x[1],x[2]); // Wavefunctions already defined with factor r, so no r^2 that would appear from jacobian, no sin(theta) because we integrate over d(cos(theta))
 
 }
 

@@ -1,2 +1,2 @@
 add_subdirectory(test)
-add_subdirectory(2bodycom)
+add_subdirectory(2bodymom)

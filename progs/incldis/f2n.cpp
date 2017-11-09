@@ -1,3 +1,5 @@
+//Simple program to output proton and neutron F2 values
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

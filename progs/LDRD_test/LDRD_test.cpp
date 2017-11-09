@@ -46,10 +46,10 @@ int main(int argc, char *argv[])
   double pwLCavg = test.getavgLCCross(kinLC,1);
 //   double fsiLCavg = test.getavgLCCross(kinLC,0); //fsi in LC still under construction
   double pwLCnoavg = test.getLCCross(kinLC,1);
-  double pwVNAavg=test.getavgVNACross(kinLC2,1);
+  double pwVNAavg=test.getavgVNACross(kinLC,1);
   double fsiVNAavg=test.getavgVNACross(kinLC,0);
-  double pwVNAnoavg=test.getVNACross(kinLC2,1);
-  double fsiVNAnoavg=test.getVNACross(kinLC2,0);
+  double pwVNAnoavg=test.getVNACross(kinLC,1);
+  double fsiVNAnoavg=test.getVNACross(kinLC,0);
 
   
   
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
   cout << "new sigma [mb]: " << sigma_deeps << endl;
   test.setScatter(sigma_deeps,betain,epsin);  //set the new scattering parameters
   fsiVNAavg=test.getavgVNACross(kinLC,0);
-  fsiVNAnoavg=test.getVNACross(kinLC2,0);
+  fsiVNAnoavg=test.getVNACross(kinLC,0);
 
   cout << fsiVNAavg << " " << fsiVNAnoavg << endl << endl; 
   //He3 part

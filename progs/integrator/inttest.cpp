@@ -1,3 +1,5 @@
+//small program to test integration routines
+
 #include <iostream>
 #include <cstdlib>
 
@@ -48,7 +50,7 @@ int main(int argc, char *argv[])
   double xmin[3]={0.,-1.,0.},xmax[3]={1.,1.,2.*PI}, c=1.;
   double res[2];
   double err[2];
-  error = adapt_integrate(2,bol,&c,3,xmin,xmax,0,SIGNIF*1.E-03,SIGNIF,res,err);
+  error = adapt_integrate(2,bol,&c,3,xmin,xmax,100,0,SIGNIF*1.E-03,SIGNIF,res,err);
   cout << res[0] << " " << res[1] << " " << err[0] << " " << err[1] << " " << error << endl;
   
 }

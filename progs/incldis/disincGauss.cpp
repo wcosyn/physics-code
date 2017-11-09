@@ -1,3 +1,5 @@
+//program used to compute the DIS region FSI contribution, Gaussian shape variant [see PhysRevC.89.014612]
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
