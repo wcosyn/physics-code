@@ -5,7 +5,7 @@ project(DIS)
 # fill list of header files 
 set(DIS_SRCS 
 InclusiveCross.cpp
-# InclusiveCrossRes.cpp
+# InclusiveCrossRes.cpp #excluded because it only used romberg integration routines and I don't use them any more (removed it from the library)
 DeuteronCross.cpp
 Resonance.cpp
 He3Cross.cpp

@@ -1,3 +1,6 @@
+// test prog for the resonance model for inclusive deuteron DIS, using two resonances
+//never used in proper calculations (see incldis for that)
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
