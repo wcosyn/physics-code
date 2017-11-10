@@ -18,7 +18,17 @@ if(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE Release)
 endif()
 
+if(NOT BUILD_PROGS)
+  set(BUILD_PROGS no)
+endif()
 
+if(NOT STATIC_BUILD)
+  set(STATIC_BUILD no)
+endif()
+
+if(NOT MPI_ENABLED)
+  set(MPI_ENABLED no)
+endif()
 
 project(mycode CXX Fortran)
 MESSAGE("c++ ${CMAKE_CXX_COMPILER}")
