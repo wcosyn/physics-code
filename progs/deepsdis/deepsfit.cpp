@@ -1,3 +1,4 @@
+//program used to fit the rescattering parameters in the FSI to the deeps data
 
 #include <TVirtualFitter.h>
 #include <TFitter.h>

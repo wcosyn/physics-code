@@ -1,4 +1,4 @@
-# script generates input to run all miniboone calculations on the hpc
+# script used to convert the bonus data to an array that I put in my C++ code
 
 # -*- coding: utf-8 -*-
 import numpy as np

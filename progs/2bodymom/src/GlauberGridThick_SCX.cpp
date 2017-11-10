@@ -122,7 +122,7 @@ void GlauberGridThick_SCX::constructGlauberGrid(){
 			file.close();
 		}
 	}
-	std::cout << "#filename exists? " << file << std::endl;
+	// std::cout << "#filename exists? " << file << std::endl;
 	std::cout << "#constructing grid " << _bpoints << " by " << _zpoints << std::endl;
 	std::cout << "#steps are " << _bstep << "  " << _zstep << std::endl;
 	std::cout << "#density correction factors are (p,n) = (" << _pdens_fctr << ", " << _ndens_fctr << ") " << std::endl;

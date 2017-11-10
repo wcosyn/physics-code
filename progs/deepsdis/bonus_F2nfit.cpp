@@ -2,6 +2,7 @@
 //we use renormalization for the data derived from our fits of the FSI model at certain kinematics
 //different strategies have been tried
 
+//sumfile etc. is for an independent fit of the results over all angles, similar to using weighted averages
 
 #include <TVirtualFitter.h>
 #include <TFitter.h>

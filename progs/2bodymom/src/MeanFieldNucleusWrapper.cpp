@@ -9,7 +9,7 @@
 
 #include "MeanFieldNucleus.hpp"
 #include "MeanFieldNucleusThick.hpp"
-#define SHAREDIR "/home/camille/Code/trunk/share"
+#define SHAREDIR HOMEDIR
 #include <iostream>
 extern "C" {
 	void* get_MeanFieldNucleus(int nuctype) { return new MeanFieldNucleus(nuctype,SHAREDIR); }

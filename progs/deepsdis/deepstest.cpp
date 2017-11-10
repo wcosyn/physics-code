@@ -1,3 +1,5 @@
+//program that calculates reduced structure funtions for spectator tagging as they were presented in the deeps data
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

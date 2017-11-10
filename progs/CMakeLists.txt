@@ -19,3 +19,7 @@ add_subdirectory(DQEinc) #inclusive deuteron QE FSI calculations, work in progre
 
 add_subdirectory(cuba_test) #test prog for the cuba library
 add_subdirectory(camille) #some test programs that camille used, don't know the details...
+
+add_subdirectory(2bodymom/src) #camille's programs for the 2nucleon knockout calculations
+
+add_subdirectory(deepsdis) #programs for spectator tagging (deeps/bonus) & deuteron tensor structure calculations

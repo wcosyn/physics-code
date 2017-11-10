@@ -6,7 +6,7 @@
 #include "2bodymom.hpp"
 
 #ifndef SHAREDIR
-#define SHAREDIR "/home/camille/Code/share"
+#define SHAREDIR HOMEDIR
 #endif
 
 int main(int argc, char* argv[]){
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
 	EventParser::write_events("parse_writetest.txt",events);
 
 	std::vector<struct Event> readEvents;
-	EventParser::read_events("parse_writetest.txt",readEvents,10,15);
+	EventParser::read_events("parse_writetest.txt",readEvents,10,15,nuc);
 	EventParser::write_events("parse_readwritetest.txt",readEvents);
 
 	return 0;

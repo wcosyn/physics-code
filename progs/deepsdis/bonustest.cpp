@@ -1,6 +1,8 @@
 //bonus data test program, test formulas from their MC, my cross section
 // generate ratios to compare with data (using scattering parameter values from fit)
 
+//integration was for bin averaging, but not used any more [no significant differences I'm assuming...]
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

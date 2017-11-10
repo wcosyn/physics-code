@@ -1,7 +1,8 @@
 //prog to fit the normalization of the bonus data
 //sigma parameters used from deeps fit
 //take scattering parameters fixed, fit norms (other strategies do not yield significant better results_)
-
+// chi2 values are calculated properly compared to before (where I divided by dof in the fit function, cannot do that)
+//also error in the fit is quadratic sum of stat and sys
 
 
 #include <TVirtualFitter.h>
