@@ -13,9 +13,11 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+#set defaults
 if(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE Release)
 endif()
+
 
 
 project(mycode CXX Fortran)
@@ -86,8 +88,12 @@ MESSAGE("--- Found GNU compiler collection")
   
 if(${CMAKE_CXX_COMPILER} MATCHES "icpc")
   MESSAGE("--- Found Intel compiler collection")
-  set(RELEASE_FLAGS ${RELEASE_FLAGS} -O3 -shared-intel -fp-model source -unroll -pthread -ipo -xavx -parallel)
+  set(RELEASE_FLAGS ${RELEASE_FLAGS} -O3 -shared-intel -fp-model source -unroll -pthread -ipo -xavx)
   set(DEBUG_FLAGS ${DEBUG_FLAGS} -g)
+
+  if(MPI_ENABLED)
+  set(RELEASE_FLAGS ${RELEASE_FLAGS} -parallel)  
+  endif()  
 endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
 
 
@@ -142,7 +148,7 @@ endif()
 
 
 
-message(${CMAKE_CXX_FLAGS_RELEASE})
+# message(${CMAKE_CXX_FLAGS_RELEASE})
 # message(${CMAKE_Fortran_FLAGS_RELEASE})
-message(${CMAKE_CXX_FLAGS_DEBUG})
+# message(${CMAKE_CXX_FLAGS_DEBUG})
 # message(${CMAKE_Fortran_FLAGS_DEBUG})
