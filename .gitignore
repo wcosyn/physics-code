@@ -24,5 +24,6 @@ manual/*.pdf
 # using astyle
 *.orig
 
-#ignore object files
+#ignore object files and libs
 *.o
+*.so
