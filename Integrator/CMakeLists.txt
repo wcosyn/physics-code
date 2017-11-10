@@ -70,6 +70,9 @@ SET(INTEGRATOR_LIBRARY_PROPERTIES ${INTEGRATOR_LIBRARY_PROPERTIES}
 ############### build the library #####################
 add_library(Integrator SHARED ${INTEGRATOR_SRCS})
 target_include_directories(Integrator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(Integrator PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_FLAGS}>")
+target_compile_options(Integrator PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_FLAGS}>")
+
 # target_link_libraries(Integrator ${LIBRARIES})
 set_target_properties(Integrator PROPERTIES ${INTEGRATOR_LIBRARY_PROPERTIES})
 install(TARGETS Integrator DESTINATION "${CMAKE_SOURCE_DIR}/lib")
@@ -79,6 +82,8 @@ if(STATIC_BUILD)
 	add_library(IntegratorST STATIC ${INTEGRATOR_SRCS})
 	target_include_directories(IntegratorST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 	target_link_libraries(IntegratorST -Wl,-no-whole-archive)
+	target_compile_options(IntegratorST PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_FLAGS}>")
+	target_compile_options(IntegratorST PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_FLAGS}>")
 	set_target_properties(IntegratorST PROPERTIES OUTPUT_NAME Integrator)
 	install(TARGETS IntegratorST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endif(STATIC_BUILD)

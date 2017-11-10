@@ -129,6 +129,8 @@ SET(MePhys_LIBRARY_PROPERTIES ${MePhys_LIBRARY_PROPERTIES}
 ############### build the library #####################
 add_library(MePhys SHARED ${MePhys_SRCS_LI})
 target_include_directories(MePhys PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${MPI_INCLUDE_PATH} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
+target_compile_options(MePhys PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_FLAGS}>")
+target_compile_options(MePhys PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_FLAGS}>")
 target_link_libraries(MePhys ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES})
 if(MPI_ENABLED)
 target_link_libraries(MePhys ${MPI_LIBRARIES})
@@ -146,6 +148,8 @@ ENDIF(60000 LESS found_vers)
 ############# build the library #####################
 if(STATIC_BUILD)
   add_library(MePhysST STATIC ${MePhys_SRCS_LI})
+  target_compile_options(MePhysST PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_FLAGS}>")
+  target_compile_options(MePhysST PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_FLAGS}>")
   target_include_directories(MePhysST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${MPI_INCLUDE_PATH} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
   target_link_libraries(MePhysST -Wl,-no-whole-archive)
   set_target_properties(MePhysST PROPERTIES OUTPUT_NAME MePhys)
