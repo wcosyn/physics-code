@@ -2,6 +2,9 @@
 
 //calculate Azz from tagged structure functions, accounting for virtual photon angle etc.
 
+//has some explicit checks between structure functions b_i and the cross section structure functions (L,T etc)
+//also comparison with the EPW definitions etc.
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
@@ -96,9 +99,9 @@ int main(int argc, char *argv[])
       F.thetaq=thetaq;
       F.strp=strp;
       
-//       double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
-//         strp.getF_xQ(F1p,F2p,1,x*MASSD/MASSn,Q2);  
-//         strp.getF_xQ(F1n,F2n,0,x*MASSD/MASSn,Q2);  
+      double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
+        strp.getF_xQ(F1p,F2p,1,x*MASSD/MASSn,Q2);  
+        strp.getF_xQ(F1n,F2n,0,x*MASSD/MASSn,Q2);  
 
       numint::mdfunction<numint::vector_d,2> mdf;
       mdf.func = &Ftor_b1::exec;

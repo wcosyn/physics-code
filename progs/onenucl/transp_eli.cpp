@@ -1,3 +1,5 @@
+//program used to calculate some lead transparencies
+
 
 #include <MeanFieldNucleusThick.hpp>
 #include <TKinematics2to2.h>

@@ -1,3 +1,6 @@
+//program that calculates FSI for dis region with uniform distribution for Azz observable in DIS, not used in published calculations (?)
+//doesn't take into account non-zero angle between polarization and virtual photon direction
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
@@ -41,7 +44,7 @@ int main(int argc, char *argv[])
     double azz=0.,azzfsi1=0.,azzfsi2=0.,azzfsioffsuppr1=0.,azzfsioffsuppr2=0.;
     for(int proton=0;proton<=1;++proton){
       InclusiveCross Dinc(proton,strucname,wf,*elec,resonances,3);
-      Dinc.calc_Azzinc(azz,teller,Q2,x);
+      Dinc.calc_Azzinc(azz,teller,Q2,x,0.);
       cout << azz << " " << teller << endl;
       double f1,f2,azz1,azz2;
 //       Dinc.calc_AzzincFSI_uniform(azz1,azz2,f1,f2,Q2,x,centrals,widths);

@@ -3,26 +3,14 @@ project(DIS)
 
 
 # fill list of header files 
-set(DIS_HEADERS_HPP 
-InclusiveCross.hpp
-# InclusiveCrossRes.hpp
-DeuteronCross.hpp
-Resonance.hpp
-He3Cross.hpp
-Poldeut.hpp
+set(DIS_SRCS 
+InclusiveCross.cpp
+# InclusiveCrossRes.cpp #excluded because it only used romberg integration routines and I don't use them any more (removed it from the library)
+DeuteronCross.cpp
+Resonance.cpp
+He3Cross.cpp
+Poldeut.cpp
 )
-
-foreach(it ${DIS_HEADERS_HPP})
-  STRING(REGEX REPLACE "(^.*).hpp" "\\1.cpp" bla ${it})
-  set(DIS_SRCS ${DIS_SRCS} ${bla})
-endforeach()
-
-
-set(INCLUDE_DIRECTORIES
-${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/Integrator" 
-"${CMAKE_SOURCE_DIR}/Tools" "${CMAKE_SOURCE_DIR}/Glauber"
-"${CMAKE_SOURCE_DIR}/Knockout" "${CMAKE_BINARY_DIR}/Tools") 
-include_directories( ${INCLUDE_DIRECTORIES})
 
 
 
@@ -41,8 +29,8 @@ SET(DIS_LIBRARY_PROPERTIES ${DIS_LIBRARY_PROPERTIES}
 
 ############### build the library #####################
 add_library(DIS SHARED ${DIS_SRCS})
-target_link_libraries(DIS ${LIBRARIES} MePhys Knockout
-Integrator)
+target_include_directories(DIS PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(DIS Knockout MePhys Integrator)
 set_target_properties(DIS PROPERTIES ${DIS_LIBRARY_PROPERTIES})
 ############### install the library ###################
 install(TARGETS DIS DESTINATION "${CMAKE_SOURCE_DIR}/lib")
@@ -50,8 +38,8 @@ install(TARGETS DIS DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 ############### build the library #####################
 if(STATIC_BUILD)
   add_library(DISST STATIC ${DIS_SRCS})
-  target_link_libraries(DISST -Wl,-no-whole-archive)
+  target_include_directories(DISST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})  
+  target_link_libraries(DISST Knockout MePhys Integrator -Wl,-no-whole-archive)
   set_target_properties(DISST PROPERTIES OUTPUT_NAME DIS)
   install(TARGETS DISST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endif(STATIC_BUILD)
-

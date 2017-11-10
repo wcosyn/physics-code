@@ -333,7 +333,7 @@ double dist2bodymom(MeanFieldNucleusThick& nuc, int shellindex1, int shellindex2
 					complex<double> ret;
 					int maxEval = 10000;
 					unsigned count;
-					int succes = numint::cube_adaptive(mdf,lowerb,upperb,1e-06,prec,maxEval,ret,count,0);	
+					int succes = numint::cube_adaptive(mdf,lowerb,upperb,1e-06,prec,1E02,maxEval,ret,count,0);	
 					intgrl_res += norm(ret);
 					assert(succes==0);
 					//cout << succes << "  --  " << count << " -- " << ret << "    " << intgrl_res << endl;
@@ -349,7 +349,7 @@ void integrandum(complex<double>& res, const numint::array<double,3>& x, TVector
 {
 	double sinth = sqrt(1.-x[1]*x[1]);
 	double PR = P*TVector3(x[0]*sinth*cos(x[2]),x[0]*sinth*sin(x[2]),x[0]*x[1]); // dot product of vector P with vector R
-	res = exp(-std::I_UNIT*INVHBARC*PR)*TSpinor::Bar(*u_pm)*TMFSpinor(*nuc,shellindex1,m1,x[0],x[1],x[2])*TSpinor::Bar(*u_ps)*TMFSpinor(*nuc,shellindex2,m2,x[0],x[1],x[2])*grid->getFsiCtGridFull_interp3(x[0],x[1],x[2]); // Wavefunctions already defined with factor r, so no r^2 that would appear from jacobian, no sin(theta) because we integrate over d(cos(theta))
+	res = exp(-I_UNIT*INVHBARC*PR)*TSpinor::Bar(*u_pm)*TMFSpinor(*nuc,shellindex1,m1,x[0],x[1],x[2])*TSpinor::Bar(*u_ps)*TMFSpinor(*nuc,shellindex2,m2,x[0],x[1],x[2])*grid->getFsiCtGridFull_interp3(x[0],x[1],x[2]); // Wavefunctions already defined with factor r, so no r^2 that would appear from jacobian, no sin(theta) because we integrate over d(cos(theta))
 
 }
 

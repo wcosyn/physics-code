@@ -1,3 +1,5 @@
+//small program that checked kinematics of the hermes b1 experiment and what influence the angle between beam (=polarization axis) and virtual photon had
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

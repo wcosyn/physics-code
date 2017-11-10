@@ -1,3 +1,5 @@
+// three resonance model for inclusive deuteron DIS, never used in proper calculations (see incldis for that)
+
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

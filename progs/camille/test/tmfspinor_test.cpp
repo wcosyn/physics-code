@@ -82,7 +82,7 @@ int main()
 		{
 			cout << "Integrating TMFSpinor with shellindex : " << n << " 2*m_j : " << m;
 			myStructInstance.m = m;
-			int succes = numint::cube_adaptive(mymdf,lowerb,upperb,1.E-10,prec,maxEval,ret,count,0);
+			int succes = numint::cube_adaptive(mymdf,lowerb,upperb,1.E-10,prec,1E02,maxEval,ret,count,0);
 			cout << " succes(=0)? : " << succes << " norm. result : " << ret << endl;
 		}
 	}

@@ -1,4 +1,4 @@
-//fit scatter parameters of already normed data to improve fits.  Didn't produce any meaningful results
+//fit rescattering parameters of already normed data to improve fits.  Didn't produce any meaningful results
 
 
 #include <TVirtualFitter.h>

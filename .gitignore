@@ -1,3 +1,4 @@
+bin/
 build/
 doc/
 lib/
@@ -22,3 +23,6 @@ manual/*.pdf
 # ignore .orig files from indentation
 # using astyle
 *.orig
+
+#ignore object files
+*.o

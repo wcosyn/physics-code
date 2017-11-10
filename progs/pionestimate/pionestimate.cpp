@@ -1,3 +1,5 @@
+//program that estimated uncertainties on the rho decay to 2 pions in the rho transparency calcaultions.  Results used in the rho transparency paper and later data (see communication w Lamiaa El Fassi)
+
 #include <iostream>
 #include <cstdlib>
 
@@ -144,11 +146,11 @@ int main(int argc, char *argv[])
     mdf.func = &Ftor_grid::exec;
     mdf.param = &F;
     F.f=intpm_pw;
-    res = numint::cube_adaptive(mdf,lower,upper,1.E-12,1.E-03,20000,ret,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-12,1.E-03,2E02,20000,ret,count,0);
     cout << res << " " << count << endl;
     numint::vector_d ret2(1,0.);
     F.f=intpm;
-    res = numint::cube_adaptive(mdf,lower,upper,1.E-12,1.E-03,20000,ret2,count,0);
+    res = numint::cube_adaptive(mdf,lower,upper,1.E-12,1.E-03,2E02,20000,ret2,count,0);
     cout << res << " " << count << endl << endl;
     
     cout << ret2[0]/ret[0] << endl;

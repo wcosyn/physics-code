@@ -1,6 +1,7 @@
 //bonus data test program, test formulas from their MC, my cross section
 // generate ratios to compare with data (using scattering parameter values from deeps fit)
-//used in extrapolation python script (mainly for plots, not meaningful fits
+//used in extrapolation python script [fitscript.py] (mainly for plots, not meaningful fits)
+//this one is based on exp bins, uses renormalised data
 
 
 

@@ -1,3 +1,5 @@
+//prog giving transparency estimates for a jlab proposal (CAFE experiment)
+
 #include <iostream>
 #include <cstdlib>
 

@@ -1,14 +1,14 @@
 project(INTEGRATOR)
 
-set(INTEGRATOR_HEADERS
-numint/array.hpp
-numint/macros.hpp
-numint/numint.hpp
-numint/numint_tools.hpp
-numint/quadrature.hpp
-numint/typedef.hpp
-numint/numint2adapt.hpp
-adaptive/cubature.h)
+# set(INTEGRATOR_HEADERS
+# numint/array.hpp
+# numint/macros.hpp
+# numint/numint.hpp
+# numint/numint_tools.hpp
+# numint/quadrature.hpp
+# numint/typedef.hpp
+# numint/numint2adapt.hpp
+# adaptive/cubature.h)
 
 
 set(INTEGRATOR_SRCS ${INTEGRATOR_SRCS}
@@ -22,9 +22,6 @@ numint/vfubini.cpp
 adaptive/cubature.c
 )
 
-set(INCLUDE_DIRECTORIES
-${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/numint )
-include_directories( ${INCLUDE_DIRECTORIES})
 
 #############################
 ### EXTERNAL CUBA PROJECT ###
@@ -64,17 +61,35 @@ SET(INTEGRATOR_LIBRARY_PROPERTIES ${INTEGRATOR_LIBRARY_PROPERTIES}
     SUFFIX ".so"
 )
 
+# set(INCLUDE_DIRECTORIES
+# ${INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/numint )
+# include_directories( ${INCLUDE_DIRECTORIES})
+
+
 
 ############### build the library #####################
 add_library(Integrator SHARED ${INTEGRATOR_SRCS})
-target_link_libraries(Integrator ${LIBRARIES})
-set_target_properties(Integrator PROPERTIES ${INTEGRATOR_LIBRARY_PROPERTIES})
-# target_link_libraries (INTEGRATOR MePhys Glauber Knockout)
-############### build the library #####################
-add_library(IntegratorST STATIC ${INTEGRATOR_SRCS})
-target_link_libraries(IntegratorST -Wl,-no-whole-archive)
-set_target_properties(IntegratorST PROPERTIES OUTPUT_NAME Integrator)
+target_include_directories(Integrator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(Integrator PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_FLAGS}>")
+target_compile_options(Integrator PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_FLAGS}>")
+if(MPI_ENABLED)
+target_link_libraries(Integrator ${MPI_LIBRARIES} "-parallel")
+endif()
 
-############### install the library ###################
+# target_link_libraries(Integrator ${LIBRARIES})
+set_target_properties(Integrator PROPERTIES ${INTEGRATOR_LIBRARY_PROPERTIES})
 install(TARGETS Integrator DESTINATION "${CMAKE_SOURCE_DIR}/lib")
-install(TARGETS IntegratorST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+
+############### build the static library #####################
+if(STATIC_BUILD)
+	add_library(IntegratorST STATIC ${INTEGRATOR_SRCS})
+	target_include_directories(IntegratorST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+	target_link_libraries(IntegratorST -Wl,-no-whole-archive)
+	if(MPI_ENABLED)
+	target_link_libraries(IntegratorST ${MPI_LIBRARIES} "-parallel")
+	endif()
+	target_compile_options(IntegratorST PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_FLAGS}>")
+	target_compile_options(IntegratorST PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_FLAGS}>")
+	set_target_properties(IntegratorST PROPERTIES OUTPUT_NAME Integrator)
+	install(TARGETS IntegratorST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+endif(STATIC_BUILD)

@@ -32,7 +32,12 @@
                 "/usr/local/include",
                 "/usr/include/x86_64-linux-gnu",
                 "/usr/include",
-                "${workspaceRoot}"
+                "${workspaceRoot}",
+                "${workspaceRoot}/Tools",
+                "${workspaceRoot}/Glauber",
+                "${workspaceRoot}/DIS",
+                "${workspaceRoot}/Knockout",
+                "${workspaceRoot}/Integrator"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
@@ -43,7 +48,12 @@
                     "/usr/local/include",
                     "/usr/include/x86_64-linux-gnu",
                     "/usr/include",
-                    "${workspaceRoot}"
+                    "${workspaceRoot}",
+                    "${workspaceRoot}/Tools",
+                    "${workspaceRoot}/Glauber",
+                    "${workspaceRoot}/DIS",
+                    "${workspaceRoot}/Knockout",
+                    "${workspaceRoot}/Integrator"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
