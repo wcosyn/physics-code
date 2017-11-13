@@ -102,6 +102,7 @@ if(${CMAKE_CXX_COMPILER} MATCHES "icpc")
   set(DEBUG_FLAGS ${DEBUG_FLAGS} -g)
 
   if(MPI_ENABLED)
+   MESSAGE("-- Enabling mpi flags")
   set(RELEASE_FLAGS ${RELEASE_FLAGS} -parallel)  
   endif()  
 endif(${CMAKE_CXX_COMPILER} MATCHES "icpc")
