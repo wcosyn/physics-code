@@ -1,5 +1,8 @@
 //contains beam fluxes of neutrino experiments
+#ifndef FLUXES_H
+#define FLUXES_H
 
+namespace neutrino_flux{
 //starts at E=25 MeV with a delta of 25 MeV. normalized to 1
 const double MiniBooNE_antineut_muon_flux_norm[] = {
 0.14760001E-03 , 
@@ -471,3 +474,5 @@ const double t2k_aneut_muon_flux_norm[] = {
 3.84099985e-05 , 
 3.73900002e-05
 };
+}
+#endif

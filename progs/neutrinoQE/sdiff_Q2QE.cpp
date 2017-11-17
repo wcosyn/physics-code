@@ -174,8 +174,8 @@ int main(int argc, char *argv[])
   else if(!exp.compare("minerva")) { 
     minbeam=1.5E03; 
     maxbeam=10.E03;
-    normalize(Minerva_nu_muon_FHC_flux,500);
-    normalize(Minerva_anu_muon_RHC_flux,500);
+    normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500);
+    normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500);
   }  
   else if(!exp.compare("t2k")) { maxbeam=2.E02; }  //still to implement!
   else {cerr << "invalid experiment name chosen" << endl << "Choose either miniboone, minerva or t2k" << endl; assert(1==0);}
@@ -186,12 +186,12 @@ int main(int argc, char *argv[])
     leptonmass=TLeptonKinematics::masse;
     flav=0;
   } 
-  else if (lepton_id.compare("muon")){
+  else if (!lepton_id.compare("muon")){
     leptonmass=TLeptonKinematics::massmu;
     flav=1;
   } 
-  else if (lepton_id.compare("tau")){
-    leptonmass=TLeptonKinematics::tau;
+  else if (!lepton_id.compare("tau")){
+    leptonmass=TLeptonKinematics::masstau;
     flav=2;
   } 
   else {cerr << "invalid lepton name chosen" << endl << "Choose either electron, muon or tau" << endl; assert(1==0);}
@@ -439,12 +439,12 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
     leptonmass=TLeptonKinematics::masse;
     flav=0;
   } 
-  else if (lepton_id.compare("muon")){
+  else if (!lepton_id.compare("muon")){
     leptonmass=TLeptonKinematics::massmu;
     flav=1;
   } 
-  else if (lepton_id.compare("tau")){
-    leptonmass=TLeptonKinematics::tau;
+  else if (!lepton_id.compare("tau")){
+    leptonmass=TLeptonKinematics::masstau;
     flav=2;
   } 
   else {cerr << "invalid lepton name chosen" << endl << "Choose either electron, muon or tau" << endl; assert(1==0);}
@@ -494,16 +494,16 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
     }
     //fold with flux
     if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
-      results[0]*=interpolate(MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
-      results[1]*=interpolate(MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
+      results[0]*=interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
+      results[1]*=interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
     }
     else if(!exp.compare("minerva")&&!lepton_id.compare("muon")){
-      results[0]*=interpolate(Minerva_nu_muon_FHC_flux,E_in,500,20,0);
-      results[1]*=interpolate(Minerva_anu_muon_RHC_flux,E_in,500,20,0);
+      results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,20,0);
+      results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in,500,20,0);
     }
     else if(!exp.compare("t2k")&&!lepton_id.compare("muon")){
-      results[0]*=interpolate(t2k_neut_muon_flux_norm,E_in,25,80,1);
-      results[1]*=interpolate(t2k_aneut_muon_flux_norm,E_in,25,80,1);
+      results[0]*=interpolate(neutrino_flux::t2k_neut_muon_flux_norm,E_in,25,80,1);
+      results[1]*=interpolate(neutrino_flux::t2k_aneut_muon_flux_norm,E_in,25,80,1);
     }
     else { cerr << "Unsupported combination of experiment and lepton_id:" << exp << " " << lepton_id << endl; assert(1==0);}
   
@@ -522,11 +522,11 @@ void int_hydr(numint::vector_d & results, double E_out,
   if(!lepton_id.compare("electron")){
     leptonmass=TLeptonKinematics::masse;
   } 
-  else if (lepton_id.compare("muon")){
+  else if (!lepton_id.compare("muon")){
     leptonmass=TLeptonKinematics::massmu;
   } 
-  else if (lepton_id.compare("tau")){
-    leptonmass=TLeptonKinematics::tau;
+  else if (!lepton_id.compare("tau")){
+    leptonmass=TLeptonKinematics::masstau;
   } 
   double massin=MASSn-34.;
   double massout=MASSn;
@@ -545,16 +545,16 @@ void int_hydr(numint::vector_d & results, double E_out,
   results[1]=WeakQECross::getElWeakQECross(Q2,E_in,0,charged,1.03E03,2);
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
-    results[0]*=E_in>maxbeam? 0. : interpolate(MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
-    results[1]*=E_in>maxbeam? 0. : interpolate(MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
+    results[0]*=E_in>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
+    results[1]*=E_in>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
   }
   else if(!exp.compare("minerva")&&!lepton_id.compare("muon")){
-    results[0]*=interpolate(Minerva_nu_muon_FHC_flux,E_in,500,20,0);
-    results[1]*=interpolate(Minerva_anu_muon_RHC_flux,E_in,500,20,0);
+    results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,20,0);
+    results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in,500,20,0);
   }
   else if(!exp.compare("t2k")&&!lepton_id.compare("muon")){
-    results[0]*=interpolate(t2k_neut_muon_flux_norm,E_in,25,80,1);
-    results[1]*=interpolate(t2k_aneut_muon_flux_norm,E_in,25,80,1);
+    results[0]*=interpolate(neutrino_flux::t2k_neut_muon_flux_norm,E_in,25,80,1);
+    results[1]*=interpolate(neutrino_flux::t2k_aneut_muon_flux_norm,E_in,25,80,1);
   }
   else {cerr << "Unsupported combination of experiment and lepton_id:" << exp << " " << lepton_id << endl; assert(1==0);}
 
@@ -569,11 +569,11 @@ void int_RFG(numint::vector_d & results, double omega,double E_out, string lepto
   if(!lepton_id.compare("electron")){
     leptonmass=TLeptonKinematics::masse;
   } 
-  else if (lepton_id.compare("muon")){
+  else if (!lepton_id.compare("muon")){
     leptonmass=TLeptonKinematics::massmu;
   } 
-  else if (lepton_id.compare("tau")){
-    leptonmass=TLeptonKinematics::tau;
+  else if (!lepton_id.compare("tau")){
+    leptonmass=TLeptonKinematics::masstau;
   } 
   double E_in=omega+E_out;
   if(E_in>maxbeam)  {return;}
@@ -591,16 +591,16 @@ void int_RFG(numint::vector_d & results, double omega,double E_out, string lepto
 //   cout << omega << " " << E_out << " " << crossRFG_p << " " << crossRFG_n << endl;
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
-    results[0]*=interpolate(MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
-    results[1]*=interpolate(MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
+    results[0]*=interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
+    results[1]*=interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
   }
   else if(!exp.compare("minerva")&&!lepton_id.compare("muon")){
-    results[0]*=interpolate(Minerva_nu_muon_FHC_flux,E_in,500,20,0);
-    results[1]*=interpolate(Minerva_anu_muon_RHC_flux,E_in,500,20,0);
+    results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,20,0);
+    results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in,500,20,0);
   }
   else if(!exp.compare("t2k")&&!lepton_id.compare("muon")){
-    results[0]*=interpolate(t2k_neut_muon_flux_norm,E_in,25,80,1);
-    results[1]*=interpolate(t2k_aneut_muon_flux_norm,E_in,25,80,1);
+    results[0]*=interpolate(neutrino_flux::t2k_neut_muon_flux_norm,E_in,25,80,1);
+    results[1]*=interpolate(neutrino_flux::t2k_aneut_muon_flux_norm,E_in,25,80,1);
   }
   else { cerr << "Unsupported combination of experiment and lepton_id:" << exp << " " << lepton_id << endl; assert(1==0);}
     
