@@ -36,12 +36,6 @@ using namespace std;
 //const double massmu = 105.6583715;
 
 
-void normalize(double flux[], double dx){
-  double sum=0;
-  for(int i=0;i<20;i++) sum+=flux[i]*dx;
-  for(int i=0;i<20;i++) flux[i]/=sum;
-  };
-
 
 //integration struct 
 struct Ftor {  //Carbon
@@ -169,13 +163,20 @@ int main(int argc, char *argv[])
   double max=-1.,min=1.; //overall min and max center of mass cosine theta angles
   
   double minbeam=0., maxbeam=0.; //different beam energy intervals for the different experiments
-  
+  double neutnorm=1.,aneutnorm=1.; // flux normalisations
+
   if(!exp.compare("miniboone")) { maxbeam=3.E03;}
   else if(!exp.compare("minerva")) { 
     minbeam=1.5E03; 
     maxbeam=10.E03;
-    normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500);
-    normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500);
+    if(!lepton_id.compare("muon")){
+      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500,20);
+      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500,20);
+    }
+    else if(!lepton_id.compare("electron")){
+      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_elec_FHC_flux,500,20);
+      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_elec_FHC_flux,500,20);      
+    }
   }  
   else if(!exp.compare("t2k")) { maxbeam=2.E02; }  //still to implement!
   else {cerr << "invalid experiment name chosen" << endl << "Choose either miniboone, minerva or t2k" << endl; assert(1==0);}
@@ -291,7 +292,7 @@ int main(int argc, char *argv[])
             if(E_out_min>E_out) E_out_min=E_out;
             if(omega>omega_hi) omega_hi=omega;
             if(omega<omega_low) omega_low=omega;
-  //             cout << E_in << " " << E_out << " " << tempmin << " " << tempmax << " " << pm_min << endl;
+//             cout << E_in << " " << E_out << " " << tempmin << " " << tempmax << " " << pm_min << endl;
           }
         }
         delete lepton;
@@ -361,7 +362,8 @@ int main(int argc, char *argv[])
   else numint::cube_adaptive(mdfRFG,lowerRFG,upperRFG,1.E-30,1.E-03,2E02,4E04,avgcrossRFG,count,0); 
 
 //   cout << "Crosssection H: " << Q2 << " " << avgcrossH[0]*1.E19*2.*PI << " [1E-39 cm2/GeV2]" <<  " "<< count << endl; //2pi because of integration over scattered lepton angle
-    cout << Q2QE*1.E-06 << " " << avgcrossH[0]*1.E19*2.*PI << " " << avgcrossH[1]*1.E19*2.*PI << " " << avgcrossRFG[0]*1.E19*2.*PI << " " << avgcrossRFG[1]*1.E19*2.*PI  << endl;
+  cout << Q2QE*1.E-06 << " " << avgcrossH[0]*1.E19*2.*PI/neutnorm << " " << avgcrossH[1]*1.E19*2.*PI/aneutnorm 
+            << " " << avgcrossRFG[0]*1.E19*2.*PI/neutnorm << " " << avgcrossRFG[1]*1.E19*2.*PI/aneutnorm  << endl;
 
  
   //initialize object -- Carbon
@@ -420,8 +422,9 @@ int main(int argc, char *argv[])
            (stf+"divonne").c_str(),nregions, countt, fail, avgcross,err,prob );
   
   //factor 2\pi because of integration over muon polar angle
-  cout << Q2QE*1.E-6 << " " << avgcrossH[0]*1.E19*2.*PI << " " << avgcrossH[1]*1.E19*2.*PI << " " << avgcrossRFG[0]*1.E19*2.*PI << " " << avgcrossRFG[1]*1.E19*2.*PI << " " <<  
-    avgcross[0]*1.E19*2.*PI/Nucleus.getN() << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ() << " " << count << endl;
+  cout << Q2QE*1.E-6 << " " << avgcrossH[0]*1.E19*2.*PI/neutnorm << " " << avgcrossH[1]*1.E19*2.*PI/aneutnorm << " " 
+      << avgcrossRFG[0]*1.E19*2.*PI/neutnorm << " " << avgcrossRFG[1]*1.E19*2.*PI/aneutnorm << " " <<  
+    avgcross[0]*1.E19*2.*PI/Nucleus.getN()/neutnorm << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ()/aneutnorm << " " << count << endl;
 
 }
 

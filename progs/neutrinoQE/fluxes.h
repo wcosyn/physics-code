@@ -301,10 +301,50 @@ double Minerva_anu_muon_RHC_flux[] = {
 
 //starts at 0, bins of 500 MeV, up to 10 GeV. not normalized to 1
 double Minerva_nu_elec_FHC_flux[] = {
+7.75396e-08,
+2.02694e-07,
+3.22610e-07,
+3.84936e-07,
+4.15845e-07,
+3.81665e-07,
+3.57537e-07,
+3.07985e-07,
+2.56419e-07,
+2.12067e-07,
+1.70515e-07,
+1.42452e-07,
+1.11390e-07,
+8.76123e-08,
+6.89416e-08,
+5.58481e-08,
+4.65502e-08,
+3.90126e-08,
+3.67891e-08,
+3.53903e-08  
 };
 
 //starts at 0, bins of 500 MeV, up to 10 GeV. not normalized to 1
 double Minerva_anu_elec_FHC_flux[] = {
+1.29121e-08,
+2.19059e-08,
+2.23450e-08,
+2.70454e-08,
+2.06952e-08,
+2.06763e-08,
+2.10683e-08,
+1.88609e-08,
+1.95614e-08,
+1.85201e-08,
+1.82437e-08,
+1.64469e-08,
+1.60847e-08,
+1.52656e-08,
+1.38283e-08,
+1.47048e-08,
+1.29192e-08,
+1.28393e-08,
+1.27927e-08,
+1.07389e-08
 };
 
 //starts at E=25 MeV with a delta of 25 MeV (up to 2 GeV), check normalisation
@@ -474,5 +514,13 @@ const double t2k_aneut_muon_flux_norm[] = {
 3.84099985e-05 , 
 3.73900002e-05
 };
+
+//obtain the normalisatin of the flux, just simple trapezoid (is accurate enough here)
+double normalize(double flux[], double dx, int length){
+  double sum=0;
+  for(int i=0;i<length;i++) sum+=flux[i]*dx;
+  return sum;
+  };
+
 }
 #endif
