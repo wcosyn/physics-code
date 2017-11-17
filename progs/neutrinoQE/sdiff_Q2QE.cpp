@@ -424,7 +424,8 @@ int main(int argc, char *argv[])
   //factor 2\pi because of integration over muon polar angle
   cout << Q2QE*1.E-6 << " " << avgcrossH[0]*1.E19*2.*PI/neutnorm << " " << avgcrossH[1]*1.E19*2.*PI/aneutnorm << " " 
       << avgcrossRFG[0]*1.E19*2.*PI/neutnorm << " " << avgcrossRFG[1]*1.E19*2.*PI/aneutnorm << " " <<  
-    avgcross[0]*1.E19*2.*PI/Nucleus.getN()/neutnorm << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ()/aneutnorm << " " << count << endl;
+    avgcross[0]*1.E19*2.*PI/Nucleus.getN()/neutnorm << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ()/aneutnorm << " " <<
+    (avgcross[0]+avgcross[1])*1.E19*2.*PI/Nucleus.getN()/(neutnorm+aneutnorm) << " " <<  count << endl;
 
 }
 

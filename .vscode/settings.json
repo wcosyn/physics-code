@@ -5,6 +5,7 @@
         "iostream": "cpp",
         "*.tcc": "cpp",
         "limits": "cpp",
-        "*.in": "cpp"
+        "*.in": "cpp",
+        "ostream": "cpp"
     }
 }
