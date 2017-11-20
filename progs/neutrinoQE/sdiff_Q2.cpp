@@ -460,7 +460,7 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
           for(int i=0;i<2;i++) results[i]+=0.; /*cout << "cut " << kin.GetPYlab() << " " << kin.GetPklab() << endl;*/
         }
         else{
-          double result=pobs.getDiffWeakQECross(kin,current,0,0,0,pw,shell,0.,maxEval,0,1);   // prec..2E04
+          double result=pobs.getDiffWeakQECross(kin,current,0,0,0,pw,shell,0.,maxEval,WeakQECross::ctheta_cm,1);   // prec..2E04
   //	  			cout << "Result " << result << endl;
 
           //Jacobian    
@@ -520,8 +520,8 @@ void int_hydr(numint::vector_d & results, double E_out,
   double E_in_p=(Q2+MASSN*MASSN-MASSP*MASSP)/2./MASSP+E_out;
   
   //[0] is neutron [1] is proton
-  results[0]=WeakQECross::getElWeakQECross(Q2,E_in_n,0,charged,1.03E03,leptonmass*leptonmass,1);
-  results[1]=WeakQECross::getElWeakQECross(Q2,E_in_p,1,charged,1.03E03,leptonmass*leptonmass,1);
+  results[0]=WeakQECross::getElWeakQECross(Q2,E_in_n,0,charged,1.03E03,leptonmass*leptonmass,WeakQECross::realQ2);
+  results[1]=WeakQECross::getElWeakQECross(Q2,E_in_p,1,charged,1.03E03,leptonmass*leptonmass,WeakQECross::realQ2);
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
     results[0]*=E_in_n>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in_p,25,120,1);
@@ -567,7 +567,7 @@ void int_RFG(numint::vector_d & results, double omega,double E_out, string lepto
   if(abs(costhetamu)>1.) {/*cout << "costheta" << endl;*/ return;}
 
   double kf=228.;
-  WeakQECross::getRFGWeakQECross(results[1],results[0],Q2, E_in, omega,kf,leptonmass*leptonmass,1,1.03E03,1,Pauli);
+  WeakQECross::getRFGWeakQECross(results[1],results[0],Q2, E_in, omega,kf,leptonmass*leptonmass,1,1.03E03,WeakQECross::realQ2,Pauli);
    //cout << omega << " " << E_out << " " << results[1] << " " << results[0] << endl;
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){

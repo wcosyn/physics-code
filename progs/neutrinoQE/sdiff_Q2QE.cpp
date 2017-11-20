@@ -480,7 +480,7 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
           for(int i=0;i<2;i++) results[i]+=0.; /*cout << "cut " << kin.GetPYlab() << " " << kin.GetPklab() << endl;*/
         }
         else{
-          double result=pobs.getDiffWeakQECross(kin,current,0,0,0,pw,shell,0.,maxEval,0,1);   // prec..2E04
+          double result=pobs.getDiffWeakQECross(kin,current,0,0,0,pw,shell,0.,maxEval,WeakQECross::ctheta_cm,1);   // prec..2E04
   //	  			cout << "Result " << result << endl;
 
           //Jacobian              
@@ -550,8 +550,8 @@ void int_hydr(numint::vector_d & results, double E_out,
 //  if(E_in>maxbeam)  cout << "int " << Q2QE << " " << EnuQE << " "<< costhetamu << " " << E_out << " " << E_in << " " << E_in-E_out << endl;
  
  
-  results[0]=WeakQECross::getElWeakQECross(Q2,E_in,0,charged,1.03E03,leptonmass*leptonmass,2);
-  results[1]=WeakQECross::getElWeakQECross(Q2,E_in,1,charged,1.03E03,leptonmass*leptonmass,2);
+  results[0]=WeakQECross::getElWeakQECross(Q2,E_in,0,charged,1.03E03,leptonmass*leptonmass,WeakQECross::type_Q2QE);
+  results[1]=WeakQECross::getElWeakQECross(Q2,E_in,1,charged,1.03E03,leptonmass*leptonmass,WeakQECross::type_Q2QE);
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
     results[0]*=E_in>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
@@ -600,7 +600,7 @@ void int_RFG(numint::vector_d & results, double omega,double E_out, string lepto
   if(abs(costhetamu)>1.) {/*cout << "costheta" << endl;*/ return;}
   double EnuQE=(2.*massin*E_out-(massin*massin+leptonmass*leptonmass-massout*massout))/2./(massin-E_out+p_out*costhetamu);                          
   double kf=228.;
-  WeakQECross::getRFGWeakQECross(results[1],results[0],Q2, E_in, omega,kf,leptonmass*leptonmass,1,1.03E03,2,Pauli);
+  WeakQECross::getRFGWeakQECross(results[1],results[0],Q2, E_in, omega,kf,leptonmass*leptonmass,1,1.03E03,WeakQECross::type_Q2QE,Pauli);
 //   cout << omega << " " << E_out << " " << crossRFG_p << " " << crossRFG_n << endl;
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){

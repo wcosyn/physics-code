@@ -86,7 +86,7 @@ int main(int argc, char *argv[]){
   
 //   for(int i=0;i<200;i++){
     Q2=1.E06;
-    double crossHanu=WeakQECross::getElWeakQECross(Q2,Ein,1,1,M_A,mmu*mmu,1);
+    double crossHanu=WeakQECross::getElWeakQECross(Q2,Ein,1,1,M_A,mmu*mmu,WeakQECross::realQ2);
     crossHanu*=2.*PI*1.E19; //units 10^-39 cm^2/GeV^2
     double omega=(Q2+MASSN*MASSN-MASSP*MASSP)/(2.*mp*x);
 

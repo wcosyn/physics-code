@@ -6,6 +6,9 @@
         "*.tcc": "cpp",
         "limits": "cpp",
         "*.in": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp",
+        "cstdlib": "cpp"
     }
 }

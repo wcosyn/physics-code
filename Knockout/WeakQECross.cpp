@@ -43,12 +43,12 @@ WeakQECross::~WeakQECross(){
   
 }
 
-double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, double leptonmass2, int Q2diff){
+double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, double leptonmass2, el_differential d_type){
 
   double massin=(proton?MASSP:MASSN);
   double massout=(charged?(proton?MASSN:MASSP):(proton?MASSP:MASSN));
   
-  if(Q2diff==2) massin=massout=MASSn;
+  if(d_type==type_Q2QE) massin=massout=MASSn;
   
   double omega=0.5*(massout*massout-massin*massin+Q2)/massin;
   double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
@@ -155,10 +155,12 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
     
         
     cross*=massfactor*pow(G_FERMI*COS_CAB*E_out/(Q2/M_W/M_W+1.)/PI/2.,2.);
-    cross/=1.+E_in/massin*(1.-massfactor*costhl); //recoil factor
+    cross/=abs(1.+E_in/massin*(1.-costhl/massfactor)); //recoil factor
     
     cross*=HBARC*HBARC; // to units fm^2.
-    
+    //so far this will give us differential cross section in lab frame, differential to lepton solid angle
+
+
 //     cross2*=massfactor*pow(G_FERMI*COS_CAB*E_out/(Q2/M_W/M_W+1.)/PI/2.,2.);
 //     cross2/=1.+E_in/massin*(1.-massfactor*costhl); //recoil factor
 //     
@@ -167,19 +169,41 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
     
     // cout<<"Factors "<<p_out<<" "<<E_out<<" "<<cos(atan(sqrt(tan2theta)))<<" "<<cos(atan(sqrt(tan2theta)))<<endl;*/
 
-    if(Q2diff==1) cross/=abs(2.*p_out*p_out*E_in*massin/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out-(massin+E_in)*p_out)); // Jacobian to d\sigma/dQ^2
-    
-    if(Q2diff==2){ //jacobian to d\sigma\dQ^2_QE
-      double masss=massin-34.;
-      double EnuQE=(2.*masss*E_out-(masss*masss+leptonmass2-massout*massout))/2./(masss-E_out*(1-massfactor*costhl));
-      double dEmu_over_dcosmu = E_in*p_out*p_out/(p_out*(E_in+massin)-costhl*E_out*E_in);
-      double dEnuQE=masss*dEmu_over_dcosmu/(masss-E_out+p_out*costhl) - EnuQE/(masss-E_out+p_out*costhl)*((E_out/p_out*costhl-1.)*dEmu_over_dcosmu + p_out);
-      double Jac=2.*EnuQE*((1.-E_out/p_out*costhl)*dEmu_over_dcosmu-p_out) +2.*(E_out-p_out*costhl)*dEnuQE;
-//        cout << "elfun " << EnuQE << " " << costhl << " " << E_out << " " << E_in << " " << omega << endl;
-//       cout << Jac << " " << 2.*p_out*p_out*E_in*massin/(E_in*E_out*costhl-(massin+E_in)*p_out) << endl;
-      cross/=abs(Jac);
-
+    //take care of different differentials
+    switch(d_type){
+      case(costheta_lab):
+        break;
+      case(realQ2):
+      {
+        cross/=abs(2.*p_out*p_out*E_in*massin/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out-(massin+E_in)*p_out)); // Jacobian to d\sigma/dQ^2
+      }
+      break;
+      
+      case(type_Q2QE):
+      {
+        double masss=massin-34.;
+        double EnuQE=(2.*masss*E_out-(masss*masss+leptonmass2-massout*massout))/2./(masss-E_out*(1-massfactor*costhl));
+        double dEmu_over_dcosmu = E_in*p_out*p_out/(p_out*(E_in+massin)-costhl*E_out*E_in);
+        double dEnuQE=masss*dEmu_over_dcosmu/(masss-E_out+p_out*costhl) - EnuQE/(masss-E_out+p_out*costhl)*((E_out/p_out*costhl-1.)*dEmu_over_dcosmu + p_out);
+        double Jac=2.*EnuQE*((1.-E_out/p_out*costhl)*dEmu_over_dcosmu-p_out) +2.*(E_out-p_out*costhl)*dEnuQE;
+  //        cout << "elfun " << EnuQE << " " << costhl << " " << E_out << " " << E_in << " " << omega << endl;
+  //       cout << Jac << " " << 2.*p_out*p_out*E_in*massin/(E_in*E_out*costhl-(massin+E_in)*p_out) << endl;
+        cross/=abs(Jac);
+      }
+      break;
+      
+      case(type_Q2p):
+      {
+        double costhin=(E_in-costhl*p_out)/qvec; //angle between beam and outgoing proton
+        cross/=abs(E_in*costhin)/abs(1.+E_in/massin*(1.-costhl/massfactor))/massin*p_out; //get rid of old jacobian, enter new one
+      }
+      break;
+      default: 
+        cerr <<"invalid option for differential cross section in WeakQECross::getElWeakQECross " << d_type <<endl;
+        assert(1==0);
+        break;
     }
+    
 //     cout << p_out << " " << E_in << " " << E_out << " " << massin << " " << (1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out << endl;
 //     if(isnan(cross)){ cout << costhl << " " << abs(2.*p_out*p_out*E_in*massin/(E_in*E_out*(1.-(Q2+leptonmass2)/(2.*E_in*E_out))/p_out*E_out-(massin+E_in)*p_out)) << endl;
 //       for(int i=0;i<5;i++) cout << kinfactors2[i] << endl;
@@ -200,7 +224,8 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
 }
 
 
-void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2, double E_in, double omega, double k_Fermi, double leptonmass2, bool charged, double M_A, int Q2diff, bool Pauli_blocking){
+void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2, double E_in, double omega, double k_Fermi, 
+                                    double leptonmass2, bool charged, double M_A, el_differential d_type, bool Pauli_blocking){
 
   double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
   double Q2overkk=Q2/qvec/qvec;
@@ -305,20 +330,31 @@ void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2,
     presult*=HBARC*HBARC*totscaling; // to units fm^2.
     nresult*=HBARC*HBARC*totscaling; // to units fm^2.
 
-    if(Q2diff==1){ 
-      presult/=2.*E_in*p_out; // Jacobian to d\sigma/dQ^2
-      nresult/=2.*E_in*p_out; // Jacobian to d\sigma/dQ^2
+    switch(d_type){
+      case(costheta_lab):
+        break;
+      case(realQ2):{
+        presult/=2.*E_in*p_out; // Jacobian to d\sigma/dQ^2
+        nresult/=2.*E_in*p_out; // Jacobian to d\sigma/dQ^2
+      }
+      break;
+      case(type_Q2QE):{
+        double massin=MASSn-34.;
+        double massout=MASSn;
+        double EnuQE=(2.*massin*E_out-(massin*massin+leptonmass2-massout*massout))/2./(massin-E_out*(1-massfactor*costhl));
+        double Q2QE=-leptonmass2+2.*EnuQE*(E_out-p_out*costhl);
+        double Jac = -2.*EnuQE*p_out*massin/(massin-E_out+p_out*costhl);
+  //       cout << Jac << " " << -2.*E_in*p_out << endl;
+        presult/=abs(Jac);
+        nresult/=abs(Jac);
+      }
+      break;
+      default:
+        cerr <<"invalid option for differential cross section in WeakQECross::getElWeakQECross " << d_type <<endl;
+        assert(1==0);
+        break;
     }
-    if(Q2diff==2){
-      double massin=MASSn-34.;
-      double massout=MASSn;
-      double EnuQE=(2.*massin*E_out-(massin*massin+leptonmass2-massout*massout))/2./(massin-E_out*(1-massfactor*costhl));
-      double Q2QE=-leptonmass2+2.*EnuQE*(E_out-p_out*costhl);
-      double Jac = -2.*EnuQE*p_out*massin/(massin-E_out+p_out*costhl);
-//       cout << Jac << " " << -2.*E_in*p_out << endl;
-      presult/=abs(Jac);
-      nresult/=abs(Jac);
-    }
+
     // if(isnan(presult)) cout << totscaling << " " << 
   }
 
@@ -386,7 +422,7 @@ double WeakQECross::getElWeakQECross(TKinematics2to2 &kin, int current, double p
  } */
 
 double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
-			   double phi, int maxEval, bool lab, bool phi_int){
+			   double phi, int maxEval, differential d_type, bool phi_int){
   
   //electron kinematics
   double Q2=kin.GetQsquared();
@@ -399,9 +435,24 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
   //kaon is residual A-1 nucleus
   
   //m_n*m_{A-1}*p_f/E_{A-1}/f_rec (for lab)
-  double frontfactor=lab? (kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
-      /abs(kin.GetEklab()+kin.GetEYlab()*(1-qvec*kin.GetCosthYlab()/kin.GetPYlab()))) :
-	    kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPkcm()/(8*pow(PI,3.)*kin.GetW());
+  double frontfactor=0.;
+  switch(d_type){
+    case(ctheta_lab):
+      frontfactor=(kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
+      /abs(kin.GetEklab()+kin.GetEYlab()*(1-qvec*kin.GetCosthYlab()/kin.GetPYlab())));
+      break;
+    case(ctheta_cm):
+      frontfactor=kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPkcm()/(8*pow(PI,3.)*kin.GetW());
+      break;
+    case(En_lab):
+      frontfactor=kin.GetHyperonMass()*kin.GetMesonMass()/(8*pow(PI,3.)*kin.GetKlab());
+      break;
+    default:
+      cerr << "Invaled differential type in getDiffWeakQECross " << d_type << endl;
+      assert(1==0);
+  }
+
+	    
   
   //we only pass enable_ROMEA as 1 if the momentum is low enough, otherwise glauber is ok!
   reacmodel=new WeakQEHadronCurrent(pnucl,prec,integrator,homedir,maxEval,charged, 

@@ -167,8 +167,8 @@ int main(int argc, char *argv[])
     double kf=228.;
     double rfgp=0.,rfgn=0.,rfgp_bl=0.,rfgn_bl=0.;
     
-    WeakQECross::getRFGWeakQECross(rfgp_bl,rfgn_bl,Q2,E_in,omega,kf,lepton->GetLeptonMass()*lepton->GetLeptonMass(),1,1.03E03,0,1);
-    WeakQECross::getRFGWeakQECross(rfgp,rfgn,Q2,E_in,omega,kf,lepton->GetLeptonMass()*lepton->GetLeptonMass(),1,1.03E03,0,0);
+    WeakQECross::getRFGWeakQECross(rfgp_bl,rfgn_bl,Q2,E_in,omega,kf,lepton->GetLeptonMass()*lepton->GetLeptonMass(),1,1.03E03,WeakQECross::costheta_lab,1);
+    WeakQECross::getRFGWeakQECross(rfgp,rfgn,Q2,E_in,omega,kf,lepton->GetLeptonMass()*lepton->GetLeptonMass(),1,1.03E03,WeakQECross::costheta_lab,0);
     
     //cross section in 10^-39 cm^2 GeV ^-1 per nucleon!!
     //factor 2\pi because of integration over muon polar angle
@@ -207,7 +207,7 @@ void adap_intPm(numint::vector_d & results, double costhetacm,
 // 	cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << " " << kin.GetPk() << endl;
       }
       else{
-	double result=pObs.getDiffWeakQECross(kin,current,0,0,0,pw,shell,0.,maxEvalweakamp,0,1);
+	double result=pObs.getDiffWeakQECross(kin,current,0,0,0,pw,shell,0.,maxEvalweakamp,WeakQECross::ctheta_cm,1);
 	results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
 // 	cout << shell << " " << E_in <<  " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
 // 	<< acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 

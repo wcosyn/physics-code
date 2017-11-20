@@ -732,7 +732,7 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
 // 	cout << "bla " << E_in << " " << costhetacm << " " << shell << " " << pm << " " << kin.GetPYlab() << " " << kin.IsPhysical() << endl;
       }
       else{
-	double result=pObs.getDiffWeakQECross(kin,current,0,0,0,pw,shell,0.,maxEvalweakamp,0,1);
+	double result=pObs.getDiffWeakQECross(kin,current,0,0,0,pw,shell,0.,maxEvalweakamp,WeakQECross::ctheta_cm,1);
         results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
 
         cout << shell << " " << E_in <<  " " << costhetacm << " "  << kin.GetCosthklab() << " " 

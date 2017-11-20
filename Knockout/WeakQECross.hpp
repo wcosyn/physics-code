@@ -24,6 +24,19 @@ class AbstractFsiGrid;
 /*! \brief A class WeakQECross, used to compute A(nu,lN) cross sections (CC and NC weak quasi-elastic knockout) */
 class WeakQECross{
 public:
+  /*! enum used to differentiate different nuclear differential cross sections, it's always differential in final lepton solid angle & energy 
+  and nucleon azimuthal angle plus...*/
+  enum differential{ctheta_lab=0, /*!< differential in final nucleon costheta in the lab */
+  ctheta_cm,  /*!< differential in final nucleon costheta in cm frame*/
+  En_lab};  /*!< differential in final nucleon lab energy */
+
+  /*! enum used to differentiate different elementary nucleon cross sections */
+  enum el_differential{costheta_lab=0, /*!< differential in final lepton lab solid angle */
+    realQ2, /*!< differential in lepton azimuthal angle + "real" Q2 */
+    type_Q2QE, /*!< differential in lepton azimuthal angle + "quasi-elastic" reconstructed Q2 */
+    type_Q2p, /*!< differential in final nucleon azimuthal angle + Q2 reconstructed from static proton */
+  };
+
     /*! Constructor for weak charged current processes
    * \param lepton contains all the lepton kinematics
    * \param pnucl pointer to a MF nucleus instance
@@ -75,12 +88,12 @@ public:
    * This also determines reaction type!! initial proton means antineutrino beam, initial neutron means neutrino beam.
    * \param phi angle between lepton and hadron plane
    * \param maxEval max # of evaluations in integrations
-   * \param lab lab frame or cm frame for hadron part
+   * \param d_type selects the type of differential cross section, see enum differential for options
    * \param phi_int integrated over phi (angle between lepton and hadron plane)?
-   * \return [fm^2/MeV/sr^2] differential cross section  \f$ d\sigma/d\Omega_l'dT_\mu \f$
+   * \return [fm^2/MeV/sr^2] differential cross section  \f$ d\sigma/d\Omega_l'dT_\mu \f$ or other differentials/units, see d_type options
    */
   double getDiffWeakQECross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
-		      double phi, int maxEval, bool lab, bool phi_int);
+		      double phi, int maxEval,differential d_type, bool phi_int);
   /*! Computes the differential A(nu,lN) cross section for certain kinematics and a certain shell of the nucleus
    * \param cross vector with the different cross sections <BR>
    * differential cross section [fm ^2/MeV/sr^2]
@@ -112,17 +125,17 @@ public:
    * \param charged [0] Z boson [1] W boson
    * \param M_A [MeV] axial mass
    * \param leptonmass2 [MeV^2] outgoing leptonmass squared
-   * \param Q2diff [0] \f$ d\sigma/d\Omega_l' [fm^2]\f$ 
-   * [2] \f$ d\sigma/dQ^2_{QE}d\phi_l' [fm^2/MeV^2] \f$ result.
-   * \return differential cross section \f$ d\sigma/d\Omega_l' [fm^2] \f$ or  \f$ d\sigma/dQ^2d\phi_l' [fm^2/MeV^2] \f$
+   * \param d_type type of differential cross section, see enum el_differential [ctheta_lab] \f$ d\sigma/d\Omega_l' [fm^2]\f$ 
+   * [realQ2] \f$ d\sigma/dQ^2d\phi_l' [fm^2/MeV^2] \f$, [Q2QE] \f$ d\sigma/dQ^2_{QE}d\phi_l' [fm^2/MeV^2], [Q2p] \f$ d\sigma/dQ^2_pd\phi_l' [fm^2/MeV^2] \f$ \f$ result.
+   * \return differential cross section, differential/units depends on d_type parameter \f$
    */  
-  static double getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, double leptonmass2, int Q2diff);
+  static double getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, double leptonmass2, WeakQECross::el_differential d_type);
   
  /*! Computes the weak interaction cross section in the relativistic Fermi Gass approximation for certain kinematics <BR>
   * Computation is PER NUCLEON, multiply with appropriate front factors where necessary!! <BR>
    * See  PHYSICAL REVIEW C 71, 065501 app. C for formulas
-   * \param[out] presult proton differential cross section  \f$ d\sigma/d\Omega_l'dT_\mu [fm^2/MeV] \f$ or \f$ d\sigma/dQ^2d\phi_l'dT_\mu [fm^2/MeV^3] \f$ PER NUCLEON
-   * \param[out] nresult neutron differential cross section \f$ d\sigma/d\Omega_l'dT_\mu [fm^2/MeV] \f$ or \f$ d\sigma/dQ^2d\phi_l'dT_\mu [fm^2/MeV^3] \f$ PER NUCLEON
+   * \param[out] presult proton differential cross section   PER NUCLEON, differential/units depends on d_type parameter
+   * \param[out] nresult neutron differential cross section  PER NUCLEON, differential/units depends on d_type parameter
    * \param Q2 [MeV^2] virtual photon Q^2
    * \param E_in [MeV] incoming lepton energy
    * \param omega [MeV] energy transfer
@@ -131,20 +144,19 @@ public:
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param charged [0] Z boson [1] W boson
    * \param M_A [MeV] axial mass
-   * \param Q2diff [0] \f$ d\sigma/d\Omega_l'dT_\mu [fm^2/MeV] \f$ [1]  \f$ d\sigma/dQ^2d\phi_l'dT_\mu [fm^2/MeV^3] \f$ 
-   *[2]  \f$ d\sigma/dQ^2_{QE}d\phi_l'dT_\mu [fm^2/MeV^3] \f$ result.
+   * \param d_type type of differential cross section, see enum el_differential [ctheta_lab] \f$ d\sigma/d\Omega_l' [fm^2]\f$ 
+   * [realQ2] \f$ d\sigma/dQ^2d\phi_l' [fm^2/MeV^2] \f$, [Q2QE] \f$ d\sigma/dQ^2_{QE}d\phi_l' [fm^2/MeV^2], [Q2p] \f$ d\sigma/dQ^2_pd\phi_l' [fm^2/MeV^2] \f$ \f$ result.
    * \param Pauli_blocking [0] no Pauli_blocking taken into account [1] Pauli blocking taken into account, through the description with negative omega.
    */  
   static void getRFGWeakQECross(double &presult, double &nresult, double Q2, double E_in, double omega, 
-                                double k_Fermi, double leptonmass2, bool charged, double M_A, int Q2diff, bool Pauli_blocking);
+                                double k_Fermi, double leptonmass2, bool charged, double M_A, WeakQECross::el_differential d_type, bool Pauli_blocking);
   double getPrec() const{return prec;} /*!< precision of the integrations */
   double getSigmascreening() const{return sigmascreening;} /*!< [%] screening of sigma */
   bool getUsersigma() const{return usersigma;} /*!< has the user set sigma? */
   MeanFieldNucleusThick * getPnucl() const{return pnucl;}  /*!< pointer to nucleus object */
   TLeptonKinematics * getPlepton() const{return lepton;} /*!< get pointer to lepton object */
   TElectronKinematics * getPelectron() const{return electron;} /*!< get pointer to lepton object */
-  
-  
+   
 private:
   std::string homedir; /*!< Contains dir with all input */
   double prec; /*!< precision you want in the integrations */
