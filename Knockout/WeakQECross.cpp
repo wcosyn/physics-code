@@ -195,7 +195,7 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
       case(type_Q2p):
       {
         double costhin=(E_in-costhl*p_out)/qvec; //angle between beam and outgoing proton
-        cross/=abs(E_in*costhin)/abs(1.+E_in/massin*(1.-costhl/massfactor))/massin*p_out; //get rid of old jacobian, enter new one
+        cross/=2.*(massin-34.)*abs(E_in*costhin)/abs(1.+E_in/massin*(1.-costhl/massfactor))/massin*p_out; //get rid of old jacobian, enter new one
       }
       break;
       default: 
