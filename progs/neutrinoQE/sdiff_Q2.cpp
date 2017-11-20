@@ -3,12 +3,12 @@
 // Can be used for different experiments, Miniboone and minerva kinematics currently implemented, T2K will be added as well
 
 //run like
-// > minibooneQ2 [Q2 in GeV^2] [integration algorithm for flux integration (see around line 400 for options)] 
+// > sdiff_Q2 [Q2 in GeV^2] [integration algorithm for flux integration (see around line 400 for options)] 
 //  [max initial nucl momentun in MeV] [min final nucl momentum in MeV] [plane wave 1 or not 0] [ROMEA 1 or not 0 in fsi]
 // [experiment "miniboone", "minerva", "t2k"] [lepton id "electron", "muon", "tau"] [sharedir]
 
 // example for plane wave calculation for miniboone
-// > minibooneQ2 0.1 3 500. 200. 1 0 miniboone ~/Code/trunk/share 
+// > sdiff_Q2 0.1 3 500. 200. 1 0 miniboone ~/physics-code/share
 
 
 
