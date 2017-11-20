@@ -354,7 +354,6 @@ int main(int argc, char *argv[])
   cout << Q2*1.E-06 << " " << avgcrossH[0]*1.E19*2.*PI/neutnorm << " " << avgcrossH[1]*1.E19*2.*PI/aneutnorm 
             << " " << avgcrossRFG[0]*1.E19*2.*PI/neutnorm << " " << avgcrossRFG[1]*1.E19*2.*PI/aneutnorm  << endl;
 
-  exit(1);
   //initialize object -- Carbon
   Ftor F;
   F.pNucleus = &Nucleus;
@@ -589,8 +588,8 @@ void int_RFG(numint::vector_d & results, double omega,double E_out, string lepto
   }
   else { cerr << "Unsupported combination of experiment and lepton_id:" << exp << " " << lepton_id << endl; assert(1==0);}
     
-   if(isnan(results[0])) { cout << omega << " " << E_out << " " << results[0] << " " << results[1] << " " 
-    << interpolate(neutrino_flux::Minerva_nu_elec_FHC_flux,E_in,500,20,0) << " " << interpolate(neutrino_flux::Minerva_anu_elec_FHC_flux,E_in,500,20,0) << endl;}
+   //if(isnan(results[0])) { cout << omega << " " << E_out << " " << results[0] << " " << results[1] << " " 
+    //<< interpolate(neutrino_flux::Minerva_nu_elec_FHC_flux,E_in,500,20,0) << " " << interpolate(neutrino_flux::Minerva_anu_elec_FHC_flux,E_in,500,20,0) << endl;}
 } 
 
 
