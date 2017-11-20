@@ -550,8 +550,8 @@ void int_hydr(numint::vector_d & results, double E_out,
 //  if(E_in>maxbeam)  cout << "int " << Q2QE << " " << EnuQE << " "<< costhetamu << " " << E_out << " " << E_in << " " << E_in-E_out << endl;
  
  
-  results[0]=WeakQECross::getElWeakQECross(Q2,E_in,1,charged,1.03E03,leptonmass*leptonmass,2);
-  results[1]=WeakQECross::getElWeakQECross(Q2,E_in,0,charged,1.03E03,leptonmass*leptonmass,2);
+  results[0]=WeakQECross::getElWeakQECross(Q2,E_in,0,charged,1.03E03,leptonmass*leptonmass,2);
+  results[1]=WeakQECross::getElWeakQECross(Q2,E_in,1,charged,1.03E03,leptonmass*leptonmass,2);
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
     results[0]*=E_in>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
