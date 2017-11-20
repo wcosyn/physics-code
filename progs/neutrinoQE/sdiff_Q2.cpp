@@ -350,10 +350,11 @@ int main(int argc, char *argv[])
   else numint::cube_adaptive(mdfRFG,lowerRFG,upperRFG,1.E-30,1.E-03,2E02,4E04,avgcrossRFG,count,0); 
 
 //   cout << "Crosssection H: " << Q2 << " " << avgcrossH[0]*1.E19*2.*PI << " [1E-39 cm2/GeV2]" <<  " "<< count << endl; //2pi because of integration over scattered lepton angle
+// neutrino (on neutron) first, antineutrino (on proton) second
   cout << Q2*1.E-06 << " " << avgcrossH[0]*1.E19*2.*PI/neutnorm << " " << avgcrossH[1]*1.E19*2.*PI/aneutnorm 
             << " " << avgcrossRFG[0]*1.E19*2.*PI/neutnorm << " " << avgcrossRFG[1]*1.E19*2.*PI/aneutnorm  << endl;
 
- 
+  exit(1);
   //initialize object -- Carbon
   Ftor F;
   F.pNucleus = &Nucleus;
@@ -505,29 +506,39 @@ void int_hydr(numint::vector_d & results, double E_out,
               double Q2, bool charged, double maxbeam, string exp, string lepton_id){
     
   results=numint::vector_d(2,0.);  
-//   if(abs(costhetamu)>1.) {/*cout << "costheta" << endl;*/ cout << E_out << " " << result[0] << " " << result[1] << endl; return;}
+  double leptonmass=0.;
+  if(!lepton_id.compare("electron")){
+    leptonmass=TLeptonKinematics::masse;
+  } 
+  else if (!lepton_id.compare("muon")){
+    leptonmass=TLeptonKinematics::massmu;
+  } 
+  else if (!lepton_id.compare("tau")){
+    leptonmass=TLeptonKinematics::masstau;
+  } 
+ //   if(abs(costhetamu)>1.) {/*cout << "costheta" << endl;*/ cout << E_out << " " << result[0] << " " << result[1] << endl; return;}
   double E_in_n=(Q2+MASSP*MASSP-MASSN*MASSN)/2./MASSN+E_out;
   double E_in_p=(Q2+MASSN*MASSN-MASSP*MASSP)/2./MASSP+E_out;
   
-  
-  results[0]=WeakQECross::getElWeakQECross(Q2,E_in_p,1,charged,1.03E03,1);
-  results[1]=WeakQECross::getElWeakQECross(Q2,E_in_n,0,charged,1.03E03,1);
+  //[0] is neutron [1] is proton
+  results[0]=WeakQECross::getElWeakQECross(Q2,E_in_n,0,charged,1.03E03,leptonmass*leptonmass,1);
+  results[1]=WeakQECross::getElWeakQECross(Q2,E_in_p,1,charged,1.03E03,leptonmass*leptonmass,1);
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
-    results[0]*=E_in_p>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in_p,25,120,1);
-    results[1]*=E_in_n>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in_n,25,120,1);
+    results[0]*=E_in_n>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in_p,25,120,1);
+    results[1]*=E_in_p>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in_n,25,120,1);
   }
   else if(!exp.compare("minerva")&&!lepton_id.compare("muon")){
-    results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in_p,500,20,0);
-    results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in_n,500,20,0);
+    results[0]*=E_in_n>maxbeam? 0. : interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in_n,500,20,0);
+    results[1]*=E_in_p>maxbeam? 0. : interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in_p,500,20,0);
   }
    else if(!exp.compare("minerva")&&!lepton_id.compare("electron")){
-      results[0]*=interpolate(neutrino_flux::Minerva_nu_elec_FHC_flux,E_in_p,500,20,0);
-      results[1]*=interpolate(neutrino_flux::Minerva_anu_elec_FHC_flux,E_in_n,500,20,0);
+      results[0]*=E_in_n>maxbeam? 0. : interpolate(neutrino_flux::Minerva_nu_elec_FHC_flux,E_in_n,500,20,0);
+      results[1]*=E_in_p>maxbeam? 0. : interpolate(neutrino_flux::Minerva_anu_elec_FHC_flux,E_in_p,500,20,0);
     }
   else if(!exp.compare("t2k")&&!lepton_id.compare("muon")){
-    results[0]*=interpolate(neutrino_flux::t2k_neut_muon_flux_norm,E_in_p,25,80,1);
-    results[1]*=interpolate(neutrino_flux::t2k_aneut_muon_flux_norm,E_in_n,25,80,1);
+    results[0]*=E_in_n>maxbeam? 0. : interpolate(neutrino_flux::t2k_neut_muon_flux_norm,E_in_n,25,80,1);
+    results[1]*=E_in_p>maxbeam? 0. : interpolate(neutrino_flux::t2k_aneut_muon_flux_norm,E_in_p,25,80,1);
   }
   else {cerr << "Unsupported combination of experiment and lepton_id:" << exp << " " << lepton_id << endl; assert(1==0);}
 
@@ -557,12 +568,12 @@ void int_RFG(numint::vector_d & results, double omega,double E_out, string lepto
   if(abs(costhetamu)>1.) {/*cout << "costheta" << endl;*/ return;}
 
   double kf=228.;
-  WeakQECross::getRFGWeakQECross(results[0],results[1],Q2, E_in, omega,kf,1,1.03E03,1,Pauli);
-//   cout << omega << " " << E_out << " " << crossRFG_p << " " << crossRFG_n << endl;
+  WeakQECross::getRFGWeakQECross(results[1],results[0],Q2, E_in, omega,kf,leptonmass*leptonmass,1,1.03E03,1,Pauli);
+   //cout << omega << " " << E_out << " " << results[1] << " " << results[0] << endl;
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
-    results[0]*=interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
-    results[1]*=interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
+    results[0]*=interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
+    results[1]*=interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
   }
   else if(!exp.compare("minerva")&&!lepton_id.compare("muon")){
     results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,20,0);
@@ -578,7 +589,8 @@ void int_RFG(numint::vector_d & results, double omega,double E_out, string lepto
   }
   else { cerr << "Unsupported combination of experiment and lepton_id:" << exp << " " << lepton_id << endl; assert(1==0);}
     
-//   if(isnan(result[0])) { cout << omega << " " << E_out << " " << crossRFG_p << " " << interpolate(MiniBooNE_antineut_flux_norm,E_in,25,120,1) << endl; exit(1);}
+   if(isnan(results[0])) { cout << omega << " " << E_out << " " << results[0] << " " << results[1] << " " 
+    << interpolate(neutrino_flux::Minerva_nu_elec_FHC_flux,E_in,500,20,0) << " " << interpolate(neutrino_flux::Minerva_anu_elec_FHC_flux,E_in,500,20,0) << endl;}
 } 
 
 

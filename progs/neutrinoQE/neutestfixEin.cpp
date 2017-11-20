@@ -167,8 +167,8 @@ int main(int argc, char *argv[])
     double kf=228.;
     double rfgp=0.,rfgn=0.,rfgp_bl=0.,rfgn_bl=0.;
     
-    WeakQECross::getRFGWeakQECross(rfgp_bl,rfgn_bl,Q2,E_in,omega,kf,1,1.03E03,0,1);
-    WeakQECross::getRFGWeakQECross(rfgp,rfgn,Q2,E_in,omega,kf,1,1.03E03,0,0);
+    WeakQECross::getRFGWeakQECross(rfgp_bl,rfgn_bl,Q2,E_in,omega,kf,lepton->GetLeptonMass()*lepton->GetLeptonMass(),1,1.03E03,0,1);
+    WeakQECross::getRFGWeakQECross(rfgp,rfgn,Q2,E_in,omega,kf,lepton->GetLeptonMass()*lepton->GetLeptonMass(),1,1.03E03,0,0);
     
     //cross section in 10^-39 cm^2 GeV ^-1 per nucleon!!
     //factor 2\pi because of integration over muon polar angle

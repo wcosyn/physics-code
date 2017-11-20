@@ -43,7 +43,7 @@ WeakQECross::~WeakQECross(){
   
 }
 
-double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, int Q2diff){
+double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool charged, double M_A, double leptonmass2, int Q2diff){
 
   double massin=(proton?MASSP:MASSN);
   double massout=(charged?(proton?MASSN:MASSP):(proton?MASSP:MASSN));
@@ -67,7 +67,6 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
   //W interaction
   if(charged){
   
-    double leptonmass2=TLeptonKinematics::massmu*TLeptonKinematics::massmu;
     double p_out=sqrt(E_out*E_out-leptonmass2);
     double delta2=leptonmass2/abs(Q2);
     double rho=abs(Q2)/(qvec*qvec);  
@@ -201,7 +200,7 @@ double WeakQECross::getElWeakQECross(double Q2, double E_in, bool proton, bool c
 }
 
 
-void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2, double E_in, double omega, double k_Fermi, bool charged, double M_A, int Q2diff, bool Pauli_blocking){
+void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2, double E_in, double omega, double k_Fermi, double leptonmass2, bool charged, double M_A, int Q2diff, bool Pauli_blocking){
 
   double qvec=sqrt(omega*omega+Q2);              // spacelike Q2???
   double Q2overkk=Q2/qvec/qvec;
@@ -252,7 +251,6 @@ void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2,
   //W interaction
   if(charged){
     
-    double leptonmass2=TLeptonKinematics::massmu*TLeptonKinematics::massmu;
     double p_out=sqrt(E_out*E_out-leptonmass2);
     double delta2=leptonmass2/abs(Q2);
     double rho=abs(Q2)/(qvec*qvec);  
@@ -321,7 +319,7 @@ void WeakQECross::getRFGWeakQECross(double &presult, double &nresult, double Q2,
       presult/=abs(Jac);
       nresult/=abs(Jac);
     }
- 
+    // if(isnan(presult)) cout << totscaling << " " << 
   }
 
  
