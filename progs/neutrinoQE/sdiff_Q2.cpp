@@ -384,7 +384,7 @@ int main(int argc, char *argv[])
   
   F.f=adap_intPm;
   count=0;
-  string stf=homedir+"/statefile/minibooneQE";
+  string stf=homedir+"/statefile/sdiff_q2";
   ostringstream qstr;
   qstr << Q2;
   string qst=qstr.str();
