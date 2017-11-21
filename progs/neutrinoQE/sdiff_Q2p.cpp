@@ -174,59 +174,100 @@ int main(int argc, char *argv[])
   double E_out_min=maxbeam;
   double E_low=maxbeam;
   double E_high=minbeam;
-  double E_muH_low=maxbeam;
-  double E_muH_hi=minbeam;
+  double E_nuH_low=maxbeam;
+  double E_nuH_hi=minbeam;
   double omega_low=maxbeam;
   double omega_hi=minbeam;
-  double max=1.,min=-1.; //overall min and max lepton theta angles
+  double max=-1.,min=1.; //overall min and max cm theta angles
+  double mumax=-1.,mumin=1;
 
+  // for(int j=0;j<=100;j++){ //loop over T_mu
+  //   //   cout << j << "/100" << endl;
+  //   double E_out=(maxbeam-leptonmass-1.E-03)/100.*j+leptonmass+1.E-03;
+  //   double p_out=sqrt(E_out*E_out-leptonmass*leptonmass);
+  //   double E_in_lo=E_out+En_out-Nucleus.getMassA()+massAmin1;
+  //   double E_in_hi=E_out+En_out-Nucleus.getMassA()+sqrt(massAmin1*massAmin1+max_initial_nucl_mom*max_initial_nucl_mom);
 
-  for(int j=0;j<=100;j++){ //loop over T_mu
-    //   cout << j << "/100" << endl;
-    double E_out=(maxbeam-leptonmass-1.E-03)/100.*j+leptonmass+1.E-03;
-    double p_out=sqrt(E_out*E_out-leptonmass*leptonmass);
-    double E_in_lo=E_out+En_out-Nucleus.getMassA()+massAmin1;
-    double E_in_hi=E_out+En_out-Nucleus.getMassA()+sqrt(massAmin1*massAmin1+max_initial_nucl_mom*max_initial_nucl_mom);
-
-    //hydrogen piece
-    double E_nu_H_n = E_out+En_out-MASSN;
-    double E_nu_H_p = E_out+En_out-MASSP;
-    if (E_nu_H_p>E_out&&E_nu_H_p<maxbeam){
-      if(E_out>E_muH_hi) E_muH_hi = E_out;
-      if(E_out<E_muH_low) E_muH_low = E_out;
-    }
-    if (E_nu_H_n>E_out&&E_nu_H_n<maxbeam){
-      if(E_out>E_muH_hi) E_muH_hi = E_out;
-      if(E_out<E_muH_low) E_muH_low = E_out;
-    }
+  //   //hydrogen piece
+  //   double E_nu_H_n = E_out+En_out-MASSN;
+  //   double E_nu_H_p = E_out+En_out-MASSP;
+  //   if (E_nu_H_p>E_out&&E_nu_H_p<maxbeam){
+  //     if(E_out>E_muH_hi) E_muH_hi = E_out;
+  //     if(E_out<E_muH_low) E_muH_low = E_out;
+  //   }
+  //   if (E_nu_H_n>E_out&&E_nu_H_n<maxbeam){
+  //     if(E_out>E_muH_hi) E_muH_hi = E_out;
+  //     if(E_out<E_muH_low) E_muH_low = E_out;
+  //   }
     
-    if(E_in_lo<maxbeam){
-        if(E_in_hi>maxbeam) E_in_hi=maxbeam;
-        for(int i=0;i<=100;i++){
-            double E_in=E_in_lo+(maxbeam-E_in_lo)*1.E-02*i;
-            double omega=E_in-E_out;
-            if(omega<0||omega<En_out-Nucleus.getMassA()-massAmin1) cout << "omega err " << omega << endl;
-            if(E_in_lo<E_low)  E_low=E_in_lo;
-            if(E_in_hi>E_high) E_high=E_in_hi;
-            if(E_out_max<E_out) E_out_max=E_out;
-            if(E_out_min>E_out) E_out_min=E_out;
+  //   if(E_in_lo<maxbeam){
+  //       if(E_in_hi>maxbeam) E_in_hi=maxbeam;
+  //       for(int i=0;i<=100;i++){
+  //           double E_in=E_in_lo+(maxbeam-E_in_lo)*1.E-02*i;
+  //           double omega=E_in-E_out;
+  //           if(omega<0||omega<En_out-Nucleus.getMassA()-massAmin1) cout << "omega err " << omega << endl;
+  //           if(E_in_lo<E_low)  E_low=E_in_lo;
+  //           if(E_in_hi>E_high) E_high=E_in_hi;
+  //           if(E_out_max<E_out) E_out_max=E_out;
+  //           if(E_out_min>E_out) E_out_min=E_out;
+  //           if(omega>omega_hi) omega_hi=omega;
+  //           if(omega<omega_low) omega_low=omega;
+            
+  //       }
+  //   }
+  // }
+
+  for(int i=0;i<=100;i++){
+    double E_in=minbeam+(maxbeam-minbeam)*i*0.01;
+    for(int j=0;j<=100;j++){
+      double pm=500.*j*0.01;
+      double EAmin1=sqrt(Nucleus.getMassA_min_proton()*Nucleus.getMassA_min_proton()+pm*pm);
+      double El_out=E_in+Nucleus.getMassA()-En_out-EAmin1;
+      double pl_out=sqrt(El_out*El_out-leptonmass*leptonmass);
+      double omega=E_in-El_out;
+      if(El_out>leptonmass){
+        int phys=0;
+        int k=0;
+        do{
+          double costhetamu=1.-k*0.001;
+          double Q2=-leptonmass*leptonmass+2.*E_in*El_out-2.*E_in*pl_out*costhetamu;
+          TKinematics2to2 kin("","",Nucleus.getMassA(),Nucleus.getMassA_min_neutron(),
+            MASSN,"qsquared:wlab:pklab",Q2,omega,pm);
+          //if(kin.IsPhysical()) cout << E_in << " " << pm << " " << costhetamu << " " << kin.GetCosthkcm() << " " << Q2 << " " << Q2p << endl;
+          if(kin.IsPhysical()&&phys==0) phys=1;
+          if(phys==1&&kin.IsPhysical()){
+            if(E_in<E_low) E_low=E_in;
+            if(E_in>E_high) E_high=E_in;
+            if(El_out<E_out_min) E_out_min=El_out;
+            if(El_out>E_out_max) E_out_max=El_out;
             if(omega>omega_hi) omega_hi=omega;
             if(omega<omega_low) omega_low=omega;
-            
-        }
-    }
+            if(kin.GetCosthkcm()<min) min=kin.GetCosthkcm();
+            if(kin.GetCosthkcm()>max) max=kin.GetCosthkcm();
+            if(costhetamu<mumin) mumin=costhetamu;
+            if(costhetamu>mumax) mumax=costhetamu;
+          }
+          if(phys==1&&(!kin.IsPhysical())) phys=2;
+          // cout << i << " " <<j << " " << k << " " << phys << " " << costhetamu << " " << kin.GetCosthkcm() << " " << kin.IsPhysical() << endl;
+          k++;       
+        }while(phys<2&&k<=2000);
+      }
+    }    
   }
+
 
   if(E_high>maxbeam) E_high=maxbeam;
   if(E_low<minbeam) E_low=minbeam;
   if(E_low>E_high) E_low=E_high;
-  if(E_muH_low<minbeam) E_muH_low=minbeam;
+  if(E_nuH_low<minbeam) E_nuH_low=minbeam;
 
   cout << endl;
+  cout << "min=" << min << "   max=" << max << endl;
+  cout << "mumin=" << mumin << "   mumax=" << mumax << endl;
   cout << "Eoutmin=" << E_out_min << "  Eoutmax=" << E_out_max << endl;
   cout << "omega_low=" << omega_low << " " << "  omega_high=" << omega_hi << endl;
   cout << "E_low=" << E_low << "  E_high=" << E_high << endl << endl;
-  cout << "E_muH_low=" << E_muH_low << "  E_muH_hi=" << E_muH_hi << endl << endl;
+  cout << "E_nuH_low=" << E_nuH_low << "  E_muH_hi=" << E_nuH_hi << endl << endl;
  
 
   FtorH FH;
@@ -352,6 +393,7 @@ void adap_intPm(numint::vector_d & results, double pm, double costhetamu, double
     TKinematics2to2 kin("","",nucleus.getMassA(),resmass,
       shell<nucleus.getPLevels()?MASSN:MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
     if(!kin.IsPhysical()||kin.GetPYlab()<min_final_nucl_mom){ //final nucleon momentum too low, impose cut!
+      // cout << kin.IsPhysical() << " " << E_out << " " << omega << " " << Q2*1.E-06 << " " << costhetamu << " " << kin.GetCosthkcm() <<  " " << kin.GetEYlab() << " " << En_out << endl;
       for(int i=0;i<2;i++) results[i]+=0.; /*cout << "cut " << kin.GetPYlab() << " " << kin.GetPklab() << endl;*/
     }
     else{
