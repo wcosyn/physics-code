@@ -4,6 +4,7 @@ doc/
 lib/
 Tools/constants.hpp
 manual/*.pdf
+share/statefile/
 
 # get rid of mac folder info files
 #

@@ -417,11 +417,12 @@ void int_hydr(numint::vector_d & results, double E_in,
   double pn_out_n = sqrt(En_out*En_out-MASSP*MASSP);  //initial neutron case
   double pn_out_p = sqrt(En_out*En_out-MASSN*MASSN);  //initial proton case  
   double costhetamu_n = (E_in*E_in+p_out_n*p_out_n-pn_out_n*pn_out_n)/(2.*p_out_n*E_in);
-  double costhetamu_p = (E_in*E_in+p_out_n*p_out_n-pn_out_p*pn_out_p)/(2.*p_out_p*E_in);
+  double costhetamu_p = (E_in*E_in+p_out_p*p_out_p-pn_out_p*pn_out_p)/(2.*p_out_p*E_in);
 
-  double Q2_n=-leptonmass*leptonmass+2.*E_in*(E_out_n-p_out_p*costhetamu_n);
-  double Q2_p=-leptonmass*leptonmass+2.*E_in*(E_out_n-p_out_p*costhetamu_p);
-
+  //actually this is not needed as in this case the Q2n, Q2p values will be the same for every incoming energy, completely determined by the nucleon kinematics...
+  //we leave it here as it's not the bottleneck...
+  double Q2_n=-leptonmass*leptonmass+2.*E_in*(E_out_n-p_out_n*costhetamu_n);
+  double Q2_p=-leptonmass*leptonmass+2.*E_in*(E_out_p-p_out_p*costhetamu_p);
 
   //[0] is neutron [1] is proton
   results[0]=WeakQECross::getElWeakQECross(Q2_n,E_in,0,charged,1.03E03,leptonmass*leptonmass,WeakQECross::type_Q2p);
