@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
   double E_nuH_low=maxbeam;
   double E_nuH_hi=minbeam;
   double omega_low=maxbeam;
-  double omega_hi=minbeam;
+  double omega_hi=0.;
   double max=-1.,min=1.; //overall min and max cm theta angles
   double mumax=-1.,mumin=1;
 
@@ -221,40 +221,44 @@ int main(int argc, char *argv[])
     double E_in=minbeam+(maxbeam-minbeam)*i*0.01;
     for(int j=0;j<=100;j++){
       double pm=500.*j*0.01;
-      double EAmin1=sqrt(Nucleus.getMassA_min_proton()*Nucleus.getMassA_min_proton()+pm*pm);
-      double El_out=E_in+Nucleus.getMassA()-En_out-EAmin1;
-      double pl_out=sqrt(El_out*El_out-leptonmass*leptonmass);
-      double omega=E_in-El_out;
-      if(El_out>leptonmass){
-        int phys=0;
-        int k=0;
-        do{
-          double costhetamu=1.-k*0.001;
-          double Q2=-leptonmass*leptonmass+2.*E_in*El_out-2.*E_in*pl_out*costhetamu;
-          TKinematics2to2 kin("","",Nucleus.getMassA(),Nucleus.getMassA_min_neutron(),
-            MASSN,"qsquared:wlab:pklab",Q2,omega,pm);
-          //if(kin.IsPhysical()) cout << E_in << " " << pm << " " << costhetamu << " " << kin.GetCosthkcm() << " " << Q2 << " " << Q2p << endl;
-          if(kin.IsPhysical()&&phys==0) phys=1;
-          if(phys==1&&kin.IsPhysical()){
-            if(E_in<E_low) E_low=E_in;
-            if(E_in>E_high) E_high=E_in;
-            if(El_out<E_out_min) E_out_min=El_out;
-            if(El_out>E_out_max) E_out_max=El_out;
-            if(omega>omega_hi) omega_hi=omega;
-            if(omega<omega_low) omega_low=omega;
-            if(kin.GetCosthkcm()<min) min=kin.GetCosthkcm();
-            if(kin.GetCosthkcm()>max) max=kin.GetCosthkcm();
-            if(costhetamu<mumin) mumin=costhetamu;
-            if(costhetamu>mumax) mumax=costhetamu;
-          }
-          if(phys==1&&(!kin.IsPhysical())) phys=2;
-          // cout << i << " " <<j << " " << k << " " << phys << " " << costhetamu << " " << kin.GetCosthkcm() << " " << kin.IsPhysical() << endl;
-          k++;       
-        }while(phys<2&&k<=2000);
+      for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
+        double resmass=(shell<Nucleus.getPLevels()? Nucleus.getMassA_min_proton(): Nucleus.getMassA_min_neutron())
+          +Nucleus.getExcitation()[shell]; //Amin1 mass + excitation energy
+      
+        double EAmin1=sqrt(resmass*resmass+pm*pm);
+        double El_out=E_in+Nucleus.getMassA()-En_out-EAmin1;
+        double pl_out=sqrt(El_out*El_out-leptonmass*leptonmass);
+        double omega=E_in-El_out;
+        if(El_out>leptonmass){
+          int phys=0;
+          int k=0;
+          do{
+            double costhetamu=1.-k*0.001;
+            double Q2=-leptonmass*leptonmass+2.*E_in*El_out-2.*E_in*pl_out*costhetamu;
+            TKinematics2to2 kin("","",Nucleus.getMassA(),Nucleus.getMassA_min_neutron(),
+              MASSN,"qsquared:wlab:pklab",Q2,omega,pm);
+            // if(kin.IsPhysical()) cout << E_in << " " << pm << " " << costhetamu << " " << kin.GetCosthkcm() << " " << Q2 << " " << Q2p << " " << omega << endl;
+            if(kin.IsPhysical()&&phys==0) phys=1;
+            if(phys==1&&kin.IsPhysical()){
+              if(E_in<E_low) E_low=E_in;
+              if(E_in>E_high) E_high=E_in;
+              if(El_out<E_out_min) E_out_min=El_out;
+              if(El_out>E_out_max) E_out_max=El_out;
+              if(omega>omega_hi) omega_hi=omega;
+              if(omega<omega_low) omega_low=omega;
+              if(kin.GetCosthkcm()<min) min=kin.GetCosthkcm();
+              if(kin.GetCosthkcm()>max) max=kin.GetCosthkcm();
+              if(costhetamu<mumin) mumin=costhetamu;
+              if(costhetamu>mumax) mumax=costhetamu;
+            }
+            if(phys==1&&(!kin.IsPhysical())) phys=2;
+            // cout << i << " " <<j << " " << k << " " << phys << " " << costhetamu << " " << kin.GetCosthkcm() << " " << kin.IsPhysical() << endl;
+            k++;       
+          }while(phys<2&&k<=2000);
+        }
       }
     }    
   }
-
 
   if(E_high>maxbeam) E_high=maxbeam;
   if(E_low<minbeam) E_low=minbeam;
@@ -313,9 +317,10 @@ int main(int argc, char *argv[])
   numint::mdfunction<numint::vector_d,3> mdf;
   mdf.func = &Ftor::exec;
   mdf.param = &F;
-
-  numint::array<double,3> lower = {{0.,min,E_low}};
-  numint::array<double,3> upper = {{max_initial_nucl_mom,max,E_high}};
+  
+  //we integrate over residual nucleus momentum, lepton costheta, incoming beam energy
+  numint::array<double,3> lower = {{0.,mumin,E_low}};
+  numint::array<double,3> upper = {{max_initial_nucl_mom,mumax,E_high}};
   
   F.f=adap_intPm;
   count=0;
@@ -411,27 +416,27 @@ void adap_intPm(numint::vector_d & results, double pm, double costhetamu, double
         << kin.GetXb()*nucleus.getMassA()/MASSP << " " << result <<  endl; 
     }  
     delete lepton;
-    
-    //fold with flux
-    if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
-      results[0]*=interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
-      results[1]*=interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
-    }
-    else if(!exp.compare("minerva")&&!lepton_id.compare("muon")){
-      results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,20,0);
-      results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in,500,20,0);
-    }
-    else if(!exp.compare("minerva")&&!lepton_id.compare("electron")){
-      results[0]*=interpolate(neutrino_flux::Minerva_nu_elec_FHC_flux,E_in,500,20,0);
-      results[1]*=interpolate(neutrino_flux::Minerva_anu_elec_FHC_flux,E_in,500,20,0);
-    }
-    else if(!exp.compare("t2k")&&!lepton_id.compare("muon")){
-      results[0]*=interpolate(neutrino_flux::t2k_neut_muon_flux_norm,E_in,25,80,1);
-      results[1]*=interpolate(neutrino_flux::t2k_aneut_muon_flux_norm,E_in,25,80,1);
-    }
-    else { cerr << "Unsupported combination of experiment and lepton_id:" << exp << " " << lepton_id << endl; assert(1==0);}
-    return;
   }
+  //fold with flux
+  if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
+    results[0]*=interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in,25,120,1);
+    results[1]*=interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
+  }
+  else if(!exp.compare("minerva")&&!lepton_id.compare("muon")){
+    results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,20,0);
+    results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in,500,20,0);
+  }
+  else if(!exp.compare("minerva")&&!lepton_id.compare("electron")){
+    results[0]*=interpolate(neutrino_flux::Minerva_nu_elec_FHC_flux,E_in,500,20,0);
+    results[1]*=interpolate(neutrino_flux::Minerva_anu_elec_FHC_flux,E_in,500,20,0);
+  }
+  else if(!exp.compare("t2k")&&!lepton_id.compare("muon")){
+    results[0]*=interpolate(neutrino_flux::t2k_neut_muon_flux_norm,E_in,25,80,1);
+    results[1]*=interpolate(neutrino_flux::t2k_aneut_muon_flux_norm,E_in,25,80,1);
+  }
+  else { cerr << "Unsupported combination of experiment and lepton_id:" << exp << " " << lepton_id << endl; assert(1==0);}
+  return;
+
 
 }
 

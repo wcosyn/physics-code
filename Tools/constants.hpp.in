@@ -27,7 +27,7 @@
 /*! underflow in the code:
    * double smaller than underflow
    * should be treated as being zero */
-#define STRANGEUFLOW 1.0e-9 
+#define STRANGEUFLOW 1.0e-12 
 #define M_P 938.272       // proton
 #define M_N 939.565       // neutron
 #define M_NUCL 938.9185  //avg nucleon mass

@@ -1694,7 +1694,7 @@ void TKinematics::UpdateKinematics()
     }
     if( std::fabs(fCosthkcm) <= 1.0 )
       fIsPhysical = true && fIsPhysical;
-    else if( std::fabs(fCosthkcm)-1.0 < Underflow() ) {
+    else if( std::fabs(fCosthkcm)-1.0 < STRANGEUFLOW ) {
       fIsPhysical = true && fIsPhysical;
       fCosthkcm = ( fCosthkcm>0.0 ? 1.0 : -1.0 );
     }
