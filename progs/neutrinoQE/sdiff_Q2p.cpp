@@ -138,12 +138,12 @@ int main(int argc, char *argv[])
     minbeam=1.5E03; 
     maxbeam=10.E03;
     if(!lepton_id.compare("muon")){
-      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500,20);
-      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500,20);
+      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500,round(1500./500.),round(10.E03/500));
+      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500,round(1500./500.),round(10.E03/500));
     }
     else if(!lepton_id.compare("electron")){
-      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_elec_FHC_flux,500,20);
-      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_elec_FHC_flux,500,20);      
+      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_elec_FHC_flux,500,round(1500./500.),round(10.E03/500));
+      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_elec_FHC_flux,500,round(1500./500.),round(10.E03/500));      
     }
   }  
   else if(!exp.compare("t2k")) { maxbeam=2.E02; }  //still to implement!

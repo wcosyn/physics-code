@@ -172,17 +172,21 @@ int main(int argc, char *argv[])
     minbeam=1.5E03; 
     maxbeam=10.E03;
     if(!lepton_id.compare("muon")){
-      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500,20);
-      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500,20);
+      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500,round(1500./500.),round(10.E03/500));
+      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500,round(1500./500.),round(10.E03/500));
+//      for(int i=0;i<20;i++) neutrino_flux::Minerva_nu_muon_FHC_flux[i]/=neutnorm;
+//      for(int i=0;i<20;i++) neutrino_flux::Minerva_anu_muon_RHC_flux[i]/=aneutnorm;
     }
     else if(!lepton_id.compare("electron")){
-      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_elec_FHC_flux,500,20);
-      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_elec_FHC_flux,500,20);      
+      neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_elec_FHC_flux,500,round(1500./500.),round(10.E03/500));
+      aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_elec_FHC_flux,500,round(1500./500.),round(10.E03/500));      
     }
   }  
   else if(!exp.compare("t2k")) { maxbeam=2.E02; }  //still to implement!
   else {cerr << "invalid experiment name chosen" << endl << "Choose either miniboone, minerva or t2k" << endl; assert(1==0);}
   
+  cout << "norm neut " << neutnorm << endl << "norm aneut " << aneutnorm << endl;
+
   double leptonmass=0.;
   int flav=999;
   if(!lepton_id.compare("electron")){
@@ -351,7 +355,7 @@ int main(int argc, char *argv[])
 
 //   cout << "Crosssection H: " << Q2 << " " << avgcrossH[0]*1.E19*2.*PI << " [1E-39 cm2/GeV2]" <<  " "<< count << endl; //2pi because of integration over scattered lepton angle
 // neutrino (on neutron) first, antineutrino (on proton) second
-  cout << Q2*1.E-06 << " " << avgcrossH[0]*1.E19*2.*PI/neutnorm << " " << avgcrossH[1]*1.E19*2.*PI/aneutnorm 
+  cout << Q2*1.E-06 << " " << avgcrossH[0]*1.E19*2.*PI/neutnorm << " " << avgcrossH[1]*1.E19*2.*PI/aneutnorm
             << " " << avgcrossRFG[0]*1.E19*2.*PI/neutnorm << " " << avgcrossRFG[1]*1.E19*2.*PI/aneutnorm  << endl;
 
   //initialize object -- Carbon
@@ -524,8 +528,8 @@ void int_hydr(numint::vector_d & results, double E_out,
   results[1]=WeakQECross::getElWeakQECross(Q2,E_in_p,1,charged,1.03E03,leptonmass*leptonmass,WeakQECross::realQ2);
   
   if(!exp.compare("miniboone")&&!lepton_id.compare("muon")){
-    results[0]*=E_in_n>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in_p,25,120,1);
-    results[1]*=E_in_p>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in_n,25,120,1);
+    results[0]*=E_in_n>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_neut_muon_flux_norm,E_in_n,25,120,1);
+    results[1]*=E_in_p>maxbeam? 0. : interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in_p,25,120,1);
   }
   else if(!exp.compare("minerva")&&!lepton_id.compare("muon")){
     results[0]*=E_in_n>maxbeam? 0. : interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in_n,500,20,0);

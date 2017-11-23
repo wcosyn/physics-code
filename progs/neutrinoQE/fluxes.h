@@ -515,10 +515,15 @@ const double t2k_aneut_muon_flux_norm[] = {
 3.73900002e-05
 };
 
-//obtain the normalisatin of the flux, just simple trapezoid (is accurate enough here)
-double normalize(double flux[], double dx, int length){
+//obtain the normalisation of the flux, just simple trapezoid (is accurate enough here)
+//between indices [start] and [stop] of the arrays above.  Determine the right limits from the data set you are comparing too!
+
+// for miniboone QE: flux is already normalised so no action necessary
+// for minerva QE use start=3 and stop=20
+double normalize(double flux[], double dx, int start, int stop){
+  cout << start << " " << stop << endl;
   double sum=0;
-  for(int i=0;i<length;i++) sum+=flux[i]*dx;
+  for(int i=start;i<stop;i++) sum+=flux[i]*dx;
   return sum;
   };
 
