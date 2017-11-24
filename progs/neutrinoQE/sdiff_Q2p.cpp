@@ -264,6 +264,8 @@ int main(int argc, char *argv[])
   if(E_low<minbeam) E_low=minbeam;
   if(E_low>E_high) E_low=E_high;
   if(E_nuH_low<minbeam) E_nuH_low=minbeam;
+  if(mumax>0.99) mumax=1.;
+  if(mumin<-0.99) mumin=-1.;
 
   cout << endl;
   cout << "min=" << min << "   max=" << max << endl;
@@ -319,14 +321,14 @@ int main(int argc, char *argv[])
   mdf.param = &F;
   
   //we integrate over residual nucleus momentum, lepton costheta, incoming beam energy
-  numint::array<double,3> lower = {{0.,mumin,E_low}};
-  numint::array<double,3> upper = {{max_initial_nucl_mom,mumax,E_high}};
+  numint::array<double,3> lower = {{0.,E_low,mumin}};
+  numint::array<double,3> upper = {{max_initial_nucl_mom,E_high,mumax}};
   
   F.f=adap_intPm;
   count=0;
   string stf=homedir+"/statefile/sdiff_q2p";
   ostringstream qstr;
-  qstr << Q2p;
+  qstr << Q2p*1.E-06 << "." << pw << "." <<enable_romea << "." <<max_initial_nucl_mom << "." <<min_final_nucl_mom;
   string qst=qstr.str();
   stf+=qst;
   int nregions,fail,countt;
@@ -338,8 +340,7 @@ int main(int argc, char *argv[])
   int flags=2;
   int seed=235;
   int minEval=100;
-  int maxEvalcuba=5000;
-  double xgiven[3]={200.,-1.,500.};
+  int maxEvalcuba=20000;
   cout << "start integration C" << endl;
   if(fluxintegrator==0) numint::vegas( mdf, lower,upper,nvec, epsrel,epsabs,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas").c_str(),countt,fail,avgcross,err,prob ); 
   if(fluxintegrator==1) numint::cuhre( mdf, lower,upper,nvec, epsrel,epsabs,flags,minEval, maxEvalcuba,11, (stf+"cuhre").c_str(),nregions,countt,fail,avgcross,err,prob ); 
@@ -358,7 +359,7 @@ int main(int argc, char *argv[])
 }
 
 //integrandum carbon
-void adap_intPm(numint::vector_d & results, double pm, double costhetamu, double E_in,
+void adap_intPm(numint::vector_d & results, double pm, double E_in, double costhetamu, 
 	 MeanFieldNucleusThick &nucleus, string lepton_id, int current, double En_out,
 	 double prec, int integrator, string homedir, int maxEval, bool charged, bool screening,
          bool enable_romea, double max_initial_nucl_mom, 
@@ -400,6 +401,10 @@ void adap_intPm(numint::vector_d & results, double pm, double costhetamu, double
     if(!kin.IsPhysical()||kin.GetPYlab()<min_final_nucl_mom){ //final nucleon momentum too low, impose cut!
       // cout << kin.IsPhysical() << " " << E_out << " " << omega << " " << Q2*1.E-06 << " " << costhetamu << " " << kin.GetCosthkcm() <<  " " << kin.GetEYlab() << " " << En_out << endl;
       for(int i=0;i<2;i++) results[i]+=0.; /*cout << "cut " << kin.GetPYlab() << " " << kin.GetPklab() << endl;*/
+      // cout << shell << " " << E_in << " " << costhetamu << " " << p_out << " " << kin.GetCosthklab()<< " " 
+      //   << kin.GetCosthYlab() << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+      //   << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
+      //   << kin.GetXb()*nucleus.getMassA()/MASSP << " 0. 0." << endl; 
     }
     else{
       double result=pobs.getDiffWeakQECross(kin,current,0,0,0,pw,shell,0.,maxEval,WeakQECross::En_lab,1);   // prec..2E04
@@ -413,7 +418,8 @@ void adap_intPm(numint::vector_d & results, double pm, double costhetamu, double
         cout << shell << " " << E_in <<  " " << costhetamu << " " << p_out << " "  << kin.GetCosthklab()<< " " 
         << kin.GetCosthYlab() << " " << kin.GetPklab() << " " << kin.GetPYlab() 
         << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetQsquared() << " "
-        << kin.GetXb()*nucleus.getMassA()/MASSP << " " << result <<  endl; 
+        << kin.GetXb()*nucleus.getMassA()/MASSP << " " << result <<  " " 
+        << result*interpolate(shell<2? neutrino_flux::Minerva_anu_muon_RHC_flux : neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,20,0) << endl; 
     }  
     delete lepton;
   }

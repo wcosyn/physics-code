@@ -521,7 +521,6 @@ const double t2k_aneut_muon_flux_norm[] = {
 // for miniboone QE: flux is already normalised so no action necessary
 // for minerva QE use start=3 and stop=20
 double normalize(double flux[], double dx, int start, int stop){
-  cout << start << " " << stop << endl;
   double sum=0;
   for(int i=start;i<stop;i++) sum+=flux[i]*dx;
   return sum;
