@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
   count=0;
   string stf=homedir+"/statefile/sdiff_Q2QE";
   ostringstream qstr;
-  qstr << Q2QE;
+  qstr << Q2QE*1.E-06 << "." << pw << "." <<enable_romea << "." <<max_initial_nucl_mom << "." <<min_final_nucl_mom;
   string qst=qstr.str();
   stf+=qst;
   int nregions,fail,countt;
@@ -411,7 +411,7 @@ int main(int argc, char *argv[])
   int flags=2;
   int seed=235;
   int minEval=100;
-  int maxEvalcuba=5000;
+  int maxEvalcuba=20000;
   double xgiven[3]={200.,-1.,500.};
   cout << "start integration C" << endl;
   if(fluxintegrator==0) numint::vegas( mdf, lower,upper,nvec, epsrel,epsabs,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas").c_str(),countt,fail,avgcross,err,prob ); 
