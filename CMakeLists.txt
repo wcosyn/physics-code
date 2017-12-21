@@ -99,7 +99,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 MESSAGE("--- Found GNU compiler collection")   
   set(RELEASE_FLAGS ${RELEASE_FLAGS} -O3 -march=native -mtune=native -pipe)
   set(DEBUG_FLAGS ${DEBUG_FLAGS} -g)
-  endif (CMAKE_COMPILER_IS_GNUCXX)
+endif (CMAKE_COMPILER_IS_GNUCXX)
   
 if(${CMAKE_CXX_COMPILER} MATCHES "icpc")
   MESSAGE("--- Found Intel compiler collection")

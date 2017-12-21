@@ -10,6 +10,7 @@ DeuteronCross.cpp
 Resonance.cpp
 He3Cross.cpp
 Poldeut.cpp
+GPD.cpp
 )
 
 
