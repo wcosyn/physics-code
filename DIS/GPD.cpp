@@ -72,7 +72,7 @@ void int_k3(numint::vector_z & res, double knorm, double kcosth, double kphi, TD
             }
         }
     }
-    res[0]=result;
+    res[0]=result*2.*knorm*knorm/Ek;
 }
 
 complex<double> getGPD_odd_nucl(int sigma_in, int sigma_out, double x, double xi, double t, double t0, double phi){
