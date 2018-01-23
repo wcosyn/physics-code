@@ -31,5 +31,10 @@
             "type": "shell",
             "command": "rm -rf *; cmake -DCMAKE_CXX_COMPILER=icpc -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=Release ../"
         }
+        {
+            "taskName": "cmake gcc with progs",
+            "type": "shell",
+            "command": "rm -rf *; cmake -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=Release -DBUILD_PROGS=yes ../"
+        },
     ]
 }

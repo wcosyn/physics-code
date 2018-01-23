@@ -23,3 +23,5 @@ add_subdirectory(camille) #some test programs that camille used, don't know the 
 add_subdirectory(2bodymom/src) #camille's programs for the 2nucleon knockout calculations
 
 add_subdirectory(deepsdis) #programs for spectator tagging (deeps/bonus) & deuteron tensor structure calculations
+
+add_subdirectory(GPD) #programs for transversity gpds (spin1)

@@ -11,6 +11,7 @@ Resonance.cpp
 He3Cross.cpp
 Poldeut.cpp
 GPD.cpp
+TransGPD_set.cpp
 )
 
 
