@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <vector>
 
 using namespace std;
 
@@ -12,11 +13,15 @@ using namespace std;
 #include "TransGPD_set.hpp"
 
 int main(int argc, char *argv[]){
-    GPD test=GPD("MSTW");
+    GPD test=GPD("MSTW","AV18");
 
-    for(int i=-100;i<=100;i++){
-        TransGPD_set out=test.getGK_param(0.01*i,0.201914,-0.158217E06);
-        cout << 0.01*i << " " << out.getHTd() << " " << out.getHTu() << " " << out.getEbarTd() << " " << out.getEbarTu() << endl;
-    }
-    
+    double xi=0.1;
+    double t=-0.25E06;
+    for(int i=-10;i<=50;i++){
+        double x=i*0.01;
+        vector< complex<double> > out = test.gpd_conv(xi,x,t,0);
+        cout << x << " ";
+        for(int j=0;j<9;j++) cout << out[j] << " ";
+        cout << endl;
+    }    
 }

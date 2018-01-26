@@ -537,256 +537,256 @@ double TInterpolatingWavefunction::Interpolate(map<double,double>* list,
 }
 
 //______________________________________________________________________________
-void TInterpolatingWavefunction::Streamer(TBuffer &R__b)
-{
-  // Stream an object of class TInterpolatingWavefunction.
+void TInterpolatingWavefunction::Streamer(TBuffer &R__b){}
+// {
+//   // Stream an object of class TInterpolatingWavefunction.
 
-  // We implement it ourselves because ROOT seems to have trouble
-  // with the pointers to map.
+//   // We implement it ourselves because ROOT seems to have trouble
+//   // with the pointers to map.
 
-   UInt_t R__s, R__c;
-   if (R__b.IsReading()) {
-      Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
-      TWavefunctionImplementation::Streamer(R__b);
-      {
-         delete fUr;
-         fUr = new map<double,double>;
-         map<double,double> &R__stl = *fUr;
-         R__stl.clear();
-         int R__i, R__n;
-         R__b >> R__n;
-         for (R__i = 0; R__i < R__n; R__i++) {
-            double R__t;
-            R__b >> R__t;
-            double R__t2;
-            R__b >> R__t2;
-            typedef double Value_t;
-            std::pair<Value_t const, double > R__t3(R__t,R__t2);
-            R__stl.insert(R__t3);
-         }
-      }
-      {
-         delete fWr;
-         fWr = new map<double,double>;
-         map<double,double> &R__stl = *fWr;
-         R__stl.clear();
-         int R__i, R__n;
-         R__b >> R__n;
-         for (R__i = 0; R__i < R__n; R__i++) {
-            double R__t;
-            R__b >> R__t;
-            double R__t2;
-            R__b >> R__t2;
-            typedef double Value_t;
-            std::pair<Value_t const, double > R__t3(R__t,R__t2);
-            R__stl.insert(R__t3);
-         }
-      }
-      {
-         delete fVTr;
-         fVTr = new map<double,double>;
-         map<double,double> &R__stl = *fVTr;
-         R__stl.clear();
-         int R__i, R__n;
-         R__b >> R__n;
-         for (R__i = 0; R__i < R__n; R__i++) {
-            double R__t;
-            R__b >> R__t;
-            double R__t2;
-            R__b >> R__t2;
-            typedef double Value_t;
-            std::pair<Value_t const, double > R__t3(R__t,R__t2);
-            R__stl.insert(R__t3);
-         }
-      }
-      {
-         delete fVSr;
-         fVSr = new map<double,double>;
-         map<double,double> &R__stl = *fVSr;
-         R__stl.clear();
-         int R__i, R__n;
-         R__b >> R__n;
-         for (R__i = 0; R__i < R__n; R__i++) {
-            double R__t;
-            R__b >> R__t;
-            double R__t2;
-            R__b >> R__t2;
-            typedef double Value_t;
-            std::pair<Value_t const, double > R__t3(R__t,R__t2);
-            R__stl.insert(R__t3);
-         }
-      }
-      {
-         delete fUp;
-         fUp = new map<double,double>;
-         map<double,double> &R__stl = *fUp;
-         R__stl.clear();
-         int R__i, R__n;
-         R__b >> R__n;
-         for (R__i = 0; R__i < R__n; R__i++) {
-            double R__t;
-            R__b >> R__t;
-            double R__t2;
-            R__b >> R__t2;
-            typedef double Value_t;
-            std::pair<Value_t const, double > R__t3(R__t,R__t2);
-            R__stl.insert(R__t3);
-         }
-      }
-      {
-         delete fWp;
-         fWp = new map<double,double>;
-         map<double,double> &R__stl = *fWp;
-         R__stl.clear();
-         int R__i, R__n;
-         R__b >> R__n;
-         for (R__i = 0; R__i < R__n; R__i++) {
-            double R__t;
-            R__b >> R__t;
-            double R__t2;
-            R__b >> R__t2;
-            typedef double Value_t;
-            std::pair<Value_t const, double > R__t3(R__t,R__t2);
-            R__stl.insert(R__t3);
-         }
-      }
-      {
-         delete fVTp;
-         fVTp = new map<double,double>;
-         map<double,double> &R__stl = *fVTp;
-         R__stl.clear();
-         int R__i, R__n;
-         R__b >> R__n;
-         for (R__i = 0; R__i < R__n; R__i++) {
-            double R__t;
-            R__b >> R__t;
-            double R__t2;
-            R__b >> R__t2;
-            typedef double Value_t;
-            std::pair<Value_t const, double > R__t3(R__t,R__t2);
-            R__stl.insert(R__t3);
-         }
-      }
-      {
-         delete fVSp;
-         fVSp = new map<double,double>;
-         map<double,double> &R__stl = *fVSp;
-         R__stl.clear();
-         int R__i, R__n;
-         R__b >> R__n;
-         for (R__i = 0; R__i < R__n; R__i++) {
-            double R__t;
-            R__b >> R__t;
-            double R__t2;
-            R__b >> R__t2;
-            typedef double Value_t;
-            std::pair<Value_t const, double > R__t3(R__t,R__t2);
-            R__stl.insert(R__t3);
-         }
-      }
-      R__b.CheckByteCount(R__s, R__c, TInterpolatingWavefunction::IsA());
-   } else {
-      R__c = R__b.WriteVersion(TInterpolatingWavefunction::IsA(), kTRUE);
-      TWavefunctionImplementation::Streamer(R__b);
-      {
-         map<double,double> &R__stl = *fUr;
-         int R__n=(&R__stl) ? int(R__stl.size()) : 0;
-         R__b << R__n;
-         if(R__n) {
-            map<double,double>::iterator R__k;
-            for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
-            R__b << ((*R__k).first );
-            R__b << ((*R__k).second);
-            }
-         }
-      }
-      {
-         map<double,double> &R__stl = *fWr;
-         int R__n=(&R__stl) ? int(R__stl.size()) : 0;
-         R__b << R__n;
-         if(R__n) {
-            map<double,double>::iterator R__k;
-            for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
-            R__b << ((*R__k).first );
-            R__b << ((*R__k).second);
-            }
-         }
-      }
-      {
-         map<double,double> &R__stl = *fVTr;
-         int R__n=(&R__stl) ? int(R__stl.size()) : 0;
-         R__b << R__n;
-         if(R__n) {
-            map<double,double>::iterator R__k;
-            for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
-            R__b << ((*R__k).first );
-            R__b << ((*R__k).second);
-            }
-         }
-      }
-      {
-         map<double,double> &R__stl = *fVSr;
-         int R__n=(&R__stl) ? int(R__stl.size()) : 0;
-         R__b << R__n;
-         if(R__n) {
-            map<double,double>::iterator R__k;
-            for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
-            R__b << ((*R__k).first );
-            R__b << ((*R__k).second);
-            }
-         }
-      }
-      {
-         map<double,double> &R__stl = *fUp;
-         int R__n=(&R__stl) ? int(R__stl.size()) : 0;
-         R__b << R__n;
-         if(R__n) {
-            map<double,double>::iterator R__k;
-            for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
-            R__b << ((*R__k).first );
-            R__b << ((*R__k).second);
-            }
-         }
-      }
-      {
-         map<double,double> &R__stl = *fWp;
-         int R__n=(&R__stl) ? int(R__stl.size()) : 0;
-         R__b << R__n;
-         if(R__n) {
-            map<double,double>::iterator R__k;
-            for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
-            R__b << ((*R__k).first );
-            R__b << ((*R__k).second);
-            }
-         }
-      }
-      {
-         map<double,double> &R__stl = *fVTp;
-         int R__n=(&R__stl) ? int(R__stl.size()) : 0;
-         R__b << R__n;
-         if(R__n) {
-            map<double,double>::iterator R__k;
-            for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
-            R__b << ((*R__k).first );
-            R__b << ((*R__k).second);
-            }
-         }
-      }
-      {
-         map<double,double> &R__stl = *fVSp;
-         int R__n=(&R__stl) ? int(R__stl.size()) : 0;
-         R__b << R__n;
-         if(R__n) {
-            map<double,double>::iterator R__k;
-            for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
-            R__b << ((*R__k).first );
-            R__b << ((*R__k).second);
-            }
-         }
-      }
-      R__b.SetByteCount(R__c, kTRUE);
-   }
-}
+//    UInt_t R__s, R__c;
+//    if (R__b.IsReading()) {
+//       Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
+//       TWavefunctionImplementation::Streamer(R__b);
+//       {
+//          delete fUr;
+//          fUr = new map<double,double>;
+//          map<double,double> &R__stl = *fUr;
+//          R__stl.clear();
+//          int R__i, R__n;
+//          R__b >> R__n;
+//          for (R__i = 0; R__i < R__n; R__i++) {
+//             double R__t;
+//             R__b >> R__t;
+//             double R__t2;
+//             R__b >> R__t2;
+//             typedef double Value_t;
+//             std::pair<Value_t const, double > R__t3(R__t,R__t2);
+//             R__stl.insert(R__t3);
+//          }
+//       }
+//       {
+//          delete fWr;
+//          fWr = new map<double,double>;
+//          map<double,double> &R__stl = *fWr;
+//          R__stl.clear();
+//          int R__i, R__n;
+//          R__b >> R__n;
+//          for (R__i = 0; R__i < R__n; R__i++) {
+//             double R__t;
+//             R__b >> R__t;
+//             double R__t2;
+//             R__b >> R__t2;
+//             typedef double Value_t;
+//             std::pair<Value_t const, double > R__t3(R__t,R__t2);
+//             R__stl.insert(R__t3);
+//          }
+//       }
+//       {
+//          delete fVTr;
+//          fVTr = new map<double,double>;
+//          map<double,double> &R__stl = *fVTr;
+//          R__stl.clear();
+//          int R__i, R__n;
+//          R__b >> R__n;
+//          for (R__i = 0; R__i < R__n; R__i++) {
+//             double R__t;
+//             R__b >> R__t;
+//             double R__t2;
+//             R__b >> R__t2;
+//             typedef double Value_t;
+//             std::pair<Value_t const, double > R__t3(R__t,R__t2);
+//             R__stl.insert(R__t3);
+//          }
+//       }
+//       {
+//          delete fVSr;
+//          fVSr = new map<double,double>;
+//          map<double,double> &R__stl = *fVSr;
+//          R__stl.clear();
+//          int R__i, R__n;
+//          R__b >> R__n;
+//          for (R__i = 0; R__i < R__n; R__i++) {
+//             double R__t;
+//             R__b >> R__t;
+//             double R__t2;
+//             R__b >> R__t2;
+//             typedef double Value_t;
+//             std::pair<Value_t const, double > R__t3(R__t,R__t2);
+//             R__stl.insert(R__t3);
+//          }
+//       }
+//       {
+//          delete fUp;
+//          fUp = new map<double,double>;
+//          map<double,double> &R__stl = *fUp;
+//          R__stl.clear();
+//          int R__i, R__n;
+//          R__b >> R__n;
+//          for (R__i = 0; R__i < R__n; R__i++) {
+//             double R__t;
+//             R__b >> R__t;
+//             double R__t2;
+//             R__b >> R__t2;
+//             typedef double Value_t;
+//             std::pair<Value_t const, double > R__t3(R__t,R__t2);
+//             R__stl.insert(R__t3);
+//          }
+//       }
+//       {
+//          delete fWp;
+//          fWp = new map<double,double>;
+//          map<double,double> &R__stl = *fWp;
+//          R__stl.clear();
+//          int R__i, R__n;
+//          R__b >> R__n;
+//          for (R__i = 0; R__i < R__n; R__i++) {
+//             double R__t;
+//             R__b >> R__t;
+//             double R__t2;
+//             R__b >> R__t2;
+//             typedef double Value_t;
+//             std::pair<Value_t const, double > R__t3(R__t,R__t2);
+//             R__stl.insert(R__t3);
+//          }
+//       }
+//       {
+//          delete fVTp;
+//          fVTp = new map<double,double>;
+//          map<double,double> &R__stl = *fVTp;
+//          R__stl.clear();
+//          int R__i, R__n;
+//          R__b >> R__n;
+//          for (R__i = 0; R__i < R__n; R__i++) {
+//             double R__t;
+//             R__b >> R__t;
+//             double R__t2;
+//             R__b >> R__t2;
+//             typedef double Value_t;
+//             std::pair<Value_t const, double > R__t3(R__t,R__t2);
+//             R__stl.insert(R__t3);
+//          }
+//       }
+//       {
+//          delete fVSp;
+//          fVSp = new map<double,double>;
+//          map<double,double> &R__stl = *fVSp;
+//          R__stl.clear();
+//          int R__i, R__n;
+//          R__b >> R__n;
+//          for (R__i = 0; R__i < R__n; R__i++) {
+//             double R__t;
+//             R__b >> R__t;
+//             double R__t2;
+//             R__b >> R__t2;
+//             typedef double Value_t;
+//             std::pair<Value_t const, double > R__t3(R__t,R__t2);
+//             R__stl.insert(R__t3);
+//          }
+//       }
+//       R__b.CheckByteCount(R__s, R__c, TInterpolatingWavefunction::IsA());
+//    } else {
+//       R__c = R__b.WriteVersion(TInterpolatingWavefunction::IsA(), kTRUE);
+//       TWavefunctionImplementation::Streamer(R__b);
+//       {
+//          map<double,double> &R__stl = *fUr;
+//          int R__n=(&R__stl) ? int(R__stl.size()) : 0;
+//          R__b << R__n;
+//          if(R__n) {
+//             map<double,double>::iterator R__k;
+//             for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
+//             R__b << ((*R__k).first );
+//             R__b << ((*R__k).second);
+//             }
+//          }
+//       }
+//       {
+//          map<double,double> &R__stl = *fWr;
+//          int R__n=(&R__stl) ? int(R__stl.size()) : 0;
+//          R__b << R__n;
+//          if(R__n) {
+//             map<double,double>::iterator R__k;
+//             for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
+//             R__b << ((*R__k).first );
+//             R__b << ((*R__k).second);
+//             }
+//          }
+//       }
+//       {
+//          map<double,double> &R__stl = *fVTr;
+//          int R__n=(&R__stl) ? int(R__stl.size()) : 0;
+//          R__b << R__n;
+//          if(R__n) {
+//             map<double,double>::iterator R__k;
+//             for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
+//             R__b << ((*R__k).first );
+//             R__b << ((*R__k).second);
+//             }
+//          }
+//       }
+//       {
+//          map<double,double> &R__stl = *fVSr;
+//          int R__n=(&R__stl) ? int(R__stl.size()) : 0;
+//          R__b << R__n;
+//          if(R__n) {
+//             map<double,double>::iterator R__k;
+//             for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
+//             R__b << ((*R__k).first );
+//             R__b << ((*R__k).second);
+//             }
+//          }
+//       }
+//       {
+//          map<double,double> &R__stl = *fUp;
+//          int R__n=(&R__stl) ? int(R__stl.size()) : 0;
+//          R__b << R__n;
+//          if(R__n) {
+//             map<double,double>::iterator R__k;
+//             for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
+//             R__b << ((*R__k).first );
+//             R__b << ((*R__k).second);
+//             }
+//          }
+//       }
+//       {
+//          map<double,double> &R__stl = *fWp;
+//          int R__n=(&R__stl) ? int(R__stl.size()) : 0;
+//          R__b << R__n;
+//          if(R__n) {
+//             map<double,double>::iterator R__k;
+//             for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
+//             R__b << ((*R__k).first );
+//             R__b << ((*R__k).second);
+//             }
+//          }
+//       }
+//       {
+//          map<double,double> &R__stl = *fVTp;
+//          int R__n=(&R__stl) ? int(R__stl.size()) : 0;
+//          R__b << R__n;
+//          if(R__n) {
+//             map<double,double>::iterator R__k;
+//             for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
+//             R__b << ((*R__k).first );
+//             R__b << ((*R__k).second);
+//             }
+//          }
+//       }
+//       {
+//          map<double,double> &R__stl = *fVSp;
+//          int R__n=(&R__stl) ? int(R__stl.size()) : 0;
+//          R__b << R__n;
+//          if(R__n) {
+//             map<double,double>::iterator R__k;
+//             for (R__k = R__stl.begin(); R__k != R__stl.end(); ++R__k) {
+//             R__b << ((*R__k).first );
+//             R__b << ((*R__k).second);
+//             }
+//          }
+//       }
+//       R__b.SetByteCount(R__c, kTRUE);
+//    }
+// }
 
 
 std::complex<double> TInterpolatingWavefunction::DeuteronPState(int deuteronPol, int nucleon2Pol,

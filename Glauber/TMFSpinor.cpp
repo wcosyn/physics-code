@@ -151,41 +151,41 @@ TMFSpinor* TMFSpinor::Clone(const char*) const
 }
 
 //______________________________________________________________________________
-void TMFSpinor::Streamer(TBuffer &R__b)
-{
-  // Stream an object of class TSpinor.
+void TMFSpinor::Streamer(TBuffer &R__b){}
+// {
+//   // Stream an object of class TSpinor.
 
-  UInt_t R__s, R__c;
+//   UInt_t R__s, R__c;
   
-  if (R__b.IsReading()) { // begin reading
-    Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
-    TObject::Streamer(R__b);
-    fComponent = new Matrix<4,1>;
-    double realComponent, imagComponent;
-    for(int i=0; i<4; ++i) {
-      R__b >> realComponent;
-      R__b >> imagComponent;
-      (*fComponent)(i,0) = complex<double>(realComponent,imagComponent);
-    }
-    if( R__v<3 ) {
-      cerr << "ERROR in TSpinor::Streamer(TBuffer&): "
-	   << "Old version of TSpinor might contain errors.\n";
-      exit(1);
-    }
+//   if (R__b.IsReading()) { // begin reading
+//     Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
+//     TObject::Streamer(R__b);
+//     fComponent = new Matrix<4,1>;
+//     double realComponent, imagComponent;
+//     for(int i=0; i<4; ++i) {
+//       R__b >> realComponent;
+//       R__b >> imagComponent;
+//       (*fComponent)(i,0) = complex<double>(realComponent,imagComponent);
+//     }
+//     if( R__v<3 ) {
+//       cerr << "ERROR in TSpinor::Streamer(TBuffer&): "
+// 	   << "Old version of TSpinor might contain errors.\n";
+//       exit(1);
+//     }
 
-    R__b.CheckByteCount(R__s, R__c, TMFSpinor::IsA());
-  } // end reading 
+//     R__b.CheckByteCount(R__s, R__c, TMFSpinor::IsA());
+//   } // end reading 
 
-  else { // begin writing
-    R__c = R__b.WriteVersion(TMFSpinor::IsA(), kTRUE);
-    TObject::Streamer(R__b);
-    for(int i=0; i<4; ++i) {
-      R__b << (*fComponent)(i,0).real();
-      R__b << (*fComponent)(i,0).imag();
-    }
-    R__b.SetByteCount(R__c, kTRUE);
-  } // end writing
-}
+//   else { // begin writing
+//     R__c = R__b.WriteVersion(TMFSpinor::IsA(), kTRUE);
+//     TObject::Streamer(R__b);
+//     for(int i=0; i<4; ++i) {
+//       R__b << (*fComponent)(i,0).real();
+//       R__b << (*fComponent)(i,0).imag();
+//     }
+//     R__b.SetByteCount(R__c, kTRUE);
+//   } // end writing
+// }
 
 Matrix<1,4> TMFSpinor::H()
 {

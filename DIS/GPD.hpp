@@ -7,6 +7,7 @@
 #include <complex>
 #include <numint/numint.hpp>
 #include "TransGPD_set.hpp"
+#include <TInterpolatingWavefunction.h>
 
 class c_mstwpdf; //forward declaration
 /**
@@ -22,7 +23,7 @@ public:
  * 
  * @param pdf_name pdf parametrization name used for the forward limit ("MSTW" is the only valid one for now)
  */
-GPD(const std::string &pdf_name);
+GPD(const std::string &pdf_name, const std::string &wfname);
 
 /**
  * @brief Destructor
@@ -39,7 +40,7 @@ GPD(const std::string &pdf_name);
  * @param helamps 
  * @return std::vector<double> 
  */
-static std::vector< std::complex<double> > helamps_to_gpds(const double xi, const double x, const double t, const std::vector< std::complex<double> > & helamps);
+static std::vector< std::complex<double> > helamps_to_gpds(const double xi, const double t, const std::vector< std::complex<double> > & helamps);
 
 /**
  * @brief Computes the set H_T, \bar{E}_T for up and down quarks according to the parametrisations of Goloskokov and Kroll EPJA47:112
@@ -52,6 +53,10 @@ static std::vector< std::complex<double> > helamps_to_gpds(const double xi, cons
  */
 TransGPD_set getGK_param(const double x, const double xi, const double t);
 
+std::vector< std::complex<double> > gpd_conv(const double xi, const double x, const double t, const int model);
+
+TInterpolatingWavefunction * getWf(){ return &wf;}
+
 private: 
 /**
  * @brief 
@@ -62,9 +67,9 @@ struct Ftor_conv {
     /*! integrandum function */
     static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
       Ftor_conv &p = * (Ftor_conv *) param;
-      p.f(ret,x[0],x[1],x[2], p.wfref,p.x,p.xi,p.t,p.pold_in, p.pold_out,p.model);
+      p.f(ret,x[0],x[1],x[2], *p.gpd,p.x,p.xi,p.t,p.pold_in, p.pold_out,p.model);
     }
-    TDeuteron::Wavefunction *wfref;
+    GPD *gpd;
     double x;
     double xi;
     double t;
@@ -72,7 +77,7 @@ struct Ftor_conv {
     int pold_out;
     int model;
     
-    void (*f)(numint::vector_z & res, double knorm, double kcosth, double kphi, TDeuteron::Wavefunction *wfref,
+    void (*f)(numint::vector_z & res, double knorm, double kcosth, double kphi, GPD &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model);
       };
 
@@ -91,7 +96,7 @@ struct Ftor_conv {
  * @param pold_in polarization initial state (-1//0//+1)
  * @param pold_out polarization final state state (-1//0//+1)
  */
-void int_k3(numint::vector_z & res, double knorm, double kcosth, double kphi, TDeuteron::Wavefunction *wfref,
+static void int_k3(numint::vector_z & res, double knorm, double kcosth, double kphi, GPD &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model);
 
 struct Ftor_doubledistr {
@@ -137,7 +142,8 @@ static void DD_int_rho(numint::vector_d & res, double rho, double x, double xi, 
 std::complex<double> getGPD_odd_nucl(int sigma_in, int sigma_out, double x_n, double xi_n, double t, double t0, double phi, int model);              
 
 c_mstwpdf *mstw; ///< object that stores MSTW pdf grids
-
+TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/
+TInterpolatingWavefunction wf;
 /**
  * @brief compute forward limit frontfactors for H_T in double distribution of GK model (Eq.24 in EPJA 47:112
  * 

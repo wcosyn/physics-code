@@ -144,41 +144,41 @@ TSpinor* TSpinor::Clone(const char*) const
 }
 
 //______________________________________________________________________________
-void TSpinor::Streamer(TBuffer &R__b)
-{
-  // Stream an object of class TSpinor.
+void TSpinor::Streamer(TBuffer &R__b){}
+// {
+//   // Stream an object of class TSpinor.
 
-  UInt_t R__s, R__c;
+//   UInt_t R__s, R__c;
   
-  if (R__b.IsReading()) { // begin reading
-    Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
-    TObject::Streamer(R__b);
-    fComponent = new Matrix<4,1>;
-    double realComponent, imagComponent;
-    for(int i=0; i<4; ++i) {
-      R__b >> realComponent;
-      R__b >> imagComponent;
-      (*fComponent)(i,0) = complex<double>(realComponent,imagComponent);
-    }
-    if( R__v<3 ) {
-      cerr << "ERROR in TSpinor::Streamer(TBuffer&): "
-	   << "Old version of TSpinor might contain errors.\n";
-      exit(1);
-    }
+//   if (R__b.IsReading()) { // begin reading
+//     Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
+//     TObject::Streamer(R__b);
+//     fComponent = new Matrix<4,1>;
+//     double realComponent, imagComponent;
+//     for(int i=0; i<4; ++i) {
+//       R__b >> realComponent;
+//       R__b >> imagComponent;
+//       (*fComponent)(i,0) = complex<double>(realComponent,imagComponent);
+//     }
+//     if( R__v<3 ) {
+//       cerr << "ERROR in TSpinor::Streamer(TBuffer&): "
+// 	   << "Old version of TSpinor might contain errors.\n";
+//       exit(1);
+//     }
 
-    R__b.CheckByteCount(R__s, R__c, TSpinor::IsA());
-  } // end reading 
+//     R__b.CheckByteCount(R__s, R__c, TSpinor::IsA());
+//   } // end reading 
 
-  else { // begin writing
-    R__c = R__b.WriteVersion(TSpinor::IsA(), kTRUE);
-    TObject::Streamer(R__b);
-    for(int i=0; i<4; ++i) {
-      R__b << (*fComponent)(i,0).real();
-      R__b << (*fComponent)(i,0).imag();
-    }
-    R__b.SetByteCount(R__c, kTRUE);
-  } // end writing
-}
+//   else { // begin writing
+//     R__c = R__b.WriteVersion(TSpinor::IsA(), kTRUE);
+//     TObject::Streamer(R__b);
+//     for(int i=0; i<4; ++i) {
+//       R__b << (*fComponent)(i,0).real();
+//       R__b << (*fComponent)(i,0).imag();
+//     }
+//     R__b.SetByteCount(R__c, kTRUE);
+//   } // end writing
+// }
 
 //______________________________________________________________________________
 void TSpinor::InitializeSpinor(double px, double py, double pz, double mass,
@@ -946,65 +946,65 @@ void TSpinor::LorentzRotation::SetRotation(double thetaX, double thetaY, double 
 }
 
 //______________________________________________________________________________
-void TSpinor::LorentzRotation::Streamer(TBuffer &R__b)
-{
-  // Stream an object of class TSpinor::LorentzRotation.
+void TSpinor::LorentzRotation::Streamer(TBuffer &R__b){}
+// {
+//   // Stream an object of class TSpinor::LorentzRotation.
 
-  //This works around a msvc bug and should be harmless on other platforms
-  typedef ::TSpinor::LorentzRotation thisClass;
-  UInt_t R__s, R__c;
+//   //This works around a msvc bug and should be harmless on other platforms
+//   typedef ::TSpinor::LorentzRotation thisClass;
+//   UInt_t R__s, R__c;
   
-  if (R__b.IsReading()) { // begin reading
-    Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
-    TObject::Streamer(R__b);
+//   if (R__b.IsReading()) { // begin reading
+//     Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
+//     TObject::Streamer(R__b);
 
-    // Retrieve all GammaStructure coefficients from the buffer
-    complex<double> compCoeff[16];
-    double real,imag;
-    for(int i=0; i<16; ++i) {
-      R__b >> real;
-      R__b >> imag;
-      compCoeff[i]=complex<double>(real,imag);
-    }
-    fTransformation 
-      = GammaStructure(compCoeff[0],compCoeff[1],compCoeff[2],compCoeff[3],
-		       compCoeff[4],compCoeff[5],compCoeff[6],compCoeff[7],
-		       compCoeff[8],compCoeff[9],compCoeff[10],compCoeff[11],
-		       compCoeff[12],compCoeff[13],compCoeff[14],compCoeff[15]);
+//     // Retrieve all GammaStructure coefficients from the buffer
+//     complex<double> compCoeff[16];
+//     double real,imag;
+//     for(int i=0; i<16; ++i) {
+//       R__b >> real;
+//       R__b >> imag;
+//       compCoeff[i]=complex<double>(real,imag);
+//     }
+//     fTransformation 
+//       = GammaStructure(compCoeff[0],compCoeff[1],compCoeff[2],compCoeff[3],
+// 		       compCoeff[4],compCoeff[5],compCoeff[6],compCoeff[7],
+// 		       compCoeff[8],compCoeff[9],compCoeff[10],compCoeff[11],
+// 		       compCoeff[12],compCoeff[13],compCoeff[14],compCoeff[15]);
 
-    R__b.CheckByteCount(R__s, R__c, thisClass::IsA());
-  } // end reading 
+//     R__b.CheckByteCount(R__s, R__c, thisClass::IsA());
+//   } // end reading 
 
-  else { // begin writing
-    R__c = R__b.WriteVersion(thisClass::IsA(), kTRUE);
-    TObject::Streamer(R__b);
+//   else { // begin writing
+//     R__c = R__b.WriteVersion(thisClass::IsA(), kTRUE);
+//     TObject::Streamer(R__b);
     
-    // We wills store the coefficients of the GammaStructure
-    complex<double> compCoeff[16];
-    compCoeff[0] = Trace(fTransformation.value()) /4.;
-    compCoeff[1] = Trace(fTransformation.value()*G5) /4.;
-    compCoeff[2] = Trace(fTransformation.value()*G0) /4.;
-    compCoeff[3] = Trace(fTransformation.value()*G1) /-4.;
-    compCoeff[4] = Trace(fTransformation.value()*G2) /-4.;
-    compCoeff[5] = Trace(fTransformation.value()*G3) /-4.;
-    compCoeff[6] = Trace(fTransformation.value()*G5G0) /-4.;
-    compCoeff[7] = Trace(fTransformation.value()*G5G1) /4.;
-    compCoeff[8] = Trace(fTransformation.value()*G5G2) /4.;
-    compCoeff[9] = Trace(fTransformation.value()*G5G3) /4.;
-    compCoeff[10] = Trace(fTransformation.value()*A1) /4.;
-    compCoeff[11] = Trace(fTransformation.value()*A2) /4.;
-    compCoeff[12] = Trace(fTransformation.value()*A3) /4.;
-    compCoeff[13] = Trace(fTransformation.value()*S1) /4.;
-    compCoeff[14] = Trace(fTransformation.value()*S2) /4.;
-    compCoeff[15] = Trace(fTransformation.value()*S3) /4.;
-    for(int i=0; i<16; ++i) {
-      R__b << compCoeff[i].real();
-      R__b << compCoeff[i].imag();
-    }
+//     // We wills store the coefficients of the GammaStructure
+//     complex<double> compCoeff[16];
+//     compCoeff[0] = Trace(fTransformation.value()) /4.;
+//     compCoeff[1] = Trace(fTransformation.value()*G5) /4.;
+//     compCoeff[2] = Trace(fTransformation.value()*G0) /4.;
+//     compCoeff[3] = Trace(fTransformation.value()*G1) /-4.;
+//     compCoeff[4] = Trace(fTransformation.value()*G2) /-4.;
+//     compCoeff[5] = Trace(fTransformation.value()*G3) /-4.;
+//     compCoeff[6] = Trace(fTransformation.value()*G5G0) /-4.;
+//     compCoeff[7] = Trace(fTransformation.value()*G5G1) /4.;
+//     compCoeff[8] = Trace(fTransformation.value()*G5G2) /4.;
+//     compCoeff[9] = Trace(fTransformation.value()*G5G3) /4.;
+//     compCoeff[10] = Trace(fTransformation.value()*A1) /4.;
+//     compCoeff[11] = Trace(fTransformation.value()*A2) /4.;
+//     compCoeff[12] = Trace(fTransformation.value()*A3) /4.;
+//     compCoeff[13] = Trace(fTransformation.value()*S1) /4.;
+//     compCoeff[14] = Trace(fTransformation.value()*S2) /4.;
+//     compCoeff[15] = Trace(fTransformation.value()*S3) /4.;
+//     for(int i=0; i<16; ++i) {
+//       R__b << compCoeff[i].real();
+//       R__b << compCoeff[i].imag();
+//     }
 
-    R__b.SetByteCount(R__c, kTRUE);
-  } // end writing
-}
+//     R__b.SetByteCount(R__c, kTRUE);
+//   } // end writing
+// }
 
 //______________________________________________________________________________
 ostream& operator<<(ostream& output, const TSpinor::LorentzRotation& rhs) 

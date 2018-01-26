@@ -648,28 +648,28 @@ void TKinematics2to3WithLabAngles::UpdateKinematics()
 }
 
 //_____________________________________________________________________
-void TKinematics2to3WithLabAngles::Streamer(TBuffer &R__b)
-{
-  // Stream an object of class TKinematics2to3WithLabAngles.
+void TKinematics2to3WithLabAngles::Streamer(TBuffer &R__b){}
+// {
+//   // Stream an object of class TKinematics2to3WithLabAngles.
 
-  UInt_t R__s, R__c;
-  if (R__b.IsReading()) {
-    Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
-    TurnOutputOff();
-    TKinematics2to3::Streamer(R__b);
-    TurnOutputOff(false);
-    fSolutions = new TKinematics2to3*[2];
-    for(int i=0; i<2; ++i) fSolutions[i] = 0;
-    UpdateKinematics();
-    R__b.CheckByteCount(R__s, R__c, TKinematics2to3WithLabAngles::IsA());
-  } else {
-    R__c = R__b.WriteVersion(TKinematics2to3WithLabAngles::IsA(), kTRUE);
-    TurnOutputOff();
-    TKinematics2to3::Streamer(R__b);
-    TurnOutputOff(false);
-    R__b.SetByteCount(R__c, kTRUE);
-  }
-}
+//   UInt_t R__s, R__c;
+//   if (R__b.IsReading()) {
+//     Version_t R__v = R__b.ReadVersion(&R__s, &R__c); if (R__v) { }
+//     TurnOutputOff();
+//     TKinematics2to3::Streamer(R__b);
+//     TurnOutputOff(false);
+//     fSolutions = new TKinematics2to3*[2];
+//     for(int i=0; i<2; ++i) fSolutions[i] = 0;
+//     UpdateKinematics();
+//     R__b.CheckByteCount(R__s, R__c, TKinematics2to3WithLabAngles::IsA());
+//   } else {
+//     R__c = R__b.WriteVersion(TKinematics2to3WithLabAngles::IsA(), kTRUE);
+//     TurnOutputOff();
+//     TKinematics2to3::Streamer(R__b);
+//     TurnOutputOff(false);
+//     R__b.SetByteCount(R__c, kTRUE);
+//   }
+// }
 
 //_____________________________________________________________________
 const TKinematics2to3& TKinematics2to3WithLabAngles::GetSolution(int solution) const
