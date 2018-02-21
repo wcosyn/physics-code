@@ -45,3 +45,24 @@ double TransGPD_set::getET_singlet(const int model) const{
     }
     
 }
+
+
+TransGPD_set TransGPD_set::operator+(const TransGPD_set& rhs) const{
+    TransGPD_set result;
+    result.HTu=this->HTu+rhs.HTu;
+    result.HTd=this->HTd+rhs.HTd;
+    result.EbarTu=this->EbarTu+rhs.EbarTu;
+    result.EbarTd=this->EbarTd+rhs.EbarTd;
+
+    return result;
+}
+
+TransGPD_set TransGPD_set::operator*(const double sc) const{
+    TransGPD_set result;
+    result.HTu=this->HTu*sc;
+    result.HTd=this->HTd*sc;
+    result.EbarTu=this->EbarTu*sc;
+    result.EbarTd=this->EbarTd*sc;
+
+    return result;
+}

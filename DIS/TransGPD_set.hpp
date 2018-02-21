@@ -20,6 +20,11 @@ TransGPD_set(const double HTd, const double HTu, const double EbarTd, const doub
 HTd(HTd),HTu(HTu),EbarTd(EbarTd),EbarTu(EbarTu)
 {}
 
+
+TransGPD_set():
+HTd(0.),HTu(0.),EbarTd(0.),EbarTu(0.)
+{}
+
 ~TransGPD_set(){}
 
 double getHT_singlet() const{return 0.5*(HTu+HTd);} ///< returns (H_T^u+H_T^d)/2
@@ -55,12 +60,28 @@ double getHTd() const{return HTd;}
 double getEbarTu() const{return EbarTu;}
 double getEbarTd() const{return EbarTd;}
 
+/**
+ * @brief adding operator
+ * 
+ * @param rhs what we want to add
+ * @return TransGPD_set sum of this + argument
+ */
+TransGPD_set operator+(const TransGPD_set& rhs) const;
+/**
+ * @brief right-multiply all elements with a scalar
+ * 
+ * @param sc what we multiply with
+ * @return TransGPD_set result of the multiplication
+ */
+TransGPD_set operator*(const double sc) const;
+
+
 private:
 
-double HTu; ///< GPD H_T up quark
 double HTd; ///< GPD H_T down quark
-double EbarTu; ///< GPD \bar{E}_T=2\tilde{H}_T+E_T up quark
+double HTu; ///< GPD H_T up quark
 double EbarTd; ///< GPD \bar{E}_T=2\tilde{H}_T+E_T down quark
+double EbarTu; ///< GPD \bar{E}_T=2\tilde{H}_T+E_T up quark
 
 };
 

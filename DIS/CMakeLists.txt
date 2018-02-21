@@ -32,7 +32,7 @@ SET(DIS_LIBRARY_PROPERTIES ${DIS_LIBRARY_PROPERTIES}
 ############### build the library #####################
 add_library(DIS SHARED ${DIS_SRCS})
 target_include_directories(DIS PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(DIS Knockout MePhys Integrator)
+target_link_libraries(DIS Knockout MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
 set_target_properties(DIS PROPERTIES ${DIS_LIBRARY_PROPERTIES})
 ############### install the library ###################
 install(TARGETS DIS DESTINATION "${CMAKE_SOURCE_DIR}/lib")
@@ -41,7 +41,7 @@ install(TARGETS DIS DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 if(STATIC_BUILD)
   add_library(DISST STATIC ${DIS_SRCS})
   target_include_directories(DISST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})  
-  target_link_libraries(DISST Knockout MePhys Integrator -Wl,-no-whole-archive)
+  target_link_libraries(DISST Knockout MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a -Wl,-no-whole-archive)
   set_target_properties(DISST PROPERTIES OUTPUT_NAME DIS)
   install(TARGETS DISST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endif(STATIC_BUILD)

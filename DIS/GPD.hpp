@@ -67,7 +67,7 @@ struct Ftor_conv {
     /*! integrandum function */
     static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
       Ftor_conv &p = * (Ftor_conv *) param;
-      p.f(ret,x[0],x[1],x[2], *p.gpd,p.x,p.xi,p.t,p.pold_in, p.pold_out,p.model);
+      p.f(ret,x[0],x[1],x[2], *p.gpd,p.x,p.xi,p.t,p.pold_in, p.pold_out,p.model,p.right,p.deltax);
     }
     GPD *gpd;
     double x;
@@ -76,28 +76,35 @@ struct Ftor_conv {
     int pold_in;
     int pold_out;
     int model;
+    bool right;
+    double deltax;
     
-    void (*f)(numint::vector_z & res, double knorm, double kcosth, double kphi, GPD &gpd,
-              double x, double xi, double t, int pold_in, int pold_out, int model);
+    void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, GPD &gpd,
+              double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
       };
 
 
 /**
  * @brief 
  * 
- * @param res 
- * @param knorm 
- * @param kcosth 
- * @param kphi 
- * @param wfref 
- * @param x 
- * @param xi 
- * @param t 
+ * @param[out] res integral result 
+ * @param alpha_1 [] lc momentum fraction of initial nucleon
+ * @param kperp [MeV] perp lf momentum entering in initial deuteron wf
+ * @param kphi [] azimuthal angle of lf momentum entering in initial deuteron wf
+ * @param[in] gpd object that contains all necessary info on the gpds 
+ * @param x [] avg lc momentum fraction of struck quark
+ * @param xi [] skewness
+ * @param t [MeV^2] momentum transfer sq
  * @param pold_in polarization initial state (-1//0//+1)
  * @param pold_out polarization final state state (-1//0//+1)
+ * @param model diff implementations of KG parametrization, see TransGPD_set for details
+ * @param right [1] R matrix element [0] L matrix element
+ * @param deltax [MeV] x component of the momentum transfer
  */
-static void int_k3(numint::vector_z & res, double knorm, double kcosth, double kphi, GPD &gpd,
-              double x, double xi, double t, int pold_in, int pold_out, int model);
+static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double kphi, GPD &gpd,
+              double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
+static void int_kprime3(numint::vector_z & res, double alpha_1, double kperp, double kphi, GPD &gpd,
+              double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
 
 struct Ftor_doubledistr {
 
@@ -131,15 +138,28 @@ static void DD_int_rho(numint::vector_d & res, double rho, double x, double xi, 
  * 
  * @param sigma_in polarization incoming nucleon
  * @param sigma_out polarization outgoing nucleon
- * @param x_n parton avg lightfront momentum fraction
  * @param xi_n skewness nucleon
  * @param t [MeV^2] momentum transfer sq.
  * @param t0 [MeV^2] minimum momentum transfer sq
  * @param phi [azimuthal angle \xiP+Delta fourvector]
  * @param model different implementations of the nucleon transversity GPDs
+ * @param right [1] right or [0] left matrix element (see notes Eq 112)
+ * @param gpd_nucl constains a set of chiral odd quark nucleon gpds computed according to the GK model
  * @return std::complex<double> nucleon helicity amplitude
  */
-std::complex<double> getGPD_odd_nucl(int sigma_in, int sigma_out, double x_n, double xi_n, double t, double t0, double phi, int model);              
+std::complex<double> getGPD_odd_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
+                                    const double t, const double t0, const double phi, const int model, const bool right,
+                                    const TransGPD_set &gpd_nucl) const;              
+
+/**
+ * @brief Obtains the chiral odd nucleon gpds for a certain kinematics (interpolated from a grid)
+ * 
+ * @param x average lf momentum fraction quark
+ * @param xi skewness nucleon
+ * @param t [MeV^2] momentum transfer sq.
+ * @return TransGPD_set set of GPDs
+ */
+TransGPD_set getTransGPDSet(const double x, const double xi, const double t);
 
 c_mstwpdf *mstw; ///< object that stores MSTW pdf grids
 TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/
@@ -153,5 +173,10 @@ TInterpolatingWavefunction wf;
  */
 void getHTfront(const double x, double &HTdfront, double &HTufront) const;
 void getEbarTfront(const double x, double &EbarTdfront, double &EbarTufront) const;
+
+double t_grid; ///< [MeV^2] momentum transfer sq value the grid has
+bool grid_set; ///< is the grid with transv gpds set or not
+TransGPD_set grid[201][201];
+
 
 };
