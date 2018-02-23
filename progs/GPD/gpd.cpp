@@ -21,10 +21,13 @@ int main(int argc, char *argv[]){
         double x=i*0.01;
         vector< complex<double> > out = test.gpd_conv(xi,x,t,1);
         vector< complex<double> > gpd = GPD::helamps_to_gpds(xi,t,out);
+        vector< complex<double> > hel = GPD::gpds_to_helamps(xi,t,gpd);
+        
         cout << x << " ";
         for(int j=0;j<9;j++) cout << out[j].real() << " ";
         for(int j=0;j<9;j++) cout << gpd[j].real() << " ";
         cout << endl;
+
         
     }    
 }

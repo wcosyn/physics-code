@@ -42,28 +42,61 @@ vector< complex<double> > GPD::helamps_to_gpds(const double xi, const double t, 
     vector< complex<double> > gpds(9,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
     double D=sqrt((-4.*MASSn*MASSn*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSn);
-    gpds.at(0)=2.*sqrt(2.)*xi/D/(1-xi*xi)*(helamps[0]-helamps[1])+2.*(1./(1.-xi)*helamps[3]+1./(1.+xi)*helamps[4]+2./(1+xi)*helamps[5]
-                +2./(1-xi)*helamps[6]+2.*sqrt(2.)*D/(1.-xi*xi)*(helamps[7]-helamps[8]));
-    gpds.at(1)=2.*sqrt(2.)*D/(1-xi*xi)*(helamps[0]-helamps[1])-2.*(1./(1.-xi)*helamps[3]-1./(1.+xi)*helamps[4]+2./(1+xi)*helamps[5]
-                -2./(1-xi)*helamps[6]+2.*sqrt(2.)*xi/D/(1.-xi*xi)*(helamps[7]-helamps[8]));
+    gpds.at(0)=2.*sqrt(2.)*xi/D/(1-xi*xi)*(helamps[0]-helamps[1])+2.*(1./(1.-xi)*helamps[3]+1./(1.+xi)*helamps[4])+2./(1+xi)*helamps[5]
+                +2./(1-xi)*helamps[6]+2.*sqrt(2.)*D/(1.-xi*xi)*(helamps[7]-helamps[8]);
+    gpds.at(1)=2.*sqrt(2.)*D/(1-xi*xi)*(helamps[0]-helamps[1])-2.*(1./(1.-xi)*helamps[3]-1./(1.+xi)*helamps[4])+2./(1+xi)*helamps[5]
+                -2./(1-xi)*helamps[6]+2.*sqrt(2.)*xi/D/(1.-xi*xi)*(helamps[7]-helamps[8]);
     gpds.at(2)=1./(2.*D)*((1-xi)/(1+xi)*helamps[0]-(1+xi)/(1-xi)*helamps[1])+1./(sqrt(2.)*D*D)*((1-xi)/(1+xi)*helamps[5]-(1+xi)/(1-xi)*helamps[6])
                 -2.*xi/(D*D*D*(1-xi*xi))*helamps[8];
-    gpds.at(3)=1/D*(1./(1-xi)*helamps[0]+1./(1.-xi)*helamps[1])+1/(sqrt(2.)*D*D)*((1-xi)/(1+xi)*helamps[5]+(1+xi)/(1-xi)*helamps[6])+1./(2.*D)*helamps[7]
-                -1./(2.*D*D*D)*(D*D-4.*xi/(1-xi*xi))*helamps[8];
+    gpds.at(3)=1/D*(1./(1+xi)*helamps[0]+1./(1.-xi)*helamps[1])+1/(sqrt(2.)*D*D)*((1-xi)/(1+xi)*helamps[5]+(1+xi)/(1-xi)*helamps[6])+1./(2.*D)*helamps[7]
+                -1./(2.*D*D*D)*(D*D-4.*xi*xi/(1-xi*xi))*helamps[8];
 
-    gpds.at(4)=-1./D*((1./2.+D/(1-xi))/(1+xi)/(1+xi)*helamps[0]+(1./2.+D/(1+xi))/(1-xi)/(1-xi)*helamps[1])+1./(D*(1.-xi*xi))*helamps[2]
+    gpds.at(4)=-1./D*((1./2.+D*D/(1-xi))/(1+xi)/(1+xi)*helamps[0]+(1./2.+D*D/(1+xi))/(1-xi)/(1-xi)*helamps[1])+1./(D*(1.-xi*xi))*helamps[2]
                     +1/sqrt(2.)/(1-xi*xi)*(helamps[3]+helamps[4])-1./(sqrt(2.)*pow(1+xi,2.))*(1.-2.*xi/(D*D*(1-xi)))*helamps[5]
                     -1/(sqrt(2.)*pow(1-xi,2.))*(1.+2.*xi/(D*D*(1.+xi)))*helamps[6]-1./(2.*D*(1-xi*xi))*helamps[7]
-                    +(D*D*(3.*xi+1-4.*xi*xi))/(2.*D*D*D*pow(1-xi*xi,2.))*helamps[8];
+                    -(D*D*(3.*xi*xi+1)+4.*xi*xi)/(2.*D*D*D*pow(1-xi*xi,2.))*helamps[8];
 
     gpds.at(5)=-1./(2.*D)*(helamps[0]+helamps[1]+helamps[7]+helamps[8]);
     gpds.at(6)=2.*(1-xi*xi)/(D*D*D)*helamps[8];
-    gpds.at(7)=-1./D*(helamps[0]+helamps[1]+xi*(helamps[7]-helamps[8]));
-    gpds.at(8)=-1./D*(xi*(helamps[0]+helamps[1])+(helamps[7]-helamps[8]));
+    gpds.at(7)=-1./D*(helamps[0]-helamps[1]+xi*(helamps[7]-helamps[8]));
+    gpds.at(8)=-1./D*(xi*(helamps[0]-helamps[1])+(helamps[7]-helamps[8]));
 
     return gpds;
 }
 
+vector< complex<double> > GPD::gpds_to_helamps(const double xi, const double t, const std::vector< std::complex<double> > & gpds){
+
+    vector< complex<double> > helamps(9,0.);
+    //symmetric frame, with momentum transfer in x,z plane, so phi=0
+
+    double D=sqrt((-4.*MASSn*MASSn*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSn);
+    double t0=-4.*MASSn*MASSn*xi*xi/(1-xi*xi);
+    // cout << (t0-t)*1.E-06 << " " << MASSn*1.E-03 << endl;
+    helamps.at(0)=-D*(gpds[5]+(t0-t)/(8.*MASSn*MASSn)*gpds[6]+1./(2.*(1.-xi))*(gpds[7]-gpds[8]));
+
+    helamps.at(1)=-D*(gpds[5]+(t0-t)/(8.*MASSn*MASSn)*gpds[6]-1./(2.*(1.+xi))*(gpds[7]+gpds[8]));
+
+    helamps.at(2)=D*(-1./(2.*sqrt(2.))*(gpds[0]+xi*gpds[1])+xi*((t0-t)/(2.*MASSn*MASSn)-2./(1-xi*xi))*gpds[2]+((t0-t)/(2.*MASSn*MASSn)-2.*xi*xi/(1.-xi*xi))*gpds[3]
+                    +(1.-xi*xi)*gpds[4]+((t0-t)/(2.*MASSn*MASSn)-(1+xi*xi)/(1-xi*xi))*gpds[5]+(pow((t0-t)/(4.*MASSn*MASSn),2.)-pow(xi/(1-xi*xi),2.))*gpds[6]-xi/(1.-xi*xi)*gpds[7]
+                    -(t0-t)/(4.*MASSn*MASSn)*gpds[8]);
+
+    helamps.at(3)=1./sqrt(2.)*((1-xi)/(2.*sqrt(2.))*(gpds[0]-gpds[1])+(1-xi)*(1-xi)*(t0-t)/(4.*MASSn*MASSn)*(gpds[2]-gpds[3])-(1-xi)*(t0-t)/(2.*MASSn*MASSn)*gpds[5]
+                    -(1-xi)*(t0-t)/(4.*MASSn*MASSn)*((t0-t)/(4.*MASSn*MASSn)-xi/(1.-xi*xi))*gpds[6]+(-(1.+xi)*(t0-t)/(8.*MASSn*MASSn)+xi/(1-xi*xi))*gpds[7]
+                    +((3.-xi)*(t0-t)/(8.*MASSn*MASSn)-xi/(1-xi*xi))*gpds[8]);                    
+
+    helamps.at(4)=1./sqrt(2.)*((1+xi)/(2.*sqrt(2.))*(gpds[0]+gpds[1])-(1+xi)*(1+xi)*(t0-t)/(4.*MASSn*MASSn)*(gpds[2]+gpds[3])-(1+xi)*(t0-t)/(2.*MASSn*MASSn)*gpds[5]
+                    -(1+xi)*(t0-t)/(4.*MASSn*MASSn)*((t0-t)/(4.*MASSn*MASSn)+xi/(1.-xi*xi))*gpds[6]+((1.-xi)*(t0-t)/(8.*MASSn*MASSn)+xi/(1-xi*xi))*gpds[7]
+                    +((3.+xi)*(t0-t)/(8.*MASSn*MASSn)+xi/(1-xi*xi))*gpds[8]);                    
+
+    helamps.at(5)=D*D/sqrt(2.)/(1-xi)*((1+xi)*(gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSn*MASSn)+xi/(1-xi*xi))*gpds[6]+1./2.*(gpds[7]-gpds[8]));
+
+    helamps.at(6)=D*D/sqrt(2.)/(1+xi)*(-(1-xi)*(gpds[2]-gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSn*MASSn)-xi/(1-xi*xi))*gpds[6]-1./2.*(gpds[7]+gpds[8]));
+
+    helamps.at(7)=D*((t0-t)/(8.*MASSn*MASSn)*gpds[6]+1./(1-xi*xi)*(xi*gpds[7]-gpds[8]));
+
+    helamps.at(8)=D*(t0-t)/(8.*MASSn*MASSn)*gpds[6];
+    return helamps;
+}
 
 
 void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kphi, GPD &gpd,
@@ -136,7 +169,7 @@ void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kph
         }
     }
     // cout << "int " << x << " " << result << " " << kperp << " " << alpha1 << endl;
-    res[0]=result*2.*kperp/alpha1/(2.-alpha1)/alphaprime;
+    res[0]=result*2.*kperp/alpha1/(2.-alpha1)/alphaprime*sqrt(Ek)*sqrt(Ekprime);
     // cout << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << " " << res[0].real() << " " << res[0].imag() << endl;
     // exit(1);
 }
@@ -204,7 +237,7 @@ void GPD::int_kprime3(numint::vector_z & res, double alphaprime, double kperppri
         }
     }
     // cout << "int " << x << " " << result << " " << kperp << " " << alpha1 << endl;
-    res[0]=result*2.*kperpprime/alphaprime/(2.-alphaprime)/alpha1;
+    res[0]=result*2.*kperpprime/alphaprime/(2.-alphaprime)/alpha1*sqrt(Ek)*sqrt(Ekprime);
 
     // cout << alpha1 << " " << kperp << " " << atan2(ky,kx) << " " << alphaprime << " " << kperpprime << " " << kphiprime << " " << xi_n << " " << x_n << " " << phin << " " << res[0].real() << " " << res[0].imag() << endl;
     // exit(1);
