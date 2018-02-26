@@ -53,6 +53,16 @@ static std::vector< std::complex<double> > helamps_to_gpds(const double xi, cons
  */
 static std::vector< std::complex<double> > gpds_to_helamps(const double xi, const double t, const std::vector< std::complex<double> > & gpds);
 
+/**
+ * @brief returns the melosh rotated lf wf, melosh rotation only acting on the first (active) nucleon, since the helicities of the spectator are summed over
+ * 
+ * @param Ek lf rel momentum on-shell energy
+ * @param k lf rel momentum
+ * @param nonrelwf deuteron light-front wf without the Melosh rotations implemented.  Helicites are as follows [0] down down, [1] up down, [2] down up, [3] up up
+ * @return std::vector< std::complex<double> >  deuteron light-front wf with the Melosh rotation for the active nucleon implemented.  Helicites are as follows [0] down down, [1] up down, [2] down up, [3] up up
+ */
+
+static std::vector< std::complex<double> > lf_deut(const double Ek, const TVector3& k, const std::vector< std::complex<double> > &nonrelwf);
 
 /**
  * @brief Computes the set H_T, \bar{E}_T for up and down quarks according to the parametrisations of Goloskokov and Kroll EPJA47:112
@@ -188,7 +198,7 @@ void getEbarTfront(const double x, double &EbarTdfront, double &EbarTufront) con
 
 double t_grid; ///< [MeV^2] momentum transfer sq value the grid has
 bool grid_set; ///< is the grid with transv gpds set or not
-TransGPD_set grid[201][201];
+TransGPD_set grid[201][101];
 
 
 };

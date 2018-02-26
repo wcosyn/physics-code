@@ -7,7 +7,7 @@
 
 using namespace std;
 
-GPD::GPD(const std::string &pdf_name, const std::string &wfname){
+GPD::GPD(const string &pdf_name, const string &wfname){
 
     if(!pdf_name.compare("MSTW")){
         string file= string(HOMEDIR)+"/mstw_grids/mstw2008lo.00.dat";
@@ -64,7 +64,7 @@ vector< complex<double> > GPD::helamps_to_gpds(const double xi, const double t, 
     return gpds;
 }
 
-vector< complex<double> > GPD::gpds_to_helamps(const double xi, const double t, const std::vector< std::complex<double> > & gpds){
+vector< complex<double> > GPD::gpds_to_helamps(const double xi, const double t, const vector< complex<double> > & gpds){
 
     vector< complex<double> > helamps(9,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
@@ -149,14 +149,32 @@ void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kph
 
 
     complex<double> result=0.;
+    //Melosh rotation active nucleon
+    vector<complex<double> > wf_in(4,0.), wf_out(4,0.);
+    wf_in.at(0)=gpd.getWf()->DeuteronPState(2*pold_in, -1, -1, k_in);
+    wf_out.at(0)=gpd.getWf()->DeuteronPState(2*pold_out, -1, -1, k_out);
+    wf_in.at(1)=gpd.getWf()->DeuteronPState(2*pold_in, -1, 1, k_in);
+    wf_out.at(1)=gpd.getWf()->DeuteronPState(2*pold_out, -1, 1, k_out);
+    wf_in.at(2)=gpd.getWf()->DeuteronPState(2*pold_in, 1, -1, k_in);
+    wf_out.at(2)=gpd.getWf()->DeuteronPState(2*pold_out, 1, -1, k_out);
+    wf_in.at(3)=gpd.getWf()->DeuteronPState(2*pold_in, 1, 1, k_in);
+    wf_out.at(3)=gpd.getWf()->DeuteronPState(2*pold_out, 1, 1, k_out);
+    wf_in=lf_deut(Ek,k_in,wf_in);
+    wf_out=lf_deut(Ekprime,k_out,wf_out);
+    
+
     TransGPD_set gpd_nucl=gpd.getTransGPDSet(x_n,xi_n,t);
     for(int sigma2=-1;sigma2<=1;sigma2+=2){
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
-            complex<double> wfin = gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in);
+            // complex<double> wfin = gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in);
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
-                complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
-                result+=wfin*conj(wfout)*gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0,phin,model,right,gpd_nucl);
-
+                // complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
+                // result+=wfin*conj(wfout)
+                //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0,phin,model,right,gpd_nucl);
+                result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
+                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0,phin,model,right,gpd_nucl);
+                // cout << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in) << endl;
+                // cout << wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out) << endl;
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1) << " " << x_n << endl;
                 // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1))
                 //     << " " << -gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0,phin+PI,model,0) << endl;
@@ -218,13 +236,28 @@ void GPD::int_kprime3(numint::vector_z & res, double alphaprime, double kperppri
     // cout << "angle " << 2*xi_n*kxprime+(1.-xi_n*(1.-alphaprime/2.)*deltax) << " " << 2*xi_n*kperp*sinkphi+(1.+xi_n*(1.-alpha1/2.)*deltax) << endl;
 
     complex<double> result=0.;
+    //Melosh rotation active nucleon
+    vector<complex<double> > wf_in(4,0.), wf_out(4,0.);
+    wf_in.at(0)=gpd.getWf()->DeuteronPState(2*pold_in, -1, -1, k_in);
+    wf_out.at(0)=gpd.getWf()->DeuteronPState(2*pold_out, -1, -1, k_out);
+    wf_in.at(1)=gpd.getWf()->DeuteronPState(2*pold_in, -1, 1, k_in);
+    wf_out.at(1)=gpd.getWf()->DeuteronPState(2*pold_out, -1, 1, k_out);
+    wf_in.at(2)=gpd.getWf()->DeuteronPState(2*pold_in, 1, -1, k_in);
+    wf_out.at(2)=gpd.getWf()->DeuteronPState(2*pold_out, 1, -1, k_out);
+    wf_in.at(3)=gpd.getWf()->DeuteronPState(2*pold_in, 1, 1, k_in);
+    wf_out.at(3)=gpd.getWf()->DeuteronPState(2*pold_out, 1, 1, k_out);
+    wf_in=lf_deut(Ek,k_in,wf_in);
+    wf_out=lf_deut(Ekprime,k_out,wf_out);
+    
+
     TransGPD_set gpd_nucl=gpd.getTransGPDSet(x_n,xi_n,t);
     for(int sigma2=-1;sigma2<=1;sigma2+=2){
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
-            complex<double> wfin = gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in);
+            //complex<double> wfin = gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in);
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
-                complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
-                result+=wfin*conj(wfout)*gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0,phin,model,right, gpd_nucl);
+                //complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
+                result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
+                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0,phin,model,right,gpd_nucl);
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1) << " " << x_n << endl;
                 // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1))
                 //     << " " << -gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0,phin+PI,model,0) << endl;
@@ -244,22 +277,25 @@ void GPD::int_kprime3(numint::vector_z & res, double alphaprime, double kperppri
 }
 
 TransGPD_set GPD::getTransGPDSet(const double x, const double xi, const double t){
+    if(xi<0) return getTransGPDSet(x,-xi,t);
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
     if(t!=t_grid||grid_set==false){
         cout << "constructing chiral odd gpd grid" << endl;
         for(int i=0;i<=200;i++){
-            for(int j=0;j<=200;j++){
-                grid[i][j]=getGK_param(0.01*(i-100),0.01*(j-100),t);
+            for(int j=0;j<=100;j++){
+                grid[i][j]=getGK_param(0.01*(i-100),0.01*(j),t);
+        //         cout << 0.01*(i-100) << " " << 0.01*(j) << " " << grid[i][j].getHTu() << " " << grid[i][j].getHTd() << " "
+        // << grid[i][j].getEbarTd() <<  " " << grid[i][j].getEbarTu() << endl;
             }
         }
         cout << "construction done" << endl;
         grid_set=true;
         t_grid=t;
-    }
+   }
     double index_i=0.,index_j=0.;
     double frac_i=0.,frac_j=0.;
     frac_i=modf(x*100+100,&index_i);
-    frac_j=modf(xi*100+100,&index_j);
+    frac_j=modf(xi*100,&index_j);
 
     TransGPD_set gpd_nucl_grid=grid[int(index_i)][int(index_j)]*(1.-frac_i)*(1.-frac_j)+grid[int(index_i)+1][int(index_j)]*(frac_i)*(1.-frac_j)
                                 +grid[int(index_i)][int(index_j)+1]*(1.-frac_i)*(frac_j)+grid[int(index_i)+1][int(index_j)+1]*(frac_i)*(frac_j);
@@ -324,10 +360,10 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
         lowprimeminus=2.*(fabs(x)+xi)/(1+xi);
     }
     else{
-        low=4.*xi/(1+xi);
-        lowminus=0.;
-        lowprime=0.;
-        lowprimeminus=4.*xi/(1+xi);
+        low=(xi>=0.? 4.*xi/(1+xi): 0.);
+        lowminus=(xi>= 0.? 0.: -4.*xi/(1.-xi));
+        lowprime=(xi>=0.? 0. : -4.*xi/(1.-xi));
+        lowprimeminus=(xi>=0.? 4.*xi/(1+xi): 0.);
     }
     // cout << "low " << low << endl;
     numint::array<double,3> lower = {{low,0.,-PI}};
@@ -335,12 +371,6 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
     numint::array<double,3> lowerprime = {{lowprime,0.,-PI}};
     numint::array<double,3> lowerprimeminus = {{lowprimeminus,0.,-PI}};
     numint::array<double,3> upper = {{2.,1.E03,PI}};
-
-    numint::array<double,3> lowercart = {{low,0.,0.}};
-    numint::array<double,3> lowerminuscart = {{lowminus,0.,0.}};
-    numint::array<double,3> lowerprimecart = {{lowprime,0.,0.}};
-    numint::array<double,3> lowerprimeminuscart = {{lowprimeminus,0.,0.}};
-    numint::array<double,3> uppercart = {{2.,1.E03,1.E03}};
 
     double abserr=1.E-10;
     double relerr=1.E-05;
@@ -371,6 +401,8 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
         //numint::vegas( mdf, lower,upper,nvec, relerr,abserr,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas").c_str(),countt,fail,out,err,prob );
         //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, stf.c_str() ,nregions,countt,fail,out,err,prob );
         ret[i]=out[0];
+
+        //symmetry checks!!
         // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
         // F.f=GPD::int_kprime3;
         // numint::cube_adaptive(mdf,lowerprime,upper,abserr,relerr,5E02,maxEval,out,count,0);
@@ -495,3 +527,14 @@ void GPD::getEbarTfront(const double x, double &EbarTdfront, double &EbarTufront
     return;
 }
 
+
+vector< complex<double> > GPD::lf_deut(const double Ek, const TVector3& k, const vector< complex<double> > &nonrelwf){
+    vector< complex<double> > wf_out(4,0.);
+    wf_out[0]=((k[2]+Ek+MASSn)*nonrelwf.at(0)+(-k[0]-I_UNIT*k[1])*nonrelwf.at(1))/sqrt(2.*(Ek+MASSn)*(Ek+k[2]));
+    wf_out[1]=((k[2]+Ek+MASSn)*nonrelwf.at(1)+(k[0]-I_UNIT*k[1])*nonrelwf.at(0))/sqrt(2.*(Ek+MASSn)*(Ek+k[2]));
+    wf_out[2]=((k[2]+Ek+MASSn)*nonrelwf.at(2)+(-k[0]-I_UNIT*k[1])*nonrelwf.at(3))/sqrt(2.*(Ek+MASSn)*(Ek+k[2]));
+    wf_out[3]=((k[2]+Ek+MASSn)*nonrelwf.at(3)+(k[0]-I_UNIT*k[1])*nonrelwf.at(2))/sqrt(2.*(Ek+MASSn)*(Ek+k[2]));
+    
+    return wf_out;
+
+}
