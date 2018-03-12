@@ -13,10 +13,11 @@ using namespace std;
 #include "TransGPD_set.hpp"
 
 int main(int argc, char *argv[]){
-    GPD test=GPD("MSTW","AV18");
+    std::string wf=argv[2];
+    GPD test=GPD("MSTW",wf);
     int model=atoi(argv[1]); //chiral odd GPD model nr
-    double xi=-0.1;
-    double t=-0.25E06;
+    double xi=atof(argv[4]);
+    double t=atof(argv[3])*-1.E06;
     cout << "xi " << xi << " t " << t << " model " << model << endl;
     for(int i=-99;i<=99;i++){
         double x=i*0.01;

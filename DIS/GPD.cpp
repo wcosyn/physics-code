@@ -41,7 +41,7 @@ vector< complex<double> > GPD::helamps_to_gpds(const double xi, const double t, 
 
     vector< complex<double> > gpds(9,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
-    double D=sqrt((-4.*MASSn*MASSn*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSn);
+    double D=sqrt((-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSD);
     gpds.at(0)=2.*sqrt(2.)*xi/D/(1-xi*xi)*(helamps[0]-helamps[1])+2.*(1./(1.-xi)*helamps[3]+1./(1.+xi)*helamps[4])+2./(1+xi)*helamps[5]
                 +2./(1-xi)*helamps[6]+2.*sqrt(2.)*D/(1.-xi*xi)*(helamps[7]-helamps[8]);
     gpds.at(1)=2.*sqrt(2.)*D/(1-xi*xi)*(helamps[0]-helamps[1])-2.*(1./(1.-xi)*helamps[3]-1./(1.+xi)*helamps[4])+2./(1+xi)*helamps[5]
@@ -69,32 +69,32 @@ vector< complex<double> > GPD::gpds_to_helamps(const double xi, const double t, 
     vector< complex<double> > helamps(9,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
 
-    double D=sqrt((-4.*MASSn*MASSn*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSn);
-    double t0=-4.*MASSn*MASSn*xi*xi/(1-xi*xi);
-    // cout << (t0-t)*1.E-06 << " " << MASSn*1.E-03 << endl;
-    helamps.at(0)=-D*(gpds[5]+(t0-t)/(8.*MASSn*MASSn)*gpds[6]+1./(2.*(1.-xi))*(gpds[7]-gpds[8]));
+    double D=sqrt((-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSD);
+    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
+    // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
+    helamps.at(0)=-D*(gpds[5]+(t0-t)/(8.*MASSD*MASSD)*gpds[6]+1./(2.*(1.-xi))*(gpds[7]-gpds[8]));
 
-    helamps.at(1)=-D*(gpds[5]+(t0-t)/(8.*MASSn*MASSn)*gpds[6]-1./(2.*(1.+xi))*(gpds[7]+gpds[8]));
+    helamps.at(1)=-D*(gpds[5]+(t0-t)/(8.*MASSD*MASSD)*gpds[6]-1./(2.*(1.+xi))*(gpds[7]+gpds[8]));
 
-    helamps.at(2)=D*(-1./(2.*sqrt(2.))*(gpds[0]+xi*gpds[1])+xi*((t0-t)/(2.*MASSn*MASSn)-2./(1-xi*xi))*gpds[2]+((t0-t)/(2.*MASSn*MASSn)-2.*xi*xi/(1.-xi*xi))*gpds[3]
-                    +(1.-xi*xi)*gpds[4]+((t0-t)/(2.*MASSn*MASSn)-(1+xi*xi)/(1-xi*xi))*gpds[5]+(pow((t0-t)/(4.*MASSn*MASSn),2.)-pow(xi/(1-xi*xi),2.))*gpds[6]-xi/(1.-xi*xi)*gpds[7]
-                    -(t0-t)/(4.*MASSn*MASSn)*gpds[8]);
+    helamps.at(2)=D*(-1./(2.*sqrt(2.))*(gpds[0]+xi*gpds[1])+xi*((t0-t)/(2.*MASSD*MASSD)-2./(1-xi*xi))*gpds[2]+((t0-t)/(2.*MASSD*MASSD)-2.*xi*xi/(1.-xi*xi))*gpds[3]
+                    +(1.-xi*xi)*gpds[4]+((t0-t)/(2.*MASSD*MASSD)-(1+xi*xi)/(1-xi*xi))*gpds[5]+(pow((t0-t)/(4.*MASSD*MASSD),2.)-pow(xi/(1-xi*xi),2.))*gpds[6]-xi/(1.-xi*xi)*gpds[7]
+                    -(t0-t)/(4.*MASSD*MASSD)*gpds[8]);
 
-    helamps.at(3)=1./sqrt(2.)*((1-xi)/(2.*sqrt(2.))*(gpds[0]-gpds[1])+(1-xi)*(1-xi)*(t0-t)/(4.*MASSn*MASSn)*(gpds[2]-gpds[3])-(1-xi)*(t0-t)/(2.*MASSn*MASSn)*gpds[5]
-                    -(1-xi)*(t0-t)/(4.*MASSn*MASSn)*((t0-t)/(4.*MASSn*MASSn)-xi/(1.-xi*xi))*gpds[6]+(-(1.+xi)*(t0-t)/(8.*MASSn*MASSn)+xi/(1-xi*xi))*gpds[7]
-                    +((3.-xi)*(t0-t)/(8.*MASSn*MASSn)-xi/(1-xi*xi))*gpds[8]);                    
+    helamps.at(3)=1./sqrt(2.)*((1-xi)/(2.*sqrt(2.))*(gpds[0]-gpds[1])+(1-xi)*(1-xi)*(t0-t)/(4.*MASSD*MASSD)*(gpds[2]-gpds[3])-(1-xi)*(t0-t)/(2.*MASSD*MASSD)*gpds[5]
+                    -(1-xi)*(t0-t)/(4.*MASSD*MASSD)*((t0-t)/(4.*MASSD*MASSD)-xi/(1.-xi*xi))*gpds[6]+(-(1.+xi)*(t0-t)/(8.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[7]
+                    +((3.-xi)*(t0-t)/(8.*MASSD*MASSD)-xi/(1-xi*xi))*gpds[8]);                    
 
-    helamps.at(4)=1./sqrt(2.)*((1+xi)/(2.*sqrt(2.))*(gpds[0]+gpds[1])-(1+xi)*(1+xi)*(t0-t)/(4.*MASSn*MASSn)*(gpds[2]+gpds[3])-(1+xi)*(t0-t)/(2.*MASSn*MASSn)*gpds[5]
-                    -(1+xi)*(t0-t)/(4.*MASSn*MASSn)*((t0-t)/(4.*MASSn*MASSn)+xi/(1.-xi*xi))*gpds[6]+((1.-xi)*(t0-t)/(8.*MASSn*MASSn)+xi/(1-xi*xi))*gpds[7]
-                    +((3.+xi)*(t0-t)/(8.*MASSn*MASSn)+xi/(1-xi*xi))*gpds[8]);                    
+    helamps.at(4)=1./sqrt(2.)*((1+xi)/(2.*sqrt(2.))*(gpds[0]+gpds[1])-(1+xi)*(1+xi)*(t0-t)/(4.*MASSD*MASSD)*(gpds[2]+gpds[3])-(1+xi)*(t0-t)/(2.*MASSD*MASSD)*gpds[5]
+                    -(1+xi)*(t0-t)/(4.*MASSD*MASSD)*((t0-t)/(4.*MASSD*MASSD)+xi/(1.-xi*xi))*gpds[6]+((1.-xi)*(t0-t)/(8.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[7]
+                    +((3.+xi)*(t0-t)/(8.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[8]);                    
 
-    helamps.at(5)=D*D/sqrt(2.)/(1-xi)*((1+xi)*(gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSn*MASSn)+xi/(1-xi*xi))*gpds[6]+1./2.*(gpds[7]-gpds[8]));
+    helamps.at(5)=D*D/sqrt(2.)/(1-xi)*((1+xi)*(gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[6]+1./2.*(gpds[7]-gpds[8]));
 
-    helamps.at(6)=D*D/sqrt(2.)/(1+xi)*(-(1-xi)*(gpds[2]-gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSn*MASSn)-xi/(1-xi*xi))*gpds[6]-1./2.*(gpds[7]+gpds[8]));
+    helamps.at(6)=D*D/sqrt(2.)/(1+xi)*(-(1-xi)*(gpds[2]-gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD*MASSD)-xi/(1-xi*xi))*gpds[6]-1./2.*(gpds[7]+gpds[8]));
 
-    helamps.at(7)=D*((t0-t)/(8.*MASSn*MASSn)*gpds[6]+1./(1-xi*xi)*(xi*gpds[7]-gpds[8]));
+    helamps.at(7)=D*((t0-t)/(8.*MASSD*MASSD)*gpds[6]+1./(1-xi*xi)*(xi*gpds[7]-gpds[8]));
 
-    helamps.at(8)=D*(t0-t)/(8.*MASSn*MASSn)*gpds[6];
+    helamps.at(8)=D*(t0-t)/(8.*MASSD*MASSD)*gpds[6];
     return helamps;
 }
 
@@ -112,13 +112,15 @@ void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kph
     // cout << alpha1 << " " << kperp << " " << Ek << " " << knorm << endl;
     if(knorm>1.E03) {return;}
 
-    double t0=-4.*MASSn*MASSn*xi*xi/(1-xi*xi);
     // double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0
 
     double alphaprime=(alpha1*(1+xi)-4.*xi)/(1-xi);
 
     double xi_n=xi/(alpha1/2.*(1+xi)-xi);
-
+    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n);
+    // double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
+    if(t>t0_n) return;
+    
     double x_n=x/(alpha1/2.*(1+xi)-xi);
     // cout << "int " << x << " " << xi << " " << x_n << " " << xi_n << " " << xi/x << " " << xi_n/x_n << endl;
     double sinkphi,coskphi;
@@ -170,24 +172,25 @@ void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kph
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
                 // complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
                 // result+=wfin*conj(wfout)
-                //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0,phin,model,right,gpd_nucl);
+                //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0,phin,model,right,gpd_nucl);
+                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
                 // cout << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in) << endl;
                 // cout << wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out) << endl;
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1) << " " << x_n << endl;
-                // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1))
-                //     << " " << -gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0,phin+PI,model,0) << endl;
-                // cout << "N p" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1)
-                //     << " " << -gpd.getGPD_odd_nucl(-sigma1in, -sigma1out, x_n, xi_n, t, t0,-phin+PI,model,0) << endl;
-                // cout << "N t" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1)
-                //     << " " << pow(-1.,(sigma1in-sigma1out)/2)*gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0,-phin,model,0) << " " <<  pow(-1.,(sigma1in-sigma1out)/2) << endl;
+                // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1))
+                //     << " " << -gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0_n,phin+PI,model,0) << endl;
+                // cout << "N p" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1)
+                //     << " " << -gpd.getGPD_odd_nucl(-sigma1in, -sigma1out, x_n, xi_n, t, t0_n,-phin+PI,model,0) << endl;
+                // cout << "N t" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1)
+                //     << " " << pow(-1.,(sigma1in-sigma1out)/2)*gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0_n,-phin,model,0) << " " <<  pow(-1.,(sigma1in-sigma1out)/2) << endl;
 
             }
         }
     }
     // cout << "int " << x << " " << result << " " << kperp << " " << alpha1 << endl;
     res[0]=result*2.*kperp/alpha1/(2.-alpha1)/alphaprime*sqrt(Ek)*sqrt(Ekprime);
+    // cout << t0 << " " << alpha1 << " " << t0_n << " " << xi << " " << xi_n << " " << res[0].real() << endl;
     // cout << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << " " << res[0].real() << " " << res[0].imag() << endl;
     // exit(1);
 }
@@ -206,12 +209,14 @@ void GPD::int_kprime3(numint::vector_z & res, double alphaprime, double kperppri
     // cout << alpha1 << " " << kperp << " " << Ek << " " << knorm << endl;
     if(knormprime>1.E03) {return;}
 
-    double t0=-4.*MASSn*MASSn*xi*xi/(1-xi*xi);
     // double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0
 
     double alpha1=(alphaprime*(1-xi)+4.*xi)/(1+xi);
 
     double xi_n=xi/(alphaprime/2.*(1-xi)+xi);
+    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n);
+    // double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
+    if(t>t0_n) return;
 
     double x_n=x/(alphaprime/2.*(1-xi)+xi);
     // cout << "int " << x << " " << xi << " " << x_n << " " << xi_n << " " << xi/x << " " << xi_n/x_n << endl;
@@ -257,14 +262,14 @@ void GPD::int_kprime3(numint::vector_z & res, double alphaprime, double kperppri
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
                 //complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0,phin,model,right,gpd_nucl);
-                // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1) << " " << x_n << endl;
-                // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1))
-                //     << " " << -gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0,phin+PI,model,0) << endl;
-                // cout << "N p" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1)
-                //     << " " << -gpd.getGPD_odd_nucl(-sigma1in, -sigma1out, x_n, xi_n, t, t0,-phin+PI,model,0) << endl;
-                // cout << "N t" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1)
-                //     << " " << pow(-1.,(sigma1in-sigma1out)/2)*gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0,-phin,model,0) << " " <<  pow(-1.,(sigma1in-sigma1out)/2) << endl;
+                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+                // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1) << " " << x_n << endl;
+                // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1))
+                //     << " " << -gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0_n,phin+PI,model,0) << endl;
+                // cout << "N p" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1)
+                //     << " " << -gpd.getGPD_odd_nucl(-sigma1in, -sigma1out, x_n, xi_n, t, t0_n,-phin+PI,model,0) << endl;
+                // cout << "N t" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1)
+                //     << " " << pow(-1.,(sigma1in-sigma1out)/2)*gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0_n,-phin,model,0) << " " <<  pow(-1.,(sigma1in-sigma1out)/2) << endl;
 
             }
         }
@@ -337,7 +342,7 @@ complex<double> GPD::getGPD_odd_nucl(const int sigma_in, const int sigma_out, co
 
 vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const double t,const int model){
     if(fabs(x)>1.) return vector< complex<double> >(9,0.);
-    double t0=-4.*MASSn*MASSn*xi*xi/(1-xi*xi);
+    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
     double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0
 
     getTransGPDSet(0.,0.,t); //just fill the grid here
@@ -401,6 +406,7 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
         //numint::vegas( mdf, lower,upper,nvec, relerr,abserr,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas").c_str(),countt,fail,out,err,prob );
         //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, stf.c_str() ,nregions,countt,fail,out,err,prob );
         ret[i]=out[0];
+        // exit(1);
 
         //symmetry checks!!
         // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
