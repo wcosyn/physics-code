@@ -128,6 +128,9 @@ static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double 
 static void int_kprime3(numint::vector_z & res, double alpha_1, double kperp, double kphi, GPD &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
 
+std::complex<double >test(double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
+
+
 struct Ftor_doubledistr {
 
     /*! integrandum function */

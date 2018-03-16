@@ -98,6 +98,70 @@ vector< complex<double> > GPD::gpds_to_helamps(const double xi, const double t, 
     return helamps;
 }
 
+std::complex<double > GPD::test(double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax){
+    double alpha1=1.;
+    double kperp=0.;
+    double kphi=0.;
+    double Ek=sqrt((MASSn*MASSn+kperp*kperp)/alpha1/(2.-alpha1));
+    double kz=(alpha1-1.)*Ek;
+    double knorm=sqrt(Ek*Ek-MASSn*MASSn);
+    if(knorm>1.E03) {return 0.;}
+
+
+    double alphaprime=(alpha1*(1+xi)-4.*xi)/(1-xi);
+
+    double xi_n=xi/(alpha1/2.*(1+xi)-xi);
+    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n);
+    // double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
+    if(t>t0_n) return 0.;
+    
+    double x_n=x/(alpha1/2.*(1+xi)-xi);
+    if(abs(x_n)>1.) return 0.;
+    double sinkphi,coskphi;
+    sincos(kphi,&sinkphi,&coskphi);
+    double kxprime=kperp*coskphi+(1-alpha1/2.)/(1-xi)*deltax;  //see (114) GPD note for kinematics
+    double kyprime=kperp*sinkphi;
+
+    double kperpprime=sqrt(kxprime*kxprime+kyprime*kyprime);
+    double Ekprime = sqrt((MASSn*MASSn+kperpprime*kperpprime)/(alphaprime*(2.-alphaprime)));
+    double kzprime = (alphaprime -1)*Ekprime;
+    TVector3 k_in(kperp*coskphi,kperp*sinkphi,kz);
+    TVector3 k_out(kxprime, kyprime, kzprime);
+    if(k_out.Mag2()>1.E06) {return 0.;}
+
+    double phin=atan2(2*xi_n*kperp*sinkphi, 2*xi_n*(kperp*coskphi+alpha1/(4.*xi)*deltax));
+
+    complex<double> result=0.;
+    //Melosh rotation active nucleon
+    vector<complex<double> > wf_in(4,0.), wf_out(4,0.);
+    wf_in.at(0)=getWf()->DeuteronPState(2*pold_in, -1, -1, k_in);
+    wf_out.at(0)=getWf()->DeuteronPState(2*pold_out, -1, -1, k_out);
+    wf_in.at(1)=getWf()->DeuteronPState(2*pold_in, -1, 1, k_in);
+    wf_out.at(1)=getWf()->DeuteronPState(2*pold_out, -1, 1, k_out);
+    wf_in.at(2)=getWf()->DeuteronPState(2*pold_in, 1, -1, k_in);
+    wf_out.at(2)=getWf()->DeuteronPState(2*pold_out, 1, -1, k_out);
+    wf_in.at(3)=getWf()->DeuteronPState(2*pold_in, 1, 1, k_in);
+    wf_out.at(3)=getWf()->DeuteronPState(2*pold_out, 1, 1, k_out);
+    wf_in=lf_deut(Ek,k_in,wf_in);
+    wf_out=lf_deut(Ekprime,k_out,wf_out);
+    
+
+    TransGPD_set gpd_nucl=getTransGPDSet(x_n,xi_n,t);
+    for(int sigma2=-1;sigma2<=1;sigma2+=2){
+        for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
+            for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
+                result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
+                             *getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+
+            }
+        }
+    }
+    return result*2.;
+    // cout << t0 << " " << alpha1 << " " << t0_n << " " << xi << " " << xi_n << " " << res[0].real() << endl;
+    // cout << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << " " << res[0].real() << " " << res[0].imag() << endl;
+    // exit(1);
+
+}
 
 void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kphi, GPD &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax){
@@ -407,6 +471,8 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
         //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, stf.c_str() ,nregions,countt,fail,out,err,prob );
         ret[i]=out[0];
         // exit(1);
+        
+        // ret[i]=test(x, xi, t, F.pold_in, F.pold_out, model, 1, Delta_perp);
 
         //symmetry checks!!
         // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
