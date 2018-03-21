@@ -22,6 +22,7 @@ public:
  * @brief constructor
  * 
  * @param pdf_name pdf parametrization name used for the forward limit ("MSTW" is the only valid one for now)
+ * @param wfname deuteron wave function parametrization name, see TDeuteron for possibilities
  */
 GPD(const std::string &pdf_name, const std::string &wfname);
 
@@ -43,7 +44,7 @@ GPD(const std::string &pdf_name, const std::string &wfname);
 static std::vector< std::complex<double> > helamps_to_gpds(const double xi, const double t, const std::vector< std::complex<double> > & helamps);
 
 /**
- * @brief conversion from GPDs to helicity amplitudesfor spin 1 chiral odd quark GPDs.  We compute in a frame where phi=0
+ * @brief conversion from GPDs to helicity amplitudes for spin 1 chiral odd quark GPDs.  We compute in a frame where phi=0
  * 
  * @param xi [] skewness
  * @param x [] parton lf momentum fraction
@@ -66,6 +67,7 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
 
 /**
  * @brief Computes the set H_T, \bar{E}_T for up and down quarks according to the parametrisations of Goloskokov and Kroll EPJA47:112
+ * Grid in x and xi is constructed and then interpolated, was a lot faster than calculating every value that appears in the convolution integral
  * 
  * 
  * @param x  [] parton lf momentum fraction
@@ -75,13 +77,23 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
  */
 TransGPD_set getGK_param(const double x, const double xi, const double t);
 
+
+/**
+ * @brief Computes the deuteron helicity amplitudes with the convolution formula
+ * 
+ * @param xi [] skewness
+ * @param x [] parton average lf momentum fraction
+ * @param t [Mev^2] momentum transfer sq
+ * @param model [0-2] different models for nucleon chiral odd GPDs
+ * @return std::vector< std::complex<double> > helicity amplitudes  deuteron helicities are (final,initial) [0]++,[1]--,[2]00,[3]0+,[4]-0,[5]+0,[6]0-,[7]-+,[8]+-
+ */
 std::vector< std::complex<double> > gpd_conv(const double xi, const double x, const double t, const int model);
 
-TInterpolatingWavefunction * getWf(){ return &wf;}
+TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf object
 
 private: 
 /**
- * @brief 
+ * @brief structure needed to carry out the convolution integration, contains parameters and integrandum function
  * 
  */
 struct Ftor_conv {
@@ -107,7 +119,7 @@ struct Ftor_conv {
 
 
 /**
- * @brief 
+ * @brief integrandum for the convolution integral, integration variables are alpha and k_perp of the initial nucleon
  * 
  * @param[out] res integral result 
  * @param alpha_1 [] lc momentum fraction of initial nucleon
@@ -128,9 +140,25 @@ static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double 
 static void int_kprime3(numint::vector_z & res, double alpha_1, double kperp, double kphi, GPD &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
 
+
+/**
+ * @brief testing: do the convolution in minimal fashion: no D-wave, no wave function, only S-wave spin sums
+ * 
+ * @param x avg parton momentum fraction
+ * @param xi skewness
+ * @param t [MeV^2] momentum transfer squared
+ * @param pold_in initial deuteron helicity
+ * @param pold_out final deuteron helicity
+ * @param model [0-2] type of model for chiral odd nucleon GPDs
+ * @param right [0] left transverse index [1] right transverse index
+ * @param deltax [MeV] perp component of momentum transfer
+ */
 std::complex<double >test(double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
 
-
+/**
+ * @brief structure used for integration appearing in GK model GPDs
+ * 
+ */
 struct Ftor_doubledistr {
 
     /*! integrandum function */
@@ -141,7 +169,7 @@ struct Ftor_doubledistr {
     double t; ///< [MeV^2] momentum transfer
     double x; ///< avg parton momentum fraction
     double xi; ///< skewness
-    GPD* gpdobject; ///< pdf object
+    GPD* gpdobject; ///< GPD object
 
     void (*f)(numint::vector_d & result, double rho, double x, double xi, double t, GPD &gpdobject);
       };
@@ -159,7 +187,7 @@ static void DD_int_rho(numint::vector_d & res, double rho, double x, double xi, 
 
 
 /**
- * @brief computes chiral odd nucleon GPDs appearing in the nucleon helicity amplitudes
+ * @brief computes nucleon matrix elements through helicity amplitudes for tensor current
  * 
  * @param sigma_in polarization incoming nucleon
  * @param sigma_out polarization outgoing nucleon
@@ -182,7 +210,7 @@ std::complex<double> getGPD_odd_nucl(const int sigma_in, const int sigma_out, co
  * @param x average lf momentum fraction quark
  * @param xi skewness nucleon
  * @param t [MeV^2] momentum transfer sq.
- * @return TransGPD_set set of GPDs
+ * @return TransGPD_set set of GPDs H, Ebar
  */
 TransGPD_set getTransGPDSet(const double x, const double xi, const double t);
 
