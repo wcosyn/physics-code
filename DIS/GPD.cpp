@@ -166,9 +166,6 @@ std::complex<double > GPD::test(double x, double xi, double t, int pold_in, int 
 void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kphi, GPD &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax){
     res=numint::vector_z(1,0.);
-    // alpha1=1.18313;
-    // kperp=187.5;
-    // kphi=3.13152;
 
     double Ek=sqrt((MASSn*MASSn+kperp*kperp)/alpha1/(2.-alpha1));
     double kz=(alpha1-1.)*Ek;
@@ -189,7 +186,7 @@ void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kph
     // cout << "int " << x << " " << xi << " " << x_n << " " << xi_n << " " << xi/x << " " << xi_n/x_n << endl;
     double sinkphi,coskphi;
     sincos(kphi,&sinkphi,&coskphi);
-    double kxprime=kperp*coskphi+(1-alpha1/2.)/(1-xi)*deltax;  //see (114) GPD note for kinematics
+    double kxprime=kperp*coskphi+(1-alpha1/2.)/(1-xi)*deltax;  //see Eq (114) GPD note for kinematics
     double kyprime=kperp*sinkphi;
 
     double kperpprime=sqrt(kxprime*kxprime+kyprime*kyprime);
@@ -200,7 +197,7 @@ void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kph
     if(k_out.Mag2()>1.E06) {return;}
 
     //double phin=atan2(2*xi_n*kyprime, 2*xi_n*kxprime+(1.-xi_n*(1.-alphaprime/2.))*deltax); //azimuthal angle of 2xi_n*\bar{p}_1+Delta
-    double phin=atan2(2*xi_n*kperp*sinkphi, 2*xi_n*(kperp*coskphi+alpha1/(4.*xi)*deltax));
+    double phin=atan2(2*xi_n*kperp*sinkphi, 2*xi_n*(kperp*coskphi+alpha1/(4.*xi)*deltax)); //azimuthal angle of 2xi_n*\bar{p}_1+Delta
     //atan2(2.*xi_n*kyprime,2*xi_n*kperp*sinkphi+(1.+xi_n*(1.-alpha1/2.))*deltax) alternative expression
     // cout << "angle " << 2*xi_n*kxprime+(1.-xi_n*(1.-alphaprime/2.)*deltax) << " " << 2*xi_n*kperp*sinkphi+(1.+xi_n*(1.-alpha1/2.)*deltax) << endl;
     // cout << "vec " << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << endl;
@@ -230,10 +227,10 @@ void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kph
     
 
     TransGPD_set gpd_nucl=gpd.getTransGPDSet(x_n,xi_n,t);
-    for(int sigma2=-1;sigma2<=1;sigma2+=2){
-        for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
+    for(int sigma2=-1;sigma2<=1;sigma2+=2){  //spectator helicity
+        for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){ //initial active nucleon helicity
             // complex<double> wfin = gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in);
-            for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
+            for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){ //final active nucleon helicity
                 // complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
                 // result+=wfin*conj(wfout)
                 //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
@@ -242,6 +239,7 @@ void GPD::int_k3(numint::vector_z & res, double alpha1, double kperp, double kph
                 // cout << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in) << endl;
                 // cout << wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out) << endl;
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1) << " " << x_n << endl;
+                //symmetry tests nucleon level
                 // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1))
                 //     << " " << -gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0_n,phin+PI,model,0) << endl;
                 // cout << "N p" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1)
@@ -346,7 +344,7 @@ void GPD::int_kprime3(numint::vector_z & res, double alphaprime, double kperppri
 }
 
 TransGPD_set GPD::getTransGPDSet(const double x, const double xi, const double t){
-    if(xi<0) return getTransGPDSet(x,-xi,t);
+    if(xi<0) return getTransGPDSet(x,-xi,t);  //Etile is always zero in the models so we have only even GPDs in xi
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
     if(t!=t_grid||grid_set==false){
         cout << "constructing chiral odd gpd grid" << endl;
@@ -361,6 +359,8 @@ TransGPD_set GPD::getTransGPDSet(const double x, const double xi, const double t
         grid_set=true;
         t_grid=t;
    }
+
+   //interpolation
     double index_i=0.,index_j=0.;
     double frac_i=0.,frac_j=0.;
     frac_i=modf(x*100+100,&index_i);
@@ -422,6 +422,7 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
     numint::vector_z out(1,0.);
 
     double low=0.,lowminus=0.,lowprime=0.,lowprimeminus=0.;
+    //integration boundaries for alpha, originating from the Heavisides in the convolution (intermediate states w physical + momentum)
     if(fabs(x)>fabs(xi)) {
         low=2.*(fabs(x)+xi)/(1+xi);
         lowminus=2.*(fabs(x)-xi)/(1-xi);
