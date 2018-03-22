@@ -129,11 +129,11 @@ struct Ftor_conv {
  * @param x [] avg lc momentum fraction of struck quark
  * @param xi [] skewness
  * @param t [MeV^2] momentum transfer sq
- * @param pold_in polarization initial state (-1//0//+1)
- * @param pold_out polarization final state state (-1//0//+1)
+ * @param pold_in polarization initial deuteron state (-1//0//+1)
+ * @param pold_out polarization final deuteron state (-1//0//+1)
  * @param model diff implementations of KG parametrization, see TransGPD_set for details
  * @param right [1] R matrix element [0] L matrix element
- * @param deltax [MeV] x component of the momentum transfer
+ * @param deltax [MeV] perp component of the momentum transfer, along x-axis
  */
 static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double kphi, GPD &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
@@ -142,7 +142,8 @@ static void int_kprime3(numint::vector_z & res, double alpha_1, double kperp, do
 
 
 /**
- * @brief testing: do the convolution in minimal fashion: no D-wave, no wave function, only S-wave spin sums
+ * @brief testing: do the convolution in minimal fashion: no D-wave, no wave function, only S-wave spin sums, 
+ * symmetric kinematics retain all the symmetries of helicity amplitudes
  * 
  * @param x avg parton momentum fraction
  * @param xi skewness

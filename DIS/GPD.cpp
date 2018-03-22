@@ -99,8 +99,8 @@ vector< complex<double> > GPD::gpds_to_helamps(const double xi, const double t, 
 }
 
 std::complex<double > GPD::test(double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax){
-    double alpha1=1.;
-    double kperp=0.;
+    double alpha1=1.+xi;
+    double kperp=-deltax/4.;
     double kphi=0.;
     double Ek=sqrt((MASSn*MASSn+kperp*kperp)/alpha1/(2.-alpha1));
     double kz=(alpha1-1.)*Ek;
@@ -123,6 +123,7 @@ std::complex<double > GPD::test(double x, double xi, double t, int pold_in, int 
     double kyprime=kperp*sinkphi;
 
     double kperpprime=sqrt(kxprime*kxprime+kyprime*kyprime);
+    // cout << alpha1 << "  " << alphaprime << " " << kperp << " " << kxprime << endl;
     double Ekprime = sqrt((MASSn*MASSn+kperpprime*kperpprime)/(alphaprime*(2.-alphaprime)));
     double kzprime = (alphaprime -1)*Ekprime;
     TVector3 k_in(kperp*coskphi,kperp*sinkphi,kz);
@@ -142,24 +143,27 @@ std::complex<double > GPD::test(double x, double xi, double t, int pold_in, int 
     wf_out.at(2)=getWf()->DeuteronPState(2*pold_out, 1, -1, k_out);
     wf_in.at(3)=getWf()->DeuteronPState(2*pold_in, 1, 1, k_in);
     wf_out.at(3)=getWf()->DeuteronPState(2*pold_out, 1, 1, k_out);
-    wf_in=lf_deut(Ek,k_in,wf_in);
-    wf_out=lf_deut(Ekprime,k_out,wf_out);
+    // wf_in=lf_deut(Ek,k_in,wf_in);
+    // wf_out=lf_deut(Ekprime,k_out,wf_out);
+    // cout << "in " << pold_in << " " << wf_in.at(0) << " " << wf_in.at(1) << " " << wf_in.at(2) << " " << wf_in.at(3) << endl;
+    // cout << "out " << pold_out << " " << wf_out.at(0) << " " << wf_out.at(1) << " " << wf_out.at(2) << " " << wf_out.at(3) << endl;
     
 
     TransGPD_set gpd_nucl=getTransGPDSet(x_n,xi_n,t);
+    // cout << x_n << " " << xi_n << " " << 2*xi/(1+xi*xi) << " " << gpd_nucl.getET_singlet(model) << endl;
     for(int sigma2=-1;sigma2<=1;sigma2+=2){
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
                              *getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+                // cout << pold_out << " " << pold_in << " " << sigma2 << " " << sigma1in << " " << sigma1out << " " << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << 
+                // wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl) << " " <<  endl;
 
             }
         }
     }
+    // cout << pold_out << " " << pold_in << " " << result << endl;
     return result*2.;
-    // cout << t0 << " " << alpha1 << " " << t0_n << " " << xi << " " << xi_n << " " << res[0].real() << endl;
-    // cout << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << " " << res[0].real() << " " << res[0].imag() << endl;
-    // exit(1);
 
 }
 
@@ -325,6 +329,7 @@ void GPD::int_kprime3(numint::vector_z & res, double alphaprime, double kperppri
                 //complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
                             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1) << " " << x_n << endl;
                 // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1))
                 //     << " " << -gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0_n,phin+PI,model,0) << endl;
@@ -359,7 +364,6 @@ TransGPD_set GPD::getTransGPDSet(const double x, const double xi, const double t
         grid_set=true;
         t_grid=t;
    }
-
    //interpolation
     double index_i=0.,index_j=0.;
     double frac_i=0.,frac_j=0.;
@@ -472,23 +476,26 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
         //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, stf.c_str() ,nregions,countt,fail,out,err,prob );
         ret[i]=out[0];
         // exit(1);
-        
-        // ret[i]=test(x, xi, t, F.pold_in, F.pold_out, model, 1, Delta_perp);
-
-        //symmetry checks!!
         // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
-        // F.f=GPD::int_kprime3;
-        // numint::cube_adaptive(mdf,lowerprime,upper,abserr,relerr,5E02,maxEval,out,count,0);
-        // //numint::cube_romb(mdf,lowerprime,upper,abserr,relerr,out,count,0);
-        // //numint::vegas( mdf, lower,upper,nvec, relerr,abserr,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas2").c_str(),countt,fail,out,err,prob );
-        // //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, stf.c_str() ,nregions,countt,fail,out,err,prob );
-        // cout << "normalprime " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
+        
+        //  out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
+
+        // //symmetry checks!!
+        // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
+        // // F.f=GPD::int_kprime3;
+        // // numint::cube_adaptive(mdf,lowerprime,upper,abserr,relerr,5E02,maxEval,out,count,0);
+        // // //numint::cube_romb(mdf,lowerprime,upper,abserr,relerr,out,count,0);
+        // // //numint::vegas( mdf, lower,upper,nvec, relerr,abserr,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas2").c_str(),countt,fail,out,err,prob );
+        // // //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, stf.c_str() ,nregions,countt,fail,out,err,prob );
+        // // cout << "normalprime " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
         // F.f=GPD::int_k3;
         // F.pold_in=i%3-1;
         // F.pold_out=i/3-1;
         // F.xi=-xi;
         // F.right=0;
         // F.deltax=-Delta_perp;
+        // out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
+        // cout << "conj " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -conj(out[0]) << " " << count << endl;
         // numint::cube_adaptive(mdf,lowerminus,upper,abserr,relerr,5E02,maxEval,out,count,0);
         // cout << "conj " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -conj(out[0]) << " " << count << endl;
         // F.pold_in=-(i/3-1);
@@ -496,6 +503,8 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
         // F.xi=xi;
         // F.right=0;
         // F.deltax=-Delta_perp;
+        // out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
+        // cout << "P " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -out[0] << " " << count << endl;
         // numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         // cout << "P " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -out[0] << " " << count << endl;
         // F.pold_in=i%3-1;
@@ -503,13 +512,15 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
         // F.xi=-xi;
         // F.right=0;
         // F.deltax=Delta_perp;
+        // out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
+        // cout << "T " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << pow(-1,F.pold_in-F.pold_out)*out[0] << " " << count << endl;
         // numint::cube_adaptive(mdf,lowerminus,upper,abserr,relerr,5E02,maxEval,out,count,0);
         // cout << "T " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << pow(-1,F.pold_in-F.pold_out)*out[0] << " " << count << endl;
     }
 
     vector< complex<double> > result(9,0.);
     //order of helicity amplitudes is ++,--,00,0+,-0,+0,0-,-+,+-
-    result[0]=ret[8];result[1]=ret[0];result[2]=ret[4];result[3]=ret[5];result[4]=ret[1];result[5]=ret[7];result[6]=ret[3];result[7]=ret[2];result[8]=ret[6];
+    result[0]=ret[8];result[1]=ret[0];result[2]=ret[4];result[3]=ret[7];result[4]=ret[3];result[5]=ret[5];result[6]=ret[1];result[7]=ret[6];result[8]=ret[2];
     return result;
 
 }
