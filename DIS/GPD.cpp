@@ -44,22 +44,33 @@ vector< complex<double> > GPD::helamps_to_gpds(const double xi, const double t, 
     double D=sqrt((-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSD);
     gpds.at(0)=2.*sqrt(2.)*xi/D/(1-xi*xi)*(helamps[0]-helamps[1])+2.*(1./(1.-xi)*helamps[3]+1./(1.+xi)*helamps[4])+2./(1+xi)*helamps[5]
                 +2./(1-xi)*helamps[6]+2.*sqrt(2.)*D/(1.-xi*xi)*(helamps[7]-helamps[8]);
-    gpds.at(1)=2.*sqrt(2.)*D/(1-xi*xi)*(helamps[0]-helamps[1])-2.*(1./(1.-xi)*helamps[3]-1./(1.+xi)*helamps[4])+2./(1+xi)*helamps[5]
-                -2./(1-xi)*helamps[6]+2.*sqrt(2.)*xi/D/(1.-xi*xi)*(helamps[7]-helamps[8]);
-    gpds.at(2)=1./(2.*D)*((1-xi)/(1+xi)*helamps[0]-(1+xi)/(1-xi)*helamps[1])+1./(sqrt(2.)*D*D)*((1-xi)/(1+xi)*helamps[5]-(1+xi)/(1-xi)*helamps[6])
-                -2.*xi/(D*D*D*(1-xi*xi))*helamps[8];
+    gpds.at(1)=sqrt(2.)*(2.*D*D/(1-xi)-xi)/D/pow(1+xi,2.)*helamps[0]
+                -sqrt(2.)*(2.*D*D/(1+xi)+xi)/D/pow(1-xi,2.)*helamps[1]
+                +2.*sqrt(2.)*xi/(1-xi*xi)/D*helamps[2]
+                -2./(1-xi*xi)*(helamps[3]-helamps[4])
+                +2.*(1./pow(1+xi,2.)+2.*xi*xi/(D*D*(1-xi*xi)*(1+xi)))*helamps[5]
+                -2.*(1./pow(1-xi,2.)+2.*xi*xi/(D*D*(1-xi*xi)*(1-xi)))*helamps[6]
+                +sqrt(2.)*xi/(D*(1-xi*xi))*helamps[7]
+                -sqrt(2)*xi/(D*pow(D*(1-xi*xi),2.))*(4.*xi*xi+D*D*(3.+xi*xi))*helamps[8];
+
+    gpds.at(2)=-(1./(2.*D)*((1-xi)/(1+xi)*helamps[0]-(1+xi)/(1-xi)*helamps[1])+1./(sqrt(2.)*D*D)*((1-xi)/(1+xi)*helamps[5]-(1+xi)/(1-xi)*helamps[6])
+                -2.*xi/(D*D*D*(1-xi*xi))*helamps[8]);
     gpds.at(3)=1/D*(1./(1+xi)*helamps[0]+1./(1.-xi)*helamps[1])+1/(sqrt(2.)*D*D)*((1-xi)/(1+xi)*helamps[5]+(1+xi)/(1-xi)*helamps[6])+1./(2.*D)*helamps[7]
                 -1./(2.*D*D*D)*(D*D-4.*xi*xi/(1-xi*xi))*helamps[8];
 
-    gpds.at(4)=-1./D*((1./2.+D*D/(1-xi))/(1+xi)/(1+xi)*helamps[0]+(1./2.+D*D/(1+xi))/(1-xi)/(1-xi)*helamps[1])+1./(D*(1.-xi*xi))*helamps[2]
+    gpds.at(4)=sqrt(2.)*(-1./D*((1./2.+D*D/(1-xi))/(1+xi)/(1+xi)*helamps[0]+(1./2.+D*D/(1+xi))/(1-xi)/(1-xi)*helamps[1])+1./(D*(1.-xi*xi))*helamps[2]
                     +1/sqrt(2.)/(1-xi*xi)*(helamps[3]+helamps[4])-1./(sqrt(2.)*pow(1+xi,2.))*(1.-2.*xi/(D*D*(1-xi)))*helamps[5]
                     -1/(sqrt(2.)*pow(1-xi,2.))*(1.+2.*xi/(D*D*(1.+xi)))*helamps[6]-1./(2.*D*(1-xi*xi))*helamps[7]
-                    -(D*D*(3.*xi*xi+1)+4.*xi*xi)/(2.*D*D*D*pow(1-xi*xi,2.))*helamps[8];
+                    -(D*D*(3.*xi*xi+1)+4.*xi*xi)/(2.*D*D*D*pow(1-xi*xi,2.))*helamps[8]);
 
     gpds.at(5)=-1./(2.*D)*(helamps[0]+helamps[1]+helamps[7]+helamps[8]);
     gpds.at(6)=2.*(1-xi*xi)/(D*D*D)*helamps[8];
-    gpds.at(7)=-1./D*(helamps[0]-helamps[1]+xi*(helamps[7]-helamps[8]));
-    gpds.at(8)=-1./D*(xi*(helamps[0]-helamps[1])+(helamps[7]-helamps[8]));
+    gpds.at(7)=-1./D*((1-xi)/(1+xi)*helamps[0]-(1+xi)/(1-xi)*helamps[1]
+                    -xi*sqrt(2.)/D*((1-xi)/(1+xi)*helamps[5]+(1+xi)/(1-xi)*helamps[6])
+                    -4.*xi*xi*xi/D/D/(1-xi*xi)*helamps[8]);
+    gpds.at(8)=-1./D*(2.*xi*(helamps[0]/(1+xi)-helamps[1]/(1-xi))
+                        +sqrt(2.)*xi/D*((1-xi)/(1+xi)*helamps[5]-(1+xi)/(1-xi)*helamps[6])
+                        +helamps[7]-(4.*xi*xi/(D*D*(1-xi*xi))+1.)*helamps[8]);
 
     return gpds;
 }
@@ -72,27 +83,29 @@ vector< complex<double> > GPD::gpds_to_helamps(const double xi, const double t, 
     double D=sqrt((-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSD);
     double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
     // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
-    helamps.at(0)=-D*(gpds[5]+(t0-t)/(8.*MASSD*MASSD)*gpds[6]+1./(2.*(1.-xi))*(gpds[7]-gpds[8]));
+    helamps.at(0)=-D*(xi/(1.-xi)*(gpds[2]-gpds[3])+gpds[5]+(t0-t)/(8.*MASSD*MASSD)*gpds[6]+1./(2.*(1.-xi))*(gpds[7]-gpds[8]));
 
-    helamps.at(1)=-D*(gpds[5]+(t0-t)/(8.*MASSD*MASSD)*gpds[6]-1./(2.*(1.+xi))*(gpds[7]+gpds[8]));
+    helamps.at(1)=-D*(xi/(1.+xi)*(gpds[2]+gpds[3])+gpds[5]+(t0-t)/(8.*MASSD*MASSD)*gpds[6]-1./(2.*(1.+xi))*(gpds[7]+gpds[8]));
 
-    helamps.at(2)=D*(-1./(2.*sqrt(2.))*(gpds[0]+xi*gpds[1])+xi*((t0-t)/(2.*MASSD*MASSD)-2./(1-xi*xi))*gpds[2]+((t0-t)/(2.*MASSD*MASSD)-2.*xi*xi/(1.-xi*xi))*gpds[3]
-                    +(1.-xi*xi)*gpds[4]+((t0-t)/(2.*MASSD*MASSD)-(1+xi*xi)/(1-xi*xi))*gpds[5]+(pow((t0-t)/(4.*MASSD*MASSD),2.)-pow(xi/(1-xi*xi),2.))*gpds[6]-xi/(1.-xi*xi)*gpds[7]
+    helamps.at(2)=D*(-1./(2.*sqrt(2.))*(gpds[0]+xi*gpds[1])+2*xi/(1.-xi*xi)*gpds[2]+2.*D*D/(1.-xi*xi)*gpds[3]
+                    +gpds[4]/sqrt(2.)+((t0-t)/(2.*MASSD*MASSD)-(1+xi*xi)/(1-xi*xi))*gpds[5]+(pow((t0-t)/(4.*MASSD*MASSD),2.)-pow(xi/(1-xi*xi),2.))*gpds[6]-xi/(1.-xi*xi)*gpds[7]
                     -(t0-t)/(4.*MASSD*MASSD)*gpds[8]);
 
-    helamps.at(3)=1./sqrt(2.)*((1-xi)/(2.*sqrt(2.))*(gpds[0]-gpds[1])+(1-xi)*(1-xi)*(t0-t)/(4.*MASSD*MASSD)*(gpds[2]-gpds[3])-(1-xi)*(t0-t)/(2.*MASSD*MASSD)*gpds[5]
+    helamps.at(3)=1./sqrt(2.)*((1-xi)/(2.*sqrt(2.))*(gpds[0]-gpds[1])+(2*xi*xi/(1.-xi*xi)-D*D/(1-xi))*gpds[2]+(-2*xi*xi/(1.-xi*xi)+D*D*(3.*xi-1.)/(1-xi*xi))*gpds[3]
+                    +1/sqrt(2.)*xi*(1-xi)*gpds[4]-(1-xi)*(t0-t)/(2.*MASSD*MASSD)*gpds[5]
                     -(1-xi)*(t0-t)/(4.*MASSD*MASSD)*((t0-t)/(4.*MASSD*MASSD)-xi/(1.-xi*xi))*gpds[6]+(-(1.+xi)*(t0-t)/(8.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[7]
                     +((3.-xi)*(t0-t)/(8.*MASSD*MASSD)-xi/(1-xi*xi))*gpds[8]);                    
 
-    helamps.at(4)=1./sqrt(2.)*((1+xi)/(2.*sqrt(2.))*(gpds[0]+gpds[1])-(1+xi)*(1+xi)*(t0-t)/(4.*MASSD*MASSD)*(gpds[2]+gpds[3])-(1+xi)*(t0-t)/(2.*MASSD*MASSD)*gpds[5]
+    helamps.at(4)=1./sqrt(2.)*((1+xi)/(2.*sqrt(2.))*(gpds[0]+gpds[1])-(2*xi*xi/(1.-xi*xi)-D*D/(1+xi))*gpds[2]+(-2*xi*xi/(1.-xi*xi)-D*D*(3.*xi+1.)/(1-xi*xi))*gpds[3]
+                    -1/sqrt(2.)*xi*(1+xi)*gpds[4]-(1+xi)*(t0-t)/(2.*MASSD*MASSD)*gpds[5]
                     -(1+xi)*(t0-t)/(4.*MASSD*MASSD)*((t0-t)/(4.*MASSD*MASSD)+xi/(1.-xi*xi))*gpds[6]+((1.-xi)*(t0-t)/(8.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[7]
                     +((3.+xi)*(t0-t)/(8.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[8]);                    
 
-    helamps.at(5)=D*D/sqrt(2.)/(1-xi)*((1+xi)*(gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[6]+1./2.*(gpds[7]-gpds[8]));
+    helamps.at(5)=D*D/sqrt(2.)/(1-xi)*((-gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[6]+1./2.*(gpds[7]-gpds[8]));
 
-    helamps.at(6)=D*D/sqrt(2.)/(1+xi)*(-(1-xi)*(gpds[2]-gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD*MASSD)-xi/(1-xi*xi))*gpds[6]-1./2.*(gpds[7]+gpds[8]));
+    helamps.at(6)=D*D/sqrt(2.)/(1+xi)*((gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD*MASSD)-xi/(1-xi*xi))*gpds[6]-1./2.*(gpds[7]+gpds[8]));
 
-    helamps.at(7)=D*((t0-t)/(8.*MASSD*MASSD)*gpds[6]+1./(1-xi*xi)*(xi*gpds[7]-gpds[8]));
+    helamps.at(7)=D*(2.*xi/(1-xi*xi)*(gpds[2]-xi*gpds[3])+(t0-t)/(8.*MASSD*MASSD)*gpds[6]+1./(1-xi*xi)*(xi*gpds[7]-gpds[8]));
 
     helamps.at(8)=D*(t0-t)/(8.*MASSD*MASSD)*gpds[6];
     return helamps;
