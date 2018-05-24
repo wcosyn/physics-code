@@ -491,6 +491,7 @@ vector< complex<double> > GPD::gpd_conv(const double xi, const double x, const d
         // exit(1);
         // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
         
+                //for min conv model (also put deuteron wave function to only S-wave + no radial dep + H_Tnucleon=0!!!!)
         //  out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
 
         // //symmetry checks!!
