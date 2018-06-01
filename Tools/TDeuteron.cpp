@@ -905,7 +905,7 @@ double TDeuteron::Wavefunction::ClebschGordan(int two_j1,int two_m1,int two_j2,
   // The arguments are the j_i and m_i multiplied by two.
   
   return gsl_sf_coupling_3j(two_j1,two_j2,two_j,two_m1,two_m2,-two_m)
-    * Power(-1.,(two_j1-two_j2-two_m)/2.)
+    * Power(-1.,(two_j1-two_j2+two_m)/2.)
     * Sqrt(two_j+1.);
 }
 

@@ -237,7 +237,7 @@ std::complex<double> OldDeuteron::get_stensor(int dspin, int spinp, int spinn, d
 
    complex<double> stensor;
    double costheta,sintheta;
-   sincos(theta,&costheta,&sintheta);
+   sincos(theta,&sintheta,&costheta);
    double cosphi,sinphi;
    sincos(phi,&sinphi,&cosphi);
    double cos2phi,sin2phi;
@@ -298,7 +298,7 @@ std::complex<double> OldDeuteron::get_stensor(int dspin, int spinp, int spinn, d
 	      stensor=complex<double>(-(3.0*costheta*costheta-1.0),0.);
 	      break;
 	    case 1:
-	      stensor=complex<double>(3.0*costheta*sintheta*cosphi,3.0*costheta*sintheta*sinphi);
+	      stensor=complex<double>(3.0*costheta*sintheta*cosphi,-3.0*costheta*sintheta*sinphi);
 	      break;
 	    default:
 	      cout << "invalid neutron spin" << endl;
