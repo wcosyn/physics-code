@@ -119,7 +119,7 @@ int main(int argc, char *argv[]){
     cout << "3dnorm " << adapnorm[0] << endl;
 
     //3D FT wf, OK!!
-    cout << endl << endl << "Checking FT of wf " << endl
+    cout << endl << endl << "Checking FT of wf " << endl;
     for(int dspin=-2;dspin<=2;dspin+=2){
         for(int pspin=-1;pspin<=1;pspin+=2){
             for(int nspin=-1;nspin<=1;nspin+=2){
