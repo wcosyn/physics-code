@@ -69,6 +69,8 @@ class TInterpolatingWavefunction : public TWavefunctionImplementation
   virtual double GetWpoff1(const TVector3& p) const; // p in [MeV]
   virtual double GetWpoff2(double pperp2) const; // p in [MeV]
   virtual std::complex<double> DeuteronPState(int deuteronPol, int nucleon2Pol,int nucleon1Pol, const TVector3& p) const;
+  virtual std::complex<double> DeuteronRState(int deuteronPol, int nucleon2Pol,int nucleon1Pol, const TVector3& r) const; //returns r times wf!!! [fm^-1/2]
+  
  protected:
   double Interpolate(std::map<double,double>* list, double q) const;
 

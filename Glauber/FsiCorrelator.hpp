@@ -16,6 +16,7 @@
 /*! \brief A class for all things needed in correlated fsi/isi calculations
  * 
  * Contains a grid for the gamma function of a certain nucleus (normalization of conditional 2-b density). <BR>
+ * Based on numerical recipes 9.7 (and maybe some other things too)
  * Has the correlation function g(r). <BR>
  */
 class FsiCorrelator{
