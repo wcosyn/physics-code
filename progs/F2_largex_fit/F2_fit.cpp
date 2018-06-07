@@ -68,7 +68,8 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   cout << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << " " << par[5] << " " << endl;
 
   for(unsigned i=0; i < xi_data.size(); i++){
-    f+=pow((F2_data[i]-exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*(1.+par[3]*pow(xi,par[4]*(1.+xi*par[5])/Q2_data[i])))/F2_err[i],2.);
+    f+=pow((F2_data[i]-exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*
+      (1.+par[3]*pow(xi_data[i],par[4]*(1.+xi_data[i]*par[5])/Q2_data[i])))/F2_err[i],2.);
     dof++;
   }
   cout << "intermediate chi2 " << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
@@ -348,7 +349,7 @@ int main(int argc, char *argv[])
   cout << "bla" << endl;
   int n=nFreePars;
   double f;
-  Fcn(n, &f, f, paramin, n);
+  Fcn(n, &f, f, params, n);
   //cout << Warray[Windex] << " ";
   for(unsigned int i=0;i<nFreePars;++i) cout << params[i] << " " << eparab[i] << " ";
   cout << f/(dof-nFreePars) << " " << f << " " << dof << " " << nFreePars << endl;
