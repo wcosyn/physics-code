@@ -66,24 +66,12 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   cout << npar << endl;
   //DeuteronCross DeepsCross("paris",proton,"SLAC",par[0],par[1],epsilon,betaoff,lambdain,offshellset,looplimit);
   cout << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << " " << par[5] << " " << endl;
-//   for(int i=startset;i<stopset;i++){
-// //   for(int i=2;i<3;i++){
-//     double pr=prarray[i];
-// //     cout << i << " " << endl;
-//     for(int j=0;j<34;j++){
-//       double costhetar=-0.975+j*0.05;
-//       if(deepsdata[Qindex][Windex][i][j][2]!=0.){
-// 	double pw=0.,fsi=0.;
-// 	DeepsCross.getDeepsresult(Qarray[Qindex], Warray[Windex], 5765, pr, costhetar, proton, pw,fsi);
-// // 	cout << costhetar << " " << pw << " " << fsi << " " << deepsdata[Qindex][Windex][i][j][1] << endl;
-// 	if(!std::isnan(fsi)){ f+=pow((fsi-deepsdata[Qindex][Windex][i][j][1])/deepsdata[Qindex][Windex][i][j][2],2.); dof++;}
-//       }
-//     }
-//   }
-  // Function to minimize (chi^2)
-  //  f = GetChiSquaredOfVertex(par) // your fitness function goes here: typically ~ sum_i {(model(par,i)-data(i))^2 / error(i)^2} 
-//   f/=(dof-npar);
-cout << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
+
+  for(unsigned i=0; i < xi_data.size(); i++){
+    f+=pow((F2_data[i]-exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*(1.+par[3]*pow(xi,par[4]*(1.+xi*par[5])/Q2_data[i])))/F2_err[i],2.);
+    dof++;
+  }
+  cout << "intermediate chi2 " << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
 }
 
 
@@ -91,24 +79,24 @@ int main(int argc, char *argv[])
 {
   
   Process_Data();
- for (unsigned i=0; i < xi_data.size(); i++){
-    cout << i << " " << xi_data[i] << " " << x_data[i] << " " << Q2_data[i]*1.E-06 << " " << F2_data[i] << endl;
-   }
-  exit(1);
+  // for (unsigned i=0; i < xi_data.size(); i++){
+  //   cout << i << " " << xi_data[i] << " " << x_data[i] << " " << Q2_data[i]*1.E-06 << " " << F2_data[i] << endl;
+  //  }
+  // exit(1);
 
   int testing = 0;
-  int fNDim = 3; // number of dimensions
-  double fLo[] = {0.,1.,-1.}; // lower limits of params
-  double fHi[] = {100.,20.,1.}; // upper limits of params
-  char* fName[] = {"sigma_tot","beta","epsilon"};
+  int fNDim = 6; // number of dimensions
+  double fLo[] = {-10.,-10.,-10.,-10.,-10.,-10.}; // lower limits of params
+  double fHi[] = {10.,10.,10.,10.,10.,10.}; // upper limits of params
+  char* fName[] = {"LT_norm","LT_xi","LT_xi2", "HT_xiff", "HT_xipow", "HT_linxi"};
   
-  int fBound[] = {1,1,1};
+  int fBound[] = {1,1,1,1,1,1};
 
   TVirtualFitter *gMinuit = TVirtualFitter::Fitter ( 0, fNDim );
 
   // Start values of parameters
   // If you have a starting individual, you can simply use 
-  double minuitIndividual[] = {40.,8.,-0.5}; // FIXME insert your starting individual ( double array) here
+  double minuitIndividual[] = {0.,0.,0.,0.,0.,0.}; // FIXME insert your starting individual ( double array) here
   
   std::cout << "done" << endl;
 
@@ -356,7 +344,7 @@ int main(int argc, char *argv[])
     gMinuit->GetErrors(i,eplus[i],eminus[i],eparab[i],globcc[i]);
     params[i]=gMinuit->GetParameter(i);
   }
-  double paramin[3]={params[0],nFreePars>1?params[1]:8.,-0.5};
+  //double paramin[3]={params[0],nFreePars>1?params[1]:8.,-0.5};
   cout << "bla" << endl;
   int n=nFreePars;
   double f;
