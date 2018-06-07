@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
 
   int testing = 0;
   int fNDim = 6; // number of dimensions
-  double fLo[] = {-10.,-10.,-10.,-10.,-10.,-10.}; // lower limits of params
-  double fHi[] = {10.,10.,10.,10.,10.,10.}; // upper limits of params
+  double fLo[] = {-100.,-100.,-100.,-100.,-100.,-100.}; // lower limits of params
+  double fHi[] = {100.,100.,100.,100.,100.,100.}; // upper limits of params
   char* fName[] = {"LT_norm","LT_xi","LT_xi2", "HT_xiff", "HT_xipow", "HT_linxi"};
   
   int fBound[] = {1,1,1,1,1,1};
