@@ -32,6 +32,45 @@ vector<double> F2_err;
 vector<double> Q2_data;
 int dof=0;
 
+void plotfit(double *par){
+  double xvalues[]={0.75,0.85,0.95,1.05,1.15,1.25};
+  double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
+  
+  for(int x_it=0;x_it<6;x_it++){
+    ofstream myfile;
+    string filename = "x"+to_string(xvalues[x_it]);
+    myfile.open(filename.c_str());
+    for(unsigned i=0; i < xi_data.size(); i++){
+      if(abs(x_data[i]-xvalues[x_it])<.01){
+        double nu=Q2_data[i]/(2.*11.17793/12*xvalues[x_it]);
+        double xi=2.*xvalues[x_it]/(1+sqrt(1.+Q2_data[i]/nu/nu));
+        myfile << x_data[i] << " " << Q2_data[i] << " " << F2_data[i] << " " << F2_err[i] << " " << exp(par[0]+par[1]*xi+par[2]*pow(xi,2.))*
+              (1.+par[3]*pow(xi,par[4])*(1.+xi*par[5])/Q2_data[i])
+              << " " << exp(adam[0]+adam[1]*xi+adam[2]*pow(xi,2.))*
+              (1.+adam[3]*pow(xi,adam[4])*(1.+xi*adam[5])/Q2_data[i]) << " " << 
+              exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*
+              (1.+par[3]*pow(xi_data[i],par[4])*(1.+xi_data[i]*par[5])/Q2_data[i])
+              << " " << exp(adam[0]+adam[1]*xi_data[i]+adam[2]*pow(xi_data[i],2.))*
+              (1.+adam[3]*pow(xi_data[i],adam[4])*(1.+xi_data[i]*adam[5])/Q2_data[i]) << endl;
+      }
+    }
+    // for(int i=1;i<=20;i++){
+    //   double Q2=10.*30./20.*i;
+    //   double nu=Q2/(2.*11177.93/12*xvalues[x_it]);
+    //   double xi=2.*xvalues[x_it]/(1+sqrt(1.+Q2/nu/nu));
+    //   myfile << xvalues[x_it] << " " << Q2 << " " << "nan" << " " << "nan" << " " << exp(par[0]+par[1]*xi+par[2]*pow(xi,2.))*
+    //         (1.+par[3]*pow(xi,par[4])*(1.+xi*par[5])/Q2)
+    //         << " " << exp(adam[0]+adam[1]*xi+adam[2]*pow(xi,2.))*
+    //         (1.+adam[3]*pow(xi,adam[4])*(1.+xi*adam[5])/Q2) << endl;
+
+    // }
+    myfile.close();
+  }
+
+
+
+}
+
 void Process_Data(){
   xi_data.clear(); F2_data.clear(); F2_err.clear(); Q2_data.clear(); x_data.clear();
   
@@ -44,7 +83,7 @@ void Process_Data(){
       //cout << nu << " " << Q2*1.E-06 << " " << x  << " " << nachtmann << endl;
       if(nachtmann>0.5){
         xi_data.push_back(nachtmann);
-        Q2_data.push_back(Q2);
+        Q2_data.push_back(Q2*1.E-06);
         F2_data.push_back(fomin_data::F2[i]*1.E06);
         F2_err.push_back(fomin_data::F2_stat[i]*1.E06);
         x_data.push_back(x);
@@ -69,7 +108,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 
   for(unsigned i=0; i < xi_data.size(); i++){
     f+=pow((F2_data[i]-exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*
-      (1.+par[3]*pow(xi_data[i],par[4]*(1.+xi_data[i]*par[5])/Q2_data[i])))/F2_err[i],2.);
+      (1.+par[3]*pow(xi_data[i],par[4])*(1.+xi_data[i]*par[5])/Q2_data[i]))/F2_err[i],2.);
     dof++;
   }
   cout << "intermediate chi2 " << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
@@ -87,8 +126,8 @@ int main(int argc, char *argv[])
 
   int testing = 0;
   int fNDim = 6; // number of dimensions
-  double fLo[] = {-100.,-100.,-100.,-100.,-100.,-100.}; // lower limits of params
-  double fHi[] = {100.,100.,100.,100.,100.,100.}; // upper limits of params
+  double fLo[] = {-100.,-100.,-100.,-100.,-100.,-1000.}; // lower limits of params
+  double fHi[] = {100.,100.,100.,100.,100.,1000.}; // upper limits of params
   char* fName[] = {"LT_norm","LT_xi","LT_xi2", "HT_xiff", "HT_xipow", "HT_linxi"};
   
   int fBound[] = {1,1,1,1,1,1};
@@ -351,10 +390,22 @@ int main(int argc, char *argv[])
   double f;
   Fcn(n, &f, f, params, n);
   //cout << Warray[Windex] << " ";
-  for(unsigned int i=0;i<nFreePars;++i) cout << params[i] << " " << eparab[i] << " ";
+  cout << "parameter values + parabolic errors" << endl;
+  for(unsigned int i=0;i<nFreePars;++i) cout << params[i] << " " << eparab[i] << endl;
+  cout << endl << endl << "chi2 per dof, chi2, dof, #freeparams" << endl;
   cout << f/(dof-nFreePars) << " " << f << " " << dof << " " << nFreePars << endl;
+
+  double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
+  Fcn(n, &f, f, adam, n);
+
+  cout << "Adam values" << endl << "chi2 per dof, chi2, dof, #freeparams" << endl;
+  cout << f/(dof-nFreePars) << " " << f << " " << dof << " " << nFreePars << endl;
+  
   delete gMinuit;
 //   cout << "\nCleaning up..." << endl;
 //   DeuteronCross::maint_deepsarray(deepsdata);
+
+  plotfit(params);
+
   return 0;
 }
