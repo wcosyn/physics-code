@@ -30,18 +30,18 @@ SET(EVOLUTION_LIBRARY_PROPERTIES ${EVOLUTION_LIBRARY_PROPERTIES}
 
 
 ############### build the library #####################
-add_library(EVOLUTION SHARED ${EVOLUTION_SRCS})
-target_include_directories(EVOLUTION PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-#target_link_libraries(EVOLUTION Knockout MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
-set_target_properties(EVOLUTION PROPERTIES ${EVOLUTION_LIBRARY_PROPERTIES})
+add_library(Evolution SHARED ${EVOLUTION_SRCS})
+target_include_directories(Evolution PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+#target_link_libraries(Evolution Knockout MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
+set_target_properties(Evolution PROPERTIES ${EVOLUTION_LIBRARY_PROPERTIES})
 ############### install the library ###################
-install(TARGETS EVOLUTION DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+install(TARGETS Evolution DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 
 ############### build the library #####################
 if(STATIC_BUILD)
-  add_library(EVOLUTIONST STATIC ${EVOLUTION_SRCS})
-  target_include_directories(EVOLUTIONST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})  
- # target_link_libraries(EVOLUTIONST Knockout MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a -Wl,-no-whole-archive)
-  set_target_properties(EVOLUTIONST PROPERTIES OUTPUT_NAME EVOLUTION)
-  install(TARGETS EVOLUTIONST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+  add_library(EvolutionST STATIC ${EVOLUTION_SRCS})
+  target_include_directories(EvolutionST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})  
+ # target_link_libraries(EvolutionST Knockout MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a -Wl,-no-whole-archive)
+  set_target_properties(EvolutionST PROPERTIES OUTPUT_NAME EVOLUTION)
+  install(TARGETS EvolutionST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endif(STATIC_BUILD)

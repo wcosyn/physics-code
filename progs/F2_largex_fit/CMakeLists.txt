@@ -1,9 +1,9 @@
-project(spectagdis)
+project(F2largex)
 
 
 #program used to fit the FSI parameters to the deeps data
 add_executable(F2_fit F2_fit.cpp )  
-target_link_libraries(F2_fit DIS MePhys)
+target_link_libraries(F2_fit DIS Evolution MePhys)
 
 
 

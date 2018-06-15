@@ -33,6 +33,13 @@ vector<double> F2_sys;
 vector<double> Q2_data;
 int dof=0;
 
+//from fortran evolution code!
+extern "C"{
+    void evolve_ns_adam(int *nx, double xx[], double HNS[], double *Q2i, double *Q2f, double *xi, double *A);
+
+}
+
+
 void plotfit(double *par){
   double xvalues[]={0.75,0.85,0.95,1.05,1.15,1.25};
   double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
@@ -408,6 +415,26 @@ int main(int argc, char *argv[])
 //   DeuteronCross::maint_deepsarray(deepsdata);
 
   plotfit(params);
+  int n_x=1000;
+  double x_evo[n_x];
+  double pdf[n_x];
+  double pdf_ini[n_x];
+  double Q2i=2.;
+  double Q2f=9.;
+  double xi=0.;
+  double A=12;
+
+  for(int i=1;i<=n_x;i++){
+    x_evo[i-1]=0.5+i*(12.-0.5)/1000.;
+    pdf[i-1]=pdf_ini[i-1]=exp(adam[0]+adam[1]*x_evo[i-1]+adam[2]*pow(x_evo[i-1],2.))*
+              (1.+adam[3]*pow(x_evo[i-1],adam[4])*(1.+x_evo[i-1]*adam[5])/Q2i);
+  }
+  cout << "blaa " << x_evo[0] << " " << pdf[0] << endl;
+  for(int i=1;i<=10;i++) cout << x_evo[i-1] << " " << pdf_ini[i-1] << " " << pdf[i-1] << endl;
+  evolve_ns_adam(&n_x, x_evo, pdf, &Q2i, &Q2f, &xi, &A);
+  cout << "after " << endl;
+
+  for(int i=1;i<=10;i++) cout << x_evo[i-1] << " " << pdf_ini[i-1] << " " << pdf[i-1] << endl;
 
   return 0;
 }
