@@ -424,17 +424,17 @@ int main(int argc, char *argv[])
   double xi=0.;
   double A=12;
 
-  for(int i=1;i<=n_x;i++){
-    x_evo[i-1]=0.5+i*(12.-0.5)/1000.;
-    pdf[i-1]=pdf_ini[i-1]=exp(adam[0]+adam[1]*x_evo[i-1]+adam[2]*pow(x_evo[i-1],2.))*
-              (1.+adam[3]*pow(x_evo[i-1],adam[4])*(1.+x_evo[i-1]*adam[5])/Q2i);
+  for(int i=0;i<n_x;i++){
+    x_evo[i]=0.5+i*(12.-0.5)/1000.;
+    pdf[i]=pdf_ini[i]=exp(adam[0]+adam[1]*x_evo[i]+adam[2]*pow(x_evo[i],2.))*
+              (1.+adam[3]*pow(x_evo[i],adam[4])*(1.+x_evo[i]*adam[5])/Q2i);
   }
   cout << "blaa " << x_evo[0] << " " << pdf[0] << endl;
-  for(int i=1;i<=10;i++) cout << x_evo[i-1] << " " << pdf_ini[i-1] << " " << pdf[i-1] << endl;
+  for(int i=0;i<10;i++) cout << x_evo[i] << " " << pdf_ini[i] << " " << pdf[i] << endl;
   evolve_ns_adam(&n_x, x_evo, pdf, &Q2i, &Q2f, &xi, &A);
   cout << "after " << endl;
 
-  for(int i=1;i<=10;i++) cout << x_evo[i-1] << " " << pdf_ini[i-1] << " " << pdf[i-1] << endl;
+  for(int i=0;i<10;i++) cout << x_evo[i] << " " << pdf_ini[i] << " " << pdf[i] << endl;
 
   return 0;
 }
