@@ -41,7 +41,6 @@ module evowrappers
         real(dp), dimension(nx), intent(inout) :: HNS
         real(dp), intent(in) :: Q2i, Q2f, xi
         real(dp), intent(in) :: A
-        print*,nx, Q2i, A, xx(1), HNS(1)
         call evolve_ns(nx, xx, HNS, Q2i, Q2f, xi, oA=A)
     end subroutine evolve_ns_wrap
 
