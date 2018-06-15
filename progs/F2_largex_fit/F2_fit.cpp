@@ -29,6 +29,7 @@ vector<double> xi_data; //nachtmann
 vector<double> x_data; //bjorken x
 vector<double> F2_data;
 vector<double> F2_err;
+vector<double> F2_sys;
 vector<double> Q2_data;
 int dof=0;
 
@@ -38,7 +39,7 @@ void plotfit(double *par){
   
   for(int x_it=0;x_it<6;x_it++){
     ofstream myfile;
-    string filename = "x"+to_string(xvalues[x_it]);
+    string filename = "sysx"+to_string(xvalues[x_it]);
     myfile.open(filename.c_str());
     for(unsigned i=0; i < xi_data.size(); i++){
       if(abs(x_data[i]-xvalues[x_it])<.01){
@@ -86,6 +87,7 @@ void Process_Data(){
         Q2_data.push_back(Q2*1.E-06);
         F2_data.push_back(fomin_data::F2[i]*1.E06);
         F2_err.push_back(fomin_data::F2_stat[i]*1.E06);
+        F2_sys.push_back(fomin_data::F2_sys[i]*1.E06);
         x_data.push_back(x);
       }
     }
@@ -108,7 +110,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
 
   for(unsigned i=0; i < xi_data.size(); i++){
     f+=pow((F2_data[i]-exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*
-      (1.+par[3]*pow(xi_data[i],par[4])*(1.+xi_data[i]*par[5])/Q2_data[i]))/F2_err[i],2.);
+      (1.+par[3]*pow(xi_data[i],par[4])*(1.+xi_data[i]*par[5])/Q2_data[i]))/sqrt(pow(F2_err[i],2.)+pow(F2_sys[i],2.)),2.);
     dof++;
   }
   cout << "intermediate chi2 " << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
@@ -120,7 +122,7 @@ int main(int argc, char *argv[])
   
   Process_Data();
   // for (unsigned i=0; i < xi_data.size(); i++){
-  //   cout << i << " " << xi_data[i] << " " << x_data[i] << " " << Q2_data[i]*1.E-06 << " " << F2_data[i] << endl;
+  //   cout << i << " " << xi_data[i] << " " << x_data[i] << " " << Q2_data[i]*1.E-06 << " " << F2_data[i] << " " << F2_err[i] << " " << F2_sys[i] << endl;
   //  }
   // exit(1);
 

@@ -45,3 +45,5 @@ if(STATIC_BUILD)
   set_target_properties(DISST PROPERTIES OUTPUT_NAME DIS)
   install(TARGETS DISST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endif(STATIC_BUILD)
+
+add_subdirectory(evolution)

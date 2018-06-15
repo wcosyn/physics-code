@@ -97,7 +97,7 @@ set(DEBUG_FLAGS ${RELEASE_FLAGS})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
 MESSAGE("--- Found GNU compiler collection")   
-  set(RELEASE_FLAGS ${RELEASE_FLAGS} -O3 -march=native -mtune=native -pipe)
+  set(RELEASE_FLAGS ${RELEASE_FLAGS} -O3 -march=native -mtune=native -pipe -fopenmp)
   set(DEBUG_FLAGS ${DEBUG_FLAGS} -g)
 endif (CMAKE_COMPILER_IS_GNUCXX)
   
