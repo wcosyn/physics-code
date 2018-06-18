@@ -1,4 +1,6 @@
-//program used to fit the rescattering parameters in the FSI to the deeps data
+//program used to fit the high x F2 JLab data
+// takes two parameters: 1) prefix of filenames that have output of fits and data 2) include sys errors or not (1/0)
+//run for instance  ~/physics-code/bin/F2_fit speedyevofitstat 0
 
 #include <TVirtualFitter.h>
 #include <TFitter.h>
@@ -20,10 +22,12 @@
 #include <signal.h>
 #include <iomanip>
 #include <vector>
+#include <cassert>
 using namespace std;
 
 #include <constants.hpp>
 #include "fomin_data.hpp"
+#include "slac_data.hpp"
 
 vector<double> xi_data; //nachtmann
 vector<double> x_data; //bjorken x
@@ -39,104 +43,95 @@ extern "C"{
 
 }
 
+void plotfit(double *par, string prefix); // generates output to plot
+void Process_Data(bool sys, bool SLAC, bool hixcut); //selects the data to fit to, only C12 and x>0.5
+void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag); //fit function
 
-void plotfit(double *par){
-  double xvalues[]={0.75,0.85,0.95,1.05,1.15,1.25};
-  double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
-  
-  for(int x_it=0;x_it<6;x_it++){
-    ofstream myfile;
-    string filename = "sysx"+to_string(xvalues[x_it]);
-    myfile.open(filename.c_str());
-    for(unsigned i=0; i < xi_data.size(); i++){
-      if(abs(x_data[i]-xvalues[x_it])<.01){
-        double nu=Q2_data[i]/(2.*11.17793/12*xvalues[x_it]);
-        double xi=2.*xvalues[x_it]/(1+sqrt(1.+Q2_data[i]/nu/nu));
-        myfile << x_data[i] << " " << Q2_data[i] << " " << F2_data[i] << " " << F2_err[i] << " " << exp(par[0]+par[1]*xi+par[2]*pow(xi,2.))*
-              (1.+par[3]*pow(xi,par[4])*(1.+xi*par[5])/Q2_data[i])
-              << " " << exp(adam[0]+adam[1]*xi+adam[2]*pow(xi,2.))*
-              (1.+adam[3]*pow(xi,adam[4])*(1.+xi*adam[5])/Q2_data[i]) << " " << 
-              exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*
-              (1.+par[3]*pow(xi_data[i],par[4])*(1.+xi_data[i]*par[5])/Q2_data[i])
-              << " " << exp(adam[0]+adam[1]*xi_data[i]+adam[2]*pow(xi_data[i],2.))*
-              (1.+adam[3]*pow(xi_data[i],adam[4])*(1.+xi_data[i]*adam[5])/Q2_data[i]) << endl;
-      }
-    }
-    // for(int i=1;i<=20;i++){
-    //   double Q2=10.*30./20.*i;
-    //   double nu=Q2/(2.*11177.93/12*xvalues[x_it]);
-    //   double xi=2.*xvalues[x_it]/(1+sqrt(1.+Q2/nu/nu));
-    //   myfile << xvalues[x_it] << " " << Q2 << " " << "nan" << " " << "nan" << " " << exp(par[0]+par[1]*xi+par[2]*pow(xi,2.))*
-    //         (1.+par[3]*pow(xi,par[4])*(1.+xi*par[5])/Q2)
-    //         << " " << exp(adam[0]+adam[1]*xi+adam[2]*pow(xi,2.))*
-    //         (1.+adam[3]*pow(xi,adam[4])*(1.+xi*adam[5])/Q2) << endl;
-
-    // }
-    myfile.close();
-  }
+/**
+ * @brief Computes the evolution of the F2 structure function, using the standard parametrization, which is assumed to have an initial scale of Q2i
+ * 
+ * @param x momentum fraction, or Nachtmann variable if computing from DIS kinematics
+ * @param Q2f [GeV^2]  scale at which you want to evaluate F2
+ * @param Q2i [GeV^2] initial scale for which the LT parametrization is valid
+ * @param params parameters of the LT and HT fit
+ * @return double F2(x,Q2f)
+ */
+double F2_evo(double x, double Q2f, double Q2i, double params[]);
 
 
+/**
+ * @brief interpolates precomputed LT grid with evolution
+ * 
+ * @param F2_grid LT part with evolution, precomputed
+ * @param x_evo grid with x values
+ * @param x momentum fraction, or Nachtmann variable
+ * @param Q2 [GeV^2] scale
+ * @return double 
+ */
+double F2_interp(double **F2_grid, double x_evo[], double x, double Q2);
 
-}
-
-void Process_Data(){
-  xi_data.clear(); F2_data.clear(); F2_err.clear(); Q2_data.clear(); x_data.clear();
-  
-  for(int i=0;i<fomin_data::datapoints;i++){
-    if(fomin_data::A[i]==12){
-      double nu = (fomin_data::Ein[i]-fomin_data::Eout[i])*1.E03;
-      double Q2 = 4.*fomin_data::Ein[i]*fomin_data::Eout[i]*1.E06*pow(sin(fomin_data::theta[i]*DEGRTORAD*0.5),2.);
-      double x= Q2/(2.*11177.93/12*nu);
-      double nachtmann = 2.*x/(1.+sqrt(1+Q2/nu/nu));
-      //cout << nu << " " << Q2*1.E-06 << " " << x  << " " << nachtmann << endl;
-      if(nachtmann>0.5){
-        xi_data.push_back(nachtmann);
-        Q2_data.push_back(Q2*1.E-06);
-        F2_data.push_back(fomin_data::F2[i]*1.E06);
-        F2_err.push_back(fomin_data::F2_stat[i]*1.E06);
-        F2_sys.push_back(fomin_data::F2_sys[i]*1.E06);
-        x_data.push_back(x);
-      }
-    }
-
-  }
-
-
-}
-
-
-
-void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
-{
-
-  f=0.;
-  dof=0;
-  cout << npar << endl;
-  //DeuteronCross DeepsCross("paris",proton,"SLAC",par[0],par[1],epsilon,betaoff,lambdain,offshellset,looplimit);
-  cout << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << " " << par[5] << " " << endl;
-
-  for(unsigned i=0; i < xi_data.size(); i++){
-    f+=pow((F2_data[i]-exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*
-      (1.+par[3]*pow(xi_data[i],par[4])*(1.+xi_data[i]*par[5])/Q2_data[i]))/sqrt(pow(F2_err[i],2.)+pow(F2_sys[i],2.)),2.);
-    dof++;
-  }
-  cout << "intermediate chi2 " << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
-}
-
+/**
+ * @brief fill a grid with the LT Q2 evolution to interpolate in the fit function (speed up)
+ * 
+ * @param F2_grid index in Q2 (from 2 to 10, per 1), and x
+ * @param x_evo values of x we use, momentum fraction or Nachtmann variable
+ * @param params fit function parameters
+ */
+void fill_F2evo_grid(double **F2_grid, double x_evo[], double params[]);
 
 int main(int argc, char *argv[])
 {
   
-  Process_Data();
+  bool sys=0;
+  bool SLAC=0;
+  bool HT=1;
+  bool hixcut=0;
+  
+  string fn_prefix;
+  
+  if(string(argv[1])=="stat") { sys=0; fn_prefix=string(argv[1])+'.';}
+  else if(string(argv[1])=="sys") { sys=1; fn_prefix=string(argv[1])+'.';}
+  else { cerr << "invalid first commandline argument (sys or stat): " << argv[1]<<  endl; assert(1==0); }
+
+  if(string(argv[2])=="noSLAC") { SLAC=0; fn_prefix+=string(argv[2])+'.';}
+  else if(string(argv[2])=="wSLAC") { SLAC=1; fn_prefix+=string(argv[2])+'.';}
+  else { cerr << "invalid second commandline argument (noSLAC or wSLAC): "  << argv[2]<< endl; assert(1==0); }
+
+  if(string(argv[3])=="noHT") { HT=0; fn_prefix+=string(argv[3])+'.';}
+  else if(string(argv[3])=="wHT") { HT=1; fn_prefix+=string(argv[3])+'.';}
+  else { cerr << "invalid third commandline argument (noHT or wHT): "  << argv[3] << endl; assert(1==0); }
+
+  if(string(argv[4])=="noxcut") { hixcut=0; fn_prefix+=string(argv[4])+'.';}
+  else if(string(argv[4])=="xcut") { hixcut=1; fn_prefix+=string(argv[4])+'.';}
+  else { cerr << "invalid third commandline argument (noxcut or xcut): " << argv[4]<< endl; assert(1==0); }
+
+  if(SLAC && sys){
+    cerr << "When including SLAC data you should only run with stat errors as I don't have the sys ones" << endl;
+    assert(1==0);
+  }
+  cout << "prefix is " << fn_prefix << endl;
+
+  Process_Data(sys,SLAC,hixcut);
   // for (unsigned i=0; i < xi_data.size(); i++){
-  //   cout << i << " " << xi_data[i] << " " << x_data[i] << " " << Q2_data[i]*1.E-06 << " " << F2_data[i] << " " << F2_err[i] << " " << F2_sys[i] << endl;
+  //   cout << i << " " << xi_data[i] << " " << x_data[i] << " " << Q2_data[i] << " " << F2_data[i] << " " << F2_err[i] << " " << F2_sys[i] << endl;
   //  }
   // exit(1);
 
+  //check some intermediate fit value
+  // double parapara[6]={-0.837456, 7.52235, -10.8259, -4.08333e-08, -29.1322, -2.02116};  //evo in fit only stat
+  // double parapara[6]={0.322534, 4.4201, -8.73624, -1.73014, 7.35932, -0.649834};  //evo in fit stat+ sys
+  // double parapara[6]={1.06693, 2.06131, -6.93703, 0.955603, 6.40586, -1.9168}; //evo in fit, only stat, cut in x
+  //0.184548 4.7876 -9.02999 1.31556 3.73082 -1.24949 //evo in fit, stat+sys, cut in x
+  // int nn=6;
+  // double ff;
+  // Fcn(nn, &ff, ff, parapara, nn);
+  // exit(1);
+
+
   int testing = 0;
   int fNDim = 6; // number of dimensions
-  double fLo[] = {-100.,-100.,-100.,-100.,-100.,-1000.}; // lower limits of params
-  double fHi[] = {100.,100.,100.,100.,100.,1000.}; // upper limits of params
+  double fLo[] = {-100.,-100.,-100.,-100.,-100.,-200.}; // lower limits of params
+  double fHi[] = {100.,100.,100.,100.,100.,200.}; // upper limits of params
   char* fName[] = {"LT_norm","LT_xi","LT_xi2", "HT_xiff", "HT_xipow", "HT_linxi"};
   
   int fBound[] = {1,1,1,1,1,1};
@@ -187,8 +182,8 @@ int main(int argc, char *argv[])
     gMinuit->SetParameter ( i, fName[i], minuitIndividual[i], step, fLo[i], fHi[i] );
 }
 
-  // For testing, fix all but three parameters...
-  if (testing)
+  // When HT is disabled, only fit LT parameters!
+  if (!HT)
 {
     std::cout << "Running reduced capability for testing...\n";
     std::cout << "Fixing all but three parameters...\n";
@@ -198,7 +193,7 @@ int main(int argc, char *argv[])
     }
 }
 
-  std::cout << "Fixing some parameters...\n";
+  // std::cout << "Fixing some parameters...\n";
 //   if(offshellset==2){
 //     for ( int i = fNDim-fixparam-1 ; i < gMinuit->GetNumberTotalParameters()-1 ; ++i ) gMinuit->FixParameter ( i );    
 //   }
@@ -246,7 +241,7 @@ int main(int argc, char *argv[])
 
       // Run minimization...
       // ...untill convergence is reached (max 4 times)
-      arglist[0] = 7000;
+      arglist[0] = 10000;
       gMinuit->ExecuteCommand ( "MIGRAD", arglist, 1 );
       for ( int i = 0; i < 3 &&
             static_cast<TFitter*> ( gMinuit->GetFitter() )->
@@ -259,7 +254,7 @@ int main(int argc, char *argv[])
            GetMinuit()->fCstatu.CompareTo ( "CONVERGED " ) )
 {
         // ...try to IMPROVE the chi-squared
-        arglist[0] = 7000;
+        arglist[0] = 10000;
         gMinuit->ExecuteCommand ( "IMPROVE", arglist, 1 );
 
         // we exit the inner loop
@@ -269,7 +264,7 @@ int main(int argc, char *argv[])
       else
 {
         // ...try to find a better spot in parameter space
-        arglist[0] = 7000;
+        arglist[0] = 10000;
         arglist[1] = 0.01;
         gMinuit->ExecuteCommand ( "SIMPLEX", arglist, 2 );
 
@@ -281,7 +276,7 @@ int main(int argc, char *argv[])
           << "**********************************************" << endl
           << "MIGRAD did not manage to converge: we give up!" << endl
           << "**********************************************" << endl;
-          exit ( 1 );
+          // exit ( 1 );
 }
 }
 } // end inner loop
@@ -394,7 +389,8 @@ int main(int argc, char *argv[])
     params[i]=gMinuit->GetParameter(i);
   }
   //double paramin[3]={params[0],nFreePars>1?params[1]:8.,-0.5};
-  cout << "bla" << endl;
+
+  //Summary of my fit
   int n=nFreePars;
   double f;
   Fcn(n, &f, f, params, n);
@@ -407,6 +403,7 @@ int main(int argc, char *argv[])
   double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
   Fcn(n, &f, f, adam, n);
 
+  //checking Adam's fit
   cout << "Adam values" << endl << "chi2 per dof, chi2, dof, #freeparams" << endl;
   cout << f/(dof-nFreePars) << " " << f << " " << dof << " " << nFreePars << endl;
   
@@ -414,27 +411,189 @@ int main(int argc, char *argv[])
 //   cout << "\nCleaning up..." << endl;
 //   DeuteronCross::maint_deepsarray(deepsdata);
 
-  plotfit(params);
-  int n_x=1000;
+  plotfit(params, fn_prefix);
+  
+  return 0;
+}
+
+
+// generates output to plot
+void plotfit(double *par, string fileprefix){
+  double xvalues[]={0.75,0.85,0.95,1.05,1.15,1.25};
+  double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
+  
+  for(int x_it=0;x_it<6;x_it++){
+    ofstream myfile;
+    string filename = fileprefix+"x"+to_string(xvalues[x_it]);
+    myfile.open(filename.c_str());
+    for(unsigned i=0; i < xi_data.size(); i++){
+      if(abs(x_data[i]-xvalues[x_it])<.01){
+        double nu=Q2_data[i]/(2.*11.17793/12*xvalues[x_it]);
+        double xi=2.*xvalues[x_it]/(1+sqrt(1.+Q2_data[i]/nu/nu));
+        // cout << "data " << xvalues[x_it] << " " << xi_data[i] << " " << xi << " " << Q2_data[i] << endl;
+        myfile << x_data[i] << " " << Q2_data[i] << " " << F2_data[i] << " " << F2_err[i] << " " << F2_evo(xi,Q2_data[i],2.,par)
+              << " " << F2_evo(xi,Q2_data[i],sqrt(18.),adam) << " " << 
+              F2_evo(xi_data[i],Q2_data[i],2.,par)
+              << " " << F2_evo(xi_data[i],Q2_data[i],sqrt(18.),adam) << endl;
+      }
+    }
+    for(int i=1;i<=20;i++){
+      double Q2=10.*30./20.*i;
+      double nu=Q2/(2.*11.17793/12*xvalues[x_it]);
+      double xi=2.*xvalues[x_it]/(1+sqrt(1.+Q2/nu/nu));
+      // cout << "extra " << xvalues[x_it] << " " << xi << " " << Q2 << endl;
+      myfile << xvalues[x_it] << " " << Q2 << " " << "nan" << " " << "nan" << " " << F2_evo(xi,Q2,2.,par)
+            << " " << F2_evo(xi,Q2,sqrt(18.),adam) << " nan nan" << endl;
+
+    }
+    myfile.close();
+  }
+
+
+
+}
+
+//selects the data to fit to, only C12 and x>0.5
+void Process_Data(bool sys, bool SLAC, bool hixcut){
+  xi_data.clear(); F2_data.clear(); F2_err.clear(); Q2_data.clear(); x_data.clear();
+  
+  for(int i=0;i<fomin_data::datapoints;i++){
+    if(fomin_data::A[i]==12){
+      double nu = (fomin_data::Ein[i]-fomin_data::Eout[i])*1.E03;
+      double Q2 = 4.*fomin_data::Ein[i]*fomin_data::Eout[i]*1.E06*pow(sin(fomin_data::theta[i]*DEGRTORAD*0.5),2.);
+      double x= Q2/(2.*11177.93/12*nu);
+      double nachtmann = 2.*x/(1.+sqrt(1+Q2/nu/nu));
+      //cout << nu << " " << Q2*1.E-06 << " " << x  << " " << nachtmann << endl;
+      if(nachtmann>0.5 && ((!hixcut)||x<1.7)){
+        xi_data.push_back(nachtmann);
+        Q2_data.push_back(Q2*1.E-06);
+        F2_data.push_back(fomin_data::F2[i]*1.E06);
+        F2_err.push_back(fomin_data::F2_stat[i]*1.E06);
+        if(sys) F2_sys.push_back(fomin_data::F2_sys[i]*1.E06);  //change to zero if you do not want sys errors in the fit
+        else F2_sys.push_back(0.);  //change to zero if you do not want sys errors in the fit
+        x_data.push_back(x);
+      }
+    }
+
+  }
+
+  if(SLAC){
+    for(int i=0;i<SLAC_data::datapoints;i++){
+      double nu = SLAC_data::Q2[i]/(2.*11.17793/12*SLAC_data::x[i]);
+      double nachtmann = 2.*SLAC_data::x[i]/(1.+sqrt(1+SLAC_data::Q2[i]/nu/nu));
+      if(nachtmann>0.5 && ((!hixcut)||SLAC_data::x[i]<1.7)){
+        xi_data.push_back(nachtmann);
+        Q2_data.push_back(SLAC_data::Q2[i]);
+        F2_data.push_back(SLAC_data::F2[i]*1.E06);
+        F2_err.push_back(SLAC_data::F2_stat[i]*1.E06);
+        F2_sys.push_back(0.);  //change to zero if you do not want sys errors in the fit
+        x_data.push_back(SLAC_data::x[i]);
+      }
+    }
+  }
+
+
+}
+
+
+//fit function
+void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
+{
+
+  f=0.;
+  dof=0;
+  //cout << npar << endl;
+  //DeuteronCross DeepsCross("paris",proton,"SLAC",par[0],par[1],epsilon,betaoff,lambdain,offshellset,looplimit);
+  cout << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << " " << par[5] << " " << endl;
+
+  int n_x=512;
+  double **F2_grid= new double *[9];
+  for(int i=0;i<9;i++) F2_grid[i]=new double[512];
+
+  double x_evo[512];
+  fill_F2evo_grid(F2_grid,x_evo,par);
+  
+  for(unsigned i=0; i < xi_data.size(); i++){
+    // f+=pow((F2_data[i]-exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*
+    //   (1.+par[3]*pow(xi_data[i],par[4])*(1.+xi_data[i]*par[5])/Q2_data[i]))/sqrt(pow(F2_err[i],2.)+pow(F2_sys[i],2.)),2.);
+    
+    // f+=pow((F2_data[i]-F2_evo(xi_data[i],Q2_data[i],2.,par))/sqrt(pow(F2_err[i],2.)+pow(F2_sys[i],2.)),2.);
+    f+=pow((F2_data[i]-F2_interp(F2_grid,x_evo,xi_data[i],Q2_data[i])*
+            (1.+par[3]*pow(xi_data[i],par[4])*(1.+xi_data[i]*par[5])/Q2_data[i]))/sqrt(pow(F2_err[i],2.)+pow(F2_sys[i],2.)),2.);
+    dof++;
+  }
+  for(int i=0;i<9;i++) delete [] F2_grid[i];
+  delete [] F2_grid;
+
+  cout << "intermediate chi2 " << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
+}
+
+//computes F2(x,Q2f) starting from fit at LT Q2i with params
+double F2_evo(double x, double Q2f, double Q2i, double params[]){
+  int n_x=512;
   double x_evo[n_x];
   double pdf[n_x];
-  double pdf_ini[n_x];
-  double Q2i=2.;
-  double Q2f=9.;
+  //double pdf_ini[n_x];
   double xi=0.;
   double A=12;
-
   for(int i=0;i<n_x;i++){
-    x_evo[i]=0.5+i*(12.-0.5)/1000.;
-    pdf[i]=pdf_ini[i]=exp(adam[0]+adam[1]*x_evo[i]+adam[2]*pow(x_evo[i],2.))*
-              (1.+adam[3]*pow(x_evo[i],adam[4])*(1.+x_evo[i]*adam[5])/Q2i);
+    x_evo[i]=0.5*pow(12./0.5,double(i)/(n_x-1.));
+    pdf[i]=exp(params[0]+params[1]*x_evo[i]+params[2]*pow(x_evo[i],2.))/x_evo[i]; //pdf \propto F2/x, only LT part!!    
   }
-  cout << "blaa " << x_evo[0] << " " << pdf[0] << endl;
-  for(int i=0;i<10;i++) cout << x_evo[i] << " " << pdf_ini[i] << " " << pdf[i] << endl;
+  // for(int i=0;i<100;i++) cout << x_evo[i] << " " << pdf[i] << endl;
   evolve_ns_adam(&n_x, x_evo, pdf, &Q2i, &Q2f, &xi, &A);
-  cout << "after " << endl;
+  // cout << "after " << endl;
 
-  for(int i=0;i<10;i++) cout << x_evo[i] << " " << pdf_ini[i] << " " << pdf[i] << endl;
+  // for(int i=0;i<100;i++) cout << x_evo[i] << " " << pdf[i] << endl;
+  int index=log(2.*x)/log(24.)*(n_x-1.);
+  // cout << x << " " << x_evo[index] << " " << x_evo[index+1] << " " << pdf[index]*x_evo[index] << " " << pdf[index+1]*x_evo[index+1] << endl;
+  double result = ((x-x_evo[index])*pdf[index+1]+(x_evo[index+1]-x)*pdf[index])/(x_evo[index+1]-x_evo[index])*x
+          *(1.+params[3]*pow(x,params[4])*(1.+x*params[5])/Q2f);  //multiply by x + HT part to get F2!
 
-  return 0;
+  if(isnan(result)) result=0.;
+  if(isinf(result)) result=0.;
+  return result;
+}
+
+
+double F2_interp(double **F2_grid, double x_evo[], double x, double Q2){
+  int n_x=512;
+  int x_index=log(2.*x)/log(24.)*(n_x-1.);
+  int Q_index=Q2-2;
+  if(x_index==(n_x-1)) x_index--;
+  if(Q_index==8) Q_index--;
+  // cout << "index " << Q_index << " " << Q2 << " " << x_index << " " << x_evo[x_index] << " " << x_evo[x_index+1] << " " << x << endl;
+
+  //2d interpolation
+  return ((Q2-Q_index-2.)*((x-x_evo[x_index])*F2_grid[Q_index+1][x_index+1]+(x_evo[x_index+1]-x)*F2_grid[Q_index+1][x_index])+
+          (Q_index+3.-Q2)*((x-x_evo[x_index])*F2_grid[Q_index][x_index+1]+(x_evo[x_index+1]-x)*F2_grid[Q_index][x_index]))/(x_evo[x_index+1]-x_evo[x_index]);
+
+}
+
+void fill_F2evo_grid(double **F2_grid, double x_evo[], double params[]){
+  int n_x=512;
+  double xi=0.;
+  double A=12;
+  for(int i=0;i<n_x;i++){
+    x_evo[i]=0.5*pow(12./0.5,double(i)/(n_x-1.));
+    F2_grid[0][i]=exp(params[0]+params[1]*x_evo[i]+params[2]*pow(x_evo[i],2.))/x_evo[i]; //pdf \propto F2/x, only LT part!!    
+  }
+  //here the F2_grid contains pdf values, and we do evolution per 1 GeV^2
+  for(int i=1;i<9;i++){
+    for(int j=0;j<n_x;j++) F2_grid[i][j]=F2_grid[i-1][j];
+    double Q2i=2.+(i-1);
+    double Q2f=Q2i+1.;
+    evolve_ns_adam(&n_x, x_evo, F2_grid[i], &Q2i, &Q2f, &xi, &A);
+  }
+  //normalize so we have F2 again
+  for(int i=0;i<9;i++){
+    for(int j=0;j<n_x;j++) {
+      F2_grid[i][j]*=x_evo[j];
+      if(isnan(F2_grid[i][j])) F2_grid[i][j]=0.;
+      if(isinf(F2_grid[i][j])) F2_grid[i][j]=0.;
+      // cout << i+2 << " " << x_evo[j] << " " << F2_grid[i][j] << endl;
+    }
+  }
+
+  return;
 }
