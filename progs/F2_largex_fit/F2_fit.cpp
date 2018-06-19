@@ -36,6 +36,7 @@ vector<double> F2_err;
 vector<double> F2_sys;
 vector<double> Q2_data;
 int dof=0;
+bool SLAC;
 
 //from fortran evolution code!
 extern "C"{
@@ -77,13 +78,13 @@ double F2_interp(double **F2_grid, double x_evo[], double x, double Q2);
  * @param x_evo values of x we use, momentum fraction or Nachtmann variable
  * @param params fit function parameters
  */
-void fill_F2evo_grid(double **F2_grid, double x_evo[], double params[]);
+void fill_F2evo_grid(double **F2_grid, double x_evo[], double params[], bool SLAC);
 
 int main(int argc, char *argv[])
 {
   
   bool sys=0;
-  bool SLAC=0;
+  SLAC=0;
   bool HT=1;
   bool hixcut=0;
   
@@ -130,8 +131,8 @@ int main(int argc, char *argv[])
 
   int testing = 0;
   int fNDim = 6; // number of dimensions
-  double fLo[] = {-100.,-100.,-100.,-100.,-100.,-200.}; // lower limits of params
-  double fHi[] = {100.,100.,100.,100.,100.,200.}; // upper limits of params
+  double fLo[] = {-100.,-100.,-100.,-10.,-5.,-10.}; // lower limits of params
+  double fHi[] = {100.,100.,100.,10.,5.,10.}; // upper limits of params
   char* fName[] = {"LT_norm","LT_xi","LT_xi2", "HT_xiff", "HT_xipow", "HT_linxi"};
   
   int fBound[] = {1,1,1,1,1,1};
@@ -400,12 +401,12 @@ int main(int argc, char *argv[])
   cout << endl << endl << "chi2 per dof, chi2, dof, #freeparams" << endl;
   cout << f/(dof-nFreePars) << " " << f << " " << dof << " " << nFreePars << endl;
 
-  double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
-  Fcn(n, &f, f, adam, n);
+  // double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
+  // Fcn(n, &f, f, adam, n);
 
-  //checking Adam's fit
-  cout << "Adam values" << endl << "chi2 per dof, chi2, dof, #freeparams" << endl;
-  cout << f/(dof-nFreePars) << " " << f << " " << dof << " " << nFreePars << endl;
+  // //checking Adam's fit
+  // cout << "Adam values" << endl << "chi2 per dof, chi2, dof, #freeparams" << endl;
+  // cout << f/(dof-nFreePars) << " " << f << " " << dof << " " << nFreePars << endl;
   
   delete gMinuit;
 //   cout << "\nCleaning up..." << endl;
@@ -419,10 +420,10 @@ int main(int argc, char *argv[])
 
 // generates output to plot
 void plotfit(double *par, string fileprefix){
-  double xvalues[]={0.75,0.85,0.95,1.05,1.15,1.25};
-  double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
+  double xvalues[8]={0.55,0.65,0.75,0.85,0.95,1.05,1.15,1.25};
+  // double adam[]={0.52577737,  3.12260242, -8.5547532, 7.89292279,  2.22163175, -0.76036478};
   
-  for(int x_it=0;x_it<6;x_it++){
+  for(int x_it=0;x_it<8;x_it++){
     ofstream myfile;
     string filename = fileprefix+"x"+to_string(xvalues[x_it]);
     myfile.open(filename.c_str());
@@ -431,10 +432,7 @@ void plotfit(double *par, string fileprefix){
         double nu=Q2_data[i]/(2.*11.17793/12*xvalues[x_it]);
         double xi=2.*xvalues[x_it]/(1+sqrt(1.+Q2_data[i]/nu/nu));
         // cout << "data " << xvalues[x_it] << " " << xi_data[i] << " " << xi << " " << Q2_data[i] << endl;
-        myfile << x_data[i] << " " << Q2_data[i] << " " << F2_data[i] << " " << F2_err[i] << " " << F2_evo(xi,Q2_data[i],2.,par)
-              << " " << F2_evo(xi,Q2_data[i],sqrt(18.),adam) << " " << 
-              F2_evo(xi_data[i],Q2_data[i],2.,par)
-              << " " << F2_evo(xi_data[i],Q2_data[i],sqrt(18.),adam) << endl;
+        myfile << x_data[i] << " " << Q2_data[i] << " " << F2_data[i] << " " << F2_err[i] << " " << F2_evo(xi,Q2_data[i],2.,par) << endl;
       }
     }
     for(int i=1;i<=20;i++){
@@ -442,8 +440,7 @@ void plotfit(double *par, string fileprefix){
       double nu=Q2/(2.*11.17793/12*xvalues[x_it]);
       double xi=2.*xvalues[x_it]/(1+sqrt(1.+Q2/nu/nu));
       // cout << "extra " << xvalues[x_it] << " " << xi << " " << Q2 << endl;
-      myfile << xvalues[x_it] << " " << Q2 << " " << "nan" << " " << "nan" << " " << F2_evo(xi,Q2,2.,par)
-            << " " << F2_evo(xi,Q2,sqrt(18.),adam) << " nan nan" << endl;
+      myfile << xvalues[x_it] << " " << Q2 << " nan nan " << F2_evo(xi,Q2,2.,par) << endl;
 
     }
     myfile.close();
@@ -481,7 +478,7 @@ void Process_Data(bool sys, bool SLAC, bool hixcut){
     for(int i=0;i<SLAC_data::datapoints;i++){
       double nu = SLAC_data::Q2[i]/(2.*11.17793/12*SLAC_data::x[i]);
       double nachtmann = 2.*SLAC_data::x[i]/(1.+sqrt(1+SLAC_data::Q2[i]/nu/nu));
-      if(nachtmann>0.5 && ((!hixcut)||SLAC_data::x[i]<1.7)){
+      if(nachtmann>0.5 && SLAC_data::Q2[i]>2. && ((!hixcut)||SLAC_data::x[i]<1.7)){
         xi_data.push_back(nachtmann);
         Q2_data.push_back(SLAC_data::Q2[i]);
         F2_data.push_back(SLAC_data::F2[i]*1.E06);
@@ -504,14 +501,15 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
   dof=0;
   //cout << npar << endl;
   //DeuteronCross DeepsCross("paris",proton,"SLAC",par[0],par[1],epsilon,betaoff,lambdain,offshellset,looplimit);
-  cout << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << " " << par[5] << " " << endl;
+  // cout << par[0] << " " << par[1] << " " << par[2] << " " << par[3] << " " << par[4] << " " << par[5] << " " << endl;
 
   int n_x=512;
-  double **F2_grid= new double *[9];
-  for(int i=0;i<9;i++) F2_grid[i]=new double[512];
+  int nQ=SLAC?26:9;
+  double **F2_grid= new double *[nQ];
+  for(int i=0;i<nQ;i++) F2_grid[i]=new double[512];
 
   double x_evo[512];
-  fill_F2evo_grid(F2_grid,x_evo,par);
+  fill_F2evo_grid(F2_grid,x_evo,par,SLAC);
   
   for(unsigned i=0; i < xi_data.size(); i++){
     // f+=pow((F2_data[i]-exp(par[0]+par[1]*xi_data[i]+par[2]*pow(xi_data[i],2.))*
@@ -522,10 +520,10 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
             (1.+par[3]*pow(xi_data[i],par[4])*(1.+xi_data[i]*par[5])/Q2_data[i]))/sqrt(pow(F2_err[i],2.)+pow(F2_sys[i],2.)),2.);
     dof++;
   }
-  for(int i=0;i<9;i++) delete [] F2_grid[i];
+  for(int i=0;i<nQ;i++) delete [] F2_grid[i];
   delete [] F2_grid;
 
-  cout << "intermediate chi2 " << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
+  // cout << "intermediate chi2 " << f/(dof-npar) << " " << dof << " " << npar << " " << f << endl;
 }
 
 //computes F2(x,Q2f) starting from fit at LT Q2i with params
@@ -570,7 +568,7 @@ double F2_interp(double **F2_grid, double x_evo[], double x, double Q2){
 
 }
 
-void fill_F2evo_grid(double **F2_grid, double x_evo[], double params[]){
+void fill_F2evo_grid(double **F2_grid, double x_evo[], double params[], bool SLAC){
   int n_x=512;
   double xi=0.;
   double A=12;
@@ -579,18 +577,20 @@ void fill_F2evo_grid(double **F2_grid, double x_evo[], double params[]){
     F2_grid[0][i]=exp(params[0]+params[1]*x_evo[i]+params[2]*pow(x_evo[i],2.))/x_evo[i]; //pdf \propto F2/x, only LT part!!    
   }
   //here the F2_grid contains pdf values, and we do evolution per 1 GeV^2
-  for(int i=1;i<9;i++){
+  int nQ=9;
+  if(SLAC) nQ=26;
+  for(int i=1;i<nQ;i++){
     for(int j=0;j<n_x;j++) F2_grid[i][j]=F2_grid[i-1][j];
     double Q2i=2.+(i-1);
     double Q2f=Q2i+1.;
     evolve_ns_adam(&n_x, x_evo, F2_grid[i], &Q2i, &Q2f, &xi, &A);
   }
   //normalize so we have F2 again
-  for(int i=0;i<9;i++){
+  for(int i=0;i<nQ;i++){
     for(int j=0;j<n_x;j++) {
       F2_grid[i][j]*=x_evo[j];
       if(isnan(F2_grid[i][j])) F2_grid[i][j]=0.;
-      if(isinf(F2_grid[i][j])) F2_grid[i][j]=0.;
+      if(F2_grid[i][j]>1.E10) F2_grid[i][j]=0.;
       // cout << i+2 << " " << x_evo[j] << " " << F2_grid[i][j] << endl;
     }
   }
