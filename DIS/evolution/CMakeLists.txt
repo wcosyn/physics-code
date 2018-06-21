@@ -12,6 +12,7 @@ utils.f90
 vector_nonsinglet.f90
 vector_singlet.f90
 wrappers.f90
+evolution_speedy.f90
 )
 
 

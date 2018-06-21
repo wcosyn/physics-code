@@ -3,6 +3,7 @@ include "kinds.f90"
 
 module evowrappers
   use evolvers
+  use evolution_speedy  
   use kinds
   USE ISO_C_BINDING
   implicit none
@@ -41,7 +42,9 @@ module evowrappers
         real(dp), dimension(nx), intent(inout) :: HNS
         real(dp), intent(in) :: Q2i, Q2f, xi
         real(dp), intent(in) :: A
-        call evolve_ns(nx, xx, HNS, Q2i, Q2f, xi, oA=A)
+        !choose between speedy optimized version for F2 at large x, or the more general one...
+        call evolve_ns_speedy(nx, xx, HNS, Q2i, Q2f, oA=A)
+        !call evolve_ns(nx, xx, HNS, Q2i, Q2f, oA=A)
     end subroutine evolve_ns_wrap
 
 
