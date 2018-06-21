@@ -83,7 +83,7 @@ double F2_interp(double **F2_grid, double x_evo[], double x, double Q2, bool SLA
  */
 void fill_F2evo_grid(double **F2_grid, double x_evo[], double params[], bool SLAC);
 
-void bootstrap_evo(double *par, string fileprefix);
+void bootstrap_evo(double *par, string fileprefix, double reduced_chi2);
 
 int main(int argc, char *argv[])
 {
@@ -404,7 +404,7 @@ int main(int argc, char *argv[])
 
   
     delete gMinuit;
-    bootstrap_evo(params,fn_prefix);
+    bootstrap_evo(params,fn_prefix, f/(dof-nFreePars));
   }
   
   return 0;
@@ -412,11 +412,11 @@ int main(int argc, char *argv[])
 
 
 // output bootstrap evoluted values for error estimates
-void bootstrap_evo(double *par, string fileprefix){
+void bootstrap_evo(double *par, string fileprefix, double reduced_chi2){
   double xvalues[8]={0.55,0.65,0.75,0.85,0.95,1.05,1.15,1.25};
   ofstream paramfile;
   paramfile.open(fileprefix+"param",std::ofstream::out | std::ofstream::app);
-  paramfile << par[0] << " " << par[1] << " " << par[2] << endl;
+  paramfile << par[0] << " " << par[1] << " " << par[2] << " " << reduced_chi2 << endl;
   for(int x_it=0;x_it<8;x_it++){
     ofstream myfile;
     string filename = fileprefix+"x"+to_string(xvalues[x_it]);
