@@ -28,3 +28,4 @@ share/statefile/
 #ignore object files and libs
 *.o
 *.so
+*.mod
