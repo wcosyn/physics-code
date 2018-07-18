@@ -34,7 +34,7 @@ SET(Knockout_LIBRARY_PROPERTIES ${Knockout_LIBRARY_PROPERTIES}
 ############### build the library #####################
 add_library(Knockout SHARED ${Knockout_SRCS})
 target_include_directories(Knockout PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(Knockout MePhys Integrator Glauber)
+target_link_libraries(Knockout MePhys Integrator Glauber ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES})
 set_target_properties(Knockout PROPERTIES ${Knockout_LIBRARY_PROPERTIES})
 ############### install the library ###################
 install(TARGETS Knockout DESTINATION "${CMAKE_SOURCE_DIR}/lib")
@@ -43,7 +43,7 @@ install(TARGETS Knockout DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 ############### build the library #####################
 if(STATIC_BUILD)
   add_library(KnockoutST STATIC ${Knockout_SRCS})
-  target_include_directories(KnockoutST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+  target_include_directories(KnockoutST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
   target_link_libraries(KnockoutST MePhys Integrator Glauber -Wl,-no-whole-archive)
   set_target_properties(KnockoutST PROPERTIES OUTPUT_NAME Knockout)
   install(TARGETS KnockoutST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
