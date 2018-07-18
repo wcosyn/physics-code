@@ -586,7 +586,7 @@ void fill_F2evo_grid(double **F2_grid, double x_evo[], double params[], bool SLA
   for(int i=0;i<nQ;i++){
     for(int j=0;j<n_x;j++) {
       F2_grid[i][j]*=x_evo[j];
-      if(isnan(F2_grid[i][j])) F2_grid[i][j]=0.;
+      if(std::isnan(F2_grid[i][j])) F2_grid[i][j]=0.;
       if(F2_grid[i][j]>1.E10) F2_grid[i][j]=0.;
       // cout << i+2 << " " << x_evo[j] << " " << F2_grid[i][j] << endl;
     }
