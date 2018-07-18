@@ -538,8 +538,8 @@ double F2_evo(double x, double Q2f, double Q2i, double params[]){
   double result = ((x-x_evo[index])*pdf[index+1]+(x_evo[index+1]-x)*pdf[index])/(x_evo[index+1]-x_evo[index])*x
           *(1.+params[3]*pow(x,params[4])*(1.+x*params[5])/Q2f);  //multiply by x + HT part to get F2!
 
-  if(isnan(result)) result=0.;
-  if(isinf(result)) result=0.;
+  if(std::isnan(result)) result=0.;
+  if(std::isinf(result)) result=0.;
   return result;
 }
 
