@@ -1,5 +1,5 @@
 ! f2py can't figure out how to use kind=dp unless this is included.
-include "kinds.f90"
+!include "kinds.f90"
 
 module evowrappers
   use evolvers
