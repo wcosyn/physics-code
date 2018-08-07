@@ -46,6 +46,7 @@ int main(int argc, char *argv[]){
     for(int i=0;i<=1000;i++){
         wf.AddUp(i,wfref->GetUp(i));
         wf.AddWp(i,wfref->GetWp(i));
+        // cout << i << " " << wf.GetWp(i) << endl;
         wf.AddUr(i*r_grid,wfref->GetUr(i*r_grid));
         wf.AddWr(i*r_grid,wfref->GetWr(i*r_grid));
         
@@ -54,11 +55,31 @@ int main(int argc, char *argv[]){
     for(int dspin=-2;dspin<=2;dspin+=2){
         for(int pspin=-1;pspin<=1;pspin+=2){
             for(int nspin=-1;nspin<=1;nspin+=2){
-                cout << dspin << " " << pspin << " " << nspin << " " << wf1.deuteronwf(dspin,1,pspin,nspin,100.,1.,2.) 
+                cout << dspin << " " << pspin << " " << nspin << " " << wf4.deuteronwf(dspin,1,pspin,nspin,100.,1.,2.) 
                     << " " << wf.DeuteronPState(dspin,nspin,pspin,TVector3(100.*sin(1)*cos(2),100.*sin(1)*sin(2),100.*cos(1))) << endl;
             }
         }
     }
+
+    cout << "single test" << endl;
+    cout << wf.DeuteronPState(0,1,1,TVector3(100.*sin(1)*cos(2),100.*sin(1)*sin(2),100.*cos(1))) << " " << -wf.GetWp(100.)*3./2.*cos(1.)*sin(1.)*exp(-I_UNIT*2.)/sqrt(4.*PI) << endl << endl;
+
+    double tpol=0.;
+    double tpol2=0.;
+    for(int dspin=-2;dspin<=2;dspin+=2){
+        for(int pspin=-1;pspin<=1;pspin+=2){
+            for(int nspin=-1;nspin<=1;nspin+=2){
+                tpol+= (dspin==0?-2.:1.)*norm(wf4.deuteronwf(dspin,1,pspin,nspin,100.,1.,2.)); 
+                tpol2+= (dspin==0?-2.:1.)*norm(wf.DeuteronPState(dspin,nspin,pspin,TVector3(100.*sin(1)*cos(2),100.*sin(1)*sin(2),100.*cos(1))));
+            }
+        }
+    }
+
+    cout << endl << endl << "tensor density" << endl;
+    cout << tpol/3. << " " << -(-wf4.U(100.)*wf4.W(100.)/sqrt(2.)+wf4.W(100.)*wf4.W(100.)/4.)*(3.*cos(2.)+1.) <<  endl;
+    cout << tpol2/3. << " " << -(wf.GetUp(100.)*wf.GetWp(100.)/sqrt(2.)+wf.GetWp(100.)*wf.GetWp(100.)/4.)*(3.*cos(2.)+1.)/4./PI <<  endl;
+    cout << wf4.U(100.) << " " << wf4.W(100.) << endl;
+    cout << wf.GetUp(100.)/sqrt(4.*PI) << " " << wf.GetWp(100.)/sqrt(4.*PI) << endl;
 
     //CG-test!
     cout << "Testing Clebsch Gordan" << endl;
@@ -68,6 +89,7 @@ int main(int argc, char *argv[]){
     for(int i=0;i<=100;i++){
         rnorm+=pow(wf.GetUr(i*r_grid*10),2.)+pow(wf.GetWr(i*r_grid*10),2.);
         pnorm+=i*i*10*10*(pow(wf.GetUp(i*10),2.)+pow(wf.GetWp(i*10),2.));
+        //Machleidt nucl-th/0006014 Eq D16
         quad+=pow(i*r_grid*10,2.)*(sqrt(8.)*wf.GetUr(i*r_grid*10)*wf.GetWr(i*r_grid*10)-pow(wf.GetWr(i*r_grid*10),2.));
         
     } 
