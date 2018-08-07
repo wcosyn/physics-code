@@ -414,7 +414,7 @@ void adap_intPm(numint::vector_d & results, double omega, double E_in, double co
   //	  			cout << "Result " << result << endl;
 
         //Jacobian to go to dQ2p, pm/E_a-1 is from going from dEleptonout (or domega) to dpm
-        double jcb=2*(MASSn-34.)*EAmin1/pm;
+        double jcb=2*(MASSn-34.)/**EAmin1/pm*/;
         result/=jcb;      
 
         results[(shell<nucleus.getPLevels()?1:0)]+= result; //results[0] neutrino, results[1] antineutrino
