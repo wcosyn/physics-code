@@ -5,6 +5,7 @@ lib/
 Tools/constants.hpp
 manual/*.pdf
 share/statefile/
+share/grids/
 
 # get rid of mac folder info files
 #

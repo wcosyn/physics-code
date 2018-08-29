@@ -65,7 +65,7 @@ double Cross::getElCross(TKinematics2to2 &kin, int current, double phi, int maxE
 
 
 double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
-			   double phi, int maxEval, bool lab){
+			   double phi, int maxEval, bool lab, bool phiavg){
   
   //electron kinematics
   double Q2=kin.GetQsquared();
@@ -115,7 +115,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
   //combine everything
 //   for(int i=0;i<6;i++) cout << response[0][i] << " ";
 //   cout << pnucl->getKappas()[shellindex] << endl;
-  result=kinfactors[0]*response[0][0]+kinfactors[1]*response[0][1]+kinfactors[2]*response[0][2]*cos(2.*phi)+kinfactors[3]*response[0][3]*cos(phi);
+  result=kinfactors[0]*response[0][0]+kinfactors[1]*response[0][1]+(phiavg?0:kinfactors[2]*response[0][2]*cos(2.*phi)+kinfactors[3]*response[0][3]*cos(phi));
   delete reacmodel;
 //   cout << mott << " " << frontfactor << " " << result << endl;
   return mott*frontfactor*result/HBARC; 
@@ -123,7 +123,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
 }
 
 void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
-			     int shellindex, int thick, double phi, int maxEval, bool lab){
+			     int shellindex, int thick, double phi, int maxEval, bool lab, bool phiavg){
   
   cross=vector<double>(5,0.);
   //electron kinematics
@@ -172,7 +172,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   }
   //combine everything, factor 2 because of symmetry!
   for(int j=0;j<total;j++) cross[j]=2.*(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
-		    +kinfactors[2]*response[j][2]*cos(2.*phi)+kinfactors[3]*response[j][3]*cos(phi))*mott*frontfactor/HBARC;
+		    +(phiavg?0:kinfactors[2]*response[j][2]*cos(2.*phi)+kinfactors[3]*response[j][3]*cos(phi)))*mott*frontfactor/HBARC;
   delete reacmodel;
   
 }

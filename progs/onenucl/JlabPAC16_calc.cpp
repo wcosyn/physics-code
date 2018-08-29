@@ -55,8 +55,8 @@ int main(int argc, char *argv[])
       TKinematics2to2 kin("","",obs[i].getPnucl()->getMassA(),obs[i].getPnucl()->getMassA_min_proton()+(obs[i].getPnucl()->getExcitation())[plevel]
                           ,MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
 //       cout << kin.GetPYlab() << " " << acos(kin.GetCosthYlab()) << endl;
-      cross+=obs[i].getDiffCross(kin,2,thick,0,0,0,plevel,phi,maxEval,1);
-      pw+=obs[i].getDiffCross(kin,2,thick,0,0,1,plevel,phi,maxEval,1);
+      cross+=obs[i].getDiffCross(kin,2,thick,0,0,0,plevel,phi,maxEval,1,0);
+      pw+=obs[i].getDiffCross(kin,2,thick,0,0,1,plevel,phi,maxEval,1,0);
     }
     cout << cross << " " << pw << " " << cross/pw << endl;
   }

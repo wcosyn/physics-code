@@ -1,4 +1,5 @@
 //program used to do some transparency calculations for Or et al. for a proposal.
+//last used to compute Hall B p and n transparencies, phiaveraging in cross section is on!!!
 
 #include <iostream>
 #include <cstdlib>
@@ -26,16 +27,29 @@ void adap_intPm(numint::vector_d &, double costhetacm,Cross* pObs, MeanFieldNucl
 int main(int argc, char *argv[])
 {
   
-  string homedir=HOMEDIR;
+  // string homedir=HOMEDIR;
+  // double Q2=atof(argv[2])*1.E06;
+  // double Ein=atof(argv[3]);
+  // double thetae=atof(argv[4])*DEGRTORAD;
+  // double omega=Ein-Q2/(4.*Ein*pow(sin(thetae/2.),2.));
+  // int thick=atoi(argv[5]);
+  // int current=atoi(argv[6]);
+  // double prec=atof(argv[7]);
+  // bool userset=atoi(argv[8]);
+  // double screening=atof(argv[9]);
+  // //cout << Ein-omega << endl;
+   string homedir=HOMEDIR;
   double Q2=atof(argv[2])*1.E06;
-  double Ein=atof(argv[3]);
-  double thetae=atof(argv[4])*DEGRTORAD;
-  double omega=Ein-Q2/(4.*Ein*pow(sin(thetae/2.),2.));
-  int thick=atoi(argv[5]);
-  int current=atoi(argv[6]);
-  double prec=atof(argv[7]);
-  bool userset=atoi(argv[8]);
-  double screening=atof(argv[9]);
+  double Ein=5010;
+  //double q=atof(argv[4]);
+  double omega=Q2/(2.*MASSn);
+  double q=sqrt(Q2+omega*omega);
+  cout << Q2 << " " << omega << " " << q << " " << Q2/4./Ein/(Ein-omega) << endl;
+  int thick=1;
+  int current=2;
+  double prec=atof(argv[3]);
+  bool userset=0;//atoi(argv[8]);
+  double screening=0.;//atof(argv[9]);
   //cout << Ein-omega << endl;
   
   MeanFieldNucleusThick Nucleus(atoi(argv[1]),homedir);
@@ -87,11 +101,11 @@ int main(int argc, char *argv[])
 // 	    total[1]/total[4] << " " << total[2]/total[4] << " " << total[3]/total[4] << endl;
 //   exit(1);
 	    
-  vector<double> totalcross(5,0.); 
-  double cthmax[Nucleus.getPLevels()];
-  double cthmin[Nucleus.getPLevels()];
+  vector<double> totalcross(10,0.); 
+  double cthmax[Nucleus.getTotalLevels()];
+  double cthmin[Nucleus.getTotalLevels()];
   double max=-1.;
-  for(int shell=0;shell<Nucleus.getPLevels();shell++) {
+  for(int shell=0;shell<Nucleus.getTotalLevels();shell++) {
     cthmax[shell]=1.; cthmin[shell]=-1.;
     getBound(cthmax[shell],cthmin[shell],Nucleus,Q2,omega,shell);
 //     cout << cthmax[shell] << endl;
@@ -136,11 +150,13 @@ int main(int argc, char *argv[])
   
   F.f=adap_intPm;
   unsigned count=0;
- numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,totalcross,count,0);
-//    numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-03,2.E06,totalcross,count,0);
+ //numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,totalcross,count,0);
+   numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-02,1.E02,1.E04,totalcross,count,0);
   
-    cout << Q2/1.E06 << " " << Ein << " " << totalcross[0]/totalcross[4] << " " << 
+    cout << Q2/1.E06 << " " << omega << " " << q  << " " << totalcross[0]/totalcross[4] << " " << 
 	    totalcross[1]/totalcross[4] << " " << totalcross[2]/totalcross[4] << " " << totalcross[3]/totalcross[4] << " " << totalcross[4] << " " << count << endl;
+    cout << Q2/1.E06 << " " << omega << " " << q  << " " << totalcross[5]/totalcross[9] << " " << 
+	    totalcross[6]/totalcross[9] << " " << totalcross[7]/totalcross[9] << " " << totalcross[8]/totalcross[9] << " " << totalcross[9] << " " << count << endl;
   
   
   delete elec;
@@ -150,7 +166,7 @@ int main(int argc, char *argv[])
 void adap_intPm(numint::vector_d & results, double costhetacm,Cross* pObs, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec,
 		double Q2, double omega, int current, double *cthmax){
 		  
-results=numint::vector_d(5,0.);
+results=numint::vector_d(10,0.);
 for(int shell=0;shell<pNucleus->getPLevels();shell++) {
   if(costhetacm<cthmax[shell]){
     TKinematics2to2 kin("","",pNucleus->getMassA(),
@@ -161,18 +177,37 @@ for(int shell=0;shell<pNucleus->getPLevels();shell++) {
       for(int i=0;i<5;i++) results[i]+=0.;
       cout << "bla " << pm << endl;
     }
-//      numint::vector_d cross=numint::vector_d(5,0.);
-//     pObs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000,0);
-    double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0);
-    for(int i=0;i<5;++i) results[i]+=pw;//cross[i];
-    cout << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+     numint::vector_d cross=numint::vector_d(5,0.);
+    pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1);
+    // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
+    for(int i=0;i<5;++i) results[i]+=cross[i];
+    cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
     << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-    << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << results[0] << endl;
+    << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << results[0] << " " << results[4] << endl;
   }
   
 }
   
-
+for(int shell=pNucleus->getPLevels();shell<pNucleus->getTotalLevels();shell++) {
+  if(costhetacm<cthmax[shell]){
+    TKinematics2to2 kin("","",pNucleus->getMassA(),
+			pNucleus->getMassA_min_neutron()+pNucleus->getExcitation()[shell],
+			MASSN,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
+    double pm=kin.GetPklab();
+    if(!kin.IsPhysical()){
+      for(int i=5;i<10;i++) results[i]+=0.;
+      cout << "bla " << pm << endl;
+    }
+     numint::vector_d cross=numint::vector_d(5,0.);
+    pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1);
+    // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
+    for(int i=5;i<10;++i) results[i]+=cross[i-5];
+    cout << "1 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+    << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+    << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << results[5] << " " << results[9] << endl;
+  }
+  
+}
 }
 
 
@@ -200,7 +235,7 @@ void intPm(const double costhcm, double *results, va_list ap){
   }
   // kin.Print();
     numint::vector_d cross=numint::vector_d(5,0.);
-    p_obs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000,0);
+    p_obs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000,0,1);
     for(int i=0;i<5;++i) results[i]=cross[i];
   cout << pm << " " << kin.IsPhysical() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetCosthYlab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " " << kin.GetCosthklab() <<" " << results[0] << " " << results[1] << " " << results[4] << endl;
   return;
@@ -208,7 +243,7 @@ void intPm(const double costhcm, double *results, va_list ap){
 
 void getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, double Q2, double omega, int shell){
   TKinematics2to2 kin("","",nucleus.getMassA(),
-		      nucleus.getMassA_min_proton()+nucleus.getExcitation()[shell],
+		      (shell<nucleus.getPLevels()? nucleus.getMassA_min_proton(): nucleus.getMassA_min_neutron())+nucleus.getExcitation()[shell],
 		      MASSP,"qsquared:wlab:costhkcm",Q2,omega,(high+low)/2.);
   double pm=kin.GetPklab();
   if(pm<300.) low=(high+low)/2.;

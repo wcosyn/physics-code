@@ -67,10 +67,11 @@ public:
    * \param phi angle between electron and hadron plane
    * \param maxEval max # of evaluations in integrations
    * \param lab lab frame of cm frame for hadron part
+   * \param phiavg is phi averaged over or not.  In the first case the phi dependent response functions are dropped
    * \return differential cross section [fm^2 /MeV/sr^2]
    */
   double getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
-		      double phi, int maxEval, bool lab);
+		      double phi, int maxEval, bool lab, bool phiavg);
   /*! Computes the differential A(e,e'N) cross section for certain kinematics and a certain shell of the nucleus
    * \param cross vector with the different cross sections <BR>
    * differential cross section [fm ^2/MeV/sr^2]
@@ -87,9 +88,10 @@ public:
    * \param phi angle between electron and hadron plane
    * \param maxEval max # of evaluations in integrations
    * \param lab lab frame or cm frame for hadron part
-   */
+    * \param phiavg is phi averaged over or not.  In the first case the phi dependent response functions are dropped
+  */
   void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
-		       int shellindex, int thick, double phi, int maxEval, bool lab);
+		       int shellindex, int thick, double phi, int maxEval, bool lab, bool phiavg);
 
   /*! Computes observables for the A(e,e'N) reaction for certain kinematics and a certain shell of the nucleus.
    * polarization axes defined as: z along momentum, y perp to the hadron plane, x perp to z in the hadron plane <BR>

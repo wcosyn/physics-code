@@ -106,8 +106,9 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
 //   
 //   shell=shellindex;
 //   mm=m;
-//   J= new NucleonEMOperator(tk.GetQsquared(),1,0);
-//   FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+//    int prot = (shellindex < pnucl->getPLevels()?0:1);
+//   J= new NucleonEMOperator(tk.GetQsquared(),prot,0);
+//   FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
 //   if(getUsersigma()) proton.setScreening(getSigmascreening());
 //   if(!pw){
 //     if(SRC||thick) grid = new GlauberGridThick(60,18,5,pnucl,prec,integrator,homedir);
@@ -173,8 +174,9 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
  
   shell=shellindex;
   mm=m;
-  J= new NucleonEMOperator(tk.GetQsquared(),1,0);
-  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+  int prot = (shellindex < pnucl->getPLevels()?0:1);
+  J= new NucleonEMOperator(tk.GetQsquared(),prot,0);
+  FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   if(!pw){
     if(SRC||thick) grid = &gridthick;
@@ -267,8 +269,9 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
   //careful!! we compute in a frame with p_f along z-axis, so have to rotate the photon polarization 4-vectors!
   shell=shellindex;
   mm=m;
-  J= new NucleonEMOperator(tk.GetQsquared(),1,0);
-  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+  int prot = (shellindex < pnucl->getPLevels()?0:1);
+  J= new NucleonEMOperator(tk.GetQsquared(),prot,0);
+  FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   FourVector<std::complex<double> > polVectorPlus = FourVector< complex<double> >(0.,
 						    -1./sqrt(2.)*costheta,
@@ -354,8 +357,9 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
  
   shell=shellindex;
   mm=m;
-  J= new NucleonEMOperator(tk.GetQsquared(),1,0);
-  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
+  int prot = (shellindex < pnucl->getPLevels()?0:1);
+  J= new NucleonEMOperator(tk.GetQsquared(),prot,0);
+  FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   
   if(thick) grid = &gridthick;
