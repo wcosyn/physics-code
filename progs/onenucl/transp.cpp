@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
   // bool userset=atoi(argv[8]);
   // double screening=atof(argv[9]);
   // //cout << Ein-omega << endl;
-   string homedir=HOMEDIR;
+   string homedir=argv[4];
   double Q2=atof(argv[2])*1.E06;
   double Ein=5010;
   //double q=atof(argv[4]);
