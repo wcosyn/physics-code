@@ -100,8 +100,9 @@ int main(int argc, char *argv[])
 //     cout << Q2/1.E06 << " " << Ein << " " << total[0]/total[4] << " " << 
 // 	    total[1]/total[4] << " " << total[2]/total[4] << " " << total[3]/total[4] << endl;
 //   exit(1);
-	    
-  vector<double> totalcross(10,0.); 
+	
+  //all levels (glauber, pw) + total proton + total neutron    
+  vector<double> totalcross(2*Nucleus.getTotalLevels()+4,0.); 
   double cthmax[Nucleus.getTotalLevels()];
   double cthmin[Nucleus.getTotalLevels()];
   double max=-1.;
@@ -153,11 +154,26 @@ int main(int argc, char *argv[])
  //numint::cube_romb(mdf,lower,upper,1.E-20,1.E-03,totalcross,count,0);
    numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-02,1.E02,1.E04,totalcross,count,0);
   
-    cout << Q2/1.E06 << " " << omega << " " << q  << " " << totalcross[0]/totalcross[4] << " " << 
-	    totalcross[1]/totalcross[4] << " " << totalcross[2]/totalcross[4] << " " << totalcross[3]/totalcross[4] << " " << totalcross[4] << " " << count << endl;
-    cout << Q2/1.E06 << " " << omega << " " << q  << " " << totalcross[5]/totalcross[9] << " " << 
-	    totalcross[6]/totalcross[9] << " " << totalcross[7]/totalcross[9] << " " << totalcross[8]/totalcross[9] << " " << totalcross[9] << " " << count << endl;
-  
+  cout << Q2/1.E06 << " " << omega << " " << q  << " ";
+  for(int shell=0;shell<Nucleus.getPLevels();shell++) {
+    cout << totalcross[2*shell]/totalcross[2*shell+1] << " ";
+  }
+  cout << totalcross[2*Nucleus.getTotalLevels()] << " " << totalcross[2*Nucleus.getTotalLevels()+1] << endl;
+
+  cout << Q2/1.E06 << " " << omega << " " << q  << " ";
+  for(int shell=Nucleus.getPLevels();shell<Nucleus.getTotalLevels();shell++) {
+    cout << totalcross[2*shell]/totalcross[2*shell+1] << " ";
+  }
+  cout << totalcross[2*Nucleus.getTotalLevels()+2] << " " << totalcross[2*Nucleus.getTotalLevels()+3] << endl;
+  cout << totalcross[2*Nucleus.getTotalLevels()]/totalcross[2*Nucleus.getTotalLevels()+1] << " " << totalcross[2*Nucleus.getTotalLevels()+2]/totalcross[2*Nucleus.getTotalLevels()+3] << endl;
+  for(int shell=Nucleus.getPLevels();shell<Nucleus.getTotalLevels();shell++) {
+    cout << totalcross[2*shell] << " ";
+  }
+  cout << endl;
+  for(int shell=Nucleus.getPLevels();shell<Nucleus.getTotalLevels();shell++) {
+    cout << totalcross[2*shell+1] << " ";
+  }
+  cout << endl;
   
   delete elec;
   return 0;
@@ -166,48 +182,56 @@ int main(int argc, char *argv[])
 void adap_intPm(numint::vector_d & results, double costhetacm,Cross* pObs, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec,
 		double Q2, double omega, int current, double *cthmax){
 		  
-results=numint::vector_d(10,0.);
-for(int shell=0;shell<pNucleus->getPLevels();shell++) {
-  if(costhetacm<cthmax[shell]){
-    TKinematics2to2 kin("","",pNucleus->getMassA(),
-			pNucleus->getMassA_min_proton()+pNucleus->getExcitation()[shell],
-			MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
-    double pm=kin.GetPklab();
-    if(!kin.IsPhysical()){
-      for(int i=0;i<5;i++) results[i]+=0.;
-      cout << "bla " << pm << endl;
-    }
-     numint::vector_d cross=numint::vector_d(5,0.);
-    pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1);
-    // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
-    for(int i=0;i<5;++i) results[i]+=cross[i];
-    cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-    << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-    << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << results[0] << " " << results[4] << endl;
+  results=numint::vector_d(2*pNucleus->getTotalLevels()+4,0.);
+  for(int shell=0;shell<pNucleus->getPLevels();shell++) {
+    if(costhetacm<cthmax[shell]){
+      TKinematics2to2 kin("","",pNucleus->getMassA(),
+        pNucleus->getMassA_min_proton()+pNucleus->getExcitation()[shell],
+        MASSP,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
+      double pm=kin.GetPklab();
+      if(!kin.IsPhysical()){
+        // for(int i=0;i<5;i++) results[i]+=0.;
+        cout << "bla " << pm << endl;
+      }
+      numint::vector_d cross=numint::vector_d(5,0.);
+      pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1);
+      // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
+      results[2*shell]+=cross[0];
+      results[2*shell+1]+=cross[4];
+      results[2*pNucleus->getTotalLevels()]+=cross[0];
+      results[2*pNucleus->getTotalLevels()+1]+=cross[4];
+      // cout << 2*shell << " " << 2*shell+1 << " " << 2*pNucleus->getTotalLevels() << " " << 2*pNucleus->getTotalLevels()+1 << endl;
+      cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+      << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+      << " " << kin.GetKlab() << " " << kin.GetWlab() <<  " " << results[2*shell] << " " << results[2*shell+1] << endl;
+    }  
   }
-  
-}
-  
-for(int shell=pNucleus->getPLevels();shell<pNucleus->getTotalLevels();shell++) {
-  if(costhetacm<cthmax[shell]){
-    TKinematics2to2 kin("","",pNucleus->getMassA(),
-			pNucleus->getMassA_min_neutron()+pNucleus->getExcitation()[shell],
-			MASSN,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
-    double pm=kin.GetPklab();
-    if(!kin.IsPhysical()){
-      for(int i=5;i<10;i++) results[i]+=0.;
-      cout << "bla " << pm << endl;
+
+  for(int shell=pNucleus->getPLevels();shell<pNucleus->getTotalLevels();shell++) {
+    if(costhetacm<cthmax[shell]){
+      TKinematics2to2 kin("","",pNucleus->getMassA(),
+        pNucleus->getMassA_min_neutron()+pNucleus->getExcitation()[shell],
+        MASSN,"qsquared:wlab:costhkcm",Q2,omega,costhetacm);
+      double pm=kin.GetPklab();
+      if(!kin.IsPhysical()){
+        //for(int i=5;i<10;i++) results[i]+=0.;
+        cout << "bla " << pm << endl;
+      }
+      numint::vector_d cross=numint::vector_d(5,0.);
+      pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1);
+      // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
+      //for(int i=5;i<10;++i) results[i]+=cross[i-5];
+      results[2*shell]+=cross[0];
+      results[2*shell+1]+=cross[4];
+      results[2*pNucleus->getTotalLevels()+2]+=cross[0];
+      results[2*pNucleus->getTotalLevels()+3]+=cross[4];
+      // cout << 2*shell << " " << 2*shell+1 << " " << 2*pNucleus->getTotalLevels()+2 << " " << 2*pNucleus->getTotalLevels()+3 << endl;
+      cout << "1 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+      << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+      << " " << kin.GetKlab() << " " << kin.GetWlab() << " "  << results[2*shell] << " " << results[2*shell+1] << endl;
     }
-     numint::vector_d cross=numint::vector_d(5,0.);
-    pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1);
-    // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
-    for(int i=5;i<10;++i) results[i]+=cross[i-5];
-    cout << "1 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-    << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-    << " " << kin.GetKlab() << " " << kin.GetWlab() << " " << results[5] << " " << results[9] << endl;
+    
   }
-  
-}
 }
 
 

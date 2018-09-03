@@ -107,7 +107,7 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
 //   shell=shellindex;
 //   mm=m;
 //    int prot = (shellindex < pnucl->getPLevels()?0:1);
-//   J= new NucleonEMOperator(tk.GetQsquared(),prot,0);
+//   J= new NucleonEMOperator(tk.GetQsquared(),!prot,0);
 //   FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
 //   if(getUsersigma()) proton.setScreening(getSigmascreening());
 //   if(!pw){
@@ -175,7 +175,7 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   shell=shellindex;
   mm=m;
   int prot = (shellindex < pnucl->getPLevels()?0:1);
-  J= new NucleonEMOperator(tk.GetQsquared(),prot,0);
+  J= new NucleonEMOperator(tk.GetQsquared(),!prot,0);
   FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   if(!pw){
@@ -270,7 +270,7 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
   shell=shellindex;
   mm=m;
   int prot = (shellindex < pnucl->getPLevels()?0:1);
-  J= new NucleonEMOperator(tk.GetQsquared(),prot,0);
+  J= new NucleonEMOperator(tk.GetQsquared(),!prot,0);
   FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   FourVector<std::complex<double> > polVectorPlus = FourVector< complex<double> >(0.,
@@ -358,7 +358,7 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
   shell=shellindex;
   mm=m;
   int prot = (shellindex < pnucl->getPLevels()?0:1);
-  J= new NucleonEMOperator(tk.GetQsquared(),prot,0);
+  J= new NucleonEMOperator(tk.GetQsquared(),!prot,0);
   FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   

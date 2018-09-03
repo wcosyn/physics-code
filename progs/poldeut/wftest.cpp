@@ -37,10 +37,10 @@ int main(int argc, char *argv[]){
         sum4+=i*i*(pow(wf4.U(i),2.)+pow(wf4.W(i),2.));
     }
 
-    cout << "normalization OldDeuteron " << sum1*4.*PI << " " << sum2*4.*PI << " " << sum3*4.*PI << " " << sum4*4.*PI << endl;
+ //   cout << "normalization OldDeuteron " << sum1*4.*PI << " " << sum2*4.*PI << " " << sum3*4.*PI << " " << sum4*4.*PI << endl;
     
 
-    TDeuteron::Wavefunction *wfref = TDeuteron::Wavefunction::CreateWavefunction("Paris");
+    TDeuteron::Wavefunction *wfref = TDeuteron::Wavefunction::CreateWavefunction("CDBonn");
     TInterpolatingWavefunction wf;
     double r_grid=20.E-03;
     for(int i=0;i<=1000;i++){
@@ -52,14 +52,37 @@ int main(int argc, char *argv[]){
         
     }
 
-    for(int dspin=-2;dspin<=2;dspin+=2){
-        for(int pspin=-1;pspin<=1;pspin+=2){
-            for(int nspin=-1;nspin<=1;nspin+=2){
-                cout << dspin << " " << pspin << " " << nspin << " " << wf4.deuteronwf(dspin,1,pspin,nspin,100.,1.,2.) 
-                    << " " << wf.DeuteronPState(dspin,nspin,pspin,TVector3(100.*sin(1)*cos(2),100.*sin(1)*sin(2),100.*cos(1))) << endl;
+    // for(int dspin=-2;dspin<=2;dspin+=2){
+    //     for(int pspin=-1;pspin<=1;pspin+=2){
+    //         for(int nspin=-1;nspin<=1;nspin+=2){
+    //             cout << dspin << " " << pspin << " " << nspin << " " << wf4.deuteronwf(dspin,1,pspin,nspin,100.,1.,2.) 
+    //                 << " " << wf.DeuteronPState(dspin,nspin,pspin,TVector3(100.*sin(1)*cos(2),100.*sin(1)*sin(2),100.*cos(1))) << endl;
+    //         }
+    //     }
+    // }
+    for(int i=-1500; i<=1000;i+=2){
+        double pz=i;
+        for(int j=0;j<=1000;j+=2){
+            double pt=j;
+            double p = sqrt(pz*pz+pt*pt);
+            double Ep= sqrt(pz*pz+pt*pt+MASSn*MASSn);
+            double kt= pt;
+            double alpha = 2.*(Ep+pz)/MASSD;
+            double E = sqrt((kt*kt+MASSn*MASSn)/(alpha*(2.-alpha)));
+            double kz=E*(alpha-1);
+            double k= sqrt(kt*kt+kz*kz);
+            if (k>1000) cout << pz << " " << pt << " nan nan nan" << endl;
+            else{
+                double perp_densdenom = wf.GetUp(k)*wf.GetUp(k)+wf.GetWp(k)*wf.GetWp(k)-0.5*(1.-3.*kz*kz/k/k)*(wf.GetUp(k)*wf.GetWp(k)/sqrt(2.)+wf.GetWp(k)*wf.GetWp(k)/4.);
+                double perp_densnomboth = (wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(wf.GetUp(k)*(1.+kt*kt/(2.*MASSn*(E+MASSn)))-wf.GetWp(k)*(-1.-kz*kz/k/k+E*kt*kt/(2.*MASSn*k*k))/sqrt(2.));
+                double perp_densnomg2 = (wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(wf.GetUp(k)*(kt*kt*(E+MASSn-kz)/(MASSn*(E+MASSn)*(E-kz)))-wf.GetWp(k)*(kt*kt*(k*k-kz*(E+2.*MASSn))/(MASSn*k*k*(E-kz)))/sqrt(2.));
+                double par_densdenom= wf.GetUp(k)*wf.GetUp(k)+wf.GetWp(k)*wf.GetWp(k)+(1.-3.*kz*kz/k/k)*(wf.GetUp(k)*wf.GetWp(k)/sqrt(2.)+wf.GetWp(k)*wf.GetWp(k)/4.);
+                double par_densnom = (wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(wf.GetUp(k)*(1.-kt*kt/(E-kz)/(E+MASSn))-wf.GetWp(k)*(1.-(E+2.*MASSn)*kt*kt/k/k/(E-kz))/sqrt(2.));
+                cout << pz << " " << pt << " " << par_densnom/par_densdenom << " " << perp_densnomboth/perp_densdenom << " " << perp_densnomg2/perp_densdenom << endl;
             }
         }
     }
+    exit(1);
 
     cout << "single test" << endl;
     cout << wf.DeuteronPState(0,1,1,TVector3(100.*sin(1)*cos(2),100.*sin(1)*sin(2),100.*cos(1))) << " " << -wf.GetWp(100.)*3./2.*cos(1.)*sin(1.)*exp(-I_UNIT*2.)/sqrt(4.*PI) << endl << endl;

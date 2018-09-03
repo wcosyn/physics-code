@@ -173,6 +173,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   //combine everything, factor 2 because of symmetry!
   for(int j=0;j<total;j++) cross[j]=2.*(kinfactors[0]*response[j][0]+kinfactors[1]*response[j][1]
 		    +(phiavg?0:kinfactors[2]*response[j][2]*cos(2.*phi)+kinfactors[3]*response[j][3]*cos(phi)))*mott*frontfactor/HBARC;
+  // cout << response[0][0] << " " << response[4][0] << " " << response[0][1] << " " << response[4][1] << " " << kinfactors[0] << " " << kinfactors[1] << " " << mott << " " << frontfactor << " " << cross[0] << " " << cross[4] << endl;
   delete reacmodel;
   
 }
