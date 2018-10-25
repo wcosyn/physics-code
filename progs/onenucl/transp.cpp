@@ -155,17 +155,23 @@ int main(int argc, char *argv[])
    numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-02,1.E02,1.E04,totalcross,count,0);
   
   cout << Q2/1.E06 << " " << omega << " " << q  << " ";
+  //proton shells transparencies
   for(int shell=0;shell<Nucleus.getPLevels();shell++) {
     cout << totalcross[2*shell]/totalcross[2*shell+1] << " ";
   }
   cout << totalcross[2*Nucleus.getTotalLevels()] << " " << totalcross[2*Nucleus.getTotalLevels()+1] << endl;
 
+  //neutron shells transparencies
   cout << Q2/1.E06 << " " << omega << " " << q  << " ";
   for(int shell=Nucleus.getPLevels();shell<Nucleus.getTotalLevels();shell++) {
     cout << totalcross[2*shell]/totalcross[2*shell+1] << " ";
   }
   cout << totalcross[2*Nucleus.getTotalLevels()+2] << " " << totalcross[2*Nucleus.getTotalLevels()+3] << endl;
+
+  //total proton and neutron transparency
   cout << totalcross[2*Nucleus.getTotalLevels()]/totalcross[2*Nucleus.getTotalLevels()+1] << " " << totalcross[2*Nucleus.getTotalLevels()+2]/totalcross[2*Nucleus.getTotalLevels()+3] << endl;
+
+  //neutron nominator and denominator cross sections
   for(int shell=Nucleus.getPLevels();shell<Nucleus.getTotalLevels();shell++) {
     cout << totalcross[2*shell] << " ";
   }
