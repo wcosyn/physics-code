@@ -103,7 +103,8 @@ int main(int argc, char *argv[])
   double costhetamu = p_mu_z/p_mu;
 
   TLeptonKinematics *lepton = TLeptonKinematics::CreateWithCosScatterAngle(TLeptonKinematics::muon,costhetamu); 
-  if((p_mu_perp/p_mu_z) < tan(20*DEGRTORAD)){
+  if((p_mu_perp/p_mu_z) > tan(20*DEGRTORAD)){
+    cout << p_mu_perp/p_mu_z << " " << tan(20*DEGRTORAD) << endl;
     cout << p_mu_z << " " << p_mu_perp << " " << 0. << " " << 0. << " " << 0 << endl;
     delete lepton;
     return 0;    
