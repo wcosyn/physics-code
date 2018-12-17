@@ -1,5 +1,5 @@
 //test program for the light-front polarized deuteron code
-
+// run like >poldeut [alpha] [D-wave] [Melosh] [wf] [strucfunc]
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

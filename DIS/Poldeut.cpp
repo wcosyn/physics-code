@@ -125,7 +125,7 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
 //   cout << (el_mu*snz)*rho_l_z << " " << (el_mu*snx)*rho_l_x << " " << snz << " " << snx << endl;
 //   cout << rhou << " " << rho_l_x << " " << rho_l_z << endl;
 //   cout << "dd " << rhou/3./Ek*alpha_i*alpha_i*pow((MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu(),2.) << " " << (MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu()<< " " << Ek << " " << alpha_i << " " << rhou << endl;
-  cout << x << " " << Q2 << " " << x_nucl << " " << alpha_s << " " << pt << " " << psnorm << " " << knorm << " " << k_perp << " " << F_U << " " << F_LSL << " " << F_LSL/F_U << " " << (MASSn*MASSn-pi_mu*pi_mu)*1.E-06 << " " << F_U*pow((MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu(),2.)/ff << " " << F2 << " " << F_UTLL/F_U/sqrt(3./2.) << endl;
+  cout << x << " " << Q2 << " " << x_nucl << " " << alpha_s << " " << pt << " " << psnorm << " " << knorm << " " << k_perp << " " << F_U << " " << F_LSL << " " << F_LSL/(F_U+1/sqrt(6.)*F_UTLL) << " " << (MASSn*MASSn-pi_mu*pi_mu)*1.E-06 << " " << F_U*pow((MASSn*MASSn-pi_mu*pi_mu)/wfref->getResidu(),2.)/ff << " " << F2 << " " << F_UTLL/F_U/sqrt(3./2.) << endl;
   
   
 }
