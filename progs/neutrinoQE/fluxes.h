@@ -559,7 +559,8 @@ const double t2k_aneut_muon_flux_norm[] = {
 //between indices [start] and [stop] of the arrays above.  Determine the right limits from the data set you are comparing too!
 
 // for miniboone QE: flux is already normalised so no action necessary
-// for minerva QE use start=3 and stop=20
+// for minerva QE sdiff use start=3 and stop=20
+// for minerva QE ddiff use start=0 and stop=40
 double normalize(double flux[], double dx, int start, int stop){
   double sum=0;
   for(int i=start;i<stop;i++) sum+=flux[i]*dx;

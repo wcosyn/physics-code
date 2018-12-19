@@ -123,16 +123,21 @@ int main(int argc, char *argv[])
 
   double minbeam=0., maxbeam=0.; //different beam energy intervals for the different experiments
   
+  double neutnorm=1.,aneutnorm=1.; // flux normalisations
+
   if(!exp.compare("miniboone")) { maxbeam=3.E03;}
   else if(!exp.compare("minerva")) { 
     minbeam=0.E03; 
     maxbeam=20.E03;
-    neutrino_flux::normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500,0,40);
-    neutrino_flux::normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500,0,40);
+    neutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500,0,40);
+    aneutnorm=neutrino_flux::normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500,0,40);
   }  
   else if(!exp.compare("t2k")) { maxbeam=2.E02; }  //still to implement!
   else {cerr << "invalid experiment name chosen" << endl << "Choose either miniboone, minerva or t2k" << endl; assert(1==0);}
-  
+
+  cout << "norm neut " << neutnorm << endl << "norm aneut " << aneutnorm << endl;
+
+
   //find reasonable integration limits
   double E_low=E_out;
   double E_high=0.;
@@ -243,10 +248,10 @@ int main(int argc, char *argv[])
   //cross section in 10^-39 cm^2 GeV ^-1 per nucleon!!
   //factor 2\pi because of integration over muon polar angle
 //cout << endl << endl << endl;
-  cout << p_mu_z << " " << p_mu_perp << " " << avgcross[0]*1.E19*2.*PI/Nucleus.getN()*p_mu_perp/E_out/p_mu
-  << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ()*p_mu_perp/E_out/p_mu << " " << count 
-  << " " << T_mu << " " << costhetamu << " " <<  avgcross[0]*1.E16*2.*PI/Nucleus.getN()
-  << " " << avgcross[1]*1.E16*2.*PI/Nucleus.getZ() << " "<< p_mu_perp/E_out/p_mu*1000. << endl;
+  cout << p_mu_z << " " << p_mu_perp << " " << avgcross[0]*1.E19*2.*PI/Nucleus.getN()*p_mu_perp/E_out/p_mu/neutnorm
+  << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ()*p_mu_perp/E_out/p_mu/aneutnorm << " " << count 
+  << " " << T_mu << " " << costhetamu << " " <<  avgcross[0]*1.E16*2.*PI/Nucleus.getN()/neutnorm
+  << " " << avgcross[1]*1.E16*2.*PI/Nucleus.getZ()/aneutnorm << " "<< p_mu_perp/E_out/p_mu*1000. << endl;
   
   delete lepton;
 
