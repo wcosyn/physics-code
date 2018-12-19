@@ -273,9 +273,29 @@ double Minerva_nu_muon_FHC_flux[] = {
 2.04961e-06,
 1.85345e-06,
 1.69827e-06,
+1.53642e-06,
+1.41473e-06,
+1.28130e-06,
+1.18419e-06,
+1.07290e-06,
+9.88757e-07,
+9.06115e-07,
+8.42301e-07,
+7.60841e-07,
+6.94909e-07,
+6.19462e-07,
+5.78754e-07,
+5.31736e-07,
+4.75759e-07,
+4.40441e-07,
+4.02552e-07,
+3.71215e-07,
+3.40375e-07,
+3.16818e-07,
+2.90653e-07
 };
 
-//starts at 0, bins of 500 MeV, up to 10 GeV. not normalized to 1
+//starts at 0, bins of 500 MeV, up to 20 GeV. not normalized to 1
 double Minerva_anu_muon_RHC_flux[] = {
 2.32864e-06,
 6.25619e-06,
@@ -299,7 +319,7 @@ double Minerva_anu_muon_RHC_flux[] = {
 8.7012e-07,
 };
 
-//starts at 0, bins of 500 MeV, up to 10 GeV. not normalized to 1
+//starts at 0, bins of 500 MeV, up to 20 GeV. not normalized to 1
 double Minerva_nu_elec_FHC_flux[] = {
 7.75396e-08,
 2.02694e-07,
@@ -320,7 +340,27 @@ double Minerva_nu_elec_FHC_flux[] = {
 4.65502e-08,
 3.90126e-08,
 3.67891e-08,
-3.53903e-08  
+3.53903e-08,
+7.42388e-07,
+6.80907e-07,
+6.11291e-07,
+5.57863e-07,
+4.98813e-07,
+4.58315e-07,
+4.17480e-07,
+3.66968e-07,
+3.31689e-07,
+2.95811e-07,
+2.67799e-07,
+2.46969e-07,
+2.22799e-07,
+1.97898e-07,
+1.80388e-07,
+1.61270e-07,
+1.46700e-07,
+1.28982e-07,
+1.20322e-07,
+1.07828e-07  
 };
 
 //starts at 0, bins of 500 MeV, up to 10 GeV. not normalized to 1

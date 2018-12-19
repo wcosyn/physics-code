@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     return 0;    
   }
   double E_out=sqrt(pow(lepton->GetLeptonMass(),2.)+pow(p_mu,2.));
-
+  double T_mu=E_out-lepton->GetLeptonMass();
 
   WeakQECross obs(lepton,&Nucleus,prec,integrator,homedir,charged, 1.03E03, screening,enable_ROMEA, 0.);
   
@@ -125,10 +125,10 @@ int main(int argc, char *argv[])
   
   if(!exp.compare("miniboone")) { maxbeam=3.E03;}
   else if(!exp.compare("minerva")) { 
-    minbeam=1.5E03; 
-    maxbeam=10.E03;
-    neutrino_flux::normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500,3,20);
-    neutrino_flux::normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500,3,20);
+    minbeam=0.E03; 
+    maxbeam=20.E03;
+    neutrino_flux::normalize(neutrino_flux::Minerva_nu_muon_FHC_flux,500,0,40);
+    neutrino_flux::normalize(neutrino_flux::Minerva_anu_muon_RHC_flux,500,0,40);
   }  
   else if(!exp.compare("t2k")) { maxbeam=2.E02; }  //still to implement!
   else {cerr << "invalid experiment name chosen" << endl << "Choose either miniboone, minerva or t2k" << endl; assert(1==0);}
@@ -244,7 +244,9 @@ int main(int argc, char *argv[])
   //factor 2\pi because of integration over muon polar angle
 //cout << endl << endl << endl;
   cout << p_mu_z << " " << p_mu_perp << " " << avgcross[0]*1.E19*2.*PI/Nucleus.getN()*p_mu_perp/E_out/p_mu
-  << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ()*p_mu_perp/E_out/p_mu << " " << count << endl;
+  << " " << avgcross[1]*1.E19*2.*PI/Nucleus.getZ()*p_mu_perp/E_out/p_mu << " " << count 
+  << " " << T_mu << " " << costhetamu << " " <<  avgcross[0]*1.E16*2.*PI/Nucleus.getN()
+  << " " << avgcross[1]*1.E16*2.*PI/Nucleus.getZ() << " "<< p_mu_perp/E_out/p_mu*1000. << endl;
   
   delete lepton;
 
