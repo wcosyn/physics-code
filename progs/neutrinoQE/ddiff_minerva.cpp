@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
   F.f=adap_intPm;
   unsigned count=0;
   if(!fluxintegrator) numint::cube_romb(mdf,lower,upper,1.E-25,1.E-02,avgcross,count,0); //1.E-20,1.E-03
-  else numint::cube_adaptive(mdf,lower,upper,1.E-25,1.E-02,2E02,2E04,avgcross,count,0);
+  else numint::cube_adaptive(mdf,lower,upper,1.E-25,1.E-02,5E02,2E04,avgcross,count,0);
    
   //cross section in 10^-39 cm^2 GeV ^-1 per nucleon!!
   //factor 2\pi because of integration over muon polar angle
@@ -300,8 +300,8 @@ void adap_intPm(numint::vector_d & results, double E_in, double costhetacm,
     results[1]*=interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
   }
   else if(!exp.compare("minerva")){
-    results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,20,0);
-    results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in,500,20,0);
+    results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,40,0);
+    results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in,500,40,0);
   }
   else if(!exp.compare("t2k")){
     results[0]*=interpolate(neutrino_flux::t2k_neut_muon_flux_norm,E_in,25,80,1);

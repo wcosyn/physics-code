@@ -503,8 +503,8 @@ void adap_intPm(numint::vector_d & results, double omega, double costhetacm, dou
       results[1]*=interpolate(neutrino_flux::MiniBooNE_antineut_muon_flux_norm,E_in,25,120,1);
     }
     else if(!exp.compare("minerva")&&!lepton_id.compare("muon")){
-      results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,20,0);
-      results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in,500,20,0);
+      results[0]*=interpolate(neutrino_flux::Minerva_nu_muon_FHC_flux,E_in,500,40,0);
+      results[1]*=interpolate(neutrino_flux::Minerva_anu_muon_RHC_flux,E_in,500,40,0);
     }
     else if(!exp.compare("minerva")&&!lepton_id.compare("electron")){
       results[0]*=interpolate(neutrino_flux::Minerva_nu_elec_FHC_flux,E_in,500,20,0);

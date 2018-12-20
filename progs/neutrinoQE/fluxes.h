@@ -317,6 +317,26 @@ double Minerva_anu_muon_RHC_flux[] = {
 1.07991e-06,
 9.67436e-07,
 8.7012e-07,
+7.42388e-07,
+6.80907e-07,
+6.11291e-07,
+5.57863e-07,
+4.98813e-07,
+4.58315e-07,
+4.17480e-07,
+3.66968e-07,
+3.31689e-07,
+2.95811e-07,
+2.67799e-07,
+2.46969e-07,
+2.22799e-07,
+1.97898e-07,
+1.80388e-07,
+1.61270e-07,
+1.46700e-07,
+1.28982e-07,
+1.20322e-07,
+1.07828e-07  
 };
 
 //starts at 0, bins of 500 MeV, up to 20 GeV. not normalized to 1
@@ -340,27 +360,7 @@ double Minerva_nu_elec_FHC_flux[] = {
 4.65502e-08,
 3.90126e-08,
 3.67891e-08,
-3.53903e-08,
-7.42388e-07,
-6.80907e-07,
-6.11291e-07,
-5.57863e-07,
-4.98813e-07,
-4.58315e-07,
-4.17480e-07,
-3.66968e-07,
-3.31689e-07,
-2.95811e-07,
-2.67799e-07,
-2.46969e-07,
-2.22799e-07,
-1.97898e-07,
-1.80388e-07,
-1.61270e-07,
-1.46700e-07,
-1.28982e-07,
-1.20322e-07,
-1.07828e-07  
+3.53903e-08
 };
 
 //starts at 0, bins of 500 MeV, up to 10 GeV. not normalized to 1
@@ -563,7 +563,7 @@ const double t2k_aneut_muon_flux_norm[] = {
 // for minerva QE ddiff use start=0 and stop=40
 double normalize(double flux[], double dx, int start, int stop){
   double sum=0;
-  for(int i=start;i<stop;i++) sum+=flux[i]*dx;
+  for(int i=start;i<stop;i++) {sum+=flux[i]*dx; }
   return sum;
   };
 
