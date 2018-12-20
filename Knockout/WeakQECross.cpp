@@ -434,6 +434,11 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
   //kaon is residual A-1 nucleus
   
   //m_n*m_{A-1}*p_f/E_{A-1}/f_rec (for lab)
+  double Ebeam=lepton->GetBeamEnergy(kin);
+  double Eout=Ebeam-kin.GetWlab();
+  double leptonmass2=lepton->GetLeptonMass()*lepton->GetLeptonMass();
+
+
   double frontfactor=0.;
   switch(d_type){
     case(ctheta_lab):
@@ -446,6 +451,11 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
     case(En_lab):
       frontfactor=kin.GetHyperonMass()*kin.GetMesonMass()/(8*pow(PI,3.)*kin.GetKlab());
       break;
+    case(N_lab_diff): 
+      //we neglect the third term in the recoil factor which depends on the azymuthal angle and yields zero for the dominant contribution after avg
+      frontfactor=(kin.GetHyperonMass()*kin.GetMesonMass()*kin.GetPYlab()/(8*pow(PI,3.))
+      /abs(kin.GetEklab()+Eout*(1-Ebeam*lepton->GetCosScatterAngle(kin)/sqrt(Eout*Eout-leptonmass2))));  
+      break;  
     default:
       cerr << "Invaled differential type in getDiffWeakQECross " << d_type << endl;
       assert(1==0);
@@ -459,9 +469,6 @@ double WeakQECross::getDiffWeakQECross(TKinematics2to2 &kin, int current, int th
   
   //CC
   if(charged){
-    double Ebeam=lepton->GetBeamEnergy(kin);
-    double Eout=Ebeam-kin.GetWlab();
-    double leptonmass2=lepton->GetLeptonMass()*lepton->GetLeptonMass();
     double mott=sqrt(1.-leptonmass2/Eout/Eout)*pow(G_FERMI*COS_CAB*Eout/(Q2/M_W/M_W+1.)/PI/2.,2.); //[MeV]^2
     
     double kinfactors[9];

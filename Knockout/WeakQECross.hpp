@@ -24,11 +24,12 @@ class AbstractFsiGrid;
 /*! \brief A class WeakQECross, used to compute A(nu,lN) cross sections (CC and NC weak quasi-elastic knockout) */
 class WeakQECross{
 public:
-  /*! enum used to differentiate different nuclear differential cross sections, it's always differential in final lepton solid angle & energy 
+  /*! enum used to differentiate different nuclear differential cross sections, it's always (except N_diff option!)differential in final lepton solid angle & energy 
   and nucleon azimuthal angle plus...*/
   enum differential{ctheta_lab=0, /*!< differential in final nucleon costheta in the lab */
   ctheta_cm,  /*!< differential in final nucleon costheta in cm frame*/
-  En_lab};  /*!< differential in final nucleon lab energy */
+  En_lab,/*!< differential in final nucleon lab energy */
+  N_lab_diff}; /*!< differential in dEn dcos theta_N [lab] dcos theta_mu */  
 
   /*! enum used to differentiate different elementary nucleon cross sections */
   enum el_differential{costheta_lab=0, /*!< differential in final lepton lab solid angle */
