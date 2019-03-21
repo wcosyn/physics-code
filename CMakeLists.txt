@@ -30,6 +30,11 @@ if(NOT MPI_ENABLED)
   set(MPI_ENABLED no)
 endif()
 
+if(NOT PARTONS_ENABLED)
+  set(PARTONS_ENABLED no)
+endif()
+
+
 project(mycode CXX Fortran)
 MESSAGE("c++ ${CMAKE_CXX_COMPILER}")
 MESSAGE("c ${CMAKE_C_COMPILER}")
@@ -152,6 +157,10 @@ add_subdirectory(Glauber)
 add_subdirectory(Knockout)
 add_subdirectory(DIS)
 add_subdirectory(progs)
+
+if(PARTONS_ENABLED)
+  add_subdirectory(GPD_Partons)
+endif()
 
 if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)
