@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
             
             //cout << count << " " << integral[0] << endl;
             
-            integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
+            integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)*(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
             integral[0] *= 2.*PI*alpha_s*sqrt(Qsq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (15) Enberg et al.
 
             double result_L=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi); // Enberg et al Eq (12)
@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
             integral[0]*=36.; //prefactor DA (twice, squared)
             //cout << count << " " << integral[0] << endl;
  
-            integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
+            integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)*(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
             integral[0] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
 
             double result_T=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi); // Enberg et al Eq (12)
