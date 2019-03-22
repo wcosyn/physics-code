@@ -186,7 +186,6 @@ void integrandum_L(numint::vector_d &result, double u, double z, PARTONS::GPDSer
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
-        
         PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,t, 1., 1.);
 
         PARTONS::GPDResult gpdResult = gpdService.computeGPDModel(gpdKinematic,
@@ -211,7 +210,6 @@ void integrandum_T(numint::vector_d &result, double u, double z, PARTONS::GPDSer
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
-        
         PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,t, 1., 1.);
 
         PARTONS::GPDResult gpdResult = gpdService.computeGPDModel(gpdKinematic,
