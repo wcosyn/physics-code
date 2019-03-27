@@ -116,14 +116,18 @@ int main(int argc, char** argv) {
             F.f=integrandum_L;
             unsigned count=0;
             // integration over u and z
-            if(Qsq>1.E-02) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
+            if(Qsq>1.E-03) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
             integral[0]*=36.; //prefactor DA (twice, squared)
             
-            //cout << count << " " << integral[0] << endl;
+            cout << count << " " << integral[0] << endl;
             
-            integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)*(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
-            integral[0] *= 2.*PI*alpha_s*sqrt(Qsq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (15) Enberg et al.
-
+            //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
+            integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; 
+            cout << 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq << endl;
+            //prefactors Eq (15) Enberg et al.
+            integral[0] *= -2.*PI*alpha_s*sqrt(Qsq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); 
+            cout << 2.*PI*alpha_s*sqrt(Qsq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << endl;
+            cout << 1./256./pow(PI,3.)/xi/(1.-xi) << endl;
             double result_L=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi); // Enberg et al Eq (12)
             //cout << Qsq << " " << xi << " " << psq << " " << result_L*0.389379E06 << endl;  // factor to go from GeV-6 to nb GeV-4
             
@@ -135,7 +139,7 @@ int main(int argc, char** argv) {
             integral[0]*=36.; //prefactor DA (twice, squared)
             //cout << count << " " << integral[0] << endl;
  
-            integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)*(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
+            integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
             integral[0] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
 
             double result_T=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi); // Enberg et al Eq (12)
@@ -186,6 +190,7 @@ void integrandum_L(numint::vector_d &result, double u, double z, PARTONS::GPDSer
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
+        
         PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,t, 1., 1.);
 
         PARTONS::GPDResult gpdResult = gpdService.computeGPDModel(gpdKinematic,
@@ -210,6 +215,7 @@ void integrandum_T(numint::vector_d &result, double u, double z, PARTONS::GPDSer
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
+        
         PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,t, 1., 1.);
 
         PARTONS::GPDResult gpdResult = gpdService.computeGPDModel(gpdKinematic,
