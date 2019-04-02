@@ -37,7 +37,7 @@ GPD::~GPD(){
 }
 
 
-vector< complex<double> > GPD::helamps_to_gpds(const double xi, const double t, const vector< complex <double> > & helamps){
+vector< complex<double> > GPD::helamps_to_gpds_T(const double xi, const double t, const vector< complex <double> > & helamps){
 
     vector< complex<double> > gpds(9,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
@@ -75,7 +75,7 @@ vector< complex<double> > GPD::helamps_to_gpds(const double xi, const double t, 
     return gpds;
 }
 
-vector< complex<double> > GPD::gpds_to_helamps(const double xi, const double t, const vector< complex<double> > & gpds){
+vector< complex<double> > GPD::gpds_to_helamps_T(const double xi, const double t, const vector< complex<double> > & gpds){
 
     vector< complex<double> > helamps(9,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
@@ -110,6 +110,57 @@ vector< complex<double> > GPD::gpds_to_helamps(const double xi, const double t, 
     helamps.at(8)=D*(t0-t)/(8.*MASSD*MASSD)*gpds[6];
     return helamps;
 }
+
+
+vector< complex<double> > GPD::helamps_to_gpds_V(const double xi, const double t, const vector< complex <double> > & helamps){
+
+    vector< complex<double> > gpds(5,0.);
+    //symmetric frame, with momentum transfer in x,z plane, so phi=0
+    double D=(-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)/(4.*MASSD*MASSD);
+    gpds.at(0)=1./3./pow(1.-xi*xi,2.)*(3.*pow(xi,4.)-7.*xi*xi+2-2.*D*(1-xi*xi))*helamps[0]+1./3./(1-xi*xi)*helamps[1]
+        +sqrt(2./D*(1+xi)/(1-xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
+        -sqrt(2./D*(1-xi)/(1+xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
+        -1./3./D/pow(1-xi*xi,3.)*(2.*xi*xi+D*(3.*pow(xi,6.)-10.*pow(xi,4.)+9.*xi*xi-2))*helamps[4];
+
+    gpds.at(1)=2./(1-xi*xi)*helamps[0]-sqrt(1./2./D*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]+sqrt(1./2./D*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
+        +2.*xi*xi/D/pow(1.-xi*xi,2.)*helamps[4];
+
+    gpds.at(2)=-1/D*helamps[4];
+    gpds.at(3)=-2.*xi/(1-xi*xi)*helamps[0]+sqrt(1./D/2.*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]+sqrt(1./D/2.*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
+    -2.*xi/D/pow(1.-xi*xi,2.)*helamps[4];
+
+
+    gpds.at(4)=-1./pow(1.-xi*xi,2.)*(xi*xi+2.*D*(1.-xi*xi)+1)*helamps[0]+1./pow(1.-xi*xi,2.)*helamps[1]
+        +sqrt(2./D*(1+xi)/(1-xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
+        -sqrt(2./D*(1-xi)/(1+xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
+                -1./D/pow(1.-xi*xi,3.)*(2.*xi*xi+D*(1.-pow(xi,4.)))*helamps[4];
+
+
+    return gpds;
+}
+
+vector< complex<double> > GPD::gpds_to_helamps_V(const double xi, const double t, const vector< complex<double> > & gpds){
+
+    vector< complex<double> > helamps(5,0.);
+    //symmetric frame, with momentum transfer in x,z plane, so phi=0
+
+    double D=(-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)/(4.*MASSD*MASSD);
+    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
+    // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
+    helamps.at(0)=gpds[0]+D*gpds[2]-1./3.*gpds[4];
+
+    helamps.at(1)=(-2.*D+(1+xi*xi)/(1-xi*xi))*gpds[0]+(2.*D-2.*xi*xi/(1-xi*xi))*gpds[1]
+            -2.*(D*D*pow(1-xi*xi,2.)-xi*xi)/pow(1-xi*xi,2.)*gpds[2]+(2.*D*xi-2.*xi/(1-xi*xi))*gpds[3]
+            +((1-xi*xi)-1./3.*(-2.*D+(1+xi*xi)/(1-xi*xi)))*gpds[4];
+
+    helamps.at(2)=sqrt(2.*D*(1-xi*xi))/(1+xi)*(gpds[0]-(1.-xi)/2.*(gpds[1]-gpds[3])+(D*(1.-xi*xi)-xi)/(1.-xi*xi)*gpds[2]-1./3.*gpds[4]);
+
+    helamps.at(3)=sqrt(2.*D*(1-xi*xi))/(1-xi)*(-gpds[0]+(1.+xi)/2.*(gpds[1]+gpds[3])-(D*(1.-xi*xi)+xi)/(1.-xi*xi)*gpds[2]+1./3.*gpds[4]);                    
+
+    helamps.at(4)=-D*gpds[2];                    
+    return helamps;
+}
+
 
 std::complex<double > GPD::test(double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax){
     double alpha1=1.+xi;
