@@ -130,7 +130,7 @@ vector< complex<double> > GPD::helamps_to_gpds_V(const double xi, const double t
     -2.*xi/D/pow(1.-xi*xi,2.)*helamps[4];
 
 
-    gpds.at(4)=-1./pow(1.-xi*xi,2.)*(xi*xi+2.*D*(1.-xi*xi)+1)*helamps[0]+1./pow(1.-xi*xi,2.)*helamps[1]
+    gpds.at(4)=-1./pow(1.-xi*xi,2.)*(xi*xi+2.*D*(1.-xi*xi)+1)*helamps[0]+1./(1.-xi*xi)*helamps[1]
         +sqrt(2./D*(1+xi)/(1-xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
         -sqrt(2./D*(1-xi)/(1+xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
                 -1./D/pow(1.-xi*xi,3.)*(2.*xi*xi+D*(1.-pow(xi,4.)))*helamps[4];
@@ -469,6 +469,19 @@ complex<double> GPD::getGPD_odd_nucl(const int sigma_in, const int sigma_out, co
                     +(sigma_in+1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
                     -(sigma_in+1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
     }
+}
+
+complex<double> GPD::getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi, const double t,
+                                    const double t0, const double phi,  const double gpd_H, const double gpd_E) const{
+
+    // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
+    double kinfac=sqrt(t0-t)/MASSn;
+    if(sigma_in==sigma_out) return sqrt(1-xi*xi)*gpd_H + sigma_in*xi*xi/sqrt(1-xi*xi)*gpd_E;
+
+    else{
+        if(sigma_in==-1) return -exp(-I_UNIT*phi)*kinfac/2.*gpd_E ;
+        else return exp(I_UNIT*phi)*kinfac/2.*gpd_E ;
+    ;
 }
 
 

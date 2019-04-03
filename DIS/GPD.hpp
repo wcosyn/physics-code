@@ -228,6 +228,23 @@ std::complex<double> getGPD_odd_nucl(const int sigma_in, const int sigma_out, co
                                     const TransGPD_set &gpd_nucl) const;              
 
 /**
+ * @brief computes nucleon matrix elements for chiral even vector GPDs
+ * 
+ * @param sigma_in polarization incoming nucleon (spin times two)
+ * @param sigma_out polarization outgoing nucleon (spin times two)
+ * @param xi_n skewness nucleon
+ * @param t [MeV^2] momentum transfer sq.
+ * @param t0 [MeV^2] minimum momentum transfer sq
+ * @param phi [azimuthal angle \xiP+Delta fourvector]
+ * @param gpd_H GPD H
+ * @param gpd_E GPD E
+ * @return std::complex<double> nucleon helicity amplitude
+ */
+std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
+                                    const double t, const double t0, const double phi,
+                                    const double gpd_H, const double gpd_E) const;              
+
+/**
  * @brief Obtains the chiral odd nucleon gpds for a certain kinematics (interpolated from a grid)
  * 
  * @param x average lf momentum fraction quark
