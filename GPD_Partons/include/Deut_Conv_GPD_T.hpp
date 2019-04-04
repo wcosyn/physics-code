@@ -12,6 +12,7 @@
 #include <numint/numint.hpp>
 #include <TInterpolatingWavefunction.h>
 #include "GPD_T_Nucl_grid.hpp"
+#include "Deut_GPD_T_set.hpp"
 
 class c_mstwpdf; //forward declaration
 class TransGPD_set;
@@ -85,6 +86,19 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
 std::vector< std::complex<double> > gpd_conv(const double xi, const double x, const double t, const int model);
 
 TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf object
+
+/**
+ * @brief Get a Deut_GPD_V_set object containing deuteron vector helicity amplitudes
+ * 
+ * @param x [] avg lf momentum fraction
+ * @param xi [] skewness
+ * @param t [GeV^2] mom transfer sq
+ * @param ERBL grid for only ERBL region or not?
+ * @param model [0-2] different models for nucleon chiral odd GPDs
+ * @return Deut_GPD_V_set 
+ */
+Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t, const bool ERBL, const int model);
+
 
 private: 
 /**
@@ -176,6 +190,11 @@ TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function
 TInterpolatingWavefunction wf;
 GPD_T_Nucl_grid chiralodd_grid; ///< object that allows to interpolate or get chiral odd nucleon GPDs
 
+double t_grid; ///< [MeV^2] momentum transfer sq value the grid has
+double xi_grid; ////< [] skewness value the grid has
+bool grid_set; ///< is the grid with transv gpds set or not
+bool ERBL_set; ///< is the grid only ERBL or not
+Deut_GPD_T_set grid[201];
 
 };
 

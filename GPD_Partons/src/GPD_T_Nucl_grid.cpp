@@ -37,7 +37,7 @@ TransGPD_set GPD_T_Nucl_grid::getTransGPDSet(const double x, const double xi, co
         cout << "constructing chiral odd gpd grid" << endl;
         for(int i=0;i<=200;i++){
             for(int j=0;j<=100;j++){
-                grid[i][j]=getGK_param(0.01*(i-100)*abs(xi),0.01*(j),t);
+                grid[i][j]=getGK_param(0.01*(i-100)*(ERBL? abs(xi): 1.),0.01*(j),t);
         //         cout << 0.01*(i-100) << " " << 0.01*(j) << " " << grid[i][j].getHTu() << " " << grid[i][j].getHTd() << " "
         // << grid[i][j].getEbarTd() <<  " " << grid[i][j].getEbarTu() << endl;
             }
@@ -50,7 +50,7 @@ TransGPD_set GPD_T_Nucl_grid::getTransGPDSet(const double x, const double xi, co
    //interpolation
     double index_i=0.,index_j=0.;
     double frac_i=0.,frac_j=0.;
-    frac_i=modf(x*100/abs(xi)+100,&index_i);
+    frac_i=modf(x*100/(ERBL? abs(xi): 1.)+100,&index_i);
     frac_j=modf(xi*100,&index_j);
 
     TransGPD_set gpd_nucl_grid=grid[int(index_i)][int(index_j)]*(1.-frac_i)*(1.-frac_j)+grid[int(index_i)+1][int(index_j)]*(frac_i)*(1.-frac_j)

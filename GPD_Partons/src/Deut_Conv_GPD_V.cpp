@@ -312,3 +312,26 @@ vector< complex<double> > Deut_Conv_GPD_V::lf_deut(const double Ek, const TVecto
     return wf_out;
 
 }
+
+
+Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double xi, const double t, const bool ERBL){
+    //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
+    if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set){
+        cout << "constructing chiral even deuteron helamps grid" << endl;
+        for(int i=0;i<=200;i++){
+            vector< complex<double> > result = gpd_conv(0.01*(i-100)*(ERBL? abs(xi): 1.),xi,t);
+            grid[i]=Deut_GPD_V_set(result[0].real(),result[2].real(),result[3].real(),result[5].real(),result[7].real());
+        }
+        
+        cout << "construction done" << endl;
+        grid_set=true;
+        t_grid=t;
+        xi_grid=xi;
+        ERBL_set=ERBL;
+   }
+   //interpolation
+    double index_i=0.;
+    double frac_i=modf(x*100/(ERBL? abs(xi): 1.)+100,&index_i);
+
+    return grid[int(index_i)]*(1.-frac_i)+grid[int(index_i)+1]*(frac_i);
+}

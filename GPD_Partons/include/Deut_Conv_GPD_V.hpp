@@ -16,6 +16,8 @@
 #include <partons/Partons.h>
 #include <partons/services/GPDService.h>
 
+#include "Deut_GPD_V_set.hpp"
+
 /**
  * @brief Class implements vector GPDs for the nucleon and deuteron (using convolution formalism) for now
  * 
@@ -87,6 +89,17 @@ std::vector< std::complex<double> > gpd_conv(const double xi, const double x, co
 
 TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf object
 
+/**
+ * @brief Get a Deut_GPD_V_set object containing deuteron vector helicity amplitudes
+ * 
+ * @param x [] avg lf momentum fraction
+ * @param xi [] skewness
+ * @param t [GeV^2] mom transfer sq
+ * @param ERBL grid for only ERBL region or not?
+ * @return Deut_GPD_V_set 
+ */
+Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t, const bool ERBL);
+
 private: 
 /**
  * @brief structure needed to carry out the convolution integration, contains parameters and integrandum function
@@ -156,6 +169,13 @@ TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function
 TInterpolatingWavefunction wf;
 PARTONS::GPDService* pGPDService; ///< GPD Service from PARTONS
 PARTONS::GPDModule* pGPDModel; ///< GPD Model from PARTONS
+
+
+double t_grid; ///< [MeV^2] momentum transfer sq value the grid has
+double xi_grid; ////< [] skewness value the grid has
+bool grid_set; ///< is the grid with transv gpds set or not
+bool ERBL_set; ///< is the grid only ERBL or not
+Deut_GPD_V_set grid[201];
 
 };
 
