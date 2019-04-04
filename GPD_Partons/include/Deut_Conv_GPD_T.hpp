@@ -10,15 +10,16 @@
 #include <TDeuteron.h>
 #include <complex>
 #include <numint/numint.hpp>
-#include "TransGPD_set.hpp"
 #include <TInterpolatingWavefunction.h>
+#include "GPD_T_Nucl_grid.hpp"
 
 class c_mstwpdf; //forward declaration
+class TransGPD_set;
 /**
  * @brief Class implements transversity GPDs for the nucleon and deuteron (using convolution formalism) for now
  * 
  */
-class GPD{
+class Deut_Conv_GPD_T{
 
 public:
 
@@ -28,13 +29,13 @@ public:
  * @param pdf_name pdf parametrization name used for the forward limit ("MSTW" is the only valid one for now)
  * @param wfname deuteron wave function parametrization name, see TDeuteron for possibilities
  */
-GPD(const std::string &pdf_name, const std::string &wfname);
+Deut_Conv_GPD_T(const std::string &pdf_name, const std::string &wfname);
 
 /**
  * @brief Destructor
  * 
  */
-~GPD();
+~Deut_Conv_GPD_T();
 
 /**
  * @brief conversion from helicity amplitudes to GPDs for spin 1 chiral odd quark GPDs.  We compute in a frame where phi=0
@@ -91,17 +92,6 @@ static std::vector< std::complex<double> > gpds_to_helamps_V(const double xi, co
 
 static std::vector< std::complex<double> > lf_deut(const double Ek, const TVector3& k, const std::vector< std::complex<double> > &nonrelwf);
 
-/**
- * @brief Computes the set H_T, \bar{E}_T for up and down quarks according to the parametrisations of Goloskokov and Kroll EPJA47:112
- * Grid in x and xi is constructed and then interpolated, was a lot faster than calculating every value that appears in the convolution integral
- * 
- * 
- * @param x  [] parton lf momentum fraction
- * @param xi [] skewness
- * @param t [MeV^2] momentum transfer sq
- * @return TransGPD_set constains the H_T and \bar{E}_T gpds for up and down quarks.  See TransGPD_set.
- */
-TransGPD_set getGK_param(const double x, const double xi, const double t);
 
 
 /**
@@ -129,7 +119,7 @@ struct Ftor_conv {
       Ftor_conv &p = * (Ftor_conv *) param;
       p.f(ret,x[0],x[1],x[2], *p.gpd,p.x,p.xi,p.t,p.pold_in, p.pold_out,p.model,p.right,p.deltax);
     }
-    GPD *gpd;
+    Deut_Conv_GPD_T *gpd;
     double x;
     double xi;
     double t;
@@ -139,7 +129,7 @@ struct Ftor_conv {
     bool right;
     double deltax;
     
-    void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, GPD &gpd,
+    void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_T &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
       };
 
@@ -161,9 +151,9 @@ struct Ftor_conv {
  * @param right [1] R matrix element [0] L matrix element
  * @param deltax [MeV] perp component of the momentum transfer, along x-axis
  */
-static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double kphi, GPD &gpd,
+static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_T &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
-static void int_kprime3(numint::vector_z & res, double alpha_1, double kperp, double kphi, GPD &gpd,
+static void int_kprime3(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_T &gpd,
               double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
 
 
@@ -182,35 +172,6 @@ static void int_kprime3(numint::vector_z & res, double alpha_1, double kperp, do
  */
 std::complex<double >test(double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
 
-/**
- * @brief structure used for integration appearing in GK model GPDs
- * 
- */
-struct Ftor_doubledistr {
-
-    /*! integrandum function */
-    static void exec(const numint::array<double,1> &rho, void *param, numint::vector_d &ret) {
-      Ftor_doubledistr &p = * (Ftor_doubledistr *) param;
-      p.f(ret,rho[0],p.x,p.xi,p.t, *p.gpdobject);
-    }
-    double t; ///< [MeV^2] momentum transfer
-    double x; ///< avg parton momentum fraction
-    double xi; ///< skewness
-    GPD* gpdobject; ///< GPD object
-
-    void (*f)(numint::vector_d & result, double rho, double x, double xi, double t, GPD &gpdobject);
-      };
-
-/**
- * @brief integral of double distribution to obtain transversity GPD according to GK prescription [EPJA 47:112 Eq 14]
- * 
- * @param res [0] H_T^d, [1] H_T^u, [2] \bar{E}_T^d, [3] \bar{E}_T^u
- * @param rho integral variable
- * @param x  avg parton lf momentum fraction
- * @param xi skewness
- * @param t [MeV^2] momentum transfer sq.
- */
-static void DD_int_rho(numint::vector_d & res, double rho, double x, double xi, double t, GPD &gpdobject);
 
 
 /**
@@ -248,32 +209,9 @@ std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, c
                                     const double t, const double t0, const double phi,
                                     const double gpd_H, const double gpd_E) const;              
 
-/**
- * @brief Obtains the chiral odd nucleon gpds for a certain kinematics (interpolated from a grid)
- * 
- * @param x average lf momentum fraction quark
- * @param xi skewness nucleon
- * @param t [MeV^2] momentum transfer sq.
- * @return TransGPD_set set of GPDs H, Ebar
- */
-TransGPD_set getTransGPDSet(const double x, const double xi, const double t);
-
-c_mstwpdf *mstw; ///< object that stores MSTW pdf grids
 TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/
 TInterpolatingWavefunction wf;
-/**
- * @brief compute forward limit frontfactors for H_T in double distribution of GK model (Eq.24 in EPJA 47:112
- * 
- * @param x [] parton avg lightfront momentum fraction
- * @param[out] HTdfront H_T^d fronfactor
- * @param[out] HTufront H_T^u fronfactor
- */
-void getHTfront(const double x, double &HTdfront, double &HTufront) const;
-void getEbarTfront(const double x, double &EbarTdfront, double &EbarTufront) const;
-
-double t_grid; ///< [MeV^2] momentum transfer sq value the grid has
-bool grid_set; ///< is the grid with transv gpds set or not
-TransGPD_set grid[201][101];
+GPD_T_Nucl_grid chiralodd_grid; ///< object that allows to interpolate or get chiral odd nucleon GPDs
 
 
 };
