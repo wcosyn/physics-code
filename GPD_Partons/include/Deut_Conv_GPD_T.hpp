@@ -100,6 +100,25 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
 Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t, const bool ERBL, const int model);
 
 
+/**
+ * @brief computes nucleon matrix elements through helicity amplitudes for tensor current
+ * 
+ * @param sigma_in polarization incoming nucleon
+ * @param sigma_out polarization outgoing nucleon
+ * @param xi_n skewness nucleon
+ * @param t [MeV^2] momentum transfer sq.
+ * @param t0 [MeV^2] minimum momentum transfer sq
+ * @param phi [azimuthal angle \xiP+Delta fourvector]
+ * @param model different implementations of the nucleon transversity GPDs
+ * @param right [1] right or [0] left matrix element (see notes Eq 112)
+ * @param gpd_nucl constains a set of chiral odd quark nucleon gpds computed according to the GK model
+ * @return std::complex<double> nucleon helicity amplitude
+ */
+static std::complex<double> getGPD_odd_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
+                                    const double t, const double t0, const double phi, const int model, const bool right,
+                                    const TransGPD_set &gpd_nucl);              
+
+
 private: 
 /**
  * @brief structure needed to carry out the convolution integration, contains parameters and integrandum function
@@ -166,24 +185,6 @@ static void int_kprime3(numint::vector_z & res, double alpha_1, double kperp, do
 std::complex<double >test(double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
 
 
-
-/**
- * @brief computes nucleon matrix elements through helicity amplitudes for tensor current
- * 
- * @param sigma_in polarization incoming nucleon
- * @param sigma_out polarization outgoing nucleon
- * @param xi_n skewness nucleon
- * @param t [MeV^2] momentum transfer sq.
- * @param t0 [MeV^2] minimum momentum transfer sq
- * @param phi [azimuthal angle \xiP+Delta fourvector]
- * @param model different implementations of the nucleon transversity GPDs
- * @param right [1] right or [0] left matrix element (see notes Eq 112)
- * @param gpd_nucl constains a set of chiral odd quark nucleon gpds computed according to the GK model
- * @return std::complex<double> nucleon helicity amplitude
- */
-std::complex<double> getGPD_odd_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
-                                    const double t, const double t0, const double phi, const int model, const bool right,
-                                    const TransGPD_set &gpd_nucl) const;              
 
 
 TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/

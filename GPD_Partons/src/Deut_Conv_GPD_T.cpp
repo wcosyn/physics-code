@@ -351,7 +351,7 @@ void Deut_Conv_GPD_T::int_kprime3(numint::vector_z & res, double alphaprime, dou
 
 
 complex<double> Deut_Conv_GPD_T::getGPD_odd_nucl(const int sigma_in, const int sigma_out, const double xi, const double t,
-                                    const double t0, const double phi, const int model, const bool right, const TransGPD_set &gpd_nucl) const{
+                                    const double t0, const double phi, const int model, const bool right, const TransGPD_set &gpd_nucl){
 
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
     double kinfac=sqrt(t0-t)/MASSn;
