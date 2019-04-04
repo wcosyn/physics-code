@@ -27,8 +27,6 @@
             "name": "Linux",
             "compileCommands": "${workspaceRoot}/build/compile_commands.json",
             "includePath": [
-                "/usr/include/x86_64-linux-gnu/c++/6.3.0",
-                "/usr/include/c++/6.3.0",
                 "/usr/local/include",
                 "/usr/include/x86_64-linux-gnu",
                 "/usr/include",
@@ -37,14 +35,13 @@
                 "${workspaceRoot}/Glauber",
                 "${workspaceRoot}/DIS",
                 "${workspaceRoot}/Knockout",
-                "${workspaceRoot}/Integrator"
+                "${workspaceRoot}/Integrator",
+                "${workspaceRoot}/GPD_Partons/include"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
             "browse": {
                 "path": [
-                    "/usr/include/x86_64-linux-gnu/c++/6.3.0",
-                    "/usr/include/c++/6.3.0",
                     "/usr/local/include",
                     "/usr/include/x86_64-linux-gnu",
                     "/usr/include",
@@ -53,7 +50,8 @@
                     "${workspaceRoot}/Glauber",
                     "${workspaceRoot}/DIS",
                     "${workspaceRoot}/Knockout",
-                    "${workspaceRoot}/Integrator"
+                    "${workspaceRoot}/Integrator",
+                    "${workspaceRoot}/GPD_Partons/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
