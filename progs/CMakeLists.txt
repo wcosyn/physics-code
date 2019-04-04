@@ -24,6 +24,8 @@ add_subdirectory(2bodymom/src) #camille's programs for the 2nucleon knockout cal
 
 add_subdirectory(deepsdis) #programs for spectator tagging (deeps/bonus) & deuteron tensor structure calculations
 
-add_subdirectory(GPD) #programs for transversity gpds (spin1)
+if(PARTONS_ENABLED)
+    add_subdirectory(GPD) #programs for transversity gpds (spin1)
+endif()
 
 add_subdirectory(F2_largex_fit) #program for x>1 nuclear F2 fit, crosschecks with Adam Freese

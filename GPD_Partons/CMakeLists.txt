@@ -1,3 +1,5 @@
+project(GPD)
+
 # BASIC DEFINITIONS ========================================================================
 
 # define minimum version of cmake
@@ -19,31 +21,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # FIND LIBRARIES ===========================================================================
 
-# find libraries: Qt4
-find_package(Qt4 REQUIRED QtCore QtSql)
-
-# add some useful macros and variables
-include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
-
-# find libraries: additional modules
-message(${CMAKE_CURRENT_SOURCE_DIR})
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
-
-# find libraries: SFML
-find_package(SFML COMPONENTS system REQUIRED)
-
-# find libraries: ElementaryUtils
-find_package(ElementaryUtils REQUIRED)
-
-# find libraries: NumA++
-find_package(NumA++ REQUIRED)
-
-# find libraries: PARTONS
-find_package(PARTONS REQUIRED)
-
-# directories containing headers 
-include_directories(${QT_INCLUDE_DIRS} ${SFML_INCLUDE_DIR} ${ELEMENTARY_UTILS_INCLUDE_DIR} ${NUMA_INCLUDE_DIR} ${PARTONS_INCLUDE_DIR})
 
 # FINALIZE ==================================================================================
 
@@ -57,32 +34,84 @@ file(
         src/*
 )
 
-# define target executable
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-add_executable(
-
-        PARTONS_example
-
-        ${source_files}
+# Set the library version in the main CMakeLists.txt
+SET(GPD_MAJOR_VERSION 1)
+SET(GPD_MINOR_VERSION 0)
+SET(GPD_PATCH_VERSION 0)
+SET(GPD_VERSION "${GPD_MAJOR_VERSION}.${GPD_MINOR_VERSION}.${GPD_PATCH_VERSION}")
+SET(GPD_LIBRARY_PROPERTIES ${GPD_LIBRARY_PROPERTIES}
+    VERSION "${GPD_VERSION}"
+    SOVERSION "${GPD_MAJOR_VERSION}"
+    SUFFIX ".so"
 )
+
+
+############### build the library #####################
+add_library(GPD SHARED ${source_files})
+target_include_directories(GPD PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_link_libraries(GPD 
+         ${QT_LIBRARIES}
+
+ 	${SFML_LIBRARIES}
+
+         ${ELEMENTARY_UTILS_LIBRARIES}
+ 
+         ${NUMA_LIBRARIES}
+        
+         ${PARTONS_LIBRARIES} 
+MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
+set_target_properties(GPD PROPERTIES ${GPD_LIBRARY_PROPERTIES})
+############### install the library ###################
+install(TARGETS GPD DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+
+############### build the library #####################
+if(STATIC_BUILD)
+  add_library(GPDST STATIC ${source_files})
+  target_include_directories(GPDST PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})  
+  target_link_libraries(GPDST          ${QT_LIBRARIES}
+
+  ${SFML_LIBRARIES}
+
+  ${ELEMENTARY_UTILS_LIBRARIES}
+
+  ${NUMA_LIBRARIES}
+ 
+  ${PARTONS_LIBRARIES} 
+MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a -Wl,-no-whole-archive)
+  set_target_properties(GPDST PROPERTIES OUTPUT_NAME DIS)
+  install(TARGETS GPDST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
+endif(STATIC_BUILD)
+
+
+
+
+# define target executable
+# set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
+# add_executable(
+
+#         PARTONS_example
+
+#         ${source_files}
+# )
 
 # define libraries to be linked
-target_link_libraries(
+# target_link_libraries(
 
-        PARTONS_example
+#         PARTONS_example
         
-        ${QT_LIBRARIES}
+#         ${QT_LIBRARIES}
 
-	${SFML_LIBRARIES}
+# 	${SFML_LIBRARIES}
 
-        ${ELEMENTARY_UTILS_LIBRARIES}
+#         ${ELEMENTARY_UTILS_LIBRARIES}
  
-        ${NUMA_LIBRARIES}
+#         ${NUMA_LIBRARIES}
         
-        ${PARTONS_LIBRARIES} 
+#         ${PARTONS_LIBRARIES} 
 
-        Integrator 
+#         Integrator 
         
-        MePhys 
-)
+#         MePhys 
+# )

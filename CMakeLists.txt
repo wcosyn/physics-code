@@ -156,11 +156,38 @@ add_subdirectory(Tools)
 add_subdirectory(Glauber)
 add_subdirectory(Knockout)
 add_subdirectory(DIS)
-add_subdirectory(progs)
 
 if(PARTONS_ENABLED)
+  # find libraries: Qt4
+  find_package(Qt4 REQUIRED QtCore QtSql)
+
+  # add some useful macros and variables
+  include(${QT_USE_FILE})
+  add_definitions(${QT_DEFINITIONS})
+
+  # find libraries: additional modules
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/GPD_Partons/cmake/Modules/")
+
+  # find libraries: SFML
+  find_package(SFML COMPONENTS system REQUIRED)
+
+  # find libraries: ElementaryUtils
+  find_package(ElementaryUtils REQUIRED)
+
+  # find libraries: NumA++
+  find_package(NumA++ REQUIRED)
+
+  # find libraries: PARTONS
+  find_package(PARTONS REQUIRED)
+
+  # directories containing headers 
+  include_directories(${QT_INCLUDE_DIRS} ${SFML_INCLUDE_DIR} ${ELEMENTARY_UTILS_INCLUDE_DIR} ${NUMA_INCLUDE_DIR} ${PARTONS_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
   add_subdirectory(GPD_Partons)
 endif()
+
+add_subdirectory(progs)
+
 
 if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)

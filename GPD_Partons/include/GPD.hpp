@@ -1,3 +1,7 @@
+#ifndef GPD_HPP
+#define GPD_HPP
+
+
 #include <vector>
 #include <cmath>
 #include <iostream>
@@ -273,3 +277,5 @@ TransGPD_set grid[201][101];
 
 
 };
+
+#endif 

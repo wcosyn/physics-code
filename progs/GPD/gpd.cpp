@@ -9,7 +9,7 @@ using namespace std;
 #include <cmath>
 #include "constants.hpp"
 
-#include "GPD.hpp"
+#include <GPD.hpp>
 #include "TransGPD_set.hpp"
 
 int main(int argc, char *argv[]){
@@ -18,17 +18,17 @@ int main(int argc, char *argv[]){
     int model=atoi(argv[1]); //chiral odd GPD model nr
     double xi=atof(argv[4]);
     double t=atof(argv[3])*-1.E06;
-    cout << "xi " << xi << " t " << t << " model " << model << endl;
-    cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
-    for(int i=0;i<5;i++){
-        vector< complex<double> > hel(5,0.);
-        hel[i]=1.;
-        vector< complex<double> > gpd = GPD::helamps_to_gpds_V(xi,t,hel);
-        vector< complex<double> > out = GPD::gpds_to_helamps_V(xi,t,gpd);
-        for(int j=0;j<5;j++) cout << out[j] << " ";
-        cout << endl;
-    }
-    exit(1);
+    // cout << "xi " << xi << " t " << t << " model " << model << endl;
+    // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
+    // for(int i=0;i<5;i++){
+    //     vector< complex<double> > hel(5,0.);
+    //     hel[i]=1.;
+    //     vector< complex<double> > gpd = GPD::helamps_to_gpds_V(xi,t,hel);
+    //     vector< complex<double> > out = GPD::gpds_to_helamps_V(xi,t,gpd);
+    //     for(int j=0;j<5;j++) cout << out[j] << " ";
+    //     cout << endl;
+    // }
+    // exit(1);
 
     for(int i=-99;i<=99;i++){
         double x=i*0.01;

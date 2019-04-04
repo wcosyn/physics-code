@@ -481,7 +481,7 @@ complex<double> GPD::getGPD_even_nucl(const int sigma_in, const int sigma_out, c
     else{
         if(sigma_in==-1) return -exp(-I_UNIT*phi)*kinfac/2.*gpd_E ;
         else return exp(I_UNIT*phi)*kinfac/2.*gpd_E ;
-    ;
+    }
 }
 
 
