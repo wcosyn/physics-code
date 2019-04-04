@@ -1,5 +1,5 @@
-#ifndef GPD_HPP
-#define GPD_HPP
+#ifndef DEUT_CONV_GPD_T
+#define DEUT_CONV_GPD_T
 
 
 #include <vector>
@@ -59,27 +59,6 @@ static std::vector< std::complex<double> > helamps_to_gpds_T(const double xi, co
  */
 static std::vector< std::complex<double> > gpds_to_helamps_T(const double xi, const double t, const std::vector< std::complex<double> > & gpds);
 
-/**
- * @brief conversion from helicity amplitudes to GPDs for spin 1 chiral even vector quark GPDs.  We compute in a frame where phi=0
- * See Cano Pire EPJA App A
- * 
- * @param xi [] skewness
- * @param t [MeV^2] momentum transfer sq
- * @param helamps helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]00,[2]0+,[3]+0,[4]-+
- * @return std::vector<double>  gpds H_1 to H_5
- */
-static std::vector< std::complex<double> > helamps_to_gpds_V(const double xi, const double t, const std::vector< std::complex<double> > & helamps);
-
-/**
- * @brief conversion from GPDs to helicity amplitudes for spin 1 chiral even vector quark GPDs.  We compute in a frame where phi=0
- * See Cano Pire EPJA App A
- * 
- * @param xi [] skewness
- * @param t [MeV^2] momentum transfer sq
- * @param gpds gpds H_1 to H_5
- * @return std::vector<double> helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]00,[2]0+,[3]+0,[4]-+
- */
-static std::vector< std::complex<double> > gpds_to_helamps_V(const double xi, const double t, const std::vector< std::complex<double> > & gpds);
 
 /**
  * @brief returns the melosh rotated lf wf, melosh rotation only acting on the first (active) nucleon, since the helicities of the spectator are summed over
@@ -192,22 +171,6 @@ std::complex<double> getGPD_odd_nucl(const int sigma_in, const int sigma_out, co
                                     const double t, const double t0, const double phi, const int model, const bool right,
                                     const TransGPD_set &gpd_nucl) const;              
 
-/**
- * @brief computes nucleon matrix elements for chiral even vector GPDs
- * 
- * @param sigma_in polarization incoming nucleon (spin times two)
- * @param sigma_out polarization outgoing nucleon (spin times two)
- * @param xi_n skewness nucleon
- * @param t [MeV^2] momentum transfer sq.
- * @param t0 [MeV^2] minimum momentum transfer sq
- * @param phi [azimuthal angle \xiP+Delta fourvector]
- * @param gpd_H GPD H
- * @param gpd_E GPD E
- * @return std::complex<double> nucleon helicity amplitude
- */
-std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
-                                    const double t, const double t0, const double phi,
-                                    const double gpd_H, const double gpd_E) const;              
 
 TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/
 TInterpolatingWavefunction wf;

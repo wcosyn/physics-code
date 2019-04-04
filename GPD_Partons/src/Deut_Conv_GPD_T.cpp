@@ -98,55 +98,6 @@ vector< complex<double> > Deut_Conv_GPD_T::gpds_to_helamps_T(const double xi, co
 }
 
 
-vector< complex<double> > Deut_Conv_GPD_T::helamps_to_gpds_V(const double xi, const double t, const vector< complex <double> > & helamps){
-
-    vector< complex<double> > gpds(5,0.);
-    //symmetric frame, with momentum transfer in x,z plane, so phi=0
-    double D=(-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)/(4.*MASSD*MASSD);
-    gpds.at(0)=1./3./pow(1.-xi*xi,2.)*(3.*pow(xi,4.)-7.*xi*xi+2-2.*D*(1-xi*xi))*helamps[0]+1./3./(1-xi*xi)*helamps[1]
-        +sqrt(2./D*(1+xi)/(1-xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
-        -sqrt(2./D*(1-xi)/(1+xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
-        -1./3./D/pow(1-xi*xi,3.)*(2.*xi*xi+D*(3.*pow(xi,6.)-10.*pow(xi,4.)+9.*xi*xi-2))*helamps[4];
-
-    gpds.at(1)=2./(1-xi*xi)*helamps[0]-sqrt(1./2./D*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]+sqrt(1./2./D*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
-        +2.*xi*xi/D/pow(1.-xi*xi,2.)*helamps[4];
-
-    gpds.at(2)=-1/D*helamps[4];
-    gpds.at(3)=-2.*xi/(1-xi*xi)*helamps[0]+sqrt(1./D/2.*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]+sqrt(1./D/2.*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
-    -2.*xi/D/pow(1.-xi*xi,2.)*helamps[4];
-
-
-    gpds.at(4)=-1./pow(1.-xi*xi,2.)*(xi*xi+2.*D*(1.-xi*xi)+1)*helamps[0]+1./(1.-xi*xi)*helamps[1]
-        +sqrt(2./D*(1+xi)/(1-xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
-        -sqrt(2./D*(1-xi)/(1+xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
-                -1./D/pow(1.-xi*xi,3.)*(2.*xi*xi+D*(1.-pow(xi,4.)))*helamps[4];
-
-
-    return gpds;
-}
-
-vector< complex<double> > Deut_Conv_GPD_T::gpds_to_helamps_V(const double xi, const double t, const vector< complex<double> > & gpds){
-
-    vector< complex<double> > helamps(5,0.);
-    //symmetric frame, with momentum transfer in x,z plane, so phi=0
-
-    double D=(-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)/(4.*MASSD*MASSD);
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
-    // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
-    helamps.at(0)=gpds[0]+D*gpds[2]-1./3.*gpds[4];
-
-    helamps.at(1)=(-2.*D+(1+xi*xi)/(1-xi*xi))*gpds[0]+(2.*D-2.*xi*xi/(1-xi*xi))*gpds[1]
-            -2.*(D*D*pow(1-xi*xi,2.)-xi*xi)/pow(1-xi*xi,2.)*gpds[2]+(2.*D*xi-2.*xi/(1-xi*xi))*gpds[3]
-            +((1-xi*xi)-1./3.*(-2.*D+(1+xi*xi)/(1-xi*xi)))*gpds[4];
-
-    helamps.at(2)=sqrt(2.*D*(1-xi*xi))/(1+xi)*(gpds[0]-(1.-xi)/2.*(gpds[1]-gpds[3])+(D*(1.-xi*xi)-xi)/(1.-xi*xi)*gpds[2]-1./3.*gpds[4]);
-
-    helamps.at(3)=sqrt(2.*D*(1-xi*xi))/(1-xi)*(-gpds[0]+(1.+xi)/2.*(gpds[1]+gpds[3])-(D*(1.-xi*xi)+xi)/(1.-xi*xi)*gpds[2]+1./3.*gpds[4]);                    
-
-    helamps.at(4)=-D*gpds[2];                    
-    return helamps;
-}
-
 
 std::complex<double > Deut_Conv_GPD_T::test(double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax){
     double alpha1=1.+xi;
@@ -422,19 +373,6 @@ complex<double> Deut_Conv_GPD_T::getGPD_odd_nucl(const int sigma_in, const int s
                     -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in-1)*phi*I_UNIT)*gpd_nucl.getHtildeT_singlet(model)
                     +(sigma_in+1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
                     -(sigma_in+1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
-    }
-}
-
-complex<double> Deut_Conv_GPD_T::getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi, const double t,
-                                    const double t0, const double phi,  const double gpd_H, const double gpd_E) const{
-
-    // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
-    double kinfac=sqrt(t0-t)/MASSn;
-    if(sigma_in==sigma_out) return sqrt(1-xi*xi)*gpd_H + sigma_in*xi*xi/sqrt(1-xi*xi)*gpd_E;
-
-    else{
-        if(sigma_in==-1) return -exp(-I_UNIT*phi)*kinfac/2.*gpd_E ;
-        else return exp(I_UNIT*phi)*kinfac/2.*gpd_E ;
     }
 }
 
