@@ -232,14 +232,14 @@ double TwoVector_Nucl::getCross_gammaL_rhoT(const double scale, const double xi,
             
             integral[0]*=36.; //prefactor DA (twice, squared)
             
-            //cout << count << " " << integral[0] << endl;
+            // cout << count << " " << integral[0] << endl;
             
             //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
             integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; 
             //cout << 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq << endl;
             //prefactors Eq (15) Enberg et al.
             integral[0] *= -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); 
-            //cout << 2.*PI*alpha_s*sqrt(Qsq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << endl;
+            // cout << 2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << endl;
             //cout << 1./256./pow(PI,3.)/xi/(1.-xi) << endl;
             result_L+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi); // Enberg et al Eq (12)
 
@@ -275,8 +275,8 @@ double TwoVector_Nucl::getCross_gammaT_rhoT(const double scale, const double xi,
     numint::array<double,2> lower = {{0.,0.}};
     numint::array<double,2> upper = {{1.,1.}};
 
-    //gamma_L calculation
-    F.f=integrandum_T;
+    //gamma_T calculation
+    F.f=integrandum_T_T;
     unsigned count=0;
     double result_T=0.;
     // integration over u and z
@@ -284,13 +284,15 @@ double TwoVector_Nucl::getCross_gammaT_rhoT(const double scale, const double xi,
         for(int spinout=-1;spinout<=1;spinout+=2){        
             F.spinout=spinout;
             F.spinin=spinin;
-        std::vector<double> integral(1,0.); //integrandum result array
-        numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
-        integral[0]*=36.; //prefactor DA (twice, squared)
+            std::vector<double> integral(1,0.); //integrandum result array
+            numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
+            integral[0]*=36.; //prefactor DA (twice, squared)
+            // cout << count << " " << integral[0] << endl;
 
-        integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
-        integral[0] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
-        result_T+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi); // Enberg et al Eq (12)
+            integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
+            integral[0] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
+            // cout << PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << endl;
+            result_T+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi); // Enberg et al Eq (12)
 
         }
     }
