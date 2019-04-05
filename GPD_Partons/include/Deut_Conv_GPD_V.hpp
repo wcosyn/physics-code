@@ -47,7 +47,7 @@ Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel,
  * See Cano Pire EPJA App A
  * 
  * @param xi [] skewness
- * @param t [MeV^2] momentum transfer sq
+ * @param t [GeV^2] momentum transfer sq
  * @param helamps helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]00,[2]0+,[3]+0,[4]-+
  * @return std::vector<double>  gpds H_1 to H_5
  */
@@ -58,7 +58,7 @@ static std::vector< std::complex<double> > helamps_to_gpds_V(const double xi, co
  * See Cano Pire EPJA App A
  * 
  * @param xi [] skewness
- * @param t [MeV^2] momentum transfer sq
+ * @param t [GeV^2] momentum transfer sq
  * @param gpds gpds H_1 to H_5
  * @return std::vector<double> helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]00,[2]0+,[3]+0,[4]-+
  */
@@ -82,7 +82,7 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
  * 
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction
- * @param t [Mev^2] momentum transfer sq
+ * @param t [Gev^2] momentum transfer sq
  * @return std::vector< std::complex<double> > helicity amplitudes  deuteron helicities are (final,initial) [0]++,[1]--,[2]00,[3]0+,[4]-0,[5]+0,[6]0-,[7]-+,[8]+-
  */
 std::vector< std::complex<double> > gpd_conv(const double xi, const double x, const double t);
@@ -135,7 +135,7 @@ struct Ftor_conv {
  * @param[in] gpd object that contains all necessary info on the gpds 
  * @param x [] avg lc momentum fraction of struck quark
  * @param xi [] skewness
- * @param t [MeV^2] momentum transfer sq
+ * @param t [GeV^2] momentum transfer sq
  * @param pold_in polarization initial deuteron state (-1//0//+1)
  * @param pold_out polarization final deuteron state (-1//0//+1)
  * @param model diff implementations of KG parametrization, see TransGPD_set for details
@@ -154,8 +154,8 @@ static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double 
  * @param sigma_in polarization incoming nucleon (spin times two)
  * @param sigma_out polarization outgoing nucleon (spin times two)
  * @param xi_n skewness nucleon
- * @param t [MeV^2] momentum transfer sq.
- * @param t0 [MeV^2] minimum momentum transfer sq
+ * @param t [GeV^2] momentum transfer sq.
+ * @param t0 [GeV^2] minimum momentum transfer sq
  * @param phi [azimuthal angle \xiP+Delta fourvector]
  * @param gpd_H GPD H
  * @param gpd_E GPD E

@@ -15,6 +15,7 @@
 #include <partons/ServiceObjectRegistry.h>
 
 #include <partons/modules/gpd/GPDMMS13.h>
+#include <partons/modules/gpd/GPDVGG99.h>
 
 
 #include <TwoVector_Nucl.hpp>
@@ -99,7 +100,13 @@ int main(int argc, char** argv) {
 
  
             cout << Qsq << " " << xi << " " << psq << " " << result_T << " " << result_L << endl;
+
         }
+        // Remove pointer references
+        // Module pointers are managed by PARTONS
+        PARTONS::Partons::getInstance()->getModuleObjectFactory()->updateModulePointerReference(
+                pGPDModel, 0);
+        pGPDModel = 0;
         
 
     }

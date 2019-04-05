@@ -28,12 +28,15 @@ using namespace std;
 #include <partons/ServiceObjectRegistry.h>
 
 #include <partons/modules/gpd/GPDMMS13.h>
+#include <partons/modules/gpd/GPDVGG99.h>
+#include <partons/modules/gpd/GPDGK16.h>
+#include <partons/modules/gpd/GPDGK16Numerical.h>
 
 
 int main(int argc, char *argv[]){
     std::string wf=argv[1];
     double xi=atof(argv[3]);
-    double t=atof(argv[2])*-1.E06;
+    double t=-atof(argv[2]);
     // cout << "xi " << xi << " t " << t << " model " << model << endl;
     // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
 
@@ -59,21 +62,50 @@ int main(int argc, char *argv[]){
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
 
+
+        // for(int i=0;i<=200;i++){
+        //     for(int j=0;j<=100;j++){
+        //         PARTONS::GPDKinematic gpdKinematic(0.01*(i-100)+(i==100? 1.E-04:0),0.01*(j),t, 1., 1.);
+        //         //PARTONS::GPDKinematic gpdKinematic(0.1, 0.2, -0.1, 1., 1.);
+        //         PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,
+        //                 pGPDModel);
+        //         double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+        //             +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+        //         double E=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+        //             +gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+        //         cout << 0.01*(i-100) << " " << 0.01*j << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution() <<
+        //         " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution()
+        //          << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution() << " " 
+        //          << gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() << endl;
+
+        //     }
+        // }
+
         //cout << "alpha_s " << alpha_s << endl;
         Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
+        //-99 to 99
 
-        for(int i=-99;i<=99;i++){
-            double x=i*0.01;
-            vector< complex<double> > out = test.gpd_conv(xi,x,t);
-            vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
-            vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
+        cout << test.getDeut_GPD_V_set(0.,xi,t,1).getAmp_00() << endl;
+        // for(int i=-99;i<=99;i++){
+        //     double x=i*0.01*abs(xi);
+        //     vector< complex<double> > out = test.gpd_conv(xi,x,t);
+        //     vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
+        //     //vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
             
-            cout << x << " ";
-            for(int j=0;j<5;j++) cout << out[j] << " ";
-            for(int j=0;j<5;j++) cout << gpd[j] << " ";
-            cout << endl;
+        //     cout << x << " ";
+        //     for(int j=0;j<5;j++) cout << out[j].real() << " ";
+        //     for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
+        //     cout << endl;
         
-        }
+        // }
+
+        // Remove pointer references
+        // Module pointers are managed by PARTONS
+        PARTONS::Partons::getInstance()->getModuleObjectFactory()->updateModulePointerReference(
+                pGPDModel, 0);
+        pGPDModel = 0;
+
+
     }
     // Appropriate catching of exceptions is crucial for working of PARTONS.
     // PARTONS defines its own type of exception, which allows to display class name and function name

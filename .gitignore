@@ -6,6 +6,7 @@ Tools/constants.hpp
 manual/*.pdf
 share/statefile/
 share/grids/
+share/gpd_deutgrids/
 .vscode/ipch/
 
 # get rid of mac folder info files

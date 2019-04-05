@@ -30,7 +30,6 @@ void TwoVector_Nucl::integrandum_L(numint::vector_d &result, double u, double z,
 
         PARTONS::GPDResult gpdResult = twovector.pGPDService->computeGPDModel(gpdKinematic,
             twovector.pGPDModel);
-
         // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
         result[0]=(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
                     -gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution())
@@ -75,8 +74,7 @@ void TwoVector_Nucl::integrandum_T_L(numint::vector_d &result, double u, double 
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
-        
-        TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,t,1);
+        TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,t*1.E06,1);
         double gpdfactor = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,t,t,0.,1,1,gpds).real();
         // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
         result[0]=gpdfactor*
@@ -96,7 +94,7 @@ void TwoVector_Nucl::integrandum_T_T(numint::vector_d &result, double u, double 
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
-        TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,t,1);
+        TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,t*1.E06,1);
         double gpdfactor = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,t,t,0.,1,1,gpds).real();
 
         // (Hq^u-Hq^d) * (2z-1) * z * barz / u / baru * Q    [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards] [factor p_perp from nominator taken out]

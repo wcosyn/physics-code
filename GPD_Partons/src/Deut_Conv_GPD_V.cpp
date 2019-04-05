@@ -1,8 +1,12 @@
 #include "Deut_Conv_GPD_V.hpp"
 #include <constants.hpp>
-#include <mstwpdf.h>
 #include <cassert>
 #include <numint/numint.hpp>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
 
 using namespace std;
 
@@ -29,7 +33,8 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_gpds_V(const double xi, co
 
     vector< complex<double> > gpds(5,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
-    double D=(-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)/(4.*MASSD*MASSD);
+    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
+    double D=(t0-t)/(4.*MASSD*MASSD)*1.E06;
     gpds.at(0)=1./3./pow(1.-xi*xi,2.)*(3.*pow(xi,4.)-7.*xi*xi+2-2.*D*(1-xi*xi))*helamps[0]+1./3./(1-xi*xi)*helamps[1]
         +sqrt(2./D*(1+xi)/(1-xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
         -sqrt(2./D*(1-xi)/(1+xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
@@ -57,8 +62,8 @@ vector< complex<double> > Deut_Conv_GPD_V::gpds_to_helamps_V(const double xi, co
     vector< complex<double> > helamps(5,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
 
-    double D=(-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)/(4.*MASSD*MASSD);
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
+    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
+    double D=(t0-t)/(4.*MASSD*MASSD)*1.E06;
     // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
     helamps.at(0)=gpds[0]+D*gpds[2]-1./3.*gpds[4];
 
@@ -91,12 +96,12 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     double alphaprime=(alpha1*(1+xi)-4.*xi)/(1-xi);
 
     double xi_n=xi/(alpha1/2.*(1+xi)-xi);
-    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n);
+    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n)*1.E-06;
     // double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
     if(t>t0_n) return;
     
     double x_n=x/(alpha1/2.*(1+xi)-xi);
-    // cout << "int " << x << " " << xi << " " << x_n << " " << xi_n << " " << xi/x << " " << xi_n/x_n << endl;
+    //cout << "int " << x << " " << xi << " " << x_n << " " << xi_n << " " << xi/x << " " << xi_n/x_n << endl;
     double sinkphi,coskphi;
     sincos(kphi,&sinkphi,&coskphi);
     double kxprime=kperp*coskphi+(1-alpha1/2.)/(1-xi)*deltax;  //see Eq (114) GPD note for kinematics
@@ -138,8 +143,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     wf_in=lf_deut(Ek,k_in,wf_in);
     wf_out=lf_deut(Ekprime,k_out,wf_out);
     
-
-    PARTONS::GPDKinematic gpdKinematic(x_n,xi_n,t, 1., 1.);
+    PARTONS::GPDKinematic gpdKinematic(x_n,abs(xi_n),t, 1., 1.);
     PARTONS::GPDResult gpdResult = gpd.pGPDService->computeGPDModel(gpdKinematic,
             gpd.pGPDModel);
     double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
@@ -181,7 +185,7 @@ complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int 
                                     const double t0, const double phi,  const double gpd_H, const double gpd_E) const{
 
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
-    double kinfac=sqrt(t0-t)/MASSn;
+    double kinfac=sqrt(t0-t)/MASSn*1.E03;
     if(sigma_in==sigma_out) return sqrt(1-xi*xi)*gpd_H + sigma_in*xi*xi/sqrt(1-xi*xi)*gpd_E;
 
     else{
@@ -192,8 +196,8 @@ complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int 
 
 
 vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const double x, const double t){
-    if(fabs(x)>1.) return vector< complex<double> >(9,0.);
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
+    if(fabs(x)>1.) return vector< complex<double> >(5,0.);
+    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
     double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0
 
     
@@ -233,7 +237,8 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
 
     unsigned count;
     vector< complex<double> > ret(9,0.);
-    for(int i=0;i<9;i++){
+    //we only need 5 Helicity amplitudes
+    for(int i=4;i<9;i++){
         F.f=Deut_Conv_GPD_V::int_k3;
         F.pold_in=i/3-1;
         F.pold_out=i%3-1;
@@ -254,48 +259,32 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         ret[i]=out[0];
 
-        // //symmetry checks!!
-        // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
-        // // F.f=Deut_Conv_GPD_V::int_kprime3;
-        // // numint::cube_adaptive(mdf,lowerprime,upper,abserr,relerr,5E02,maxEval,out,count,0);
-        // // //numint::cube_romb(mdf,lowerprime,upper,abserr,relerr,out,count,0);
-        // // //numint::vegas( mdf, lower,upper,nvec, relerr,abserr,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas2").c_str(),countt,fail,out,err,prob );
-        // // //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, stf.c_str() ,nregions,countt,fail,out,err,prob );
-        // // cout << "normalprime " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
-        // F.f=Deut_Conv_GPD_V::int_k3;
+        //symmetry checks!!
+        //cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
         // F.pold_in=i%3-1;
         // F.pold_out=i/3-1;
         // F.xi=-xi;
-        // F.right=0;
         // F.deltax=-Delta_perp;
-        // out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
-        // cout << "conj " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -conj(out[0]) << " " << count << endl;
         // numint::cube_adaptive(mdf,lowerminus,upper,abserr,relerr,5E02,maxEval,out,count,0);
-        // cout << "conj " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -conj(out[0]) << " " << count << endl;
+        // cout << "conj " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << conj(out[0]) << " " << count << endl;
         // F.pold_in=-(i/3-1);
         // F.pold_out=-(i%3-1);
         // F.xi=xi;
-        // F.right=0;
         // F.deltax=-Delta_perp;
-        // out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
-        // cout << "P " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -out[0] << " " << count << endl;
         // numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
-        // cout << "P " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -out[0] << " " << count << endl;
+        // cout << "P " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
         // F.pold_in=i%3-1;
         // F.pold_out=i/3-1;
         // F.xi=-xi;
-        // F.right=0;
         // F.deltax=Delta_perp;
-        // out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
-        // cout << "T " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << pow(-1,F.pold_in-F.pold_out)*out[0] << " " << count << endl;
         // numint::cube_adaptive(mdf,lowerminus,upper,abserr,relerr,5E02,maxEval,out,count,0);
         // cout << "T " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << pow(-1,F.pold_in-F.pold_out)*out[0] << " " << count << endl;
 
      }
 
-    vector< complex<double> > result(9,0.);
-    //order of helicity amplitudes is ++,--,00,0+,-0,+0,0-,-+,+-
-    result[0]=ret[8];result[1]=ret[0];result[2]=ret[4];result[3]=ret[7];result[4]=ret[3];result[5]=ret[5];result[6]=ret[1];result[7]=ret[6];result[8]=ret[2];
+    vector< complex<double> > result(5,0.);
+    //order of helicity amplitudes is ++,00,0+,+0,-+
+    result[0]=ret[8];result[1]=ret[4];result[2]=ret[7];result[3]=ret[5];result[4]=ret[6];
     return result;
 
 }
@@ -317,21 +306,42 @@ vector< complex<double> > Deut_Conv_GPD_V::lf_deut(const double Ek, const TVecto
 Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double xi, const double t, const bool ERBL){
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
     if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        cout << "constructing chiral even deuteron helamps grid" << endl;
-        for(int i=0;i<=200;i++){
-            vector< complex<double> > result = gpd_conv(0.01*(i-100)*(ERBL? abs(xi): 1.),xi,t);
-            grid[i]=Deut_GPD_V_set(result[0].real(),result[2].real(),result[3].real(),result[5].real(),result[7].real());
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/V.xi"+to_string(xi)+".t"+to_string(t)+".EBRL"+to_string(ERBL);
+        ifstream infile(filename.c_str());
+        if(!infile.is_open()){
+            cout << "constructing chiral even deuteron helamps grid " << filename << endl;
+            ofstream outfile(filename.c_str());
+
+            for(int i=0;i<=100;i++){
+                double x=0.02*(i-50)*(ERBL? abs(xi): 1.);
+                vector< complex<double> > result = gpd_conv(x,xi,t);
+                grid[i]=Deut_GPD_V_set(result[0].real(),result[1].real(),result[2].real(),result[3].real(),result[4].real());
+                outfile << x << " " << result[0].real() << " " << result[1].real() << " " << result[2].real() << " " << result[3].real() << " " << result[4].real() << endl;
+            }
+            outfile.close();
+            
+            cout << "construction done" << endl;
+            grid_set=true;
+            t_grid=t;
+            xi_grid=xi;
+            ERBL_set=ERBL;
         }
-        
-        cout << "construction done" << endl;
-        grid_set=true;
-        t_grid=t;
-        xi_grid=xi;
-        ERBL_set=ERBL;
+        else{
+            cout << "Reading in grid " << filename << endl;
+            string line;
+            for(int i=0;i<=100;i++){
+                getline (infile,line);
+                istringstream iss(line);
+                vector<string> tokens{istream_iterator<string>{iss},
+                      istream_iterator<string>{}};
+                grid[i]=Deut_GPD_V_set(stod(tokens[1]),stod(tokens[2]),stod(tokens[3]),stod(tokens[4]),stod(tokens[5]));
+            }
+            infile.close();
+        }
    }
    //interpolation
     double index_i=0.;
-    double frac_i=modf(x*100/(ERBL? abs(xi): 1.)+100,&index_i);
+    double frac_i=modf(x*50/(ERBL? abs(xi): 1.)+50,&index_i);
 
     return grid[int(index_i)]*(1.-frac_i)+grid[int(index_i)+1]*(frac_i);
 }
