@@ -1,3 +1,17 @@
+#include <iostream>
+#include <cstdlib>
+#include <vector>
+
+using namespace std;
+
+
+#include <iostream>
+#include <cmath>
+#include "constants.hpp"
+
+#include <Deut_Conv_GPD_V.hpp>
+#include "TransGPD_set.hpp"
+
 #include <ElementaryUtils/logger/CustomException.h>
 #include <ElementaryUtils/logger/LoggerManager.h>
 #include <partons/Partons.h>
@@ -6,7 +20,6 @@
 #include <partons/ServiceObjectRegistry.h>
 #include <QtCore/qcoreapplication.h>
 #include <string>
-#include <vector>
 
 
 #include <partons/ModuleObjectFactory.h>
@@ -17,49 +30,14 @@
 #include <partons/modules/gpd/GPDMMS13.h>
 
 
-#include <TwoVector_Nucl.hpp>
+int main(int argc, char *argv[]){
+    std::string wf=argv[1];
+    double xi=atof(argv[3]);
+    double t=atof(argv[2])*-1.E06;
+    // cout << "xi " << xi << " t " << t << " model " << model << endl;
+    // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
 
 
-
-using namespace std;
-
-
-   /**
-     * @brief list of possible GPD models
-     * 
-     */
-    enum GPD_model_type { GK16Numerical,MMS13,MPSSW13,VGG99,Vinnikov06 };
-    /**
-     * @brief a string to type map so you can lookup int values using strings like "VGG99" and so on... 
-     * use in constructor as Twovector_Nucl(Twovector_Nucl::TypeNames.at("VGG99"); (don't use [] acces op.)
-     * 
-     */
-    static const std::map<std::string,GPD_model_type> TypeNames; 
-    /**
-     * @brief initialise typename lookup map, use in constructor as Twovector_Nucl(Twovector_Nucl::TypeNames.at("VGG99"); (don't use [] acces op.) 
-     * 
-     * @return std::map<std::string,GPD_model_type> 
-     */
-    static std::map<std::string,GPD_model_type> initTypeNames(){ std::map<std::string,GPD_model_type> m; 
-                                                                    m["GK16Numerical"]=GK16Numerical;
-                                                                    m["MMS13"]=MMS13;
-                                                                    m["MPSSW13"]=MPSSW13;
-                                                                    m["VGG99"]=VGG99;
-                                                                    m["Vinnikov06"]=Vinnikov06;return m;} 
-
-
-
-
-/*
- * Main function.
- */
-int main(int argc, char** argv) {
-
-
-    double xi=atof(argv[1]);
-    double Qsq = atof(argv[2]); // virtual photon scale squared [GeV^2]
-    bool longitudinal = atoi(argv[3]);
-    // Init Qt4
     QCoreApplication a(argc, argv);
     PARTONS::Partons* pPartons = 0;
     
@@ -82,26 +60,20 @@ int main(int argc, char** argv) {
                     PARTONS::RunningAlphaStrongStandard::classId);
 
         //cout << "alpha_s " << alpha_s << endl;
-        TwoVector_Nucl gimme_xs(pGPDService, pGPDModel, pRunningAlphaStrongModule);
+        Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
 
-        for(int i=0;i<=16;i++){
+        for(int i=-99;i<=99;i++){
+            double x=i*0.01;
+            vector< complex<double> > out = test.gpd_conv(xi,x,t);
+            vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
+            vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
+            
+            cout << x << " ";
+            for(int j=0;j<5;j++) cout << out[j] << " ";
+            for(int j=0;j<5;j++) cout << gpd[j] << " ";
+            cout << endl;
         
-            double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
-            double result_L=0.,result_T=0.;
-            if(longitudinal){
-                result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
-                result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
-            }
-            else{
-                result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq);
-                result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq);
-            }
-
- 
-            cout << Qsq << " " << xi << " " << psq << " " << result_T << " " << result_L << endl;
         }
-        
-
     }
     // Appropriate catching of exceptions is crucial for working of PARTONS.
     // PARTONS defines its own type of exception, which allows to display class name and function name
@@ -135,3 +107,4 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
