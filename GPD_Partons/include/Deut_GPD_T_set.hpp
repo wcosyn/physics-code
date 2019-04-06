@@ -40,6 +40,8 @@ double getAmp_0m() const{return amp_0m;}
 double getAmp_mp() const{return amp_mp;}
 double getAmp_pm() const{return amp_pm;}
 
+double getAmp(int i) const;
+
 /**
  * @brief adding operator
  * 

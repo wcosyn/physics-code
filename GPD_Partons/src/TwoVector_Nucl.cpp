@@ -15,7 +15,6 @@ pGPDService(pGPDService),pGPDModel(pGPDModel),pRunningAlphaStrongModule(pRunning
     ;
 }
 
-TwoVector_Nucl::~TwoVector_Nucl(){;}
 
 
 // integrandum for gamma_L amplitude

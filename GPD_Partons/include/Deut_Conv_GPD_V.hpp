@@ -1,5 +1,5 @@
-#ifndef DEUT_CONV_GPD_T
-#define DEUT_CONV_GPD_T
+#ifndef DEUT_CONV_GPD_V
+#define DEUT_CONV_GPD_V
 
 
 #include <vector>

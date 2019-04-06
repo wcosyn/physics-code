@@ -29,7 +29,7 @@ double getAmp_00() const{return amp_00;}
 double getAmp_0p() const{return amp_0p;}
 double getAmp_p0() const{return amp_p0;}
 double getAmp_mp() const{return amp_mp;}
-
+double getAmp(int index) const;
 /**
  * @brief adding operator
  * 

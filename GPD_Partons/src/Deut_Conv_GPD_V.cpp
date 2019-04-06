@@ -186,7 +186,7 @@ complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int 
 
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
     double kinfac=sqrt(t0-t)/MASSn*1.E03;
-    if(sigma_in==sigma_out) return sqrt(1-xi*xi)*gpd_H + sigma_in*xi*xi/sqrt(1-xi*xi)*gpd_E;
+    if(sigma_in==sigma_out) return sqrt(1-xi*xi)*gpd_H - xi*xi/sqrt(1-xi*xi)*gpd_E;
 
     else{
         if(sigma_in==-1) return -exp(-I_UNIT*phi)*kinfac/2.*gpd_E ;

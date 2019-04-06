@@ -35,3 +35,40 @@ Deut_GPD_T_set Deut_GPD_T_set::operator*(const double sc) const{
 
     return result;
 }
+
+double Deut_GPD_T_set::getAmp(int index) const{
+    switch(index){
+        case 0:
+            return amp_pp;
+            break;
+        case 1:
+            return amp_mm;
+            break;
+        case 2:
+            return amp_00;
+            break;
+        case 3:
+            return amp_0p;
+            break;
+        case 4:
+            return amp_m0;
+            break;
+        case 5:
+            return amp_p0;
+            break;
+        case 6:
+            return amp_0m;
+            break;
+        case 7:
+            return amp_mp;
+            break;
+        case 8:
+            return amp_pm;
+            break;
+        default:
+            cerr << "invalid index" << endl;
+            return 0.;
+            break;
+    }
+
+}
