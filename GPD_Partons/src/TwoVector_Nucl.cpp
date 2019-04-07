@@ -134,7 +134,7 @@ double TwoVector_Nucl::getCross_gammaL_rhoL(const double scale, const double xi,
     F.f=integrandum_L;
     unsigned count=0;
     // integration over u and z
-    if(Q2>1.E-03) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
+    if(Q2>1.E-05) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
     integral[0]*=36.; //prefactor DA (twice, squared)
     
     //cout << count << " " << integral[0] << endl;
@@ -225,7 +225,7 @@ double TwoVector_Nucl::getCross_gammaL_rhoT(const double scale, const double xi,
             F.spinout=spinout;
             F.spinin=spinin;
             std::vector<double> integral(1,0.); //integrandum result array
-            if(Q2>1.E-03) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
+            if(Q2>1.E-05) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
             
             integral[0]*=36.; //prefactor DA (twice, squared)
             

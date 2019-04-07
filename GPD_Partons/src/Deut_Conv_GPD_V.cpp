@@ -11,7 +11,7 @@
 using namespace std;
 
 Deut_Conv_GPD_V::Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, const string &wfname):
-pGPDService(pGPDService),pGPDModel(pGPDModel)
+pGPDService(pGPDService),pGPDModel(pGPDModel),chiraleven_grid(pGPDService, pGPDModel)
 {
 
 
@@ -144,13 +144,16 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     wf_in=lf_deut(Ek,k_in,wf_in);
     wf_out=lf_deut(Ekprime,k_out,wf_out);
     
-    PARTONS::GPDKinematic gpdKinematic(x_n,abs(xi_n),t, 1., 1.);
-    PARTONS::GPDResult gpdResult = gpd.pGPDService->computeGPDModel(gpdKinematic,
-            gpd.pGPDModel);
-    double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
-        +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
-    double E=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
-        +gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+    // PARTONS::GPDKinematic gpdKinematic(x_n,abs(xi_n),t, 1., 1.);
+    // PARTONS::GPDResult gpdResult = gpd.pGPDService->computeGPDModel(gpdKinematic,
+    //         gpd.pGPDModel);
+    // double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+    //     +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+    // double E=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+    //     +gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+    vector<double> nuclgpd = gpd.chiraleven_grid.getVectorGPDSet(x_n,abs(xi_n),t,0);
+    double E=nuclgpd[1];
+    double H=nuclgpd[0];
 
     for(int sigma2=-1;sigma2<=1;sigma2+=2){  //spectator helicity
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){ //initial active nucleon helicity
@@ -307,7 +310,7 @@ vector< complex<double> > Deut_Conv_GPD_V::lf_deut(const double Ek, const TVecto
 Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double xi, const double t, const bool ERBL){
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
     if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/V.xi"+to_string(xi)+".t"+to_string(t)+".EBRL"+to_string(ERBL);
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/V_grid.xi"+to_string(xi)+".t"+to_string(t)+".EBRL"+to_string(ERBL);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
             cout << "constructing chiral even deuteron helamps grid " << filename << endl;

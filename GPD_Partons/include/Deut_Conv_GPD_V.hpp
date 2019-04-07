@@ -12,6 +12,7 @@
 #include <numint/numint.hpp>
 #include <TInterpolatingWavefunction.h>
 
+#include "GPD_V_Nucl_grid.hpp"
 
 #include <partons/Partons.h>
 #include <partons/services/GPDService.h>
@@ -169,6 +170,8 @@ TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function
 TInterpolatingWavefunction wf;
 PARTONS::GPDService* pGPDService; ///< GPD Service from PARTONS
 PARTONS::GPDModule* pGPDModel; ///< GPD Model from PARTONS
+
+GPD_V_Nucl_grid chiraleven_grid;
 
 
 double t_grid; ///< [MeV^2] momentum transfer sq value the grid has
