@@ -519,7 +519,7 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
 
             for(int i=0;i<=100;i++){
                 double x=0.02*(i-50)*(ERBL? abs(xi): 1.);
-                vector< complex<double> > result = gpd_conv(x,xi,t,model);
+                vector< complex<double> > result = gpd_conv(xi,x,t,model);
                 grid[i]=Deut_GPD_T_set(result[0].real(),result[1].real(),result[2].real(),result[3].real(),
             result[4].real(),result[5].real(),result[6].real(),result[7].real(),result[8].real());
                 outfile << x << " " << result[0].real() << " " << result[1].real() << " " << result[2].real() << " " << result[3].real() << " " << result[4].real() << 
@@ -545,6 +545,10 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
                 stod(tokens[6]),stod(tokens[7]),stod(tokens[8]),stod(tokens[9]));
             }
             infile.close();
+            grid_set=true;
+            t_grid=t;
+            xi_grid=xi;
+            ERBL_set=ERBL;
         }
    }
    //interpolation

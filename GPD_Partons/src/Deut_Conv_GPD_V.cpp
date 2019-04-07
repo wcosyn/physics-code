@@ -101,6 +101,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     if(t>t0_n) return;
     
     double x_n=x/(alpha1/2.*(1+xi)-xi);
+    if(abs(x_n)>=1.) return; //overflow
     //cout << "int " << x << " " << xi << " " << x_n << " " << xi_n << " " << xi/x << " " << xi_n/x_n << endl;
     double sinkphi,coskphi;
     sincos(kphi,&sinkphi,&coskphi);
@@ -313,10 +314,12 @@ Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double x
             ofstream outfile(filename.c_str());
 
             for(int i=0;i<=100;i++){
-                double x=0.02*(i-50)*(ERBL? abs(xi): 1.);
-                vector< complex<double> > result = gpd_conv(x,xi,t);
+                double x=0.02*(i-50)*(ERBL? abs(xi): 1.)+(i==50? 1.E-04:0.);
+                vector< complex<double> > result = gpd_conv(xi,x,t);
+                vector< complex<double> > gpd = helamps_to_gpds_V(xi,t,result);
                 grid[i]=Deut_GPD_V_set(result[0].real(),result[1].real(),result[2].real(),result[3].real(),result[4].real());
-                outfile << x << " " << result[0].real() << " " << result[1].real() << " " << result[2].real() << " " << result[3].real() << " " << result[4].real() << endl;
+                outfile << x << " " << result[0].real() << " " << result[1].real() << " " << result[2].real() << " " << result[3].real() << " " << result[4].real()
+                <<" " << gpd[0].real() << " " << gpd[1].real() << " " << gpd[2].real() << " " << gpd[3].real() << " " << gpd[4].real() << " " << endl;
             }
             outfile.close();
             
@@ -337,6 +340,10 @@ Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double x
                 grid[i]=Deut_GPD_V_set(stod(tokens[1]),stod(tokens[2]),stod(tokens[3]),stod(tokens[4]),stod(tokens[5]));
             }
             infile.close();
+            grid_set=true;
+            t_grid=t;
+            xi_grid=xi;
+            ERBL_set=ERBL;
         }
    }
    //interpolation

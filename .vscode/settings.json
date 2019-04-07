@@ -11,5 +11,6 @@
         "complex": "cpp",
         "cstdlib": "cpp",
         "functional": "cpp"
-    }
+    },
+    "C_Cpp.intelliSenseEngine":"Default"
 }

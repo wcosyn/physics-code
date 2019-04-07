@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
     double Qsq = atof(argv[2]); // virtual photon scale squared [GeV^2]
     bool longitudinal = atoi(argv[3]);
     // Init Qt4
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
     PARTONS::Partons* pPartons = 0;
     
  

@@ -102,6 +102,7 @@ double TwoVector_Deut::getCross_gammaL_rhoL(const double scale, const double xi,
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
     double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
+    t=floor(t*100.)/100.;
 
     Ftor_2vector F;
     F.xi=xi;
@@ -152,6 +153,7 @@ double TwoVector_Deut::getCross_gammaT_rhoL(const double scale, const double xi,
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
     double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
+    t=floor(t*100.)/100.;
 
 
     Ftor_2vector F;
@@ -194,8 +196,8 @@ double TwoVector_Deut::getCross_gammaL_rhoT(const double scale, const double xi,
     double alpha_s = pRunningAlphaStrongModule->compute(scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
-    double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
-
+    double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi);//tmin [MeV^2]
+    t=floor(t/10000.)*10000.;
     Ftor_2vector F;
     F.xi=xi;
     F.t=t;
@@ -248,7 +250,8 @@ double TwoVector_Deut::getCross_gammaT_rhoT(const double scale, const double xi,
     double alpha_s = pRunningAlphaStrongModule->compute(scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
-    double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
+    double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi);//tmin [MeV^2]
+    t=floor(t/10000.)*10000.;
 
 
     Ftor_2vector F;

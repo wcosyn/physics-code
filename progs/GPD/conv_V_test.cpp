@@ -36,12 +36,13 @@ using namespace std;
 int main(int argc, char *argv[]){
     std::string wf=argv[1];
     double xi=atof(argv[3]);
-    double t=-atof(argv[2]);
+    double t=-atof(argv[2]); //[GeV^2] positive input!
+    int ERBL = atoi(argv[4]);
     // cout << "xi " << xi << " t " << t << " model " << model << endl;
     // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
 
 
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
     PARTONS::Partons* pPartons = 0;
     
  
@@ -85,7 +86,7 @@ int main(int argc, char *argv[]){
         Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
         //-99 to 99
 
-        cout << test.getDeut_GPD_V_set(0.,xi,t,1).getAmp_00() << endl;
+        test.getDeut_GPD_V_set(0.,xi,t,ERBL).getAmp_00();
         // for(int i=-99;i<=99;i++){
         //     double x=i*0.01*abs(xi);
         //     vector< complex<double> > out = test.gpd_conv(xi,x,t);

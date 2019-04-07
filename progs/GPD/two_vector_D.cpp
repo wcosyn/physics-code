@@ -20,7 +20,7 @@
 
 #include <TwoVector_Deut.hpp>
 
-
+#include <locale.h>
 
 using namespace std;
 
@@ -64,10 +64,11 @@ int main(int argc, char** argv) {
     std::string pdfname = argv[5];
     
     // Init Qt4
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
+    //std::locale::global( std::locale( "" ) );
+    //setlocale(LC_NUMERIC,"en_US");
     PARTONS::Partons* pPartons = 0;
-    
- 
+     
     try {
 
         // Init PARTONS application
