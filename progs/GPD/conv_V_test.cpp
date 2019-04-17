@@ -10,7 +10,8 @@ using namespace std;
 #include "constants.hpp"
 
 #include <Deut_Conv_GPD_V.hpp>
-#include "TransGPD_set.hpp"
+#include <GPD_V_Nucl_grid.hpp>
+
 
 #include <ElementaryUtils/logger/CustomException.h>
 #include <ElementaryUtils/logger/LoggerManager.h>
@@ -59,7 +60,7 @@ int main(int argc, char *argv[]){
         // Create GPD module with the BaseModuleFactory
         PARTONS::GPDModule* pGPDModel =
                 PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
-                        PARTONS::GPDMMS13::classId);
+                        PARTONS::GPDVGG99::classId);
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
 
@@ -82,11 +83,24 @@ int main(int argc, char *argv[]){
         //     }
         // }
 
+        GPD_V_Nucl_grid gridV( pGPDService, pGPDModel);
+
+        for(int i=-99;i<=99;i++){
+            double x=i*0.01;
+            
+            //cout << x << " " << gridV.getVectorGPDSet(x,xi,t,0)[0] << endl;
+            PARTONS::GPDKinematic gpdKinematic(x,xi,t, 2., 2.);
+            PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,
+                    pGPDModel);
+            cout << x << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution() << endl;
+                
+        }
         //cout << "alpha_s " << alpha_s << endl;
-        Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
+
+        // Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
         //-99 to 99
 
-        test.getDeut_GPD_V_set(0.,xi,t,ERBL).getAmp_00();
+        // test.getDeut_GPD_V_set(0.,xi,t,ERBL).getAmp_00();
         // for(int i=-99;i<=99;i++){
         //     double x=i*0.01*abs(xi);
         //     vector< complex<double> > out = test.gpd_conv(xi,x,t);
