@@ -93,10 +93,11 @@ struct Ftor_2vector {
 
   static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
     Ftor_2vector &p = * (Ftor_2vector *) param;
-    p.f(ret,x[0],x[1], p.xi, p.t, p.psq, p.Qsq, p.spinout, p.spinin, *p.pobj);
+    p.f(ret,x[0],x[1], p.xi, p.t, p.scale, p.psq, p.Qsq, p.spinout, p.spinin, *p.pobj);
   }
   double xi; ///< [] skewness
   double t; ///< [GeV^2] momentum transfer, taken at t_min for now
+  double scale; ///< [GeV] factorization = renormalization scale
   double psq; ///< [GeV^2] pomeron hard scale
   double Qsq; ///< [GeV^2] virtual photon 4mom squared
   int spinin; /// [] spin*2 of incomcing nucleon
@@ -106,7 +107,7 @@ struct Ftor_2vector {
    * @brief integration function, integration over u and z from DA's, see Enberg et al paper EPJC47 87-94
    * 
    */
-  void (*f)(numint::vector_d &, double u, double z, double xi, double t, double psq, double Qsq, int spinout, int spinin, TwoVector_Nucl& twovector);
+  void (*f)(numint::vector_d &, double u, double z, double xi, double t, double scale, double psq, double Qsq, int spinout, int spinin, TwoVector_Nucl& twovector);
 
 };
 
@@ -122,7 +123,7 @@ struct Ftor_2vector {
  * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
  */
-static void integrandum_L(numint::vector_d &, double u, double z, double xi, double t, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+static void integrandum_L(numint::vector_d &, double u, double z, double xi, double t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
 
 /**
  * @brief integrandum for transversily polarized photon on nucleon, two times rho_L in final state
@@ -136,7 +137,7 @@ static void integrandum_L(numint::vector_d &, double u, double z, double xi, dou
   * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
 */
-static void integrandum_T(numint::vector_d &, double u, double z, double xi, double t, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+static void integrandum_T(numint::vector_d &, double u, double z, double xi, double t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
 
 /**
  * @brief  integrandum for longitudinal polarized photon on nucleon, rho_L and rho_T in final state
@@ -150,7 +151,7 @@ static void integrandum_T(numint::vector_d &, double u, double z, double xi, dou
  * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
  */
-static void integrandum_T_L(numint::vector_d &, double u, double z, double xi, double t, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+static void integrandum_T_L(numint::vector_d &, double u, double z, double xi, double t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
 
 /**
  * @brief integrandum for transversily polarized photon on nucleon, rho_L and rho_T in final state
@@ -164,7 +165,7 @@ static void integrandum_T_L(numint::vector_d &, double u, double z, double xi, d
   * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
 */
-static void integrandum_T_T(numint::vector_d &, double u, double z, double xi, double t, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+static void integrandum_T_T(numint::vector_d &, double u, double z, double xi, double t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
 
 PARTONS::GPDService* pGPDService; ///< GPD service from PARTONS
 PARTONS::GPDModule* pGPDModel; ///< GPD model from PARTONS

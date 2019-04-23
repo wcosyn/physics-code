@@ -150,7 +150,7 @@ std::complex<double > Deut_Conv_GPD_T::test(double x, double xi, double t, int p
     // cout << "out " << pold_out << " " << wf_out.at(0) << " " << wf_out.at(1) << " " << wf_out.at(2) << " " << wf_out.at(3) << endl;
     
 
-    TransGPD_set gpd_nucl=chiralodd_grid.getTransGPDSet(x_n,xi_n,t,0);
+    TransGPD_set gpd_nucl=chiralodd_grid.getTransGPDSet(x_n,xi_n,t,2.);
     // cout << x_n << " " << xi_n << " " << 2*xi/(1+xi*xi) << " " << gpd_nucl.getET_singlet(model) << endl;
     for(int sigma2=-1;sigma2<=1;sigma2+=2){
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
@@ -169,7 +169,7 @@ std::complex<double > Deut_Conv_GPD_T::test(double x, double xi, double t, int p
 }
 
 void Deut_Conv_GPD_T::int_k3(numint::vector_z & res, double alpha1, double kperp, double kphi, Deut_Conv_GPD_T &gpd,
-              double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax){
+              double x, double xi, double t, double scale, int pold_in, int pold_out, int model, bool right, double deltax){
     res=numint::vector_z(1,0.);
 
     double Ek=sqrt((MASSn*MASSn+kperp*kperp)/alpha1/(2.-alpha1));
@@ -231,7 +231,7 @@ void Deut_Conv_GPD_T::int_k3(numint::vector_z & res, double alpha1, double kperp
     wf_out=lf_deut(Ekprime,k_out,wf_out);
     
 
-    TransGPD_set gpd_nucl=gpd.chiralodd_grid.getTransGPDSet(x_n,xi_n,t,0);
+    TransGPD_set gpd_nucl=gpd.chiralodd_grid.getTransGPDSet(x_n,xi_n,t,scale);
     for(int sigma2=-1;sigma2<=1;sigma2+=2){  //spectator helicity
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){ //initial active nucleon helicity
             // complex<double> wfin = gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in);
@@ -263,7 +263,7 @@ void Deut_Conv_GPD_T::int_k3(numint::vector_z & res, double alpha1, double kperp
 }
 
 void Deut_Conv_GPD_T::int_kprime3(numint::vector_z & res, double alphaprime, double kperpprime, double kphiprime, Deut_Conv_GPD_T &gpd,
-              double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax){
+              double x, double xi, double t, double scale, int pold_in, int pold_out, int model, bool right, double deltax){
     res=numint::vector_z(1,0.);
     // alphaprime=1.0016;
     // kperpprime=21.6618;
@@ -322,7 +322,7 @@ void Deut_Conv_GPD_T::int_kprime3(numint::vector_z & res, double alphaprime, dou
     wf_out=lf_deut(Ekprime,k_out,wf_out);
     
 
-    TransGPD_set gpd_nucl=gpd.chiralodd_grid.getTransGPDSet(x_n,xi_n,t,0);
+    TransGPD_set gpd_nucl=gpd.chiralodd_grid.getTransGPDSet(x_n,xi_n,t,scale);
     for(int sigma2=-1;sigma2<=1;sigma2+=2){
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
             //complex<double> wfin = gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in);
@@ -377,15 +377,16 @@ complex<double> Deut_Conv_GPD_T::getGPD_odd_nucl(const int sigma_in, const int s
 }
 
 
-vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const double x, const double t,const int model){
+vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const double x, const double t,const double scale, const int model){
     if(fabs(x)>1.) return vector< complex<double> >(9,0.);
     double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
     double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0
 
-    chiralodd_grid.getTransGPDSet(0.,0.,t,0); //just fill the grid here
+    chiralodd_grid.getTransGPDSet(0.,0.,t,scale); //just fill the grid here
     Deut_Conv_GPD_T::Ftor_conv F;
     F.x=x;
     F.t=t;
+    F.scale=scale;
     F.gpd=this;
     F.model=model;
 
@@ -508,10 +509,10 @@ vector< complex<double> > Deut_Conv_GPD_T::lf_deut(const double Ek, const TVecto
 
 }
 
-Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double xi, const double t, const bool ERBL, const int model){
+Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model){
      //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
     if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/T.xi"+to_string(xi)+".t"+to_string(t)+".EBRL"+to_string(ERBL)+".model"+to_string(model);
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/T.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".EBRL"+to_string(ERBL)+".model"+to_string(model);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
             cout << "constructing chiral odd deuteron helamps grid " << filename << endl;
@@ -519,7 +520,7 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
 
             for(int i=0;i<=100;i++){
                 double x=0.02*(i-50)*(ERBL? abs(xi): 1.);
-                vector< complex<double> > result = gpd_conv(xi,x,t,model);
+                vector< complex<double> > result = gpd_conv(xi,x,t,model,scale);
                 grid[i]=Deut_GPD_T_set(result[0].real(),result[1].real(),result[2].real(),result[3].real(),
             result[4].real(),result[5].real(),result[6].real(),result[7].real(),result[8].real());
                 outfile << x << " " << result[0].real() << " " << result[1].real() << " " << result[2].real() << " " << result[3].real() << " " << result[4].real() << 

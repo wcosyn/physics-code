@@ -11,7 +11,7 @@
 using namespace std;
 
 Deut_Conv_GPD_V::Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, const string &wfname):
-pGPDService(pGPDService),pGPDModel(pGPDModel),chiraleven_grid(pGPDService, pGPDModel)
+pGPDService(pGPDService),pGPDModel(pGPDModel),chiraleven_grid(pGPDService, pGPDModel),incH(1), incE(1)
 {
 
 
@@ -82,7 +82,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpds_to_helamps_V(const double xi, co
 
 
 void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
-              double x, double xi, double t, int pold_in, int pold_out, double deltax){
+              double x, double xi, double t, double scale, int pold_in, int pold_out, double deltax){
     res=numint::vector_z(1,0.);
 
     double Ek=sqrt((MASSn*MASSn+kperp*kperp)/alpha1/(2.-alpha1));
@@ -151,9 +151,9 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     //     +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
     // double E=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
     //     +gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
-    vector<double> nuclgpd = gpd.chiraleven_grid.getVectorGPDSet(x_n,abs(xi_n),t,0);
-    double E=nuclgpd[1];
-    double H=nuclgpd[0];
+    vector<double> nuclgpd = gpd.chiraleven_grid.getVectorGPDSet(x_n,abs(xi_n),t,scale);
+    double E=gpd.incE? nuclgpd[1] : 0.;
+    double H= gpd.incH? nuclgpd[0] : 0.;
 
     for(int sigma2=-1;sigma2<=1;sigma2+=2){  //spectator helicity
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){ //initial active nucleon helicity
@@ -164,23 +164,20 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
                 //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
                             *gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E);
-                // cout << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in) << endl;
-                // cout << wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out) << endl;
-                // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1) << " " << x_n << endl;
-                //symmetry tests nucleon level
-                // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1))
-                //     << " " << -gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0_n,phin+PI,model,0) << endl;
-                // cout << "N p" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1)
-                //     << " " << -gpd.getGPD_odd_nucl(-sigma1in, -sigma1out, x_n, xi_n, t, t0_n,-phin+PI,model,0) << endl;
-                // cout << "N t" << sigma1in << " " << sigma1out << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1)
-                //     << " " << pow(-1.,(sigma1in-sigma1out)/2)*gpd.getGPD_odd_nucl(sigma1out, sigma1in, x_n, -xi_n, t, t0_n,-phin,model,0) << " " <<  pow(-1.,(sigma1in-sigma1out)/2) << endl;
+
+                //symmetry tests nucleon level (tested OK)
+                // cout << "N conj " << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E))
+                //     << " " << gpd.getGPD_even_nucl(sigma1out, sigma1in, -xi_n, t, t0_n,phin+PI,H,E) << endl;
+                // cout << "N p " << sigma1in << " " << sigma1out << " " << gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E)
+                //     << " " << gpd.getGPD_even_nucl(-sigma1in, -sigma1out, xi_n, t, t0_n,-phin+PI,H,E) << endl;
+                // cout << "N t " << sigma1in << " " << sigma1out << " " << gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E)
+                //     << " " << pow(-1.,(sigma1in-sigma1out)/2)*gpd.getGPD_even_nucl(sigma1out, sigma1in, -xi_n, t, t0_n,-phin,H,E) << " " <<  pow(-1.,(sigma1in-sigma1out)/2) << endl;
 
             }
         }
     }
     // cout << "int " << x << " " << result << " " << kperp << " " << alpha1 << endl;
-    res[0]=result*2.*kperp/alpha1/(2.-alpha1)/alphaprime*sqrt(Ek)*sqrt(Ekprime);
-    // cout << t0 << " " << alpha1 << " " << t0_n << " " << xi << " " << xi_n << " " << res[0].real() << endl;
+    res[0]=result*2.*kperp/alpha1/(2.-alpha1)/alphaprime*sqrt(Ek)*sqrt(Ekprime);    // cout << t0 << " " << alpha1 << " " << t0_n << " " << xi << " " << xi_n << " " << res[0].real() << endl;
     // cout << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << " " << res[0].real() << " " << res[0].imag() << endl;
     // exit(1);
 }
@@ -199,7 +196,7 @@ complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int 
 }
 
 
-vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const double x, const double t){
+vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const double x, const double t, const double scale){
     if(fabs(x)>1.) return vector< complex<double> >(5,0.);
     double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
     double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0
@@ -208,6 +205,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
     Deut_Conv_GPD_V::Ftor_conv F;
     F.x=x;
     F.t=t;
+    F.scale=scale;
     F.gpd=this;
     
     numint::mdfunction<numint::vector_z,3> mdf;
@@ -259,12 +257,12 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         int minEval=1E02;
         int maxEvalcuba=1E06;
 
-        int maxEval=1E04;
+        int maxEval=1E05;
         numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         ret[i]=out[0];
 
-        //symmetry checks!!
-        //cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
+        //symmetry checks!! [seems ok, but quite large differences for the small helicity amps]
+        // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
         // F.pold_in=i%3-1;
         // F.pold_out=i/3-1;
         // F.xi=-xi;
@@ -307,10 +305,10 @@ vector< complex<double> > Deut_Conv_GPD_V::lf_deut(const double Ek, const TVecto
 }
 
 
-Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double xi, const double t, const bool ERBL){
+Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL){
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
     if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/V_grid.xi"+to_string(xi)+".t"+to_string(t)+".EBRL"+to_string(ERBL);
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/V_grid.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".EBRL"+to_string(ERBL);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
             cout << "constructing chiral even deuteron helamps grid " << filename << endl;
@@ -318,7 +316,7 @@ Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double x
 
             for(int i=0;i<=100;i++){
                 double x=0.02*(i-50)*(ERBL? abs(xi): 1.)+(i==50? 1.E-04:0.);
-                vector< complex<double> > result = gpd_conv(xi,x,t);
+                vector< complex<double> > result = gpd_conv(xi,x,t, scale);
                 vector< complex<double> > gpd = helamps_to_gpds_V(xi,t,result);
                 grid[i]=Deut_GPD_V_set(result[0].real(),result[1].real(),result[2].real(),result[3].real(),result[4].real());
                 outfile << x << " " << result[0].real() << " " << result[1].real() << " " << result[2].real() << " " << result[3].real() << " " << result[4].real()

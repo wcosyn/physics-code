@@ -30,27 +30,26 @@ GPD_T_Nucl_grid::~GPD_T_Nucl_grid(){
     if(mstw) delete mstw;
 }
 
-TransGPD_set GPD_T_Nucl_grid::getTransGPDSet(const double x, const double xi, const double t, const bool ERBL){
-    if(xi<0) return getTransGPDSet(x,-xi,t,ERBL);  //Etile is always zero in the models so we have only even GPDs in xi
+TransGPD_set GPD_T_Nucl_grid::getTransGPDSet(const double x, const double xi, const double t, const double scale){
+    if(xi<0) return getTransGPDSet(x,-xi,t,scale);  //Etilde is always zero in the models so we have only even GPDs in xi
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
-    if(t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        cout << "constructing chiral odd gpd grid" << endl;
+    if(t!=t_grid||grid_set==false){
+        // cout << "constructing chiral odd gpd grid" << endl;
         for(int i=0;i<=200;i++){
             for(int j=0;j<=100;j++){
-                grid[i][j]=getGK_param(0.01*(i-100)*(ERBL? abs(xi): 1.),0.01*(j),t);
+                grid[i][j]=getGK_param(0.01*(i-100),0.01*(j),t, scale);
         //         cout << 0.01*(i-100) << " " << 0.01*(j) << " " << grid[i][j].getHTu() << " " << grid[i][j].getHTd() << " "
         // << grid[i][j].getEbarTd() <<  " " << grid[i][j].getEbarTu() << endl;
             }
         }
-        cout << "construction done" << endl;
+        // cout << "construction done" << endl;
         grid_set=true;
         t_grid=t;
-        ERBL_set=ERBL;
    }
    //interpolation
     double index_i=0.,index_j=0.;
     double frac_i=0.,frac_j=0.;
-    frac_i=modf(x*100/(ERBL? abs(xi): 1.)+100,&index_i);
+    frac_i=modf(x*100+100,&index_i);
     frac_j=modf(xi*100,&index_j);
 
     TransGPD_set gpd_nucl_grid=grid[int(index_i)][int(index_j)]*(1.-frac_i)*(1.-frac_j)+grid[int(index_i)+1][int(index_j)]*(frac_i)*(1.-frac_j)
@@ -65,13 +64,14 @@ TransGPD_set GPD_T_Nucl_grid::getTransGPDSet(const double x, const double xi, co
 }
 
 
-TransGPD_set GPD_T_Nucl_grid::getGK_param(const double x, const double xi, const double t){
+TransGPD_set GPD_T_Nucl_grid::getGK_param(const double x, const double xi, const double t, const double scale){
 
     if(fabs(x)>1.) return TransGPD_set(0.,0.,0.,0.);
     GPD_T_Nucl_grid::Ftor_doubledistr F;
     F.x=x;
     F.xi=xi;
     F.t=t;
+    F.scale=scale;
     F.gpdobject=this;
     numint::mdfunction<numint::vector_d,1> mdf;
     mdf.func = &Ftor_doubledistr::exec;
@@ -105,13 +105,13 @@ TransGPD_set GPD_T_Nucl_grid::getGK_param(const double x, const double xi, const
 }
 
 
-void GPD_T_Nucl_grid::DD_int_rho(numint::vector_d & res, double rho, double x, double xi, double t, GPD_T_Nucl_grid &gpdobject){
+void GPD_T_Nucl_grid::DD_int_rho(numint::vector_d & res, double rho, double x, double xi, double t, double scale, GPD_T_Nucl_grid &gpdobject){
 
     res=numint::vector_d(4,0.);
     double eta=(x-rho)/xi;
     double temp=3./4.*((1.-rho)*(1.-rho)-eta*eta)/pow(1.-rho,3.)/abs(xi);
     double HTdfront,HTufront, EbarTdfront, EbarTufront;
-    gpdobject.getHTfront(rho,HTdfront,HTufront);
+    gpdobject.getHTfront(rho,HTdfront,HTufront, scale);
     gpdobject.getEbarTfront(rho,EbarTdfront, EbarTufront);
 
     double exp1=exp(-0.45*log(rho)*t*1.E-06);
@@ -125,14 +125,14 @@ void GPD_T_Nucl_grid::DD_int_rho(numint::vector_d & res, double rho, double x, d
 
 }
 
-void GPD_T_Nucl_grid::getHTfront(const double x, double &HTdfront, double &HTufront) const{
+void GPD_T_Nucl_grid::getHTfront(const double x, double &HTdfront, double &HTufront, const double scale) const{
     mstw->update(x,2.);
 
 
-    double d=mstw->parton(1,x,2.)/x;
-    double dbar=mstw->parton(-1,x,2.)/x;
-    double u=mstw->parton(2,x,2.)/x;
-    double ubar=mstw->parton(-2,x,2.)/x;
+    double d=mstw->parton(1,x,scale)/x;
+    double dbar=mstw->parton(-1,x,scale)/x;
+    double u=mstw->parton(2,x,scale)/x;
+    double ubar=mstw->parton(-2,x,scale)/x;
 
     double Dd=-0.7*sqrt(x)*d;
     double Ddbar=-0.3*pow(x,0.4)*dbar;

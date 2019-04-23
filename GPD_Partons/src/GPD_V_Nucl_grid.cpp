@@ -16,15 +16,15 @@ pGPDService(pGPDService),pGPDModel(pGPDModel){
 }
 
 
-vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi, const double t, const bool ERBL){
-    if(xi<0) return getVectorGPDSet(x,-xi,t,ERBL);  //both GPDs are even
+vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi, const double t, const double scale){
+    if(xi<0) return getVectorGPDSet(x,-xi,t,scale);  //both GPDs are even
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
-    if(t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        cout << "constructing chiral even gpd grid" << endl;
+    if(t!=t_grid||grid_set==false){
+        // cout << "constructing chiral even gpd grid" << endl;
         for(int i=0;i<=200;i++){
             for(int j=0;j<=100;j++){
-                double x = 0.01*(i-100)*(ERBL? abs(xi): 1.)+(i==100?1.E-04:0.);
-                PARTONS::GPDKinematic gpdKinematic(x,0.01*(j),t, 1., 1.);
+                double x = 0.01*(i-100)+(i==100?1.E-04:0.);
+                PARTONS::GPDKinematic gpdKinematic(x,0.01*(j),t, scale*scale, scale*scale);
                 PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,
                     pGPDModel);
                 double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
@@ -36,15 +36,14 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
                 grid[i][j][1]=E;
             }
         }
-        cout << "construction done" << endl;
+        // cout << "construction done" << endl;
         grid_set=true;
         t_grid=t;
-        ERBL_set=ERBL;
    }
    //interpolation
     double index_i=0.,index_j=0.;
     double frac_i=0.,frac_j=0.;
-    frac_i=modf(x*100/(ERBL? abs(xi): 1.)+100,&index_i);
+    frac_i=modf(x*100+100,&index_i);
     frac_j=modf(xi*100,&index_j);
 
     vector<double> result=vector<double>(2,0.);

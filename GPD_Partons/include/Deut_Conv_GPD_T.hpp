@@ -80,10 +80,11 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction
  * @param t [Mev^2] momentum transfer sq
+ * @param scale [GeV] factorization = renorm scale
  * @param model [0-2] different models for nucleon chiral odd GPDs
  * @return std::vector< std::complex<double> > helicity amplitudes  deuteron helicities are (final,initial) [0]++,[1]--,[2]00,[3]0+,[4]-0,[5]+0,[6]0-,[7]-+,[8]+-
  */
-std::vector< std::complex<double> > gpd_conv(const double xi, const double x, const double t, const int model);
+std::vector< std::complex<double> > gpd_conv(const double xi, const double x, const double t, const double scale, const int model);
 
 TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf object
 
@@ -93,11 +94,12 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
  * @param x [] avg lf momentum fraction
  * @param xi [] skewness
  * @param t [GeV^2] mom transfer sq
+ * @param scale [GeV] factorization = renorm scale
  * @param ERBL grid for only ERBL region or not?
  * @param model [0-2] different models for nucleon chiral odd GPDs
  * @return Deut_GPD_V_set 
  */
-Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t, const bool ERBL, const int model);
+Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model);
 
 
 /**
@@ -129,12 +131,13 @@ struct Ftor_conv {
     /*! integrandum function */
     static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
       Ftor_conv &p = * (Ftor_conv *) param;
-      p.f(ret,x[0],x[1],x[2], *p.gpd,p.x,p.xi,p.t,p.pold_in, p.pold_out,p.model,p.right,p.deltax);
+      p.f(ret,x[0],x[1],x[2], *p.gpd,p.x,p.xi,p.t,p.scale, p.pold_in, p.pold_out,p.model,p.right,p.deltax);
     }
     Deut_Conv_GPD_T *gpd;
     double x;
     double xi;
     double t;
+    double scale; ///< [GeV]
     int pold_in;
     int pold_out;
     int model;
@@ -142,7 +145,7 @@ struct Ftor_conv {
     double deltax;
     
     void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_T &gpd,
-              double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
+              double x, double xi, double t, double scale, int pold_in, int pold_out, int model, bool right, double deltax);
       };
 
 
@@ -157,6 +160,7 @@ struct Ftor_conv {
  * @param x [] avg lc momentum fraction of struck quark
  * @param xi [] skewness
  * @param t [MeV^2] momentum transfer sq
+ * @param scale [GeV] factorization = renorm scale
  * @param pold_in polarization initial deuteron state (-1//0//+1)
  * @param pold_out polarization final deuteron state (-1//0//+1)
  * @param model diff implementations of KG parametrization, see TransGPD_set for details
@@ -164,9 +168,9 @@ struct Ftor_conv {
  * @param deltax [MeV] perp component of the momentum transfer, along x-axis
  */
 static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_T &gpd,
-              double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
+              double x, double xi, double t, double scale,  int pold_in, int pold_out, int model, bool right, double deltax);
 static void int_kprime3(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_T &gpd,
-              double x, double xi, double t, int pold_in, int pold_out, int model, bool right, double deltax);
+              double x, double xi, double t, double scale, int pold_in, int pold_out, int model, bool right, double deltax);
 
 
 /**

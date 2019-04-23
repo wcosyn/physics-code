@@ -18,7 +18,7 @@ deut_tensor_grid(pdfname, wfname){
 
 
 // integrandum for gamma_L amplitude
-void TwoVector_Deut::integrandum_L(numint::vector_d &result, double u, double z, double xi, double t, double psq, double Qsq,
+void TwoVector_Deut::integrandum_L(numint::vector_d &result, double u, double z, double xi, double t, double scale, double psq, double Qsq,
                                  int helampindex, TwoVector_Deut &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
@@ -28,7 +28,7 @@ void TwoVector_Deut::integrandum_L(numint::vector_d &result, double u, double z,
         ;
 
         // Amp^Isoscalar *sqrt(2) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
-        result[0]= twovector.deut_vector_grid.getDeut_GPD_V_set(xi*(2.*u-1),xi,t,1).getAmp(helampindex)*sqrt(2.)
+        result[0]= twovector.deut_vector_grid.getDeut_GPD_V_set(xi*(2.*u-1),xi,t,scale,1).getAmp(helampindex)*sqrt(2.)
                     *z*z*(1.-z)*(1.-z)/u/(1.-u)
                         *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
@@ -39,7 +39,7 @@ void TwoVector_Deut::integrandum_L(numint::vector_d &result, double u, double z,
 }
 
 // integrandum for gamma_T amplitude
-void TwoVector_Deut::integrandum_T(numint::vector_d &result, double u, double z, double xi, double t, double psq, double Qsq, 
+void TwoVector_Deut::integrandum_T(numint::vector_d &result, double u, double z, double xi, double t, double scale, double psq, double Qsq, 
                                     int helampindex, TwoVector_Deut &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
@@ -48,7 +48,7 @@ void TwoVector_Deut::integrandum_T(numint::vector_d &result, double u, double z,
         
 
         // Amp^Isoscalar *sqrt(2) * (2z-1) * z * barz / u / baru * Q    [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards] [factor p_perp from nominator taken out]
-        result[0]=twovector.deut_vector_grid.getDeut_GPD_V_set(xi*(2.*u-1),xi,t,1).getAmp(helampindex)*sqrt(2.)
+        result[0]=twovector.deut_vector_grid.getDeut_GPD_V_set(xi*(2.*u-1),xi,t,scale,1).getAmp(helampindex)*sqrt(2.)
                     *(2.*z-1)*z*(1.-z)/u/(1.-u)
                         *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
@@ -59,14 +59,14 @@ void TwoVector_Deut::integrandum_T(numint::vector_d &result, double u, double z,
 
 
 // integrandum for gamma_L amplitude
-void TwoVector_Deut::integrandum_T_L(numint::vector_d &result, double u, double z, double xi, double t, double psq, double Qsq,
+void TwoVector_Deut::integrandum_T_L(numint::vector_d &result, double u, double z, double xi, double t, double scale, double psq, double Qsq,
                                  int helampindex, TwoVector_Deut &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
         // (Amp^isoscalar * sqrt(2) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
-        result[0]=twovector.deut_tensor_grid.getDeut_GPD_T_set(xi*(2.*u-1),xi,t,1,1).getAmp(helampindex)*sqrt(2.)*2.* //helamp for T is w a factor 0.5
+        result[0]=twovector.deut_tensor_grid.getDeut_GPD_T_set(xi*(2.*u-1),xi,t, scale, 1,1).getAmp(helampindex)*sqrt(2.)*2.* //helamp for T is w a factor 0.5
                     z*z*(1.-z)*(1.-z)/u/(1.-u)
                         *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
@@ -77,7 +77,7 @@ void TwoVector_Deut::integrandum_T_L(numint::vector_d &result, double u, double 
 }
 
 // integrandum for gamma_T amplitude
-void TwoVector_Deut::integrandum_T_T(numint::vector_d &result, double u, double z, double xi, double t, double psq, double Qsq, 
+void TwoVector_Deut::integrandum_T_T(numint::vector_d &result, double u, double z, double xi, double t, double scale, double psq, double Qsq, 
                                     int helampindex,  TwoVector_Deut &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
@@ -85,7 +85,7 @@ void TwoVector_Deut::integrandum_T_T(numint::vector_d &result, double u, double 
     else{ 
 
         // (Amp^Isoscalar *sqrt(2) * (2z-1) * z * barz / u / baru * Q    [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards] [factor p_perp from nominator taken out]
-        result[0]=twovector.deut_tensor_grid.getDeut_GPD_T_set(xi*(2.*u-1),xi,t,1,1).getAmp(helampindex)*sqrt(2.)*2.* //helamp for T is w a factor 0.5
+        result[0]=twovector.deut_tensor_grid.getDeut_GPD_T_set(xi*(2.*u-1),xi,t,scale, 1,1).getAmp(helampindex)*sqrt(2.)*2.* //helamp for T is w a factor 0.5
                     (2.*z-1)*z*(1.-z)/u/(1.-u)
                         *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
@@ -98,7 +98,7 @@ void TwoVector_Deut::integrandum_T_T(numint::vector_d &result, double u, double 
 double TwoVector_Deut::getCross_gammaL_rhoL(const double scale, const double xi, const double Q2, const double psq){
     double frhoplus = 0.216; //omega decay constant [GeV]
     double frho0 = 0.216; //rho0 decay constant [GeV]
-    double alpha_s = pRunningAlphaStrongModule->compute(scale); //scale is 1 GeV^2
+    double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
     double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
@@ -107,6 +107,7 @@ double TwoVector_Deut::getCross_gammaL_rhoL(const double scale, const double xi,
     Ftor_2vector F;
     F.xi=xi;
     F.t=t;
+    F.scale=scale;
     F.Qsq=Q2;
     F.psq=psq;
     F.pobj=this;
@@ -148,7 +149,7 @@ double TwoVector_Deut::getCross_gammaL_rhoL(const double scale, const double xi,
 double TwoVector_Deut::getCross_gammaT_rhoL(const double scale, const double xi, const double Q2, const double psq){
     double frhoplus = 0.216; //omega decay constant [GeV]
     double frho0 = 0.216; //rho0 decay constant [GeV]
-    double alpha_s = pRunningAlphaStrongModule->compute(scale); //scale is 1 GeV^2
+    double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
     double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
@@ -158,6 +159,7 @@ double TwoVector_Deut::getCross_gammaT_rhoL(const double scale, const double xi,
     Ftor_2vector F;
     F.xi=xi;
     F.t=t;
+    F.scale=scale;
     F.Qsq=Q2;
     F.psq=psq;
     F.pobj=this;
@@ -192,7 +194,7 @@ double TwoVector_Deut::getCross_gammaT_rhoL(const double scale, const double xi,
 double TwoVector_Deut::getCross_gammaL_rhoT(const double scale, const double xi, const double Q2, const double psq){
     double frhoplus = 0.216; //rho+ decay constant [GeV]
     double frho0 = 0.216; //rho0 decay constant [GeV]
-    double alpha_s = pRunningAlphaStrongModule->compute(scale); //scale is 1 GeV^2
+    double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
     double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi);//tmin [MeV^2]
@@ -200,6 +202,7 @@ double TwoVector_Deut::getCross_gammaL_rhoT(const double scale, const double xi,
     Ftor_2vector F;
     F.xi=xi;
     F.t=t;
+    F.scale=scale;
     F.Qsq=Q2;
     F.psq=psq;
     F.pobj=this;
@@ -246,7 +249,7 @@ double TwoVector_Deut::getCross_gammaL_rhoT(const double scale, const double xi,
 double TwoVector_Deut::getCross_gammaT_rhoT(const double scale, const double xi, const double Q2, const double psq){
     double frhoplus = 0.216; //rho+ decay constant [GeV]
     double frho0 = 0.216; //rho0 decay constant [GeV]
-    double alpha_s = pRunningAlphaStrongModule->compute(scale); //scale is 1 GeV^2
+    double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
     double t= -4.*MASSD*MASSD*xi*xi/(1-xi*xi);//tmin [MeV^2]
@@ -256,6 +259,7 @@ double TwoVector_Deut::getCross_gammaT_rhoT(const double scale, const double xi,
     Ftor_2vector F;
     F.xi=xi;
     F.t=t;
+    F.scale=scale;
     F.Qsq=Q2;
     F.psq=psq;
     F.pobj=this;

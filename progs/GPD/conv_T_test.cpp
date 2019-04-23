@@ -19,6 +19,7 @@ int main(int argc, char *argv[]){
     double xi=atof(argv[4]);
     double t=atof(argv[3])*-1.E06;
     int ERBL = atoi(argv[5]);
+    double scale=atof(argv[6]);
     // cout << "xi " << xi << " t " << t << " model " << model << endl;
     // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
     // for(int i=0;i<5;i++){
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]){
     // }
     // exit(1);
 
-        test.getDeut_GPD_T_set(0.,xi,t,ERBL,model).getAmp_00();
+        test.getDeut_GPD_T_set(0.,xi,t,scale,ERBL,model).getAmp_00();
 
     // for(int i=-99;i<=99;i++){
     //     double x=i*0.01;

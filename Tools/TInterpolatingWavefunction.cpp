@@ -39,7 +39,7 @@ ClassImp(TInterpolatingWavefunction)
 //_____________________________________________________________________
 TInterpolatingWavefunction::TInterpolatingWavefunction()
 : TWavefunctionImplementation(0),
-  fUr(0), fWr(0), fVTr(0), fVSr(0), fUp(0), fWp(0), fVTp(0), fVSp(0)
+  fUr(0), fWr(0), fVTr(0), fVSr(0), fUp(0), fWp(0), fVTp(0), fVSp(0), inclS(1), inclD(1)
 {
   // Constructor
 }
@@ -60,6 +60,10 @@ TInterpolatingWavefunction::TInterpolatingWavefunction(const TInterpolatingWavef
   if(rhs.fWp) fWp = new map<double,double>(*rhs.fWp);
   if(rhs.fVTp) fVTp = new map<double,double>(*rhs.fVTp);
   if(rhs.fVSp) fVSp = new map<double,double>(*rhs.fVSp);
+
+  inclS=rhs.inclS;
+  inclD=rhs.inclD;
+
 }
 
 //_____________________________________________________________________
@@ -810,12 +814,14 @@ std::complex<double> TInterpolatingWavefunction::DeuteronPState(int deuteronPol,
   std::complex<double> state=0.;
 // L=2, mL=mD-mS, S=1, mS=m1+m2
   // for(int mS=-1; mS<=1; ++mS)
+  if(inclD)
     state -=
       TDeuteron::Wavefunction::ClebschGordan(4,deuteronPol-nucleon1Pol-nucleon2Pol,2,nucleon1Pol+nucleon2Pol,2,deuteronPol)
       *TDeuteron::Wavefunction::ClebschGordan(1,nucleon1Pol,1,nucleon2Pol,2,nucleon1Pol+nucleon2Pol)
       *TDeuteron::Wavefunction::SphericalHarmonicCos(2,(deuteronPol-nucleon1Pol-nucleon2Pol)/2,p.CosTheta(),p.Phi());
   state*=GetWp(p.Mag());
   // L=0, mL=0, S=1, mS=mD
+  if(inclS)
   state += 
     TDeuteron::Wavefunction::ClebschGordan(0,0,2,deuteronPol,2,deuteronPol)
     *TDeuteron::Wavefunction::ClebschGordan(1,nucleon1Pol,1,nucleon2Pol,2,deuteronPol)
@@ -830,16 +836,17 @@ std::complex<double> TInterpolatingWavefunction::DeuteronRState(int deuteronPol,
 						       int nucleon1Pol, 
 						       const TVector3& r) const
 {
-  
   std::complex<double> state=0.;
 // L=2, mL=mD-mS, S=1, mS=m1+m2
   // for(int mS=-1; mS<=1; ++mS)
+  if(inclD)
     state +=
       TDeuteron::Wavefunction::ClebschGordan(4,deuteronPol-nucleon1Pol-nucleon2Pol,2,nucleon1Pol+nucleon2Pol,2,deuteronPol)
       *TDeuteron::Wavefunction::ClebschGordan(1,nucleon1Pol,1,nucleon2Pol,2,nucleon1Pol+nucleon2Pol)
       *TDeuteron::Wavefunction::SphericalHarmonicCos(2,(deuteronPol-nucleon1Pol-nucleon2Pol)/2,r.CosTheta(),r.Phi());
   state*=GetWr(r.Mag());
   // L=0, mL=0, S=1, mS=mD
+  if(inclS)
   state += 
     TDeuteron::Wavefunction::ClebschGordan(0,0,2,deuteronPol,2,deuteronPol)
     *TDeuteron::Wavefunction::ClebschGordan(1,nucleon1Pol,1,nucleon2Pol,2,deuteronPol)

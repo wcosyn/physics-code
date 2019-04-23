@@ -38,7 +38,8 @@ int main(int argc, char *argv[]){
     std::string wf=argv[1];
     double xi=atof(argv[3]);
     double t=-atof(argv[2]); //[GeV^2] positive input!
-    int ERBL = atoi(argv[4]);
+    //int ERBL = atoi(argv[4]);
+    double scale = sqrt(2.);//atof(argv[5]); //[GeV]
     // cout << "xi " << xi << " t " << t << " model " << model << endl;
     // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
 
@@ -60,7 +61,7 @@ int main(int argc, char *argv[]){
         // Create GPD module with the BaseModuleFactory
         PARTONS::GPDModule* pGPDModel =
                 PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
-                        PARTONS::GPDVGG99::classId);
+                        PARTONS::GPDMMS13::classId);
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
 
@@ -83,36 +84,26 @@ int main(int argc, char *argv[]){
         //     }
         // }
 
-        GPD_V_Nucl_grid gridV( pGPDService, pGPDModel);
 
-        for(int i=-99;i<=99;i++){
-            double x=i*0.01;
-            
-            //cout << x << " " << gridV.getVectorGPDSet(x,xi,t,0)[0] << endl;
-            PARTONS::GPDKinematic gpdKinematic(x,xi,t, 2., 2.);
-            PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,
-                    pGPDModel);
-            cout << x << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution() << endl;
-                
-        }
         //cout << "alpha_s " << alpha_s << endl;
 
-        // Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
+        Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
         //-99 to 99
 
-        // test.getDeut_GPD_V_set(0.,xi,t,ERBL).getAmp_00();
-        // for(int i=-99;i<=99;i++){
-        //     double x=i*0.01*abs(xi);
-        //     vector< complex<double> > out = test.gpd_conv(xi,x,t);
-        //     vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
-        //     //vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
+        //test.getDeut_GPD_V_set(0.,xi,t,scale, ERBL).getAmp_00();
+        for(int i=-99;i<=99;i++){
+            double x=i*0.01;
+            vector< complex<double> > out = test.gpd_conv(xi,x,t,scale);
+            vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
+            // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
             
-        //     cout << x << " ";
-        //     for(int j=0;j<5;j++) cout << out[j].real() << " ";
-        //     for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
-        //     cout << endl;
+            cout << x << " ";
+            for(int j=0;j<5;j++) cout << out[j].real() << " ";
+            for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
+            // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
+            cout << endl;
         
-        // }
+        }
 
         // Remove pointer references
         // Module pointers are managed by PARTONS
