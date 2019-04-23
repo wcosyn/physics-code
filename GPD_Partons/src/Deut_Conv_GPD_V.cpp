@@ -154,6 +154,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     vector<double> nuclgpd = gpd.chiraleven_grid.getVectorGPDSet(x_n,abs(xi_n),t,scale);
     double E=gpd.incE? nuclgpd[1] : 0.;
     double H= gpd.incH? nuclgpd[0] : 0.;
+    if(isnan(E)||isnan(H)) return;
 
     for(int sigma2=-1;sigma2<=1;sigma2+=2){  //spectator helicity
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){ //initial active nucleon helicity
@@ -164,7 +165,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
                 //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
                             *gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E);
-
+                //if(isnan(real(result))) cout << result << " " << gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E) << " " << H << " " << E << endl;
                 //symmetry tests nucleon level (tested OK)
                 // cout << "N conj " << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E))
                 //     << " " << gpd.getGPD_even_nucl(sigma1out, sigma1in, -xi_n, t, t0_n,phin+PI,H,E) << endl;
