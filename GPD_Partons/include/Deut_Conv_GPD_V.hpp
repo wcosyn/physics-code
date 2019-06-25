@@ -101,9 +101,8 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
  */
 Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL);
 
-void setH(const bool H){incH=H;}
-void setE(const bool E){incE=E;}
-
+void setH(const bool H){incH=H;} ///< [1] include or [0] exclude isoscalar nucleon GPD H
+void setE(const bool E){incE=E;} ///< [1] include or [0] exclude isoscalar nucleon GPD E
 
 private: 
 /**

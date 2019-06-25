@@ -40,6 +40,10 @@ int main(int argc, char *argv[]){
     double t=-atof(argv[2]); //[GeV^2] positive input!
     //int ERBL = atoi(argv[4]);
     double scale = sqrt(2.);//atof(argv[5]); //[GeV]
+    bool setS = atoi(argv[4]);
+    bool setD = atoi(argv[5]);
+    bool setH = atoi(argv[6]);
+    bool setE = atoi(argv[7]);
     // cout << "xi " << xi << " t " << t << " model " << model << endl;
     // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
 
@@ -88,6 +92,10 @@ int main(int argc, char *argv[]){
         //cout << "alpha_s " << alpha_s << endl;
 
         Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
+        test.getWf()->setD(setD);
+        test.getWf()->setS(setS);
+        test.setH(setH);
+        test.setE(setE);
         //-99 to 99
 
         //test.getDeut_GPD_V_set(0.,xi,t,scale, ERBL).getAmp_00();

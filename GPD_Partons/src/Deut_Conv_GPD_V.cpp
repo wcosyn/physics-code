@@ -235,8 +235,8 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
     numint::array<double,3> lowerprimeminus = {{lowprimeminus,0.,-PI}};
     numint::array<double,3> upper = {{2.,1.E03,PI}};
 
-    double abserr=1.E-10;
-    double relerr=1.E-05;
+    double abserr=1.E-15;
+    double relerr=1.E-03;
 
     unsigned count;
     vector< complex<double> > ret(9,0.);
@@ -258,7 +258,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         int minEval=1E02;
         int maxEvalcuba=1E06;
 
-        int maxEval=1E05;
+        int maxEval=1E06;
         numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         ret[i]=out[0];
 
