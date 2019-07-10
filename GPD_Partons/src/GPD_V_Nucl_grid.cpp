@@ -20,7 +20,7 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
     if(xi<0) return getVectorGPDSet(x,-xi,t,scale);  //both GPDs are even
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
     if(t!=t_grid||grid_set==false){
-        // cout << "constructing chiral even gpd grid" << endl;
+        //cout << "constructing chiral even gpd grid " << t_grid << " " << t << " " << grid_set << endl;
         for(int i=0;i<=200;i++){
             for(int j=0;j<=100;j++){
                 double x = 0.01*(i-100)+(i==100?1.E-04:0.);
@@ -34,8 +34,29 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
 
                 grid[i][j][0]=H;
                 grid[i][j][1]=E;
+                // grid[i][j][2]=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+                //     -gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+                // grid[i][j][3]=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+                //     -gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+                // grid[i][j][0]=gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+                // grid[i][j][1]=gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+                // grid[i][j][2]=gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+                // grid[i][j][3]=gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+                
+                //cout << x << " " << 0.01*j << " " << H << " " << E << endl;
             }
         }
+        //test nucleon
+
+        // for(int j=0;j<=20;j++){
+        //     double sumEs=0,sumHs=0, sumEv=0., sumHv=0.;
+        //     for(int i=0;i<200;i++) {sumHs+=grid[i][j][0]; sumEs+=grid[i][j][1];sumHv+=grid[i][j][2]; sumEv+=grid[i][j][3];}
+        //     cout << j << " " << (sumHs+3.*sumHv)/3.*0.01 << " " << (sumEs+3.*sumEv)/3.*0.01 << " " << (sumHs-3.*sumHv)/3.*0.01 << " " << (sumEs-3.*sumEv)/3.*0.01 << 
+        //     " " << sumHs/3.*0.01 << " " << sumEs/3.*0.01 << " " << sumHv*0.01 << " " << sumEv*0.01 << endl;
+        //     // double sumEu=0,sumHu=0, sumEd=0., sumHd=0.;
+        //     // for(int i=0;i<200;i++) {sumHu+=grid[i][j][0]; sumEu+=grid[i][j][1];sumHd+=grid[i][j][2]; sumEd+=grid[i][j][3];}
+        //     // cout << j << " " << (2.*sumHu-sumHd)/3.*0.01 << " " << (2.*sumEu-sumEd)/3.*0.01 << " " << (2.*sumHd-sumHu)/3.*0.01 << " " << (2.*sumEd-sumEu)/3.*0.01 << endl;
+        //  }
         // cout << "construction done" << endl;
         grid_set=true;
         t_grid=t;

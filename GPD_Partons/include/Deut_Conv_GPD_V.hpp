@@ -19,6 +19,8 @@
 
 #include "Deut_GPD_V_set.hpp"
 
+#include <NucleonEMOperator.hpp>
+
 /**
  * @brief Class implements vector GPDs for the nucleon and deuteron (using convolution formalism) for now
  * 
@@ -42,6 +44,29 @@ Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel,
  */
 ~Deut_Conv_GPD_V();
 
+/**
+ * @brief conversion from GPDs to helicity amplitudes for spin 1 chiral even vector quark FFs.  We compute in a frame where phi=0
+ * See Cano Pire EPJA App A (restricted to ++,0+,-+ helamps) + mathematica sheet (gpd_helmatrix_newtensors)
+ * 
+ * @param xi [] skewness
+ * @param t [GeV^2] momentum transfer sq
+ * @param FFs gpds G_1 to G_3
+ * @return std::vector<double> helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]0+,[2]-+
+ */
+static std::vector< std::complex<double> > FFs_to_helamps_V(const double xi, const double t, const std::vector< std::complex<double> > & FFs);
+
+/**
+ * @brief conversion from helicity amplitudes to vector FFs for spin 1.  We compute in a frame where phi=0
+ * See mathematica sheet (gpd_helmatrix_newtensors)
+ * 
+ * @param xi [] skewness
+ * @param t [GeV^2] momentum transfer sq
+ * @param helamps helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]0+,[2]-+
+ * @return std::vector<double>  FFs G_1 to G_3
+ */
+static std::vector< std::complex<double> > helamps_to_FFs_V(const double xi, const double t, const std::vector< std::complex<double> > & helamps);
+
+
 
 /**
  * @brief conversion from helicity amplitudes to GPDs for spin 1 chiral even vector quark GPDs.  We compute in a frame where phi=0
@@ -54,6 +79,7 @@ Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel,
  */
 static std::vector< std::complex<double> > helamps_to_gpds_V(const double xi, const double t, const std::vector< std::complex<double> > & helamps);
 
+
 /**
  * @brief conversion from GPDs to helicity amplitudes for spin 1 chiral even vector quark GPDs.  We compute in a frame where phi=0
  * See Cano Pire EPJA App A
@@ -64,6 +90,7 @@ static std::vector< std::complex<double> > helamps_to_gpds_V(const double xi, co
  * @return std::vector<double> helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]00,[2]0+,[3]+0,[4]-+
  */
 static std::vector< std::complex<double> > gpds_to_helamps_V(const double xi, const double t, const std::vector< std::complex<double> > & gpds);
+
 
 /**
  * @brief returns the melosh rotated lf wf, melosh rotation only acting on the first (active) nucleon, since the helicities of the spectator are summed over
@@ -84,9 +111,18 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction
  * @param t [Gev^2] momentum transfer sq
- * @return std::vector< std::complex<double> > helicity amplitudes  deuteron helicities are (final,initial) [0]++,[1]--,[2]00,[3]0+,[4]-0,[5]+0,[6]0-,[7]-+,[8]+-
+ * @return std::vector< std::complex<double> > helicity amplitudes  deuteron helicities are (final,initial) [0]++,[1]00,[2]0+,[3]+0,[4]-+ 
  */
 std::vector< std::complex<double> > gpd_conv(const double xi, const double x, const double t, const double scale);
+
+/**
+ * @brief Computes the deuteron helicity amplitudes with the convolution formula for vector form factors
+ * 
+ * @param xi [] skewness
+ * @param t [Gev^2] momentum transfer sq
+ * @return std::vector< std::complex<double> > helicity amplitudes  deuteron helicities are (final,initial) [0]++,[1]00,[2]0+,[3]+0,[4]-+ 
+ */
+std::vector< std::complex<double> > FF_conv(const double xi, const double t);
 
 TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf object
 
@@ -130,6 +166,31 @@ struct Ftor_conv {
       };
 
 
+
+/**
+ * @brief structure needed to carry out the convolution integration for the form factors, contains parameters and integrandum function
+ * 
+ */
+struct Ftor_conv_FF {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+      Ftor_conv_FF &p = * (Ftor_conv_FF *) param;
+      p.f(ret,x[0],x[1],x[2], *p.gpd,p.xi,p.t,p.pold_in, p.pold_out,p.deltax,p.F1, p.F2);
+    }
+    Deut_Conv_GPD_V *gpd;
+     double xi;
+    double t;
+    int pold_in;
+    int pold_out;
+    double deltax;
+    double F1, F2;
+    
+    void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
+               double xi, double t, int pold_in, int pold_out,  double deltax, double F1, double F2);
+      };
+
+
 /**
  * @brief integrandum for the convolution integral, integration variables are alpha and k_perp of the initial nucleon
  * 
@@ -151,6 +212,27 @@ struct Ftor_conv {
 static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
               double x, double xi, double t, double scale, int pold_in, int pold_out, double deltax);
 
+/**
+ * @brief integrandum for the convolution integral, integration variables are alpha and k_perp of the initial nucleon
+ * 
+ * @param[out] res integral result 
+ * @param alpha_1 [] lc momentum fraction of initial nucleon
+ * @param kperp [MeV] perp lf momentum entering in initial deuteron wf
+ * @param kphi [] azimuthal angle of lf momentum entering in initial deuteron wf
+ * @param[in] gpd object that contains all necessary info on the gpds 
+ * @param xi [] skewness
+ * @param t [GeV^2] momentum transfer sq
+ * @param pold_in polarization initial deuteron state (-1//0//+1)
+ * @param pold_out polarization final deuteron state (-1//0//+1)
+ * @param model diff implementations of KG parametrization, see TransGPD_set for details
+ * @param right [1] R matrix element [0] L matrix element
+ * @param deltax [MeV] perp component of the momentum transfer, along x-axis
+ * @param F1 isoscalar nucleon FF F1
+ * @param F2 isoscalar nucleon FF F2
+ */
+static void int_k3_FF(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
+               double xi, double t, int pold_in, int pold_out, double deltax, double F1, double F2);
+
 
 
 
@@ -170,6 +252,8 @@ static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double 
 std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
                                     const double t, const double t0, const double phi,
                                     const double gpd_H, const double gpd_E) const;              
+
+
 
 TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/
 TInterpolatingWavefunction wf;

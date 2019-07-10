@@ -12,6 +12,7 @@ using namespace std;
 #include <Deut_Conv_GPD_V.hpp>
 #include <GPD_V_Nucl_grid.hpp>
 
+#include <NucleonEMOperator.hpp>
 
 #include <ElementaryUtils/logger/CustomException.h>
 #include <ElementaryUtils/logger/LoggerManager.h>
@@ -99,19 +100,58 @@ int main(int argc, char *argv[]){
         //-99 to 99
 
         //test.getDeut_GPD_V_set(0.,xi,t,scale, ERBL).getAmp_00();
-        for(int i=-99;i<=99;i++){
-            double x=i*0.01;
-            vector< complex<double> > out = test.gpd_conv(xi,x,t,scale);
-            vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
-            // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
-            
-            cout << x << " ";
-            for(int j=0;j<5;j++) cout << out[j].real() << " ";
-            for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
-            // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
-            cout << endl;
+    
+
+        vector< complex<double> > out = test.FF_conv(xi,t);
+        for(int j=0;j<5;j++) cout << out[j].real() << " ";
+        cout << endl;
+
+        vector< complex<double> > hels = {out[0],out[2],out[4]};
+        vector< complex<double> > FFs = Deut_Conv_GPD_V::helamps_to_FFs_V(xi,t,hels);
         
-        }
+        double FM = FFs[1].real();
+        double FQ = (FFs[0].real()-FFs[1].real()+(1.-t/4./MASSD/MASSD*1.E06)*FFs[2].real());
+        double FC = (FFs[0].real()-t/4./MASSD/MASSD*1.E06*FQ*2./3.);
+        
+        for(int j=0;j<3;j++) cout << FFs[j].real() << " ";
+        cout << endl;
+        cout << FC << " "<< FM << " " << FQ << endl << endl;
+        
+        
+        
+        vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
+        // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
+
+        double GM = gpd[1].real();
+        double GQ = (gpd[0].real()-gpd[1].real()+(1.-t/4./MASSD/MASSD*1.E06)*gpd[2].real());
+        double GC = (gpd[0].real()-t/4./MASSD/MASSD*1.E06*GQ);
+        
+
+        for(int j=0;j<5;j++) cout << out[j].real() << " ";
+        cout << endl;
+        for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
+        cout << endl;
+        cout << GC << " " << GM << " " << GQ << endl;
+
+        //cout << -t/4./MASSD/MASSD*1.E06 << " " << gpd[0].real()-gpd[1].real() << " " << (1.-t/4./MASSD/MASSD*1.E06)*gpd[2].real() << endl;
+    
+
+        // for(int i=-99;i<=99;i++){
+        //     double x=i*0.01;
+        //     NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
+        //     cout << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
+        //     cout << (proton.getF1()+neutron.getF1())/2. << " " <<  (proton.getF2()+neutron.getF2())/2. << " " << (proton.getF1()-neutron.getF1())/2. << " " << (proton.getF2()-neutron.getF2())/2. << endl;
+        //     vector< complex<double> > out = test.gpd_conv(xi,x,t,scale);
+        //     vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
+        //     // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
+            
+        //     cout << x << " ";
+        //     for(int j=0;j<5;j++) cout << out[j].real() << " ";
+        //     for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
+        //     // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
+        //     cout << endl;
+        
+        // }
 
         // Remove pointer references
         // Module pointers are managed by PARTONS

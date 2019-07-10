@@ -60,7 +60,7 @@ target_link_libraries(GPD
          ${NUMA_LIBRARIES}
         
          ${PARTONS_LIBRARIES} 
-MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
+MePhys Integrator Glauber ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
 set_target_properties(GPD PROPERTIES ${GPD_LIBRARY_PROPERTIES})
 ############### install the library ###################
 install(TARGETS GPD DESTINATION "${CMAKE_SOURCE_DIR}/lib")

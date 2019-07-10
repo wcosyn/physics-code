@@ -12,7 +12,7 @@ add_executable(two_vector_D two_vector_D.cpp)
 target_link_libraries(two_vector_D GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
 
 add_executable(conv_V_test conv_V_test.cpp)
-target_link_libraries(conv_V_test GPD  MePhys ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(conv_V_test GPD  MePhys Glauber ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
 
 if(NOT BUILD_PROGS)
 set_target_properties(conv_T_test PROPERTIES EXCLUDE_FROM_ALL 1)
