@@ -140,6 +140,16 @@ Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t
 void setH(const bool H){incH=H;} ///< [1] include or [0] exclude isoscalar nucleon GPD H
 void setE(const bool E){incE=E;} ///< [1] include or [0] exclude isoscalar nucleon GPD E
 
+
+/**
+ * @brief Calculates three deuteron vector form factors in a non-relativistic approximation
+ * 
+ * @param t [GeV^2] momentum transfer squared (negative!)
+ * @return vector<double> [0] G_C [1] G_M [2] G_Q (See Gross, Gilman JPG '01 review Eq(15) for FF definitions )
+ */
+std::vector<double> calc_NR_ffs(double t);
+
+
 private: 
 /**
  * @brief structure needed to carry out the convolution integration, contains parameters and integrandum function
@@ -164,6 +174,34 @@ struct Ftor_conv {
     void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
               double x, double xi, double t, double scale, int pold_in, int pold_out,  double deltax);
       };
+
+/**
+ * @brief structure needed to carry out the non relativistic evalution of deuteron form factors, contains parameters and integrandum function
+ * 
+ */
+struct Ftor_conv_FF_nr {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,1> &x, void *param, numint::vector_d &ret) {
+      Ftor_conv_FF_nr &p = * (Ftor_conv_FF_nr *) param;
+      p.f(ret,x[0], *p.gpd,p.t);
+    }
+    Deut_Conv_GPD_V *gpd;
+    double t;
+    
+    void (*f)(numint::vector_d & res, double r, Deut_Conv_GPD_V &gpd, double t);
+};
+
+/**
+ * @brief integration function for NR evaluation of deuteron form factors, see Gross, Gilman JPG '01 review, around Eq (34)
+ * 
+ * @param[out] res returns [0] D_C [1] D_Q [1] D_M [2] D_E 
+ * @param r integration variable
+ * @param gpd object that contains all usefull things
+ * @param t [GeV^2] momentum transfer squared (negative!)
+ */
+static void int_r(numint::vector_d & res, double r, Deut_Conv_GPD_V &gpd, double t);
+
 
 
 

@@ -101,6 +101,16 @@ int main(int argc, char *argv[]){
 
         //test.getDeut_GPD_V_set(0.,xi,t,scale, ERBL).getAmp_00();
     
+        for (int i=0;i<=200;i++){
+            double Q = i*2./200.;
+            double t = -Q*Q;
+            double eta = -t/4./MASSD/MASSD*1.E06;
+            vector<double> FF = test.calc_NR_ffs(t);
+            double G1 = FF[0]-2./3.*eta*FF[2];
+            double G3 = (FF[2]-G1+FF[1])/(1.+eta);
+            cout << Q << " " << FF[0] << " " << FF[1] << " " << FF[2] << " " << G1 << " " << G3 << endl;
+        }
+        exit(1);
 
         vector< complex<double> > out = test.FF_conv(xi,t);
         for(int j=0;j<5;j++) cout << out[j].real() << " ";

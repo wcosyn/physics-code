@@ -19,6 +19,8 @@ pGPDService(pGPDService),pGPDModel(pGPDModel),chiraleven_grid(pGPDService, pGPDM
     for(int i=0;i<=1000;i++){
         wf.AddUp(i,wfref->GetUp(i));
         wf.AddWp(i,wfref->GetWp(i));
+        wf.AddUr(i*0.02,wfref->GetUr(i*0.02));
+        wf.AddWr(i*0.02,wfref->GetWr(i*0.02));        
     }
 
 }
@@ -307,6 +309,69 @@ complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int 
         if(sigma_in==-1) return -exp(-I_UNIT*phi)*kinfac/2.*gpd_E ;
         else return exp(I_UNIT*phi)*kinfac/2.*gpd_E ;
     }
+}
+
+
+
+vector<double> Deut_Conv_GPD_V::calc_NR_ffs(double t){
+    double Q2=-t;
+    double Q=sqrt(Q2);
+    double eta = -t/4./MASSD/MASSD*1.E06;
+
+    Deut_Conv_GPD_V::Ftor_conv_FF_nr F;
+    F.gpd=this;
+    F.t=t;
+
+    numint::mdfunction<numint::vector_d,1> mdf;
+    mdf.func = &Ftor_conv_FF_nr::exec;
+    mdf.param = &F;
+    numint::vector_d out(4,0.);
+    numint::array<double,1> lower = {{0.}};
+    numint::array<double,1> upper = {{19.99}};
+    F.f=Deut_Conv_GPD_V::int_r;
+    double abserr=1.E-15;
+    double relerr=1.E-03;
+    int maxEval=1E06;
+    unsigned count;
+    numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
+    NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
+    double GsE = proton.getGE()+neutron.getGE();
+    double GsM = proton.getGM()+neutron.getGM();
+    double GC = GsE*out[0];
+    double GM = MASSD/2./MASSP*(GsM*out[2]+GsE*out[3]);
+    double GQ = GsE*out[1]; 
+
+    return vector<double> {GC,GM,GQ};
+}
+
+
+void Deut_Conv_GPD_V::int_r(numint::vector_d & res, double r, Deut_Conv_GPD_V &gpd, double t){
+    res = vector< double >(4,0.);
+    double U = gpd.wf.GetUr(r);
+    double W = gpd.wf.GetWr(r);
+
+
+    double densU = U*U+W*W;
+    double densT = 3./sqrt(2.)*W*(U-W/sqrt(8.));
+    double densM0 = 2.*U*U-W*W;
+    double densM2 = sqrt(2.)*U*W+W*W;
+    double densE = 3./2.*W*W;
+
+    double x = sqrt(-t)*r/2./HBARC*1.E03;
+    double eta = -t/4./MASSD/MASSD*1.E06;
+
+    double j0 = sin(x)/x;
+    double j2 = (3./x/x-1.)*j0-3.*cos(x)/x/x;
+    if(x==0.) {j0=1.;j2=0.;}
+
+
+    res[0] = densU*j0;
+    res[1] = densT*j2/eta;
+    res[2] = densM0*j0+densM2*j2;
+    res[3] = densE*(j0+j2);
+    if(x==0.) res[1] = densT*r*r*MASSD*MASSD/HBARC/HBARC/sqrt(50.)/2.;
+    if(isnan(res[0])) cout << r << " " << j0 << " " << densU << endl;
+    return;
 }
 
 
