@@ -27,7 +27,7 @@ vector< complex<double> > Deut_Conv_GPD_T::helamps_to_gpds_T(const double xi, co
 
     vector< complex<double> > gpds(9,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
-    double D=sqrt((-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSD);
+    double D=sqrt((-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSD_G);
     gpds.at(0)=2.*sqrt(2.)*xi/D/(1-xi*xi)*(helamps[0]-helamps[1])+2.*(1./(1.-xi)*helamps[3]+1./(1.+xi)*helamps[4])+2./(1+xi)*helamps[5]
                 +2./(1-xi)*helamps[6]+2.*sqrt(2.)*D/(1.-xi*xi)*(helamps[7]-helamps[8]);
     gpds.at(1)=sqrt(2.)*(2.*D*D/(1-xi)-xi)/D/pow(1+xi,2.)*helamps[0]
@@ -66,34 +66,34 @@ vector< complex<double> > Deut_Conv_GPD_T::gpds_to_helamps_T(const double xi, co
     vector< complex<double> > helamps(9,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
 
-    double D=sqrt((-4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSD);
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
-    // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
-    helamps.at(0)=-D*(xi/(1.-xi)*(gpds[2]-gpds[3])+gpds[5]+(t0-t)/(8.*MASSD*MASSD)*gpds[6]+1./(2.*(1.-xi))*(gpds[7]-gpds[8]));
+    double D=sqrt((-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi)-t)*(1-xi*xi))/(2.*MASSD_G);
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi);
+    // cout << (t0-t)*1.E-06 << " " << MASSD_G*1.E-03 << endl;
+    helamps.at(0)=-D*(xi/(1.-xi)*(gpds[2]-gpds[3])+gpds[5]+(t0-t)/(8.*MASSD_G*MASSD_G)*gpds[6]+1./(2.*(1.-xi))*(gpds[7]-gpds[8]));
 
-    helamps.at(1)=-D*(xi/(1.+xi)*(gpds[2]+gpds[3])+gpds[5]+(t0-t)/(8.*MASSD*MASSD)*gpds[6]-1./(2.*(1.+xi))*(gpds[7]+gpds[8]));
+    helamps.at(1)=-D*(xi/(1.+xi)*(gpds[2]+gpds[3])+gpds[5]+(t0-t)/(8.*MASSD_G*MASSD_G)*gpds[6]-1./(2.*(1.+xi))*(gpds[7]+gpds[8]));
 
     helamps.at(2)=D*(-1./(2.*sqrt(2.))*(gpds[0]+xi*gpds[1])+2*xi/(1.-xi*xi)*gpds[2]+2.*D*D/(1.-xi*xi)*gpds[3]
-                    +gpds[4]/sqrt(2.)+((t0-t)/(2.*MASSD*MASSD)-(1+xi*xi)/(1-xi*xi))*gpds[5]+(pow((t0-t)/(4.*MASSD*MASSD),2.)-pow(xi/(1-xi*xi),2.))*gpds[6]-xi/(1.-xi*xi)*gpds[7]
-                    -(t0-t)/(4.*MASSD*MASSD)*gpds[8]);
+                    +gpds[4]/sqrt(2.)+((t0-t)/(2.*MASSD_G*MASSD_G)-(1+xi*xi)/(1-xi*xi))*gpds[5]+(pow((t0-t)/(4.*MASSD_G*MASSD_G),2.)-pow(xi/(1-xi*xi),2.))*gpds[6]-xi/(1.-xi*xi)*gpds[7]
+                    -(t0-t)/(4.*MASSD_G*MASSD_G)*gpds[8]);
 
     helamps.at(3)=1./sqrt(2.)*((1-xi)/(2.*sqrt(2.))*(gpds[0]-gpds[1])+(2*xi*xi/(1.-xi*xi)-D*D/(1-xi))*gpds[2]+(-2*xi*xi/(1.-xi*xi)+D*D*(3.*xi-1.)/(1-xi*xi))*gpds[3]
-                    +1/sqrt(2.)*xi*(1-xi)*gpds[4]-(1-xi)*(t0-t)/(2.*MASSD*MASSD)*gpds[5]
-                    -(1-xi)*(t0-t)/(4.*MASSD*MASSD)*((t0-t)/(4.*MASSD*MASSD)-xi/(1.-xi*xi))*gpds[6]+(-(1.+xi)*(t0-t)/(8.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[7]
-                    +((3.-xi)*(t0-t)/(8.*MASSD*MASSD)-xi/(1-xi*xi))*gpds[8]);                    
+                    +1/sqrt(2.)*xi*(1-xi)*gpds[4]-(1-xi)*(t0-t)/(2.*MASSD_G*MASSD_G)*gpds[5]
+                    -(1-xi)*(t0-t)/(4.*MASSD_G*MASSD_G)*((t0-t)/(4.*MASSD_G*MASSD_G)-xi/(1.-xi*xi))*gpds[6]+(-(1.+xi)*(t0-t)/(8.*MASSD_G*MASSD_G)+xi/(1-xi*xi))*gpds[7]
+                    +((3.-xi)*(t0-t)/(8.*MASSD_G*MASSD_G)-xi/(1-xi*xi))*gpds[8]);                    
 
     helamps.at(4)=1./sqrt(2.)*((1+xi)/(2.*sqrt(2.))*(gpds[0]+gpds[1])-(2*xi*xi/(1.-xi*xi)-D*D/(1+xi))*gpds[2]+(-2*xi*xi/(1.-xi*xi)-D*D*(3.*xi+1.)/(1-xi*xi))*gpds[3]
-                    -1/sqrt(2.)*xi*(1+xi)*gpds[4]-(1+xi)*(t0-t)/(2.*MASSD*MASSD)*gpds[5]
-                    -(1+xi)*(t0-t)/(4.*MASSD*MASSD)*((t0-t)/(4.*MASSD*MASSD)+xi/(1.-xi*xi))*gpds[6]+((1.-xi)*(t0-t)/(8.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[7]
-                    +((3.+xi)*(t0-t)/(8.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[8]);                    
+                    -1/sqrt(2.)*xi*(1+xi)*gpds[4]-(1+xi)*(t0-t)/(2.*MASSD_G*MASSD_G)*gpds[5]
+                    -(1+xi)*(t0-t)/(4.*MASSD_G*MASSD_G)*((t0-t)/(4.*MASSD_G*MASSD_G)+xi/(1.-xi*xi))*gpds[6]+((1.-xi)*(t0-t)/(8.*MASSD_G*MASSD_G)+xi/(1-xi*xi))*gpds[7]
+                    +((3.+xi)*(t0-t)/(8.*MASSD_G*MASSD_G)+xi/(1-xi*xi))*gpds[8]);                    
 
-    helamps.at(5)=D*D/sqrt(2.)/(1-xi)*((-gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD*MASSD)+xi/(1-xi*xi))*gpds[6]+1./2.*(gpds[7]-gpds[8]));
+    helamps.at(5)=D*D/sqrt(2.)/(1-xi)*((-gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD_G*MASSD_G)+xi/(1-xi*xi))*gpds[6]+1./2.*(gpds[7]-gpds[8]));
 
-    helamps.at(6)=D*D/sqrt(2.)/(1+xi)*((gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD*MASSD)-xi/(1-xi*xi))*gpds[6]-1./2.*(gpds[7]+gpds[8]));
+    helamps.at(6)=D*D/sqrt(2.)/(1+xi)*((gpds[2]+gpds[3])+2.*gpds[5]+((t0-t)/(4.*MASSD_G*MASSD_G)-xi/(1-xi*xi))*gpds[6]-1./2.*(gpds[7]+gpds[8]));
 
-    helamps.at(7)=D*(2.*xi/(1-xi*xi)*(gpds[2]-xi*gpds[3])+(t0-t)/(8.*MASSD*MASSD)*gpds[6]+1./(1-xi*xi)*(xi*gpds[7]-gpds[8]));
+    helamps.at(7)=D*(2.*xi/(1-xi*xi)*(gpds[2]-xi*gpds[3])+(t0-t)/(8.*MASSD_G*MASSD_G)*gpds[6]+1./(1-xi*xi)*(xi*gpds[7]-gpds[8]));
 
-    helamps.at(8)=D*(t0-t)/(8.*MASSD*MASSD)*gpds[6];
+    helamps.at(8)=D*(t0-t)/(8.*MASSD_G*MASSD_G)*gpds[6];
     return helamps;
 }
 
@@ -112,7 +112,7 @@ std::complex<double > Deut_Conv_GPD_T::test(double x, double xi, double t, int p
     double alphaprime=(alpha1*(1+xi)-4.*xi)/(1-xi);
 
     double xi_n=xi/(alpha1/2.*(1+xi)-xi);
-    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n);
+    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n); //[MeV^2]
     // double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
     if(t>t0_n) return 0.;
     
@@ -183,7 +183,7 @@ void Deut_Conv_GPD_T::int_k3(numint::vector_z & res, double alpha1, double kperp
     double alphaprime=(alpha1*(1+xi)-4.*xi)/(1-xi);
 
     double xi_n=xi/(alpha1/2.*(1+xi)-xi);
-    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n);
+    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n); //[MeV^2]
     // double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
     if(t>t0_n) return;
     
@@ -281,7 +281,7 @@ void Deut_Conv_GPD_T::int_kprime3(numint::vector_z & res, double alphaprime, dou
     double alpha1=(alphaprime*(1-xi)+4.*xi)/(1+xi);
 
     double xi_n=xi/(alphaprime/2.*(1-xi)+xi);
-    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n);
+    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n);  //[MeV]
     // double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
     if(t>t0_n) return;
 
@@ -354,7 +354,7 @@ complex<double> Deut_Conv_GPD_T::getGPD_odd_nucl(const int sigma_in, const int s
                                     const double t0, const double phi, const int model, const bool right, const TransGPD_set &gpd_nucl){
 
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
-    double kinfac=sqrt(t0-t)/MASSn;
+    double kinfac=sqrt(t0-t)/MASSn;  // t in MeV^2 !! 
     if(right){
         if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_singlet(model)
                                 +(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getET_singlet(model)
@@ -379,13 +379,13 @@ complex<double> Deut_Conv_GPD_T::getGPD_odd_nucl(const int sigma_in, const int s
 
 vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const double x, const double t,const double scale, const int model){
     if(fabs(x)>1.) return vector< complex<double> >(9,0.);
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
-    double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // Gev^2
+    double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0  //GeV
 
     chiralodd_grid.getTransGPDSet(0.,0.,t,scale); //just fill the grid here
     Deut_Conv_GPD_T::Ftor_conv F;
     F.x=x;
-    F.t=t;
+    F.t=t*1.E06; //[MeV^2]
     F.scale=scale;
     F.gpd=this;
     F.model=model;
@@ -427,7 +427,7 @@ vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const doubl
         F.pold_out=i%3-1;
         F.xi=xi;
         F.right=1;
-        F.deltax=Delta_perp;
+        F.deltax=Delta_perp*1.E03; //[MeV]
 
         string stf="statefile";
         int nregions,fail,countt;
@@ -464,7 +464,7 @@ vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const doubl
         // F.pold_out=i/3-1;
         // F.xi=-xi;
         // F.right=0;
-        // F.deltax=-Delta_perp;
+        // F.deltax=-Delta_perp*1.E03;
         // out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
         // cout << "conj " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -conj(out[0]) << " " << count << endl;
         // numint::cube_adaptive(mdf,lowerminus,upper,abserr,relerr,5E02,maxEval,out,count,0);
@@ -473,7 +473,7 @@ vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const doubl
         // F.pold_out=-(i%3-1);
         // F.xi=xi;
         // F.right=0;
-        // F.deltax=-Delta_perp;
+        // F.deltax=-Delta_perp*1.E03;
         // out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
         // cout << "P " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << -out[0] << " " << count << endl;
         // numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
@@ -482,7 +482,7 @@ vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const doubl
         // F.pold_out=i/3-1;
         // F.xi=-xi;
         // F.right=0;
-        // F.deltax=Delta_perp;
+        // F.deltax=Delta_perp*1.E03;
         // out[0]=ret[i]=test(F.x, F.xi, F.t, F.pold_in, F.pold_out, F.model, F.right, F.deltax);
         // cout << "T " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << pow(-1,F.pold_in-F.pold_out)*out[0] << " " << count << endl;
         // numint::cube_adaptive(mdf,lowerminus,upper,abserr,relerr,5E02,maxEval,out,count,0);

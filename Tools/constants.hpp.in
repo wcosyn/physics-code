@@ -12,6 +12,9 @@
 #define MASSN 939.56536 /*!< \def defines proton mass [MeV] */
 #define MASSP 938.27231 /*!< \def defines neutron mass [MeV] */
 #define MASSn (0.5*(MASSN+MASSP)) /*!< \def average nucleon mass [MeV] */
+#define MASSN_G 939.56536E-03 /*!< \def defines proton mass [MeV] */
+#define MASSP_G 938.27231E-03 /*!< \def defines neutron mass [MeV] */
+#define MASSn_G (0.5*(MASSN+MASSP)) /*!< \def average nucleon mass [MeV] */
 #define MASSPI 139.57 /*!< \def defines charged pion mass [MeV] */
 #define MASSRHO 775.49 /*!< \def defines rho0 mass [MeV] */
 #define HBARC 197.327  /*!< \def defines hbar*c [MeV*fm] */
@@ -22,6 +25,7 @@
 #define DEGRTORAD 0.0174532925 /*!< \def defines Pi/180 */
 #define RADTODEGR 57.2957795 /*!< \def defines 180/Pi */
 #define MASSD 1875.6 /*!< \def defines deuteron mass [MeV] */
+#define MASSD_G 1875.6E-03 /*!< \def defines deuteron mass [MeV] */
 #define MASSHE3 2809.41338 /*!< \def defines he3 mass [MeV] */
 #define SIN2W 0.2224 /*!< \def defines sin squared of Weinberg angle */
 /*! underflow in the code:

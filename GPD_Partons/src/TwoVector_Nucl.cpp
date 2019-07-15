@@ -18,14 +18,14 @@ pGPDService(pGPDService),pGPDModel(pGPDModel),pRunningAlphaStrongModule(pRunning
 
 
 // integrandum for gamma_L amplitude
-void TwoVector_Nucl::integrandum_L(numint::vector_d &result, double u, double z, double xi, double t, double scale, double psq, double Qsq,
+void TwoVector_Nucl::integrandum_L(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq,
                                  int spinout, int spinin, TwoVector_Nucl &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
         
-        PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,t, scale*scale, scale*scale);
+        PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
 
         PARTONS::GPDResult gpdResult = twovector.pGPDService->computeGPDModel(gpdKinematic,
             twovector.pGPDModel);
@@ -42,14 +42,14 @@ void TwoVector_Nucl::integrandum_L(numint::vector_d &result, double u, double z,
 }
 
 // integrandum for gamma_T amplitude
-void TwoVector_Nucl::integrandum_T(numint::vector_d &result, double u, double z, double xi, double t, double scale, double psq, double Qsq, 
+void TwoVector_Nucl::integrandum_T(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, 
                                     int spinout, int spinint, TwoVector_Nucl &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
         
-        PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,t, scale*scale, scale*scale);
+        PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
 
         PARTONS::GPDResult gpdResult = twovector.pGPDService->computeGPDModel(gpdKinematic,
             twovector.pGPDModel);
@@ -67,14 +67,14 @@ void TwoVector_Nucl::integrandum_T(numint::vector_d &result, double u, double z,
 
 
 // integrandum for gamma_L amplitude
-void TwoVector_Nucl::integrandum_T_L(numint::vector_d &result, double u, double z, double xi, double t, double scale, double psq, double Qsq,
+void TwoVector_Nucl::integrandum_T_L(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq,
                                  int spinout, int spinin, TwoVector_Nucl &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
-        TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,t*1.E06, scale);
-        double gpdfactor = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,t,t,0.,1,1,gpds).real();
+        TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,mandelstam_t*1.E06, scale);
+        double gpdfactor = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,1,1,gpds).real();
         // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
         result[0]=gpdfactor*
                     z*z*(1.-z)*(1.-z)/u/(1.-u)
@@ -87,14 +87,14 @@ void TwoVector_Nucl::integrandum_T_L(numint::vector_d &result, double u, double 
 }
 
 // integrandum for gamma_T amplitude
-void TwoVector_Nucl::integrandum_T_T(numint::vector_d &result, double u, double z, double xi, double t, double scale, double psq, double Qsq, 
+void TwoVector_Nucl::integrandum_T_T(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, 
                                     int spinout, int spinin,  TwoVector_Nucl &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
-        TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,t*1.E06,scale);
-        double gpdfactor = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,t,t,0.,1,1,gpds).real();
+        TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,mandelstam_t*1.E06,scale);
+        double gpdfactor = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.E06,mandelstam_t*1.E06,0.,1,1,gpds).real();  //only right?
 
         // (Hq^u-Hq^d) * (2z-1) * z * barz / u / baru * Q    [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards] [factor p_perp from nominator taken out]
         result[0]=gpdfactor
@@ -113,11 +113,11 @@ double TwoVector_Nucl::getCross_gammaL_rhoL(const double scale, const double xi,
     double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
-    double t= -4.*MASSP*MASSP*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
+    double mandelstam_t= -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi);//tmin [GeV^2]
 
     Ftor_2vector F;
     F.xi=xi;
-    F.t=t;
+    F.mandelstam_t=mandelstam_t;
     F.scale=scale;
     F.Qsq=Q2;
     F.psq=psq;
@@ -160,12 +160,12 @@ double TwoVector_Nucl::getCross_gammaT_rhoL(const double scale, const double xi,
     double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
-    double t= -4.*MASSP*MASSP*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
+    double mandelstam_t= -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi);//tmin [GeV^2]
 
 
     Ftor_2vector F;
     F.xi=xi;
-    F.t=t;
+    F.mandelstam_t=mandelstam_t;
     F.scale=scale;
     F.Qsq=Q2;
     F.psq=psq;
@@ -201,11 +201,11 @@ double TwoVector_Nucl::getCross_gammaL_rhoT(const double scale, const double xi,
     double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
-    double t= -4.*MASSP*MASSP*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
+    double mandelstam_t= -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi);//tmin [GeV^2]
 
     Ftor_2vector F;
     F.xi=xi;
-    F.t=t;
+    F.mandelstam_t=mandelstam_t;
     F.scale=scale;
     F.Qsq=Q2;
     F.psq=psq;
@@ -258,12 +258,12 @@ double TwoVector_Nucl::getCross_gammaT_rhoT(const double scale, const double xi,
     double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
     double CF=(Nc*Nc-1)/2./Nc;
-    double t= -4.*MASSP*MASSP*xi*xi/(1-xi*xi)*1.E-06;//tmin [GeV^2]
+    double mandelstam_t= -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi);//tmin [GeV^2]
 
 
     Ftor_2vector F;
     F.xi=xi;
-    F.t=t;
+    F.mandelstam_t=mandelstam_t;
     F.scale=scale;
     F.Qsq=Q2;
     F.psq=psq;

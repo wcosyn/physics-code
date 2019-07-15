@@ -165,11 +165,11 @@ struct Ftor_conv {
     Deut_Conv_GPD_V *gpd;
     double x;
     double xi;
-    double t;
+    double t; // [MeV^2]
     double scale; ///< [GeV]
     int pold_in;
     int pold_out;
-    double deltax;
+    double deltax; //[MeV]
     
     void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
               double x, double xi, double t, double scale, int pold_in, int pold_out,  double deltax);
@@ -218,10 +218,10 @@ struct Ftor_conv_FF {
     }
     Deut_Conv_GPD_V *gpd;
      double xi;
-    double t;
+    double t; // [MeV^2]
     int pold_in;
     int pold_out;
-    double deltax;
+    double deltax; //[MeV]
     double F1, F2;
     
     void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
@@ -239,7 +239,7 @@ struct Ftor_conv_FF {
  * @param[in] gpd object that contains all necessary info on the gpds 
  * @param x [] avg lc momentum fraction of struck quark
  * @param xi [] skewness
- * @param t [GeV^2] momentum transfer sq
+ * @param t [MeV^2] momentum transfer sq
  * @param scale [GeV] factorization = renorm scale
  * @param pold_in polarization initial deuteron state (-1//0//+1)
  * @param pold_out polarization final deuteron state (-1//0//+1)
@@ -280,8 +280,8 @@ static void int_k3_FF(numint::vector_z & res, double alpha_1, double kperp, doub
  * @param sigma_in polarization incoming nucleon (spin times two)
  * @param sigma_out polarization outgoing nucleon (spin times two)
  * @param xi_n skewness nucleon
- * @param t [GeV^2] momentum transfer sq.
- * @param t0 [GeV^2] minimum momentum transfer sq
+ * @param t [MeV^2] momentum transfer sq.
+ * @param t0 [MeV^2] minimum momentum transfer sq
  * @param phi [azimuthal angle \xiP+Delta fourvector]
  * @param gpd_H GPD H
  * @param gpd_E GPD E
@@ -301,7 +301,7 @@ PARTONS::GPDModule* pGPDModel; ///< GPD Model from PARTONS
 GPD_V_Nucl_grid chiraleven_grid;
 
 
-double t_grid; ///< [MeV^2] momentum transfer sq value the grid has
+double t_grid; ///< [GeV^2] momentum transfer sq value the grid has
 double xi_grid; ////< [] skewness value the grid has
 bool grid_set; ///< is the grid with transv gpds set or not
 bool ERBL_set; ///< is the grid only ERBL or not

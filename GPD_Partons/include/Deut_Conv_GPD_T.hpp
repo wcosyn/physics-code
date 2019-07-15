@@ -43,7 +43,7 @@ Deut_Conv_GPD_T(const std::string &pdf_name, const std::string &wfname);
  * See Cosyn, Pire PRD '18 App C
  * 
  * @param xi [] skewness
- * @param t [MeV^2] momentum transfer sq
+ * @param t [GeV^2] momentum transfer sq
  * @param helamps helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]--,[2]00,[3]0+,[4]-0,[5]+0,[6]0-,[7]-+,[8]+-
  * @return std::vector<double>  gpds H^T_1 to H^T_9
  */
@@ -54,7 +54,7 @@ static std::vector< std::complex<double> > helamps_to_gpds_T(const double xi, co
  * See Cosyn, Pire PRD '18 App C
  * 
  * @param xi [] skewness
- * @param t [MeV^2] momentum transfer sq
+ * @param t [GeV^2] momentum transfer sq
  * @param gpds gpds H^T_1 to H^T_9
  * @return std::vector<double> helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]--,[2]00,[3]0+,[4]-0,[5]+0,[6]0-,[7]-+,[8]+-
  */
@@ -79,7 +79,7 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
  * 
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction
- * @param t [Mev^2] momentum transfer sq
+ * @param t [Gev^2] momentum transfer sq
  * @param scale [GeV] factorization = renorm scale
  * @param model [0-2] different models for nucleon chiral odd GPDs
  * @return std::vector< std::complex<double> > helicity amplitudes  deuteron helicities are (final,initial) [0]++,[1]--,[2]00,[3]0+,[4]-0,[5]+0,[6]0-,[7]-+,[8]+-
@@ -136,13 +136,13 @@ struct Ftor_conv {
     Deut_Conv_GPD_T *gpd;
     double x;
     double xi;
-    double t;
+    double t; //< [MeV^2]
     double scale; ///< [GeV]
     int pold_in;
     int pold_out;
     int model;
     bool right;
-    double deltax;
+    double deltax;//< [MeV]
     
     void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_T &gpd,
               double x, double xi, double t, double scale, int pold_in, int pold_out, int model, bool right, double deltax);
@@ -195,7 +195,7 @@ TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function
 TInterpolatingWavefunction wf;
 GPD_T_Nucl_grid chiralodd_grid; ///< object that allows to interpolate or get chiral odd nucleon GPDs
 
-double t_grid; ///< [MeV^2] momentum transfer sq value the grid has
+double t_grid; ///< [GeV^2] momentum transfer sq value the grid has
 double xi_grid; ////< [] skewness value the grid has
 bool grid_set; ///< is the grid with transv gpds set or not
 bool ERBL_set; ///< is the grid only ERBL or not

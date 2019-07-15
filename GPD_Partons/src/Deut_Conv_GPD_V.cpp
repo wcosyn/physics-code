@@ -34,8 +34,8 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_FFs_V(const double xi, con
 
     vector< complex<double> > FFs(3,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
-    double D=(t0-t)/(4.*MASSD*MASSD)*1.E06;
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
+    double D=(t0-t)/(4.*MASSD_G*MASSD_G); // GeV^2
     //cout << "1/D " << 1/D << endl;
     FFs.at(0)=helamps[0]+helamps[2];
 
@@ -51,8 +51,8 @@ vector< complex<double> > Deut_Conv_GPD_V::FFs_to_helamps_V(const double xi, con
     vector< complex<double> > helamps(5,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
 
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
-    double D=(t0-t)/(4.*MASSD*MASSD)*1.E06;
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
+    double D=(t0-t)/(4.*MASSD_G*MASSD_G); // GeV^2
     // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
     helamps.at(0)=FFs[0]+D*FFs[2];
 
@@ -66,8 +66,8 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_gpds_V(const double xi, co
 
     vector< complex<double> > gpds(5,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
-    double D=(t0-t)/(4.*MASSD*MASSD)*1.E06;
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
+    double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]
     gpds.at(0)=1./3./pow(1.-xi*xi,2.)*(3.*pow(xi,4.)-7.*xi*xi+2-2.*D*(1-xi*xi))*helamps[0]+1./3./(1-xi*xi)*helamps[1]
         +sqrt(2./D*(1+xi)/(1-xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
         -sqrt(2./D*(1-xi)/(1+xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
@@ -95,8 +95,8 @@ vector< complex<double> > Deut_Conv_GPD_V::gpds_to_helamps_V(const double xi, co
     vector< complex<double> > helamps(5,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
 
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
-    double D=(t0-t)/(4.*MASSD*MASSD)*1.E06;
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
+    double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]
     // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
     helamps.at(0)=gpds[0]+D*gpds[2]-1./3.*gpds[4];
 
@@ -118,7 +118,8 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
               double x, double xi, double t, double scale, int pold_in, int pold_out, double deltax){
     res=numint::vector_z(1,0.);
 
-    double Ek=sqrt((MASSn*MASSn+kperp*kperp)/alpha1/(2.-alpha1));
+    //All momenta/energies MeV!!!!
+    double Ek=sqrt((MASSn*MASSn+kperp*kperp)/alpha1/(2.-alpha1)); 
     double kz=(alpha1-1.)*Ek;
     double knorm=sqrt(Ek*Ek-MASSn*MASSn);
     // cout << alpha1 << " " << kperp << " " << Ek << " " << knorm << endl;
@@ -129,7 +130,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     double alphaprime=(alpha1*(1+xi)-4.*xi)/(1-xi);
 
     double xi_n=xi/(alpha1/2.*(1+xi)-xi);
-    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n)*1.E-06;
+    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n); //[MeV^2]
     // double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
     if(t>t0_n) return;
     
@@ -221,6 +222,7 @@ void Deut_Conv_GPD_V::int_k3_FF(numint::vector_z & res, double alpha1, double kp
               double xi, double t, int pold_in, int pold_out, double deltax,  double F1, double F2){
     res=numint::vector_z(1,0.);
 
+    //all momenta etc in MeV!!!
     double Ek=sqrt((MASSn*MASSn+kperp*kperp)/alpha1/(2.-alpha1));
     double kz=(alpha1-1.)*Ek;
     double knorm=sqrt(Ek*Ek-MASSn*MASSn);
@@ -234,7 +236,7 @@ void Deut_Conv_GPD_V::int_k3_FF(numint::vector_z & res, double alpha1, double kp
 
     double xi_n=xi/(alpha1/2.*(1+xi)-xi);
     if(abs(xi_n)>1.) return;
-    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n)*1.E-06;
+    double t0_n=-4.*MASSn*MASSn*xi_n*xi_n/(1-xi_n*xi_n);  //[MeV^2]
     // double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi);
     if(t>t0_n) return;
     
@@ -303,7 +305,7 @@ complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int 
                                     const double t0, const double phi,  const double gpd_H, const double gpd_E) const{
 
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
-    double kinfac=sqrt(t0-t)/MASSn*1.E03;
+    double kinfac=sqrt(t0-t)/MASSn; // t in MeV^2
     if(sigma_in==sigma_out) return sqrt(1-xi*xi)*gpd_H - xi*xi/sqrt(1-xi*xi)*gpd_E;
 
     else{
@@ -317,7 +319,7 @@ complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int 
 vector<double> Deut_Conv_GPD_V::calc_NR_ffs(double t){
     double Q2=-t;
     double Q=sqrt(Q2);
-    double eta = -t/4./MASSD/MASSD*1.E06;
+    double eta = -t/4./MASSD_G/MASSD_G;
 
     Deut_Conv_GPD_V::Ftor_conv_FF_nr F;
     F.gpd=this;
@@ -359,7 +361,7 @@ void Deut_Conv_GPD_V::int_r(numint::vector_d & res, double r, Deut_Conv_GPD_V &g
     double densE = 3./2.*W*W;
 
     double x = sqrt(-t)*r/2./HBARC*1.E03;
-    double eta = -t/4./MASSD/MASSD*1.E06;
+    double eta = -t/4./MASSD_G/MASSD_G;
 
     double j0 = sin(x)/x;
     double j2 = (3./x/x-1.)*j0-3.*cos(x)/x/x;
@@ -378,16 +380,16 @@ void Deut_Conv_GPD_V::int_r(numint::vector_d & res, double r, Deut_Conv_GPD_V &g
 
 vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const double x, const double t, const double scale){
     if(fabs(x)>1.) return vector< complex<double> >(5,0.);
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
-    double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi);  //MeV^2
+    double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0  //GeV
 
     
     Deut_Conv_GPD_V::Ftor_conv F;
     F.x=x;
-    F.t=t;
+    F.t=t*1.E06; //[MeV^2]
     F.scale=scale;
     F.gpd=this;
-    chiraleven_grid.getVectorGPDSet(0.,0.,t,scale);
+    chiraleven_grid.getVectorGPDSet(0.,0.,t*1.E06,scale);
 
     numint::mdfunction<numint::vector_z,3> mdf;
     mdf.func = &Ftor_conv::exec;
@@ -426,7 +428,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         F.pold_in=i/3-1;
         F.pold_out=i%3-1;
         F.xi=xi;
-        F.deltax=Delta_perp*1.E03;
+        F.deltax=Delta_perp*1.E03; //[MeV]
 
         string stf="statefile."+to_string(x)+"."+to_string(i)+".";
         int nregions,fail,countt;
@@ -439,9 +441,9 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         int maxEvalcuba=1E06;
 
         int maxEval=1E06;
-        //numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
+        numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         //numint::vegas( mdf, lower,upper,nvec, relerr,abserr,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas").c_str(),countt,fail,out,err,prob );
-        numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, /*stf.c_str() */ NULL ,nregions,countt,fail,out,err,prob );
+        //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, /*stf.c_str() */ NULL ,nregions,countt,fail,out,err,prob );
 
         ret[i]=out[0];
 
@@ -476,11 +478,11 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
 }
 
 vector< complex<double> > Deut_Conv_GPD_V::FF_conv(const double xi, const double t){
-    double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
     double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0 [GeV!!!!]
     
     Deut_Conv_GPD_V::Ftor_conv_FF F;
-    F.t=t;
+    F.t=t*1.E06;
     F.gpd=this;
 
     NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);

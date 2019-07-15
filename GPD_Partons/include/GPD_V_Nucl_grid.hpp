@@ -40,7 +40,7 @@ GPD_V_Nucl_grid(PARTONS::GPDService *pGPDService, PARTONS::GPDModule *pGPDModel)
  * 
  * @param x average lf momentum fraction quark
  * @param xi skewness nucleon
- * @param t [GeV^2] momentum transfer sq.
+ * @param t [MeV^2] momentum transfer sq.
  * @param scale [GeV] factorization = renormalization scale
  * @return [0] H, [1] E
  */
