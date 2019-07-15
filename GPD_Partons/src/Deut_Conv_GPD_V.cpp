@@ -243,7 +243,7 @@ void Deut_Conv_GPD_V::int_k3_FF(numint::vector_z & res, double alpha1, double kp
     sincos(kphi,&sinkphi,&coskphi);
     double kxprime=kperp*coskphi+(1-alpha1/2.)/(1-xi)*deltax;  //see Eq (114) GPD note for kinematics
     double kyprime=kperp*sinkphi;
-    //cout << "x " << kperp*coskphi << " " << kxprime << " " << kperp*sinkphi << " " << kyprime << endl;
+    //cout << "x " << kperp*coskphi << " " << kxprime << " " << kperp*sinkphi << " " << kyprime << " " << deltax << endl;
 
     double kperpprime=sqrt(kxprime*kxprime+kyprime*kyprime);
     double Ekprime = sqrt((MASSn*MASSn+kperpprime*kperpprime)/(alphaprime*(2.-alphaprime)));
@@ -426,7 +426,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         F.pold_in=i/3-1;
         F.pold_out=i%3-1;
         F.xi=xi;
-        F.deltax=Delta_perp;
+        F.deltax=Delta_perp*1.E03;
 
         string stf="statefile."+to_string(x)+"."+to_string(i)+".";
         int nregions,fail,countt;
@@ -450,19 +450,19 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         // F.pold_in=i%3-1;
         // F.pold_out=i/3-1;
         // F.xi=-xi;
-        // F.deltax=-Delta_perp;
+        // F.deltax=-Delta_perp*1.E03;
         // numint::cube_adaptive(mdf,lowerminus,upper,abserr,relerr,5E02,maxEval,out,count,0);
         // cout << "conj " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << conj(out[0]) << " " << count << endl;
         // F.pold_in=-(i/3-1);
         // F.pold_out=-(i%3-1);
         // F.xi=xi;
-        // F.deltax=-Delta_perp;
+        // F.deltax=-Delta_perp*1.E03;
         // numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         // cout << "P " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
         // F.pold_in=i%3-1;
         // F.pold_out=i/3-1;
         // F.xi=-xi;
-        // F.deltax=Delta_perp;
+        // F.deltax=Delta_perp*1.E03;
         // numint::cube_adaptive(mdf,lowerminus,upper,abserr,relerr,5E02,maxEval,out,count,0);
         // cout << "T " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << pow(-1,F.pold_in-F.pold_out)*out[0] << " " << count << endl;
 
@@ -477,15 +477,14 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
 
 vector< complex<double> > Deut_Conv_GPD_V::FF_conv(const double xi, const double t){
     double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
-    double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0
-
+    double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0 [GeV!!!!]
     
     Deut_Conv_GPD_V::Ftor_conv_FF F;
     F.t=t;
     F.gpd=this;
 
     NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
-    cout << sqrt(-t) << " " << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
+    //cout << sqrt(-t) << " " << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
     F.F1=0.5*(proton.getF1()+neutron.getF1());
     F.F2=0.5*(proton.getF2()+neutron.getF2());
     
@@ -493,7 +492,6 @@ vector< complex<double> > Deut_Conv_GPD_V::FF_conv(const double xi, const double
     mdf.func = &Ftor_conv_FF::exec;
     mdf.param = &F;
     numint::vector_z out(1,0.);
-    return out;
 
     double low=0.,lowminus=0.,lowprime=0.,lowprimeminus=0.;
     //integration boundaries for alpha, originating from the Heavisides in the convolution (intermediate states w physical + momentum)
@@ -527,7 +525,7 @@ vector< complex<double> > Deut_Conv_GPD_V::FF_conv(const double xi, const double
         F.pold_in=i/3-1;
         F.pold_out=i%3-1;
         F.xi=xi;
-        F.deltax=Delta_perp;
+        F.deltax=Delta_perp*1.E03; //[MeV!!!!]
 
         string stf="statefile."+to_string(i)+".";
         int nregions,fail,countt;

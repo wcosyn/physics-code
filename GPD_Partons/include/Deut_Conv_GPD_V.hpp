@@ -245,7 +245,7 @@ struct Ftor_conv_FF {
  * @param pold_out polarization final deuteron state (-1//0//+1)
  * @param model diff implementations of KG parametrization, see TransGPD_set for details
  * @param right [1] R matrix element [0] L matrix element
- * @param deltax [MeV] perp component of the momentum transfer, along x-axis
+ * @param deltax [MeV!!!] perp component of the momentum transfer, along x-axis
  */
 static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
               double x, double xi, double t, double scale, int pold_in, int pold_out, double deltax);
@@ -264,7 +264,7 @@ static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double 
  * @param pold_out polarization final deuteron state (-1//0//+1)
  * @param model diff implementations of KG parametrization, see TransGPD_set for details
  * @param right [1] R matrix element [0] L matrix element
- * @param deltax [MeV] perp component of the momentum transfer, along x-axis
+ * @param deltax [MeV!!!] perp component of the momentum transfer, along x-axis
  * @param F1 isoscalar nucleon FF F1
  * @param F2 isoscalar nucleon FF F2
  */
