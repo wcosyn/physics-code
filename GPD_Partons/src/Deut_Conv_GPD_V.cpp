@@ -36,7 +36,7 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_FFs_V(const double xi, con
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
     double t0=-4.*MASSD*MASSD*xi*xi/(1-xi*xi)*1.E-06;
     double D=(t0-t)/(4.*MASSD*MASSD)*1.E06;
-    cout << "1/D " << 1/D << endl;
+    //cout << "1/D " << 1/D << endl;
     FFs.at(0)=helamps[0]+helamps[2];
 
     FFs.at(1)=2./(1.-xi)*helamps[0]-sqrt(2./(D*(1.-xi*xi)))*(1.+xi)/(1.-xi)*helamps[1]+2./D*xi/(1.-xi*xi)/(1.-xi)*helamps[2];
@@ -150,6 +150,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
 
     //double phin=atan2(2*xi_n*kyprime, 2*xi_n*kxprime+(1.-xi_n*(1.-alphaprime/2.))*deltax); //azimuthal angle of 2xi_n*\bar{p}_1+Delta
     double phin=atan2(2*xi_n*kperp*sinkphi, 2*xi_n*(kperp*coskphi+alpha1/(4.*xi)*deltax)); //azimuthal angle of 2xi_n*\bar{p}_1+Delta
+    if(xi_n==0.) phin=0.;
     //atan2(2.*xi_n*kyprime,2*xi_n*kperp*sinkphi+(1.+xi_n*(1.-alpha1/2.))*deltax) alternative expression
     // cout << "angle " << 2*xi_n*kxprime+(1.-xi_n*(1.-alphaprime/2.)*deltax) << " " << 2*xi_n*kperp*sinkphi+(1.+xi_n*(1.-alpha1/2.)*deltax) << endl;
     // cout << "vec " << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << endl;
@@ -484,6 +485,7 @@ vector< complex<double> > Deut_Conv_GPD_V::FF_conv(const double xi, const double
     F.gpd=this;
 
     NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
+    cout << sqrt(-t) << " " << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
     F.F1=0.5*(proton.getF1()+neutron.getF1());
     F.F2=0.5*(proton.getF2()+neutron.getF2());
     
@@ -491,6 +493,7 @@ vector< complex<double> > Deut_Conv_GPD_V::FF_conv(const double xi, const double
     mdf.func = &Ftor_conv_FF::exec;
     mdf.param = &F;
     numint::vector_z out(1,0.);
+    return out;
 
     double low=0.,lowminus=0.,lowprime=0.,lowprimeminus=0.;
     //integration boundaries for alpha, originating from the Heavisides in the convolution (intermediate states w physical + momentum)

@@ -70,7 +70,7 @@ int main(int argc, char *argv[]){
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
 
-
+        //nucleon GPD test
         // for(int i=0;i<=200;i++){
         //     for(int j=0;j<=100;j++){
         //         PARTONS::GPDKinematic gpdKinematic(0.01*(i-100)+(i==100? 1.E-04:0),0.01*(j),t, 1., 1.);
@@ -101,48 +101,48 @@ int main(int argc, char *argv[]){
 
         //test.getDeut_GPD_V_set(0.,xi,t,scale, ERBL).getAmp_00();
     
-        for (int i=0;i<=200;i++){
-            double Q = i*2./200.;
-            double t = -Q*Q;
-            double eta = -t/4./MASSD/MASSD*1.E06;
-            vector<double> FF = test.calc_NR_ffs(t);
-            double G1 = FF[0]-2./3.*eta*FF[2];
-            double G3 = (FF[2]-G1+FF[1])/(1.+eta);
-            cout << Q << " " << FF[0] << " " << FF[1] << " " << FF[2] << " " << G1 << " " << G3 << endl;
+        //non rel test
+        // for (int i=0;i<=200;i++){
+        //     double Q = i*2./200.;
+        //     double t = -Q*Q;
+        //     double eta = -t/4./MASSD/MASSD*1.E06;
+        //     vector<double> FF = test.calc_NR_ffs(t);
+        //     double G1 = FF[0]-2./3.*eta*FF[2];
+        //     double G3 = (FF[2]-G1+FF[1])/(1.+eta);
+        //     cout << Q << " " << FF[0] << " " << FF[1] << " " << FF[2] << " " << G1 << " " << G3 << endl;
+        // }
+        // exit(1);
+
+        for (int i=0;i<=40;i++){
+            double Q = i*2./40.;
+            t = -Q*Q;
+            cout << Q << " ";
+            vector< complex<double> > out = test.FF_conv(xi,t);
+            // for(int j=0;j<5;j++) cout << out[j].real() << " ";
+
+            // vector< complex<double> > hels = {out[0],out[2],out[4]};
+            // vector< complex<double> > FFs = Deut_Conv_GPD_V::helamps_to_FFs_V(xi,t,hels);
+            
+            // double FM = FFs[1].real();
+            // double FQ = (FFs[0].real()-FFs[1].real()+(1.-t/4./MASSD/MASSD*1.E06)*FFs[2].real());
+            // double FC = (FFs[0].real()-t/4./MASSD/MASSD*1.E06*FQ*2./3.);
+            
+            // for(int j=0;j<3;j++) cout << FFs[j].real() << " ";
+            // cout << FC << " "<< FM << " " << FQ << " ";
+            
+            
+            
+            // vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
+            // // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
+
+            // double GM = gpd[1].real();
+            // double GQ = (gpd[0].real()-gpd[1].real()+(1.-t/4./MASSD/MASSD*1.E06)*gpd[2].real());
+            // double GC = (gpd[0].real()-t/4./MASSD/MASSD*1.E06*GQ);
+            
+            // //for(int j=0;j<5;j++) cout << out[j].real() << " ";
+            // for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
+            // cout << GC << " " << GM << " " << GQ << endl;
         }
-        exit(1);
-
-        vector< complex<double> > out = test.FF_conv(xi,t);
-        for(int j=0;j<5;j++) cout << out[j].real() << " ";
-        cout << endl;
-
-        vector< complex<double> > hels = {out[0],out[2],out[4]};
-        vector< complex<double> > FFs = Deut_Conv_GPD_V::helamps_to_FFs_V(xi,t,hels);
-        
-        double FM = FFs[1].real();
-        double FQ = (FFs[0].real()-FFs[1].real()+(1.-t/4./MASSD/MASSD*1.E06)*FFs[2].real());
-        double FC = (FFs[0].real()-t/4./MASSD/MASSD*1.E06*FQ*2./3.);
-        
-        for(int j=0;j<3;j++) cout << FFs[j].real() << " ";
-        cout << endl;
-        cout << FC << " "<< FM << " " << FQ << endl << endl;
-        
-        
-        
-        vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
-        // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
-
-        double GM = gpd[1].real();
-        double GQ = (gpd[0].real()-gpd[1].real()+(1.-t/4./MASSD/MASSD*1.E06)*gpd[2].real());
-        double GC = (gpd[0].real()-t/4./MASSD/MASSD*1.E06*GQ);
-        
-
-        for(int j=0;j<5;j++) cout << out[j].real() << " ";
-        cout << endl;
-        for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
-        cout << endl;
-        cout << GC << " " << GM << " " << GQ << endl;
-
         //cout << -t/4./MASSD/MASSD*1.E06 << " " << gpd[0].real()-gpd[1].real() << " " << (1.-t/4./MASSD/MASSD*1.E06)*gpd[2].real() << endl;
     
 
