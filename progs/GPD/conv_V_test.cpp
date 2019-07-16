@@ -151,7 +151,7 @@ int main(int argc, char *argv[]){
         //     cout << GC << " " << GM << " " << GQ << endl;
         // }
     
-
+        cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) << endl;
         NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
         //cout << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
         cout << (proton.getF1()+neutron.getF1())/2. << " " <<  (proton.getF2()+neutron.getF2())/2. << endl;

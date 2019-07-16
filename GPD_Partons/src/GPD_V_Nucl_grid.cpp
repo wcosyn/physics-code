@@ -48,18 +48,18 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
         }
         //test nucleon
 
-        for(int j=0;j<=20;j++){
-            double sumEs=0,sumHs=0;
-            // sumEv=0., sumHv=0.;
-            for(int i=1;i<199;i++) {sumHs+=grid[i][j][0]; sumEs+=grid[i][j][1];/* sumHv+=grid[i][j][2]; sumEv+=grid[i][j][3];*/}
-            cout << j*0.01 << " " /* << (sumHs+3.*sumHv)/3.*0.01 << " " << (sumEs+3.*sumEv)/3.*0.01 << " " << (sumHs-3.*sumHv)/3.*0.01 << " " << (sumEs-3.*sumEv)/3.*0.01 << 
-            " "*/ << sumHs/3.*0.01 << " " << sumEs/3.*0.01 /* << " " << sumHv*0.01 << " " << sumEv*0.01*/ <<  endl;
-            // double sumEu=0,sumHu=0, sumEd=0., sumHd=0.;
-            // for(int i=0;i<200;i++) {sumHu+=grid[i][j][0]; sumEu+=grid[i][j][1];sumHd+=grid[i][j][2]; sumEd+=grid[i][j][3];}
-            // cout << j << " " << (2.*sumHu-sumHd)/3.*0.01 << " " << (2.*sumEu-sumEd)/3.*0.01 << " " << (2.*sumHd-sumHu)/3.*0.01 << " " << (2.*sumEd-sumEu)/3.*0.01 << endl;
-         }
-         cout << endl;
-        // cout << "construction done" << endl;
+        // for(int j=0;j<=20;j++){
+        //     double sumEs=0,sumHs=0;
+        //     // sumEv=0., sumHv=0.;
+        //     for(int i=1;i<199;i++) {sumHs+=grid[i][j][0]; sumEs+=grid[i][j][1];/* sumHv+=grid[i][j][2]; sumEv+=grid[i][j][3];*/}
+        //     cout << j*0.01 << " " /* << (sumHs+3.*sumHv)/3.*0.01 << " " << (sumEs+3.*sumEv)/3.*0.01 << " " << (sumHs-3.*sumHv)/3.*0.01 << " " << (sumEs-3.*sumEv)/3.*0.01 << 
+        //     " "*/ << sumHs/3.*0.01 << " " << sumEs/3.*0.01 /* << " " << sumHv*0.01 << " " << sumEv*0.01*/ <<  endl;
+        //     // double sumEu=0,sumHu=0, sumEd=0., sumHd=0.;
+        //     // for(int i=0;i<200;i++) {sumHu+=grid[i][j][0]; sumEu+=grid[i][j][1];sumHd+=grid[i][j][2]; sumEd+=grid[i][j][3];}
+        //     // cout << j << " " << (2.*sumHu-sumHd)/3.*0.01 << " " << (2.*sumEu-sumEd)/3.*0.01 << " " << (2.*sumHd-sumHu)/3.*0.01 << " " << (2.*sumEd-sumEu)/3.*0.01 << endl;
+        //  }
+        //  cout << endl;
+        // // cout << "construction done" << endl;
         grid_set=true;
         t_grid=t;
    }

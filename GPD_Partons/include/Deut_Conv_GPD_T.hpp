@@ -75,7 +75,8 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
 
 
 /**
- * @brief Computes the deuteron helicity amplitudes with the convolution formula
+ * @brief Computes the deuteron helicity amplitudes with the convolution formula, 
+ * careful there is a factor 1/2 to relate the helicity amplitude to the matrix element of the transverse correlator!
  * 
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction

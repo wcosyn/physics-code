@@ -213,7 +213,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
         }
     }
     // cout << "int " << x << " " << result << " " << kperp << " " << alpha1 << endl;
-    res[0]=result*2.*kperp/alpha1/(2.-alpha1)/alphaprime*sqrt(Ek)*sqrt(Ekprime);    // cout << t0 << " " << alpha1 << " " << t0_n << " " << xi << " " << xi_n << " " << res[0].real() << endl;
+    res[0]=result*4.*kperp/alpha1/(2.-alpha1)/alphaprime*sqrt(Ek)*sqrt(Ekprime);    // cout << t0 << " " << alpha1 << " " << t0_n << " " << xi << " " << xi_n << " " << res[0].real() << endl;
     // cout << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << " " << res[0].real() << " " << res[0].imag() << endl;
     // exit(1);
 }
@@ -438,9 +438,9 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         int flags=0;
         int seed=235;
         int minEval=1E02;
-        int maxEvalcuba=1E06;
+        int maxEvalcuba=1E05;
 
-        int maxEval=1E06;
+        int maxEval=1E05;
         numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         //numint::vegas( mdf, lower,upper,nvec, relerr,abserr,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas").c_str(),countt,fail,out,err,prob );
         //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, /*stf.c_str() */ NULL ,nregions,countt,fail,out,err,prob );
