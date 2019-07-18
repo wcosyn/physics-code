@@ -123,25 +123,27 @@ double TwoVector_Deut::getCross_gammaL_rhoL(const double scale, const double xi,
     //gamma_L calculation
     F.f=integrandum_L;
     double result_L=0.;
+    //cout << 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq << endl;        
+    //cout << 2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << endl;
     for(int helampindex=0; helampindex<=4;helampindex++){
         F.helampindex=helampindex;
         unsigned count=0;
         // integration over u and z
-        if(Q2>1.E-05) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
+        if(Q2>1.E-06) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
         integral[0]*=36.; //prefactor DA (twice, squared)
+        //cout << helampindex << " " << integral[0] << endl;
         
         //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
         integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; 
-        //cout << 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq << endl;
         //prefactors Eq (15) Enberg et al.
         integral[0] *= -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); 
-        //cout << 2.*PI*alpha_s*sqrt(Qsq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << endl;
         //cout << 1./256./pow(PI,3.)/xi/(1.-xi) << endl;
         result_L+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi)*(helampindex==1?1:2); // Enberg et al Eq (12) + symmetry factor helicity amplitudes, 00 one only once
         //cout << Qsq << " " << xi << " " << psq << " " << result_L*0.389379E06 << endl;  // factor to go from GeV-6 to nb GeV-4
     }
     
-
+    //cout << "final " << result_L*0.389379E06/3. << endl;
+    //exit(1);
     return result_L*0.389379E06/3.;  //[Gev-2 -> nb conversion] + avg initial spin
 
 }
@@ -222,7 +224,7 @@ double TwoVector_Deut::getCross_gammaL_rhoT(const double scale, const double xi,
     for(int helamps=0;helamps<=8;helamps++){
         F.helampindex=helamps;
         std::vector<double> integral(1,0.); //integrandum result array
-        if(Q2>1.E-05) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
+        if(Q2>1.E-06) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
         
         integral[0]*=36.; //prefactor DA (twice, squared)
         
