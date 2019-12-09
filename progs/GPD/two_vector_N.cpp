@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
         //cout << "alpha_s " << alpha_s << endl;
         TwoVector_Nucl gimme_xs(pGPDService, pGPDModel, pRunningAlphaStrongModule);
 
-        for(int i=0;i<=16;i++){
+        for(int i=0;i<=0;i++){
         
             double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
             double result_L=0.,result_T=0.;

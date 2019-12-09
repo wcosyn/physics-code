@@ -46,6 +46,19 @@ public:
    */
   void calc_Double_Asymm(double x, double Q2, double y, double alpha_s, double pt, bool proton, double &F_LSL, double &F_U);
 
+/**
+ * @brief compare the nuclear densitiy ratio entering in the Azz asymmetry, between lightcone expression and its nonrelativistic reduction
+ * 
+ * @param[out] lfratio ''exact'' lightfront expression
+ * @param[out] nrratio nonrelativistic reduction
+ * @param alpha_p [] detected spectator lf +momentum fraction
+ * @param pt  [MeV] detected spectator perp momentum
+ */
+  void Tensor_Compare_nonrel(double &lfratio, double &nrratio, double alpha_p, double pt);
+
+
+
+
 private:
   std::string strucname; /*!< structure function parametrization */
   std::string wfname; /*!< name of deuteron wf parametrization, see TDeuteron for possibilities */
@@ -86,6 +99,7 @@ private:
    */ 
   void Melosh_rot(double k_perp, double k_plus, double Ek, double &rho_l_z, double &rho_l_x); 
   
+
 };
 /*! @} */
 #endif 

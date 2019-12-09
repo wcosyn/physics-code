@@ -191,3 +191,26 @@ void Poldeut::getDensities(double knorm, double thetak, double &rhou, double &rh
 //   exit(1);
   return;
 }
+
+
+void Poldeut::Tensor_Compare_nonrel(double &lfratio, double &nrratio, double alpha_p, double pt){
+  double Ek_sq = (MASSn*MASSn+pt*pt)/alpha_p/(2.-alpha_p);
+  double knorm = sqrt(Ek_sq-MASSn*MASSn);
+  double U_lf = getU(knorm);
+  double W_lf = getW(knorm);
+
+  double p_p_plus = alpha_p/2.*MASSD;
+  double p_p_minus = (MASSn*MASSn+pt*pt)/p_p_plus;
+  double p_z = (p_p_plus - p_p_minus)/2.;
+  double pnorm = sqrt(p_z*p_z+pt*pt);
+
+  double U_nr = getU(pnorm);
+  double W_nr = getW(pnorm);
+
+  lfratio = -((1-3./2.*pt*pt/knorm/knorm)*(2*U_lf+W_lf/sqrt(2.))*W_lf/sqrt(2.))/(U_lf*U_lf + W_lf*W_lf) ;
+  lfratio = U_lf;
+
+  nrratio = -((1-3./2.*pt*pt/pnorm/pnorm/(1+p_z/MASSn))*(2*U_nr+W_nr/sqrt(2.))*W_nr/sqrt(2.))/(U_nr*U_nr + W_nr*W_nr) ;
+  nrratio = W_lf;
+
+}
