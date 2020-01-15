@@ -45,6 +45,8 @@ int main(int argc, char *argv[]){
     bool setD = atoi(argv[5]);
     bool setH = atoi(argv[6]);
     bool setE = atoi(argv[7]);
+    string GPD_model = argv[8];  // "GPDMMS13" or "GPDVGG99" or "GPDGK16" or "GPDGK16Numerical"
+
     // cout << "xi " << xi << " t " << t << " model " << model << endl;
     // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
 
@@ -64,11 +66,16 @@ int main(int argc, char *argv[]){
                 PARTONS::Partons::getInstance()->getServiceObjectRegistry()->getGPDService();
 
         // Create GPD module with the BaseModuleFactory
-        PARTONS::GPDModule* pGPDModel =
-                PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
-                        //PARTONS::GPDMMS13::classId);
-                        PARTONS::GPDGK16Numerical::classId);
-                        //PARTONS::GPDGK16::classId);
+        PARTONS::GPDModule* pGPDModel = NULL;
+        if(!GPD_model.compare("GPDMMS13"))
+                pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDMMS13::classId);
+        else if(!GPD_model.compare("GPDVGG99"))
+                pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDVGG99::classId);
+        else if(!GPD_model.compare("GPDGK16Numerical"))
+                pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDGK16Numerical::classId);
+        else if(!GPD_model.compare("GPDGK16"))
+                pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDGK16::classId);
+        
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
 
@@ -154,7 +161,7 @@ int main(int argc, char *argv[]){
         cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) << endl;
         NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
         //cout << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
-        cout << (proton.getF1()+neutron.getF1())/2. << " " <<  (proton.getF2()+neutron.getF2())/2. << endl;
+        cout << (proton.getF1()+neutron.getF1())/2. << " " <<  (proton.getF2()+neutron.getF2())/2. << endl << endl << endl;
         for(int i=-99;i<=99;i++){
             double x=i*0.01;
             vector< complex<double> > out = test.gpd_conv(xi,x,t,scale);

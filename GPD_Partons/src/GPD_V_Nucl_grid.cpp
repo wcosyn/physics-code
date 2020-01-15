@@ -34,6 +34,7 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
                 //if(isnan(H)||isnan(E)) cout << x << " " << 0.01*j << endl;
                 grid[i][j][0]=H;
                 grid[i][j][1]=E;
+                if(isnan(H)||isnan(E)) grid[i][j][0]=grid[i][j][1]=0.;
                 // grid[i][j][2]=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
                 //     -gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
                 // grid[i][j][3]=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
@@ -43,7 +44,7 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
                 // grid[i][j][2]=gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
                 // grid[i][j][3]=gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
                 
-                //cout << x << " " << 0.01*j << " " << H << " " << E << endl;
+                //cout << x << " " << 0.01*j << " " << grid[i][j][0] << " " << grid[i][j][1] << endl;
             }
         }
         //test nucleon

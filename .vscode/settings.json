@@ -12,5 +12,6 @@
         "cstdlib": "cpp",
         "functional": "cpp"
     },
-    "C_Cpp.intelliSenseEngine":"Default"
+    "C_Cpp.intelliSenseEngine": "Default",
+    "cmake.configureOnOpen": true
 }

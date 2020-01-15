@@ -389,7 +389,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
     F.t=t*1.E06; //[MeV^2]
     F.scale=scale;
     F.gpd=this;
-    chiraleven_grid.getVectorGPDSet(0.,0.,t*1.E06,scale);
+    chiraleven_grid.getVectorGPDSet(0.,0.,t*1.E06,scale);  //filling the grid
 
     numint::mdfunction<numint::vector_z,3> mdf;
     mdf.func = &Ftor_conv::exec;

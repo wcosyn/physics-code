@@ -18,7 +18,7 @@
 
 
 /**
- * @brief contains a grid with chiral even nucleon GPDs obtained from partons
+ * @brief contains a grid with isoscalar chiral even nucleon GPDs obtained from partons
  * 
  */
 class GPD_V_Nucl_grid{
