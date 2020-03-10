@@ -1,6 +1,7 @@
 #include "Poldeut.hpp"
 #include <FourVector.h>
 #include <NuclStructure.hpp>
+#include <NucleonStructure.hpp>
 #include <TVector3.h>
 #include <cassert>
 #include <TDeuteron.h>
@@ -129,7 +130,39 @@ void Poldeut::calc_Double_Asymm(double x, double Q2, double y, double alpha_s, d
   
   
 }
+
+
+double Poldeut::calc_dsigma_unpol(const double x, const double Q2, const double s, const double alpha_p, const double tprime, bool proton){
+  double pt2=1./4.*alpha_p*(2.-alpha_p)*MASSD*MASSD-MASSn*MASSn-alpha_p*tprime/2.;
+
+  double k_perp=-sqrt(pt2);  //minus sign!!
+  double Ek = sqrt((MASSn*MASSn+k_perp*k_perp)/alpha_p/(2.-alpha_p));
+  double kfz=(alpha_p-1.)*Ek;
+  double knorm = sqrt(kfz*kfz+k_perp*k_perp);
+  double thetak = atan2(k_perp,kfz);
+  double k_plus = Ek+kfz;
+
   
+  double y=Q2/x*2./(s-MASSD*MASSD);
+  double gamma_d = x*x*MASSD*MASSD/(Q2);
+  double epsilon=(1.-y-pow(gamma_d*y/2.,2.))/(1.-y+y*y/2.+pow(gamma_d*y/2.,2.));
+
+  double U=getU(knorm);
+  double W=getW(knorm);
+  NucleonStructure nucl(strucname);
+  double F1=0.,F2=0;
+  nucl.getF_xQ(F1,F2,proton,x/(2.-alpha_p),Q2);
+
+  double dens=Ek*(U*U+W*W)/(2.-alpha_p)/4./PI;
+  double strucunpol = 2.*pow(2.*PI,3.)*2.*dens/(2.-alpha_p)*(2.*F1+epsilon*(1+gamma_d*gamma_d/x*(2.-alpha_p))*F2-2.*F1);
+  cout << sqrt(pt2) << " " << dens << " " << strucunpol << " " << ALPHA*ALPHA/8./pow(2.*PI,2.)*y*y/Q2/Q2/(1.-epsilon) << " "; //Mev^-2, Mev^-2, Mev^-4
+  double dsigma = strucunpol*ALPHA*ALPHA/8./pow(2.*PI,2.)*y*y/Q2/Q2/(1.-epsilon);  //MeV-6
+
+  return dsigma*HBARC*HBARC*10.E19;  //nb/GeV^-4
+
+}
+
+
 void Poldeut::Melosh_rot(double k_perp, double k_plus, double Ek, double &rho_l_z, double &rho_l_x){
   double nom=k_plus*(Ek+MASSn);
   

@@ -41,14 +41,14 @@ public:
    * \param Q2 [MeV^2] fourmomentum sq
    */
   void getF_xQ(double &F1, double &F2, const bool proton, const double x, const double Q2) const;
-  /*! Returns the F1 and F2 structure functions starting from bjorken x and Q^2
+  /*! Returns the F1 structure functions starting from bjorken x and Q^2
    * \param proton 0 neutron, 1 proton
    * \param x Bjorken x
    * \param Q2 [MeV^2] fourmomentum sq
    * \return F1 structure function
    */
   double getF1_xQ(const bool proton, const double x, const double Q2) const; 
-  /*! Returns the F1 and F2 structure functions starting from bjorken x and Q^2
+  /*! Returns the F2 structure functions starting from bjorken x and Q^2
    * \param proton 0 neutron, 1 proton
    * \param x Bjorken x
    * \param Q2 [MeV^2] fourmomentum sq
@@ -63,14 +63,14 @@ public:
    * \param Q2 [MeV^2] fourmomentum sq
    */
   void getF_WQ(double &F1, double &F2, const bool proton, const double Wsq, const double Q2) const;
-  /*! Returns the F1 and F2 structure functions starting from bjorken x and Q^2
+  /*! Returns the F1 structure functions starting from bjorken x and Q^2
    * \param proton 0 neutron, 1 proton
    * \param Wsq [MeV^2] invariant mass produced X
    * \param Q2 [MeV^2] fourmomentum sq
    * \return F1 structure function
    */
   double getF1_WQ(const bool proton, const double Wsq, const double Q2) const; 
-  /*! Returns the F1 and F2 structure functions starting from bjorken x and Q^2
+  /*! Returns the F2 structure functions starting from bjorken x and Q^2
    * \param proton 0 neutron, 1 proton
    * \param Wsq [MeV^2] invariant mass produced X
    * \param Q2 [MeV^2] fourmomentum sq

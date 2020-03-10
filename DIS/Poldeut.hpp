@@ -46,6 +46,20 @@ public:
    */
   void calc_Double_Asymm(double x, double Q2, double y, double alpha_s, double pt, bool proton, double &F_LSL, double &F_U);
 
+
+/**
+ * @brief calculates the unpolarized cross section for spectator tagging dsigma/[dalpha_p dt' dQ^2 dx]
+ * 
+ * @param x Bjorken x
+ * @param Q2 [MeV^2] photon virtuality
+ * @param s [MeV^2] COM energy
+ * @param alpha_p spectator proton lightfront momentum fraction
+ * @param tprime  [MeV^2] tprime variable
+ * @param proton  *struck* nucleon is proton[1] or neutron[0]
+ * @return double [nb/GeV^4] fourfold (integrated over spectator nucleon phi, scattered electron phi) differential cross section
+ */
+double calc_dsigma_unpol(const double x, const double Q2, const double s, const double alpha_p, const double tprime, bool proton);
+
 /**
  * @brief compare the nuclear densitiy ratio entering in the Azz asymmetry, between lightcone expression and its nonrelativistic reduction
  * 

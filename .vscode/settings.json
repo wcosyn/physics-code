@@ -13,5 +13,5 @@
         "functional": "cpp"
     },
     "C_Cpp.intelliSenseEngine": "Default",
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": false
 }

@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDGK16Numerical::classId);
         else if(!GPD_model.compare("GPDGK16"))
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDGK16::classId);
-        
+        else {cout << "Invalid GPD model, exiting" << endl; exit(1);}
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
 
@@ -157,23 +157,33 @@ int main(int argc, char *argv[]){
         //     for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
         //     cout << GC << " " << GM << " " << GQ << endl;
         // }
-    
-        cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) << endl;
+        double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
+        double D=(t0-t)/(4.*MASSD_G*MASSD_G); // GeV^2
+        cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) << " D " << D << endl;
         NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
         //cout << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
         cout << (proton.getF1()+neutron.getF1())/2. << " " <<  (proton.getF2()+neutron.getF2())/2. << endl << endl << endl;
         for(int i=-99;i<=99;i++){
             double x=i*0.01;
-            vector< complex<double> > out = test.gpd_conv(xi,x,t,scale);
-            vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
-            // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
-            
-            cout << x << " ";
-            for(int j=0;j<5;j++) cout << out[j].real() << " ";
-            for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
-            // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
-            cout << endl;
-        
+
+            if(t>t0){
+                cout << x << " ";
+                for(int j=0;j<5;j++) cout << 0. << " ";
+                for(int j=0;j<5;j++) cout << 0. << " ";
+                // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
+                cout << endl;
+            }
+            else{
+                vector< complex<double> > out = test.gpd_conv(xi,x,t,scale);
+                vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,out);
+                // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
+                
+                cout << x << " ";
+                for(int j=0;j<5;j++) cout << out[j].real() << " ";
+                for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
+                // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
+                cout << endl;
+            }
         }
 
         // Remove pointer references

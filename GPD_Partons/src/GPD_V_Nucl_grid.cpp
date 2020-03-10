@@ -24,7 +24,7 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
         for(int i=0;i<=200;i++){
             for(int j=0;j<=100;j++){
                 double x = 0.01*(i-100)+(i==100?1.E-04:0.);
-                PARTONS::GPDKinematic gpdKinematic(x,0.01*(j),t*1.E-06, scale*scale, scale*scale);
+                PARTONS::GPDKinematic gpdKinematic(x,0.01*(j)+(j==0?1.E-04:0.),t*1.E-06, scale*scale, scale*scale);
                 PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,
                     pGPDModel);
                 double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
@@ -69,20 +69,22 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
     double frac_i=0.,frac_j=0.;
     frac_i=modf(x*100+100,&index_i);
     frac_j=modf(xi*100,&index_j);
+    if(int(index_j)==0.) {index_j=1.; frac_j-=1.;} //xi=0 gives nan values from partons usually
+
 
     vector<double> result=vector<double>(2,0.);
     result[0]=grid[int(index_i)][int(index_j)][0]*(1.-frac_i)*(1.-frac_j)
                                         +grid[int(index_i)+1][int(index_j)][0]*(frac_i)*(1.-frac_j)
                                         +grid[int(index_i)][int(index_j)+1][0]*(1.-frac_i)*(frac_j)
                                         +grid[int(index_i)+1][int(index_j)+1][0]*(frac_i)*(frac_j);
-    result[1]=grid[int(index_i)][int(index_j)][0]*(1.-frac_i)*(1.-frac_j)
+    result[1]=grid[int(index_i)][int(index_j)][1]*(1.-frac_i)*(1.-frac_j)
                                         +grid[int(index_i)+1][int(index_j)][1]*(frac_i)*(1.-frac_j)
                                         +grid[int(index_i)][int(index_j)+1][1]*(1.-frac_i)*(frac_j)
                                         +grid[int(index_i)+1][int(index_j)+1][1]*(frac_i)*(frac_j);
                                     
                         
 
-
+    
     // TransGPD_set gpd_nucl=getGK_param(x,xi,t);
 
     // cout << "gpd " << gpd_nucl_grid.getHTu() << " " << gpd_nucl.getHTu() << " " << gpd_nucl_grid.getHTd() << " " << gpd_nucl.getHTd() << " "

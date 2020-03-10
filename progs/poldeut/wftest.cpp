@@ -2,6 +2,7 @@
 #include<TDeuteron.h>
 #include<TInterpolatingWavefunction.h>
 #include<TVector.h>
+#include<NucleonStructure.hpp>
 
 
 #include <iostream>
@@ -22,20 +23,13 @@ void int_3d(numint::vector_z &, double p, double costheta, double phi, TInterpol
 
 
 int main(int argc, char *argv[]){
+
+
     OldDeuteron wf1("AV18");
     OldDeuteron wf2("AV18b");
     OldDeuteron wf3("CDBonn");
     OldDeuteron wf4("Paris");
     
-    double sum1=0.,sum2=0.,sum3=0.,sum4=0.;
-
-    //normalization test
-    for(int i=0; i<=1000; i++){
-        sum1+=i*i*(pow(wf1.U(i),2.)+pow(wf1.W(i),2.));
-        sum2+=i*i*(pow(wf2.U(i),2.)+pow(wf2.W(i),2.));
-        sum3+=i*i*(pow(wf3.U(i),2.)+pow(wf3.W(i),2.));
-        sum4+=i*i*(pow(wf4.U(i),2.)+pow(wf4.W(i),2.));
-    }
 
  //   cout << "normalization OldDeuteron " << sum1*4.*PI << " " << sum2*4.*PI << " " << sum3*4.*PI << " " << sum4*4.*PI << endl;
     
@@ -52,7 +46,24 @@ int main(int argc, char *argv[]){
         
     }
 
-    // for(int dspin=-2;dspin<=2;dspin+=2){
+     double sum1=0.,sum2=0.,sum3=0.,sum4=0., sum5=0.;
+
+    //normalization test
+    for(int i=0; i<=1000; i++){
+        sum1+=i*i*(pow(wf1.U(i),2.)+pow(wf1.W(i),2.));
+        sum2+=i*i*(pow(wf2.U(i),2.)+pow(wf2.W(i),2.));
+        sum3+=i*i*(pow(wf3.U(i),2.)+pow(wf3.W(i),2.));
+        sum4+=i*i*(pow(wf4.U(i),2.)+pow(wf4.W(i),2.));
+        sum5+=i*i*(pow(wf.GetUp(i),2.)+pow(wf.GetWp(i),2.))/4./PI;
+        cout << i*1.E-03 << " " << pow(wf.GetUp(i),2.)/4./PI*1.E09 << " " << (pow(wf.GetUp(i),2.)+pow(wf.GetWp(i),2.))/4./PI*1.E09 << endl;
+    }
+
+    cout << endl << endl;
+    cout << "normalization OldDeuteron " << sum1*4.*PI << " " << sum2*4.*PI << " " << sum3*4.*PI << " " << sum4*4.*PI << endl;
+    cout << "normalization new deuteron "<< sum5*4.*PI << endl;
+    exit(1);
+    
+   // for(int dspin=-2;dspin<=2;dspin+=2){
     //     for(int pspin=-1;pspin<=1;pspin+=2){
     //         for(int nspin=-1;nspin<=1;nspin+=2){
     //             cout << dspin << " " << pspin << " " << nspin << " " << wf4.deuteronwf(dspin,1,pspin,nspin,100.,1.,2.) 

@@ -72,11 +72,14 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_gpds_V(const double xi, co
         +sqrt(2./D*(1+xi)/(1-xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
         -sqrt(2./D*(1-xi)/(1+xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
         -1./3./D/pow(1-xi*xi,3.)*(2.*xi*xi+D*(3.*pow(xi,6.)-10.*pow(xi,4.)+9.*xi*xi-2))*helamps[4];
-
+ 
     gpds.at(1)=2./(1-xi*xi)*helamps[0]-sqrt(1./2./D*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]+sqrt(1./2./D*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
         +2.*xi*xi/D/pow(1.-xi*xi,2.)*helamps[4];
 
+
     gpds.at(2)=-1/D*helamps[4];
+
+
     gpds.at(3)=-2.*xi/(1-xi*xi)*helamps[0]+sqrt(1./D/2.*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]+sqrt(1./D/2.*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
     -2.*xi/D/pow(1.-xi*xi,2.)*helamps[4];
 
@@ -86,6 +89,26 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_gpds_V(const double xi, co
         -sqrt(2./D*(1-xi)/(1+xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
                 -1./D/pow(1.-xi*xi,3.)*(2.*xi*xi+D*(1.-pow(xi,4.)))*helamps[4];
 
+ 
+    // cout << "coeff" << endl;
+    // cout << 1./3./pow(1.-xi*xi,2.)*(3.*pow(xi,4.)-7.*xi*xi+2-2.*D*(1-xi*xi)) << " "
+    // << 1./3./(1-xi*xi) << " " << sqrt(2./D*(1+xi)/(1-xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi) << " " 
+    // << -sqrt(2./D*(1-xi)/(1+xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi) << " "
+    // << -1./3./D/pow(1-xi*xi,3.)*(2.*xi*xi+D*(3.*pow(xi,6.)-10.*pow(xi,4.)+9.*xi*xi-2)) << endl;
+    
+    // cout << 2./(1-xi*xi)<< " 0. "
+    // << -sqrt(1./2./D*(1.+xi)/(1.-xi))/(1.-xi) << " " 
+    // << sqrt(1./2./D*(1.-xi)/(1.+xi))/(1.+xi) << " "
+    // << 2.*xi*xi/D/pow(1.-xi*xi,2.) << endl;
+    
+    // cout << "0. 0. 0. 0. " << -1/D << endl;
+    
+    // cout << -2.*xi/(1-xi*xi) << " 0. " << sqrt(1./D/2.*(1.+xi)/(1.-xi))/(1.-xi) << " "<<
+    // sqrt(1./D/2.*(1.-xi)/(1.+xi))/(1.+xi) << " " << -2.*xi/D/pow(1.-xi*xi,2.) << endl;
+    
+    // cout << -1./pow(1.-xi*xi,2.)*(xi*xi+2.*D*(1.-xi*xi)+1) << " "
+    // << 1./(1.-xi*xi) << " " << +sqrt(2./D*(1+xi)/(1-xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi) << " " <<
+    // -sqrt(2./D*(1-xi)/(1+xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi) << " " << -1./D/pow(1.-xi*xi,3.)*(2.*xi*xi+D*(1.-pow(xi,4.))) << endl;
 
     return gpds;
 }
@@ -179,6 +202,32 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     wf_in=lf_deut(Ek,k_in,wf_in);
     wf_out=lf_deut(Ekprime,k_out,wf_out);
     
+    //SD interference
+    // vector<complex<double> > wf_in_S(4,0.), wf_out_S(4,0.), wf_in_D(4,0.), wf_out_D(4,0.);
+    // gpd.getWf()->setD(0); gpd.getWf()->setS(1);
+    // wf_in_S.at(0)=gpd.getWf()->DeuteronPState(2*pold_in, -1, -1, k_in);
+    // wf_out_S.at(0)=gpd.getWf()->DeuteronPState(2*pold_out, -1, -1, k_out);
+    // wf_in_S.at(1)=gpd.getWf()->DeuteronPState(2*pold_in, -1, 1, k_in);
+    // wf_out_S.at(1)=gpd.getWf()->DeuteronPState(2*pold_out, -1, 1, k_out);
+    // wf_in_S.at(2)=gpd.getWf()->DeuteronPState(2*pold_in, 1, -1, k_in);
+    // wf_out_S.at(2)=gpd.getWf()->DeuteronPState(2*pold_out, 1, -1, k_out);
+    // wf_in_S.at(3)=gpd.getWf()->DeuteronPState(2*pold_in, 1, 1, k_in);
+    // wf_out_S.at(3)=gpd.getWf()->DeuteronPState(2*pold_out, 1, 1, k_out);
+    // wf_in_S=lf_deut(Ek,k_in,wf_in_S);
+    // wf_out_S=lf_deut(Ekprime,k_out,wf_out_S);
+
+    // gpd.getWf()->setD(1); gpd.getWf()->setS(0);
+    // wf_in_D.at(0)=gpd.getWf()->DeuteronPState(2*pold_in, -1, -1, k_in);
+    // wf_out_D.at(0)=gpd.getWf()->DeuteronPState(2*pold_out, -1, -1, k_out);
+    // wf_in_D.at(1)=gpd.getWf()->DeuteronPState(2*pold_in, -1, 1, k_in);
+    // wf_out_D.at(1)=gpd.getWf()->DeuteronPState(2*pold_out, -1, 1, k_out);
+    // wf_in_D.at(2)=gpd.getWf()->DeuteronPState(2*pold_in, 1, -1, k_in);
+    // wf_out_D.at(2)=gpd.getWf()->DeuteronPState(2*pold_out, 1, -1, k_out);
+    // wf_in_D.at(3)=gpd.getWf()->DeuteronPState(2*pold_in, 1, 1, k_in);
+    // wf_out_D.at(3)=gpd.getWf()->DeuteronPState(2*pold_out, 1, 1, k_out);
+    // wf_in_D=lf_deut(Ek,k_in,wf_in_D);
+    // wf_out_D=lf_deut(Ekprime,k_out,wf_out_D);
+
     // PARTONS::GPDKinematic gpdKinematic(x_n,abs(xi_n),t, 1., 1.);
     // PARTONS::GPDResult gpdResult = gpd.pGPDService->computeGPDModel(gpdKinematic,
     //         gpd.pGPDModel);
@@ -190,7 +239,8 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     double E=gpd.incE? nuclgpd[1] : 0.;
     double H= gpd.incH? nuclgpd[0] : 0.;
     if(isnan(E)||isnan(H)) return;
-
+    //cout << x_n << " " << xi_n << " " << alpha1 << " " << alphaprime << " " << t0_n << " " << E << endl;
+    
     for(int sigma2=-1;sigma2<=1;sigma2+=2){  //spectator helicity
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){ //initial active nucleon helicity
             // complex<double> wfin = gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in);
@@ -198,9 +248,10 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
                 // complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
                 // result+=wfin*conj(wfout)
                 //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
-                result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
+               result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
+                // result+=(wf_in_S.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out_D.at((sigma1out+1)/2+(sigma2+1)))
+                //             + wf_in_D.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out_S.at((sigma1out+1)/2+(sigma2+1))) )
                             *gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E);
-                //if(isnan(real(result))) cout << result << " " << gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E) << " " << H << " " << E << endl;
                 //symmetry tests nucleon level (tested OK)
                 // cout << "N conj " << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E))
                 //     << " " << gpd.getGPD_even_nucl(sigma1out, sigma1in, -xi_n, t, t0_n,phin+PI,H,E) << endl;
@@ -214,7 +265,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     }
     // cout << "int " << x << " " << result << " " << kperp << " " << alpha1 << endl;
     res[0]=result*4.*kperp/alpha1/(2.-alpha1)/alphaprime*sqrt(Ek)*sqrt(Ekprime);    // cout << t0 << " " << alpha1 << " " << t0_n << " " << xi << " " << xi_n << " " << res[0].real() << endl;
-    // cout << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << " " << res[0].real() << " " << res[0].imag() << endl;
+    // cout << alpha1 << " " << kperp << " " << kphi << " " << alphaprime << " " << kperpprime << " " << atan2(kyprime,kxprime) << " " << xi_n << " " << x_n << " " << phin << " " << res[0].real() << " " << res[0].imag() << " "<<  abs(res[0]) << endl;
     // exit(1);
 }
 
@@ -444,8 +495,9 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         //numint::vegas( mdf, lower,upper,nvec, relerr,abserr,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas").c_str(),countt,fail,out,err,prob );
         //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, /*stf.c_str() */ NULL ,nregions,countt,fail,out,err,prob );
-
+        //cout << count << endl;
         ret[i]=out[0];
+        //cout << out[0] << endl;
 
         //symmetry checks!! [seems ok, but quite large differences for the small helicity amps]
         // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
@@ -572,7 +624,7 @@ vector< complex<double> > Deut_Conv_GPD_V::lf_deut(const double Ek, const TVecto
 Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL){
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
     if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/V_grid.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".EBRL"+to_string(ERBL);
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/V_grid."+pGPDModel->CLASS_NAME+".xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".EBRL"+to_string(ERBL);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
             cout << "constructing chiral even deuteron helamps grid " << filename << endl;
