@@ -16,6 +16,8 @@
 
 #include <partons/modules/gpd/GPDMMS13.h>
 #include <partons/modules/gpd/GPDVGG99.h>
+#include <partons/modules/gpd/GPDGK16.h>
+#include <partons/modules/gpd/GPDGK16Numerical.h>
 
 
 #include <TwoVector_Nucl.hpp>
@@ -78,16 +80,17 @@ int main(int argc, char** argv) {
         // Create GPD module with the BaseModuleFactory
         PARTONS::GPDModule* pGPDModel =
                 PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
-                        PARTONS::GPDMMS13::classId);
+                        PARTONS::GPDGK16Numerical::classId);
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
 
         //cout << "alpha_s " << alpha_s << endl;
         TwoVector_Nucl gimme_xs(pGPDService, pGPDModel, pRunningAlphaStrongModule);
 
-        for(int i=0;i<=0;i++){
+        for(int i=0;i<=16;i++){
         
             double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
+            cout << Qsq << " " << xi << " " << psq << " "; 
             double result_L=0.,result_T=0.;
             if(longitudinal){
                 result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
@@ -99,7 +102,7 @@ int main(int argc, char** argv) {
             }
 
  
-            cout << Qsq << " " << xi << " " << psq << " " << result_T << " " << result_L << endl;
+            cout << result_T << " " << result_L << endl;
 
         }
         // Remove pointer references

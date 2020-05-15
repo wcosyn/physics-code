@@ -156,7 +156,7 @@ std::complex<double > Deut_Conv_GPD_T::test(double x, double xi, double t, int p
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                             *getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+                             *getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,0,gpd_nucl);
                 // cout << pold_out << " " << pold_in << " " << sigma2 << " " << sigma1in << " " << sigma1out << " " << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << 
                 // wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl) << " " <<  endl;
 
@@ -240,7 +240,7 @@ void Deut_Conv_GPD_T::int_k3(numint::vector_z & res, double alpha1, double kperp
                 // result+=wfin*conj(wfout)
                 //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,0,gpd_nucl);
                 // cout << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in) << endl;
                 // cout << wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out) << endl;
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1) << " " << x_n << endl;
@@ -329,7 +329,7 @@ void Deut_Conv_GPD_T::int_kprime3(numint::vector_z & res, double alphaprime, dou
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
                 //complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,1,gpd_nucl);
 
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1) << " " << x_n << endl;
                 // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1))
@@ -351,28 +351,51 @@ void Deut_Conv_GPD_T::int_kprime3(numint::vector_z & res, double alphaprime, dou
 
 
 complex<double> Deut_Conv_GPD_T::getGPD_odd_nucl(const int sigma_in, const int sigma_out, const double xi, const double t,
-                                    const double t0, const double phi, const int model, const bool right, const TransGPD_set &gpd_nucl){
+                                    const double t0, const double phi, const int model, const bool right, const bool singlet, const TransGPD_set &gpd_nucl){
 
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
     double kinfac=sqrt(t0-t)/MASSn;  // t in MeV^2 !! 
-    if(right){
-        if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_singlet(model)
-                                +(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getET_singlet(model)
-                                +sigma_in*(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_singlet())*exp(I_UNIT*phi);
+    if(singlet){
+        if(right){
+            if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_singlet(model)
+                                    +(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getET_singlet(model)
+                                    +sigma_in*(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_singlet())*exp(I_UNIT*phi);
 
-        else return -(sigma_in-1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_singlet()
-                    -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in+1)*phi*I_UNIT)*gpd_nucl.getHtildeT_singlet(model)
-                    +(sigma_in-1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
-                    -(sigma_in-1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
+            else return -(sigma_in-1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_singlet()
+                        -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in+1)*phi*I_UNIT)*gpd_nucl.getHtildeT_singlet(model)
+                        +(sigma_in-1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
+                        -(sigma_in-1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
+        }
+        else{
+            if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_singlet(model)
+                                    +(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getET_singlet(model)
+                                    -sigma_in*(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_singlet())*exp(-I_UNIT*phi);
+            else return -(sigma_in+1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_singlet()
+                        -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in-1)*phi*I_UNIT)*gpd_nucl.getHtildeT_singlet(model)
+                        +(sigma_in+1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
+                        -(sigma_in+1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
+        }
     }
     else{
-        if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_singlet(model)
-                                +(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getET_singlet(model)
-                                -sigma_in*(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_singlet())*exp(-I_UNIT*phi);
-        else return -(sigma_in+1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_singlet()
-                    -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in-1)*phi*I_UNIT)*gpd_nucl.getHtildeT_singlet(model)
-                    +(sigma_in+1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
-                    -(sigma_in+1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
+        if(right){
+            if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_vector(model)
+                                    +(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getET_vector(model)
+                                    +sigma_in*(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_vector())*exp(I_UNIT*phi);
+
+            else return -(sigma_in-1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_vector()
+                        -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in+1)*phi*I_UNIT)*gpd_nucl.getHtildeT_vector(model)
+                        +(sigma_in-1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_vector(model)
+                        -(sigma_in-1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_vector();
+        }
+        else{
+            if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_vector(model)
+                                    +(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getET_vector(model)
+                                    -sigma_in*(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_vector())*exp(-I_UNIT*phi);
+            else return -(sigma_in+1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_vector()
+                        -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in-1)*phi*I_UNIT)*gpd_nucl.getHtildeT_vector(model)
+                        +(sigma_in+1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_vector(model)
+                        -(sigma_in+1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_vector();
+        }
     }
 }
 

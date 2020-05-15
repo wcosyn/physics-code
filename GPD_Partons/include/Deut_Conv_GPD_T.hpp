@@ -104,7 +104,7 @@ Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t
 
 
 /**
- * @brief computes nucleon matrix elements through helicity amplitudes for tensor current
+ * @brief computes nucleon matrix elements through helicity amplitudes for tensor current.  Careful it outputs isoscalar (u+d)/2 or isovector (u-d)/2 combinations!!!
  * 
  * @param sigma_in polarization incoming nucleon
  * @param sigma_out polarization outgoing nucleon
@@ -114,11 +114,12 @@ Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t
  * @param phi [azimuthal angle \xiP+Delta fourvector]
  * @param model different implementations of the nucleon transversity GPDs
  * @param right [1] right or [0] left matrix element (see notes Eq 112)
+ * @param singlet (u+d)/2 [1] or isovector (u-d)2 [0]
  * @param gpd_nucl constains a set of chiral odd quark nucleon gpds computed according to the GK model
  * @return std::complex<double> nucleon helicity amplitude
  */
 static std::complex<double> getGPD_odd_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
-                                    const double t, const double t0, const double phi, const int model, const bool right,
+                                    const double t, const double t0, const double phi, const int model, const bool right, const bool singlet,
                                     const TransGPD_set &gpd_nucl);              
 
 

@@ -28,6 +28,7 @@ HTd(0.),HTu(0.),EbarTd(0.),EbarTu(0.)
 ~TransGPD_set(){}
 
 double getHT_singlet() const{return 0.5*(HTu+HTd);} ///< returns (H_T^u+H_T^d)/2
+double getHT_vector() const{return 0.5*(HTu-HTd);} ///< returns (H_T^u-H_T^d)/2
 /**
  * @brief returns isosinglet combination of \tilde{H}_T
  * 
@@ -39,6 +40,16 @@ double getHT_singlet() const{return 0.5*(HTu+HTd);} ///< returns (H_T^u+H_T^d)/2
  */
 double getHtildeT_singlet(const int model) const;
 /**
+ * @brief returns isovector combination of \tilde{H}_T
+ * 
+ * @param model different implementations discussed in Phys. Rev. D 95, 094001 p3, top right column
+ * [0]: \tilde{H}_T=0
+ * [1]: \tilde{H}_T=H_T
+ * [2]: \tilde{H}_T=-H_T
+ * @return double getHtildeT_singlet 
+ */
+double getHtildeT_vector(const int model) const;
+/**
  * @brief returns isosinglet combination of E_T
  * 
  * @param model different implementations discussed in Phys. Rev. D 95, 094001 p3, top right column
@@ -49,11 +60,27 @@ double getHtildeT_singlet(const int model) const;
  */
 double getET_singlet(const int model) const;
 /**
+ * @brief returns isovector combination of E_T
+ * 
+ * @param model different implementations discussed in Phys. Rev. D 95, 094001 p3, top right column
+ * [0]: E_T=\bar{E}_T
+ * [1]: E_T=\bar{E}_T-2H_T
+ * [2]: E_T=\bar{E}_T+2H_T
+ * @return double getET_singlet 
+ */
+double getET_vector(const int model) const;
+/**
  * @brief returns \tilde{E}_T, put to zero here
  * 
- * @return double getEtildeT_singlet 
+ * @return 0.
  */
 double getEtildeT_singlet() const{ return 0.;}
+/**
+ * @brief returns \tilde{E}_T, put to zero here
+ * 
+ * @return 0.
+ */
+double getEtildeT_vector() const{ return 0.;}
 
 double getHTu() const{return HTu;}
 double getHTd() const{return HTd;}

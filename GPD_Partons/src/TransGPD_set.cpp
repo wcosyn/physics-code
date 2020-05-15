@@ -25,6 +25,30 @@ double TransGPD_set::getHtildeT_singlet(const int model) const{
 
 }
 
+
+
+double TransGPD_set::getHtildeT_vector(const int model) const{
+
+    switch(model){
+        case 0:
+            return 0.;
+            break;
+        case 1:
+            return getHT_vector();
+            break;
+        case 2:
+            return -getHT_vector();
+            break;
+        default:
+            cerr << "invalid choice in TransGPD_set::getHtildeT_vector" << endl;
+            assert(1==0);
+            return 0.;
+            break;
+    }
+
+}
+
+
 double TransGPD_set::getET_singlet(const int model) const{
 
     switch(model){
@@ -46,6 +70,26 @@ double TransGPD_set::getET_singlet(const int model) const{
     
 }
 
+double TransGPD_set::getET_vector(const int model) const{
+
+    switch(model){
+        case 0:
+            return 0.5*(EbarTd-EbarTu);
+            break;
+        case 1:
+            return 0.5*(EbarTd-EbarTu)-2.*getHT_vector();
+            break;
+        case 2:
+            return 0.5*(EbarTd-EbarTu)+2.*getHT_vector();
+            break;
+        default:
+            cerr << "invalid choice in TransGPD_set::getET_vector" << endl;
+            assert(1==0);
+            return 0.;
+            break;
+    }
+    
+}
 
 TransGPD_set TransGPD_set::operator+(const TransGPD_set& rhs) const{
     TransGPD_set result;
