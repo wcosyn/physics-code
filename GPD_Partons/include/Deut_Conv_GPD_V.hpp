@@ -149,6 +149,25 @@ void setE(const bool E){incE=E;} ///< [1] include or [0] exclude isoscalar nucle
  */
 std::vector<double> calc_NR_ffs(double t);
 
+/**
+ * @brief computes nucleon matrix elements for chiral even vector GPDs
+ * 
+ * @param sigma_in polarization incoming nucleon (spin times two)
+ * @param sigma_out polarization outgoing nucleon (spin times two)
+ * @param xi_n skewness nucleon
+ * @param t [MeV^2] momentum transfer sq.
+ * @param t0 [MeV^2] minimum momentum transfer sq
+ * @param phi [azimuthal angle \xiP+Delta fourvector]
+ * @param gpd_H GPD H
+ * @param gpd_E GPD E
+ * @return std::complex<double> nucleon helicity amplitude
+ */
+static std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
+                                    const double t, const double t0, const double phi,
+                                    const double gpd_H, const double gpd_E);              
+
+
+
 
 private: 
 /**
@@ -273,23 +292,6 @@ static void int_k3_FF(numint::vector_z & res, double alpha_1, double kperp, doub
 
 
 
-
-/**
- * @brief computes nucleon matrix elements for chiral even vector GPDs
- * 
- * @param sigma_in polarization incoming nucleon (spin times two)
- * @param sigma_out polarization outgoing nucleon (spin times two)
- * @param xi_n skewness nucleon
- * @param t [MeV^2] momentum transfer sq.
- * @param t0 [MeV^2] minimum momentum transfer sq
- * @param phi [azimuthal angle \xiP+Delta fourvector]
- * @param gpd_H GPD H
- * @param gpd_E GPD E
- * @return std::complex<double> nucleon helicity amplitude
- */
-std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
-                                    const double t, const double t0, const double phi,
-                                    const double gpd_H, const double gpd_E) const;              
 
 
 

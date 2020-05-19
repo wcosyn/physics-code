@@ -353,7 +353,7 @@ void Deut_Conv_GPD_V::int_k3_FF(numint::vector_z & res, double alpha1, double kp
 }
 
 complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi, const double t,
-                                    const double t0, const double phi,  const double gpd_H, const double gpd_E) const{
+                                    const double t0, const double phi,  const double gpd_H, const double gpd_E){
 
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
     double kinfac=sqrt(t0-t)/MASSn; // t in MeV^2

@@ -97,8 +97,8 @@ int main(int argc, char** argv) {
                 result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
             }
             else{
-                result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq);
-                result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq);
+                result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq,1);
+                result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq,1);
             }
 
  

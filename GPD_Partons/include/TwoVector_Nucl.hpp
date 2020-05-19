@@ -71,9 +71,10 @@ double getCross_gammaT_rhoL(const double scale, const double xi, const double Q2
  * @param xi [] skewness
  * @param Q2 [GeV^2] incoming virtual photon 4mom sq.
  * @param psq [GeV^2] pomeron hard scale
+ * @param rhopol [1] Transverse [0] Longitudinal
  * @return double [nb/GeV^4] cross section 
  */
-double getCross_gammaL_rhoT(const double scale, const double xi, const double Q2, const double psq);
+double getCross_gammaL_rhoT(const double scale, const double xi, const double Q2, const double psq, bool rhopol);
 
 /**
  * @brief calculate the Cross section for gammaT rhoT
@@ -81,10 +82,10 @@ double getCross_gammaL_rhoT(const double scale, const double xi, const double Q2
  * @param scale [GeV^2] factorization and renorm scale
  * @param xi [] skewness
  * @param Q2 [GeV^2] incoming virtual photon 4mom sq.
- * @param psq [GeV^2] pomeron hard scale
+ * @param rhopol [1] Transverse [0] Longitudinal
  * @return double [nb/GeV^4] cross section 
  */
-double getCross_gammaT_rhoT(const double scale, const double xi, const double Q2, const double psq);
+double getCross_gammaT_rhoT(const double scale, const double xi, const double Q2, const double psq, bool rhopol);
 
 private:
 
@@ -123,7 +124,7 @@ struct Ftor_2vector {
  * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
  */
-static void integrandum_L(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+static void integrandum_rhoL_gammaL(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
 
 /**
  * @brief integrandum for transversily polarized photon on nucleon, two times rho_L in final state
@@ -137,7 +138,37 @@ static void integrandum_L(numint::vector_d &, double u, double z, double xi, dou
   * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
 */
-static void integrandum_T(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+static void integrandum_rhoL_gammaT_helamps(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+
+/**
+ * @brief  integrandum for longitudinal polarized photon on nucleon, two times rho_L in final state; calculated using helicity amplitudes
+ * 
+ * @param u [] integration variable, momentum fraction in lower rho DA
+ * @param z [] integration variable, momentum fraction in upper rho DA
+ * @param xi [] skewness
+ * @param mandelstam_t  [GeV^2] momentum transfer, taken at t_min for now
+ * @param psq [GeV^2] pomeron hard scale
+ * @param Qsq [GeV^2] virtual photon 4mom squared
+ * @param pGPDService GPD service from PARTONS
+ * @param pGPDModel GPD model from PARTONS
+ */
+static void integrandum_rhoL_gammaL_helamps(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+
+/**
+ * @brief integrandum for transversily polarized photon on nucleon, two times rho_L in final state; calculated using helicity amplitudes
+ * 
+ * @param u [] integration variable, momentum fraction in lower rho DA
+ * @param z [] integration variable, momentum fraction in upper rho DA
+ * @param xi [] skewness
+ * @param mandelstam_t  [GeV^2] momentum transfer, taken at t_min for now
+ * @param psq [GeV^2] pomeron hard scale
+ * @param Qsq [GeV^2] virtual photon 4mom squared
+  * @param pGPDService GPD service from PARTONS
+ * @param pGPDModel GPD model from PARTONS
+*/
+static void integrandum_rhoL_gammaT(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+
+
 
 /**
  * @brief  integrandum for longitudinal polarized photon on nucleon, rho_L and rho_T in final state
@@ -151,7 +182,7 @@ static void integrandum_T(numint::vector_d &, double u, double z, double xi, dou
  * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
  */
-static void integrandum_T_L(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+static void integrandum_rhoT_gammaL(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
 
 /**
  * @brief integrandum for transversily polarized photon on nucleon, rho_L and rho_T in final state
@@ -165,7 +196,7 @@ static void integrandum_T_L(numint::vector_d &, double u, double z, double xi, d
   * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
 */
-static void integrandum_T_T(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
+static void integrandum_rhoT_gammaT(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int spintout, int spinin, TwoVector_Nucl& twovector);
 
 PARTONS::GPDService* pGPDService; ///< GPD service from PARTONS
 PARTONS::GPDModule* pGPDModel; ///< GPD model from PARTONS
