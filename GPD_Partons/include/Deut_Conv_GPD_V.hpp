@@ -152,8 +152,8 @@ std::vector<double> calc_NR_ffs(double t);
 /**
  * @brief computes nucleon matrix elements for chiral even vector GPDs
  * 
- * @param sigma_in polarization incoming nucleon (spin times two)
- * @param sigma_out polarization outgoing nucleon (spin times two)
+ * @param sigma_in polarization incoming nucleon (spin times two!!)
+ * @param sigma_out polarization outgoing nucleon (spin times two!!)
  * @param xi_n skewness nucleon
  * @param t [MeV^2] momentum transfer sq.
  * @param t0 [MeV^2] minimum momentum transfer sq

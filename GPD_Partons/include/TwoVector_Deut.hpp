@@ -126,7 +126,7 @@ struct Ftor_2vector {
  * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
  */
-static void integrandum_L(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int helampindex, TwoVector_Deut& twovector);
+static void integrandum_gammaL_rhoL(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int helampindex, TwoVector_Deut& twovector);
 
 /**
  * @brief integrandum for transversily polarized photon on nucleon, two times rho_L in final state
@@ -141,7 +141,7 @@ static void integrandum_L(numint::vector_d &, double u, double z, double xi, dou
   * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
 */
-static void integrandum_T(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int helampindex, TwoVector_Deut& twovector);
+static void integrandum_gammaT_rhoL(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int helampindex, TwoVector_Deut& twovector);
 
 /**
  * @brief  integrandum for longitudinal polarized photon on nucleon, rho_L and rho_T in final state
@@ -156,7 +156,7 @@ static void integrandum_T(numint::vector_d &, double u, double z, double xi, dou
  * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
  */
-static void integrandum_T_L(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int helampindex, TwoVector_Deut& twovector);
+static void integrandum_gammaL_rhoT(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int helampindex, TwoVector_Deut& twovector);
 
 /**
  * @brief integrandum for transversily polarized photon on nucleon, rho_L and rho_T in final state
@@ -171,7 +171,7 @@ static void integrandum_T_L(numint::vector_d &, double u, double z, double xi, d
   * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
 */
-static void integrandum_T_T(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int helampindex, TwoVector_Deut& twovector);
+static void integrandum_gammaT_rhoT(numint::vector_d &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, int helampindex, TwoVector_Deut& twovector);
 
 PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule; ///< alpha_S from PARTONS
 

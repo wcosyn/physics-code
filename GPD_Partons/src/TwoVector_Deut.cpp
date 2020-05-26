@@ -18,7 +18,7 @@ deut_tensor_grid(pdfname, wfname){
 
 
 // integrandum for gamma_L amplitude
-void TwoVector_Deut::integrandum_L(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq,
+void TwoVector_Deut::integrandum_gammaL_rhoL(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq,
                                  int helampindex, TwoVector_Deut &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
@@ -39,7 +39,7 @@ void TwoVector_Deut::integrandum_L(numint::vector_d &result, double u, double z,
 }
 
 // integrandum for gamma_T amplitude
-void TwoVector_Deut::integrandum_T(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, 
+void TwoVector_Deut::integrandum_gammaT_rhoL(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, 
                                     int helampindex, TwoVector_Deut &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
@@ -59,7 +59,7 @@ void TwoVector_Deut::integrandum_T(numint::vector_d &result, double u, double z,
 
 
 // integrandum for gamma_L amplitude
-void TwoVector_Deut::integrandum_T_L(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq,
+void TwoVector_Deut::integrandum_gammaL_rhoT(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq,
                                  int helampindex, TwoVector_Deut &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
@@ -77,7 +77,7 @@ void TwoVector_Deut::integrandum_T_L(numint::vector_d &result, double u, double 
 }
 
 // integrandum for gamma_T amplitude
-void TwoVector_Deut::integrandum_T_T(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, 
+void TwoVector_Deut::integrandum_gammaT_rhoT(numint::vector_d &result, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, 
                                     int helampindex,  TwoVector_Deut &twovector){
     result = vector<double>(1,0.);
     //limits are well behaved
@@ -122,30 +122,30 @@ double TwoVector_Deut::getCross_gammaL_rhoL(const double scale, const double xi,
     std::vector<double> integral(1,0.); //integrandum result array
 
     //gamma_L calculation
-    F.f=integrandum_L;
+    F.f=integrandum_gammaL_rhoL;
     double result_L=0.;
-    //cout << 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq << endl;        
+    //cout << 16.*PI*PI*alpha_s*frhoplus*xi*CF/Nc/psq/psq << endl;        
     //cout << 2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << endl;
     for(int helampindex=0; helampindex<=4;helampindex++){
         F.helampindex=helampindex;
         unsigned count=0;
         // integration over u and z
-        if(Q2>1.E-06) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
+        numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
         integral[0]*=36.; //prefactor DA (twice, squared)
         //cout << helampindex << " " << integral[0] << endl;
         
         //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
-        integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; 
+        integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*CF/Nc/psq/psq; 
         //prefactors Eq (15) Enberg et al.
         integral[0] *= -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); 
-        //cout << 1./256./pow(PI,3.)/xi/(1.-xi) << endl;
-        result_L+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi)*(helampindex==1?1:2); // Enberg et al Eq (12) + symmetry factor helicity amplitudes, 00 one only once
+        //cout << 1./256./pow(PI,3.)/xi/(1.+xi) << endl;
+        result_L+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.+xi)*(helampindex==1?1:2); // Enberg et al Eq (12) + symmetry factor helicity amplitudes, 00 one only once
         //cout << Qsq << " " << xi << " " << psq << " " << result_L*0.389379E06 << endl;  // factor to go from GeV-6 to nb GeV-4
     }
     
     //cout << "final " << result_L*0.389379E06/3. << endl;
     //exit(1);
-    return result_L*0.389379E06/3.;  //[Gev-2 -> nb conversion] + avg initial spin
+    return result_L*0.389379E06/3.*2.;  //[Gev-2 -> nb conversion] + avg initial spin + factor 2 because omega is ~ [(u+d)/sqrt(2)]^2 = 2u for isoscalar
 
 }
 
@@ -178,7 +178,7 @@ double TwoVector_Deut::getCross_gammaT_rhoL(const double scale, const double xi,
     std::vector<double> integral(1,0.); //integrandum result array
 
     //gamma_L calculation
-    F.f=integrandum_T;
+    F.f=integrandum_gammaT_rhoL;
     double result_T=0.;
     for(int helamps=0;helamps<=4;helamps++){
         F.helampindex=helamps;
@@ -187,12 +187,12 @@ double TwoVector_Deut::getCross_gammaT_rhoL(const double scale, const double xi,
         numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
         integral[0]*=36.; //prefactor DA (twice, squared)
 
-        integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
+        integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
         integral[0] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
 
-        result_T+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi)*(helamps==1?1:2); // Enberg et al Eq (12) + helamp symmetry factor, 00 only once
+        result_T+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.+xi)*(helamps==1?1:2); // Enberg et al Eq (12) + helamp symmetry factor, 00 only once
     }
-    return result_T*0.389379E06/3; //[Gev-2 -> nb conversion] + avg initial spin
+    return result_T*0.389379E06/3*2; //[Gev-2 -> nb conversion] + avg initial spin + factor 2 because omega is ~ [(u+d)/sqrt(2)]^2 = 2u for isoscalar
 
 }
 
@@ -222,33 +222,33 @@ double TwoVector_Deut::getCross_gammaL_rhoT(const double scale, const double xi,
     numint::array<double,2> upper = {{1.,1.}};
 
     //gamma_L calculation
-    F.f=integrandum_T_L;
+    F.f=integrandum_gammaL_rhoT;
     unsigned count=0;
     double result_L=0.;
     // integration over u and z
     for(int helamps=0;helamps<=8;helamps++){
         F.helampindex=helamps;
         std::vector<double> integral(1,0.); //integrandum result array
-        if(Q2>1.E-06) numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
+        numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
         
         integral[0]*=36.; //prefactor DA (twice, squared)
         
-        cout << helamps << " " << integral[0] << endl;
+        //cout << helamps << " " << integral[0] << endl;
         
         //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
-        integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; 
-        cout << 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq << endl;
+        integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*CF/Nc/psq/psq; 
+        //cout << 16.*PI*PI*alpha_s*frhoplus*xi*CF/Nc/psq/psq << endl;
         //prefactors Eq (15) Enberg et al.
         integral[0] *= -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); 
-        cout << -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << " " << frho0 << endl;
-        cout << 1./256./pow(PI,3.)/xi/(1.-xi) << endl;
-        result_L+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi); // Enberg et al Eq (12)
+        //cout << -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << " " << frho0 << endl;
+        //cout << 1./256./pow(PI,3.)/xi/(1.+xi) << endl;
+        result_L+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.+xi); // Enberg et al Eq (12)
 
         
     }
     //cout << Qsq << " " << xi << " " << psq << " " << result_L*0.389379E06 << endl;  // factor to go from GeV-6 to nb GeV-4
 
-    return result_L*0.389379E06/3.;  //[Gev-2 -> nb conversion] + avg initial spin
+    return result_L*0.389379E06/3.*2;  //[Gev-2 -> nb conversion] + avg initial spin+ factor 2 because omega is ~ [(u+d)/sqrt(2)]^2 = 2u for isoscalar
 
 }
 
@@ -280,7 +280,7 @@ double TwoVector_Deut::getCross_gammaT_rhoT(const double scale, const double xi,
     numint::array<double,2> upper = {{1.,1.}};
 
     //gamma_T calculation
-    F.f=integrandum_T_T;
+    F.f=integrandum_gammaT_rhoT;
     unsigned count=0;
     double result_T=0.;
     // integration over u and z
@@ -289,20 +289,17 @@ double TwoVector_Deut::getCross_gammaT_rhoT(const double scale, const double xi,
         std::vector<double> integral(1,0.); //integrandum result array
         numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,2E05,integral,count,0);
         integral[0]*=36.; //prefactor DA (twice, squared)
-        cout << helamps << " " << integral[0] << endl;
+        //cout << helamps << " " << integral[0] << endl;
 
-        integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
-        cout << "pre1 " << 16.*PI*PI*alpha_s*frhoplus*xi*sqrt((1-xi)/(1+xi))*CF/Nc/psq/psq << " " << frhoplus << endl;
-        cout << "pre2 " << PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << endl;
-        cout << "pre3 " << 1/256./pow(PI,3.)/xi/(1.-xi) << endl;
+        integral[0] *= 16.*PI*PI*alpha_s*frhoplus*xi*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
         integral[0] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
         // cout << PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI) << endl;
-        result_T+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.-xi); // Enberg et al Eq (12)
+        result_T+=pow(integral[0],2.)/256./pow(PI,3.)/xi/(1.+xi); // Enberg et al Eq (12)
 
         
     }
 
 
-    return result_T*0.389379E06/3.; //[Gev-2 -> nb conversion] + avg initial spin
+    return result_T*0.389379E06/3.*2.; //[Gev-2 -> nb conversion] + avg initial spin+ factor 2 because omega is ~ [(u+d)/sqrt(2)]^2 = 2u for isoscalar
 
 }

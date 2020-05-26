@@ -106,8 +106,8 @@ Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t
 /**
  * @brief computes nucleon matrix elements through helicity amplitudes for tensor current.  Careful it outputs isoscalar (u+d)/2 or isovector (u-d)/2 combinations!!!
  * 
- * @param sigma_in polarization incoming nucleon
- * @param sigma_out polarization outgoing nucleon
+ * @param sigma_in polarization incoming nucleon (spin times 2!!)
+ * @param sigma_out polarization outgoing nucleon (spin times 2!!)
  * @param xi_n skewness nucleon
  * @param t [MeV^2] momentum transfer sq.
  * @param t0 [MeV^2] minimum momentum transfer sq

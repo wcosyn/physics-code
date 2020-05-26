@@ -21,7 +21,7 @@
 
 
 #include <TwoVector_Nucl.hpp>
-
+#include <constants.hpp>
 
 
 using namespace std;
@@ -62,6 +62,7 @@ int main(int argc, char** argv) {
     double xi=atof(argv[1]);
     double Qsq = atof(argv[2]); // virtual photon scale squared [GeV^2]
     bool longitudinal = atoi(argv[3]);
+    bool gammaT = atoi(argv[4]);
     // Init Qt4
     //QCoreApplication a(argc, argv);
     PARTONS::Partons* pPartons = 0;
@@ -87,23 +88,48 @@ int main(int argc, char** argv) {
         //cout << "alpha_s " << alpha_s << endl;
         TwoVector_Nucl gimme_xs(pGPDService, pGPDModel, pRunningAlphaStrongModule);
 
+        //Testing chiral even GPDs
+
+        // double mandelstam_t= -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi);//tmin [GeV^2]
+        // double scale=1.;
+        // for(int i =-50;i<=50;i++){
+        //     double x=i*0.01;
+        //     PARTONS::GPDKinematic gpdKinematic(x,xi,mandelstam_t, scale*scale, scale*scale);
+
+        //     PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,pGPDModel);
+        // // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
+        //     cout << x << " " << xi << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+        //     << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() <<
+        //     " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()-
+        //     gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() << " " << 
+        //     " " << gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+        //     << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() <<
+        //     " " << gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()-
+        //     gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() << " " << endl;
+
+        //     }
+        // exit(1);
+
         for(int i=0;i<=16;i++){
         
             double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
             cout << Qsq << " " << xi << " " << psq << " "; 
-            double result_L=0.,result_T=0.;
-            if(longitudinal){
-                result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
-                result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
-            }
-            else{
-                result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq,1);
-                result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq,1);
-            }
+            // double result_L=0.,result_T=0.;
+            // if(longitudinal){
+            //     result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
+            //     result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
+            // }
+            // else{
+            //     result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq,1);
+            //     result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq,1);
+            // }
+            //cout << result_T << " " << result_L << endl;
 
- 
-            cout << result_T << " " << result_L << endl;
 
+            vector< double > results(12,0.);
+            gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, longitudinal? TwoVector_Nucl::krhoL : TwoVector_Nucl::krhoT);
+            for(int index=0;index<12;index++) cout << results[index] << " ";
+            cout << endl;
         }
         // Remove pointer references
         // Module pointers are managed by PARTONS
