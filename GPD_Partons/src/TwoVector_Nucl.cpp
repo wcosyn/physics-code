@@ -85,10 +85,10 @@ void TwoVector_Nucl::integrandum_rho_gammaL_general(numint::vector_z & result, d
             double Ed = gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
 
             //at t=tmin it will always be real
-            complex<double> gpdfactor_HE_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,Eu-Ed)); 
-            complex<double> gpdfactor_HE_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,Eu+Ed)); 
-            complex<double> gpdfactor_H_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,0.)); 
-            complex<double> gpdfactor_H_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,0.)); 
+            complex<double> gpdfactor_HE_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,Eu-Ed,1)); 
+            complex<double> gpdfactor_HE_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,Eu+Ed,1)); 
+            complex<double> gpdfactor_H_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,0.,1)); 
+            complex<double> gpdfactor_H_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,0.,1)); 
         
             result[0]= gpdfactor_HE_iv;  //H+E isovector
             result[1]= gpdfactor_H_iv;  //H isovector 
@@ -99,8 +99,29 @@ void TwoVector_Nucl::integrandum_rho_gammaL_general(numint::vector_z & result, d
             result[9]= gpdfactor_HE_is;  //H+E isoscalar 
             result[10]= gpdfactor_H_is;  //H  isooscalar
         }
+        if(rhopol==TwoVector_Nucl::kaxial){
+            PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
+
+            PARTONS::GPDResult gpdResult = twovector.pGPDService->computeGPDModel(gpdKinematic,
+                twovector.pGPDModel);
+
+            double Hu = gpdResult.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+            double Hd = gpdResult.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+            double Eu = gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+            double Ed = gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+
+            //at t=tmin it will always be real
+            complex<double> gpdfactor_HtEt_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,Eu-Ed,0)); 
+            complex<double> gpdfactor_Ht_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,0.,0)); 
+        
+            result[0]= gpdfactor_HtEt_iv;  //H+E isovector
+            result[1]= gpdfactor_Ht_iv;  //H isovector 
+            result[3]= gpdfactor_HtEt_iv;  //H+E isovector 
+            result[4]= gpdfactor_Ht_iv;  //H isovector 
+        }
         if(rhopol==TwoVector_Nucl::krhoT){
             TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,mandelstam_t*1.E06, scale);
+            //factor of 2 because of (u+/-d)/2 in helicity amplitudes!
             complex<double> gpd_model0_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,0,1,0,gpds)*2.;
             complex<double> gpd_model1_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,1,1,0,gpds)*2.;
             complex<double> gpd_model2_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,2,1,0,gpds)*2.;
@@ -108,6 +129,9 @@ void TwoVector_Nucl::integrandum_rho_gammaL_general(numint::vector_z & result, d
             complex<double> gpd_model0_is = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,0,1,1,gpds)*2.;
             complex<double> gpd_model1_is = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,1,1,1,gpds)*2.;
             complex<double> gpd_model2_is = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,2,1,1,gpds)*2.;
+
+            // cout << xi*(2.*u-1) << " " << gpd_model0_iv.real() << " " << gpd_model1_iv.real() << " " << gpd_model2_iv.real()
+            // << " " << gpd_model0_is.real() << " " << gpd_model1_is.real() << " " << gpd_model2_is.real() << endl;
 
             result[0]=result[3]= gpd_model0_iv;
             result[1]=result[4]= gpd_model1_iv;
@@ -118,7 +142,8 @@ void TwoVector_Nucl::integrandum_rho_gammaL_general(numint::vector_z & result, d
             result[8]=result[11]= gpd_model2_is;
 
         }
-        // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
+
+        // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [6z*barz,6u*baru from 2 DA taken into account]
         double integrand = 36./sqrt(1-xi*xi) //sqrt factor from helamps accounted for in prefactor 
                     *z*z*(1.-z)*(1.-z)/u/(1.-u)
                         *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
@@ -152,7 +177,7 @@ void TwoVector_Nucl::integrandum_rhoL_gammaL_helamps(numint::vector_d &result, d
                     -gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
 
         //at t=tmin it will always be real
-        double gpdfactor = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,H_isovec,E_isovec)).real();
+        double gpdfactor = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,H_isovec,E_isovec,1)).real();
         // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
         result[0]= gpdfactor/sqrt(1-xi*xi) //sqrt factor from helamps accounted for in prefactor 
                     *z*z*(1.-z)*(1.-z)/u/(1.-u)
@@ -183,10 +208,10 @@ void TwoVector_Nucl::integrandum_rho_gammaT_general(numint::vector_z & result, d
             double Ed = gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
 
             //at t=tmin it will always be real
-            complex<double> gpdfactor_HE_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,Eu-Ed)); 
-            complex<double> gpdfactor_HE_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,Eu+Ed)); 
-            complex<double> gpdfactor_H_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,0.)); 
-            complex<double> gpdfactor_H_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,0.)); 
+            complex<double> gpdfactor_HE_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,Eu-Ed,1)); 
+            complex<double> gpdfactor_HE_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,Eu+Ed,1)); 
+            complex<double> gpdfactor_H_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,0.,1)); 
+            complex<double> gpdfactor_H_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,0.,1)); 
         
             result[0]= gpdfactor_HE_iv;  //H+E isovector
             result[1]= gpdfactor_H_iv;  //H isovector 
@@ -197,8 +222,29 @@ void TwoVector_Nucl::integrandum_rho_gammaT_general(numint::vector_z & result, d
             result[9]= gpdfactor_HE_is;  //H+E isoscalar 
             result[10]= gpdfactor_H_is;  //H  isooscalar
         }
+        if(rhopol==TwoVector_Nucl::kaxial){
+            PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
+
+            PARTONS::GPDResult gpdResult = twovector.pGPDService->computeGPDModel(gpdKinematic,
+                twovector.pGPDModel);
+
+            double Hu = gpdResult.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+            double Hd = gpdResult.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+            double Eu = gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+            double Ed = gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+
+            //at t=tmin it will always be real
+            complex<double> gpdfactor_HtEt_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,Eu-Ed,0)); 
+            complex<double> gpdfactor_Ht_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,0.,0)); 
+        
+            result[0]= gpdfactor_HtEt_iv;  //H+E isovector
+            result[1]= gpdfactor_Ht_iv;  //H isovector 
+            result[3]= gpdfactor_HtEt_iv;  //H+E isovector 
+            result[4]= gpdfactor_Ht_iv;  //H isovector 
+        }
         if(rhopol==TwoVector_Nucl::krhoT){
             TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,mandelstam_t*1.E06, scale);
+            //factor of 2 because helicity amplitudes have (u+/-d)/2
             complex<double> gpd_model0_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,0,1,0,gpds)*2.;
             complex<double> gpd_model1_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,1,1,0,gpds)*2.;
             complex<double> gpd_model2_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,2,1,0,gpds)*2.;
@@ -250,7 +296,7 @@ void TwoVector_Nucl::integrandum_rhoL_gammaT_helamps(numint::vector_d &result, d
                     -gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
 
         //at t=tmin it will always be real
-        double gpdfactor = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,H_isovec,E_isovec)).real();
+        double gpdfactor = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,H_isovec,E_isovec,1).real());
         // (Hq^u-Hq^d) * (2z-1) * z * barz / u / baru * Q    [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards] [factor p_perp from nominator taken out]
         result[0]= gpdfactor/sqrt(1-xi*xi)   //sqrt factor from helamps accounted for in prefactor 
                     *(2.*z-1)*z*(1.-z)/u/(1.-u)
@@ -517,7 +563,10 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
                           TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol){
 
 
-    double frhoplus =  ((rhopol == TwoVector_Nucl::krhoT)? 0.160: 0.198); //rho+ decay constant [GeV]
+    double f_lowermeson =  0.;  // meson decay constant for meson originating from lower part of the graph
+    if (rhopol == TwoVector_Nucl::krhoT) f_lowermeson=0.160;
+    if (rhopol == TwoVector_Nucl::krhoL) f_lowermeson=0.198;
+    if (rhopol == TwoVector_Nucl::kaxial) f_lowermeson=0.130;
     double frho0 = 0.216; //rho0 decay constant [GeV]
     double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
@@ -559,7 +608,7 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
             
                 //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
                 // sqrt(1-xi^2) compensated  in the helicity amplitudes
-                integral[index] *= 16.*PI*PI*alpha_s*frhoplus*xi*sqrt(1-xi*xi)*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
+                integral[index] *= 16.*PI*PI*alpha_s*f_lowermeson*xi*sqrt(1-xi*xi)*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
                 if(gammapol==TwoVector_Nucl::kgammaL) integral[index] *= -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI);; //prefactors Eq (17) Enberg et al.
                 if(gammapol==TwoVector_Nucl::kgammaT) integral[index] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
                 results[index]+=norm(integral[index])/256./pow(PI,3.)/xi/(1+xi); // Enberg et al Eq (12), corrected phase space factor!
@@ -567,8 +616,9 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
         }
     }
 
-
-    for(int index=0;index<12;index++) results[index]*=0.389379E06/(index<6?  2.: 4.); //[Gev-2 -> nb conversion] + avg initial spin + extra factor of 1/2 for omega wf (u+d)/sqrt(2)
+    //[Gev-2 -> nb conversion] + avg initial spin + extra factor of 1/2 for omega/rho0 wf (u+/-d)/sqrt(2) 
+    //+ extra factor 1/2 from averaging over sin^2 theta in case of transverse vector meson
+    for(int index=0;index<12;index++) results[index]*=0.389379E06/4./(rhopol==TwoVector_Nucl::krhoT? 2.:1.); 
     return;
 
 }

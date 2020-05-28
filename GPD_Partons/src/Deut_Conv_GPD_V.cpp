@@ -251,7 +251,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
                result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
                 // result+=(wf_in_S.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out_D.at((sigma1out+1)/2+(sigma2+1)))
                 //             + wf_in_D.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out_S.at((sigma1out+1)/2+(sigma2+1))) )
-                            *gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E);
+                            *gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E,1);
                 //symmetry tests nucleon level (tested OK)
                 // cout << "N conj " << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E))
                 //     << " " << gpd.getGPD_even_nucl(sigma1out, sigma1in, -xi_n, t, t0_n,phin+PI,H,E) << endl;
@@ -332,8 +332,8 @@ void Deut_Conv_GPD_V::int_k3_FF(numint::vector_z & res, double alpha1, double kp
                 // result+=wfin*conj(wfout)
                 //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                            *gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,F1,F2);
-                if(isnan(real(result))) cout << result << " " << gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,F1,F2) << " " 
+                            *gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,F1,F2,1);
+                if(isnan(real(result))) cout << result << " " << gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,F1,F2,1) << " " 
                     << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << wf_out.at((sigma1out+1)/2+(sigma2+1)) <<  F1 << " " << F2 << " " << xi_n << " " << phin << " " << t << " " << t0_n << endl;
                 //symmetry tests nucleon level (tested OK)
                 // cout << "N conj " << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E))
@@ -353,7 +353,7 @@ void Deut_Conv_GPD_V::int_k3_FF(numint::vector_z & res, double alpha1, double kp
 }
 
 complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi, const double t,
-                                    const double t0, const double phi,  const double gpd_H, const double gpd_E){
+                                    const double t0, const double phi,  const double gpd_H, const double gpd_E, const bool vector){
 
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
     double kinfac=sqrt(t0-t)/MASSn; // t in MeV^2
@@ -363,8 +363,8 @@ complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int 
     }
 
     else{
-        if(sigma_in==-1) return -exp(-I_UNIT*phi)*kinfac/2.*gpd_E ;
-        else return exp(I_UNIT*phi)*kinfac/2.*gpd_E ;
+        if(sigma_in==-1) return -exp(-I_UNIT*phi)*kinfac/2.*gpd_E*(vector? 1.:-xi) ;
+        else return exp(I_UNIT*phi)*kinfac/2.*gpd_E*(vector?1.:xi) ;
     }
 }
 

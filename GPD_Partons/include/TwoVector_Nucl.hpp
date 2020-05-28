@@ -30,7 +30,8 @@ public:
  * 
  */
   enum Rho_pol { krhoL=1,     ///<   longitudinal rho polarization
-		       krhoT=2 ///< transverse rho polarization
+		       krhoT=2, ///< transverse rho polarization ///< transverse rho polarization
+           kaxial=3 ///< pseudescalar meson
   };
 
 

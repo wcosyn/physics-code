@@ -160,11 +160,12 @@ std::vector<double> calc_NR_ffs(double t);
  * @param phi [azimuthal angle \xiP+Delta fourvector]
  * @param gpd_H GPD H
  * @param gpd_E GPD E
+ * @param [1] vector [0] axial GPDS
  * @return std::complex<double> nucleon helicity amplitude
  */
 static std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
                                     const double t, const double t0, const double phi,
-                                    const double gpd_H, const double gpd_E);              
+                                    const double gpd_H, const double gpd_E, const bool vector);              
 
 
 

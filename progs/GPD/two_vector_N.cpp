@@ -61,8 +61,23 @@ int main(int argc, char** argv) {
 
     double xi=atof(argv[1]);
     double Qsq = atof(argv[2]); // virtual photon scale squared [GeV^2]
-    bool longitudinal = atoi(argv[3]);
+    int meson_type = atoi(argv[3]);
     bool gammaT = atoi(argv[4]);
+    TwoVector_Nucl::Rho_pol kmeson;
+    switch(meson_type){
+        case 0:
+            kmeson=TwoVector_Nucl::krhoT;
+            break;
+        case 1:
+            kmeson=TwoVector_Nucl::krhoL;
+            break;
+        case 2:
+            kmeson=TwoVector_Nucl::kaxial;
+            break;
+        default:
+        ;
+    }
+
     // Init Qt4
     //QCoreApplication a(argc, argv);
     PARTONS::Partons* pPartons = 0;
@@ -127,7 +142,7 @@ int main(int argc, char** argv) {
 
 
             vector< double > results(12,0.);
-            gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, longitudinal? TwoVector_Nucl::krhoL : TwoVector_Nucl::krhoT);
+            gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, kmeson);
             for(int index=0;index<12;index++) cout << results[index] << " ";
             cout << endl;
         }

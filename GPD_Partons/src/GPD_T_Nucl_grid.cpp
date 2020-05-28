@@ -39,7 +39,7 @@ TransGPD_set GPD_T_Nucl_grid::getTransGPDSet(const double x, const double xi, co
             for(int j=0;j<=100;j++){
                 grid[i][j]=getGK_param(0.01*(i-100),0.01*(j),t, scale);
         //         cout << 0.01*(i-100) << " " << 0.01*(j) << " " << grid[i][j].getHTu() << " " << grid[i][j].getHTd() << " "
-        // << grid[i][j].getEbarTd() <<  " " << grid[i][j].getEbarTu() << endl;
+        // << grid[i][j].getEbarTu() <<  " " << grid[i][j].getEbarTd() << endl;
             }
         }
         // cout << "construction done" << endl;
