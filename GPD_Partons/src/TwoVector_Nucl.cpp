@@ -30,9 +30,17 @@ void TwoVector_Nucl::integrandum_rhoL_gammaL(numint::vector_d &result, double u,
 
         PARTONS::GPDResult gpdResult = twovector.pGPDService->computeGPDModel(gpdKinematic,
             twovector.pGPDModel);
+
+        PARTONS::GPDKinematic gpdKinematic2(-xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
+
+        PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeGPDModel(gpdKinematic2,
+            twovector.pGPDModel);
+
         // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
         result[0]=(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
-                    -gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution())
+                   +gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+                    -gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution()
+                    -gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution())
                     *z*z*(1.-z)*(1.-z)/u/(1.-u)
                         *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
@@ -55,19 +63,32 @@ void TwoVector_Nucl::integrandum_rhoL_gammaT(numint::vector_d &result, double u,
         PARTONS::GPDResult gpdResult = twovector.pGPDService->computeGPDModel(gpdKinematic,
             twovector.pGPDModel);
 
+        PARTONS::GPDKinematic gpdKinematic2(-xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
+
+        PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeGPDModel(gpdKinematic2,
+            twovector.pGPDModel);
+
         // (Hq^u-Hq^d) * (2z-1) * z * barz / u / baru * Q    [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards] [factor p_perp from nominator taken out]
         result[0]=(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
-                    -gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution())
+                    +gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+                    -gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution()
+                    -gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution())
                     *(2.*z-1)*z*(1.-z)/u/(1.-u)
                         *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
     }
+    // cout << (2.*z-1)*z*(1.-z)/u/(1.-u)
+    //                     *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) )<< " ";
+    // u = 1.-u;
+    // cout << (2.*z-1)*z*(1.-z)/u/(1.-u)
+    //                     *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) ) << endl;                    
      return;
 
 }
 
-void TwoVector_Nucl::integrandum_rho_gammaL_general(numint::vector_z & result, double u, double z, double xi, double mandelstam_t, double scale, 
-                                      double psq, double Qsq, int spinout, int spinin, TwoVector_Nucl::Rho_pol rhopol, TwoVector_Nucl& twovector){
+void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u, double z, double xi, double mandelstam_t, double scale, 
+                                      double psq, double Qsq, int spinout, int spinin, TwoVector_Nucl::Rho_pol rhopol, 
+                                      TwoVector_Nucl::Photon_pol gamma, TwoVector_Nucl& twovector){
 
     result = vector<complex <double> >(12,0.);
     //limits are well behaved
@@ -83,13 +104,23 @@ void TwoVector_Nucl::integrandum_rho_gammaL_general(numint::vector_z & result, d
             double Hd = gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
             double Eu = gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
             double Ed = gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+        
+            PARTONS::GPDKinematic gpdKinematic2(-xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
+
+            PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeGPDModel(gpdKinematic2,
+                twovector.pGPDModel);
+
+            double Hu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+            double Hd2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+            double Eu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+            double Ed2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
 
             //at t=tmin it will always be real
-            complex<double> gpdfactor_HE_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,Eu-Ed,1)); 
-            complex<double> gpdfactor_HE_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,Eu+Ed,1)); 
-            complex<double> gpdfactor_H_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,0.,1)); 
-            complex<double> gpdfactor_H_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hd,0.,1)); 
-        
+            complex<double> gpdfactor_HE_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2-Hd-Hd2,Eu+Eu2-Ed-Ed2,1)); 
+            complex<double> gpdfactor_HE_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2+Hd+Hd2,Eu+Eu2+Ed+Ed2,1)); 
+            complex<double> gpdfactor_H_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2-Hd-Hd2,0.,1)); 
+            complex<double> gpdfactor_H_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2+Hd+Hd2,0.,1)); 
+
             result[0]= gpdfactor_HE_iv;  //H+E isovector
             result[1]= gpdfactor_H_iv;  //H isovector 
             result[3]= gpdfactor_HE_iv;  //H+E isovector 
@@ -110,9 +141,19 @@ void TwoVector_Nucl::integrandum_rho_gammaL_general(numint::vector_z & result, d
             double Eu = gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
             double Ed = gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
 
+            PARTONS::GPDKinematic gpdKinematic2(-xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
+
+            PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeGPDModel(gpdKinematic2,
+                twovector.pGPDModel);
+
+            double Hu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+            double Hd2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+            double Eu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+            double Ed2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+
             //at t=tmin it will always be real
-            complex<double> gpdfactor_HtEt_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,Eu-Ed,0)); 
-            complex<double> gpdfactor_Ht_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu-Hd,0.,0)); 
+            complex<double> gpdfactor_HtEt_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2-Hd-Hd2,Eu+Eu2-Ed-Ed2,0)); 
+            complex<double> gpdfactor_Ht_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2-Hd-Hd2,0.,0)); 
         
             result[0]= gpdfactor_HtEt_iv;  //H+E isovector
             result[1]= gpdfactor_Ht_iv;  //H isovector 
@@ -121,14 +162,15 @@ void TwoVector_Nucl::integrandum_rho_gammaL_general(numint::vector_z & result, d
         }
         if(rhopol==TwoVector_Nucl::krhoT){
             TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,mandelstam_t*1.E06, scale);
+            TransGPD_set gpds2 = twovector.gpdTgrid.getTransGPDSet(-xi*(2.*u-1),xi,mandelstam_t*1.E06, scale);
             //factor of 2 because of (u+/-d)/2 in helicity amplitudes!
-            complex<double> gpd_model0_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,0,1,0,gpds)*2.;
-            complex<double> gpd_model1_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,1,1,0,gpds)*2.;
-            complex<double> gpd_model2_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,2,1,0,gpds)*2.;
+            complex<double> gpd_model0_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,0,1,0,gpds+gpds2)*2.;
+            complex<double> gpd_model1_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,1,1,0,gpds+gpds2)*2.;
+            complex<double> gpd_model2_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,2,1,0,gpds+gpds2)*2.;
 
-            complex<double> gpd_model0_is = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,0,1,1,gpds)*2.;
-            complex<double> gpd_model1_is = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,1,1,1,gpds)*2.;
-            complex<double> gpd_model2_is = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,2,1,1,gpds)*2.;
+            complex<double> gpd_model0_is = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,0,1,1,gpds+gpds2)*2.;
+            complex<double> gpd_model1_is = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,1,1,1,gpds+gpds2)*2.;
+            complex<double> gpd_model2_is = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,2,1,1,gpds+gpds2)*2.;
 
             // cout << xi*(2.*u-1) << " " << gpd_model0_iv.real() << " " << gpd_model1_iv.real() << " " << gpd_model2_iv.real()
             // << " " << gpd_model0_is.real() << " " << gpd_model1_is.real() << " " << gpd_model2_is.real() << endl;
@@ -144,9 +186,12 @@ void TwoVector_Nucl::integrandum_rho_gammaL_general(numint::vector_z & result, d
         }
 
         // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [6z*barz,6u*baru from 2 DA taken into account]
-        double integrand = 36./sqrt(1-xi*xi) //sqrt factor from helamps accounted for in prefactor 
+        double integrand = (gamma == TwoVector_Nucl::kgammaL?  36./sqrt(1-xi*xi) //sqrt factor from helamps accounted for in prefactor 
                     *z*z*(1.-z)*(1.-z)/u/(1.-u)
-                        *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
+                        *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) )
+                        : 36./sqrt(1-xi*xi)   //sqrt factor from helamps accounted for in prefactor 
+                    *(2.*z-1)*z*(1.-z)/u/(1.-u)
+                        *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) ));
         for(int i=0;i<12;i++) result[i]*=integrand;                
         for(int i=0;i<3;i++){
             result[3+i]*=64./PI/PI/36./sqrt(z*(1-z)*u*(1-u));  //AdS DA
@@ -369,7 +414,7 @@ double TwoVector_Nucl::getCross_gammaL_rhoL(const double scale, const double xi,
     mdf.param = &F;
 
     numint::array<double,2> lower = {{0.,0.}};
-    numint::array<double,2> upper = {{1.,1.}};
+    numint::array<double,2> upper = {{0.5,1.}};
     std::vector<double> integral(1,0.); //integrandum result array
 
     //gamma_L calculation
@@ -417,7 +462,7 @@ double TwoVector_Nucl::getCross_gammaT_rhoL(const double scale, const double xi,
     mdf.param = &F;
 
     numint::array<double,2> lower = {{0.,0.}};
-    numint::array<double,2> upper = {{1.,1.}};
+    numint::array<double,2> upper = {{0.5,1.}};
     std::vector<double> integral(1,0.); //integrandum result array
 
     //gamma_L calculation
@@ -581,6 +626,7 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
     F.Qsq=Q2;
     F.psq=psq;
     F.rhopol = rhopol;
+    F.gammapol = gammapol;
     F.pobj=this;
     
     numint::mdfunction<numint::vector_z,2> mdf;
@@ -588,11 +634,10 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
     mdf.param = &F;
 
     numint::array<double,2> lower = {{0.,0.}};
-    numint::array<double,2> upper = {{1.,1.}};
+    numint::array<double,2> upper = {{0.5,1.}};
 
     //gamma_T calculation
-    if(gammapol==TwoVector_Nucl::kgammaL) F.f=integrandum_rho_gammaL_general;
-    if(gammapol==TwoVector_Nucl::kgammaT) F.f=integrandum_rho_gammaT_general;
+    F.f=integrandum_rho_general;
     unsigned count=0;
     results = vector<double>(12,0.);
     // integration over u and z

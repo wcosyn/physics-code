@@ -155,7 +155,7 @@ struct Ftor_2vector_general {
 
   static void exec(const numint::array<double,2> &x, void *param, numint::vector_z &ret) {
     Ftor_2vector_general &p = * (Ftor_2vector_general *) param;
-    p.f(ret,x[0],x[1], p.xi, p.mandelstam_t, p.scale, p.psq, p.Qsq, p.spinout, p.spinin, p.rhopol,  *p.pobj);
+    p.f(ret,x[0],x[1], p.xi, p.mandelstam_t, p.scale, p.psq, p.Qsq, p.spinout, p.spinin, p.rhopol,  p.gammapol, *p.pobj);
   }
   double xi; ///< [] skewness
   double mandelstam_t; ///< [GeV^2] momentum transfer, taken at t_min for now
@@ -165,13 +165,14 @@ struct Ftor_2vector_general {
   int spinin; ///< [] spin*2 of incomcing nucleon
   int spinout;///< [] spin*2 of outgoing nucleon
   TwoVector_Nucl::Rho_pol rhopol; ////< [krhoL/krhoT] long/transverse rho polarization
+  TwoVector_Nucl::Photon_pol gammapol; ////< [kgammaL/kgammaT] long/transverse photon polarization
   TwoVector_Nucl* pobj;
    /**
    * @brief integration function, integration over u and z from DA's, see Enberg et al paper EPJC47 87-94
    * 
    */
   void (*f)(numint::vector_z &, double u, double z, double xi, double mandelstam_t, double scale, double psq, double Qsq, 
-            int spinout, int spinin, TwoVector_Nucl::Rho_pol rhopol, TwoVector_Nucl& twovector);
+            int spinout, int spinin, TwoVector_Nucl::Rho_pol rhopol, TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl& twovector);
 
 };
 
@@ -289,28 +290,12 @@ static void integrandum_rhoT_gammaT(numint::vector_d &, double u, double z, doub
  * @param psq [GeV^2] pomeron hard scale
  * @param Qsq [GeV^2] virtual photon 4mom squared
  * @param rhopol [krhoL/krhoT] longitudinal or transverse rho polarization
+ * @param gamma [kgammaL/kgammaT] longitudinal or transverse photon polarization
  * @param twovector  class object to get all the other integration parameters 
  */
-static void integrandum_rho_gammaL_general(numint::vector_z &, double u, double z, double xi, double mandelstam_t, double scale, 
-                                      double psq, double Qsq, int spinout, int spinin, TwoVector_Nucl::Rho_pol rhopol, TwoVector_Nucl& twovector);
-
-/**
- * @brief integrandum for transversily polarized photon on nucleon, two times rho_L in final state
- * 
- * @param u [] integration variable, momentum fraction in lower rho DA
- * @param z [] integration variable, momentum fraction in upper rho DA
- * @param xi [] skewness
- * @param mandelstam_t  [GeV^2] momentum transfer, taken at t_min for now
- * @param scale [GeV^2] factorization and renorm scale
- * @param psq [GeV^2] pomeron hard scale
- * @param Qsq [GeV^2] virtual photon 4mom squared
- * @param rhopol [krhoL/krhoT] longitudinal or transverse rho polarization
- * @param twovector  class object to get all the other integration parameters 
-*/
-static void integrandum_rho_gammaT_general(numint::vector_z &, double u, double z, double xi, double mandelstam_t, double scale, 
-                                            double psq, double Qsq, int spinout, int spinin, TwoVector_Nucl::Rho_pol rhopol, TwoVector_Nucl& twovector);
-
-
+static void integrandum_rho_general(numint::vector_z &, double u, double z, double xi, double mandelstam_t, double scale, 
+                                      double psq, double Qsq, int spinout, int spinin, TwoVector_Nucl::Rho_pol rhopol,
+                                      TwoVector_Nucl::Photon_pol gamma,  TwoVector_Nucl& twovector);
 
 
 

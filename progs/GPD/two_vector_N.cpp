@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
             double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
             cout << Qsq << " " << xi << " " << psq << " "; 
             // double result_L=0.,result_T=0.;
-            // if(longitudinal){
+            // if(meson_type){
             //     result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
             //     result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
             // }
@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
             //     result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq,1);
             //     result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq,1);
             // }
-            //cout << result_T << " " << result_L << endl;
+            // cout << result_T << " " << result_L << endl;
 
 
             vector< double > results(12,0.);
