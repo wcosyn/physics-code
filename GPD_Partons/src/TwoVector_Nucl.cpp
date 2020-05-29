@@ -105,6 +105,7 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
             double Eu = gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
             double Ed = gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
         
+            // Hard part selects symmetric part in x!  (C^- for rho/omega; C^+ for pi )
             PARTONS::GPDKinematic gpdKinematic2(-xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
 
             PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeGPDModel(gpdKinematic2,
@@ -141,6 +142,7 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
             double Eu = gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
             double Ed = gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
 
+            // Hard part selects symmetric part in x!  (C^- for rho/omega; C^+ for pi )
             PARTONS::GPDKinematic gpdKinematic2(-xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
 
             PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeGPDModel(gpdKinematic2,
@@ -162,6 +164,7 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
         }
         if(rhopol==TwoVector_Nucl::krhoT){
             TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,mandelstam_t*1.E06, scale);
+            // Hard part selects symmetric part in x!  (C^- for rho/omega; C^+ for pi )
             TransGPD_set gpds2 = twovector.gpdTgrid.getTransGPDSet(-xi*(2.*u-1),xi,mandelstam_t*1.E06, scale);
             //factor of 2 because of (u+/-d)/2 in helicity amplitudes!
             complex<double> gpd_model0_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,0,1,0,gpds+gpds2)*2.;
@@ -548,7 +551,7 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
     mdf.param = &F;
 
     numint::array<double,2> lower = {{0.,0.}};
-    numint::array<double,2> upper = {{0.5,1.}};
+    numint::array<double,2> upper = {{0.5,1.}};  // symmetry in u exploited to simplify integrand!
 
     //gamma_T calculation
     F.f=integrandum_rho_general;
