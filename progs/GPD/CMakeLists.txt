@@ -14,11 +14,16 @@ target_link_libraries(two_vector_D GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBR
 add_executable(conv_V_test conv_V_test.cpp)
 target_link_libraries(conv_V_test GPD  MePhys Glauber ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
 
+add_executable(Nucl_GPD Nucl_GPD.cpp)
+target_link_libraries(Nucl_GPD GPD ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+
+
 if(NOT BUILD_PROGS)
 set_target_properties(conv_T_test PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(two_vector_N PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(two_vector_D PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(conv_V_test PROPERTIES EXCLUDE_FROM_ALL 1)
+set_target_properties(Nucl_GPD PROPERTIES EXCLUDE_FROM_ALL 1)
 endif()
 
 if(BUILD_PROGS)
@@ -26,4 +31,5 @@ install(TARGETS conv_T_test DESTINATION "${CMAKE_SOURCE_DIR}/bin")
 install(TARGETS two_vector_N DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS two_vector_D DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS conv_V_test DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
+install(TARGETS Nucl_GPD DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 endif()

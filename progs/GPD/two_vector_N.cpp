@@ -37,7 +37,7 @@ using namespace std;
      * use in constructor as Twovector_Nucl(Twovector_Nucl::TypeNames.at("VGG99"); (don't use [] acces op.)
      * 
      */
-    static const std::map<std::string,GPD_model_type> TypeNames; 
+    static  std::map<std::string,GPD_model_type> TypeNames; 
     /**
      * @brief initialise typename lookup map, use in constructor as Twovector_Nucl(Twovector_Nucl::TypeNames.at("VGG99"); (don't use [] acces op.) 
      * 
@@ -59,7 +59,10 @@ using namespace std;
 int main(int argc, char** argv) {
 
 
-    double xi=atof(argv[1]);
+    //double xi=atof(argv[1]);
+    TypeNames=initTypeNames();
+    //cout << argv[1] << endl;
+    GPD_model_type gpdmodel = TypeNames.at(argv[1]);
     double Qsq = atof(argv[2]); // virtual photon scale squared [GeV^2]
     int meson_type = atoi(argv[3]);
     bool gammaT = atoi(argv[4]);
@@ -94,9 +97,26 @@ int main(int argc, char** argv) {
                 PARTONS::Partons::getInstance()->getServiceObjectRegistry()->getGPDService();
 
         // Create GPD module with the BaseModuleFactory
-        PARTONS::GPDModule* pGPDModel =
-                PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
+        PARTONS::GPDModule* pGPDModel;
+        
+        switch(gpdmodel){
+            case(GK16Numerical):
+                pGPDModel=PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
                         PARTONS::GPDGK16Numerical::classId);
+                break;
+            case(MMS13):
+                pGPDModel=PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
+                        PARTONS::GPDMMS13::classId);
+                break;
+            case(VGG99):
+                pGPDModel=PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
+                        PARTONS::GPDVGG99::classId);
+                break;
+            default:
+                cerr << "Invalid GPD model name chosen " << endl;
+                exit(1);
+        } 
+                
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
 
@@ -125,7 +145,37 @@ int main(int argc, char** argv) {
         //     }
         // exit(1);
 
-        for(int i=0;i<=16;i++){
+        //xi dependence, model comparisons
+        // for(int j=0;j<=50;j++){
+        //     double xi=0.1+0.01*j;
+        //     for(int i=0;i<=3;i++){
+            
+        //         double psq = 2.+i*4; //pomeron scale squared [GeV^2]
+        //         cout << Qsq << " " << xi << " " << psq << " "; 
+        //         // double result_L=0.,result_T=0.;
+        //         // if(meson_type){
+        //         //     result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
+        //         //     result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
+        //         // }
+        //         // else{
+        //         //     result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq,1);
+        //         //     result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq,1);
+        //         // }
+        //         // cout << result_T << " " << result_L << endl;
+
+
+        //         vector< double > results(12,0.);
+        //         gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, kmeson);
+        //         for(int index=0;index<12;index++) cout << results[index] << " ";
+        //         cout << endl;
+        //     }
+        //     cout << endl << endl;
+        // }
+
+
+        //pt2 dependence
+        double xi=0.3;
+        for(int i=0;i<=18;i++){
         
             double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
             cout << Qsq << " " << xi << " " << psq << " "; 
@@ -146,6 +196,9 @@ int main(int argc, char** argv) {
             for(int index=0;index<12;index++) cout << results[index] << " ";
             cout << endl;
         }
+
+
+
         // Remove pointer references
         // Module pointers are managed by PARTONS
         PARTONS::Partons::getInstance()->getModuleObjectFactory()->updateModulePointerReference(

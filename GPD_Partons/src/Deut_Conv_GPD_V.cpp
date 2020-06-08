@@ -359,7 +359,7 @@ complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int 
     double kinfac=sqrt(t0-t)/MASSn; // t in MeV^2
     if(sigma_in==sigma_out) {
         //cout << "GPD helamps " << sqrt(1-xi*xi)*gpd_H << " " << xi*xi/sqrt(1-xi*xi)*gpd_E << " " << sqrt(1-xi*xi)*gpd_H - xi*xi/sqrt(1-xi*xi)*gpd_E << " " << sqrt(1-xi*xi) << " " << gpd_H <<  " " << xi*xi/sqrt(1-xi*xi) << " " << gpd_E << endl; 
-        return sqrt(1-xi*xi)*gpd_H - xi*xi/sqrt(1-xi*xi)*gpd_E;
+        return (sqrt(1-xi*xi)*gpd_H - xi*xi/sqrt(1-xi*xi)*gpd_E)*(vector? 1. : sigma_in);
     }
 
     else{
