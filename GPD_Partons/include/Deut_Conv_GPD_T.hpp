@@ -100,7 +100,7 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
  * @param model [0-2] different models for nucleon chiral odd GPDs
  * @return Deut_GPD_V_set 
  */
-Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model);
+Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model, const int gridsize);
 
 
 /**
@@ -201,7 +201,9 @@ double t_grid; ///< [GeV^2] momentum transfer sq value the grid has
 double xi_grid; ////< [] skewness value the grid has
 bool grid_set; ///< is the grid with transv gpds set or not
 bool ERBL_set; ///< is the grid only ERBL or not
-Deut_GPD_T_set grid[201];
+Deut_GPD_T_set *grid;
+
+int grid_size;
 
 };
 

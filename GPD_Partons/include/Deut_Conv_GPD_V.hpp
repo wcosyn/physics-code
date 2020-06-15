@@ -35,8 +35,9 @@ public:
  * @param pGPDService GPD Service from PARTONS
  * @param pGPDModel GPD Module from PARTONS
  * @param wfname deuteron wave function parametrization name, see TDeuteron for possibilities
+ * @param id PARTONS class id for the gpd model, used for grid filename
  */
-Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, const std::string &wfname);
+Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, const std::string &wfname,unsigned int id);
 
 /**
  * @brief Destructor
@@ -133,9 +134,10 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
  * @param xi [] skewness
  * @param t [GeV^2] mom transfer sq
  * @param ERBL grid for only ERBL region or not?
+ * @param size of grid
  * @return Deut_GPD_V_set 
  */
-Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL);
+Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int gridsize);
 
 void setH(const bool H){incH=H;} ///< [1] include or [0] exclude isoscalar nucleon GPD H
 void setE(const bool E){incE=E;} ///< [1] include or [0] exclude isoscalar nucleon GPD E
@@ -308,10 +310,12 @@ double t_grid; ///< [GeV^2] momentum transfer sq value the grid has
 double xi_grid; ////< [] skewness value the grid has
 bool grid_set; ///< is the grid with transv gpds set or not
 bool ERBL_set; ///< is the grid only ERBL or not
-Deut_GPD_V_set grid[201];
+int grid_size; ///< size of grid
+Deut_GPD_V_set *grid;
 
 bool incH; ///< include GPD H
 bool incE; ///< include GPD E
+unsigned int gpdmodel_id; ///< PARTONS gpd model class ID
 
 };
 

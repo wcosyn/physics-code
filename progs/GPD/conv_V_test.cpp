@@ -67,14 +67,23 @@ int main(int argc, char *argv[]){
 
         // Create GPD module with the BaseModuleFactory
         PARTONS::GPDModule* pGPDModel = NULL;
-        if(!GPD_model.compare("GPDMMS13"))
+        unsigned int ID;
+        if(!GPD_model.compare("GPDMMS13")){
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDMMS13::classId);
-        else if(!GPD_model.compare("GPDVGG99"))
+                ID = PARTONS::GPDMMS13::classId;
+                }
+        else if(!GPD_model.compare("GPDVGG99")){
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDVGG99::classId);
-        else if(!GPD_model.compare("GPDGK16Numerical"))
+                ID = PARTONS::GPDVGG99::classId;
+        }
+        else if(!GPD_model.compare("GPDGK16Numerical")){
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDGK16Numerical::classId);
-        else if(!GPD_model.compare("GPDGK16"))
+                ID = PARTONS::GPDGK16Numerical::classId;
+        }
+        else if(!GPD_model.compare("GPDGK16")){
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDGK16::classId);
+                ID = PARTONS::GPDGK16::classId;
+        }
         else {cout << "Invalid GPD model, exiting" << endl; exit(1);}
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
@@ -101,7 +110,7 @@ int main(int argc, char *argv[]){
 
         //cout << "alpha_s " << alpha_s << endl;
 
-        Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
+        Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf,ID);
         test.getWf()->setD(setD);
         test.getWf()->setS(setS);
         test.setH(setH);

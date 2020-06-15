@@ -15,11 +15,16 @@ chiralodd_grid(pdf_name){
         wf.AddUp(i,wfref->GetUp(i));
         wf.AddWp(i,wfref->GetWp(i));
     }
+    grid = NULL;
+    grid_set = false;
+    ERBL_set = 0;
+    grid_size=0;
 
 }
 
 Deut_Conv_GPD_T::~Deut_Conv_GPD_T(){
       delete wfref;
+      if(grid != NULL) delete [] grid;
 }
 
 
@@ -405,7 +410,7 @@ vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const doubl
     double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // Gev^2
     double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0  //GeV
 
-    chiralodd_grid.getTransGPDSet(0.,0.,t,scale); //just fill the grid here
+    chiralodd_grid.getTransGPDSet(0.,0.,t*1.E06,scale); //just fill the grid here
     Deut_Conv_GPD_T::Ftor_conv F;
     F.x=x;
     F.t=t*1.E06; //[MeV^2]
@@ -532,22 +537,32 @@ vector< complex<double> > Deut_Conv_GPD_T::lf_deut(const double Ek, const TVecto
 
 }
 
-Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model){
+Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model,
+            const int gridsize){
      //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
-    if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/T.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".EBRL"+to_string(ERBL)+".model"+to_string(model);
+    if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set||gridsize!=grid_size){
+        if(grid!=NULL) delete [] grid;
+        grid = new Deut_GPD_T_set[gridsize+1];
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/T.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".EBRL"+to_string(ERBL)+".model"+to_string(model)
+        +".siiize"+to_string(gridsize);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
             cout << "constructing chiral odd deuteron helamps grid " << filename << endl;
             ofstream outfile(filename.c_str());
 
-            for(int i=0;i<=100;i++){
-                double x=0.02*(i-50)*(ERBL? abs(xi): 1.);
-                vector< complex<double> > result = gpd_conv(xi,x,t,model,scale);
-                grid[i]=Deut_GPD_T_set(result[0].real(),result[1].real(),result[2].real(),result[3].real(),
-            result[4].real(),result[5].real(),result[6].real(),result[7].real(),result[8].real());
-                outfile << x << " " << result[0].real() << " " << result[1].real() << " " << result[2].real() << " " << result[3].real() << " " << result[4].real() << 
-                " " << result[5].real() << " " << result[6].real() << " " << result[7].real() << " " << result[8].real() << endl;
+            for(int i=0;i<=gridsize;i++){
+                double x=double(i)/gridsize*(ERBL? abs(xi): 1.)+(i==0? 1.E-04:0.);
+                vector< complex<double> > total = gpd_conv(xi,x,t, model,scale);
+                // vector< complex<double> > resultmin = gpd_conv(xi,-x,t,model, scale);
+                // vector< complex<double> > total(9,0.);
+                // for(int k=0; k<9; k++) total[k]=result[k]+resultmin[k];
+               grid[i]=Deut_GPD_T_set(total[0].real(),total[1].real(),total[2].real(),total[3].real(),
+            total[4].real(),total[5].real(),total[6].real(),total[7].real(),total[8].real());
+                vector < complex<double> > gpds=helamps_to_gpds_T(xi,t,total);
+                outfile << x << " " << total[0].real() << " " << total[1].real() << " " << total[2].real() << " " << total[3].real() << " " << total[4].real() << 
+                " " << total[5].real() << " " << total[6].real() << " " << total[7].real() << " " << total[8].real() << " " <<
+                gpds[0].real() << " " << gpds[1].real() << " " << gpds[2].real() << " " << gpds[3].real() << " " << gpds[4].real() << 
+                " " << gpds[5].real() << " " << gpds[6].real() << " " << gpds[7].real() << " " << gpds[8].real() << " " << endl;
             }
             outfile.close();
             
@@ -556,11 +571,12 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
             t_grid=t;
             xi_grid=xi;
             ERBL_set=ERBL;
+            grid_size = gridsize;
         }
         else{
             cout << "Reading in deut T gpd grid " << filename << endl;
             string line;
-            for(int i=0;i<=100;i++){
+            for(int i=0;i<=gridsize;i++){
                 getline (infile,line);
                 istringstream iss(line);
                 vector<string> tokens{istream_iterator<string>{iss},
@@ -573,11 +589,12 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
             t_grid=t;
             xi_grid=xi;
             ERBL_set=ERBL;
+            grid_size = gridsize;
         }
    }
    //interpolation
     double index_i=0.;
-    double frac_i=modf(x*50/(ERBL? abs(xi): 1.)+50,&index_i);
-
+    double frac_i=modf(x*gridsize/(ERBL? abs(xi): 1.),&index_i);
+    //cout << x << " " << index_i << " "<< frac_i << endl;
     return grid[int(index_i)]*(1.-frac_i)+grid[int(index_i)+1]*(frac_i);
 }

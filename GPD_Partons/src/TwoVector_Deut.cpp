@@ -9,8 +9,8 @@ using namespace std;
 
 TwoVector_Deut::TwoVector_Deut(PARTONS::GPDService* pGPDService,
                                  PARTONS::GPDModule* pGPDModel, 
-                                 PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule, string wfname, string pdfname):
-pRunningAlphaStrongModule(pRunningAlphaStrongModule),deut_vector_grid(pGPDService,pGPDModel,wfname),
+                                 PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule, string wfname, string pdfname, unsigned int id):
+pRunningAlphaStrongModule(pRunningAlphaStrongModule),deut_vector_grid(pGPDService,pGPDModel,wfname,id),
 deut_tensor_grid(pdfname, wfname){
     ;
 }
@@ -28,7 +28,8 @@ void TwoVector_Deut::integrandum_gammaL_rhoL(numint::vector_d &result, double u,
         ;
 
         // Amp^Isoscalar *sqrt(2) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
-        result[0]= twovector.deut_vector_grid.getDeut_GPD_V_set(xi*(2.*u-1),xi,mandelstam_t,scale,1).getAmp(helampindex)*sqrt(2.)
+        result[0]= (twovector.deut_vector_grid.getDeut_GPD_V_set(-xi*(2.*u-1),xi,mandelstam_t,scale,1, 50).getAmp(helampindex)) 
+        *sqrt(2.)
                     *z*z*(1.-z)*(1.-z)/u/(1.-u)
                         *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
@@ -48,7 +49,8 @@ void TwoVector_Deut::integrandum_gammaT_rhoL(numint::vector_d &result, double u,
         
 
         // Amp^Isoscalar *sqrt(2) * (2z-1) * z * barz / u / baru * Q    [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards] [factor p_perp from nominator taken out]
-        result[0]=twovector.deut_vector_grid.getDeut_GPD_V_set(xi*(2.*u-1),xi,mandelstam_t,scale,1).getAmp(helampindex)*sqrt(2.)
+        result[0]=(twovector.deut_vector_grid.getDeut_GPD_V_set(-xi*(2.*u-1),xi,mandelstam_t,scale,1,50).getAmp(helampindex))
+        *sqrt(2.)
                     *(2.*z-1)*z*(1.-z)/u/(1.-u)
                         *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
@@ -66,7 +68,7 @@ void TwoVector_Deut::integrandum_gammaL_rhoT(numint::vector_d &result, double u,
     if(u==0||u==1||z==0||z==1) result[0]=0.;
     else{ 
         // (Amp^isoscalar * sqrt(2) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
-        result[0]=twovector.deut_tensor_grid.getDeut_GPD_T_set(xi*(2.*u-1),xi,mandelstam_t, scale, 1,1).getAmp(helampindex)*sqrt(2.)*2.* //helamp for T is w a factor 0.5
+        result[0]=twovector.deut_tensor_grid.getDeut_GPD_T_set(xi*(2.*u-1),xi,mandelstam_t, scale, 1,1,50).getAmp(helampindex)*sqrt(2.)*2.* //helamp for T is w a factor 0.5
                     z*z*(1.-z)*(1.-z)/u/(1.-u)
                         *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
@@ -85,7 +87,7 @@ void TwoVector_Deut::integrandum_gammaT_rhoT(numint::vector_d &result, double u,
     else{ 
 
         // (Amp^Isoscalar *sqrt(2) * (2z-1) * z * barz / u / baru * Q    [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards] [factor p_perp from nominator taken out]
-        result[0]=twovector.deut_tensor_grid.getDeut_GPD_T_set(xi*(2.*u-1),xi,mandelstam_t,scale, 1,1).getAmp(helampindex)*sqrt(2.)*2.* //helamp for T is w a factor 0.5
+        result[0]=twovector.deut_tensor_grid.getDeut_GPD_T_set(xi*(2.*u-1),xi,mandelstam_t,scale, 1,1,50).getAmp(helampindex)*sqrt(2.)*2.* //helamp for T is w a factor 0.5
                     (2.*z-1)*z*(1.-z)/u/(1.-u)
                         *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) );
 
@@ -103,7 +105,7 @@ double TwoVector_Deut::getCross_gammaL_rhoL(const double scale, const double xi,
     double CF=(Nc*Nc-1)/2./Nc;
     double mandelstam_t= -4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi);//tmin [GeV^2]
     //mandelstam_t=floor(mandelstam_t*100.)/100.;
-    mandelstam_t*=1.1;
+    //mandelstam_t*=1.1;
 
     Ftor_2vector F;
     F.xi=xi;
@@ -118,7 +120,7 @@ double TwoVector_Deut::getCross_gammaL_rhoL(const double scale, const double xi,
     mdf.param = &F;
 
     numint::array<double,2> lower = {{0.,0.}};
-    numint::array<double,2> upper = {{1.,1.}};
+    numint::array<double,2> upper = {{0.5,1.}};
     std::vector<double> integral(1,0.); //integrandum result array
 
     //gamma_L calculation
@@ -174,7 +176,7 @@ double TwoVector_Deut::getCross_gammaT_rhoL(const double scale, const double xi,
     mdf.param = &F;
 
     numint::array<double,2> lower = {{0.,0.}};
-    numint::array<double,2> upper = {{1.,1.}};
+    numint::array<double,2> upper = {{0.5,1.}};
     std::vector<double> integral(1,0.); //integrandum result array
 
     //gamma_L calculation
@@ -303,3 +305,12 @@ double TwoVector_Deut::getCross_gammaT_rhoT(const double scale, const double xi,
     return result_T*0.389379E06/3.*2.; //[Gev-2 -> nb conversion] + avg initial spin+ factor 2 because omega is ~ [(u+d)/sqrt(2)]^2 = 2u for isoscalar
 
 }
+
+
+
+void TwoVector_Deut::integrandum_rho_general(numint::vector_z &, double u, double z, double xi, double mandelstam_t, double scale, 
+                                      double psq, double Qsq, int helampindex, TwoVector_Deut::Rho_pol rhopol,
+                                      TwoVector_Deut::Photon_pol gamma,  TwoVector_Deut& twovector){
+
+
+                                      }

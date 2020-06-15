@@ -10,8 +10,8 @@
 
 using namespace std;
 
-Deut_Conv_GPD_V::Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, const string &wfname):
-pGPDService(pGPDService),pGPDModel(pGPDModel),chiraleven_grid(pGPDService, pGPDModel),incH(1), incE(1)
+Deut_Conv_GPD_V::Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, const string &wfname, unsigned int id):
+pGPDService(pGPDService),pGPDModel(pGPDModel),chiraleven_grid(pGPDService, pGPDModel),incH(1), incE(1), gpdmodel_id(id)
 {
 
 
@@ -22,11 +22,15 @@ pGPDService(pGPDService),pGPDModel(pGPDModel),chiraleven_grid(pGPDService, pGPDM
         wf.AddUr(i*0.02,wfref->GetUr(i*0.02));
         wf.AddWr(i*0.02,wfref->GetWr(i*0.02));        
     }
-
+    grid = NULL;
+    grid_set = false;
+    ERBL_set = 0;
+    grid_size=0;
 }
 
 Deut_Conv_GPD_V::~Deut_Conv_GPD_V(){
       delete wfref;
+      if(grid != NULL) delete [] grid;
 }
 
 
@@ -494,7 +498,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         int minEval=1E02;
         int maxEvalcuba=1E05;
 
-        int maxEval=1E05;
+        int maxEval=1E04;
         numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         //numint::vegas( mdf, lower,upper,nvec, relerr,abserr,flags,seed,minEval, maxEvalcuba,1000, 500, 1000, 0,(stf+"vegas").c_str(),countt,fail,out,err,prob );
         //numint::cuhre( mdf, lower,upper,nvec, relerr,abserr,flags,int(5E02), maxEvalcuba,11, /*stf.c_str() */ NULL ,nregions,countt,fail,out,err,prob );
@@ -624,21 +628,27 @@ vector< complex<double> > Deut_Conv_GPD_V::lf_deut(const double Ek, const TVecto
 }
 
 
-Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL){
+Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int gridsize){
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
-    if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/V_grid."+pGPDModel->CLASS_NAME+".xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".EBRL"+to_string(ERBL);
+    if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set|| gridsize!=grid_size){
+        if(grid!=NULL) delete [] grid;
+        grid = new Deut_GPD_V_set[gridsize+1];
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/V_grid."+to_string(gpdmodel_id)+".xi"+to_string(xi)
+            +".t"+to_string(t)+".mu"+to_string(scale)+".ERBL"+to_string(ERBL)+".size"+to_string(gridsize);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
             cout << "constructing chiral even deuteron helamps grid " << filename << endl;
             ofstream outfile(filename.c_str());
 
-            for(int i=0;i<=100;i++){
-                double x=0.02*(i-50)*(ERBL? abs(xi): 1.)+(i==50? 1.E-04:0.);
+            for(int i=0;i<=gridsize;i++){
+                double x=double(i)/gridsize*(ERBL? abs(xi): 1.)+(i==0? 1.E-04:0.);
                 vector< complex<double> > result = gpd_conv(xi,x,t, scale);
-                vector< complex<double> > gpd = helamps_to_gpds_V(xi,t,result);
-                grid[i]=Deut_GPD_V_set(result[0].real(),result[1].real(),result[2].real(),result[3].real(),result[4].real());
-                outfile << x << " " << result[0].real() << " " << result[1].real() << " " << result[2].real() << " " << result[3].real() << " " << result[4].real()
+                vector< complex<double> > resultmin = gpd_conv(xi,-x,t, scale);
+                vector< complex<double> > total(5,0.);
+                for(int k=0; k<5; k++) total[k]=result[k]+resultmin[k];
+                vector< complex<double> > gpd = helamps_to_gpds_V(xi,t,total);
+                grid[i]=Deut_GPD_V_set(total[0].real(),total[1].real(),total[2].real(),total[3].real(),total[4].real());
+                outfile << x << " " << total[0].real() << " " << total[1].real() << " " << total[2].real() << " " << total[3].real() << " " << total[4].real()
                 <<" " << gpd[0].real() << " " << gpd[1].real() << " " << gpd[2].real() << " " << gpd[3].real() << " " << gpd[4].real() << " " << endl;
             }
             outfile.close();
@@ -648,11 +658,12 @@ Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double x
             t_grid=t;
             xi_grid=xi;
             ERBL_set=ERBL;
+            grid_size=gridsize;
         }
         else{
             cout << "Reading in grid " << filename << endl;
             string line;
-            for(int i=0;i<=100;i++){
+            for(int i=0;i<=gridsize;i++){
                 getline (infile,line);
                 istringstream iss(line);
                 vector<string> tokens{istream_iterator<string>{iss},
@@ -664,11 +675,12 @@ Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double x
             t_grid=t;
             xi_grid=xi;
             ERBL_set=ERBL;
+            grid_size = gridsize;
         }
    }
    //interpolation
     double index_i=0.;
-    double frac_i=modf(x*50/(ERBL? abs(xi): 1.)+50,&index_i);
-
+    double frac_i=modf(x*gridsize/(ERBL? abs(xi): 1.),&index_i);
+    //cout << x << " " << index_i << " "<< frac_i << endl;
     return grid[int(index_i)]*(1.-frac_i)+grid[int(index_i)+1]*(frac_i);
 }
