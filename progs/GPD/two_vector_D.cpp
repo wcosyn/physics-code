@@ -71,13 +71,13 @@ int main(int argc, char** argv) {
     double xi = atof(argv[7]);
 
     
-    TwoVector_Deut::Rho_pol kmeson;
+    TwoVector_Deut::Omega_pol kmeson;
     switch(meson_type){
         case 0:
-            kmeson=TwoVector_Deut::krhoT;
+            kmeson=TwoVector_Deut::komegaT;
             break;
         case 1:
-            kmeson=TwoVector_Deut::krhoL;
+            kmeson=TwoVector_Deut::komegaL;
             break;
         default:
         ;
@@ -131,15 +131,18 @@ int main(int argc, char** argv) {
         //cout << "alpha_s " << alpha_s << endl;
         TwoVector_Deut gimme_xs(pGPDService, pGPDModel, pRunningAlphaStrongModule, wfname, pdfname, gpdmodel_id);
         //double xi=0.13;
-        for(int i=0;i<=10;i++){
+        for(int i=0;i<=18;i++){
         
             double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
             double result_L=0.,result_T=0.;
-                result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq);
-
- 
+            result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
+            result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
             cout << Qsq << " " << xi << " " << psq << " " << result_T << " " << result_L << endl;
-
+            vector<double> result(6,0.);
+            gimme_xs.getCross_twovector(result,1.,xi,Qsq,psq, gammaT? TwoVector_Deut::kgammaT : TwoVector_Deut::kgammaL, kmeson);
+ 
+            for(int i=0;i<6;i++) cout << result[i] << " ";
+            cout << endl;
         }
         // Remove pointer references
         // Module pointers are managed by PARTONS

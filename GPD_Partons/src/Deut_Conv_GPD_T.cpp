@@ -161,7 +161,7 @@ std::complex<double > Deut_Conv_GPD_T::test(double x, double xi, double t, int p
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                             *getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,0,gpd_nucl);
+                             *getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,1,gpd_nucl);
                 // cout << pold_out << " " << pold_in << " " << sigma2 << " " << sigma1in << " " << sigma1out << " " << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << 
                 // wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl) << " " <<  endl;
 
@@ -245,7 +245,7 @@ void Deut_Conv_GPD_T::int_k3(numint::vector_z & res, double alpha1, double kperp
                 // result+=wfin*conj(wfout)
                 //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,0,gpd_nucl);
+                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,1,gpd_nucl);
                 // cout << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in) << endl;
                 // cout << wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out) << endl;
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1) << " " << x_n << endl;
@@ -543,8 +543,8 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
     if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set||gridsize!=grid_size){
         if(grid!=NULL) delete [] grid;
         grid = new Deut_GPD_T_set[gridsize+1];
-        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/T.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".EBRL"+to_string(ERBL)+".model"+to_string(model)
-        +".siiize"+to_string(gridsize);
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/T.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".ERBL"+to_string(ERBL)+".model"+to_string(model)
+        +".size"+to_string(gridsize);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
             cout << "constructing chiral odd deuteron helamps grid " << filename << endl;
@@ -552,10 +552,10 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
 
             for(int i=0;i<=gridsize;i++){
                 double x=double(i)/gridsize*(ERBL? abs(xi): 1.)+(i==0? 1.E-04:0.);
-                vector< complex<double> > total = gpd_conv(xi,x,t, model,scale);
-                // vector< complex<double> > resultmin = gpd_conv(xi,-x,t,model, scale);
-                // vector< complex<double> > total(9,0.);
-                // for(int k=0; k<9; k++) total[k]=result[k]+resultmin[k];
+                vector< complex<double> > result = gpd_conv(xi,x,t, model,scale);
+                vector< complex<double> > resultmin = gpd_conv(xi,-x,t,model, scale);
+                vector< complex<double> > total(9,0.);
+                for(int k=0; k<9; k++) total[k]=result[k]+resultmin[k];
                grid[i]=Deut_GPD_T_set(total[0].real(),total[1].real(),total[2].real(),total[3].real(),
             total[4].real(),total[5].real(),total[6].real(),total[7].real(),total[8].real());
                 vector < complex<double> > gpds=helamps_to_gpds_T(xi,t,total);
