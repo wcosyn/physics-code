@@ -63,12 +63,13 @@ int main(int argc, char** argv) {
     TypeNames=initTypeNames();
     //cout << argv[1] << endl;
     GPD_model_type gpdmodel = TypeNames.at(argv[1]);
-    double Qsq = atof(argv[2]); // virtual photon scale squared [GeV^2]
-    int meson_type = atoi(argv[3]);
-    bool gammaT = atoi(argv[4]);
-    std::string wfname = argv[5];
-    std::string pdfname = argv[6];
-    double xi = atof(argv[7]);
+    int T_model = atoi(argv[2]); // gpd_T model (3 diff implementations of GK)
+    double Qsq = atof(argv[3]); // virtual photon scale squared [GeV^2]
+    int meson_type = atoi(argv[4]);
+    bool gammaT = atoi(argv[5]);
+    std::string wfname = argv[6];
+    std::string pdfname = argv[7];
+    double xi = atof(argv[8]);
 
     
     TwoVector_Deut::Omega_pol kmeson;
@@ -134,14 +135,11 @@ int main(int argc, char** argv) {
         for(int i=0;i<=18;i++){
         
             double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
-            double result_L=0.,result_T=0.;
-            result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
-            result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
-            cout << Qsq << " " << xi << " " << psq << " " << result_T << " " << result_L << endl;
             vector<double> result(6,0.);
-            gimme_xs.getCross_twovector(result,1.,xi,Qsq,psq, gammaT? TwoVector_Deut::kgammaT : TwoVector_Deut::kgammaL, kmeson);
+            gimme_xs.getCross_twovector(result,1.,xi,Qsq,psq, gammaT? TwoVector_Deut::kgammaT : TwoVector_Deut::kgammaL, kmeson, T_model);
  
-            for(int i=0;i<6;i++) cout << result[i] << " ";
+            cout << Qsq << " " << xi << " " << psq << " ";
+            for(int i=0;i<2;i++) cout << result[i] << " ";
             cout << endl;
         }
         // Remove pointer references

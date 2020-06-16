@@ -204,7 +204,7 @@ bool ERBL_set; ///< is the grid only ERBL or not
 Deut_GPD_T_set *grid;
 
 int grid_size;
-
+int model_set;
 };
 
 #endif 

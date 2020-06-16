@@ -19,6 +19,7 @@ chiralodd_grid(pdf_name){
     grid_set = false;
     ERBL_set = 0;
     grid_size=0;
+    model_set=0;
 
 }
 
@@ -417,7 +418,6 @@ vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const doubl
     F.scale=scale;
     F.gpd=this;
     F.model=model;
-
     numint::mdfunction<numint::vector_z,3> mdf;
     mdf.func = &Ftor_conv::exec;
     mdf.param = &F;
@@ -540,7 +540,7 @@ vector< complex<double> > Deut_Conv_GPD_T::lf_deut(const double Ek, const TVecto
 Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model,
             const int gridsize){
      //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
-    if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set||gridsize!=grid_size){
+    if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set||gridsize!=grid_size||model!=model_set){
         if(grid!=NULL) delete [] grid;
         grid = new Deut_GPD_T_set[gridsize+1];
         std::string filename = string(HOMEDIR)+"/gpd_deutgrids/T.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".ERBL"+to_string(ERBL)+".model"+to_string(model)
@@ -552,8 +552,9 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
 
             for(int i=0;i<=gridsize;i++){
                 double x=double(i)/gridsize*(ERBL? abs(xi): 1.)+(i==0? 1.E-04:0.);
-                vector< complex<double> > result = gpd_conv(xi,x,t, model,scale);
-                vector< complex<double> > resultmin = gpd_conv(xi,-x,t,model, scale);
+
+                vector< complex<double> > result = gpd_conv(xi,x,t,scale,model);
+                vector< complex<double> > resultmin = gpd_conv(xi,-x,t,scale, model);
                 vector< complex<double> > total(9,0.);
                 for(int k=0; k<9; k++) total[k]=result[k]+resultmin[k];
                grid[i]=Deut_GPD_T_set(total[0].real(),total[1].real(),total[2].real(),total[3].real(),
@@ -572,6 +573,7 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
             xi_grid=xi;
             ERBL_set=ERBL;
             grid_size = gridsize;
+            model_set=model;
         }
         else{
             cout << "Reading in deut T gpd grid " << filename << endl;
@@ -590,6 +592,7 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
             xi_grid=xi;
             ERBL_set=ERBL;
             grid_size = gridsize;
+            model_set=model;
         }
    }
    //interpolation
