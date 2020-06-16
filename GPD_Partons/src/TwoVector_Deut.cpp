@@ -25,20 +25,21 @@ void TwoVector_Deut::integrandum_omega_general(numint::vector_z & result, const 
     if(u==0||u==1||z==0||z==1) for(int i=0;i<2;i++) result[i]=0.;
     else{ 
         if(omegapol==TwoVector_Deut::komegaL){
-            result[0]= (twovector.deut_vector_grid.getDeut_GPD_V_set(-xi*(2.*u-1),xi,mandelstam_t,scale,1, 50).getAmp(helampindex)) 
-            *sqrt(2.);  //why sqrt 2??
+            //only gpd u but isoscalar so d is equal to it (taken care of at end)
+            result[0]= twovector.deut_vector_grid.getDeut_GPD_V_set(-xi*(2.*u-1),xi,mandelstam_t,scale,1, 50).getAmp(helampindex); 
             for(int i =1; i<2;i++) result[i] = result[0];
         }
         if(omegapol==TwoVector_Deut::komegaT){
-            result[0]= twovector.deut_tensor_grid.getDeut_GPD_T_set(-xi*(2.*u-1),xi,mandelstam_t, scale, 1,T_model,50).getAmp(helampindex)*sqrt(2.)*2.;  //check factors
+            //only gpd u but isoscalar so d is equal to it (taken care of at end); grid contains i\sigma^+R matrix elements
+            result[0]= twovector.deut_tensor_grid.getDeut_GPD_T_set(-xi*(2.*u-1),xi,mandelstam_t, scale, 1,T_model,50).getAmp(helampindex);
             for(int i =1; i<2;i++) result[i] = result[0];
         }
 
-        // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [6z*barz,6u*baru from 2 DA taken into account]
-        double integrand = (gamma == TwoVector_Deut::kgammaL?  36. //sqrt factor from helamps accounted for in prefactor 
+        // (Hq^u) * z^2 * barz^2 / u / baru * P [6z*barz,6u*baru from 2 DA taken into account]
+        double integrand = (gamma == TwoVector_Deut::kgammaL?  36. 
                     *z*z*(1.-z)*(1.-z)/u/(1.-u)
                         *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) )
-                        : 36.   //sqrt factor from helamps accounted for in prefactor 
+                        : 36.  
                     *(2.*z-1)*z*(1.-z)/u/(1.-u)
                         *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) ));
         for(int i=0;i<2;i++) result[i]*=integrand;                
@@ -56,7 +57,7 @@ void TwoVector_Deut::getCross_twovector(std::vector<double> & results, const dou
     double f_lowermeson =  0.;  // meson decay constant for meson originating from lower part of the graph
     int helampmax= 0;
     if (omegapol == TwoVector_Deut::komegaT) {
-        f_lowermeson=0.216;
+        f_lowermeson=0.160;
         helampmax=8;
     }
     if (omegapol == TwoVector_Deut::komegaL) {
@@ -114,8 +115,9 @@ void TwoVector_Deut::getCross_twovector(std::vector<double> & results, const dou
         }
     }
 
-    //[Gev-2 -> nb conversion] + 1/3 avg initial spin + factor 2 because omega is ~ [(u+d)/sqrt(2)]^2 = 2u for isoscalar
-    for(int index=0;index<2;index++) results[index]*=0.389379E06/3*2.; 
+    //[Gev-2 -> nb conversion] + 1/3 avg initial spin + factor 2 because omega is ~ [(u+d)/sqrt(2)]^2 = 2u^2 for isoscalar
+    //+ extra factor 1/2 from averaging over sin^2 theta in case of transverse vector meson (or from (RL+LR)/2 products)
+    for(int index=0;index<2;index++) results[index]*=0.389379E06/3*2./(omegapol==TwoVector_Deut::komegaT? 2.:1.); 
     return;
 
 }

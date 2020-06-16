@@ -36,7 +36,7 @@ GPD_V_Nucl_grid(PARTONS::GPDService *pGPDService, PARTONS::GPDModule *pGPDModel)
 
 
 /**
- * @brief Obtains the isoscalar chiral even nucleon gpds for a certain kinematics (interpolated from a grid)
+ * @brief Obtains the isoscalar [(u+d)/2 combination] chiral even nucleon gpds for a certain kinematics (interpolated from a grid)
  * 
  * @param x average lf momentum fraction quark
  * @param xi skewness nucleon

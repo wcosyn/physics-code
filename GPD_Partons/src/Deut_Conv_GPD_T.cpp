@@ -454,7 +454,7 @@ vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const doubl
         F.pold_in=i/3-1;
         F.pold_out=i%3-1;
         F.xi=xi;
-        F.right=1;
+        F.right=0;
         F.deltax=Delta_perp*1.E03; //[MeV]
 
         string stf="statefile";
@@ -556,7 +556,8 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
                 vector< complex<double> > result = gpd_conv(xi,x,t,scale,model);
                 vector< complex<double> > resultmin = gpd_conv(xi,-x,t,scale, model);
                 vector< complex<double> > total(9,0.);
-                for(int k=0; k<9; k++) total[k]=result[k]+resultmin[k];
+                //factor of 2 because gpd_conv calculates helicity amplitudes, which differ by i\sigma^+R matrix elements by a factor of 2!
+                for(int k=0; k<9; k++) total[k]=2.*(result[k]+resultmin[k]);
                grid[i]=Deut_GPD_T_set(total[0].real(),total[1].real(),total[2].real(),total[3].real(),
             total[4].real(),total[5].real(),total[6].real(),total[7].real(),total[8].real());
                 vector < complex<double> > gpds=helamps_to_gpds_T(xi,t,total);

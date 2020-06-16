@@ -76,7 +76,7 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
 
 /**
  * @brief Computes the deuteron helicity amplitudes with the convolution formula, 
- * careful there is a factor 1/2 to relate the helicity amplitude to the matrix element of the transverse correlator!
+ * careful there is a factor 1/2 (present in the integrand) to relate the helicity amplitude to the matrix element of the transverse correlator!
  * 
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction
@@ -104,7 +104,10 @@ Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t
 
 
 /**
- * @brief computes nucleon matrix elements through helicity amplitudes for tensor current.  Careful it outputs isoscalar (u+d)/2 or isovector (u-d)/2 combinations!!!
+ * @brief computes nucleon matrix elements through helicity amplitudes for tensor current.  2*A^q_{lambda',+,lambda,-} for right combination [Diehl (62) convention]
+ * Is equal to the matrix element of i\sigma^{+R} in standard GPD definition
+ * Careful it outputs isoscalar (u+d)/2 or isovector (u-d)/2 combinations!!!
+ * 
  * 
  * @param sigma_in polarization incoming nucleon (spin times 2!!)
  * @param sigma_out polarization outgoing nucleon (spin times 2!!)

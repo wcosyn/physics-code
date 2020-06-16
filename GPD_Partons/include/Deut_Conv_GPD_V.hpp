@@ -152,7 +152,9 @@ void setE(const bool E){incE=E;} ///< [1] include or [0] exclude isoscalar nucle
 std::vector<double> calc_NR_ffs(double t);
 
 /**
- * @brief computes nucleon matrix elements for chiral even vector GPDs
+ * @brief computes nucleon matrix elements for chiral even vector GPDs.  
+ * (\bar{u}(p') \gamma^+ u(p))/2P^+ etc for vector GPDs
+ * (\bar{u}(p') \gamma^+gamma^5 u(p))/2P^+ etc for axial GPDs  [Diehl conventions, but shouldn't matter]
  * 
  * @param sigma_in polarization incoming nucleon (spin times two!!)
  * @param sigma_out polarization outgoing nucleon (spin times two!!)
@@ -160,8 +162,8 @@ std::vector<double> calc_NR_ffs(double t);
  * @param t [MeV^2] momentum transfer sq.
  * @param t0 [MeV^2] minimum momentum transfer sq
  * @param phi [azimuthal angle \xiP+Delta fourvector]
- * @param gpd_H GPD H
- * @param gpd_E GPD E
+ * @param gpd_H GPD H or Htilde
+ * @param gpd_E GPD E or Etilde
  * @param [1] vector [0] axial GPDS
  * @return std::complex<double> nucleon helicity amplitude
  */

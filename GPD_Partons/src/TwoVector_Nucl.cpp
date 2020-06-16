@@ -55,14 +55,14 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
             complex<double> gpdfactor_H_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2-Hd-Hd2,0.,1)); 
             complex<double> gpdfactor_H_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2+Hd+Hd2,0.,1)); 
 
-            result[0]= gpdfactor_HE_iv;  //H+E isovector
-            result[1]= gpdfactor_H_iv;  //H isovector 
-            result[3]= gpdfactor_HE_iv;  //H+E isovector 
-            result[4]= gpdfactor_H_iv;  //H isovector 
-            result[6]= gpdfactor_HE_is;  //H+E isoscalar 
-            result[7]= gpdfactor_H_is;  //H isoscalar 
-            result[9]= gpdfactor_HE_is;  //H+E isoscalar 
-            result[10]= gpdfactor_H_is;  //H  isooscalar
+            result[0]= gpdfactor_HE_iv;  //H+E^- isovector u-d
+            result[1]= gpdfactor_H_iv;  //H^- isovector u-d
+            result[3]= gpdfactor_HE_iv;  //H+E^- isovector u-d 
+            result[4]= gpdfactor_H_iv;  //H^- isovector u-d
+            result[6]= gpdfactor_HE_is;  //H+E^- isoscalar u+d
+            result[7]= gpdfactor_H_is;  //H^- isoscalar u+d
+            result[9]= gpdfactor_HE_is;  //H+E^- isoscalar u+d
+            result[10]= gpdfactor_H_is;  //H ^- isooscalar u+d
         }
         if(rhopol==TwoVector_Nucl::kaxial){
             PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
@@ -90,16 +90,17 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
             complex<double> gpdfactor_HtEt_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2-Hd-Hd2,Eu+Eu2-Ed-Ed2,0)); 
             complex<double> gpdfactor_Ht_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2-Hd-Hd2,0.,0)); 
         
-            result[0]= gpdfactor_HtEt_iv;  //H+E isovector
-            result[1]= gpdfactor_Ht_iv;  //H isovector 
-            result[3]= gpdfactor_HtEt_iv;  //H+E isovector 
-            result[4]= gpdfactor_Ht_iv;  //H isovector 
+            result[0]= gpdfactor_HtEt_iv;  //H+E^+ isovector u-d
+            result[1]= gpdfactor_Ht_iv;  //H^+ isovector u-d
+            result[3]= gpdfactor_HtEt_iv;  //H+E^+ isovector u-d
+            result[4]= gpdfactor_Ht_iv;  //H^+ isovector u-d
         }
         if(rhopol==TwoVector_Nucl::krhoT){
             TransGPD_set gpds = twovector.gpdTgrid.getTransGPDSet(xi*(2.*u-1),xi,mandelstam_t*1.E06, scale);
             // Hard part selects symmetric part in x!  (C^- for rho/omega; C^+ for pi )
             TransGPD_set gpds2 = twovector.gpdTgrid.getTransGPDSet(-xi*(2.*u-1),xi,mandelstam_t*1.E06, scale);
             //factor of 2 because of (u+/-d)/2 in helicity amplitudes!
+            //output i\sigma^+R matrix elements
             complex<double> gpd_model0_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,0,1,0,gpds+gpds2)*2.;
             complex<double> gpd_model1_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,1,1,0,gpds+gpds2)*2.;
             complex<double> gpd_model2_iv = Deut_Conv_GPD_T::getGPD_odd_nucl(spinin,spinout,xi,mandelstam_t*1.06,mandelstam_t*1.06,0.,2,1,0,gpds+gpds2)*2.;
@@ -147,7 +148,7 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
 
     double f_lowermeson =  0.;  // meson decay constant for meson originating from lower part of the graph
     if (rhopol == TwoVector_Nucl::krhoT) f_lowermeson=0.160;
-    if (rhopol == TwoVector_Nucl::krhoL) f_lowermeson=0.198;
+    if (rhopol == TwoVector_Nucl::krhoL) f_lowermeson=0.216;
     if (rhopol == TwoVector_Nucl::kaxial) f_lowermeson=0.130;
     double frho0 = 0.216; //rho0 decay constant [GeV]
     double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
@@ -199,7 +200,7 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
     }
 
     //[Gev-2 -> nb conversion] + avg initial spin + extra factor of 1/2 for omega/rho0 wf (u+/-d)/sqrt(2) 
-    //+ extra factor 1/2 from averaging over sin^2 theta in case of transverse vector meson
+    //+ extra factor 1/2 from averaging over sin^2 theta in case of transverse vector meson (or from (RL+LR)/2 products)
     for(int index=0;index<12;index++) results[index]*=0.389379E06/4./(rhopol==TwoVector_Nucl::krhoT? 2.:1.); 
     return;
 
