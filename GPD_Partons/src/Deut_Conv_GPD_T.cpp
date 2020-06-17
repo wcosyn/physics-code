@@ -547,7 +547,7 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
         +".size"+to_string(gridsize);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
-            cout << "constructing chiral odd deuteron helamps grid " << filename << endl;
+            //cout << "constructing chiral odd deuteron helamps grid " << filename << endl;
             ofstream outfile(filename.c_str());
 
             for(int i=0;i<=gridsize;i++){
@@ -568,7 +568,7 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
             }
             outfile.close();
             
-            cout << "construction done" << endl;
+            //cout << "construction done" << endl;
             grid_set=true;
             t_grid=t;
             xi_grid=xi;
@@ -577,7 +577,7 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
             model_set=model;
         }
         else{
-            cout << "Reading in deut T gpd grid " << filename << endl;
+            //cout << "Reading in deut T gpd grid " << filename << endl;
             string line;
             for(int i=0;i<=gridsize;i++){
                 getline (infile,line);

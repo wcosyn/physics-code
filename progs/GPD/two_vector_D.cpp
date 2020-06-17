@@ -132,16 +132,47 @@ int main(int argc, char** argv) {
         //cout << "alpha_s " << alpha_s << endl;
         TwoVector_Deut gimme_xs(pGPDService, pGPDModel, pRunningAlphaStrongModule, wfname, pdfname, gpdmodel_id);
         //double xi=0.13;
-        for(int i=0;i<=18;i++){
+        // for(int i=0;i<=18;i++){
         
-            double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
-            vector<double> result(6,0.);
-            gimme_xs.getCross_twovector(result,1.,xi,Qsq,psq, gammaT? TwoVector_Deut::kgammaT : TwoVector_Deut::kgammaL, kmeson, T_model);
+        //     double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
+        //     vector<double> result(6,0.);
+        //     gimme_xs.getCross_twovector(result,1.,xi,Qsq,psq, gammaT? TwoVector_Deut::kgammaT : TwoVector_Deut::kgammaL, kmeson, T_model);
  
-            cout << Qsq << " " << xi << " " << psq << " ";
-            for(int i=0;i<2;i++) cout << result[i] << " ";
-            cout << endl;
+        //     cout << Qsq << " " << xi << " " << psq << " ";
+        //     for(int i=0;i<2;i++) cout << result[i] << " ";
+        //     cout << endl;
+        // }
+
+        //xi dependence, model comparisons
+        for(int j=0;j<=20;j++){
+            double xxi=0.05+0.01*j;
+            for(int i=0;i<=0;i++){
+            
+                double psq = 2.+i*4; //pomeron scale squared [GeV^2]
+                cout << Qsq << " " << xxi << " " << psq << " "; 
+                // double result_L=0.,result_T=0.;
+                // if(meson_type){
+                //     result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
+                //     result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
+                // }
+                // else{
+                //     result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq,1);
+                //     result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq,1);
+                // }
+                // cout << result_T << " " << result_L << endl;
+
+
+                vector< double > results(2,0.);
+                gimme_xs.getCross_twovector(results, 1.,xxi,Qsq,psq, gammaT? TwoVector_Deut::kgammaT : TwoVector_Deut::kgammaL, kmeson,T_model);
+                for(int index=0;index<2;index++) cout << results[index] << " ";
+                cout << endl;
+            }
+            //cout << endl << endl;
         }
+
+
+
+
         // Remove pointer references
         // Module pointers are managed by PARTONS
         PARTONS::Partons::getInstance()->getModuleObjectFactory()->updateModulePointerReference(
