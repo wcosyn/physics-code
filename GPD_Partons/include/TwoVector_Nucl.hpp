@@ -64,7 +64,7 @@ TwoVector_Nucl(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, 
 
 
 /**
- * @brief calculate the Cross section for two vector polarization, general function, pass
+ * @brief calculate the photoproduction Cross section for two vector polarization, general function, pass
  * 
  * @param[out] [nb/GeV^4] results various cross section calculations <<ADD indices>>
  * @param scale [GeV^2] factorization and renorm scale
@@ -78,6 +78,20 @@ TwoVector_Nucl(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, 
 void getCross_twovector(std::vector<double> & results, const double scale, const double xi, const double Q2, const double psq, 
                           TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol);
 
+/**
+ * @brief calculate the electroproduction Cross section for two vector polarization, general function, pass
+ * 
+ * @param[out] [nb/GeV^4] results various cross section calculations <<ADD indices>>
+ * @param ph [GeV] hadron beam momentum -> collider
+ * @param pe [GeV] electron beam momentum -> collider
+ * @param scale [GeV^2] factorization and renorm scale
+ * @param xi [] skewness
+ * @param rhopol [krhoT] Transverse [krhoL] Longitudinal
+ * @
+ * 
+ */
+void getElectro_Cross_twovector(std::vector<double> & results, const double ph, const double pe, const double scale, const double xi, const double psq, 
+                          TwoVector_Nucl::Rho_pol rhopol);
 
 
 private:

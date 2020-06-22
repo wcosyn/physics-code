@@ -146,10 +146,10 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
                           TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol){
 
 
-    double f_lowermeson =  0.;  // meson decay constant for meson originating from lower part of the graph
-    if (rhopol == TwoVector_Nucl::krhoT) f_lowermeson=0.160;
-    if (rhopol == TwoVector_Nucl::krhoL) f_lowermeson=0.216;
-    if (rhopol == TwoVector_Nucl::kaxial) f_lowermeson=0.130;
+    double f_lowermeson_iv =  0., f_lowermeson_is = 0.;  // meson decay constant for meson originating from lower part of the graph
+    if (rhopol == TwoVector_Nucl::krhoT) { f_lowermeson_iv=f_lowermeson_is=0.160; }
+    if (rhopol == TwoVector_Nucl::krhoL) {f_lowermeson_iv=0.216; f_lowermeson_is=0.197;}
+    if (rhopol == TwoVector_Nucl::kaxial) f_lowermeson_iv=0.130;
     double frho0 = 0.216; //rho0 decay constant [GeV]
     double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
     int Nc=3; //number of colors
@@ -191,7 +191,7 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
             
                 //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
                 // sqrt(1-xi^2) compensated  in the helicity amplitudes
-                integral[index] *= 16.*PI*PI*alpha_s*f_lowermeson*xi*sqrt(1-xi*xi)*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
+                integral[index] *= 16.*PI*PI*alpha_s*(index<6 ? f_lowermeson_iv : f_lowermeson_is)*xi*sqrt(1-xi*xi)*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
                 if(gammapol==TwoVector_Nucl::kgammaL) integral[index] *= -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI);; //prefactors Eq (17) Enberg et al.
                 if(gammapol==TwoVector_Nucl::kgammaT) integral[index] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
                 results[index]+=norm(integral[index])/256./pow(PI,3.)/xi/(1+xi); // Enberg et al Eq (12), corrected phase space factor!
@@ -203,5 +203,30 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
     //+ extra factor 1/2 from averaging over sin^2 theta in case of transverse vector meson (or from (RL+LR)/2 products)
     for(int index=0;index<12;index++) results[index]*=0.389379E06/4./(rhopol==TwoVector_Nucl::krhoT? 2.:1.); 
     return;
+
+}
+
+void TwoVector_Nucl::getElectro_Cross_twovector(std::vector<double> & results, const double ph, const double pe, const double scale, const double xi, 
+                    const double psq, TwoVector_Nucl::Rho_pol rhopol){
+    
+    double s2 = (1-xi)/2./xi*psq;
+    double me = 0.511E-03;  //electron mass [GeV]
+    for(int i=1; i<=10; i++){
+        double y = i==0? 1.E-03:  i/10.*1.;
+        double epsilon = (1-y)/(1-y+y*y/2.);
+        double s = ph*y*2*pe; ///GeV^2
+        for(int j=0; j<=10; j++){
+            double Q2=pow(10.,-1.-j/10.*5.);
+            vector< double > resultsL(12,0.), resultsT(12,0.), results_total(12,0.);
+            getCross_twovector(resultsL, 1.,xi,Q2,psq, TwoVector_Nucl::kgammaL, rhopol);
+            getCross_twovector(resultsT, 1.,xi,Q2,psq, TwoVector_Nucl::kgammaT, rhopol);
+            for(int kk=0;kk<12;kk++) results_total[kk]=(resultsT[kk] + epsilon*resultsL[kk])*(ALPHA/2/PI/y*(1.-y+y*y*(1-me*me/Q2)));
+            cout << y << " " << Q2 << " "<< log10(Q2) << " " << s2/s << " " << epsilon << " " << 1./y*(1.-y+y*y*(1-me*me/Q2))) << " ";
+            for(int kk=0;kk<12;kk++) cout << resultsT[kk] << " " << resultsL[kk] << " " << resultsT[kk] << " ";
+            cout << endl; 
+        }
+
+    }
+
 
 }

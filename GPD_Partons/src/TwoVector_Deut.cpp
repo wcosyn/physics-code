@@ -61,7 +61,7 @@ void TwoVector_Deut::getCross_twovector(std::vector<double> & results, const dou
         helampmax=8;
     }
     if (omegapol == TwoVector_Deut::komegaL) {
-        f_lowermeson=0.216;
+        f_lowermeson=0.197;
         helampmax=4;
     }
     double frho0 = 0.216; //rho0 decay constant [GeV]
