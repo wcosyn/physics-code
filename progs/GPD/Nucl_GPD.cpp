@@ -4,7 +4,7 @@
 #include <partons/services/automation/AutomationService.h>
 #include <partons/modules/running_alpha_strong/RunningAlphaStrongStandard.h>
 #include <partons/ServiceObjectRegistry.h>
-#include <QtCore/qcoreapplication.h>
+// #include <QtCore/qcoreapplication.h>
 #include <string>
 #include <vector>
 
@@ -97,8 +97,8 @@ int main(int argc, char** argv) {
             cout << xi << " " << mandelstam_t << " ";
             PARTONS::GPDKinematic gpdKinematic(x,xi,mandelstam_t, scale*scale, scale*scale);
             PARTONS::GPDKinematic gpdKinematic_min(-x,xi,mandelstam_t, scale*scale, scale*scale);
-            PARTONS::GPDResult gpdResult_GK16 = pGPDService->computeGPDModel(gpdKinematic,pGK16);
-            PARTONS::GPDResult gpdResult_min_GK16 = pGPDService->computeGPDModel(gpdKinematic_min,pGK16);
+            PARTONS::GPDResult gpdResult_GK16 = pGPDService->computeSingleKinematic(gpdKinematic,pGK16);
+            PARTONS::GPDResult gpdResult_min_GK16 = pGPDService->computeSingleKinematic(gpdKinematic_min,pGK16);
             double Etu_GK16 = gpdResult_GK16.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()+
                         gpdResult_min_GK16.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
             double Etd_GK16 = gpdResult_GK16.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution()+
@@ -119,12 +119,12 @@ int main(int argc, char** argv) {
                 PARTONS::GPDKinematic gpdKinematic(x,xi,mandelstam_t, scale*scale, scale*scale);
                 PARTONS::GPDKinematic gpdKinematic_min(-x,xi,mandelstam_t, scale*scale, scale*scale);
 
-                PARTONS::GPDResult gpdResult_GK16 = pGPDService->computeGPDModel(gpdKinematic,pGK16);
-                PARTONS::GPDResult gpdResult_min_GK16 = pGPDService->computeGPDModel(gpdKinematic_min,pGK16);
-                PARTONS::GPDResult gpdResult_MMS13 = pGPDService->computeGPDModel(gpdKinematic,pMMS13);
-                PARTONS::GPDResult gpdResult_min_MMS13 = pGPDService->computeGPDModel(gpdKinematic_min,pMMS13);
-                PARTONS::GPDResult gpdResult_VGG99 = pGPDService->computeGPDModel(gpdKinematic,pVGG99);
-                PARTONS::GPDResult gpdResult_min_VGG99 = pGPDService->computeGPDModel(gpdKinematic_min,pVGG99);
+                PARTONS::GPDResult gpdResult_GK16 = pGPDService->computeSingleKinematic(gpdKinematic,pGK16);
+                PARTONS::GPDResult gpdResult_min_GK16 = pGPDService->computeSingleKinematic(gpdKinematic_min,pGK16);
+                PARTONS::GPDResult gpdResult_MMS13 = pGPDService->computeSingleKinematic(gpdKinematic,pMMS13);
+                PARTONS::GPDResult gpdResult_min_MMS13 = pGPDService->computeSingleKinematic(gpdKinematic_min,pMMS13);
+                PARTONS::GPDResult gpdResult_VGG99 = pGPDService->computeSingleKinematic(gpdKinematic,pVGG99);
+                PARTONS::GPDResult gpdResult_min_VGG99 = pGPDService->computeSingleKinematic(gpdKinematic_min,pVGG99);
 
                 GPD_T_Nucl_grid gpdTgrid("MSTW");
                 TransGPD_set gpdT = gpdTgrid.getGK_param(x,xi,mandelstam_t*1.E06, scale);

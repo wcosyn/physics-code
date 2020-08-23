@@ -20,7 +20,7 @@ using namespace std;
 #include <partons/services/automation/AutomationService.h>
 #include <partons/modules/running_alpha_strong/RunningAlphaStrongStandard.h>
 #include <partons/ServiceObjectRegistry.h>
-#include <QtCore/qcoreapplication.h>
+//// #include <QtCore/qcoreapplication.h>
 #include <string>
 
 
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]){
         //     for(int j=0;j<=100;j++){
         //         PARTONS::GPDKinematic gpdKinematic(0.01*(i-100)+(i==100? 1.E-04:0),0.01*(j),t, 1., 1.);
         //         //PARTONS::GPDKinematic gpdKinematic(0.1, 0.2, -0.1, 1., 1.);
-        //         PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,
+        //         PARTONS::GPDResult gpdResult = pGPDService->computeSingleKinematic(gpdKinematic,
         //                 pGPDModel);
         //         double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
         //             +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
