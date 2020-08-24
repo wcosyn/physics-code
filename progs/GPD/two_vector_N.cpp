@@ -165,7 +165,7 @@ int main(int argc, char** argv) {
 
 
         //         vector< double > results(12,0.);
-        //         gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, kmeson);
+        //         gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, kmeson, 1E04);
         //         for(int index=0;index<12;index++) cout << results[index] << " ";
         //         cout << endl;
         //     }
@@ -192,7 +192,7 @@ int main(int argc, char** argv) {
 
 
             vector< double > results(12,0.);
-            gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, kmeson);
+            gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, kmeson, 1E04);
             for(int index=0;index<12;index++) cout << results[index] << " ";
             cout << endl;
         }

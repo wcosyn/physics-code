@@ -64,8 +64,6 @@ int main(int argc, char** argv) {
     //cout << argv[1] << endl;
     GPD_model_type gpdmodel = TypeNames.at(argv[1]);
     int meson_type = atoi(argv[2]);
-    double ph = atof(argv[3]); /// hadron beam [GeV]
-    double pe = atof(argv[4]); /// electron beam [GeV]
     TwoVector_Nucl::Rho_pol kmeson;
     switch(meson_type){
         case 0:
@@ -123,9 +121,37 @@ int main(int argc, char** argv) {
         //cout << "alpha_s " << alpha_s << endl;
         TwoVector_Nucl gimme_xs(pGPDService, pGPDModel, pRunningAlphaStrongModule);
 
-        vector< double > results(12,0.);
-        gimme_xs.getElectro_Cross_twovector(results, ph,pe,1.,0.15,4., kmeson);
-        //for(int index=0;index<12;index++) cout << results[index] << " ";
+        double masse2=pow(511.E-06,2.);
+        double Q2max=atof(argv[3]);
+        double sum=0.;
+        for(int i=100;i<1000;i++){
+            double y=i/1000.;
+            sum+=ALPHA/2./PI*(2.*masse2*y*(1./Q2max-(1-y)/masse2/y/y)+(((1-y)*(1-y)+1)*log(Q2max*(1-y)/masse2/y/y)/y));
+        }
+        cout << sum*1.04692/2./1000. << endl;
+        exit(1);
+
+
+        vector< double > resultsL(12,0.), resultsT(12,0.), results_total(12,0.);
+        double xi=0.15;
+        double psq=4.;
+        for(int j=-24; j<=-23; j++){
+            double Q2=pow(10.,j/20.*5.+0.125);
+            gimme_xs.getCross_twovector(resultsL, 1.,xi,Q2,psq, TwoVector_Nucl::kgammaL, TwoVector_Nucl::krhoL, 2E05);
+            gimme_xs.getCross_twovector(resultsT, 1.,xi,Q2,psq, TwoVector_Nucl::kgammaT, TwoVector_Nucl::krhoL, 1E04);
+            cout << Q2 << " " << resultsL[0] << " " << resultsT[0] << endl;
+            // for(int i=0;i<20;i++){
+            //     double y = 0.1+0.9/20.*i;
+            //     gimme_xs.getElectro_Cross_twovector(results_total, resultsL, resultsT, y,Q2);
+            //     cout << Q2 << " " << y << " ";
+            //     for(int kk=0;kk<12;kk++){
+            //         cout << results_total[kk] << " " << resultsL[kk] << " " << resultsT[kk] << " ";
+            //     }
+            //     cout << endl;
+            // }
+        }
+        // cout << endl << endl;
+        // for(int index=0;index<12;index++) cout << results[index] << " ";
  
 
 

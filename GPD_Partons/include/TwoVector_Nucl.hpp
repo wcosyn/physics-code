@@ -72,26 +72,26 @@ TwoVector_Nucl(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, 
  * @param Q2 [GeV^2] incoming virtual photon 4mom sq.
  * @param gammapol [kgammaT] gamma_transverse [kgammaL] gamma_longitudinal
  * @param rhopol [krhoT] Transverse [krhoL] Longitudinal
+ * @param max_integrationsteps number of integration steps in du,dz integral.  1E04 is good value above Q^2=.01, below take 2E05
  * @
  * 
  */
 void getCross_twovector(std::vector<double> & results, const double scale, const double xi, const double Q2, const double psq, 
-                          TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol);
+                          TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol, const int max_integrationsteps);
 
 /**
  * @brief calculate the electroproduction Cross section for two vector polarization, general function, pass
  * 
- * @param[out] [nb/GeV^4] results various cross section calculations <<ADD indices>>
- * @param ph [GeV] hadron beam momentum -> collider
- * @param pe [GeV] electron beam momentum -> collider
- * @param scale [GeV^2] factorization and renorm scale
- * @param xi [] skewness
- * @param rhopol [krhoT] Transverse [krhoL] Longitudinal
- * @
+ * @param[out] results_total [nb/GeV^4] results various electroproduction cross section calculations <<ADD indices>>
+ * @param[in] resultsL [nb/GeV^4] results various gammaL cross section calculations <<ADD indices>>
+ * @param[in] resultsT [nb/GeV^4] results various gammaT cross section calculations <<ADD indices>>
+ * @param y [] fractional energy loss of scattered electron
+ * @param Q2 [GeV^2] Qsquared
+ * 
  * 
  */
-void getElectro_Cross_twovector(std::vector<double> & results, const double ph, const double pe, const double scale, const double xi, const double psq, 
-                          TwoVector_Nucl::Rho_pol rhopol);
+void getElectro_Cross_twovector(std::vector<double> & results_total, std::vector<double> & resultsL, std::vector<double> & resultsT,
+                        const double y, const double Q2);
 
 
 private:

@@ -122,13 +122,14 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
 
         }
 
-        // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [6z*barz,6u*baru from 2 DA taken into account]
+        // 36 * helicityamp * z^2 * barz^2 / u / baru * P [6z*barz,6u*baru from 2 DA taken into account]
+        double mq_sq = 0.;//25.E-06;
         double integrand = (gamma == TwoVector_Nucl::kgammaL?  36./sqrt(1-xi*xi) //sqrt factor from helamps accounted for in prefactor 
                     *z*z*(1.-z)*(1.-z)/u/(1.-u)
-                        *(1./(z*z*psq+Qsq*z*(1.-z)) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) )
+                        *(1./(z*z*psq+Qsq*z*(1.-z)+mq_sq) + 1./((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)+mq_sq) - 1./((u-z)*(u-z)*psq+Qsq*z*(1.-z)+mq_sq) - 1./((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)+mq_sq) )
                         : 36./sqrt(1-xi*xi)   //sqrt factor from helamps accounted for in prefactor 
                     *(2.*z-1)*z*(1.-z)/u/(1.-u)
-                        *(z/(z*z*psq+Qsq*z*(1.-z)) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)) ));
+                        *(z/(z*z*psq+Qsq*z*(1.-z)+mq_sq) - (1.-z)/((1.-z)*(1.-z)*psq+Qsq*z*(1.-z)+mq_sq) + (u-z)/((u-z)*(u-z)*psq+Qsq*z*(1.-z)+mq_sq) - (u-1+z)/((u-1.+z)*(u-1.+z)*psq+Qsq*z*(1.-z)+mq_sq) ));
         for(int i=0;i<12;i++) result[i]*=integrand;                
         for(int i=0;i<3;i++){
             result[3+i]*=64./PI/PI/36./sqrt(z*(1-z)*u*(1-u));  //AdS DA
@@ -143,7 +144,7 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
 
 
 void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const double scale, const double xi, const double Q2, const double psq, 
-                          TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol){
+                          TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol, const int maxintsteps){
 
 
     double f_lowermeson_iv =  0., f_lowermeson_is = 0.;  // meson decay constant for meson originating from lower part of the graph
@@ -185,7 +186,7 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
             F.spinin=spinin;
 
             std::vector<complex<double> > integral(12,0.); //integrandum result array
-            numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,1E04,integral,count,0);
+            numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,maxintsteps,integral,count,0);
             for(int index=0;index<12;index++){
                 //cout << spinin << " " << spinout << " " << integral[index] << endl;
             
@@ -206,27 +207,13 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
 
 }
 
-void TwoVector_Nucl::getElectro_Cross_twovector(std::vector<double> & results, const double ph, const double pe, const double scale, const double xi, 
-                    const double psq, TwoVector_Nucl::Rho_pol rhopol){
+void TwoVector_Nucl::getElectro_Cross_twovector(std::vector<double> & results, std::vector<double> & resultsL, std::vector<double> & resultsT, 
+                const double y, const double Q2){
     
-    double s2 = (1-xi)/2./xi*psq;
-    double me = 0.511E-03;  //electron mass [GeV]
-    for(int i=1; i<=10; i++){
-        double y = i==0? 1.E-03:  i/10.*1.;
-        double epsilon = (1-y)/(1-y+y*y/2.);
-        double s = ph*y*2*pe; ///GeV^2
-        for(int j=0; j<=10; j++){
-            double Q2=pow(10.,-1.-j/10.*5.);
-            vector< double > resultsL(12,0.), resultsT(12,0.), results_total(12,0.);
-            getCross_twovector(resultsL, 1.,xi,Q2,psq, TwoVector_Nucl::kgammaL, rhopol);
-            getCross_twovector(resultsT, 1.,xi,Q2,psq, TwoVector_Nucl::kgammaT, rhopol);
-            for(int kk=0;kk<12;kk++) results_total[kk]=(resultsT[kk] + epsilon*resultsL[kk])*(ALPHA/2/PI/y*(1.-y+y*y*(1-me*me/Q2)));
-            cout << y << " " << Q2 << " "<< log10(Q2) << " " << s2/s << " " << epsilon << " " << 1./y*(1.-y+y*y*(1-me*me/Q2))) << " ";
-            for(int kk=0;kk<12;kk++) cout << resultsT[kk] << " " << resultsL[kk] << " " << resultsT[kk] << " ";
-            cout << endl; 
-        }
-
-    }
-
-
+    results= vector<double> (12,0.);
+    
+        
+    double epsilon = (1-y)/(1-y+y*y/2.);
+    for(int kk=0;kk<12;kk++) results[kk] = (resultsL[kk]+epsilon/2.*resultsT[kk])*ALPHA/2./PI*y/Q2/(1-epsilon);
+    
 }
