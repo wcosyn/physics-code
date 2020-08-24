@@ -4,7 +4,7 @@
 #include <partons/services/automation/AutomationService.h>
 #include <partons/modules/running_alpha_strong/RunningAlphaStrongStandard.h>
 #include <partons/ServiceObjectRegistry.h>
-#include <QtCore/qcoreapplication.h>
+// #include <QtCore/qcoreapplication.h>
 #include <string>
 #include <vector>
 

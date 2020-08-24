@@ -25,7 +25,7 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
             for(int j=0;j<=100;j++){
                 double x = 0.01*(i-100)+(i==100?1.E-04:0.);
                 PARTONS::GPDKinematic gpdKinematic(x,0.01*(j)+(j==0?1.E-04:0.),t*1.E-06, scale*scale, scale*scale);
-                PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,
+                PARTONS::GPDResult gpdResult = pGPDService->computeSingleKinematic(gpdKinematic,
                     pGPDModel);
                 double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
                     +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());

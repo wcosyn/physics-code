@@ -159,10 +159,10 @@ add_subdirectory(DIS)
 
 if(PARTONS_ENABLED)
   # find libraries: Qt4
-  find_package(Qt4 REQUIRED QtCore QtSql)
+  find_package(Qt5 COMPONENTS Core Sql XmlPatterns REQUIRED)
 
   # add some useful macros and variables
-  include(${QT_USE_FILE})
+  
   add_definitions(${QT_DEFINITIONS})
 
   # find libraries: additional modules

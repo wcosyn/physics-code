@@ -30,7 +30,7 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
         if(rhopol==TwoVector_Nucl::krhoL){
             PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
 
-            PARTONS::GPDResult gpdResult = twovector.pGPDService->computeGPDModel(gpdKinematic,
+            PARTONS::GPDResult gpdResult = twovector.pGPDService->computeSingleKinematic(gpdKinematic,
                 twovector.pGPDModel);
 
             double Hu = gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
@@ -41,7 +41,7 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
             // Hard part selects symmetric part in x!  (C^- for rho/omega; C^+ for pi )
             PARTONS::GPDKinematic gpdKinematic2(-xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
 
-            PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeGPDModel(gpdKinematic2,
+            PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeSingleKinematic(gpdKinematic2,
                 twovector.pGPDModel);
 
             double Hu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
@@ -67,7 +67,7 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
         if(rhopol==TwoVector_Nucl::kaxial){
             PARTONS::GPDKinematic gpdKinematic(xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
 
-            PARTONS::GPDResult gpdResult = twovector.pGPDService->computeGPDModel(gpdKinematic,
+            PARTONS::GPDResult gpdResult = twovector.pGPDService->computeSingleKinematic(gpdKinematic,
                 twovector.pGPDModel);
 
             double Hu = gpdResult.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
@@ -78,7 +78,7 @@ void TwoVector_Nucl::integrandum_rho_general(numint::vector_z & result, double u
             // Hard part selects symmetric part in x!  (C^- for rho/omega; C^+ for pi )
             PARTONS::GPDKinematic gpdKinematic2(-xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
 
-            PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeGPDModel(gpdKinematic2,
+            PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeSingleKinematic(gpdKinematic2,
                 twovector.pGPDModel);
 
             double Hu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();

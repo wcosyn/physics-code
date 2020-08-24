@@ -4,7 +4,7 @@
 #include <partons/services/automation/AutomationService.h>
 #include <partons/modules/running_alpha_strong/RunningAlphaStrongStandard.h>
 #include <partons/ServiceObjectRegistry.h>
-#include <QtCore/qcoreapplication.h>
+// #include <QtCore/qcoreapplication.h>
 #include <string>
 #include <vector>
 
@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
         //     double x=i*0.01;
         //     PARTONS::GPDKinematic gpdKinematic(x,xi,mandelstam_t, scale*scale, scale*scale);
 
-        //     PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,pGPDModel);
+        //     PARTONS::GPDResult gpdResult = pGPDService->computeSingleKinematic(gpdKinematic,pGPDModel);
         // // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
         //     cout << x << " " << xi << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
         //     << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() <<

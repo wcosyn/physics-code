@@ -22,7 +22,7 @@
        REAL,ALLOCATABLE    ::  wavef(:)
 
        PUBLIC readwave,getwave,getwave_s,getwave_d,mbjreset
-       character(kind=C_CHAR), bind(C, name="he3filename"):: datname*256
+       character(kind=C_CHAR), bind(C, name="he3filename"):: datname
        PUBLIC :: datname
 
       CONTAINS

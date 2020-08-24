@@ -233,7 +233,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
     // wf_out_D=lf_deut(Ekprime,k_out,wf_out_D);
 
     // PARTONS::GPDKinematic gpdKinematic(x_n,abs(xi_n),t, 1., 1.);
-    // PARTONS::GPDResult gpdResult = gpd.pGPDService->computeGPDModel(gpdKinematic,
+    // PARTONS::GPDResult gpdResult = gpd.pGPDService->computeSingleKinematic(gpdKinematic,
     //         gpd.pGPDModel);
     // double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
     //     +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
