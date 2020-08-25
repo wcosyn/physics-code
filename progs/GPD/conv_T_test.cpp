@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
     // }
     // exit(1);
 
-        test.getDeut_GPD_T_set(0.,xi,t,scale,ERBL,model).getAmp_00();
+        test.getDeut_GPD_T_set(0.,xi,t,scale,ERBL,model,50).getAmp_00();
 
     // for(int i=-99;i<=99;i++){
     //     double x=i*0.01;

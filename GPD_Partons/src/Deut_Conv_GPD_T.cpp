@@ -15,11 +15,17 @@ chiralodd_grid(pdf_name){
         wf.AddUp(i,wfref->GetUp(i));
         wf.AddWp(i,wfref->GetWp(i));
     }
+    grid = NULL;
+    grid_set = false;
+    ERBL_set = 0;
+    grid_size=0;
+    model_set=0;
 
 }
 
 Deut_Conv_GPD_T::~Deut_Conv_GPD_T(){
       delete wfref;
+      if(grid != NULL) delete [] grid;
 }
 
 
@@ -156,7 +162,7 @@ std::complex<double > Deut_Conv_GPD_T::test(double x, double xi, double t, int p
         for(int sigma1in=-1; sigma1in<=1; sigma1in+=2){
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                             *getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+                             *getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,1,gpd_nucl);
                 // cout << pold_out << " " << pold_in << " " << sigma2 << " " << sigma1in << " " << sigma1out << " " << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << 
                 // wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl) << " " <<  endl;
 
@@ -240,7 +246,7 @@ void Deut_Conv_GPD_T::int_k3(numint::vector_z & res, double alpha1, double kperp
                 // result+=wfin*conj(wfout)
                 //             *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,1,gpd_nucl);
                 // cout << wf_in.at((sigma1in+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_in, sigma2, sigma1in, k_in) << endl;
                 // cout << wf_out.at((sigma1out+1)/2+(sigma2+1)) << " " << gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out) << endl;
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0,phin,model,1) << " " << x_n << endl;
@@ -329,7 +335,7 @@ void Deut_Conv_GPD_T::int_kprime3(numint::vector_z & res, double alphaprime, dou
             for(int sigma1out=-1; sigma1out<=1; sigma1out+=2){
                 //complex<double> wfout=gpd.getWf()->DeuteronPState(2*pold_out, sigma2, sigma1out, k_out);
                 result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
-                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,gpd_nucl);
+                            *gpd.getGPD_odd_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,model,right,1,gpd_nucl);
 
                 // cout << wfin << " " << wfout << " " << gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1) << " " << x_n << endl;
                 // cout << "N conj" << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_odd_nucl(sigma1in, sigma1out, x_n, xi_n, t, t0_n,phin,model,1))
@@ -351,28 +357,51 @@ void Deut_Conv_GPD_T::int_kprime3(numint::vector_z & res, double alphaprime, dou
 
 
 complex<double> Deut_Conv_GPD_T::getGPD_odd_nucl(const int sigma_in, const int sigma_out, const double xi, const double t,
-                                    const double t0, const double phi, const int model, const bool right, const TransGPD_set &gpd_nucl){
+                                    const double t0, const double phi, const int model, const bool right, const bool singlet, const TransGPD_set &gpd_nucl){
 
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
     double kinfac=sqrt(t0-t)/MASSn;  // t in MeV^2 !! 
-    if(right){
-        if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_singlet(model)
-                                +(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getET_singlet(model)
-                                +sigma_in*(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_singlet())*exp(I_UNIT*phi);
+    if(singlet){
+        if(right){
+            if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_singlet(model)
+                                    +(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getET_singlet(model)
+                                    +sigma_in*(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_singlet())*exp(I_UNIT*phi);
 
-        else return -(sigma_in-1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_singlet()
-                    -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in+1)*phi*I_UNIT)*gpd_nucl.getHtildeT_singlet(model)
-                    +(sigma_in-1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
-                    -(sigma_in-1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
+            else return -(sigma_in-1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_singlet()
+                        -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in+1)*phi*I_UNIT)*gpd_nucl.getHtildeT_singlet(model)
+                        +(sigma_in-1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
+                        -(sigma_in-1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
+        }
+        else{
+            if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_singlet(model)
+                                    +(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getET_singlet(model)
+                                    -sigma_in*(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_singlet())*exp(-I_UNIT*phi);
+            else return -(sigma_in+1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_singlet()
+                        -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in-1)*phi*I_UNIT)*gpd_nucl.getHtildeT_singlet(model)
+                        +(sigma_in+1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
+                        -(sigma_in+1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
+        }
     }
     else{
-        if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_singlet(model)
-                                +(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getET_singlet(model)
-                                -sigma_in*(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_singlet())*exp(-I_UNIT*phi);
-        else return -(sigma_in+1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_singlet()
-                    -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in-1)*phi*I_UNIT)*gpd_nucl.getHtildeT_singlet(model)
-                    +(sigma_in+1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_singlet(model)
-                    -(sigma_in+1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_singlet();
+        if(right){
+            if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_vector(model)
+                                    +(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getET_vector(model)
+                                    +sigma_in*(1-sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_vector())*exp(I_UNIT*phi);
+
+            else return -(sigma_in-1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_vector()
+                        -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in+1)*phi*I_UNIT)*gpd_nucl.getHtildeT_vector(model)
+                        +(sigma_in-1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_vector(model)
+                        -(sigma_in-1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_vector();
+        }
+        else{
+            if(sigma_in==sigma_out) return (kinfac*gpd_nucl.getHtildeT_vector(model)
+                                    +(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getET_vector(model)
+                                    -sigma_in*(1+sigma_in*xi)*kinfac/2.*gpd_nucl.getEtildeT_vector())*exp(-I_UNIT*phi);
+            else return -(sigma_in+1)*sqrt(1.-xi*xi)*gpd_nucl.getHT_vector()
+                        -sigma_in/2.*kinfac*kinfac*sqrt(1-xi*xi)*exp((sigma_in-1)*phi*I_UNIT)*gpd_nucl.getHtildeT_vector(model)
+                        +(sigma_in+1)*xi*xi/sqrt(1-xi*xi)*gpd_nucl.getET_vector(model)
+                        -(sigma_in+1)*xi/sqrt(1.-xi*xi)*gpd_nucl.getEtildeT_vector();
+        }
     }
 }
 
@@ -382,14 +411,13 @@ vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const doubl
     double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // Gev^2
     double Delta_perp=sqrt((t0-t)*(1-xi*xi)); //symmetric frame where \bar{P}^perp=0  //GeV
 
-    chiralodd_grid.getTransGPDSet(0.,0.,t,scale); //just fill the grid here
+    chiralodd_grid.getTransGPDSet(0.,0.,t*1.E06,scale); //just fill the grid here
     Deut_Conv_GPD_T::Ftor_conv F;
     F.x=x;
     F.t=t*1.E06; //[MeV^2]
     F.scale=scale;
     F.gpd=this;
     F.model=model;
-
     numint::mdfunction<numint::vector_z,3> mdf;
     mdf.func = &Ftor_conv::exec;
     mdf.param = &F;
@@ -426,7 +454,7 @@ vector< complex<double> > Deut_Conv_GPD_T::gpd_conv(const double xi, const doubl
         F.pold_in=i/3-1;
         F.pold_out=i%3-1;
         F.xi=xi;
-        F.right=1;
+        F.right=0;
         F.deltax=Delta_perp*1.E03; //[MeV]
 
         string stf="statefile";
@@ -509,35 +537,49 @@ vector< complex<double> > Deut_Conv_GPD_T::lf_deut(const double Ek, const TVecto
 
 }
 
-Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model){
+Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model,
+            const int gridsize){
      //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
-    if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set){
-        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/T.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".EBRL"+to_string(ERBL)+".model"+to_string(model);
+    if(xi!=xi_grid||t!=t_grid||grid_set==false||ERBL!=ERBL_set||gridsize!=grid_size||model!=model_set){
+        if(grid!=NULL) delete [] grid;
+        grid = new Deut_GPD_T_set[gridsize+1];
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/T.xi"+to_string(xi)+".t"+to_string(t)+".mu"+to_string(scale)+".ERBL"+to_string(ERBL)+".model"+to_string(model)
+        +".size"+to_string(gridsize);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
-            cout << "constructing chiral odd deuteron helamps grid " << filename << endl;
+            //cout << "constructing chiral odd deuteron helamps grid " << filename << endl;
             ofstream outfile(filename.c_str());
 
-            for(int i=0;i<=100;i++){
-                double x=0.02*(i-50)*(ERBL? abs(xi): 1.);
-                vector< complex<double> > result = gpd_conv(xi,x,t,model,scale);
-                grid[i]=Deut_GPD_T_set(result[0].real(),result[1].real(),result[2].real(),result[3].real(),
-            result[4].real(),result[5].real(),result[6].real(),result[7].real(),result[8].real());
-                outfile << x << " " << result[0].real() << " " << result[1].real() << " " << result[2].real() << " " << result[3].real() << " " << result[4].real() << 
-                " " << result[5].real() << " " << result[6].real() << " " << result[7].real() << " " << result[8].real() << endl;
+            for(int i=0;i<=gridsize;i++){
+                double x=double(i)/gridsize*(ERBL? abs(xi): 1.)+(i==0? 1.E-04:0.);
+
+                vector< complex<double> > result = gpd_conv(xi,x,t,scale,model);
+                vector< complex<double> > resultmin = gpd_conv(xi,-x,t,scale, model);
+                vector< complex<double> > total(9,0.);
+                //factor of 2 because gpd_conv calculates helicity amplitudes, which differ by i\sigma^+R matrix elements by a factor of 2!
+                for(int k=0; k<9; k++) total[k]=2.*(result[k]+resultmin[k]);
+               grid[i]=Deut_GPD_T_set(total[0].real(),total[1].real(),total[2].real(),total[3].real(),
+            total[4].real(),total[5].real(),total[6].real(),total[7].real(),total[8].real());
+                vector < complex<double> > gpds=helamps_to_gpds_T(xi,t,total);
+                outfile << x << " " << total[0].real() << " " << total[1].real() << " " << total[2].real() << " " << total[3].real() << " " << total[4].real() << 
+                " " << total[5].real() << " " << total[6].real() << " " << total[7].real() << " " << total[8].real() << " " <<
+                gpds[0].real() << " " << gpds[1].real() << " " << gpds[2].real() << " " << gpds[3].real() << " " << gpds[4].real() << 
+                " " << gpds[5].real() << " " << gpds[6].real() << " " << gpds[7].real() << " " << gpds[8].real() << " " << endl;
             }
             outfile.close();
             
-            cout << "construction done" << endl;
+            //cout << "construction done" << endl;
             grid_set=true;
             t_grid=t;
             xi_grid=xi;
             ERBL_set=ERBL;
+            grid_size = gridsize;
+            model_set=model;
         }
         else{
-            cout << "Reading in deut T gpd grid " << filename << endl;
+            //cout << "Reading in deut T gpd grid " << filename << endl;
             string line;
-            for(int i=0;i<=100;i++){
+            for(int i=0;i<=gridsize;i++){
                 getline (infile,line);
                 istringstream iss(line);
                 vector<string> tokens{istream_iterator<string>{iss},
@@ -550,11 +592,13 @@ Deut_GPD_T_set Deut_Conv_GPD_T::getDeut_GPD_T_set(const double x, const double x
             t_grid=t;
             xi_grid=xi;
             ERBL_set=ERBL;
+            grid_size = gridsize;
+            model_set=model;
         }
    }
    //interpolation
     double index_i=0.;
-    double frac_i=modf(x*50/(ERBL? abs(xi): 1.)+50,&index_i);
-
+    double frac_i=modf(x*gridsize/(ERBL? abs(xi): 1.),&index_i);
+    //cout << x << " " << index_i << " "<< frac_i << endl;
     return grid[int(index_i)]*(1.-frac_i)+grid[int(index_i)+1]*(frac_i);
 }

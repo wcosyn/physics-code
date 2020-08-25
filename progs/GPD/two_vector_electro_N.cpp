@@ -63,9 +63,7 @@ int main(int argc, char** argv) {
     TypeNames=initTypeNames();
     //cout << argv[1] << endl;
     GPD_model_type gpdmodel = TypeNames.at(argv[1]);
-    double Qsq = atof(argv[2]); // virtual photon scale squared [GeV^2]
-    int meson_type = atoi(argv[3]);
-    bool gammaT = atoi(argv[4]);
+    int meson_type = atoi(argv[2]);
     TwoVector_Nucl::Rho_pol kmeson;
     switch(meson_type){
         case 0:
@@ -123,80 +121,38 @@ int main(int argc, char** argv) {
         //cout << "alpha_s " << alpha_s << endl;
         TwoVector_Nucl gimme_xs(pGPDService, pGPDModel, pRunningAlphaStrongModule);
 
-        //Testing chiral even GPDs
-
-        // double mandelstam_t= -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi);//tmin [GeV^2]
-        // double scale=1.;
-        // for(int i =-50;i<=50;i++){
-        //     double x=i*0.01;
-        //     PARTONS::GPDKinematic gpdKinematic(x,xi,mandelstam_t, scale*scale, scale*scale);
-
-        //     PARTONS::GPDResult gpdResult = pGPDService->computeSingleKinematic(gpdKinematic,pGPDModel);
-        // // (Hq^u-Hq^d) * z^2 * barz^2 / u / baru * P [z*barz,u*baru from 2 DA taken into account, factors 6 afterwards]
-        //     cout << x << " " << xi << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
-        //     << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() <<
-        //     " " << gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()-
-        //     gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() << " " << 
-        //     " " << gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
-        //     << " " << gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() <<
-        //     " " << gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()-
-        //     gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution() << " " << endl;
-
-        //     }
-        // exit(1);
-
-        //xi dependence, model comparisons
-        // for(int j=0;j<=50;j++){
-        //     double xi=0.1+0.01*j;
-        //     for(int i=0;i<=3;i++){
-            
-        //         double psq = 2.+i*4; //pomeron scale squared [GeV^2]
-        //         cout << Qsq << " " << xi << " " << psq << " "; 
-        //         // double result_L=0.,result_T=0.;
-        //         // if(meson_type){
-        //         //     result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
-        //         //     result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
-        //         // }
-        //         // else{
-        //         //     result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq,1);
-        //         //     result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq,1);
-        //         // }
-        //         // cout << result_T << " " << result_L << endl;
-
-
-        //         vector< double > results(12,0.);
-        //         gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, kmeson, 1E04);
-        //         for(int index=0;index<12;index++) cout << results[index] << " ";
-        //         cout << endl;
-        //     }
-        //     cout << endl << endl;
-        // }
-
-
-        //pt2 dependence
-        double xi=0.3;
-        for(int i=0;i<=18;i++){
-        
-            double psq = 2.+i*0.5; //pomeron scale squared [GeV^2]
-            cout << Qsq << " " << xi << " " << psq << " "; 
-            // double result_L=0.,result_T=0.;
-            // if(meson_type){
-            //     result_L=gimme_xs.getCross_gammaL_rhoL(1.,xi,Qsq,psq);
-            //     result_T=gimme_xs.getCross_gammaT_rhoL(1.,xi,Qsq,psq);
-            // }
-            // else{
-            //     result_L=gimme_xs.getCross_gammaL_rhoT(1.,xi,Qsq,psq,1);
-            //     result_T=gimme_xs.getCross_gammaT_rhoT(1.,xi,Qsq,psq,1);
-            // }
-            // cout << result_T << " " << result_L << endl;
-
-
-            vector< double > results(12,0.);
-            gimme_xs.getCross_twovector(results, 1.,xi,Qsq,psq, gammaT? TwoVector_Nucl::kgammaT : TwoVector_Nucl::kgammaL, kmeson, 1E04);
-            for(int index=0;index<12;index++) cout << results[index] << " ";
-            cout << endl;
+        double masse2=pow(511.E-06,2.);
+        double Q2max=atof(argv[3]);
+        double sum=0.;
+        for(int i=100;i<1000;i++){
+            double y=i/1000.;
+            sum+=ALPHA/2./PI*(2.*masse2*y*(1./Q2max-(1-y)/masse2/y/y)+(((1-y)*(1-y)+1)*log(Q2max*(1-y)/masse2/y/y)/y));
         }
+        cout << sum*1.04692/2./1000. << endl;
+        exit(1);
 
+
+        vector< double > resultsL(12,0.), resultsT(12,0.), results_total(12,0.);
+        double xi=0.15;
+        double psq=4.;
+        for(int j=-24; j<=-23; j++){
+            double Q2=pow(10.,j/20.*5.+0.125);
+            gimme_xs.getCross_twovector(resultsL, 1.,xi,Q2,psq, TwoVector_Nucl::kgammaL, TwoVector_Nucl::krhoL, 2E05);
+            gimme_xs.getCross_twovector(resultsT, 1.,xi,Q2,psq, TwoVector_Nucl::kgammaT, TwoVector_Nucl::krhoL, 1E04);
+            cout << Q2 << " " << resultsL[0] << " " << resultsT[0] << endl;
+            // for(int i=0;i<20;i++){
+            //     double y = 0.1+0.9/20.*i;
+            //     gimme_xs.getElectro_Cross_twovector(results_total, resultsL, resultsT, y,Q2);
+            //     cout << Q2 << " " << y << " ";
+            //     for(int kk=0;kk<12;kk++){
+            //         cout << results_total[kk] << " " << resultsL[kk] << " " << resultsT[kk] << " ";
+            //     }
+            //     cout << endl;
+            // }
+        }
+        // cout << endl << endl;
+        // for(int index=0;index<12;index++) cout << results[index] << " ";
+ 
 
 
         // Remove pointer references

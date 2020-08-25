@@ -76,7 +76,7 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
 
 /**
  * @brief Computes the deuteron helicity amplitudes with the convolution formula, 
- * careful there is a factor 1/2 to relate the helicity amplitude to the matrix element of the transverse correlator!
+ * careful there is a factor 1/2 (present in the integrand) to relate the helicity amplitude to the matrix element of the transverse correlator!
  * 
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction
@@ -100,25 +100,29 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
  * @param model [0-2] different models for nucleon chiral odd GPDs
  * @return Deut_GPD_V_set 
  */
-Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model);
+Deut_GPD_T_set getDeut_GPD_T_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int model, const int gridsize);
 
 
 /**
- * @brief computes nucleon matrix elements through helicity amplitudes for tensor current
+ * @brief computes nucleon matrix elements through helicity amplitudes for tensor current.  2*A^q_{lambda',+,lambda,-} for right combination [Diehl (62) convention]
+ * Is equal to the matrix element of i\sigma^{+R} in standard GPD definition
+ * Careful it outputs isoscalar (u+d)/2 or isovector (u-d)/2 combinations!!!
  * 
- * @param sigma_in polarization incoming nucleon
- * @param sigma_out polarization outgoing nucleon
+ * 
+ * @param sigma_in polarization incoming nucleon (spin times 2!!)
+ * @param sigma_out polarization outgoing nucleon (spin times 2!!)
  * @param xi_n skewness nucleon
  * @param t [MeV^2] momentum transfer sq.
  * @param t0 [MeV^2] minimum momentum transfer sq
  * @param phi [azimuthal angle \xiP+Delta fourvector]
  * @param model different implementations of the nucleon transversity GPDs
  * @param right [1] right or [0] left matrix element (see notes Eq 112)
+ * @param singlet (u+d)/2 [1] or isovector (u-d)2 [0]
  * @param gpd_nucl constains a set of chiral odd quark nucleon gpds computed according to the GK model
  * @return std::complex<double> nucleon helicity amplitude
  */
 static std::complex<double> getGPD_odd_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
-                                    const double t, const double t0, const double phi, const int model, const bool right,
+                                    const double t, const double t0, const double phi, const int model, const bool right, const bool singlet,
                                     const TransGPD_set &gpd_nucl);              
 
 
@@ -200,8 +204,10 @@ double t_grid; ///< [GeV^2] momentum transfer sq value the grid has
 double xi_grid; ////< [] skewness value the grid has
 bool grid_set; ///< is the grid with transv gpds set or not
 bool ERBL_set; ///< is the grid only ERBL or not
-Deut_GPD_T_set grid[201];
+Deut_GPD_T_set *grid;
 
+int grid_size;
+int model_set;
 };
 
 #endif 

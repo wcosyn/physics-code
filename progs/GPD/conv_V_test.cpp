@@ -20,7 +20,7 @@ using namespace std;
 #include <partons/services/automation/AutomationService.h>
 #include <partons/modules/running_alpha_strong/RunningAlphaStrongStandard.h>
 #include <partons/ServiceObjectRegistry.h>
-#include <QtCore/qcoreapplication.h>
+//// #include <QtCore/qcoreapplication.h>
 #include <string>
 
 
@@ -67,14 +67,23 @@ int main(int argc, char *argv[]){
 
         // Create GPD module with the BaseModuleFactory
         PARTONS::GPDModule* pGPDModel = NULL;
-        if(!GPD_model.compare("GPDMMS13"))
+        unsigned int ID;
+        if(!GPD_model.compare("GPDMMS13")){
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDMMS13::classId);
-        else if(!GPD_model.compare("GPDVGG99"))
+                ID = PARTONS::GPDMMS13::classId;
+                }
+        else if(!GPD_model.compare("GPDVGG99")){
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDVGG99::classId);
-        else if(!GPD_model.compare("GPDGK16Numerical"))
+                ID = PARTONS::GPDVGG99::classId;
+        }
+        else if(!GPD_model.compare("GPDGK16Numerical")){
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDGK16Numerical::classId);
-        else if(!GPD_model.compare("GPDGK16"))
+                ID = PARTONS::GPDGK16Numerical::classId;
+        }
+        else if(!GPD_model.compare("GPDGK16")){
                 pGPDModel = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(PARTONS::GPDGK16::classId);
+                ID = PARTONS::GPDGK16::classId;
+        }
         else {cout << "Invalid GPD model, exiting" << endl; exit(1);}
         PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule = PARTONS::Partons::getInstance()->getModuleObjectFactory()->newRunningAlphaStrongModule(
                     PARTONS::RunningAlphaStrongStandard::classId);
@@ -84,7 +93,7 @@ int main(int argc, char *argv[]){
         //     for(int j=0;j<=100;j++){
         //         PARTONS::GPDKinematic gpdKinematic(0.01*(i-100)+(i==100? 1.E-04:0),0.01*(j),t, 1., 1.);
         //         //PARTONS::GPDKinematic gpdKinematic(0.1, 0.2, -0.1, 1., 1.);
-        //         PARTONS::GPDResult gpdResult = pGPDService->computeGPDModel(gpdKinematic,
+        //         PARTONS::GPDResult gpdResult = pGPDService->computeSingleKinematic(gpdKinematic,
         //                 pGPDModel);
         //         double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
         //             +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
@@ -101,7 +110,7 @@ int main(int argc, char *argv[]){
 
         //cout << "alpha_s " << alpha_s << endl;
 
-        Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf);
+        Deut_Conv_GPD_V test=Deut_Conv_GPD_V(pGPDService,pGPDModel,wf,ID);
         test.getWf()->setD(setD);
         test.getWf()->setS(setS);
         test.setH(setH);

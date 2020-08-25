@@ -35,8 +35,9 @@ public:
  * @param pGPDService GPD Service from PARTONS
  * @param pGPDModel GPD Module from PARTONS
  * @param wfname deuteron wave function parametrization name, see TDeuteron for possibilities
+ * @param id PARTONS class id for the gpd model, used for grid filename
  */
-Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, const std::string &wfname);
+Deut_Conv_GPD_V(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, const std::string &wfname,unsigned int id);
 
 /**
  * @brief Destructor
@@ -133,9 +134,10 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
  * @param xi [] skewness
  * @param t [GeV^2] mom transfer sq
  * @param ERBL grid for only ERBL region or not?
+ * @param size of grid
  * @return Deut_GPD_V_set 
  */
-Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL);
+Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int gridsize);
 
 void setH(const bool H){incH=H;} ///< [1] include or [0] exclude isoscalar nucleon GPD H
 void setE(const bool E){incE=E;} ///< [1] include or [0] exclude isoscalar nucleon GPD E
@@ -148,6 +150,28 @@ void setE(const bool E){incE=E;} ///< [1] include or [0] exclude isoscalar nucle
  * @return vector<double> [0] G_C [1] G_M [2] G_Q (See Gross, Gilman JPG '01 review Eq(15) for FF definitions )
  */
 std::vector<double> calc_NR_ffs(double t);
+
+/**
+ * @brief computes nucleon matrix elements for chiral even vector GPDs.  
+ * (\bar{u}(p') \gamma^+ u(p))/2P^+ etc for vector GPDs
+ * (\bar{u}(p') \gamma^+gamma^5 u(p))/2P^+ etc for axial GPDs  [Diehl conventions, but shouldn't matter]
+ * 
+ * @param sigma_in polarization incoming nucleon (spin times two!!)
+ * @param sigma_out polarization outgoing nucleon (spin times two!!)
+ * @param xi_n skewness nucleon
+ * @param t [MeV^2] momentum transfer sq.
+ * @param t0 [MeV^2] minimum momentum transfer sq
+ * @param phi [azimuthal angle \xiP+Delta fourvector]
+ * @param gpd_H GPD H or Htilde
+ * @param gpd_E GPD E or Etilde
+ * @param [1] vector [0] axial GPDS
+ * @return std::complex<double> nucleon helicity amplitude
+ */
+static std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
+                                    const double t, const double t0, const double phi,
+                                    const double gpd_H, const double gpd_E, const bool vector);              
+
+
 
 
 private: 
@@ -274,23 +298,6 @@ static void int_k3_FF(numint::vector_z & res, double alpha_1, double kperp, doub
 
 
 
-/**
- * @brief computes nucleon matrix elements for chiral even vector GPDs
- * 
- * @param sigma_in polarization incoming nucleon (spin times two)
- * @param sigma_out polarization outgoing nucleon (spin times two)
- * @param xi_n skewness nucleon
- * @param t [MeV^2] momentum transfer sq.
- * @param t0 [MeV^2] minimum momentum transfer sq
- * @param phi [azimuthal angle \xiP+Delta fourvector]
- * @param gpd_H GPD H
- * @param gpd_E GPD E
- * @return std::complex<double> nucleon helicity amplitude
- */
-std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
-                                    const double t, const double t0, const double phi,
-                                    const double gpd_H, const double gpd_E) const;              
-
 
 
 TDeuteron::Wavefunction *wfref; /*!< contains instance of deuteron wave function*/
@@ -305,10 +312,12 @@ double t_grid; ///< [GeV^2] momentum transfer sq value the grid has
 double xi_grid; ////< [] skewness value the grid has
 bool grid_set; ///< is the grid with transv gpds set or not
 bool ERBL_set; ///< is the grid only ERBL or not
-Deut_GPD_V_set grid[201];
+int grid_size; ///< size of grid
+Deut_GPD_V_set *grid;
 
 bool incH; ///< include GPD H
 bool incE; ///< include GPD E
+unsigned int gpdmodel_id; ///< PARTONS gpd model class ID
 
 };
 

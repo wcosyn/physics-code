@@ -34,12 +34,12 @@ TransGPD_set GPD_T_Nucl_grid::getTransGPDSet(const double x, const double xi, co
     if(xi<0) return getTransGPDSet(x,-xi,t,scale);  //Etilde is always zero in the models so we have only even GPDs in xi
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
     if(t!=t_grid||grid_set==false){
-        // cout << "constructing chiral odd gpd grid" << endl;
+        //cout << "constructing chiral odd gpd grid " << t_grid << " " << t << " " << xi << " " << grid_set << " " << x << " " << scale << endl;
         for(int i=0;i<=200;i++){
             for(int j=0;j<=100;j++){
-                grid[i][j]=getGK_param(0.01*(i-100),0.01*(j),t, scale);
-        //         cout << 0.01*(i-100) << " " << 0.01*(j) << " " << grid[i][j].getHTu() << " " << grid[i][j].getHTd() << " "
-        // << grid[i][j].getEbarTd() <<  " " << grid[i][j].getEbarTu() << endl;
+                grid[i][j]=getGK_param(0.01*(i-100),j==0?  1.E-04: 0.01*(j),t, scale);
+        //          cout << 0.01*(i-100) << " " << 0.01*(j) << " " << grid[i][j].getHTu() << " " << grid[i][j].getHTd() << " "
+        //  << grid[i][j].getEbarTu() <<  " " << grid[i][j].getEbarTd() << endl;
             }
         }
         // cout << "construction done" << endl;
@@ -137,7 +137,7 @@ void GPD_T_Nucl_grid::getHTfront(const double x, double &HTdfront, double &HTufr
     double Dd=-0.7*sqrt(x)*d;
     double Ddbar=-0.3*pow(x,0.4)*dbar;
     double Du=Dd/d/-0.7*u;
-    double Dubar=Ddbar/dbar*ubar;
+    double Dubar= (Ddbar==0.? 0.: Ddbar/dbar*ubar);
 
 
     HTdfront=-1.01*sqrt(x)*(1.-x)*(d-dbar+Dd-Ddbar);
