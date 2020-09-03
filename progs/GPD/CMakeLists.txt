@@ -8,6 +8,9 @@ target_link_libraries(conv_T_test GPD MePhys)
 add_executable(two_vector_N two_vector_N.cpp)
 target_link_libraries(two_vector_N GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
 
+add_executable(diDVCS diDVCS.cpp)
+target_link_libraries(diDVCS GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+
 add_executable(two_vector_electro_N two_vector_electro_N.cpp)
 target_link_libraries(two_vector_electro_N GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
 
@@ -28,6 +31,7 @@ set_target_properties(two_vector_electro_N PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(two_vector_D PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(conv_V_test PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(Nucl_GPD PROPERTIES EXCLUDE_FROM_ALL 1)
+set_target_properties(diDVCS PROPERTIES EXCLUDE_FROM_ALL 1)
 endif()
 
 if(BUILD_PROGS)
@@ -37,4 +41,5 @@ install(TARGETS two_vector_electro_N DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Parton
 install(TARGETS two_vector_D DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS conv_V_test DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS Nucl_GPD DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
+install(TARGETS diDVCS DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 endif()

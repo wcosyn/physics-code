@@ -50,9 +50,6 @@ public:
  * @param pGPDService GPD service from PARTONS
  * @param pGPDModel GPD model from PARTONS
  * @param pRunningAlphaStrongModule alpha_S from PARTONS
- * @param scale [GeV] factorization and renorm scale
- * @param xi [] skewness
- * @param Q2 [GeV^2] incoming virtual photon 4mom sq.
  */
 TwoVector_Nucl(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, PARTONS::RunningAlphaStrongModule* pRunningAlphaStrongModule);
 
@@ -70,6 +67,7 @@ TwoVector_Nucl(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, 
  * @param scale [GeV^2] factorization and renorm scale
  * @param xi [] skewness
  * @param Q2 [GeV^2] incoming virtual photon 4mom sq.
+ * @param psq [GeV^2] virtuality of hard Pomeron
  * @param gammapol [kgammaT] gamma_transverse [kgammaL] gamma_longitudinal
  * @param rhopol [krhoT] Transverse [krhoL] Longitudinal
  * @param max_integrationsteps number of integration steps in du,dz integral.  1E04 is good value above Q^2=.01, below take 2E05
