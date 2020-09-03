@@ -15,21 +15,8 @@ int main(int argc, char *argv[])
 {
 
 
-  //unpolarized cross section test
-  // double s=2.*1000.E06;
-  // double x=0.05;
-  // double Q2=35.E06;
-  // double alpha_p=1.;
-  // for(int i=1;i<10;i++){
-  //   double tprime=-0.005*i*1.E06;
-  //   Poldeut cross=Poldeut("AV18","CTEQ");
-  //   cout << tprime << " " ;
-  //   double result = cross.calc_dsigma_unpol(x,Q2,s,alpha_p,tprime,0);
-  //   cout << result << " " << result*PI*MASSD/4./sqrt(((-MASSD*(2.*MASSn-MASSD)-pow(2.*MASSn-MASSD,2.)/2.)-tprime)/2.+MASSn*MASSn) << endl;
-  // }
-
-
-  //ALL test
+  // unpolarized cross section test
+  double s=2.*1000.E06;
   double x=0.05;
   double Q2=20.E06;
   double y=0.4;
@@ -54,6 +41,8 @@ int main(int argc, char *argv[])
     test.calc_Double_Asymm(x,Q2,y,alpha_s,pt,proton, F_LSL, F_U);
 //     test.set_D(0);
 //     test.calc_Double_Asymm(x,Q2,y,alpha_s,pt,proton, F_LSL, F_U);
+// //     test.set_D(0);
+// //     test.calc_Double_Asymm(x,Q2,y,alpha_s,pt,proton, F_LSL, F_U);
     
   }
   cout << endl << endl; 

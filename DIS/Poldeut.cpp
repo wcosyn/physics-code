@@ -146,6 +146,8 @@ double Poldeut::calc_dsigma_unpol(const double x, const double Q2, const double 
   double y=Q2/x*2./(s-MASSD*MASSD);
   double gamma_d = x*x*MASSD*MASSD/(Q2);
   double epsilon=(1.-y-pow(gamma_d*y/2.,2.))/(1.-y+y*y/2.+pow(gamma_d*y/2.,2.));
+  double gamma_n = pow(2.*x/(2.-alpha_p)*MASSn,2.)/Q2;
+  //cout << y << " " << gamma_d << " " << gamma_n << " " << epsilon << endl; 
 
   double U=getU(knorm);
   double W=getW(knorm);
@@ -154,11 +156,17 @@ double Poldeut::calc_dsigma_unpol(const double x, const double Q2, const double 
   nucl.getF_xQ(F1,F2,proton,x/(2.-alpha_p),Q2);
 
   double dens=Ek*(U*U+W*W)/(2.-alpha_p)/4./PI;
-  double strucunpol = 2.*pow(2.*PI,3.)*2.*dens/(2.-alpha_p)*(2.*F1+epsilon*(1+gamma_d*gamma_d/x*(2.-alpha_p))*F2-2.*F1);
-  cout << sqrt(pt2) << " " << dens << " " << strucunpol << " " << ALPHA*ALPHA/8./pow(2.*PI,2.)*y*y/Q2/Q2/(1.-epsilon) << " "; //Mev^-2, Mev^-2, Mev^-4
-  double dsigma = strucunpol*ALPHA*ALPHA/8./pow(2.*PI,2.)*y*y/Q2/Q2/(1.-epsilon);  //MeV-6
+  
+  
+  double F1d = 2.*pow(2.*PI,3.)*2.*dens/(2.-alpha_p)*F1;
+  double F2d = 2.*pow(2.*PI,3.)*dens*F2;
 
-  return dsigma*HBARC*HBARC*10.E19;  //nb/GeV^-4
+  double strucunpol2 = 2.*F1d+epsilon*((1+gamma_d*gamma_d)*F2d/x*2.-2.*F1d);
+
+  double strucunpol = 2.*pow(2.*PI,3.)*2.*dens/(2.-alpha_p)*(2.*F1+epsilon*((1+gamma_n*gamma_n)/x*(2.-alpha_p)*F2-2.*F1));
+  cout << sqrt(pt2) << " " << dens << " " << strucunpol << " " << strucunpol2 << " " << ALPHA*ALPHA/4./pow(2.*PI,2.)*y*y/Q2/Q2/(1.-epsilon) << " "; //Mev^-2, Mev^-2, Mev^-4
+  double dsigma = strucunpol*ALPHA*ALPHA/4./pow(2.*PI,2.)*y*y/Q2/Q2/(1.-epsilon);  //MeV-6
+  return dsigma*HBARC*HBARC*1.E19;  //nb/GeV^-4
 
 }
 
