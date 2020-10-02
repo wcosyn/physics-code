@@ -27,7 +27,6 @@ void DiDVCS::integrandum_DiDVCS(numint::vector_z & result, double x_over_xi,doub
     if(x_over_xi==-1||x_over_xi==1) for(int i=0;i<2;i++) result[i]=0.;
     else{ 
         double x=x_over_xi*xi;
-//        cout << x << " " << xi << " " << x_over_xi << endl;
         PARTONS::GPDKinematic gpdKinematic(x,xi,mandelstam_t, scale*scale, scale*scale);
 
         PARTONS::GPDResult gpdResult = didvcs_obj.pGPDService->computeSingleKinematic(gpdKinematic,didvcs_obj.pGPDModel);
@@ -39,15 +38,14 @@ void DiDVCS::integrandum_DiDVCS(numint::vector_z & result, double x_over_xi,doub
         // cout << x << " "<< Hu << " " << Hd << " " << Eu << " " << Ed << endl;
         // exit(1);
         // Hard part selects symmetric part in x!  (C^- for rho/omega; C^+ for pi )
-        //PARTONS::GPDKinematic gpdKinematic2(-xi*(2.*u-1),xi,mandelstam_t, scale*scale, scale*scale);
+        PARTONS::GPDKinematic gpdKinematic2(-x,xi,mandelstam_t, scale*scale, scale*scale);
 
-        //PARTONS::GPDResult gpdResult2 = twovector.pGPDService->computeSingleKinematic(gpdKinematic2,
-            //twovector.pGPDModel);
+        PARTONS::GPDResult gpdResult2 = didvcs_obj.pGPDService->computeSingleKinematic(gpdKinematic2,didvcs_obj.pGPDModel);
 
-        // double Hu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
-        // double Hd2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
-        // double Eu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
-        // double Ed2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+        double Hu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+        double Hd2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
+        double Eu2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution();
+        double Ed2 = gpdResult2.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution();
 
         //at t=tmin it will always be real
         // complex<double> gpdfactor_HE_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2-Hd-Hd2,Eu+Eu2-Ed-Ed2,1)); 
@@ -59,8 +57,8 @@ void DiDVCS::integrandum_DiDVCS(numint::vector_z & result, double x_over_xi,doub
         double sqt4zp1 = sqrt(4.*z+1);
         complex<double> integrand = ((gsl_sf_dilog(-2./(sqt4zp1-1))-gsl_sf_dilog(+2./(sqt4zp1+1)))*(-2.*z/sqt4zp1)
                     -2.-(log(z)-I_UNIT*PI)*(1.-4.*z/sqt4zp1*atanh(1./sqt4zp1)))*xi;  //the *xi at the end because I integrate over x/xi
-        result[0]=integrand*(2.*Hu-Hd)/3.;
-        result[1]=integrand*(2.*Eu-Ed)/3.;
+        result[0]=integrand*(2.*(Hu+Hu2)-(Hd+Hd2))/3.;  //C-odd
+        result[1]=integrand*(2.*(Eu+Eu2)-(Ed+Ed2))/3.;  //C-odd combination
      }
     return;
 }
@@ -93,7 +91,7 @@ void DiDVCS::getCross_DiDVCS(std::vector<double> & results, const double scale, 
     mdf.func = &Ftor_DiDVCS_general::exec;
     mdf.param = &F;
 
-    numint::array<double,1> lower = {{-1.}};
+    numint::array<double,1> lower = {{0.}};
     numint::array<double,1> upper = {{1.}};  // symmetry in u exploited to simplify integrand!
 
     //gamma_T calculation

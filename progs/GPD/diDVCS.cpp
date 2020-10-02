@@ -17,6 +17,7 @@
 #include <partons/modules/gpd/GPDMMS13.h>
 #include <partons/modules/gpd/GPDVGG99.h>
 #include <partons/modules/gpd/GPDGK16.h>
+#include <partons/modules/gpd/GPDGK19.h>
 #include <partons/modules/gpd/GPDGK16Numerical.h>
 
 
@@ -31,7 +32,7 @@ using namespace std;
      * @brief list of possible GPD models
      * 
      */
-    enum GPD_model_type { GK16Numerical,MMS13,MPSSW13,VGG99,Vinnikov06 };
+    enum GPD_model_type { GK16Numerical,GK16,GK19,MMS13,MPSSW13,VGG99,Vinnikov06 };
     /**
      * @brief a string to type map so you can lookup int values using strings like "VGG99" and so on... 
      * use in constructor as Twovector_Nucl(Twovector_Nucl::TypeNames.at("VGG99"); (don't use [] acces op.)
@@ -45,6 +46,8 @@ using namespace std;
      */
     static std::map<std::string,GPD_model_type> initTypeNames(){ std::map<std::string,GPD_model_type> m; 
                                                                     m["GK16Numerical"]=GK16Numerical;
+                                                                    m["GK16"]=GK16;
+                                                                    m["GK19"]=GK19;
                                                                     m["MMS13"]=MMS13;
                                                                     m["MPSSW13"]=MPSSW13;
                                                                     m["VGG99"]=VGG99;
@@ -84,6 +87,14 @@ int main(int argc, char** argv) {
         PARTONS::GPDModule* pGPDModel;
         
         switch(gpdmodel){
+            case(GK19):
+                pGPDModel=PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
+                        PARTONS::GPDGK19::classId);
+                break;
+            case(GK16):
+                pGPDModel=PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
+                        PARTONS::GPDGK16::classId);
+                break;
             case(GK16Numerical):
                 pGPDModel=PARTONS::Partons::getInstance()->getModuleObjectFactory()->newGPDModule(
                         PARTONS::GPDGK16Numerical::classId);
