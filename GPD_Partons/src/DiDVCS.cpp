@@ -20,7 +20,7 @@ pGPDService(pGPDService),pGPDModel(pGPDModel),pRunningAlphaStrongModule(pRunning
 
 void DiDVCS::integrandum_DiDVCS(numint::vector_z & result, double x_over_xi,double xi, double mandelstam_t, double scale, 
                                       double Qsqin, double Qsqout, int spinout, int spinin,
-                                      DiDVCS::Photon_pol gamma, DiDVCS& didvcs_obj){
+                                      DiDVCS& didvcs_obj){
 
     result = vector<complex <double> >(2,0.);
     //limits are well behaved
@@ -67,8 +67,8 @@ void DiDVCS::integrandum_DiDVCS(numint::vector_z & result, double x_over_xi,doub
 
 
 
-void DiDVCS::getCross_DiDVCS(std::vector<double> & results, const double scale, const double xi, const double Q2in, const double Q2out, 
-                          const double mandelstam_t, DiDVCS::Photon_pol gammapol, const int maxintsteps){
+void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const double t_rho, const double t_N, const double Q2in, const double Q2out, 
+                          const double s2, const double s, const int maxintsteps){
 
 
     double frho0 = 0.216; //rho0 decay constant [GeV]
@@ -77,14 +77,17 @@ void DiDVCS::getCross_DiDVCS(std::vector<double> & results, const double scale, 
     double CF=(Nc*Nc-1)/2./Nc;
     //double mandelstam_t= -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi);//tmin [GeV^2]
 
+    //kinematics
+    double s1=s*Q2out/s2;
+    double xi = (Q2in +s*(Q2out/s2))/(2.*s+Q2in -s*(Q2out/s2));
+
 
     Ftor_DiDVCS_general F;
     F.xi=xi;
-    F.mandelstam_t=mandelstam_t;
+    F.mandelstam_t=t_N;
     F.scale=scale;
     F.Qsqin=Q2in;
     F.Qsqout=Q2out;
-    F.gammapol = gammapol;
     F.pobj=this;
     
     numint::mdfunction<numint::vector_z,1> mdf;
@@ -97,31 +100,17 @@ void DiDVCS::getCross_DiDVCS(std::vector<double> & results, const double scale, 
     //gamma_T calculation
     F.f=integrandum_DiDVCS;
     unsigned count=0;
-    results = vector<double>(2,0.);
-    // integration over u and z
-    // for(int spinin=-1;spinin<=1;spinin+=2){        
-    //     for(int spinout=-1;spinout<=1;spinout+=2){        
-    //         F.spinout=spinout;
-    //         F.spinin=spinin;
+    results = vector<double>(1,0.);
+    std::vector<complex<double> > integral(2,0.); //integrandum result array [dimensionless!]
+    numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,maxintsteps,integral,count,0); 
+    //cout << xi << " " << integral[0].real() << " " << integral[0].imag() << " " << integral[1].real() << " " << integral[1].imag() << endl;
+    double K = pow(2,7.)*PI*PI*ALPHA*CF*CF*alpha_s*alpha_s/8.; //[dimensionless]
+    double CFF = pow(3.*sqrt(2.)*K*frho0/Q2in/sqrt(Q2in*Q2out),2.)*(norm(integral[0])); //[GeV^-6]
 
-            std::vector<complex<double> > integral(2,0.); //integrandum result array
-            numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,maxintsteps,integral,count,0);
-            cout << xi << " " << integral[0].real() << " " << integral[0].imag() << " " << integral[1].real() << " " << integral[1].imag() << endl;
-            for(int index=0;index<2;index++){
-                //cout << spinin << " " << spinout << " " << integral[index] << endl;
-            
-                //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
-                // sqrt(1-xi^2) compensated  in the helicity amplitudes
-                double K = pow(2,7.)*PI*PI*ALPHA*CF*CF*alpha_s*alpha_s/8.;
-                integral[index] *= 3.*sqrt(2.)*K*frho0/Q2in/sqrt(Q2in*Q2out); //prefactors Eq (23) Pire et al.
-//                results[index]+=norm(integral[index])/256./pow(PI,3.)/xi/(1+xi); // Enberg et al Eq (12), corrected phase space factor!
-        //     }
-        // }
-    }
+    results[0] = CFF*ALPHA*(1-xi)/(1+xi)/(48*pow(2.*PI,4.)*Q2out*(s2-t_rho)); //[GeV-10]
 
-    //[Gev-2 -> nb conversion] + avg initial spin + extra factor of 1/2 for omega/rho0 wf (u+/-d)/sqrt(2) 
-    //+ extra factor 1/2 from averaging over sin^2 theta in case of transverse vector meson (or from (RL+LR)/2 products)
-    //for(int index=0;index<12;index++) results[index]*=0.389379E06/4./(rhopol==DiDVCS::krhoT? 2.:1.); 
+    //[Gev-2 -> nb conversion]
+    results[0] *=0.389379E06; 
     return;
 
 }

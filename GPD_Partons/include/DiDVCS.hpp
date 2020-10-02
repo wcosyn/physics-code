@@ -23,14 +23,6 @@ class DiDVCS{
 public:
 
 
-/**
- * @brief enumeration used to pass which photon polarization cross section to calculate
- * 
- */
-  enum Photon_pol { kgammaL=1,     ///<   longitudinal photon polarization
-		       kgammaT=2 ///< transverse photon polarization
-  };
-
 
 /**
  * @brief Construct a new DiDVCS object,  used to calculate cross sections
@@ -53,17 +45,18 @@ DiDVCS(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, PARTONS:
  * 
  * @param[out] [nb/GeV^4] results various cross section calculations <<ADD indices>>
  * @param scale [GeV^2] factorization and renorm scale
- * @param xi [] skewness
+ * @param t_rho [GeV^2] (q-q_rho)^2 momentum transfer between virtual photon and diffractive rho
+ * @param t_N [GeV^2] (p1-p'1)^2 momentum transfer initial to final nucleon
  * @param Q2in [GeV^2] incoming virtual photon 4mom sq.
  * @param Q2out [GeV^2] incoming virtual photon 4mom sq.
- * @param mandelstam_t [GeV^2] momentum transfer sq to the proton
- * @param gammapol [kgammaT] gamma_transverse [kgammaL] gamma_longitudinal
+ * @param s2 [GeV^2] invariant mass nucleon outgoing photon
+ * @param s [GeV^2] invariant mass incoming virtual photon nucleon system
  * @param max_integrationsteps number of integration steps in du,dz integral.  1E04 is good value above Q^2=.01, below take 2E05
  * @
  * 
  */
-void getCross_DiDVCS(std::vector<double> & results, const double scale, const double xi, const double Q2in, const double Q2out, 
-                          const double mandelstam_t, DiDVCS::Photon_pol gammapol, const int max_integrationsteps);
+void getCross_DiDVCS(std::vector<double> & results, const double scale, const double t_rho, const double t_N, const double Q2in, const double Q2out, 
+                          const double s2, const double s, const int maxintsteps);
 
 /**
  * @brief calculate the electroproduction Cross section for two vector polarization, general function, pass
@@ -87,7 +80,7 @@ struct Ftor_DiDVCS_general {
 
   static void exec(const numint::array<double,1> &x, void *param, numint::vector_z &ret) {
     Ftor_DiDVCS_general &p = * (Ftor_DiDVCS_general *) param;
-    p.f(ret,x[0], p.xi, p.mandelstam_t, p.scale, p.Qsqin, p.Qsqout, p.spinout, p.spinin, p.gammapol, *p.pobj);
+    p.f(ret,x[0], p.xi, p.mandelstam_t, p.scale, p.Qsqin, p.Qsqout, p.spinout, p.spinin, *p.pobj);
   }
   double xi; ///< [] skewness
   double mandelstam_t; ///< [GeV^2] momentum transfer, taken at t_min for now
@@ -96,21 +89,20 @@ struct Ftor_DiDVCS_general {
   double Qsqout; ///< [GeV^2] outgoing virtual photon virtuality 
   int spinin; ///< [] spin*2 of incomcing nucleon
   int spinout;///< [] spin*2 of outgoing nucleon
-  DiDVCS::Photon_pol gammapol; ////< [kgammaL/kgammaT] long/transverse photon polarization
   DiDVCS* pobj;
    /**
    * @brief integration function, integration over Bjorken x, see Eq. (23) of PRD paper without the prefactor
    * 
    */
   void (*f)(numint::vector_z &, double x, double xi, double mandelstam_t, double scale, double Qsqin, double Qsqout, 
-            int spinout, int spinin, DiDVCS::Photon_pol gammapol, DiDVCS& twovector);
+            int spinout, int spinin,DiDVCS& twovector);
 
 };
 
 
 static void integrandum_DiDVCS(numint::vector_z &, double x, double xi, double mandelstam_t, double scale, 
                                       double Qsqin, double Qsqout, int spinout, int spinin,
-                                      DiDVCS::Photon_pol gamma,  DiDVCS& twovector);
+                                     DiDVCS& twovector);
 
 
 
