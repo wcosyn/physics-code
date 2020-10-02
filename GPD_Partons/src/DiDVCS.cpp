@@ -68,7 +68,7 @@ void DiDVCS::integrandum_DiDVCS(numint::vector_z & result, double x_over_xi,doub
 
 
 void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const double t_rho, const double t_N, const double Q2in, const double Q2out, 
-                          const double s2, const double s, const int maxintsteps){
+                          const double s2, const double s_eN, double y, const int maxintsteps){
 
 
     double frho0 = 0.216; //rho0 decay constant [GeV]
@@ -78,9 +78,10 @@ void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const
     //double mandelstam_t= -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi);//tmin [GeV^2]
 
     //kinematics
-    double s1=s*Q2out/s2;
-    double xi = (Q2in +s*(Q2out/s2))/(2.*s+Q2in -s*(Q2out/s2));
-
+    double s_gN = s_eN*y;
+    double s1=s_gN*Q2out/s2;
+    double xi = (Q2in +s_gN*(Q2out/s2))/(2.*s_gN+Q2in -s_gN*(Q2out/s2));
+    cout << "xi =" << xi << endl;
 
     Ftor_DiDVCS_general F;
     F.xi=xi;
@@ -100,28 +101,22 @@ void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const
     //gamma_T calculation
     F.f=integrandum_DiDVCS;
     unsigned count=0;
-    results = vector<double>(1,0.);
+    results = vector<double>(2,0.);
     std::vector<complex<double> > integral(2,0.); //integrandum result array [dimensionless!]
     numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,maxintsteps,integral,count,0); 
     //cout << xi << " " << integral[0].real() << " " << integral[0].imag() << " " << integral[1].real() << " " << integral[1].imag() << endl;
     double K = pow(2,7.)*PI*PI*ALPHA*CF*CF*alpha_s*alpha_s/8.; //[dimensionless]
-    double CFF = pow(3.*sqrt(2.)*K*frho0/Q2in/sqrt(Q2in*Q2out),2.)*(norm(integral[0])); //[GeV^-6]
+    double CFF = pow(3.*sqrt(2.)*K*frho0/Q2in/sqrt(Q2in*Q2out),2.)*((1-xi*xi)*norm(integral[0])
+                        -2.*xi*((integral[0]*integral[1]).real())-(xi*xi+t_N/4./MASSn/MASSn)*norm(integral[1])); //[GeV^-6]
 
-    results[0] = CFF*ALPHA*(1-xi)/(1+xi)/(48*pow(2.*PI,4.)*Q2out*(s2-t_rho)); //[GeV-10]
+    results[0] = CFF*ALPHA/pow(1+xi,2.)/(48*pow(2.*PI,4.)*Q2out*(s2-t_rho)); //[GeV-10]
 
     //[Gev-2 -> nb conversion]
-    results[0] *=0.389379E06; 
+    results[0] *=0.389379E06; //[nb GeV-6]
+
+    double epsilon = (1-y)/(1-y+y*y/2.);
+    results[1] = results[0]*ALPHA/2./PI*y/Q2in/(1-epsilon);
     return;
 
 }
-
-void DiDVCS::getElectro_Cross_DiDVCS(std::vector<double> & results, std::vector<double> & resultsL, std::vector<double> & resultsT, 
-                const double y, const double Q2){
     
-    results= vector<double> (2,0.);
-    
-        
-    double epsilon = (1-y)/(1-y+y*y/2.);
-    for(int kk=0;kk<2;kk++) results[kk] = (resultsL[kk]+epsilon/2.*resultsT[kk])*ALPHA/2./PI*y/Q2/(1-epsilon);
-    
-}

@@ -43,34 +43,21 @@ DiDVCS(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, PARTONS:
 /**
  * @brief calculate the photoproduction Cross section for two vector polarization, general function, pass
  * 
- * @param[out] [nb/GeV^4] results various cross section calculations <<ADD indices>>
+ * @param[out] [nb/GeV^8 nb/GeV^10] results various cross section calculations [0] photoproduction [1] electroproduction dydQ^2dt_n dt_rho ds2 dQ'2
  * @param scale [GeV^2] factorization and renorm scale
  * @param t_rho [GeV^2] (q-q_rho)^2 momentum transfer between virtual photon and diffractive rho
  * @param t_N [GeV^2] (p1-p'1)^2 momentum transfer initial to final nucleon
  * @param Q2in [GeV^2] incoming virtual photon 4mom sq.
  * @param Q2out [GeV^2] incoming virtual photon 4mom sq.
  * @param s2 [GeV^2] invariant mass nucleon outgoing photon
- * @param s [GeV^2] invariant mass incoming virtual photon nucleon system
+ * @param s [GeV^2] invariant mass incoming electron nucleon system
+ * @param y [] inelasticity
  * @param max_integrationsteps number of integration steps in du,dz integral.  1E04 is good value above Q^2=.01, below take 2E05
  * @
  * 
  */
 void getCross_DiDVCS(std::vector<double> & results, const double scale, const double t_rho, const double t_N, const double Q2in, const double Q2out, 
-                          const double s2, const double s, const int maxintsteps);
-
-/**
- * @brief calculate the electroproduction Cross section for two vector polarization, general function, pass
- * 
- * @param[out] results_total [nb/GeV^4] results various electroproduction cross section calculations <<ADD indices>>
- * @param[in] resultsL [nb/GeV^4] results various gammaL cross section calculations <<ADD indices>>
- * @param[in] resultsT [nb/GeV^4] results various gammaT cross section calculations <<ADD indices>>
- * @param y [] fractional energy loss of scattered electron
- * @param Q2 [GeV^2] Qsquared
- * 
- * 
- */
-void getElectro_Cross_DiDVCS(std::vector<double> & results_total, std::vector<double> & resultsL, std::vector<double> & resultsT,
-                        const double y, const double Q2);
+                          const double s2, const double s, double y, const int maxintsteps);
 
 
 private:
