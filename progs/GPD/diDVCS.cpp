@@ -342,17 +342,26 @@ int main(int argc, char** argv) {
         DiDVCS gimme_xs(pGPDService, pGPDModel, pRunningAlphaStrongModule);
         vector< double > results(2,0.);
 
-        double Ep=sqrt(MASSP*MASSP+p_beam*p_beam);
-        double s_eN = MASSP*MASSP + 2.*El_beam*(Ep+p_beam);
+        double Ep=sqrt(MASSP_G*MASSP_G+p_beam*p_beam);
+        double s_eN = MASSP_G*MASSP_G + 2.*El_beam*(Ep+p_beam);
+
+        double s_gN = s_eN*y;
+        double s1=s_gN*Q2out/s2;
+        double xi = (Q2in +s_gN*(Q2out/s2))/(2.*s_gN+Q2in -s_gN*(Q2out/s2));
+        cout << "sq_s_eN " << sqrt(s_eN) << endl;
+        cout << "sq_s_gN " << sqrt(s_gN) << endl;
+        cout << "x " << Q2in/s_eN/y << endl;
+        cout << t_N << " " << -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi) << endl;
+        if (t_N>-4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi)) { cerr << "Invalid kinematics, t is larger than t_min." << endl; exit(1);}
 
         gimme_xs.getCross_DiDVCS(results, 2., t_rho, t_N, Q2in, Q2out, s2, s_eN, y, 1.E04);
         GetParticles(El_beam,p_beam,Q2in,y,Q2out,s2,t_N,t_rho);
 
         cout << results[0] << " " << results[1] << endl;
-        Rho0.Print();
-        QPrime.Print();
-        ScattL.Print();
-        Proton.Print();
+        cout << "Rho "; Rho0.Print();
+        cout << "Qprime "; QPrime.Print();
+        cout << "eprime "; ScattL.Print();
+        cout << "proton "; Proton.Print();
         
 
 
