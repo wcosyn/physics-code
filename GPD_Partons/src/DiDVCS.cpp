@@ -81,7 +81,7 @@ void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const
     double s_gN = s_eN*y;
     double s1=s_gN*Q2out/s2;
     double xi = (Q2in +s_gN*(Q2out/s2))/(2.*s_gN+Q2in -s_gN*(Q2out/s2));
-    cout << "xi =" << xi << endl;
+//    cout << "xi =" << xi << endl;
 
     Ftor_DiDVCS_general F;
     F.xi=xi;
@@ -112,10 +112,10 @@ void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const
     results[0] = CFF*ALPHA/pow(1+xi,2.)/(48*pow(2.*PI,4.)*Q2out*(s2-t_rho)); //[GeV-10]
 
     //[Gev-2 -> nb conversion]
-    results[0] *=0.389379E06; //[nb GeV-6]
+    results[0] *=0.389379E06; //[nb GeV-8]
 
     double epsilon = (1-y)/(1-y+y*y/2.);
-    results[1] = results[0]*ALPHA/2./PI*y/Q2in/(1-epsilon);
+    results[1] = results[0]*ALPHA/2./PI*y/Q2in/(1-epsilon); //[nb GeV-10]
     return;
 
 }
