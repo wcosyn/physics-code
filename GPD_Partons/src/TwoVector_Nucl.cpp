@@ -180,6 +180,7 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
     unsigned count=0;
     results = vector<double>(12,0.);
     // integration over u and z
+    // cout << endl << alpha_s << " " << psq << " " << Q2 << endl;
     for(int spinin=-1;spinin<=1;spinin+=2){        
         for(int spinout=-1;spinout<=1;spinout+=2){        
             F.spinout=spinout;
@@ -192,14 +193,18 @@ void TwoVector_Nucl::getCross_twovector(std::vector<double> & results, const dou
             
                 //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
                 // sqrt(1-xi^2) compensated  in the helicity amplitudes
+                // if (index==0) cout << spinin << " " << spinout << " " << pow(16.*PI*PI*alpha_s*(index<6 ? f_lowermeson_iv : f_lowermeson_is)*xi*sqrt(1-xi*xi)*CF/Nc/psq/psq,2.)*
+                //     pow(-2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI),2.)/256./pow(PI,3.)/xi/(1+xi) << " " 
+                //     << norm(integral[index]) << " " << pow(alpha_s,4.)*pow(frho0,4.)*CF*CF/pow(Nc,4.)*8.*pow(PI,4.)*ALPHA/pow(psq,4.)*Q2*xi*(1.-xi)   << endl;
                 integral[index] *= 16.*PI*PI*alpha_s*(index<6 ? f_lowermeson_iv : f_lowermeson_is)*xi*sqrt(1-xi*xi)*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
                 if(gammapol==TwoVector_Nucl::kgammaL) integral[index] *= -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI);; //prefactors Eq (17) Enberg et al.
                 if(gammapol==TwoVector_Nucl::kgammaT) integral[index] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
                 results[index]+=norm(integral[index])/256./pow(PI,3.)/xi/(1+xi); // Enberg et al Eq (12), corrected phase space factor!
+                    
             }
         }
     }
-
+    // exit(1);
     //[Gev-2 -> nb conversion] + avg initial spin + extra factor of 1/2 for omega/rho0 wf (u+/-d)/sqrt(2) 
     //+ extra factor 1/2 from averaging over sin^2 theta in case of transverse vector meson (or from (RL+LR)/2 products)
     for(int index=0;index<12;index++) results[index]*=0.389379E06/4./(rhopol==TwoVector_Nucl::krhoT? 2.:1.); 
@@ -216,4 +221,79 @@ void TwoVector_Nucl::getElectro_Cross_twovector(std::vector<double> & results, s
     double epsilon = (1-y)/(1-y+y*y/2.);
     for(int kk=0;kk<12;kk++) results[kk] = (resultsL[kk]+epsilon/2.*resultsT[kk])*ALPHA/2./PI*y/Q2/(1-epsilon);
     
+}
+
+void TwoVector_Nucl::getCross_twovector_ds2(std::vector<double> & results, const double scale, const double s_eN, const double y,
+                                 const double Q2, const double trho, const double tN, const double s2, 
+                          TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol, const int maxintsteps){
+
+
+    double f_lowermeson_iv =  0., f_lowermeson_is = 0.;  // meson decay constant for meson originating from lower part of the graph
+    if (rhopol == TwoVector_Nucl::krhoT) { f_lowermeson_iv=f_lowermeson_is=0.160; }
+    if (rhopol == TwoVector_Nucl::krhoL) {f_lowermeson_iv=0.216; f_lowermeson_is=0.197;}
+    if (rhopol == TwoVector_Nucl::kaxial) f_lowermeson_iv=0.130;
+    double frho0 = 0.216; //rho0 decay constant [GeV]
+    double alpha_s = pRunningAlphaStrongModule->compute(scale*scale); //scale is 1 GeV^2
+    int Nc=3; //number of colors
+    double CF=(Nc*Nc-1)/2./Nc;
+
+    double s_gN = y*s_eN;
+    double alpha = 1.-(s2-trho)/(s_gN+Q2);
+    double psq=(-Q2*(1.-alpha)-trho)*alpha;
+
+    double xi= (1-s2/(s2-trho))/(1+s2/(s2-trho));
+
+
+
+    Ftor_2vector_general F;
+    F.xi=xi;
+    F.mandelstam_t=tN;
+    F.scale=scale;
+    F.Qsq=Q2;
+    F.psq=psq;
+    F.rhopol = rhopol;
+    F.gammapol = gammapol;
+    F.pobj=this;
+    
+    numint::mdfunction<numint::vector_z,2> mdf;
+    mdf.func = &Ftor_2vector_general::exec;
+    mdf.param = &F;
+
+    numint::array<double,2> lower = {{0.,0.}};
+    numint::array<double,2> upper = {{0.5,1.}};  // symmetry in u exploited to simplify integrand!
+
+    //gamma_T calculation
+    F.f=integrandum_rho_general;
+    unsigned count=0;
+    results = vector<double>(12,0.);
+    // integration over u and z
+    // cout << endl << alpha_s << " " << psq << " " << Q2 << endl;
+    for(int spinin=-1;spinin<=1;spinin+=2){        
+        for(int spinout=-1;spinout<=1;spinout+=2){        
+            F.spinout=spinout;
+            F.spinin=spinin;
+
+            std::vector<complex<double> > integral(12,0.); //integrandum result array
+            numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,maxintsteps,integral,count,0);
+            for(int index=0;index<12;index++){
+                //cout << spinin << " " << spinout << " " << integral[index] << endl;
+            
+                //prefactors Eq (14) Enberg et al., not including s factor since it drops out in xsection
+                // sqrt(1-xi^2) compensated  in the helicity amplitudes
+                // if (index==0&&spinin==-1&&spinout==-1&&gammapol==TwoVector_Nucl::kgammaL) cout << " " << pow(alpha_s,4.)*pow(frho0,4.)*CF*CF/pow(Nc,4.)*8.*pow(PI,4.)*ALPHA/pow(psq,6.)*Q2*xi*xi*(1.-xi*xi)/(s2-trho)*0.389379E06  << " " 
+                //     << norm(integral[index]*psq)/2. << " ";
+                integral[index] *= 16.*PI*PI*alpha_s*(index<6 ? f_lowermeson_iv : f_lowermeson_is)*xi*sqrt(1-xi*xi)*CF/Nc/psq/psq; //prefactors Eq (14) Enberg et al.
+                if(gammapol==TwoVector_Nucl::kgammaL) integral[index] *= -2.*PI*alpha_s*sqrt(Q2)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI);; //prefactors Eq (17) Enberg et al.
+                if(gammapol==TwoVector_Nucl::kgammaT) integral[index] *= PI*alpha_s*sqrt(psq)/Nc/sqrt(2.)*frho0*sqrt(ALPHA*4.*PI); //prefactors Eq (17) Enberg et al.
+                results[index]+=norm(integral[index])/256./pow(PI,3.)/(s2-trho); // Enberg et al Eq (12), corrected phase space factor!
+                    
+            }
+        }
+    }
+    // exit(1);
+    //[Gev-2 -> nb conversion] + avg initial spin + extra factor of 1/2 for omega/rho0 wf (u+/-d)/sqrt(2) 
+    //+ extra factor 1/2 from averaging over sin^2 theta in case of transverse vector meson (or from (RL+LR)/2 products)
+    for(int index=0;index<12;index++) results[index]*=0.389379E06/4./(rhopol==TwoVector_Nucl::krhoT? 2.:1.); 
+    return;
+
 }

@@ -77,6 +77,29 @@ TwoVector_Nucl(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, 
 void getCross_twovector(std::vector<double> & results, const double scale, const double xi, const double Q2, const double psq, 
                           TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol, const int max_integrationsteps);
 
+
+/**
+ * @brief calculate the photoproduction Cross section for two vector polarization, general function, dtrho ds2 dtN
+ * 
+ * @param[out] [nb/GeV^6] results various cross section calculations <<ADD indices>>
+ * @param scale [GeV^2] factorization and renorm scale
+ * @param s_eN [GeV^2] invariant mass eN system
+ * @param y [] q.pn/pe.pn
+ * @param Q2 [GeV^2] incoming virtual photon 4mom sq.
+ * @param trho [GeV^2] momentum transfer to rho ~ virtuality of hard Pomeron
+ * @param tN [GeV^2] momentum transfer to nucleon
+ * @param s2 [GeV^2] invariant mass of meson proton system (GPD part)
+ * @param gammapol [kgammaT] gamma_transverse [kgammaL] gamma_longitudinal
+ * @param rhopol [krhoT] Transverse [krhoL] Longitudinal
+ * @param max_integrationsteps number of integration steps in du,dz integral.  1E04 is good value above Q^2=.01, below take 2E05
+ * @
+ * 
+ */
+void getCross_twovector_ds2(std::vector<double> & results, const double scale, const double s_eN, const double y,
+                                 const double Q2, const double trho, const double tN, const double s2, 
+                          TwoVector_Nucl::Photon_pol gammapol, TwoVector_Nucl::Rho_pol rhopol, const int maxintsteps);
+
+
 /**
  * @brief calculate the electroproduction Cross section for two vector polarization, general function, pass
  * 
@@ -90,6 +113,9 @@ void getCross_twovector(std::vector<double> & results, const double scale, const
  */
 void getElectro_Cross_twovector(std::vector<double> & results_total, std::vector<double> & resultsL, std::vector<double> & resultsT,
                         const double y, const double Q2);
+
+
+
 
 
 private:

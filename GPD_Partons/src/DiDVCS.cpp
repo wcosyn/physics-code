@@ -110,7 +110,8 @@ void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const
                         -2.*xi*((integral[0]*integral[1]).real())-(xi*xi+t_N/4./MASSP_G/MASSP_G)*norm(integral[1])); //[GeV^-6]
 
     results[0] = CFF*ALPHA/pow(1+xi,2.)/(48*pow(2.*PI,4.)*Q2out*(s2-t_rho)); //[GeV-10]
-
+    // cout << 6.*frho0*frho0*pow(ALPHA/Q2in,3.)*pow(alpha_s*CF,4.)*(1.-xi)/(1+xi)/pow(Q2out,2.)/(s2-t_rho)*0.389379E06 << " " << ((1-xi*xi)*norm(integral[0])
+    //                     -2.*xi*((integral[0]*integral[1]).real())-(xi*xi+t_N/4./MASSP_G/MASSP_G)*norm(integral[1]))/(1.-xi*xi) << " ";
     //[Gev-2 -> nb conversion]
     results[0] *=0.389379E06; //[nb GeV-8]
 
