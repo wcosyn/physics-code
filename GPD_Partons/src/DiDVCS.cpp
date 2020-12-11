@@ -107,7 +107,7 @@ void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const
     //cout << xi << " " << integral[0].real() << " " << integral[0].imag() << " " << integral[1].real() << " " << integral[1].imag() << endl;
     double K = pow(2,7.)*PI*PI*ALPHA*CF*CF*alpha_s*alpha_s/8.; //[dimensionless]
     double CFF = pow(3.*sqrt(2.)*K*frho0/Q2in/sqrt(Q2in*Q2out),2.)*((1-xi*xi)*norm(integral[0])
-                        -2.*xi*((integral[0]*integral[1]).real())-(xi*xi+t_N/4./MASSP_G/MASSP_G)*norm(integral[1])); //[GeV^-6]
+                        -2.*xi*((conj(integral[0])*integral[1]).real())-(xi*xi+t_N/4./MASSP_G/MASSP_G)*norm(integral[1])); //[GeV^-6]
 
     results[0] = CFF*ALPHA/pow(1+xi,2.)/(48*pow(2.*PI,4.)*Q2out*(s2-t_rho)); //[GeV-10]
     // cout << 6.*frho0*frho0*pow(ALPHA/Q2in,3.)*pow(alpha_s*CF,4.)*(1.-xi)/(1+xi)/pow(Q2out,2.)/(s2-t_rho)*0.389379E06 << " " << ((1-xi*xi)*norm(integral[0])
