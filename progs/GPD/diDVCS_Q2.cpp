@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
     TypeNames=initTypeNames();
     //cout << argv[1] << endl;
     GPD_model_type gpdmodel = TypeNames.at(argv[1]);
-    double Q2in = atof(argv[2]); // virtual photon scale squared [GeV^2]
+    double Q2out = atof(argv[2]); // virtual photon scale squared [GeV^2]
     //double Q2out = atof(argv[3]); // virtual photon scale squared [GeV^2]
     double t_N = atof(argv[3]);  //NEGATIVE!!!
     double t_rho = atof(argv[4]); //NEGATIVE!!!
@@ -165,15 +165,11 @@ int main(int argc, char** argv) {
                 double y=0.7/pow(2.,j);
                 double s_gN = s_eN*y;
                 for (int i=0;i<10;i++){
-                    double Q2out = 2.+(2.*ximax/(1+ximax)*s2-2.)/10.*i;
+                    double Q2in = 0.5*pow(10./0.5,double(i)/9.);
                     double xi_didvcs = (Q2in +s_gN*(Q2out/s2))/(2.*s_gN+Q2in -s_gN*(Q2out/s2));
-
-                    double trho_2meson = -(2.+((2.*ximax)/(1.-ximax)*s2-2.)/10.*i);
-                    double xi_2meson= (1-s2/(s2-trho_2meson))/(1+s2/(s2-trho_2meson));
 
                     //cout << t_N << " " << -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi) << endl;
                     double s1_dvcs=s_gN*Q2out/s2;
-                    double s1_2meson = 2.*xi_2meson*(s_gN+Q2in)/(1.+xi_2meson)-Q2in;
                     //t_N = -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi);  //put t_n equal to tmin
                     
                     cout << y << " " << Q2in << " " << Q2in/s_eN/y /* bjorken x */ << " " << s2 << " " << t_N << " ";

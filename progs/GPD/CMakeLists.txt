@@ -11,6 +11,9 @@ target_link_libraries(two_vector_N GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBR
 add_executable(diDVCS diDVCS.cpp)
 target_link_libraries(diDVCS GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
 
+add_executable(diDVCS_Q2 diDVCS_Q2.cpp)
+target_link_libraries(diDVCS_Q2 GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+
 add_executable(diDVCS_gen diDVCS_gen.cpp)
 target_link_libraries(diDVCS_gen GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
 
@@ -36,6 +39,7 @@ set_target_properties(two_vector_D PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(conv_V_test PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(Nucl_GPD PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(diDVCS PROPERTIES EXCLUDE_FROM_ALL 1)
+set_target_properties(diDVCS_Q2 PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(diDVCS_gen PROPERTIES EXCLUDE_FROM_ALL 1)
 endif()
 
@@ -47,5 +51,6 @@ install(TARGETS two_vector_D DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS conv_V_test DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS Nucl_GPD DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS diDVCS DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
+install(TARGETS diDVCS_Q2 DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS diDVCS_gen DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 endif()
