@@ -68,7 +68,7 @@ void DiDVCS::integrandum_DiDVCS(numint::vector_z & result, double x_over_xi,doub
 
 
 void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const double t_rho, const double t_N, const double Q2in, const double Q2out, 
-                          const double s2, const double s_eN, double y, const int maxintsteps){
+                          const double s2, const double s_eN, double y, const int maxintsteps, bool no_realpart){
 
 
     double frho0 = 0.216; //rho0 decay constant [GeV]
@@ -106,9 +106,12 @@ void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const
     numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,maxintsteps,integral,count,0); 
     //cout << xi << " " << integral[0].real() << " " << integral[0].imag() << " " << integral[1].real() << " " << integral[1].imag() << endl;
     double K = pow(2,7.)*PI*PI*ALPHA*CF*CF*alpha_s*alpha_s/8.; //[dimensionless]
+    if(no_realpart){
+        integral[0]=complex<double> (0.,integral[0].imag());
+        integral[1]=complex<double> (0.,integral[1].imag());
+    }
     double CFF = pow(3.*sqrt(2.)*K*frho0/Q2in/sqrt(Q2in*Q2out),2.)*((1-xi*xi)*norm(integral[0])
-                        -2.*xi*((conj(integral[0])*integral[1]).real())-(xi*xi+t_N/4./MASSP_G/MASSP_G)*norm(integral[1])); //[GeV^-6]
-
+                        -2.*xi*xi*((conj(integral[0])*integral[1]).real())-(xi*xi+t_N/4./MASSP_G/MASSP_G)*norm(integral[1])); //[GeV^-6]
     results[0] = CFF*ALPHA/pow(1+xi,2.)/(48*pow(2.*PI,4.)*Q2out*(s2-t_rho)); //[GeV-10]
     // cout << 6.*frho0*frho0*pow(ALPHA/Q2in,3.)*pow(alpha_s*CF,4.)*(1.-xi)/(1+xi)/pow(Q2out,2.)/(s2-t_rho)*0.389379E06 << " " << ((1-xi*xi)*norm(integral[0])
     //                     -2.*xi*((integral[0]*integral[1]).real())-(xi*xi+t_N/4./MASSP_G/MASSP_G)*norm(integral[1]))/(1.-xi*xi) << " ";

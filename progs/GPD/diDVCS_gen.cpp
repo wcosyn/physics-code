@@ -319,7 +319,7 @@ void GenerateEvents(double EneL, double EneH, int nevents, int ndec, DiDVCS & gi
                                 cout << q2p << " " << xi << " " << -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi) << " " << tN << endl;}
 
         vector< double > results(2,0.);
-        gimme_xs.getCross_DiDVCS(results, 2., trho, tN, q2, q2p, s2, s, y, 1.E04);
+        gimme_xs.getCross_DiDVCS(results, 2., trho, tN, q2, q2p, s2, s, y, 1.E04,0);
         cout << y << " " << q2 << " " << q2/s/y << " " << q2p << " " << s2 << " " << xi << " " << s1/s_gN <<
                 " " << s2/s1 << " " << trho << " " << tN << " " << results[0] << " " << results[1] << endl;
 

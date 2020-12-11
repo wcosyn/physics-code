@@ -53,11 +53,12 @@ DiDVCS(PARTONS::GPDService* pGPDService, PARTONS::GPDModule* pGPDModel, PARTONS:
  * @param s [GeV^2] invariant mass incoming electron nucleon system
  * @param y [] inelasticity
  * @param max_integrationsteps number of integration steps in du,dz integral.  1E04 is good value above Q^2=.01, below take 2E05
+ * @param no_realpart consider only the (dominating) imaginary part of the CFFs
  * @
  * 
  */
 void getCross_DiDVCS(std::vector<double> & results, const double scale, const double t_rho, const double t_N, const double Q2in, const double Q2out, 
-                          const double s2, const double s, double y, const int maxintsteps);
+                          const double s2, const double s, double y, const int maxintsteps, bool no_realpart);
 
 
 private:

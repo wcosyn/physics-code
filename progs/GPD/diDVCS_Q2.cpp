@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
                         cout << "0. 0. 0." << endl;
                     }
                     else{
-                        gimme_xs.getCross_DiDVCS(results, 2., t_rho, t_N, Q2in, Q2out, s2, s_eN, y, 1.E04);
+                        gimme_xs.getCross_DiDVCS(results, 2., t_rho, t_N, Q2in, Q2out, s2, s_eN, y, 1.E04,0);
                         // dsigma/ds2 dQout^2  dtrho dtN   | dsigma/dxi dQout^2  dtrho dtN  | dsigma/ds2 dQout^2  dtrho dtN dy dQ^2 
                         cout << results[0] << " " << results[0]*Q2out/2/xi_didvcs/xi_didvcs << " " << results[1] << endl;
                     }
