@@ -136,7 +136,6 @@ void ComputeLeptScatt(double q2, double y){
   cms=q+BeamH;
   //q2=sxy is approximative... need to readjust the value of xb for consistency
   xb=-q.Mag2()/2./(BeamH*q);
-
    //The collision is easier to understand in the center-of-mass frame
    ScattL.Boost(-cms.BoostVector());
    BeamH.Boost(-cms.BoostVector());
@@ -318,13 +317,20 @@ void GenerateEvents(double EneL, double EneH, int nevents, int ndec, DiDVCS & gi
         if ((tN>-4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi))) { cerr << "Invalid kinematics, t is larger than t_min." << endl;
                                 cout << q2p << " " << xi << " " << -4.*MASSP_G*MASSP_G*xi*xi/(1-xi*xi) << " " << tN << endl;}
 
-        vector< double > results(2,0.);
+        vector< double > results(4,0.);
         gimme_xs.getCross_DiDVCS(results, 2., trho, tN, q2, q2p, s2, s, y, 1.E04,0);
-        cout << y << " " << q2 << " " << q2/s/y << " " << q2p << " " << s2 << " " << xi << " " << s1/s_gN <<
-                " " << s2/s1 << " " << trho << " " << tN << " " << results[0] << " " << results[1] << endl;
-
+        // cout << y << " " << q2 << " " << q2/s/y << " " << q2p << " " << s2 << " " << xi << " " << s1/s_gN <<
+        //         " " << s2/s1 << " " << trho << " " << tN << " " << results[0]*exp(-6*(trho_min-trho)) << " " << results[1]*exp(-6*(trho_min-trho)) << endl;
         //////////////////OUTPUT to text file to write here
         //===> Need to output all 4 monenta in text file here with a weight=xsec*psf/num_events/ndec and psf= deltaQ2 * delta Y * delta s2 * delta t_rho * delta t_N * delta Q'2 ()
+        cout << "ScattL//Proton//Qprime//Rho0" << endl;  
+        ScattL.Print();        
+        Proton.Print();
+        QPrime.Print();
+        Rho0.Print();
+        cout << "weight " << results[1]*exp(-6*(trho_min-trho))*psf/nevents/ndec << endl;
+        cout << "=========================" << endl;
+
       }
     }
   }

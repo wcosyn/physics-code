@@ -1,3 +1,5 @@
+// fixed Q2out, range of Q2in
+
 #include <ElementaryUtils/logger/CustomException.h>
 #include <ElementaryUtils/logger/LoggerManager.h>
 #include <partons/Partons.h>

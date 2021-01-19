@@ -1,3 +1,5 @@
+// fixed Q2in, range of Q2out
+
 #include <ElementaryUtils/logger/CustomException.h>
 #include <ElementaryUtils/logger/LoggerManager.h>
 #include <partons/Partons.h>
@@ -85,6 +87,7 @@ int main(int argc, char** argv) {
     double t_rho = atof(argv[4]); //NEGATIVE!!!
     double El_beam = atof(argv[5]);
     double p_beam = atof(argv[6]);    
+    bool no_real = atoi(argv[7]);
 
     if(t_N >0.|| t_rho > 0.) {cerr << "Momentum transfer should be negative!  Exiting.." << endl; exit(1);}
 
@@ -179,12 +182,13 @@ int main(int argc, char** argv) {
                     cout << y << " " << Q2in << " " << Q2in/s_eN/y /* bjorken x */ << " " << s2 << " " << t_N << " ";
                     cout << Q2out << " " << s1_dvcs/s_gN << " " << s2/s1_dvcs << " " << xi_didvcs << " ";
                     if ((t_N>-4.*MASSP_G*MASSP_G*xi_didvcs*xi_didvcs/(1-xi_didvcs*xi_didvcs)) || s2>0.5*s1_dvcs){
-                        cout << "0. 0. 0." << endl;
+                        cout << "0. 0. 0. 0. 0. 0. " << endl;
                     }
                     else{
-                        gimme_xs.getCross_DiDVCS(results, 2., t_rho, t_N, Q2in, Q2out, s2, s_eN, y, 1.E04,0);
+                        gimme_xs.getCross_DiDVCS(results, 2., t_rho, t_N, Q2in, Q2out, s2, s_eN, y, 1.E04,no_real);
                         // dsigma/ds2 dQout^2  dtrho dtN   | dsigma/dxi dQout^2  dtrho dtN  | dsigma/ds2 dQout^2  dtrho dtN dy dQ^2 
-                        cout << results[0] << " " << results[0]*Q2out/2/xi_didvcs/xi_didvcs << " " << results[1] << endl;
+                        cout << results[0] << " " << results[0]*Q2out/2/xi_didvcs/xi_didvcs << " " << results[1] << " ";
+                        cout << results[2] << " " << results[2]*Q2out/2/xi_didvcs/xi_didvcs << " " << results[3] << endl;
                     }
 
                     //comparison code for twomeson production
