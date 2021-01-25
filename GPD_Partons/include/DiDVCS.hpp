@@ -68,13 +68,12 @@ struct Ftor_DiDVCS_general {
 
   static void exec(const numint::array<double,1> &x, void *param, numint::vector_z &ret) {
     Ftor_DiDVCS_general &p = * (Ftor_DiDVCS_general *) param;
-    p.f(ret,x[0], p.xi, p.mandelstam_t, p.scale, p.Qsqin, p.Qsqout, p.spinout, p.spinin, *p.pobj);
+    p.f(ret,x[0], p.xi, p.mandelstam_t, p.scale, p.Q2out_over_Q2in, p.spinout, p.spinin, *p.pobj);
   }
   double xi; ///< [] skewness
   double mandelstam_t; ///< [GeV^2] momentum transfer, taken at t_min for now
   double scale; ///< [GeV] factorization = renormalization scale
-  double Qsqin; ///< [GeV^2] incoming virtual photon virtuality 
-  double Qsqout; ///< [GeV^2] outgoing virtual photon virtuality 
+  double Q2out_over_Q2in; ///< [] outgoing over incoming virtual photon virtuality 
   int spinin; ///< [] spin*2 of incomcing nucleon
   int spinout;///< [] spin*2 of outgoing nucleon
   DiDVCS* pobj;
@@ -82,14 +81,14 @@ struct Ftor_DiDVCS_general {
    * @brief integration function, integration over Bjorken x, see Eq. (23) of PRD paper without the prefactor
    * 
    */
-  void (*f)(numint::vector_z &, double x, double xi, double mandelstam_t, double scale, double Qsqin, double Qsqout, 
+  void (*f)(numint::vector_z &, double x, double xi, double mandelstam_t, double scale, double Q2out_over_Q2in, 
             int spinout, int spinin,DiDVCS& twovector);
 
 };
 
 
 static void integrandum_DiDVCS(numint::vector_z &, double x, double xi, double mandelstam_t, double scale, 
-                                      double Qsqin, double Qsqout, int spinout, int spinin,
+                                      double Q2out_over_Q2in, int spinout, int spinin,
                                      DiDVCS& twovector);
 
 

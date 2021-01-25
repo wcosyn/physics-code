@@ -41,5 +41,10 @@
             "type": "shell",
             "command": "rm -rf *; cmake -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=Release -DBUILD_PROGS=yes -DPARTONS_ENABLED=yes ../"
         },
+        {
+            "taskName": "cmake gcc with progs and partons debug",
+            "type": "shell",
+            "command": "rm -rf *; cmake -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=Debug -DBUILD_PROGS=yes -DPARTONS_ENABLED=yes ../"
+        },
     ]
 }

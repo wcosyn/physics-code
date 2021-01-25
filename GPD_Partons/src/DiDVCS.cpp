@@ -19,7 +19,7 @@ pGPDService(pGPDService),pGPDModel(pGPDModel),pRunningAlphaStrongModule(pRunning
 
 
 void DiDVCS::integrandum_DiDVCS(numint::vector_z & result, double x_over_xi,double xi, double mandelstam_t, double scale, 
-                                      double Qsqin, double Qsqout, int spinout, int spinin,
+                                      double Q2out_over_Q2in, int spinout, int spinin,
                                       DiDVCS& didvcs_obj){
 
     result = vector<complex <double> >(4,0.);
@@ -53,7 +53,7 @@ void DiDVCS::integrandum_DiDVCS(numint::vector_z & result, double x_over_xi,doub
         // complex<double> gpdfactor_H_iv = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2-Hd-Hd2,0.,1)); 
         // complex<double> gpdfactor_H_is = (Deut_Conv_GPD_V::getGPD_even_nucl(spinin, spinout,xi,mandelstam_t,mandelstam_t,0.,Hu+Hu2+Hd+Hd2,0.,1)); 
 
-        double z = Qsqout/Qsqin*(xi*xi-x*x)/(4.*xi*xi);
+        double z = Q2out_over_Q2in*(xi*xi-x*x)/(4.*xi*xi);
         double sqt4zp1 = sqrt(4.*z+1);
         // asymptotic DA result (see Eq. (23) Pire, Szym.,Wallon paper)
         complex<double> integrand = ((gsl_sf_dilog(-2./(sqt4zp1-1))-gsl_sf_dilog(+2./(sqt4zp1+1)))*(-2.*z/sqt4zp1)
@@ -89,27 +89,48 @@ void DiDVCS::getCross_DiDVCS(vector<double> & results, const double scale, const
 //    cout << "xi =" << xi << endl;
 
     Ftor_DiDVCS_general F;
-    F.xi=xi;
-    F.mandelstam_t=t_N;
     F.scale=scale;
-    F.Qsqin=Q2in;
-    F.Qsqout=Q2out;
     F.pobj=this;
-    
     numint::mdfunction<numint::vector_z,1> mdf;
     mdf.func = &Ftor_DiDVCS_general::exec;
     mdf.param = &F;
-
     numint::array<double,1> lower = {{0.}};
     numint::array<double,1> upper = {{1.}};  // symmetry in u exploited to simplify integrand!
+    F.f=integrandum_DiDVCS;
+    results = vector<double>(4,0.);
+
+    // for(int i=0;i<=24;i++){
+    //     F.Q2out_over_Q2in=pow(10.,(i-12)/4.);
+    //     for(int j=0;j<=10;j++){
+    //         F.mandelstam_t=-0.05-j*0.05;
+    //         for(int k=1;k<100;k++){
+    //             F.xi=0.01*k;
+    //             if (F.mandelstam_t> 0.5*(-4.*MASSP_G*MASSP_G*F.xi*F.xi)/(1-F.xi*F.xi)) cout << F.Q2out_over_Q2in << " " << F.mandelstam_t << " " << F.xi << " 0 0 0 0" << endl;
+    //             else{
+    //                 unsigned count=0;
+    //                 std::vector<complex<double> > integral(4,0.); //integrandum result array [dimensionless!]
+    //                 numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,maxintsteps,integral,count,0); 
+    //                 cout << F.Q2out_over_Q2in << " " << F.mandelstam_t << " " << F.xi << " " << integral[0].real() << " " << integral[0].imag() 
+    //                 << " " << integral[1].real() << " " << integral[1].imag() << endl;
+    //             }
+
+    //         }
+    //     }
+    // }
+    // exit(1);
+ 
+    F.xi=xi;
+    F.mandelstam_t=t_N;
+    F.Q2out_over_Q2in=Q2out/Q2in;
+    
+
 
     //gamma_T calculation
-    F.f=integrandum_DiDVCS;
     unsigned count=0;
     results = vector<double>(4,0.);
     std::vector<complex<double> > integral(4,0.); //integrandum result array [dimensionless!]
     numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-03,1E02,maxintsteps,integral,count,0); 
-    //cout << xi << " " << integral[0].real() << " " << integral[0].imag() << " " << integral[1].real() << " " << integral[1].imag() << endl;
+    //cout << "integral " << " " << integral[0].real() << " " << integral[0].imag() << " " << integral[1].real() << " " << integral[1].imag() << endl;
     double K = pow(2,7.)*PI*PI*ALPHA*CF*CF*alpha_s*alpha_s/8.; //[dimensionless]
     if(no_realpart){
         integral[0]=complex<double> (0.,integral[0].imag());
