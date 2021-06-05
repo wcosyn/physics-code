@@ -176,7 +176,7 @@ void cuhre( const mdfunction<T,N> &f, const numint::array<double, N> &a,
   
   Cuhre(N, ncomp, mdf2cuba<T,N>::exec, &F, nvec,
         epsrel, epsabs, flags,
-        minEval, maxEval, key, statefile,
+        minEval, maxEval, key, statefile, NULL,
         &nregions, &neval, &fail, result_t, err_t, prob_t);
   
   cuba2numint(ncomp,result_t,result); // convert the multicomponent function back to normal variables like complex ones
@@ -212,7 +212,7 @@ void divonne( const mdfunction<T,N> &f, const numint::array<double, N> &a,
         epsrel, epsabs, flags,seed,
         minEval, maxEval, key1, key2, key3, maxpass,border,
         maxchisq,mindeviation,ngiven,ldxgiven,xgiven,nextra,peakfinder,
-        statefile, &nregions, &neval, &fail, result_t, err_t, prob_t);
+        statefile, NULL, &nregions, &neval, &fail, result_t, err_t, prob_t);
   
   cuba2numint(ncomp,result_t,result); // convert the multicomponent function back to normal variables like complex ones
   cuba2numint(ncomp,err_t,err);       // convert the multicomponent error back to the template variables
@@ -225,7 +225,7 @@ void divonne( const mdfunction<T,N> &f, const numint::array<double, N> &a,
 template<typename T, unsigned N>
 void suave( const mdfunction<T,N> &f, const numint::array<double, N> &a,
            const numint::array<double,N> &b,int nvec, double epsrel, double epsabs,int flags, int seed,
-           int minEval, int maxEval,int nnew, double flatness, const char* statefile, int &nregions, int &neval, int &fail, T &result,T &err, T &prob ){
+           int minEval, int maxEval,int nnew, int nmin, double flatness, const char* statefile, int &nregions, int &neval, int &fail, T &result,T &err, T &prob ){
   
   struct mdf2cuba<T,N> F;
   F.f = f; // set the integrand
@@ -242,8 +242,8 @@ void suave( const mdfunction<T,N> &f, const numint::array<double, N> &a,
   
   Suave(N, ncomp, mdf2cuba<T,N>::exec, &F, nvec,
         epsrel, epsabs, flags,seed,
-        minEval, maxEval,nnew,flatness,
-        statefile,&nregions, &neval, &fail, result_t, err_t, prob_t);
+        minEval, maxEval,nnew, nmin, flatness,
+        statefile,NULL,&nregions, &neval, &fail, result_t, err_t, prob_t);
   
   cuba2numint(ncomp,result_t,result); // convert the multicomponent function back to normal variables like complex ones
   cuba2numint(ncomp,err_t,err);       // convert the multicomponent error back to the template variables
@@ -275,7 +275,7 @@ void vegas( const mdfunction<T,N> &f, const numint::array<double, N> &a,
   Vegas(N, ncomp, mdf2cuba<T,N>::exec, &F, nvec,
         epsrel, epsabs, flags,seed,
         minEval, maxEval, nstart,nincrease,nbatch,gridno,
-        statefile, &neval, &fail, result_t, err_t, prob_t);
+        statefile, NULL,&neval, &fail, result_t, err_t, prob_t);
   
   cuba2numint(ncomp,result_t,result); // convert the multicomponent function back to normal variables like complex ones
   cuba2numint(ncomp,err_t,err);       // convert the multicomponent error back to the template variables

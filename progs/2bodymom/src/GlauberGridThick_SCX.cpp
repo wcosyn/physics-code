@@ -334,7 +334,7 @@ void GlauberGridThick_SCX::calcFSI(double b,double z,double& ret,double& err){
 	Vegas(ndim,ncomp,integr,userdata,nvec,
 		epsrel,epsabs,flags,seed,
 		mineval,maxeval,nstart,nincrease,
-		nbatch,gridno,statefile,&neval,
+		nbatch,gridno,statefile,NULL,&neval,
 		&fail,&integral,&error,&prob);
 	//printf("# Vegas  (b,z) = (%6.2f,%6.2f) : res = %e, error = %e, prob = %f, neval = %d ,fail = %d\n",b,z,integral,error,prob,neval,fail);
 	

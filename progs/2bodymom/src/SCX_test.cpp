@@ -125,8 +125,9 @@ void mdist2bodymom_SCX(MeanFieldNucleusThick& nuc,Event& e,double& res,double& e
 					double epsrel = 1e-4;
 					int seed = 113337;
 					int nnew = 5000;
+					int nmin = 2;
 					double flatness = 0.2;
-					suave(mdf,lowerb,upperb,1,epsrel,epsabs,0x00,seed,minEval,maxEval,nnew,flatness,NULL,nregions,neval,fail,ret,err,prob);
+					suave(mdf,lowerb,upperb,1,epsrel,epsabs,0x00,seed,minEval,maxEval,nnew,nmin,flatness,NULL,nregions,neval,fail,ret,err,prob);
 					
 					std::cout << "shell1 m1 = " << e.shellindex1 << " " << m1 << " shell2 m2 = " << e.shellindex2 << " " << m2 << std::endl;	
 					std::cout << " ret is " << ret << "  real part is " << real(ret) << "  complex part is " << imag(ret) << std::endl;

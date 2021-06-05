@@ -347,7 +347,7 @@ void GlauberGridThick_SEL::calcFSI(double b,double z,std::complex<double>& ret,s
 	Vegas(ndim,ncomp,integr,userdata,nvec,
 		epsrel,epsabs,flags,seed,
 		mineval,maxeval,nstart,nincrease,
-		nbatch,gridno,statefile,&neval,
+		nbatch,gridno,statefile,NULL,&neval,
 		&fail,&integral_p,&error_p,&prob_p);
 
 	p.f = f_SEL_integrand_n; // now do elastic scattering with neutrons
@@ -355,7 +355,7 @@ void GlauberGridThick_SEL::calcFSI(double b,double z,std::complex<double>& ret,s
 	Vegas(ndim,ncomp,integr,userdata,nvec,
 		epsrel,epsabs,flags,seed,
 		mineval,maxeval,nstart,nincrease,
-		nbatch,gridno,statefile,&neval,
+		nbatch,gridno,statefile,NULL,&neval,
 		&fail,&integral_n,&error_n,&prob_n);
 
 	//printf("# Vegas  (b,z) = (%6.2f,%6.2f) : res = %e, error = %e, prob = %f, neval = %d ,fail = %d\n",b,z,integral,error,prob,neval,fail);

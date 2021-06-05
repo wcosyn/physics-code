@@ -39,6 +39,7 @@ void test_suave() {
 	int mineval = 10000;
 	int maxeval = 1000000;
 	int nnew = 5000;
+	int nmin = 2;
 	double flatness = 0.25;
 	char* statefile = NULL; //{"suave.state"};
 	
@@ -51,7 +52,7 @@ void test_suave() {
 	double prob     = 0.;
 	
 	suave(mymdf,start,stop,nvec,epsrel,epsabs,flags,seed,
-				mineval,maxeval,nnew,flatness,
+				mineval,maxeval,nnew,nmin,flatness,
 				statefile,nregions,neval,fail,integral,error,prob);
 	
 	printf("Suave  : res = %f, error = %e, prob = %f, neval = %d ,fail = %d\n",integral,error,prob,neval,fail);

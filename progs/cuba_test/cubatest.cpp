@@ -40,7 +40,7 @@ void test_vegas(int ndim,int ncomp,integrand_t integrand) {
 	Vegas(ndim,ncomp,integrand,userdata,nvec,
 		epsrel,epsabs,flags,seed,
 		mineval,maxeval,nstart,nincrease,
-		nbatch,gridno,statefile,&neval,
+		nbatch,gridno,statefile,NULL,&neval,
 		&fail,integral,error,prob);
     printf("Vegas  : neval = %d ,fail = %d\n",neval,fail);
     for (int nc=0;nc<ncomp;nc++){
@@ -78,7 +78,7 @@ void test_cuhre(int ndim,int ncomp,integrand_t integrand) {
 	Cuhre(ndim,ncomp,integrand,userdata,nvec,
 		epsrel,epsabs,flags,
 		mineval,maxeval,key,
-		statefile,&nregions,&neval,&fail,
+		statefile,NULL,&nregions,&neval,&fail,
 		integral,error,prob);
 	printf("Cuhre  : neval = %d, fail = %d \n",neval,fail);
     for (int nc=0;nc<ncomp;nc++){
@@ -129,7 +129,7 @@ void test_divonne(int ndim,int ncomp,integrand_t integrand) {
 		mineval,maxeval,key1,key2,key3,
 		maxpass,border,maxchisq,mindeviation,
 		ngiven,ldxgiven,xgiven,nextra,peakfinder,
-		statefile,&nregions,&neval,&fail,
+		statefile,NULL,&nregions,&neval,&fail,
 		integral,error,prob);
 
 	printf("Divonne: neval = %d, fail = %d \n",neval,fail);
@@ -153,6 +153,7 @@ void test_suave(int ndim,int ncomp,integrand_t integrand){
 	int mineval = 10000;
 	int maxeval = 100000;
 	int nnew = 5000;
+	int nmin = 2;
 	double flatness = 0.25;
 	char* statefile = nullptr; // {"suave.state"};
 	int nregions=0;
@@ -164,7 +165,7 @@ void test_suave(int ndim,int ncomp,integrand_t integrand){
 
 	Suave(ndim,ncomp,integrand,userdata,nvec,
 		epsrel,epsabs,flags,seed,mineval,
-		maxeval,nnew,flatness,statefile,
+		maxeval,nnew,nmin,flatness,statefile,NULL,
 		&nregions,&neval,&fail,integral,
 		error,prob);
 

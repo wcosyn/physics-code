@@ -204,7 +204,7 @@ void calculate_CX_probabilities(struct Event& event,MeanFieldNucleusThick& nuc,d
 				Vegas(ndim,ncomp,integr,userdata,nvec,
 					epsrel,epsabs,flags,seed,
 					mineval,maxeval,nstart,nincrease,
-					nbatch,gridno,statefile,&neval,
+					nbatch,gridno,statefile,NULL,&neval,
 					&fail,integral,error,prob);
 				/** vegas done still have to take care of jacobian!**/
 				for (int i=0;i<ncomp;i++){
