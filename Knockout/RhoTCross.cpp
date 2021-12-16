@@ -426,7 +426,7 @@ void RhoTCross::getMomdistr(double *results, double prho, double thetarho, doubl
 			    double pm, double pmcostheta, double pmphi){
   //if userset there's only one possible glaubergrid, so we don't have to check every time!
   if(!(userset&&pfsigrid[shell]->getFilledallgrid())){
-    FastParticle rho(particle_type, 0, prho,0.,0.,Q2,145.,homedir);
+    FastParticle rho(particle_type, 0, prho,0.,0.,Q2,145.,1.,1.,homedir);
     if(userset) rho.setScatter(usersigma,6.,-0.2,pdil);
     pfsigrid[shell]->clearParticles();
     pfsigrid[shell]->addParticle(rho);

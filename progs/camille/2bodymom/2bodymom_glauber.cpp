@@ -256,8 +256,8 @@ double dist2bodymom(MeanFieldNucleusThick& nuc, int shellindex1, int shellindex2
 {
 
 	// GLAUBER stuff -------------------------
-	FastParticle proton_pm(0,0,pm,0.,0.,SHAREDIR); // 1: 0=proton, 2: 0=not a beam particle, 3: pm= 3vector of particle, 4: hard scale, 5: decay width, 6 share dir
-	FastParticle proton_ps(0,0,ps,0.,0.,SHAREDIR);
+	FastParticle proton_pm(0,0,pm,0.,0.,1.,1.,SHAREDIR); // 1: 0=proton, 2: 0=not a beam particle, 3: pm= 3vector of particle, 4: hard scale, 5: decay width, 6 share dir
+	FastParticle proton_ps(0,0,ps,0.,0.,1.,1.,SHAREDIR);
 	
 	GlauberGridThick grid(1,1,1,&nuc,1e-01,2,SHAREDIR); // 1: 60=rgrid, 2: 20=thetagrid, 3: 10=phigrid, 4: 1e-6= prec, 5: [int]=integrator, 6=share dir
 	grid.clearParticles();

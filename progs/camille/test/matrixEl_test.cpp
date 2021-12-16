@@ -31,7 +31,7 @@ int main()
 	int current = 1; // see T. de Forest Nucl Phys A 392,232 (1983) for CC1, CC2, or CC3
 	int SRC = 0; // short range correlations
 	int thick = 0; // thickness?
-	mod.getMatrixEl(kin,res,shellindex,m,CT,pw,current,SRC,thick);
+	mod.getMatrixEl(kin,res,shellindex,m,CT,pw,current,SRC,thick,1.,1.);
 	cout << res << endl;
 	cout << "Matrix element for nucleon helicity -1 " << endl;
 	cout << "> photon pol =  0 " << res(0,0) << endl;

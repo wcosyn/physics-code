@@ -41,10 +41,13 @@ public:
    * \param pphi [rad] spherical coord, phi angle of momentum
    * \param hard_scale [GeV^2] for CT calculations, the hard scale associated with the particle (like Q^2 or |t|, etc)
    * \param Gamma [MeV] Decay width in rest frame (main branching assumed)
+   * \param lc_mod [] modification of coherence length in CT 
+   * \param nkt_mod [] modification of initial CT sigma value
    * \param dir homedir where all input is located
    */
   FastParticle(const int type, const int inc, const double momentum,
-			   const double ptheta, const double pphi, const double hard_scale, const double Gamma, const std::string dir);
+			   const double ptheta, const double pphi, const double hard_scale, const double Gamma, 
+         const double lc_mod, const double nkt_mod, const std::string dir);
   /*! Constructor
    * \param type which particle [0-4] can be extended of course <BR>
    * 0: proton <BR>
@@ -61,10 +64,13 @@ public:
    * \param pvec [MeV] 3-vector with momentum
    * \param hard_scale [GeV^2] for CT calculations, the hard scale associated with the particle (like Q^2 or |t|, etc)
    * \param Gamma [MeV] Decay width in rest frame (main branching assumed)
+   * \param lc_mod [] modification of coherence length in CT 
+   * \param nkt_mod [] modification of initial CT sigma value
    * \param dir homedir where all input is located
    */
   FastParticle(const int type, const int inc, const TVector3 &pvec, 
-			   const double hard_scale, const double Gamma, const std::string dir);
+			   const double hard_scale, const double Gamma, 
+         const double lc_mod, const double nkt_mod, const std::string dir);
   /*! Copy Constructor
    * \param Copy copy
    */
@@ -129,6 +135,8 @@ public:
   double getSigma_decay_n() const{ return sigma_decay_n;}
   /*! [fm^2] return sigma (corrected for decay) parameter for scattering with proton(1) or neutron(0) \param proton selects proton or neutron */
   double getSigma_decay(bool proton) const{ return proton? sigma_decay_p : sigma_decay_n;}
+  double get_lc_mod(){return lc_mod;}
+  double get_nkt_mod(){return nkt_mod;}
   
   
   /*! [fm^2] return sigma parameter for scattering with nucleon from specified level
@@ -307,6 +315,8 @@ private:
   double sigma_decay_n; /*!<  [fm^2]  sigma parameter for decay products scattering with neutron*/
   bool userset; /*!<  if user has set scatt parameters */
   double Gamma; /*!< [MeV] decay width in rest frame */
+  double lc_mod; /*!< [] modification factor of coherence length (playing around with parameters) */
+  double nkt_mod; /*!< [] modification factor of initial CT sigma value (playing around with parameters) */
   static const double sigmap_array[];				      
   static const double beta2p_array[];
   static const double epsp_array[];

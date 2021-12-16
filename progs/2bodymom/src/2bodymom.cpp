@@ -138,8 +138,8 @@ void dist2bodymom_SEL(MeanFieldNucleusThick& nuc,Event& e,double& res,double& er
 	// GLAUBER stuff -------------------------
 	//FastParticle proton_pm(0,0,pm,0.,0.,SHAREDIR); // 1: 0=proton, 2: 0=not a beam particle, 3: pm= 3vector of particle, 4: hard scale, 5: decay width, 6 share dir
 	
-	FastParticle particle_p1(e.type1,0,e.p1,0.,0.,SHAREDIR); // change elastic scattering nucleon 0 is proton 1 is neutron
-	FastParticle particle_p2(e.type2,0,e.p2,0.,0.,SHAREDIR); // change elastic scattering nucleon 0 is proton 1 is neutron
+	FastParticle particle_p1(e.type1,0,e.p1,0.,0.,1.,1.,SHAREDIR); // change elastic scattering nucleon 0 is proton 1 is neutron
+	FastParticle particle_p2(e.type2,0,e.p2,0.,0.,1.,1.,SHAREDIR); // change elastic scattering nucleon 0 is proton 1 is neutron
 	cout << "# Type and mass of fast particle " << e.mass1 << " " << e.type1 << endl;
 	cout << "# Type and mass of slow particle " << e.mass2 << " " << e.type2 << endl;
 	GlauberGridThick_SEL grid(&nuc,SEL_LEADING ? particle_p1 : particle_p2 ,25,20); // the particle you pass here is the one SEL FSIs are calculated upon
@@ -220,8 +220,8 @@ void dist2bodymom_SCX(MeanFieldNucleusThick& nuc,Event& e,double& res,double& er
 	// GLAUBER stuff -------------------------
 	//FastParticle proton_pm(0,0,pm,0.,0.,SHAREDIR); // 1: 0=proton, 2: 0=not a beam particle, 3: pm= 3vector of particle, 4: hard scale, 5: decay width, 6 share dir
 	
-	FastParticle particle_p1(e.type1==0? 8 : 9,0,e.p1,0.,0.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
-	FastParticle particle_p2(e.type2==0? 8 : 9,0,e.p2,0.,0.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
+	FastParticle particle_p1(e.type1==0? 8 : 9,0,e.p1,0.,0.,1.,1.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
+	FastParticle particle_p2(e.type2==0? 8 : 9,0,e.p2,0.,0.,1.,1.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
 	cout << "# Type and mass of fast particle " << e.mass1 << " " << e.type1 << endl;
 	cout << "# Type and mass of slow particle " << e.mass2 << " " << e.type2 << endl;
 	GlauberGridThick_SCX grid(&nuc,SCX_LEADING ? particle_p1 : particle_p2 ,25,20); // the particle you pass here is the one SCX FSIs are calculated upon
@@ -301,8 +301,8 @@ void dist2bodymom_glauber(MeanFieldNucleusThick& nuc,Event& e,double& res,double
 	double intgrl_err = 0.;
 	// GLAUBER stuff -------------------------
 	//FastParticle proton_pm(0,0,pm,0.,0.,SHAREDIR); // 1: 0=proton, 2: 0=not a beam particle, 3: pm= 3vector of particle, 4: hard scale, 5: decay width, 6 share dir
-	FastParticle particle_p1(e.type1,0,e.p1,0.,0.,SHAREDIR);
-	FastParticle particle_p2(e.type2,0,e.p2,0.,0.,SHAREDIR);
+	FastParticle particle_p1(e.type1,0,e.p1,0.,0.,1.,1.,SHAREDIR);
+	FastParticle particle_p2(e.type2,0,e.p2,0.,0.,1.,1.,SHAREDIR);
 	cout << "Type and mass of fast particle " << e.mass1 << " " << e.type1 << endl;
 	cout << "Type and mass of slow particle " << e.mass2 << " " << e.type2 << endl;
 	cout << "Sigmap of fast particle    " << particle_p1.getSigmap() << endl;

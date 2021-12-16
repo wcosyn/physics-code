@@ -200,7 +200,7 @@ void adap_intPm(numint::vector_d & results, double costhetacm,Cross* pObs, MeanF
         cout << "bla " << pm << endl;
       }
       numint::vector_d cross=numint::vector_d(5,0.);
-      pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1);
+      pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1,1.,1.);
       // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
       results[2*shell]+=cross[0];
       results[2*shell+1]+=cross[4];
@@ -224,7 +224,7 @@ void adap_intPm(numint::vector_d & results, double costhetacm,Cross* pObs, MeanF
         cout << "bla " << pm << endl;
       }
       numint::vector_d cross=numint::vector_d(5,0.);
-      pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1);
+      pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,1,1.,1.);
       // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
       //for(int i=5;i<10;++i) results[i]+=cross[i-5];
       results[2*shell]+=cross[0];
@@ -265,7 +265,7 @@ void intPm(const double costhcm, double *results, va_list ap){
   }
   // kin.Print();
     numint::vector_d cross=numint::vector_d(5,0.);
-    p_obs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000,0,1);
+    p_obs->getAllDiffCross(cross,kin,current,shell,1,0.,2000000,0,1,1.,1.);
     for(int i=0;i<5;++i) results[i]=cross[i];
   cout << pm << " " << kin.IsPhysical() << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetCosthYlab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " " << kin.GetCosthklab() <<" " << results[0] << " " << results[1] << " " << results[4] << endl;
   return;

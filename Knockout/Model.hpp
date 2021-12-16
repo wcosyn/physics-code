@@ -60,9 +60,11 @@ public:
    * \param SRC SRC or not in the FSI
    * \param thick thickness in the glauber
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
+   * \param lc_mod [] modification of coherence length in CT 
+   * \param nkt_mod [] modification of initial CT sigma value
    */
   void getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> &results, int shellindex, int m, int CT, int pw, int current,
-    int SRC, int thick);
+    int SRC, int thick, double lc_mod, double nkt_mod);
   /*! Computes amplitudes \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu \phi^{D}_{\alpha}(\vec{p}_m,m) \f$
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
@@ -74,8 +76,10 @@ public:
    * \param m \f$ m_j \f$ times TWO!!! of the initial nucleon
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param thick thickness in the glauber
+   * \param lc_mod [] modification of coherence length in CT 
+   * \param nkt_mod [] modification of initial CT sigma value
    */
-  void getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, int current, int thick);
+  void getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, int current, int thick, double lc_mod, double nkt_mod);
   /*! Computes amplitudes \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu \phi^{D}_{\alpha}(\vec{p}_m,m) \f$
    * for all three photon polarizations (0,-1,+1) and both final nucleon helicities (-1,+1) and all glauber varieties<BR>
    * Computed in the frame where the z-axis lies along the ejected nucleon!!!!!!
@@ -90,8 +94,11 @@ public:
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param thick thickness in the glauber
    * \param medium medium modifications (0=none, 1=QCM, 2=CQSM)
+   * \param lc_mod [] modification of coherence length in CT 
+   * \param nkt_mod [] modification of initial CT sigma value
    */
-  void getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, int current, int thick, int medium);
+  void getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *results, int shellindex, int m, 
+        int current, int thick, int medium, double lc_mod, double nkt_mod);
    /*! Computes the off-shell amplitude \f$ \bar{u}(\vec{p}_f,m_f)\Gamma^{\mu}\epsilon_\mu u(\vec{p}_m,m_i) \f$
    * \param tk contains the hadron kinematics
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).

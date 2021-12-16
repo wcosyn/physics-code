@@ -36,7 +36,7 @@ double diffcross(MeanFieldNucleusThick& nuc,int level,double pm, double Q2, doub
     Cross cross(*elec,&nuc,abserr,2,getShareDir(),user_sigma,screening);
     
     delete elec;
-    return cross.getDiffCross(kin,current,thick,src,ct,pw,level,0.,25000,true, true); // kinematics2to2,current [1,2,3], src, CT, pw, shellindex, phi,maxEval,lab
+    return cross.getDiffCross(kin,current,thick,src,ct,pw,level,0.,25000,true, true,1.,1.); // kinematics2to2,current [1,2,3], src, CT, pw, shellindex, phi,maxEval,lab
 }
 
 void run(MeanFieldNucleusThick& nuc, double Q2,double pf){

@@ -151,7 +151,7 @@ complex<double> Model::getFreeMatrixEl(TKinematics2to2 &tk, int current, int spi
 
 
 void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellindex, 
-			int m, int CT, int pw, int current, int SRC, int thick){
+			int m, int CT, int pw, int current, int SRC, int thick, double lc_mod, double nkt_mod){
 
   //to translate the 2to2kinematics language to our particles:
   //p is A
@@ -176,7 +176,7 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
   mm=m;
   int prot = (shellindex < pnucl->getPLevels()?0:1);
   J= new NucleonEMOperator(tk.GetQsquared(),!prot,0);
-  FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+  FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,lc_mod, nkt_mod, homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   if(!pw){
     if(SRC||thick) grid = &gridthick;
@@ -257,7 +257,7 @@ void Model::getMatrixEl(TKinematics2to2 &tk, Matrix<2,3> & matrixel, int shellin
 }
 
 void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shellindex, int m, 
-			       int current, int thick){
+			       int current, int thick, double lc_mod, double nkt_mod){
   //to translate the 2to2kinematics language to our particles:
   //p is A
   //hyperon Y is fast final nucleon
@@ -271,7 +271,7 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
   mm=m;
   int prot = (shellindex < pnucl->getPLevels()?0:1);
   J= new NucleonEMOperator(tk.GetQsquared(),!prot,0);
-  FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0.,homedir);
+  FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()/1.e06,0., lc_mod, nkt_mod, homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   FourVector<std::complex<double> > polVectorPlus = FourVector< complex<double> >(0.,
 						    -1./sqrt(2.)*costheta,
@@ -344,7 +344,8 @@ void Model::getAllMatrixElMult(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int s
 }
 
 
-void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shellindex, int m, int current, int thick, int medium){
+void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shellindex, int m, 
+                int current, int thick, int medium, double lc_mod, double nkt_mod){
   //to translate the 2to2kinematics language to our particles:
   //p is A
   //hyperon Y is fast final nucleon
@@ -359,7 +360,7 @@ void Model::getAllMatrixEl(TKinematics2to2 &tk, Matrix<2,3> *matrixel, int shell
   mm=m;
   int prot = (shellindex < pnucl->getPLevels()?0:1);
   J= new NucleonEMOperator(tk.GetQsquared(),!prot,0);
-  FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
+  FastParticle proton(prot, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,lc_mod, nkt_mod, homedir);
   if(getUsersigma()) proton.setScreening(getSigmascreening());
   
   if(thick) grid = &gridthick;

@@ -55,8 +55,8 @@ int main(int argc, char *argv[])
   
   if(ppion<4){ //2 pion decay  (1) both pions 
     GlauberGridThick grid = GlauberGridThick(60,18,5,&nucl,prec,integrator,homedir);
-    FastParticle pion1(2, 0, ppi,0.,0.,3.,0.,homedir);
-    FastParticle pion2(3, 0, ppi,thetapi,0.,3.,0.,homedir);
+    FastParticle pion1(2, 0, ppi,0.,0.,3.,0.,1.,1.,homedir);
+    FastParticle pion2(3, 0, ppi,thetapi,0.,3.,0.,1.,1.,homedir);
     grid.clearParticles();
     if(ppion==1||ppion==2) grid.addParticle(pion1);
     if(ppion==1||ppion==3) grid.addParticle(pion2);
@@ -84,8 +84,8 @@ int main(int argc, char *argv[])
     double ppi2=sqrt(ppiz2*ppiz2+ppiperp*ppiperp);
     
     GlauberGridThick grid = GlauberGridThick(60,18,5,&nucl,prec,integrator,homedir);
-    FastParticle pion1(2, 0, ppi,0.,0.,3.,0.,homedir);
-    FastParticle pion2(3, 0, ppi2,acos(ppiz/ppi)+acos(ppiz2/ppi2),0.,3.,0.,homedir);
+    FastParticle pion1(2, 0, ppi,0.,0.,3.,0.,1.,1.,homedir);
+    FastParticle pion2(3, 0, ppi2,acos(ppiz/ppi)+acos(ppiz2/ppi2),0.,3.,0.,1.,1.,homedir);
     grid.clearParticles();
     grid.addParticle(pion1);
     grid.addParticle(pion2);
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
   }
   if(ppion==0){ //one compound particle (rho-like) containing two pions
     OneGlauberGrid grid = OneGlauberGrid(60,18,&nucl,prec,integrator,homedir);
-    FastParticle rhopion(7, 0, ppi,0.,0.,3.,0.,homedir);
+    FastParticle rhopion(7, 0, ppi,0.,0.,3.,0.,1.,1.,homedir);
     grid.clearParticles();
     grid.addParticle(rhopion);
     grid.updateGrids();

@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 //    Momgrid.printRho_grid(4);  
    
   MeanFieldNucleusThick FeThick(3,homedir);
-  FastParticle rho(4, 0, 2340,0.,0.,1.0,145.,homedir);
+  FastParticle rho(4, 0, 2340,0.,0.,1.0,145.,1.,1.,homedir);
   GlauberDecayGridThick gridthick(60,20,5,&FeThick,2,1.E-04,homedir);  
   gridthick.addParticle(rho);
   //gridthick.printParticles();

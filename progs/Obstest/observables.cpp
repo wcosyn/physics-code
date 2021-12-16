@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 //       obs.printDensity_profile(kin,shell,thick,maxEval);
       
       vector<double> observ;
-      obs.getAllObs_xyz(observ,kin,2,shell,thick,medium,0.,maxEval,1);
+      obs.getAllObs_xyz(observ,kin,2,shell,thick,medium,0.,maxEval,1,1.,1.);
       
      cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR 
       << " " << kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
       << " " << -kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
       
       double free180=obs.getElCross(kin,2,PI,maxEval)*HBARC*HBARC;
-      obs.getAllObs_xyz(observ,kin,2,shell,thick,medium,PI,maxEval,1);
+      obs.getAllObs_xyz(observ,kin,2,shell,thick,medium,PI,maxEval,1,1.,1.);
       for(int i=0;i<5;i+=4) cout << observ[i*8] << " " << observ[i*8+3] << " " << observ[i*8+5] << " " << observ[i*8+7]<< " ";
       cout << free180*1.E-09 << endl;
     }

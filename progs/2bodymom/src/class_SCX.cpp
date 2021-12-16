@@ -131,8 +131,8 @@ void calculate_CX_probabilities(struct Event& event,MeanFieldNucleusThick& nuc,d
 	res[0]=0.; res[1]=0.; res[2]=0.;
 	err[0]=0.; err[1]=0.; err[2]=0.;
 	/** make the fast particles required for the elastic FSI grid **/
-	FastParticle fp1_fsi(event.type1,0,event.p1,0.,0.,SHAREDIR);
-	FastParticle fp2_fsi(event.type2,0,event.p2,0.,0.,SHAREDIR);
+	FastParticle fp1_fsi(event.type1,0,event.p1,0.,0.,1.,1.,SHAREDIR);
+	FastParticle fp2_fsi(event.type2,0,event.p2,0.,0.,1.,1.,SHAREDIR);
 	/** set up the Glauber FSI grid **/
 	
 	GlauberGridThick grid(60,20,5,&nuc,1e-03,2,SHAREDIR); // 1: 60=rgrid, 2: 20=thetagrid, 3: 10=phigrid, 4: nucleus, 5: 1e-6= prec, 5: [int]=integrator, 6=share dir
@@ -145,8 +145,8 @@ void calculate_CX_probabilities(struct Event& event,MeanFieldNucleusThick& nuc,d
 	grid.clearKnockout();
 	
 	/** make the fast particles required for the classical CX grids **/
-	FastParticle fp1_cx((event.type1==0)? FastParticle::P_CLASS_SCX : FastParticle::N_CLASS_SCX,0,event.p1,0.,0.,SHAREDIR); // change elastic scattering nucleon 0 is proton 1 is neutron
-	FastParticle fp2_cx((event.type2==0)? FastParticle::P_CLASS_SCX : FastParticle::N_CLASS_SCX,0,event.p2,0.,0.,SHAREDIR); // change elastic scattering nucleon 0 is proton 1 is neutron
+	FastParticle fp1_cx((event.type1==0)? FastParticle::P_CLASS_SCX : FastParticle::N_CLASS_SCX,0,event.p1,0.,0.,1.,1.,SHAREDIR); // change elastic scattering nucleon 0 is proton 1 is neutron
+	FastParticle fp2_cx((event.type2==0)? FastParticle::P_CLASS_SCX : FastParticle::N_CLASS_SCX,0,event.p2,0.,0.,1.,1.,SHAREDIR); // change elastic scattering nucleon 0 is proton 1 is neutron
 	/** now make the classical CX grids, one for each particle **/
 	ClassGridThick_SCX cx_grid_1(&nuc,&fp1_cx,25,25);
 	ClassGridThick_SCX cx_grid_2(&nuc,&fp2_cx,25,25);

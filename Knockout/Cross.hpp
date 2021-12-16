@@ -68,10 +68,12 @@ public:
    * \param maxEval max # of evaluations in integrations
    * \param lab lab frame of cm frame for hadron part
    * \param phiavg is phi averaged over or not.  In the first case the phi dependent response functions are dropped
+   * \param lc_mod [] modification of coherence length in CT 
+   * \param nkt_mod [] modification of initial CT sigma value
    * \return differential cross section [fm^2 /MeV/sr^2]
    */
   double getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
-		      double phi, int maxEval, bool lab, bool phiavg);
+		      double phi, int maxEval, bool lab, bool phiavg, double lc_mod, double nkt_mod);
   /*! Computes the differential A(e,e'N) cross section for certain kinematics and a certain shell of the nucleus
    * \param cross vector with the different cross sections <BR>
    * differential cross section [fm ^2/MeV/sr^2]
@@ -85,13 +87,15 @@ public:
    * \param current selects the current operator [1=CC1, 2=CC2, 3=CC3], see T. de Forest, Nucl. Phys. A 392, 232 (1983).
    * \param shellindex selects the shell in the nucleus where the ejected N originates from
    * \param thick do you want thickness in the Glauber FSI or not?
-   * \param phi angle between electron and hadron plane
+   * \param phi [rad] angle between electron and hadron plane
    * \param maxEval max # of evaluations in integrations
    * \param lab lab frame or cm frame for hadron part
     * \param phiavg is phi averaged over or not.  In the first case the phi dependent response functions are dropped
+   * \param lc_mod [] modification of coherence length in CT 
+   * \param nkt_mod [] modification of initial CT sigma value
   */
   void getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
-		       int shellindex, int thick, double phi, int maxEval, bool lab, bool phiavg);
+		       int shellindex, int thick, double phi, int maxEval, bool lab, bool phiavg, double lc_mod, double nkt_mod);
 
   /*! Computes observables for the A(e,e'N) reaction for certain kinematics and a certain shell of the nucleus.
    * polarization axes defined as: z along momentum, y perp to the hadron plane, x perp to z in the hadron plane <BR>
@@ -119,10 +123,12 @@ public:
    * \param phi angle between electron and hadron plane
    * \param maxEval max # of evaluations in integrations
    * \param lab lab frame or cm frame for hadron part
+   * \param lc_mod [] modification of coherence length in CT 
+   * \param nkt_mod [] modification of initial CT sigma value
    * \return differential cross section 
    */
   void getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
-			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab);
+			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab, double lc_mod, double nkt_mod);
 
   /*! Computes observables for the A(e,e'N) reaction for certain kinematics and a certain shell of the nucleus.
    * polarization axes defined as: z along q, y perp to the electron plane, x perp to z in the electron plane <BR>
@@ -144,10 +150,12 @@ public:
    * \param phi angle between electron and hadron plane
    * \param maxEval max # of evaluations in integrations
    * \param lab lab frame or cm frame for hadron part
+   * \param lc_mod [] modification of coherence length in CT 
+   * \param nkt_mod [] modification of initial CT sigma value
    * \return differential cross section 
    */
   void getAllObs_xyz(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
-			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab);
+			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab, double lc_mod, double nkt_mod);
   
   /*! Computes the off-shell (e,e'p) cross section for certain kinematics <BR>
    * What is denoted as \f$ K \sigma_{ep} \f$ in the literature

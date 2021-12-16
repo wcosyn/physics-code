@@ -12,7 +12,8 @@ using namespace std;
 using namespace std;
 
 FastParticle::FastParticle(const int type, const int inc, const double momentum,
-			   const double ptheta, const double pphi, const double hard_scale, const double ggamma, const std::string dir)
+			   const double ptheta, const double pphi, const double hard_scale, 
+         const double ggamma, const double lc_mod, const double nkt_mod, const std::string dir)
 :particletype(type),
 incoming(inc), 
 p(momentum),
@@ -23,7 +24,10 @@ hardscale(hard_scale),
 sigma_decay_p(0.),
 sigma_decay_n(0.),
 userset(0),
-Gamma(ggamma){
+Gamma(ggamma),
+lc_mod(lc_mod),
+nkt_mod(nkt_mod)
+{
 //   cout << "Initializing FastParticle object: " << endl;
   ex=sin(theta)*cos(phi);
   ey=sin(theta)*sin(phi);
@@ -174,8 +178,8 @@ Gamma(ggamma){
 
 /** alternative constructor now using constructor delegation; needs -std=c++11 **/
 FastParticle::FastParticle(const int type, const int inc, const TVector3 &pvec, 
-			   const double hard_scale, const double Gamma, const std::string dir) :
-	FastParticle::FastParticle(type,inc,pvec.Mag(),pvec.Theta(),pvec.Phi(),hard_scale,Gamma,dir) {}
+			   const double hard_scale, const double Gamma, const double lc_mod, const double nkt_mod, const std::string dir) :
+	FastParticle::FastParticle(type,inc,pvec.Mag(),pvec.Theta(),pvec.Phi(),hard_scale,Gamma, lc_mod, nkt_mod, dir) {}
 
 FastParticle::FastParticle(const FastParticle &Copy):
 particletype(Copy.getParticletype()),
@@ -203,7 +207,9 @@ E(Copy.getE()),
 decay_dil(Copy.getDecay_dil()),
 sigma_decay_n(Copy.getSigma_decay_n()),
 sigma_decay_p(Copy.getSigma_decay_p()),
-userset(Copy.userset)
+userset(Copy.userset),
+lc_mod(Copy.lc_mod),
+nkt_mod(Copy.nkt_mod)
 {
   for(int i=0;i<3;i++) hitb[i]=Copy.getHitbvec()[i];
 }
@@ -239,6 +245,8 @@ FastParticle& FastParticle::operator=(const FastParticle& rhs)
     sigma_decay_n = rhs.getSigma_decay_n();
     sigma_decay_p = rhs.getSigma_decay_p();
     userset = rhs.userset;
+    lc_mod = rhs.lc_mod;
+    nkt_mod = rhs.nkt_mod;
     for(int i=0;i<3;i++) hitb[i]=rhs.getHitbvec()[i];
      
      
@@ -309,11 +317,11 @@ complex<double> FastParticle::getScatterfront(bool proton) const{
 }
 
 double FastParticle::getCTsigma(double z) const{
- return ((abs(z-getHitz()) > getLc())
-			  ||(getHardScale() < getNkt_sq()))? 
-			  1.:(abs(z-getHitz())/getLc() 
-			  + getNkt_sq()/getHardScale()*
-			  (1.-abs(z-getHitz()) / getLc())); 
+ return ((abs(z-getHitz()) > getLc()*lc_mod)
+			  ||(getHardScale() < getNkt_sq()*nkt_mod))? 
+			  1.:(abs(z-getHitz())/(getLc()*lc_mod)
+			  + getNkt_sq()*nkt_mod/getHardScale()*
+			  (1.-abs(z-getHitz()) / (getLc()*lc_mod))); 
   
 }
 

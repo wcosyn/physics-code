@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
   double pphi = 0.; // momentum phi angle
   double hard_scale = 8. ; // hard_scale ?? -> seems only to matter in CT-calculations
   double Gamma = 0. ; // decay width of particle, stable proton -> Gamma = 0
-  FastParticle proton(type,inc,momentum,ptheta,pphi,hard_scale,Gamma,homedir);
+  FastParticle proton(type,inc,momentum,ptheta,pphi,hard_scale,Gamma,1.,1.,homedir);
   proton.printParticle();
   
   

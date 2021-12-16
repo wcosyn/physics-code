@@ -65,7 +65,7 @@ double Cross::getElCross(TKinematics2to2 &kin, int current, double phi, int maxE
 
 
 double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC, int CT, int pw, int shellindex, 
-			   double phi, int maxEval, bool lab, bool phiavg){
+			   double phi, int maxEval, bool lab, bool phiavg, double lc_mod, double nkt_mod){
   
   //electron kinematics
   double Q2=kin.GetQsquared();
@@ -98,7 +98,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
 //   cout << pnucl->getJ_array()[shellindex]/2. << " " << pnucl->getL_array()[shellindex] << endl;
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
       Matrix<2,3> J;
-      reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current, SRC, thick);
+      reacmodel->getMatrixEl(kin,J,shellindex,m,CT,pw, current, SRC, thick, lc_mod, nkt_mod);
       for(int i=0;i<2;i++){ //only polarization, other one follows from parity symmetry!!
 //  	  cout << i << " " << m << " " << J(i,0) << " " << J(i,1) << " " <<  J(i,2) << endl;
 	response[0][0]+=norm(J(i,0));
@@ -123,7 +123,7 @@ double Cross::getDiffCross(TKinematics2to2 &kin, int current, int thick, int SRC
 }
 
 void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, int current, 
-			     int shellindex, int thick, double phi, int maxEval, bool lab, bool phiavg){
+			     int shellindex, int thick, double phi, int maxEval, bool lab, bool phiavg, double lc_mod, double nkt_mod){
   
   cross=vector<double>(5,0.);
   //electron kinematics
@@ -155,7 +155,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
   for(int i=0;i<6;i++) for(int j=0;j<total;j++) response[j][i]=0.;
   for(int m=-pnucl->getJ_array()[shellindex];m<=pnucl->getJ_array()[shellindex];m+=2){
     Matrix<2,3> *J = new Matrix<2,3>[total];
-    reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,0);
+    reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,0, lc_mod, nkt_mod);
   //only half of the m values due to parity symmetry, careful!!! 
     for(int i=0;i<1;i++){
       for(int j=0;j<total;j++){
@@ -180,7 +180,7 @@ void  Cross::getAllDiffCross(std::vector<double> &cross, TKinematics2to2 &kin, i
 
 
 void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
-			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab){
+			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab, double lc_mod, double nkt_mod){
   
 
 
@@ -218,7 +218,7 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
   //we can exploit parity symmetry for half of the currents!!!
   for(int m=-pnucl->getJ_array()[shellindex];m<=0/*pnucl->getJ_array()[shellindex]*/;m+=2){
       Matrix<2,3> *J = new Matrix<2,3>[total_grid];
-      reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,medium);
+      reacmodel->getAllMatrixEl(kin,J,shellindex,m,current,thick,medium, lc_mod, nkt_mod);
       for(int j=0;j<total_grid;j++){
 	  //2*2 density matrices with helicities as indices
 // 	  responsematrix[j][0]+=Matrix<2,2>(norm(J[j](1,0)),
@@ -355,8 +355,8 @@ void  Cross::getAllObs_tnl(std::vector<double> &obs, TKinematics2to2 &kin, int c
 }
 
 void  Cross::getAllObs_xyz(std::vector<double> &obs, TKinematics2to2 &kin, int current, 
-			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab){
-  getAllObs_tnl(obs,kin,current,shellindex,thick,medium,phi,maxEval,lab);
+			     int shellindex, int thick, int medium, double phi, int maxEval, bool lab, double lc_mod, double nkt_mod){
+  getAllObs_tnl(obs,kin,current,shellindex,thick,medium,phi,maxEval,lab, lc_mod, nkt_mod);
   int total=thick?5:3;
   double sinphi,cosphi;
   sincos(phi,&sinphi,&cosphi);
@@ -394,7 +394,7 @@ void Cross::getDensr(std::vector<double> &densr, const TKinematics2to2 &tk, cons
   double sintheta=sqrt(1.-costheta*costheta);
   //careful!! we compute in a frame with p_f along z-axis
   
-  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,1.,1.,homedir);
   AbstractFsiGrid *grid; 
   if(thick) grid = new GlauberGridThick(120,36,5,pnucl,prec,2,homedir);
   else grid= new OneGlauberGrid(120,36,pnucl,prec,2,homedir);
@@ -489,7 +489,7 @@ void Cross::getDensr_ctheta(std::vector<double> &densr, const TKinematics2to2 &t
   double sintheta=sqrt(1.-costheta*costheta);
   //careful!! we compute in a frame with p_f along z-axis
   
-  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,1.,1.,homedir);
   AbstractFsiGrid *grid; 
   if(thick) grid = new GlauberGridThick(120,36,5,pnucl,prec,2,homedir);
   else grid= new OneGlauberGrid(120,36,pnucl,prec,2,homedir);
@@ -584,7 +584,7 @@ void Cross::getPhid(std::vector<complex<double> > &phid, const TKinematics2to2 &
   double sintheta=sqrt(1.-costheta*costheta);
   //careful!! we compute in a frame with p_f along z-axis
   
-  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,homedir);
+  FastParticle proton(0, 0, tk.GetPYlab(),0.,0.,tk.GetQsquared()*1.E-06,0.,1.,1.,homedir);
   AbstractFsiGrid *grid; 
   if(thick) grid = new GlauberGridThick(120,36,5,pnucl,prec,2,homedir);
   else grid= new OneGlauberGrid(120,36,pnucl,prec,2,homedir);

@@ -438,7 +438,7 @@ void DQEinclusive::FSI_int(numint::vector_d & result, double pperp1, double qt,
   if(pcm<cross.minpcm) cross.minpcm=pcm;
   double chi=sqrt(s)*pcm*2.;
 
-  FastParticle rescatter(0,0,pcm,0.,0.,Q2,0.,"");
+  FastParticle rescatter(0,0,pcm,0.,0.,Q2,0.,1.,1.,"");
   
   double pperp2=sqrt(pow(pperp1+qt*cosqphi,2.)+pow(qt*sinqphi,2.));
 
@@ -815,7 +815,7 @@ void DQEinclusive::FSI_PV(numint::vector_d & result, double pperp1, double qt,
   double pcm=sqrt(s/4.-MASSP*MASSP);
   if(pcm<cross.minpcm) cross.minpcm=pcm;
   double chi=sqrt(s)*pcm*2.;
-  FastParticle rescatter(0,0,pcm,0.,0.,Q2,0.,"");
+  FastParticle rescatter(0,0,pcm,0.,0.,Q2,0.,1.,1.,"");
 
   double pperp2=sqrt(pow(pperp1+qt*cosqphi,2.)+pow(qt*sinqphi,2.));
 
@@ -1146,7 +1146,7 @@ void DQEinclusive::FSI_PVfirst_perp(numint::vector_d & res, double pz1, double p
   double pcm=sqrt(s/4.-MASSP*MASSP);
   if(pcm<cross.getMinpcm()) cross.minpcm=pcm;
   double chi=sqrt(s)*pcm*2.;
-  FastParticle rescatter(0,0,pcm,0.,0.,Q2,0.,"");
+  FastParticle rescatter(0,0,pcm,0.,0.,Q2,0.,1.,1.,"");
 
   double pperp2=sqrt(pow(pperp1+qt*cosqphi,2.)+pow(qt*sinqphi,2.));
 

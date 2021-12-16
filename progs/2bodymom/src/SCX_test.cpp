@@ -44,10 +44,10 @@ void mdist2bodymom_SCX(MeanFieldNucleusThick& nuc,Event& e,double& res,double& e
 	double intgrl_res = 0.; // result of the integral we will return at the end
 	double intgrl_err = 0.;
 	// GLAUBER stuff -------------------------
-	//FastParticle proton_pm(0,0,pm,0.,0.,SHAREDIR); // 1: 0=proton, 2: 0=not a beam particle, 3: pm= 3vector of particle, 4: hard scale, 5: decay width, 6 share dir
+	//FastParticle proton_pm(0,0,pm,0.,0.,1.,1.,SHAREDIR); // 1: 0=proton, 2: 0=not a beam particle, 3: pm= 3vector of particle, 4: hard scale, 5: decay width, 6 share dir
 	
-	FastParticle particle_p1(e.type1==0? 8 : 9,0,e.p1,0.,0.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
-	FastParticle particle_p2(e.type2==0? 8 : 9,0,e.p2,0.,0.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
+	FastParticle particle_p1(e.type1==0? 8 : 9,0,e.p1,0.,0.,1.,1.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
+	FastParticle particle_p2(e.type2==0? 8 : 9,0,e.p2,0.,0.,1.,1.,SHAREDIR); // change elastic scattering nucleon (0,1) to SCX nucleon (8,9)
 	cout << "# Type and mass of fast particle " << e.mass1 << " " << e.type1 << endl;
 	cout << "# Type and mass of slow particle " << e.mass2 << " " << e.type2 << endl;
 	bool SCX_LEADING = true;
@@ -181,8 +181,8 @@ int main(){
 }
 
 void testClass(){
-	FastParticle fpp(FastParticle::P_CLASS_SCX,0,100.,0.,0.,0.,0.,SHAREDIR);
-	FastParticle fpn(FastParticle::N_CLASS_SCX,0,1000.,0.,0.,0.,0.,SHAREDIR);
+	FastParticle fpp(FastParticle::P_CLASS_SCX,0,100.,0.,0.,0.,0.,1.,1.,SHAREDIR);
+	FastParticle fpn(FastParticle::N_CLASS_SCX,0,1000.,0.,0.,0.,0.,1.,1.,SHAREDIR);
 	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::Pb,SHAREDIR);
 	ClassGridThick_SCX g(&nuc,&fpp,25,20);
 	g.constructGrid();
@@ -191,15 +191,15 @@ void testClass(){
 
 void testClassScaling(){
 	for (double p=300;p<=1500;p+=10.){
-		FastParticle fp(FastParticle::P_CLASS_SCX,0,p,0.,0.,0.,0.,SHAREDIR);
-		FastParticle fn(FastParticle::N_CLASS_SCX,0,p,0.,0.,0.,0.,SHAREDIR);
+		FastParticle fp(FastParticle::P_CLASS_SCX,0,p,0.,0.,0.,0.,1.,1.,SHAREDIR);
+		FastParticle fn(FastParticle::N_CLASS_SCX,0,p,0.,0.,0.,0.,1.,1.,SHAREDIR);
 		std::cout << p << "\t" << fp.getSigman() << "\t" << fn.getSigmap() << std::endl;
 	}
 }
 
 void createGrids(){
-	FastParticle fpp(8,0,1000.,0.,0.,0.,0.,SHAREDIR);
-	FastParticle fpn(9,0,1000.,0.,0.,0.,0.,SHAREDIR);
+	FastParticle fpp(8,0,1000.,0.,0.,0.,0.,1.,1.,SHAREDIR);
+	FastParticle fpn(9,0,1000.,0.,0.,0.,0.,1.,1.,SHAREDIR);
 	MeanFieldNucleusThick C(MeanFieldNucleusThick::C,SHAREDIR);
 	MeanFieldNucleusThick Al(MeanFieldNucleusThick::Al,SHAREDIR);
 	MeanFieldNucleusThick Fe(MeanFieldNucleusThick::Fe,SHAREDIR);
@@ -215,9 +215,9 @@ void createGrids(){
 }
 
 void testgrid_el(){
-	FastParticle fp(1,0,250.,0.,0.,0.,0.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
-	//FastParticle fp(8,0,100,M_PI/4.,0.,0.,0.,SHAREDIR);
-	//FastParticle fp(8,0,1397.,M_PI/2.,3.*M_PI/4.,0.,0.,SHAREDIR);
+	FastParticle fp(1,0,250.,0.,0.,0.,0.,1.,1.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
+	//FastParticle fp(8,0,100,M_PI/4.,0.,0.,0.,1.,1.,SHAREDIR);
+	//FastParticle fp(8,0,1397.,M_PI/2.,3.*M_PI/4.,0.,0.,1.,1.,SHAREDIR);
 	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::Fe,SHAREDIR);
 	GlauberGridThick_SEL g(&nuc,fp,25,20);
 	g.addKnockoutParticle(nuc.getPLevels()+1);
@@ -251,9 +251,9 @@ void testgrid_el(){
 	//g.printDensityGrid();
 }
 void testgrid(){
-	FastParticle fp(8,0,250.,0.,0.,0.,0.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
-	//FastParticle fp(8,0,100,M_PI/4.,0.,0.,0.,SHAREDIR);
-	//FastParticle fp(8,0,1397.,M_PI/2.,3.*M_PI/4.,0.,0.,SHAREDIR);
+	FastParticle fp(8,0,250.,0.,0.,0.,0.,1.,1.,SHAREDIR); // type, beam part, momentum (MeV), ptheta,pphi,hard scale (CT),gamma (Decay width)
+	//FastParticle fp(8,0,100,M_PI/4.,0.,0.,0.,1.,1.,SHAREDIR);
+	//FastParticle fp(8,0,1397.,M_PI/2.,3.*M_PI/4.,0.,0.,1.,1.,SHAREDIR);
 	MeanFieldNucleusThick nuc(MeanFieldNucleusThick::Fe,SHAREDIR);
 	GlauberGridThick_SCX g(&nuc,fp,25,20);
 	g.addKnockoutParticle(nuc.getPLevels()+1);
@@ -290,16 +290,16 @@ void testgrid(){
 
 void scatterFrontScaling(){
 	for (double p=350; p<2000; p+=10){ // p is in MeV
-		FastParticle fp(8,0,p,0.,0.,0.,0.,SHAREDIR);
-		FastParticle fpel(0,0,p,0.,0.,0.,0.,SHAREDIR);
+		FastParticle fp(8,0,p,0.,0.,0.,0.,1.,1.,SHAREDIR);
+		FastParticle fpel(0,0,p,0.,0.,0.,0.,1.,1.,SHAREDIR);
 		std::cout << p << "\t" <<fp.getScatterfront(0).real() << "\t" << fp.getScatterfront(0).imag() << "\t";
 		std::cout << fpel.getScatterfront(0).real() << "\t" << fpel.getScatterfront(0).imag() << "\t";
 		std::cout << fpel.getScatterfront(1).real() << "\t" << fpel.getScatterfront(1).imag() << std::endl;
 	}
 	std::ofstream beta("beta_dep.dat");
 	for (double p=350; p<2000; p+=10){
-		FastParticle fp(8,0,p,0.,0.,0.,0.,SHAREDIR);
-		FastParticle fpel(0,0,p,0.,0.,0.,0.,SHAREDIR);
+		FastParticle fp(8,0,p,0.,0.,0.,0.,1.,1.,SHAREDIR);
+		FastParticle fpel(0,0,p,0.,0.,0.,0.,1.,1.,SHAREDIR);
 		beta << p << "\t" << fp.getBetasq(0) << "\t" << fp.getBetasq(1) << "\t";
 		beta << fpel.getBetasq(0) << "\t" << fpel.getBetasq(1) << "\t" << std::endl;
 	}
