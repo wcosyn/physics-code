@@ -18,7 +18,7 @@ using namespace std;
 
 void getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, double Q2, double omega, int shell);
 void adap_intPm(numint::vector_d &, double costhetacm,Cross* pObs, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec,
-		double Q2, double omega, int current, double lc_mod, double nkt_mod, double *cthmax);
+		double Q2, double omega, int current, int thick, double lc_mod, double nkt_mod, double *cthmax);
 
 
 //run ./transp_jlab12 [Q2,GeV^2] [Ein, MeV] [precision in integration] [userset coherence length factor] [userset initial sigma CT value]
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
   cout << Q2 << " " << omega << " " << q << " " << Q2/4./Ein/(Ein-omega) << endl;
   
   //glauber parameters
-  int thick=1;
+  int thick=0;
   int current=2;
   double prec=atof(argv[4]);
   bool userset=0;//atoi(argv[8]);
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
     static void exec(const numint::array<double,1> &x, void *param, numint::vector_d &ret) {
       Ftor &p = * (Ftor *) param;
-      p.f(ret,x[0],p.pObs,p.pNucleus,p.elec,p.Q2,p.omega,p.current,p.lc_mod, p.nkt_mod, p.cthmax);
+      p.f(ret,x[0],p.pObs,p.pNucleus,p.elec,p.Q2,p.omega,p.current,p.thick,p.lc_mod, p.nkt_mod, p.cthmax);
     }
     Cross *pObs;
     MeanFieldNucleusThick *pNucleus;
@@ -78,11 +78,12 @@ int main(int argc, char *argv[])
     double Q2;
     double omega;
     int current;
+    int thick;
     double lc_mod;
     double nkt_mod;
     double *cthmax;
     void (*f)(numint::vector_d &, double pm,Cross* pObs, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec,
-	  double Q2, double omega, int current, double lc_mod, double nkt_mod, double *cthmax);
+	  double Q2, double omega, int current, int thick, double lc_mod, double nkt_mod, double *cthmax);
 
   };
 
@@ -94,6 +95,7 @@ int main(int argc, char *argv[])
   F.Q2=Q2;
   F.omega=omega;
   F.current=current;
+  F.thick=thick;
   F.cthmax=cthmax;
   F.lc_mod = lc_mod;
   F.nkt_mod = nkt_mod;
@@ -161,7 +163,7 @@ int main(int argc, char *argv[])
 
 //integrandum
 void adap_intPm(numint::vector_d & results, double costhetacm,Cross* pObs, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec,
-		double Q2, double omega, int current, double lc_mod, double nkt_mod, double *cthmax){
+		double Q2, double omega, int current, int thick, double lc_mod, double nkt_mod, double *cthmax){
 		  
   results=numint::vector_d(3*pNucleus->getTotalLevels()+6,0.);
   for(int shell=0;shell<pNucleus->getPLevels();shell++) {
@@ -174,19 +176,19 @@ void adap_intPm(numint::vector_d & results, double costhetacm,Cross* pObs, MeanF
         // for(int i=0;i<5;i++) results[i]+=0.;
         cout << "bla " << pm << endl;
       }
-      numint::vector_d cross=numint::vector_d(5,0.);
-      pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,0, lc_mod, nkt_mod);
+      numint::vector_d cross=numint::vector_d(thick? 5:3,0.);
+      pObs->getAllDiffCross(cross,kin,current,shell,0,0.,20000,0,0, lc_mod, nkt_mod);
       // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
       results[3*shell]+=cross[0];
-      results[3*shell+1]+=cross[2];
-      results[3*shell+2]+=cross[4];
+      results[3*shell+1]+=cross[thick?2:1];
+      results[3*shell+2]+=cross[thick?4:2];
       results[3*pNucleus->getTotalLevels()]+=cross[0];
-      results[3*pNucleus->getTotalLevels()+1]+=cross[2];
-      results[3*pNucleus->getTotalLevels()+2]+=cross[4];
+      results[3*pNucleus->getTotalLevels()+1]+=cross[thick?2:1];
+      results[3*pNucleus->getTotalLevels()+2]+=cross[thick?4:2];
       // cout << 2*shell << " " << 2*shell+1 << " " << 2*pNucleus->getTotalLevels() << " " << 2*pNucleus->getTotalLevels()+1 << endl;
-      // cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-      // << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-      // << " " << kin.GetKlab() << " " << kin.GetWlab() <<  " " << results[3*shell] << " " << results[3*shell+2] << endl;
+      cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+      << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+      << " " << kin.GetKlab() << " " << kin.GetWlab() <<  " " << results[3*shell] << " " << results[3*shell+2] << endl;
     }  
   }
 
@@ -200,20 +202,20 @@ void adap_intPm(numint::vector_d & results, double costhetacm,Cross* pObs, MeanF
         //for(int i=5;i<10;i++) results[i]+=0.;
         cout << "bla " << pm << endl;
       }
-      numint::vector_d cross=numint::vector_d(5,0.);
-      pObs->getAllDiffCross(cross,kin,current,shell,1,0.,20000,0,0, lc_mod, nkt_mod);
+      numint::vector_d cross=numint::vector_d(thick?5:3,0.);
+      pObs->getAllDiffCross(cross,kin,current,shell,0,0.,20000,0,0, lc_mod, nkt_mod);
       // double pw=pObs->getDiffCross(kin,current,1,0,0,1,shell,0.,20000,0,1);
       //for(int i=5;i<10;++i) results[i]+=cross[i-5];
       results[3*shell]+=cross[0];
-      results[3*shell+1]+=cross[2];
-      results[3*shell+2]+=cross[4];
+      results[3*shell+1]+=cross[thick?2:1];
+      results[3*shell+2]+=cross[thick?4:2];
       results[3*pNucleus->getTotalLevels()+3]+=cross[0];
-      results[3*pNucleus->getTotalLevels()+4]+=cross[2];
-      results[3*pNucleus->getTotalLevels()+5]+=cross[4];
+      results[3*pNucleus->getTotalLevels()+4]+=cross[thick?2:1];
+      results[3*pNucleus->getTotalLevels()+5]+=cross[thick?4:2];
       // cout << 2*shell << " " << 2*shell+1 << " " << 2*pNucleus->getTotalLevels()+2 << " " << 2*pNucleus->getTotalLevels()+3 << endl;
-      // cout << "1 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-      // << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-      // << " " << kin.GetKlab() << " " << kin.GetWlab() << " "  << results[3*shell] << " " << results[3*shell+2] << endl;
+      cout << "1 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+      << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+      << " " << kin.GetKlab() << " " << kin.GetWlab() << " "  << results[3*shell] << " " << results[3*shell+2] << endl;
     }
     
   }
