@@ -186,9 +186,9 @@ void adap_intPm(numint::vector_d & results, double costhetacm,Cross* pObs, MeanF
       results[3*pNucleus->getTotalLevels()+1]+=cross[thick?2:1];
       results[3*pNucleus->getTotalLevels()+2]+=cross[thick?4:2];
       // cout << 2*shell << " " << 2*shell+1 << " " << 2*pNucleus->getTotalLevels() << " " << 2*pNucleus->getTotalLevels()+1 << endl;
-      cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-      << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-      << " " << kin.GetKlab() << " " << kin.GetWlab() <<  " " << results[3*shell] << " " << results[3*shell+2] << endl;
+      // cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+      // << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+      // << " " << kin.GetKlab() << " " << kin.GetWlab() <<  " " << results[3*shell] << " " << results[3*shell+2] << endl;
     }  
   }
 
@@ -213,9 +213,9 @@ void adap_intPm(numint::vector_d & results, double costhetacm,Cross* pObs, MeanF
       results[3*pNucleus->getTotalLevels()+4]+=cross[thick?2:1];
       results[3*pNucleus->getTotalLevels()+5]+=cross[thick?4:2];
       // cout << 2*shell << " " << 2*shell+1 << " " << 2*pNucleus->getTotalLevels()+2 << " " << 2*pNucleus->getTotalLevels()+3 << endl;
-      cout << "1 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-      << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-      << " " << kin.GetKlab() << " " << kin.GetWlab() << " "  << results[3*shell] << " " << results[3*shell+2] << endl;
+      // cout << "1 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+      // << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+      // << " " << kin.GetKlab() << " " << kin.GetWlab() << " "  << results[3*shell] << " " << results[3*shell+2] << endl;
     }
     
   }
