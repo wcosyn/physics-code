@@ -2,18 +2,18 @@
 #
 # Once done this will define
 #
-#  ELEMENTARY_UTILS_FOUND - system has Elementary_Utils lib
-#  ELEMENTARY_UTILS_LIBRARIES - the path of the library
-#  ELEMENTARY_UTILS_INCLUDE_DIR - the include directory
+#  ElementaryUtils_FOUND - system has Elementary_Utils lib
+#  ElementaryUtils_LIBRARIES - the path of the library
+#  ElementaryUtils_INCLUDE_DIR - the include directory
 
-if (ELEMENTARY_UTILS_INCLUDE_DIR AND ELEMENTARY_UTILS_LIBRARIES)
+if (ElementaryUtils_INCLUDE_DIR AND ElementaryUtils_LIBRARIES)
 
   # in cache already
-  set(ELEMENTARY_UTILS_FOUND TRUE)
+  set(ElementaryUtils_FOUND TRUE)
 
-else (ELEMENTARY_UTILS_INCLUDE_DIR AND ELEMENTARY_UTILS_LIBRARIES)
+else (ElementaryUtils_INCLUDE_DIR AND ElementaryUtils_LIBRARIES)
 
-  find_path(ELEMENTARY_UTILS_INCLUDE_DIR ElementaryUtils/PropertiesManager.h
+  find_path(ElementaryUtils_INCLUDE_DIR ElementaryUtils/PropertiesManager.h
       PATHS
       ${CMAKE_INSTALL_PREFIX}
       ${CMAKE_SOURCE_DIR}/../ElementaryUtils
@@ -24,7 +24,7 @@ else (ELEMENTARY_UTILS_INCLUDE_DIR AND ELEMENTARY_UTILS_LIBRARIES)
       PATH_SUFFIXES include/PARTONS include
     )
     
-  find_library(ELEMENTARY_UTILS_LIBRARIES
+  find_library(ElementaryUtils_LIBRARIES
                      NAMES ElementaryUtils
                      PATHS
                      ${CMAKE_INSTALL_PREFIX}
@@ -36,7 +36,7 @@ else (ELEMENTARY_UTILS_INCLUDE_DIR AND ELEMENTARY_UTILS_LIBRARIES)
                      PATH_SUFFIXES lib/PARTONS lib64/PARTONS bin/PARTONS lib lib64 bin)
 
   include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(ELEMENTARY_UTILS DEFAULT_MSG ELEMENTARY_UTILS_INCLUDE_DIR ELEMENTARY_UTILS_LIBRARIES)
+  find_package_handle_standard_args(ElementaryUtils DEFAULT_MSG ElementaryUtils_LIBRARIES)
 
-endif(ELEMENTARY_UTILS_INCLUDE_DIR AND ELEMENTARY_UTILS_LIBRARIES)
+endif(ElementaryUtils_INCLUDE_DIR AND ElementaryUtils_LIBRARIES)
 
