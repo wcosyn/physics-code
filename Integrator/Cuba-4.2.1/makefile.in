@@ -39,7 +39,7 @@ TOOLS = partview$(EXE)
 
 all: lib demos $(MATH_DEFAULT) $(TOOLS_DEFAULT)
 
-lib: $(LIB) $(HEADERS)
+lib: $(LIB)
 
 demos: demo-c$(EXE) $(DEMO_FORTRAN_DEFAULT)
 

@@ -181,7 +181,7 @@ if(PARTONS_ENABLED)
   find_package(PARTONS REQUIRED)
 
   # directories containing headers 
-  include_directories(${QT_INCLUDE_DIRS} ${SFML_INCLUDE_DIR} ${ELEMENTARY_UTILS_INCLUDE_DIR} ${NUMA_INCLUDE_DIR} ${PARTONS_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/include")
+  include_directories(${QT_INCLUDE_DIRS} ${SFML_INCLUDE_DIR} ${ElementaryUtils_INCLUDE_DIR} ${NumA++_INCLUDE_DIR} ${PARTONS_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
   add_subdirectory(GPD_Partons)
 endif()

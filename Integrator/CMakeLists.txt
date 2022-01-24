@@ -40,9 +40,9 @@ execute_process(COMMAND readlink -f Cuba
 include(ExternalProject)
 ExternalProject_Add(Cuba
 					SOURCE_DIR ${Cuba_dir}
-					CONFIGURE_COMMAND ${Cuba_dir}/configure --prefix=${Cuba_dir} --libdir=${CMAKE_SOURCE_DIR}/lib 
-					BINARY_DIR ${Cuba_dir}
-					BUILD_COMMAND make
+					CONFIGURE_COMMAND ${Cuba_dir}/configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/Cuba-install --libdir=${CMAKE_SOURCE_DIR}/lib 
+					BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Cuba-build
+					BUILD_COMMAND make lib
 					INSTALL_COMMAND make install
 					)
 

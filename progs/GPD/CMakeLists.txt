@@ -1,39 +1,39 @@
 project(gpd_progs)
 
-include_directories(${QT_INCLUDE_DIRS} ${SFML_INCLUDE_DIR} ${ELEMENTARY_UTILS_INCLUDE_DIR} ${NUMA_INCLUDE_DIR} ${PARTONS_INCLUDE_DIR})
+include_directories(${QT_INCLUDE_DIRS} ${SFML_INCLUDE_DIR} ${ElementaryUtils_INCLUDE_DIR} ${NumA++_INCLUDE_DIR} ${PARTONS_INCLUDE_DIR})
 
 add_executable(conv_T_test conv_T_test.cpp ) #tranversity GPD program
 target_link_libraries(conv_T_test GPD MePhys)
 
 add_executable(two_vector_N two_vector_N.cpp)
-target_link_libraries(two_vector_N GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(two_vector_N GPD   ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
 add_executable(diDVCS diDVCS.cpp)
-target_link_libraries(diDVCS GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(diDVCS GPD   ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
 add_executable(diDVCS_Q2 diDVCS_Q2.cpp)
-target_link_libraries(diDVCS_Q2 GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(diDVCS_Q2 GPD   ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
 add_executable(diDVCS_gen diDVCS_gen.cpp)
-target_link_libraries(diDVCS_gen GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(diDVCS_gen GPD   ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
 add_executable(diDVCS_gen_grid diDVCS_gen_grid.cpp)
-target_link_libraries(diDVCS_gen_grid GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(diDVCS_gen_grid GPD   ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
 add_executable(diDVCS_gen_gridonly diDVCS_gen_gridonly.cpp)
 target_link_libraries(diDVCS_gen_gridonly ${ROOT_LIBRARIES})
 
 add_executable(two_vector_electro_N two_vector_electro_N.cpp)
-target_link_libraries(two_vector_electro_N GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(two_vector_electro_N GPD   ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
 add_executable(two_vector_D two_vector_D.cpp)
-target_link_libraries(two_vector_D GPD   ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(two_vector_D GPD   ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
 add_executable(conv_V_test conv_V_test.cpp)
-target_link_libraries(conv_V_test GPD  MePhys Glauber ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(conv_V_test GPD  MePhys Glauber ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
 add_executable(Nucl_GPD Nucl_GPD.cpp)
-target_link_libraries(Nucl_GPD GPD ${ELEMENTARY_UTILS_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(Nucl_GPD GPD ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
 
 if(NOT BUILD_PROGS)

@@ -55,9 +55,9 @@ target_link_libraries(GPD
 
  	${SFML_LIBRARIES}
 
-         ${ELEMENTARY_UTILS_LIBRARIES}
+         ${ElementaryUtils_LIBRARIES}
  
-         ${NUMA_LIBRARIES}
+         ${NumA++_LIBRARIES}
         
          ${PARTONS_LIBRARIES} 
 MePhys Integrator Glauber ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
@@ -73,9 +73,9 @@ if(STATIC_BUILD)
 
   ${SFML_LIBRARIES}
 
-  ${ELEMENTARY_UTILS_LIBRARIES}
+  ${ElementaryUtils_LIBRARIES}
 
-  ${NUMA_LIBRARIES}
+  ${NumA++_LIBRARIES}
  
   ${PARTONS_LIBRARIES} 
 MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a -Wl,-no-whole-archive)
@@ -105,9 +105,9 @@ endif(STATIC_BUILD)
 
 # 	${SFML_LIBRARIES}
 
-#         ${ELEMENTARY_UTILS_LIBRARIES}
+#         ${ElementaryUtils_LIBRARIES}
  
-#         ${NUMA_LIBRARIES}
+#         ${NumA++_LIBRARIES}
         
 #         ${PARTONS_LIBRARIES} 
 
