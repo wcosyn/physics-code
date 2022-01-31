@@ -6,6 +6,10 @@ target_link_libraries(transp Knockout Glauber MePhys)
 add_executable(transp_jlab12 transp_jlab12.cpp )  #used to compute transparencies for Or for some proposal
 target_link_libraries(transp_jlab12 Knockout Glauber MePhys)
 
+add_executable(transp_uchannel transp_uchannel.cpp )  #used to compute transparencies for Or for some proposal
+target_link_libraries(transp_uchannel Knockout Glauber MePhys)
+
+
 add_executable(transp_eli transp_eli.cpp ) # used to compute lead transparencies for some proposal
 target_link_libraries(transp_eli Knockout Glauber MePhys)
 
