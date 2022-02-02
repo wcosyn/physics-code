@@ -24,26 +24,47 @@ using namespace std;
 #include <vector>
 #include <numint/numint.hpp>
 #include <OneGlauberGrid.hpp>
-
+#include <TMFSpinor.hpp>
 
 void getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, double Q2, double omega, int shell);
 void adap_intpiCM(numint::vector_d &, double costhetapiCM, double phipiCM, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec,
-		OneGlauberGrid *pgrid, double Q2, double omega, double EN, double thetaN, int thick, double lc_mod, double nkt_mod);
+		OneGlauberGrid *pgrid, double Q2, double omega, double EN, double thetaN);
 
 //used in CM momenta calculation, for instance p_iCM = sqrt(lambda(s,m1^2,m2^2))/(2 sqrt{s})
 double lambda(double s, double m1sq, double m2sq){ return (s*s-2*(m1sq+m2sq)*s+pow(m1sq-m2sq,2.));}
 
 
 // function to compute nuclear cross section
-void  getDiffCross(std::vector<double> &cross, TKinematics2to3 &kin, TElectronKinematics &elec, OneGlauberGrid &grid,
-			     int shellindex, int maxEval, double lc_mod, double nkt_mod);
+void  getDiffCross(std::vector<double> &cross, MeanFieldNucleusThick * pnucleus, TKinematics2to3 * pkin, TElectronKinematics *pelec, OneGlauberGrid *pgrid,
+			     int shellindex, int maxEval);
 
 //u and Q2 in GeV-2
 //fit from plot in proposal 2008.10768 and python script mentioned at the start
 double getSigmaT(double u, double Q2);
 
 //calculates distorted mom distribution
-void rhoD(std::vector<double> &cross, TKinematics2to3 & kin, int shellindex, int maxEval,double lc_mod, double nkt_mod);
+void rhoD(std::vector<double> &cross, MeanFieldNucleusThick * pnucleus, TKinematics2to3 * pkin, OneGlauberGrid * pgrid, int shellindex, int maxEval);
+
+//for radial integral in distorted momentum distribution
+struct Ftor_one {
+
+    /*! integrandum function */
+    static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
+      Ftor_one &p = * (Ftor_one *) param;
+      p.f(ret,x[0],x[1],x[2],p.pnucleus,p.pgrid,p.pmiss, p.pspinoru, p.shellindex, p.mindex);
+    }
+    MeanFieldNucleusThick *pnucleus;
+    OneGlauberGrid *pgrid;
+    TVector3 pmiss;
+    TSpinor *pspinoru;
+    int shellindex;
+    int mindex;
+    void (*f)(numint::vector_z & res, double r, double costheta, double phi, MeanFieldNucleusThick * pnucleus, OneGlauberGrid *pgrid,
+        TVector3 &pmiss, TSpinor * pspinoru, int shellindex, int mindex);
+  };
+
+void int_r3(numint::vector_z & res, double r, double costheta, double phi, MeanFieldNucleusThick * pnucleus, OneGlauberGrid *grid,
+        TVector3 &pmiss, TSpinor *spinoru, int shellindex, int mindex);
 
 
 int main(int argc, char *argv[])
@@ -51,23 +72,33 @@ int main(int argc, char *argv[])
   
   string homedir=HOMEDIR;
   //kinematics input
-  double Q2=atof(argv[2])*1.E06; // input in GeV^2 [8.0,9.4,11.4,14.2]
+  double Q2=atof(argv[1])*1.E06; // input in GeV^2 [8.0,9.4,11.4,14.2]
   double Ein=10.6*1.E03;  //input in GeV 10.6 fixed
-  double Eout = atof(argv[3])*1.E03; // scattered electron momentum [MeV]
-  double thetae = atof(argv[4])*DEGRTORAD; // electron scatt angle
-  double pN = atof(argv[5])*1.E03; // outgoing proton momentum [MeV]
+  double Eout = atof(argv[2])*1.E03; // scattered electron momentum [MeV]
+  double thetae = atof(argv[3])*DEGRTORAD; // electron scatt angle
+  double pN = atof(argv[4])*1.E03; // outgoing proton momentum [MeV]
   double EN = sqrt(MASSP*MASSP+pN*pN);
-  double thetaN = atof(argv[6])*DEGRTORAD; // final proton scatt angle (hall lab frame)
+  double thetaN = atof(argv[5])*DEGRTORAD; // final proton scatt angle (hall lab frame)
 
   //calculate kinematics
   double omega=Ein-Eout;
   double x=Q2/(2.*MASSP*omega);
-  double q=sqrt(Q2+omega*omega);
+  //double q=sqrt(Q2+omega*omega);
+
+  double qx = -Eout*sin(thetae);
+  double qz = Ein-Eout*cos(thetae);
+  double thetaq = atan2(qx,qz);
+  double q = sqrt(qx*qx+qz*qz);
+  Q2 = q*q-omega*omega;
+
+  cout << thetaN << " " << thetaq << endl;
+  cout << q*cos(thetaq) + Eout*cos(thetae) << endl;
+  cout << q*sin(thetaq) + Eout*sin(thetae) << endl;
+  thetaN+=thetaq;
   //cout << Q2 << " " << omega << " " << q << " " << Q2/4./Ein/(Ein-omega) << endl;
   
   //glauber parameters
-  int thick=0;
-  double prec=atof(argv[7]);
+  double prec=atof(argv[6]);
   bool userset=0;//atoi(argv[8]);
   double screening=0.;//atof(argv[9]);
   double lc_mod = 1.;
@@ -76,7 +107,30 @@ int main(int argc, char *argv[])
   //create objects for nucleus, kinematics and cross section
   MeanFieldNucleusThick Nucleus(1,homedir);  //1 for Carbon
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
-  //Cross obs(*elec,&Nucleus,prec, 2, homedir, userset, screening);
+ 
+
+  for(int i=0;i<=20;i++){
+    for(int j=0;j<=20;j++){
+      double costheta = -1+2.*i/20.;
+      double phi = 2.*PI*j/20.;
+      TKinematics2to3 kin("","",7,TKinematics2to3::kN,"qsquared:wlab:pn:thn:kycosthkcm:kyphikcm",Q2,omega,EN,thetaN,costheta,phi,
+                Nucleus.getMassA(), MASSP, M_PI0, Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[1]);
+      cout << costheta << " " << phi << " ";
+      if(!kin.IsPhysical()){
+        double pm=kin.GetPy();
+        double u = kin.GetTng();
+        double t = kin.GetTkg();
+        cout << pm << " " << u*1.E-06 << " " << t*1.E-06;
+      }
+      cout << endl;
+      //else cout << "not" << endl;
+
+    }
+  }
+  exit(1);
+
+
+
 
   //proton momentum is input
   OneGlauberGrid grid(120,36,&Nucleus,prec,2,HOMEDIR);
@@ -107,7 +161,7 @@ int main(int argc, char *argv[])
 
     static void exec(const numint::array<double,2> &x, void *param, numint::vector_d &ret) {
       Ftor &p = * (Ftor *) param;
-      p.f(ret,x[0],x[1],p.pNucleus,p.elec,p.pgrid,p.Q2,p.omega,p.EN,p.thetaN,p.thick,p.lc_mod, p.nkt_mod);
+      p.f(ret,x[0],x[1],p.pNucleus,p.elec,p.pgrid,p.Q2,p.omega,p.EN,p.thetaN);
     }
     MeanFieldNucleusThick *pNucleus;
     TElectronKinematics *elec;
@@ -116,11 +170,8 @@ int main(int argc, char *argv[])
     double omega;
     double EN;
     double thetaN;
-    int thick;
-    double lc_mod;
-    double nkt_mod;
     void (*f)(numint::vector_d &, double cospicm, double phiphicm, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec,
-	            OneGlauberGrid *pgrid, double Q2, double omega, double EN, double thetaN, int thick, double lc_mod, double nkt_mod);
+	            OneGlauberGrid *pgrid, double Q2, double omega, double EN, double thetaN);
 
   };
 
@@ -133,9 +184,6 @@ int main(int argc, char *argv[])
   F.omega=omega;
   F.EN=EN;
   F.thetaN=thetaN;
-  F.thick=thick;
-  F.lc_mod = lc_mod;
-  F.nkt_mod = nkt_mod;
 
   numint::mdfunction<numint::vector_d,2> mdf;
   mdf.func = &Ftor::exec;
@@ -145,7 +193,8 @@ int main(int argc, char *argv[])
   numint::array<double,2> lower = {{-1.,0.}};
   numint::array<double,2> upper = {{1.,2.*PI}};
   
-  
+
+
   F.f=adap_intpiCM;
   unsigned count=0;
    numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-02,1.E02,1.E04,totalcross,count,0);
@@ -175,7 +224,7 @@ int main(int argc, char *argv[])
 
 //integrandum
 void adap_intpiCM(numint::vector_d & results, double costhetapiCM, double phipiCM, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec,
-		OneGlauberGrid *pgrid, double Q2, double omega, double EN, double thetaN, int thick, double lc_mod, double nkt_mod){
+		OneGlauberGrid *pgrid, double Q2, double omega, double EN, double thetaN){
 		  
   results=numint::vector_d(3*pNucleus->getPLevels()+3,0.);
   for(int shell=0;shell<pNucleus->getPLevels();shell++) {
@@ -184,7 +233,7 @@ void adap_intpiCM(numint::vector_d & results, double costhetapiCM, double phipiC
     // N is the outgoing nucleon
     // K is the pion
     // Y is the A-1 residual nucleus
-    TKinematics2to3 kin("","",7,TKinematics2to3::kN,"qsquared:wlab:pn:thn:kycosthkcm:knphikcm",Q2,omega,EN,thetaN,costhetapiCM,phipiCM,
+    TKinematics2to3 kin("","",7,TKinematics2to3::kN,"qsquared:wlab:pn:thn:kycosthkcm:kyphikcm",Q2,omega,EN,thetaN,costhetapiCM,phipiCM,
                 pNucleus->getMassA(), MASSP, M_PI0, pNucleus->getMassA_min_proton()+pNucleus->getExcitation()[shell]);
 
     if(!kin.IsPhysical()){
@@ -192,7 +241,7 @@ void adap_intpiCM(numint::vector_d & results, double costhetapiCM, double phipiC
         cout << "bla " << pm << endl;
         }
     numint::vector_d cross=numint::vector_d(3,0.);
-    getDiffCross(cross, kin, *elec, *pgrid, shell,20000, lc_mod, nkt_mod);
+    getDiffCross(cross, pNucleus, &kin, elec, pgrid, shell,20000);
     results[3*shell]+=cross[0];
     results[3*shell+1]+=cross[1];
     results[3*shell+2]+=cross[2];
@@ -208,20 +257,20 @@ void adap_intpiCM(numint::vector_d & results, double costhetapiCM, double phipiC
     
 }
 
-void  getDiffCross(std::vector<double> &cross, TKinematics2to3 &kin, TElectronKinematics &elec, OneGlauberGrid &grid,
-			     int shellindex, int maxEval, double lc_mod, double nkt_mod){
+void  getDiffCross(std::vector<double> &cross, MeanFieldNucleusThick * pnucleus, TKinematics2to3 * pkin, TElectronKinematics *pelec, OneGlauberGrid *pgrid,
+			     int shellindex, int maxEval){
   
   cross=vector<double>(3,0.);
-  double front = kin.GetMy()/(4.*kin.GetSky())*sqrt(lambda(kin.GetSky(),pow(kin.GetMk(),2.),pow(kin.GetMy(),2.))
-                                                *lambda(kin.GetSkn(),pow(kin.GetMn(),2.), -kin.GetQsquared())
-                                                /lambda(kin.GetStot(),pow(kin.GetMd(),2.),-kin.GetQsquared()));
+  double front = pkin->GetMy()/(4.*pkin->GetSky())*sqrt(lambda(pkin->GetSky(),pow(pkin->GetMk(),2.),pow(pkin->GetMy(),2.))
+                                                *lambda(pkin->GetSkn(),pow(pkin->GetMn(),2.), -pkin->GetQsquared())
+                                                /lambda(pkin->GetStot(),pow(pkin->GetMd(),2.),-pkin->GetQsquared()));
   //extra 1/2pi because of dsigmaT/2pi
-  double gamma = ALPHA/(4.*PI*PI*PI)*(elec.GetBeamEnergy(kin.GetQsquared(),kin.GetWlab())-kin.GetWlab())
-                  /elec.GetBeamEnergy(kin.GetQsquared(),kin.GetWlab())*(kin.GetSkn()-MASSP*MASSP)/(2.*MASSP)/kin.GetQsquared()
-                  /(1-elec.GetEpsilon(kin.GetQsquared(),kin.GetWlab()));
-  double sigmaT = getSigmaT(kin.GetTng()*1.E-06,kin.GetQsquared()*1.E-06);
+  double gamma = ALPHA/(4.*PI*PI*PI)*(pelec->GetBeamEnergy(pkin->GetQsquared(),pkin->GetWlab())-pkin->GetWlab())
+                  /pelec->GetBeamEnergy(pkin->GetQsquared(),pkin->GetWlab())*(pkin->GetSkn()-MASSP*MASSP)/(2.*MASSP)/pkin->GetQsquared()
+                  /(1-pelec->GetEpsilon(pkin->GetQsquared(),pkin->GetWlab()));
+  double sigmaT = getSigmaT(pkin->GetTng()*1.E-06,pkin->GetQsquared()*1.E-06);
 
-  rhoD(cross,kin,shellindex,maxEval,lc_mod,nkt_mod);
+  rhoD(cross,pnucleus,pkin,pgrid,shellindex,maxEval);
   for(int i=0;i<3;i++){
     cross[i]*=front*gamma*sigmaT;
   }
@@ -238,13 +287,67 @@ double getSigmaT(double u, double Q2){
 }
 
 
-void rhoD(std::vector<double> &cross, TKinematics2to3 & kin, int shellindex, int maxEval,double lc_mod, double nkt_mod){
-  double costheta=kin.GetCosthn();
-  if(costheta>1.) costheta=1.;
-  if(costheta<-1.) costheta=-1.;
+void rhoD(std::vector<double> &cross, MeanFieldNucleusThick * pnucleus, TKinematics2to3 * pkin, OneGlauberGrid * pgrid, int shellindex, int maxEval){
+  //careful!! we compute in a frame with p_f along z-axis, so have to rotate the pmiss vector!
+  cross=vector<double>(3,0.);
+  double thetaN=pkin->GetThn();
+  TVector3 pN = pkin->GetN3();
+  //cout << "pre " << pN[0] << " " << pN[1] << " " << pN[2] << endl;
+  pN.RotateY(-thetaN);
+  //cout << "post " << pN[0] << " " << pN[1] << " " << pN[2] << endl;
+  TVector3 pmiss = -pkin->GetY3();
+  pmiss.RotateY(-thetaN);
+  FourVector<double> pmiss4(sqrt(MASSP*MASSP+pmiss.Mag2()),pmiss[0],pmiss[1],pmiss[2]);
+  TSpinor spinoru(pmiss4,MASSP,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity);
+
+  for(int m=-pnucleus->getJ_array()[shellindex];m<=pnucleus->getJ_array()[shellindex];m+=2){
+     //only half of the m values due to parity symmetry, careful!!! 
+    //cout << shellindex << " " << m << endl;
+    pgrid->clearKnockout();
+    pgrid->addKnockout(shellindex,m);    
+    for(int i=0;i<1;i++){
+      
+      numint::array<double,3> lower = {{0.,-1.,0.}};
+      numint::array<double,3> upper = {{pnucleus->getRange(),1.,2.*PI}};
+      Ftor_one F;
+      F.pnucleus = pnucleus;
+      F.pgrid = pgrid;
+      F.pmiss = pmiss;
+      F.pspinoru = &spinoru;
+      F.shellindex=shellindex;
+      F.mindex = m;
+      numint::mdfunction<numint::vector_z,3> mdf;
+      mdf.func = &Ftor_one::exec;
+      mdf.param = &F;
+      numint::vector_z ret(3,0.);
+      F.f=int_r3;
+      unsigned count=0;
+      numint::cube_adaptive(mdf,lower,upper,1.E-08,1.E-04,1E03,maxEval,ret,count,0);
+      
+      //factor of 2 because of parity symmetry
+      for(int jj=0;jj<3;jj++) cross[jj]+= 2.*norm(ret[jj]);
+
+    }
+  }
+
+}
+
+void int_r3(numint::vector_z & results, double r, double costheta, double phi, MeanFieldNucleusThick * pnucleus, OneGlauberGrid * pgrid,
+        TVector3 &pmiss, TSpinor * pspinoru, int shellindex, int mindex){
+
+  results=numint::vector_z(3,0.);
   double sintheta=sqrt(1.-costheta*costheta);
-  //careful!! we compute in a frame with p_f along z-axis, so have to rotate the photon polarization 4-vectors!
   
+  double cosphi,sinphi;
+  sincos(phi,&sinphi,&cosphi);
+  TMFSpinor wave(*pnucleus,shellindex,mindex,r,costheta,phi);
+  complex<double> exp_pr=r*exp(-I_UNIT*INVHBARC*(pmiss*TVector3(r*sintheta*cosphi,r*sintheta*sinphi,r*costheta)));
+  complex<double> temp = TSpinor::Bar(*pspinoru)*wave;
+  for(int i=0; i<3; i++) results[i] = temp*exp_pr;
+  results[0]*=pgrid->getFsiGridFull_interp3(r,costheta,phi);
+  results[1]*=pgrid->getFsiCtGridFull_interp3(r,costheta,phi);
+
+  return;
 }
 
 

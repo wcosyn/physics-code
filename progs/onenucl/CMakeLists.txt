@@ -29,5 +29,5 @@ set_target_properties(JlabPAC16_calc PROPERTIES EXCLUDE_FROM_ALL 1)
 endif()
 
 if(BUILD_PROGS)
-install(TARGETS transp_jlab12 transp transp_eli A_QE_cross JlabPAC16_calc DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+install(TARGETS transp_uchannel transp_jlab12 transp transp_eli A_QE_cross JlabPAC16_calc DESTINATION "${CMAKE_SOURCE_DIR}/bin")
 endif()
