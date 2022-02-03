@@ -109,25 +109,25 @@ int main(int argc, char *argv[])
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
  
 
-  for(int i=0;i<=20;i++){
-    for(int j=0;j<=20;j++){
-      double costheta = -1+2.*i/20.;
-      double phi = 2.*PI*j/20.;
-      TKinematics2to3 kin("","",7,TKinematics2to3::kN,"qsquared:wlab:pn:thn:kycosthkcm:kyphikcm",Q2,omega,EN,thetaN,costheta,phi,
-                Nucleus.getMassA(), MASSP, M_PI0, Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[1]);
-      cout << costheta << " " << phi << " ";
-      if(!kin.IsPhysical()){
-        double pm=kin.GetPy();
-        double u = kin.GetTng();
-        double t = kin.GetTkg();
-        cout << pm << " " << u*1.E-06 << " " << t*1.E-06;
-      }
-      cout << endl;
-      //else cout << "not" << endl;
+  // for(int i=0;i<=20;i++){
+  //   for(int j=0;j<=20;j++){
+  //     double costheta = -1+2.*i/20.;
+  //     double phi = 2.*PI*j/20.;
+  //     TKinematics2to3 kin("","",7,TKinematics2to3::kN,"qsquared:wlab:pn:thn:kycosthkcm:kyphikcm",Q2,omega,EN,thetaN,costheta,phi,
+  //               Nucleus.getMassA(), MASSP, M_PI0, Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[1]);
+  //     cout << costheta << " " << phi << " ";
+  //     if(kin.IsPhysical()){
+  //       double pm=kin.GetPy();
+  //       double u = kin.GetTng();
+  //       double t = kin.GetTkg();
+  //       cout << pm << " " << u*1.E-06 << " " << t*1.E-06 << " " << kin.GetY3()[0] << " " << kin.GetY3()[1] << " " << kin.GetY3()[2] << endl;
+  //     }
+  //     cout << endl;
+  //     //else cout << "not" << endl;
 
-    }
-  }
-  exit(1);
+  //   }
+  // }
+  // exit(1);
 
 
 
@@ -240,19 +240,22 @@ void adap_intpiCM(numint::vector_d & results, double costhetapiCM, double phipiC
         double pm=kin.GetPy();
         cout << "bla " << pm << endl;
         }
-    numint::vector_d cross=numint::vector_d(3,0.);
-    getDiffCross(cross, pNucleus, &kin, elec, pgrid, shell,20000);
-    results[3*shell]+=cross[0];
-    results[3*shell+1]+=cross[1];
-    results[3*shell+2]+=cross[2];
-    results[3*pNucleus->getPLevels()]+=cross[0];
-    results[3*pNucleus->getPLevels()+1]+=cross[1];
-    results[3*pNucleus->getPLevels()+2]+=cross[2];
-    // cout << 2*shell << " " << 2*shell+1 << " " << 2*pNucleus->getTotalLevels() << " " << 2*pNucleus->getTotalLevels()+1 << endl;
-    // cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
-    // << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
-    // << " " << kin.GetKlab() << " " << kin.GetWlab() <<  " " << results[3*shell] << " " << results[3*shell+2] << endl;
+    else{
+      numint::vector_d cross=numint::vector_d(3,0.);
+      getDiffCross(cross, pNucleus, &kin, elec, pgrid, shell,20000);
+      results[3*shell]+=cross[0];
+      results[3*shell+1]+=cross[1];
+      results[3*shell+2]+=cross[2];
+      results[3*pNucleus->getPLevels()]+=cross[0];
+      results[3*pNucleus->getPLevels()+1]+=cross[1];
+      results[3*pNucleus->getPLevels()+2]+=cross[2];
+      // cout << 2*shell << " " << 2*shell+1 << " " << 2*pNucleus->getTotalLevels() << " " << 2*pNucleus->getTotalLevels()+1 << endl;
+      // cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
+      // << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
+      // << " " << kin.GetKlab() << " " << kin.GetWlab() <<  " " << results[3*shell] << " " << results[3*shell+2] << endl;
+      //cout << shell << " " << costhetapiCM << " " << phipiCM << " " << kin.GetPy() << " " << results[3*shell] << " " << results[3*shell+1] << " " << results[3*shell+2] << endl;
     }
+  }
 
     
 }
