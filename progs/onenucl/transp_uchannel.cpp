@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
   double pN = atof(argv[4])*1.E03; // outgoing proton momentum [MeV]
   double EN = sqrt(MASSP*MASSP+pN*pN);
   double thetaN = atof(argv[5])*DEGRTORAD; // final proton scatt angle (hall lab frame)
+  int nucl = atoi(argv[7]);
 
   //calculate kinematics
   double omega=Ein-Eout;
@@ -105,7 +106,7 @@ int main(int argc, char *argv[])
   double nkt_mod = 1.;
   
   //create objects for nucleus, kinematics and cross section
-  MeanFieldNucleusThick Nucleus(1,homedir);  //1 for Carbon
+  MeanFieldNucleusThick Nucleus(nucl,homedir);  //1,6,5,7 for Carbon,Al,Cu,Au
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
  
 
