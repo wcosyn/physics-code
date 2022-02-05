@@ -2761,10 +2761,11 @@ void TKinematics2to3::UpdateKinematics()
 
   // Do a final check whether we are in a physical point
   // by checking conservation of energy and momentum
-  TLorentzVector sum = *fGvector + *fDvector - *fKvector - *fYvector - *fNvector;
-  if( fabs(sum.E()) > STRANGEUFLOW || fabs(sum.X()) > STRANGEUFLOW ||
-      fabs(sum.Y()) > STRANGEUFLOW || fabs(sum.Z()) > STRANGEUFLOW )
-    fIsPhysical = false;
+  // TLorentzVector sum = *fGvector + *fDvector - *fKvector - *fYvector - *fNvector;
+  // if( fabs(sum.E()) > STRANGEUFLOW || fabs(sum.X()) > STRANGEUFLOW ||
+  //     fabs(sum.Y()) > STRANGEUFLOW || fabs(sum.Z()) > STRANGEUFLOW )
+  //   fIsPhysical = false;
+  // cout << "after " << fIsPhysical << " " << sum.E() << " " << sum.X() << " " << sum.Y() << " " << sum.Z() << std::endl;
 
   fIsPhysical *= fKYsystem->IsPhysical() 
     * fKNsystem->IsPhysical() 

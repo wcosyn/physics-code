@@ -116,14 +116,14 @@ int main(int argc, char *argv[])
   //     double phi = 2.*PI*j/20.;
   //     TKinematics2to3 kin("","",7,TKinematics2to3::kN,"qsquared:wlab:pn:thn:kycosthkcm:kyphikcm",Q2,omega,EN,thetaN,costheta,phi,
   //               Nucleus.getMassA(), MASSP, M_PI0, Nucleus.getMassA_min_proton()+Nucleus.getExcitation()[1]);
-  //     cout << costheta << " " << phi << " ";
   //     if(kin.IsPhysical()){
   //       double pm=kin.GetPy();
   //       double u = kin.GetTng();
   //       double t = kin.GetTkg();
-  //       cout << pm << " " << u*1.E-06 << " " << t*1.E-06 << " " << kin.GetY3()[0] << " " << kin.GetY3()[1] << " " << kin.GetY3()[2] << endl;
-  //     }
+  //     cout << costheta << " " << phi << " ";
+  //       cout << pm << " " << kin.GetPk() << " " << u*1.E-06 << " " << t*1.E-06 << " " << kin.GetY3()[0] << " " << kin.GetY3()[1] << " " << kin.GetY3()[2] << endl;
   //     cout << endl;
+  //     }
   //     //else cout << "not" << endl;
 
   //   }
@@ -254,7 +254,7 @@ void adap_intpiCM(numint::vector_d & results, double costhetapiCM, double phipiC
       // cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
       // << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
       // << " " << kin.GetKlab() << " " << kin.GetWlab() <<  " " << results[3*shell] << " " << results[3*shell+2] << endl;
-      //cout << shell << " " << costhetapiCM << " " << phipiCM << " " << kin.GetPy() << " " << results[3*shell] << " " << results[3*shell+1] << " " << results[3*shell+2] << endl;
+      cout << shell << " " << costhetapiCM << " " << phipiCM << " " << kin.GetPy() << " " << kin.GetPk() << " " << results[3*shell] << " " << results[3*shell+1] << " " << results[3*shell+2] << endl;
     }
   }
 
