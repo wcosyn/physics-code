@@ -7,7 +7,7 @@
 //elementary process is parametrized using input from Lee & Huber
 // see python script  ~/Calculations/A\(ee\'p\)/backwards_T/dsigmaT_fit.py
 
-//run ./transp_uchannel  [Q2,GeV^2]  [Eout, GeV]  [theta_e, degr] [pNout, GeV] [theta_p, rad] [precision in integration]
+//run ./transp_uchannel  [Q2,GeV^2]  [Eout, GeV]  [theta_e, degr] [pNout, GeV] [theta_p, rad] [precision in integration] [nucleus]
 
 
 
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 
   F.f=adap_intpiCM;
   unsigned count=0;
-   numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-02,1.E02,1.E04,totalcross,count,0);
+   numint::cube_adaptive(mdf,lower,upper,1.E-20,1.E-04,1.E02,1.E05,totalcross,count,0);
   
   cout << Q2/1.E06 << " " << omega << " " << q  << " ";
   //proton shells transparencies
@@ -212,6 +212,8 @@ int main(int argc, char *argv[])
   }
   //cout << "proton shells total cross no CT, CT, plane-wave"
   cout << totalcross[3*Nucleus.getPLevels()] << " " << totalcross[3*Nucleus.getPLevels()+1] << " " << totalcross[3*Nucleus.getPLevels()+2] << endl;
+
+  cout << totalcross[0] << " "<< totalcross[3] << " " << totalcross[2] << " " << totalcross[5] << endl;
 
   //total proton and neutron transparency, proton no CT, with CT; neutron no CT, with CT
   cout << totalcross[3*Nucleus.getPLevels()]/totalcross[3*Nucleus.getPLevels()+2] 
@@ -241,9 +243,10 @@ void adap_intpiCM(numint::vector_d & results, double costhetapiCM, double phipiC
         double pm=kin.GetPy();
         cout << "bla " << pm << endl;
         }
-    else{
+    else /*if (kin.GetPy()<200.)*/{
       numint::vector_d cross=numint::vector_d(3,0.);
-      getDiffCross(cross, pNucleus, &kin, elec, pgrid, shell,20000);
+      cout << shell << " " << costhetapiCM << " " << phipiCM << " " << kin.GetPy() << " " << kin.GetPk() << " ";
+      getDiffCross(cross, pNucleus, &kin, elec, pgrid, shell,5E04);
       results[3*shell]+=cross[0];
       results[3*shell+1]+=cross[1];
       results[3*shell+2]+=cross[2];
@@ -254,7 +257,7 @@ void adap_intpiCM(numint::vector_d & results, double costhetapiCM, double phipiC
       // cout << "0 " << shell << " " << costhetacm << " " << pm << " "  << acos(kin.GetCosthklab())*RADTODEGR << " " 
       // << acos(kin.GetCosthYlab())*RADTODEGR << " " << kin.GetPklab() << " " << kin.GetPYlab() 
       // << " " << kin.GetKlab() << " " << kin.GetWlab() <<  " " << results[3*shell] << " " << results[3*shell+2] << endl;
-      cout << shell << " " << costhetapiCM << " " << phipiCM << " " << kin.GetPy() << " " << kin.GetPk() << " " << results[3*shell] << " " << results[3*shell+1] << " " << results[3*shell+2] << endl;
+       cout << results[3*shell] << " " << results[3*shell+1] << " " << results[3*shell+2] <<  endl;
     }
   }
 
@@ -276,6 +279,7 @@ void  getDiffCross(std::vector<double> &cross, MeanFieldNucleusThick * pnucleus,
 
   rhoD(cross,pnucleus,pkin,pgrid,shellindex,maxEval);
   for(int i=0;i<3;i++){
+    cout << cross[i] << " ";
     cross[i]*=front*gamma*sigmaT;
   }
   return;
@@ -303,6 +307,7 @@ void rhoD(std::vector<double> &cross, MeanFieldNucleusThick * pnucleus, TKinemat
   pmiss.RotateY(-thetaN);
   FourVector<double> pmiss4(sqrt(MASSP*MASSP+pmiss.Mag2()),pmiss[0],pmiss[1],pmiss[2]);
   TSpinor spinoru(pmiss4,MASSP,TSpinor::Polarization(0.,0.,TSpinor::Polarization::kUp),TSpinor::kUnity);
+  cout << pmiss.CosTheta() << " " << pmiss.Phi() << " ";
 
   for(int m=-pnucleus->getJ_array()[shellindex];m<=pnucleus->getJ_array()[shellindex];m+=2){
      //only half of the m values due to parity symmetry, careful!!! 
