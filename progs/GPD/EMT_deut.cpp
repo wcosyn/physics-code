@@ -14,9 +14,16 @@ using namespace std;
 int main(int argc, char** argv) {
 
     Deut_Conv_EMTLF test("AV18");
-    test.EMT_conv_real(atof(argv[1]));
-
-    exit(1);
-
-
+    double t = -1.E-04;
+    test.EMT_conv_real(-1.E-04);
+    test.EMT_conv_real(-1.);
+    // for(int i=0;i<20;i++){
+    //     test.EMT_conv_real(t);
+    //     t*=2;
+    // }
+    // for(int i=0;i<25;i++){
+    //     t=-4-i;
+    //     test.EMT_conv_real(t);
+    // }
+    return 1;
 }

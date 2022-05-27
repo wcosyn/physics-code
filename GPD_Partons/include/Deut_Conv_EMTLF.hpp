@@ -123,18 +123,16 @@ struct Ftor_conv_real{
     /*! integrandum function */
     static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
       Ftor_conv_real &p = * (Ftor_conv_real *) param;
-      p.f(ret,x[0],x[1],x[2], *p.emt,p.t,p.pold_in, p.pold_out,p.deltax, p.GFF_A, p.GFF_J, p.GFF_D);
+      p.f(ret,x[0],x[1],x[2], *p.emt,p.t,p.deltax, p.GFF_A, p.GFF_J, p.GFF_D);
     }
     Deut_Conv_EMTLF *emt;
     double t; // [MeV^2]
     double scale; ///< [GeV]
-    int pold_in;
-    int pold_out;
     double deltax; //[MeV]
     double GFF_A, GFF_J, GFF_D;
     
     void (*f)(numint::vector_d & res, double alpha_1, double kperp, double kphi, Deut_Conv_EMTLF &emt,
-              double t, int pold_in, int pold_out,  double deltax, double GFF_A, double GFF_J, double GFF_D);
+              double t, double deltax, double GFF_A, double GFF_J, double GFF_D);
       };
 
 
@@ -172,7 +170,7 @@ static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double 
  * @param deltax [MeV!!!] perp component of the momentum transfer, along x-axis
  */
 static void int_k3_real(numint::vector_d & res, double alpha_1, double kperp, double kphi, Deut_Conv_EMTLF &emt,
-              double t, int pold_in, int pold_out, double deltax, double GFF_A, double GFF_J, double GFF_D);
+              double t, double deltax, double GFF_A, double GFF_J, double GFF_D);
 
 
 /**
