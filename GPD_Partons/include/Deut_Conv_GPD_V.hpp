@@ -129,6 +129,7 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
 
 /**
  * @brief Get a Deut_GPD_V_set object containing deuteron vector helicity amplitudes
+ * Takes a few shortcuts, it writes to a grid helamp(x,xi,t)+helamp(-x,xi,t), as that combination enters in the two meson knockout amplitude
  * 
  * @param x [] avg lf momentum fraction
  * @param xi [] skewness
@@ -138,6 +139,32 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
  * @return Deut_GPD_V_set 
  */
 Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int gridsize);
+
+
+/**
+ * @brief Get a Deut_GPD_V_set object containing deuteron vector helicity amplitudes
+ *  calculates a full grid for 
+ * 
+ * @param x [] avg lf momentum fraction
+ * @param xi [] skewness
+ * @param t [GeV^2] mom transfer sq
+ * @param ERBL grid for only ERBL region or not?
+ * @param size of grid
+ * @return Deut_GPD_V_set 
+ */
+Deut_GPD_V_set getDeut_GPD_V_set_full(const double x, const double xi, const double t, const double scale, const int gridsize);
+
+/**
+ * @brief Get a Deut_GPD_V_set object containing deuteron Compton form factors in helicity basis
+ * 
+ * @param xi [] skewness
+ * @param t [GeV^2] mom transfer sq
+ * @param size of grid used in PV integration of x dependence
+ * @return vector< complex<double> > contains CFF but in helicity amplitude basis
+ */
+std::vector< std::complex<double> > getDeut_CFF_hel_V_set(const double xi, const double t, const double scale, const int gridsize);
+
+
 
 void setH(const bool H){incH=H;} ///< [1] include or [0] exclude isoscalar nucleon GPD H
 void setE(const bool E){incE=E;} ///< [1] include or [0] exclude isoscalar nucleon GPD E
@@ -175,6 +202,30 @@ static std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma
 
 
 private: 
+/**
+ * @brief structure needed to carry out the PV integration in gsl for the Compton FF, contains parameters and integrandum
+ * 
+ */
+struct Ftor_CFF {
+
+    /*! integrandum function */
+    static double exec(double x, void *param) {
+      Ftor_CFF &p = * (Ftor_CFF *) param;
+      Deut_GPD_V_set out = (p.gpd->getDeut_GPD_V_set_full(x,p.xi,p.t,p.scale,p.gridsize)
+                            + p.gpd->getDeut_GPD_V_set_full(-x,p.xi,p.t,p.scale,p.gridsize)*(-1.));
+      return out.getAmp(p.index);
+    }
+    Deut_Conv_GPD_V *gpd;
+    double xi;
+    double t; // [MeV^2]
+    double scale; ///< [GeV]
+    int gridsize; ///< size of interpolation grid in deuteron convolution
+    int index; ///< which helicity amplitude are we computing
+    
+    };
+
+
+
 /**
  * @brief structure needed to carry out the convolution integration, contains parameters and integrandum function
  * 
