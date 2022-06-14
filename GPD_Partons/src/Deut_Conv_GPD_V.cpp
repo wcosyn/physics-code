@@ -73,26 +73,31 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_gpds_V(const double xi, co
     vector< complex<double> > gpds(5,0.);
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
     double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
-    double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]
-    gpds.at(0)=1./3./pow(1.-xi*xi,2.)*(3.*pow(xi,4.)-7.*xi*xi+2-2.*D*(1-xi*xi))*helamps[0]+1./3./(1-xi*xi)*helamps[1]
-        +sqrt(2./D*(1+xi)/(1-xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
-        -sqrt(2./D*(1-xi)/(1+xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
-        -1./3./D/pow(1-xi*xi,3.)*(2.*xi*xi+D*(3.*pow(xi,6.)-10.*pow(xi,4.)+9.*xi*xi-2))*helamps[4];
+    double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]  D as in Berger et al PRL (after Eq. (18))
+    gpds.at(0)=1./3./pow(1.-xi*xi,2.)*(3.*pow(xi,4.)-7.*xi*xi+2-2.*D*(1-xi*xi))*helamps[0]  //00
+                +1./3./(1-xi*xi)*helamps[1]                                                 //++
+        -sqrt(2./D*(1+xi)/(1-xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]          //0+
+        +sqrt(2./D*(1-xi)/(1+xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]          //+0
+        -1./3./D/pow(1-xi*xi,3.)*(2.*xi*xi+D*(3.*pow(xi,6.)-10.*pow(xi,4.)+9.*xi*xi-2))*helamps[4]; //-+
  
-    gpds.at(1)=2./(1-xi*xi)*helamps[0]-sqrt(1./2./D*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]+sqrt(1./2./D*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
-        +2.*xi*xi/D/pow(1.-xi*xi,2.)*helamps[4];
+    gpds.at(1)=2./(1-xi*xi)*helamps[0]
+                +sqrt(1./2./D*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]
+                -sqrt(1./2./D*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
+        +2.*xi*xi/D/pow(1.-xi*xi,2.)*helamps[4];  //typo in Cano/Pire, denominator should be (1-xi^2)^2
 
 
     gpds.at(2)=-1/D*helamps[4];
 
 
-    gpds.at(3)=-2.*xi/(1-xi*xi)*helamps[0]+sqrt(1./D/2.*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]+sqrt(1./D/2.*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
-    -2.*xi/D/pow(1.-xi*xi,2.)*helamps[4];
+    gpds.at(3)=-2.*xi/(1-xi*xi)*helamps[0]
+                -sqrt(1./D/2.*(1.+xi)/(1.-xi))/(1.-xi)*helamps[2]
+                -sqrt(1./D/2.*(1.-xi)/(1.+xi))/(1.+xi)*helamps[3]
+                -2.*xi/D/pow(1.-xi*xi,2.)*helamps[4];
 
 
     gpds.at(4)=-1./pow(1.-xi*xi,2.)*(xi*xi+2.*D*(1.-xi*xi)+1)*helamps[0]+1./(1.-xi*xi)*helamps[1]
-        +sqrt(2./D*(1+xi)/(1-xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
-        -sqrt(2./D*(1-xi)/(1+xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
+                -sqrt(2./D*(1+xi)/(1-xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]
+                +sqrt(2./D*(1-xi)/(1+xi))/pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]
                 -1./D/pow(1.-xi*xi,3.)*(2.*xi*xi+D*(1.-pow(xi,4.)))*helamps[4];
 
  
@@ -125,7 +130,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpds_to_helamps_V(const double xi, co
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
 
     double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
-    double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]
+    double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]  D as in Berger et al PRL (after Eq. (18))
     // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
     helamps.at(0)=gpds[0]+D*gpds[2]-1./3.*gpds[4];
 
@@ -133,9 +138,9 @@ vector< complex<double> > Deut_Conv_GPD_V::gpds_to_helamps_V(const double xi, co
             -2.*(D*D*pow(1-xi*xi,2.)-xi*xi)/pow(1-xi*xi,2.)*gpds[2]+(2.*D*xi-2.*xi/(1-xi*xi))*gpds[3]
             +((1-xi*xi)-1./3.*(-2.*D+(1+xi*xi)/(1-xi*xi)))*gpds[4];
 
-    helamps.at(2)=sqrt(2.*D*(1-xi*xi))/(1+xi)*(gpds[0]-(1.-xi)/2.*(gpds[1]-gpds[3])+(D*(1.-xi*xi)-xi)/(1.-xi*xi)*gpds[2]-1./3.*gpds[4]);
+    helamps.at(2)=-(sqrt(2.*D*(1-xi*xi))/(1+xi)*(gpds[0]-(1.-xi)/2.*(gpds[1]-gpds[3])+(D*(1.-xi*xi)-xi)/(1.-xi*xi)*gpds[2]-1./3.*gpds[4]));
 
-    helamps.at(3)=sqrt(2.*D*(1-xi*xi))/(1-xi)*(-gpds[0]+(1.+xi)/2.*(gpds[1]+gpds[3])-(D*(1.-xi*xi)+xi)/(1.-xi*xi)*gpds[2]+1./3.*gpds[4]);                    
+    helamps.at(3)=-(sqrt(2.*D*(1-xi*xi))/(1-xi)*(-gpds[0]+(1.+xi)/2.*(gpds[1]+gpds[3])-(D*(1.-xi*xi)+xi)/(1.-xi*xi)*gpds[2]+1./3.*gpds[4]));                    
 
     helamps.at(4)=-D*gpds[2];                    
     return helamps;
@@ -361,6 +366,8 @@ void Deut_Conv_GPD_V::int_k3_FF(numint::vector_z & res, double alpha1, double kp
 complex<double> Deut_Conv_GPD_V::getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi, const double t,
                                     const double t0, const double phi,  const double gpd_H, const double gpd_E, const bool vector){
 
+    // helicity amplitudes directly of the correlators (no factors involved, see Diehl Eq.54)
+
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
     double kinfac=sqrt(t0-t)/MASSn; // t in MeV^2
     if(sigma_in==sigma_out) {
@@ -482,7 +489,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
     unsigned count;
     vector< complex<double> > ret(9,0.);
     //we only need 5 Helicity amplitudes
-    for(int i=4;i<9;i++){
+    for(int i=4;i<9;i++){  // order is [out,in] (0)-1-1, (1)0-1, (2)1-1, (3)-10, (4)00, (5)10, (6)-11, (7)01, (8)11
         F.f=Deut_Conv_GPD_V::int_k3;
         F.pold_in=i/3-1;
         F.pold_out=i%3-1;
@@ -531,7 +538,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
      }
 
     vector< complex<double> > result(5,0.);
-    //order of helicity amplitudes is ++,00,0+,+0,-+
+    //order of helicity amplitudes is [out,in] ++,00,0+,+0,-+
     result[0]=ret[8];result[1]=ret[4];result[2]=ret[7];result[3]=ret[5];result[4]=ret[6];
     return result;
 

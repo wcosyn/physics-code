@@ -70,8 +70,9 @@ static std::vector< std::complex<double> > helamps_to_FFs_V(const double xi, con
 
 
 /**
- * @brief conversion from helicity amplitudes to GPDs for spin 1 chiral even vector quark GPDs.  We compute in a frame where phi=0
+ * @brief conversion from helicity amplitudes to GPDs for spin 1 chiral even vector quark GPDs.  We convert in a frame where phi=0
  * See Cano Pire EPJA App A
+ * We convert between V_\lambda'\lambda [Berger Eq1] matrix elements and GPDs directly, See Cano Pire App A.2 [But that has phi=PI!!!!]
  * 
  * @param xi [] skewness
  * @param t [GeV^2] momentum transfer sq
@@ -82,8 +83,9 @@ static std::vector< std::complex<double> > helamps_to_gpds_V(const double xi, co
 
 
 /**
- * @brief conversion from GPDs to helicity amplitudes for spin 1 chiral even vector quark GPDs.  We compute in a frame where phi=0
- * See Cano Pire EPJA App A
+ * @brief conversion from GPDs to helicity amplitudes for spin 1 chiral even vector quark GPDs.  We convert in a frame where phi=0
+ * We convert between V_\lambda'\lambda [Berger Eq1] matrix elements and GPDs directly, See Cano Pire App A.2
+ * See Cano Pire EPJA App A [But that has phi=PI!!!!]
  * 
  * @param xi [] skewness
  * @param t [GeV^2] momentum transfer sq
@@ -108,6 +110,7 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
 
 /**
  * @brief Computes the deuteron helicity amplitudes with the convolution formula
+ * Matrix elements of V_\labmda'\lambda [Berger et al PRL Eq.(1) ] are computed, no extra factors involved.
  * 
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction
@@ -155,12 +158,12 @@ Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t
 Deut_GPD_V_set getDeut_GPD_V_set_full(const double x, const double xi, const double t, const double scale, const int gridsize);
 
 /**
- * @brief Get a Deut_GPD_V_set object containing deuteron Compton form factors in helicity basis
+ * @brief Get ann array containing deuteron Compton form factors in helicity basis
  * 
  * @param xi [] skewness
  * @param t [GeV^2] mom transfer sq
  * @param size of grid used in PV integration of x dependence
- * @return vector< complex<double> > contains CFF but in helicity amplitude basis
+ * @return vector< complex<double> > contains CFF but in helicity amplitude basis //add INDICES!!
  */
 std::vector< std::complex<double> > getDeut_CFF_hel_V_set(const double xi, const double t, const double scale, const int gridsize);
 
@@ -182,6 +185,7 @@ std::vector<double> calc_NR_ffs(double t);
  * @brief computes nucleon matrix elements for chiral even vector GPDs.  
  * (\bar{u}(p') \gamma^+ u(p))/2P^+ etc for vector GPDs
  * (\bar{u}(p') \gamma^+gamma^5 u(p))/2P^+ etc for axial GPDs  [Diehl conventions, but shouldn't matter]
+ * The results are equal to Diehl's Eq. (54), or twice the vector or axial part of Eq. (61)
  * 
  * @param sigma_in polarization incoming nucleon (spin times two!!)
  * @param sigma_out polarization outgoing nucleon (spin times two!!)

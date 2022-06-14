@@ -189,17 +189,23 @@ vector< complex<double> > Deut_Conv_EMTLF::getGFF_nucl(const int sigma_in, const
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
     if(sigma_in==sigma_out) {
         res[0] = alpha_1*alpha_1/4.*GFF_A;
-        res[1] = alpha_1/2.*(-2.*p1R/sqrt(-t)*GFF_A+sigma_in*GFF_J);
-        //res[1] = alpha_1/2.*(-(p1R-p1L)/sqrt(-t)/2.*GFF_A+sigma_in*GFF_J);
-        res[2] = 4.*p1R*p1L*GFF_A+t*GFF_D+2.*sqrt(-t)*sigma_in*(p1R-p1L)*GFF_J;
+        res[1] = alpha_1/2.*(-2.*p1R/sqrt(-t)*GFF_A+sigma_in*GFF_J); //+R
+        //res[1] = alpha_1/2.*(2.*p1L/sqrt(-t)*GFF_A+sigma_in*GFF_J); //+L
+        //res[1] = alpha_1/2.*(-(p1R-p1L)/sqrt(-t)*GFF_A+sigma_in*GFF_J); // +R +L average
+        //res[2] = 4.*p1R*p1L*GFF_A+t*GFF_D+2.*sqrt(-t)*sigma_in*(p1R-p1L)*GFF_J; //RL
+        res[2] = -4.*p1R*p1R*GFF_A+t*GFF_D+4.*sqrt(-t)*sigma_in*p1R*GFF_J;  //RR
+        //res[2] = -4.*p1L*p1L*GFF_A+t*GFF_D-4.*sqrt(-t)*sigma_in*p1L*GFF_J; //LL
     }
 
     else{
         res[0] = (sigma_in==1?-1.:1.)*sqrt(-t)/(2.*MASSn)*pow(alpha_1/2.,2.)*(GFF_A-2.*GFF_J);
-        res[1] = (sigma_in==1?1.:-1.)*p1R/MASSn*alpha_1/2.*(GFF_A+(sigma_in==1?-2:(p1L/p1R-1.))*GFF_J);
-        //res[1] = (sigma_in==1?1.:-1.)*(p1R-p1L)/2./MASSn*alpha_1/2.*(GFF_A) -alpha_1/2./MASSn*GFF_J*(sigma_in==1? p1R : p1L)
-                                                +(sigma_in==1? -1.:1.)*(p1R-p1L)/alpha_1/4./MASSn*GFF_J;
-        res[2] = (sigma_in==1?-1.:1.)*sqrt(-t)/(2.*MASSn)*(4.*p1R*p1L*GFF_A+t*GFF_D)-2.*(p1R-p1L)*sqrt(-t)/MASSn*GFF_J*(sigma_in==1?p1R:p1L);
+        res[1] = (sigma_in==1?1.:-1.)*p1R/MASSn*alpha_1/2.*(GFF_A+(sigma_in==1?-2:(p1L/p1R-1.))*GFF_J); //+R
+        //res[1] = (sigma_in==1?-1.:+1.)*p1L/MASSn*alpha_1/2.*(GFF_A+(sigma_in==-1?-2:(p1R/p1L-1.))*GFF_J); //+L
+        //res[1] = (sigma_in==1?1.:-1.)*p1R/MASSn*alpha_1/4.*(GFF_A+(sigma_in==1?-2:(p1L/p1R-1.))*GFF_J)
+          //      + (sigma_in==1?-1.:+1.)*p1L/MASSn*alpha_1/4.*(GFF_A+(sigma_in==-1?-2:(p1R/p1L-1.))*GFF_J); //+L +R average
+        //res[2] = (sigma_in==1?-1.:1.)*sqrt(-t)/(2.*MASSn)*(4.*p1R*p1L*GFF_A+t*GFF_D)-2.*(p1R-p1L)*sqrt(-t)/MASSn*GFF_J*(sigma_in==1?p1R:p1L); //RL
+        res[2] = (sigma_in==1?-1.:1.)*sqrt(-t)/(2.*MASSn)*(-4.*p1R*p1R*GFF_A+t*GFF_D)-4.*sqrt(-t)*p1R/MASSn*GFF_J*(sigma_in==1?p1R:p1L); //RR
+        //res[2] = (sigma_in==1?-1.:1.)*sqrt(-t)/(2.*MASSn)*(-4.*p1L*p1L*GFF_A+t*GFF_D)+4.*sqrt(-t)*p1L/MASSn*GFF_J*(sigma_in==1?p1R:p1L); //LL
     }
     return res;
 }
@@ -236,7 +242,7 @@ vector< complex<double> > Deut_Conv_EMTLF::EMT_conv(const double t){
     unsigned count;
     vector< complex<double> > ret(9,0.);
     //we only need 5 Helicity amplitudes
-    for(int i=4;i<9;i++){
+    for(int i=0;i<9;i++){
         F.f=Deut_Conv_EMTLF::int_k3;
         F.pold_in=i/3-1;
         F.pold_out=i%3-1;
@@ -248,7 +254,7 @@ vector< complex<double> > Deut_Conv_EMTLF::EMT_conv(const double t){
         int maxEval=1E07;
         numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
         ret[i]=out[0];
-        cout << F.pold_in << " " << F.pold_out << " " << out[0] << " " << out[1] << " " << out[2]*1.E-06 << endl;
+        cout << F.pold_in << " " << F.pold_out << " " << out[0] << " " << out[1] << " " << out[2]*1.E-06 << " " << count << endl;
      }
 
     vector< complex<double> > result(5,0.);

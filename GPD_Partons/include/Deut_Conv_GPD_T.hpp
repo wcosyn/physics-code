@@ -41,6 +41,7 @@ Deut_Conv_GPD_T(const std::string &pdf_name, const std::string &wfname);
 /**
  * @brief conversion from helicity amplitudes to GPDs for spin 1 chiral odd quark GPDs.  We compute in a frame where phi=0
  * See Cosyn, Pire PRD '18 App C
+ * Se we transform between 1/2T^R matrix elements and GPDs as in Eq. C1
  * 
  * @param xi [] skewness
  * @param t [GeV^2] momentum transfer sq
@@ -52,6 +53,7 @@ static std::vector< std::complex<double> > helamps_to_gpds_T(const double xi, co
 /**
  * @brief conversion from GPDs to helicity amplitudes for spin 1 chiral odd quark GPDs.  We compute in a frame where phi=0
  * See Cosyn, Pire PRD '18 App C
+ * Se we transform between 1/2T^R matrix elements and GPDs as in Eq. C21
  * 
  * @param xi [] skewness
  * @param t [GeV^2] momentum transfer sq
@@ -77,6 +79,7 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
 /**
  * @brief Computes the deuteron helicity amplitudes with the convolution formula, 
  * careful there is a factor 1/2 (present in the integrand) to relate the helicity amplitude to the matrix element of the transverse correlator!
+ * So what is computed is 1/2 T^R (Eq. 39 Cosyn/Pire PRD)
  * 
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction
