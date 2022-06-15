@@ -121,9 +121,34 @@ int main(int argc, char *argv[]){
         // 0.36 -> xi 0.0989 -> tmin = -0.14
         // 0.48 -> xi 0.1364 -> tmin = -0.267
         // 0.6 -> xi 0.176 -> tmin = -0.45
-        vector< complex<double> > out = test.getDeut_CFF_hel_V_set(xi,t,scale,200);
-        for(int i=0;i<5;i++) cout << out[i] << " ";
+
+        vector< complex<double> > hels(5,0.);
+        hels[3]=1.;
+        for(int i=0;i<5;i++) { cout << hels[i] << " ";}
         cout << endl;
+
+        vector< complex<double> > gpds = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,hels);
+        for(int i=0;i<5;i++) cout << gpds[i] << " ";
+        cout << endl;
+
+        hels = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpds);
+        for(int i=0;i<5;i++) cout << hels[i] << " ";
+        cout << endl;
+
+        gpds = Deut_Conv_GPD_V::helamps_to_gpds_A(xi,t,hels);
+        for(int i=0;i<4;i++) cout << gpds[i] << " ";
+        cout << endl;
+
+        hels = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpds);
+
+        for(int i=0;i<4;i++) cout << hels[i] << " ";
+        cout << endl;
+
+
+
+        // vector< complex<double> > out = test.getDeut_CFF_hel_V_set(xi,t,scale,200);
+        // for(int i=0;i<5;i++) cout << out[i] << " ";
+        // cout << endl;
     
     
         //-99 to 99

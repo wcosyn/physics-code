@@ -74,8 +74,8 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_gpds_V(const double xi, co
     //symmetric frame, with momentum transfer in x,z plane, so phi=0
     double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
     double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]  D as in Berger et al PRL (after Eq. (18))
-    gpds.at(0)=1./3./pow(1.-xi*xi,2.)*(3.*pow(xi,4.)-7.*xi*xi+2-2.*D*(1-xi*xi))*helamps[0]  //00
-                +1./3./(1-xi*xi)*helamps[1]                                                 //++
+    gpds.at(0)=1./3./pow(1.-xi*xi,2.)*(3.*pow(xi,4.)-7.*xi*xi+2-2.*D*(1-xi*xi))*helamps[0]  //++
+                +1./3./(1-xi*xi)*helamps[1]                                                 //00
         -sqrt(2./D*(1+xi)/(1-xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)+xi)*helamps[2]          //0+
         +sqrt(2./D*(1-xi)/(1+xi))/3./pow(1.-xi*xi,2.)*(D*(1.-xi*xi)-xi)*helamps[3]          //+0
         -1./3./D/pow(1-xi*xi,3.)*(2.*xi*xi+D*(3.*pow(xi,6.)-10.*pow(xi,4.)+9.*xi*xi-2))*helamps[4]; //-+
@@ -132,17 +132,74 @@ vector< complex<double> > Deut_Conv_GPD_V::gpds_to_helamps_V(const double xi, co
     double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
     double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]  D as in Berger et al PRL (after Eq. (18))
     // cout << (t0-t)*1.E-06 << " " << MASSD*1.E-03 << endl;
-    helamps.at(0)=gpds[0]+D*gpds[2]-1./3.*gpds[4];
+    helamps.at(0)=gpds[0]+D*gpds[2]-1./3.*gpds[4];  //++
 
-    helamps.at(1)=(-2.*D+(1+xi*xi)/(1-xi*xi))*gpds[0]+(2.*D-2.*xi*xi/(1-xi*xi))*gpds[1]
+    //++
+    helamps.at(1)=(-2.*D+(1+xi*xi)/(1-xi*xi))*gpds[0]+(2.*D-2.*xi*xi/(1-xi*xi))*gpds[1]    
             -2.*(D*D*pow(1-xi*xi,2.)-xi*xi)/pow(1-xi*xi,2.)*gpds[2]+(2.*D*xi-2.*xi/(1-xi*xi))*gpds[3]
             +((1-xi*xi)-1./3.*(-2.*D+(1+xi*xi)/(1-xi*xi)))*gpds[4];
 
+    //0+
     helamps.at(2)=-(sqrt(2.*D*(1-xi*xi))/(1+xi)*(gpds[0]-(1.-xi)/2.*(gpds[1]-gpds[3])+(D*(1.-xi*xi)-xi)/(1.-xi*xi)*gpds[2]-1./3.*gpds[4]));
 
+    //+0
     helamps.at(3)=-(sqrt(2.*D*(1-xi*xi))/(1-xi)*(-gpds[0]+(1.+xi)/2.*(gpds[1]+gpds[3])-(D*(1.-xi*xi)+xi)/(1.-xi*xi)*gpds[2]+1./3.*gpds[4]));                    
 
+    //-+
     helamps.at(4)=-D*gpds[2];                    
+    return helamps;
+}
+
+vector< complex<double> > Deut_Conv_GPD_V::helamps_to_gpds_A(const double xi, const double t, const vector< complex <double> > & helamps){
+
+    //See Cano/Pire Appendix A.2
+    vector< complex<double> > gpds(4,0.);
+    //symmetric frame, with momentum transfer in x,z plane, so phi=0
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
+    double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]  D as in Berger et al PRL (after Eq. (18))
+
+    gpds.at(0) = 1./(1+D*(1-xi*xi))*helamps[0]  //++
+                -(1+xi)*sqrt(2.*D*(1-xi*xi))/(2.*xi*(1+D*(1-xi*xi)))*helamps[1]; //0+
+                -(1-xi)*sqrt(2.*D*(1-xi*xi))/(2.*xi*(1+D*(1-xi*xi)))*helamps[2]; //+0
+                 +D*(1-xi*xi)/xi/(1+D*(1-xi*xi))*helamps[3]; //-+
+
+    gpds.at(1) = 1./(4.*(1+D*(1-xi*xi)))*helamps[0]
+                +(1+xi)/(4.*xi*sqrt(2.*D*(1-xi*xi))*(1+D*(1-xi*xi)))*helamps[1]
+                +(1-xi)/(4.*xi*sqrt(2.*D*(1-xi*xi))*(1+D*(1-xi*xi)))*helamps[2]
+                +(xi*xi-D*pow(1-xi*xi,2.))/(4.*D*(1-xi*xi)*(1+D*(1-xi*xi)))*helamps[3];
+
+    gpds.at(2) = -xi/4./(1+D*(1-xi*xi))*helamps[0]
+                -(1+xi)/(4.*sqrt(2.*D*(1-xi*xi))*(1+D*(1-xi*xi)))*helamps[1]
+                -(1-xi)/(4.*sqrt(2.*D*(1-xi*xi))*(1+D*(1-xi*xi)))*helamps[2]
+                -1./(4.*D*(1-xi*xi)*(1+D*(1-xi*xi)))*helamps[3];
+
+    gpds.at(3) = -1./(1-xi*xi)*helamps[0]
+                -1./(1-xi)/sqrt(2.*D*(1-xi*xi))*helamps[1]
+                +1./(1+xi)/sqrt(2.*D*(1-xi*xi))*helamps[2]
+                -xi/(4.*D*pow(1-xi*xi,2.))*helamps[3];
+
+    return gpds;
+}
+
+vector< complex<double> > Deut_Conv_GPD_V::gpds_to_helamps_A(const double xi, const double t, const vector< complex<double> > & gpds){
+
+    //These are matrix elements of A_\lambda'lambda (Berger et al. Eq 1)
+    //See Berger et al PRL Eq.(18) (axial part multiplied with 2!)
+    vector< complex<double> > helamps(4,0.);
+    //symmetric frame, with momentum transfer in x,z plane, so phi=0
+
+    double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
+    double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]  D as in Berger et al PRL (after Eq. (18))
+    helamps.at(0)=gpds[0]+4.*D*(gpds[1]+xi*gpds[2]);  // ++
+
+    //0+
+    helamps.at(1)=-2.*sqrt(2.*D*(1-xi*xi))*((gpds[0]+(1-xi)*gpds[3])/4. + (D-xi/(1-xi*xi))*(gpds[1]+gpds[2]));
+
+    //+0
+    helamps.at(2)=2.*sqrt(2.*D*(1-xi*xi))*((gpds[0]+(1+xi)*gpds[3])/4. + (D+xi/(1-xi*xi))*(gpds[1]-gpds[2]));
+
+    //-+
+    helamps.at(3)=-4.*D*(xi*gpds[1]+gpds[2]);                    
     return helamps;
 }
 

@@ -72,8 +72,9 @@ static std::vector< std::complex<double> > helamps_to_FFs_V(const double xi, con
 /**
  * @brief conversion from helicity amplitudes to GPDs for spin 1 chiral even vector quark GPDs.  We convert in a frame where phi=0
  * See Cano Pire EPJA App A
- * We convert between V_\lambda'\lambda [Berger Eq1] matrix elements and GPDs directly, See Cano Pire App A.2 [But that has phi=PI!!!!]
- * 
+ * We convert between V_\lambda'\lambda [Berger Eq1] matrix elements and GPDs directly
+ * See Berger et al. Eq. (18) (axial part times 2)
+ *  
  * @param xi [] skewness
  * @param t [GeV^2] momentum transfer sq
  * @param helamps helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]00,[2]0+,[3]+0,[4]-+
@@ -94,6 +95,31 @@ static std::vector< std::complex<double> > helamps_to_gpds_V(const double xi, co
  */
 static std::vector< std::complex<double> > gpds_to_helamps_V(const double xi, const double t, const std::vector< std::complex<double> > & gpds);
 
+/**
+ * @brief conversion from helicity amplitudes to GPDs for spin 1 chiral even axial quark GPDs.  We convert in a frame where phi=0
+ * See Cano Pire EPJA App A
+ * We convert between V_\lambda'\lambda [Berger Eq1] matrix elements and GPDs directly, 
+ * See Berger et al. Eq. (18) (axial part times 2)
+ * 
+ * @param xi [] skewness
+ * @param t [GeV^2] momentum transfer sq
+ * @param helamps helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]0+,[2]+0,[3]-+
+ * @return std::vector<double>  gpds Htilde_1 to Htilde_4
+ */
+static std::vector< std::complex<double> > helamps_to_gpds_A(const double xi, const double t, const std::vector< std::complex<double> > & helamps);
+
+
+/**
+ * @brief conversion from GPDs to helicity amplitudes for spin 1 chiral even axial quark GPDs.  We convert in a frame where phi=0
+ * We convert between V_\lambda'\lambda [Berger Eq1] matrix elements and GPDs directly, See Cano Pire App A.2
+ * See Cano Pire EPJA App A [But that has phi=PI!!!!]
+ * 
+ * @param xi [] skewness
+ * @param t [GeV^2] momentum transfer sq
+ * @param gpds gpds Htilde_1 to Htilde_4
+ * @return std::vector<double> helicity amplitudes, deuteron helicities are (final,initial) [0]++,[1]0+,[2]+0,[3]-+
+ */
+static std::vector< std::complex<double> > gpds_to_helamps_A(const double xi, const double t, const std::vector< std::complex<double> > & gpds);
 
 /**
  * @brief returns the melosh rotated lf wf, melosh rotation only acting on the first (active) nucleon, since the helicities of the spectator are summed over
