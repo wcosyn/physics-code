@@ -159,16 +159,16 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_gpds_A(const double xi, co
     double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]  D as in Berger et al PRL (after Eq. (18))
 
     gpds.at(0) = 1./(1+D*(1-xi*xi))*helamps[0]  //++
-                -(1+xi)*sqrt(2.*D*(1-xi*xi))/(2.*xi*(1+D*(1-xi*xi)))*helamps[1]; //0+
-                -(1-xi)*sqrt(2.*D*(1-xi*xi))/(2.*xi*(1+D*(1-xi*xi)))*helamps[2]; //+0
+                -(1+xi)*sqrt(2.*D*(1-xi*xi))/(2.*xi*(1+D*(1-xi*xi)))*helamps[1] //0+
+                -(1-xi)*sqrt(2.*D*(1-xi*xi))/(2.*xi*(1+D*(1-xi*xi)))*helamps[2] //+0
                  +D*(1-xi*xi)/xi/(1+D*(1-xi*xi))*helamps[3]; //-+
 
     gpds.at(1) = 1./(4.*(1+D*(1-xi*xi)))*helamps[0]
                 +(1+xi)/(4.*xi*sqrt(2.*D*(1-xi*xi))*(1+D*(1-xi*xi)))*helamps[1]
                 +(1-xi)/(4.*xi*sqrt(2.*D*(1-xi*xi))*(1+D*(1-xi*xi)))*helamps[2]
-                +(xi*xi-D*pow(1-xi*xi,2.))/(4.*D*(1-xi*xi)*(1+D*(1-xi*xi)))*helamps[3];
+                +(xi*xi-D*pow(1-xi*xi,2.))/(4.*D*xi*(1-xi*xi)*(1+D*(1-xi*xi)))*helamps[3];
 
-    gpds.at(2) = -xi/4./(1+D*(1-xi*xi))*helamps[0]
+    gpds.at(2) = -xi/(4.*(1+D*(1-xi*xi)))*helamps[0]
                 -(1+xi)/(4.*sqrt(2.*D*(1-xi*xi))*(1+D*(1-xi*xi)))*helamps[1]
                 -(1-xi)/(4.*sqrt(2.*D*(1-xi*xi))*(1+D*(1-xi*xi)))*helamps[2]
                 -1./(4.*D*(1-xi*xi)*(1+D*(1-xi*xi)))*helamps[3];
@@ -176,7 +176,7 @@ vector< complex<double> > Deut_Conv_GPD_V::helamps_to_gpds_A(const double xi, co
     gpds.at(3) = -1./(1-xi*xi)*helamps[0]
                 -1./(1-xi)/sqrt(2.*D*(1-xi*xi))*helamps[1]
                 +1./(1+xi)/sqrt(2.*D*(1-xi*xi))*helamps[2]
-                -xi/(4.*D*pow(1-xi*xi,2.))*helamps[3];
+                -xi/(D*pow(1-xi*xi,2.))*helamps[3];
 
     return gpds;
 }
@@ -191,7 +191,6 @@ vector< complex<double> > Deut_Conv_GPD_V::gpds_to_helamps_A(const double xi, co
     double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); //[GeV^2]
     double D=(t0-t)/(4.*MASSD_G*MASSD_G); //[]  D as in Berger et al PRL (after Eq. (18))
     helamps.at(0)=gpds[0]+4.*D*(gpds[1]+xi*gpds[2]);  // ++
-
     //0+
     helamps.at(1)=-2.*sqrt(2.*D*(1-xi*xi))*((gpds[0]+(1-xi)*gpds[3])/4. + (D-xi/(1-xi*xi))*(gpds[1]+gpds[2]));
 

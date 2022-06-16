@@ -135,15 +135,16 @@ int main(int argc, char *argv[]){
         for(int i=0;i<5;i++) cout << hels[i] << " ";
         cout << endl;
 
+        // gpds[0]=gpds[1]=gpds[2]=gpds[3]=0.;
+        // gpds[1]=1.;
+
         gpds = Deut_Conv_GPD_V::helamps_to_gpds_A(xi,t,hels);
         for(int i=0;i<4;i++) cout << gpds[i] << " ";
         cout << endl;
-
-        hels = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpds);
+        hels = Deut_Conv_GPD_V::gpds_to_helamps_A(xi,t,gpds);
 
         for(int i=0;i<4;i++) cout << hels[i] << " ";
         cout << endl;
-
 
 
         // vector< complex<double> > out = test.getDeut_CFF_hel_V_set(xi,t,scale,200);
