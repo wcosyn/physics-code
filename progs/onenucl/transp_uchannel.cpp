@@ -276,6 +276,7 @@ void  getDiffCross(std::vector<double> &cross, MeanFieldNucleusThick * pnucleus,
 
   rhoD(cross,pnucleus,pkin,pgrid,shellindex,maxEval);
   for(int i=0;i<3;i++){
+    cout << cross[i] << " ";
     cross[i]*=front*gamma*sigmaT;
   }
   return;
