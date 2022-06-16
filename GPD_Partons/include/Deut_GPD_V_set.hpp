@@ -2,7 +2,7 @@
 #define DEUT_GPD_V_SET_HPP
 
 /**
- * @brief small class that holds deuteron (isosinglet) transversity helicity amplitudes for a certain kinematics
+ * @brief small class that holds deuteron (isosinglet) vector helicity amplitudes for a certain kinematics
  * 
  */
 class Deut_GPD_V_set{
@@ -29,6 +29,12 @@ double getAmp_00() const{return amp_00;}
 double getAmp_0p() const{return amp_0p;}
 double getAmp_p0() const{return amp_p0;}
 double getAmp_mp() const{return amp_mp;}
+/**
+ * @brief Get amplitude with certain index
+ * 
+ * @param index 0 is ++, 1 is 00, 2 is 0+, 3 is +0, 4 is -+
+ * @return double deuteron helicity amplitude
+ */
 double getAmp(int index) const;
 /**
  * @brief adding operator

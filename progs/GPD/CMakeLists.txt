@@ -35,6 +35,8 @@ target_link_libraries(conv_V_test GPD  MePhys Glauber ${ElementaryUtils_LIBRARIE
 add_executable(Nucl_GPD Nucl_GPD.cpp)
 target_link_libraries(Nucl_GPD GPD ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
+add_executable(EMT_deut EMT_deut.cpp)
+target_link_libraries(EMT_deut GPD MePhys)
 
 if(NOT BUILD_PROGS)
 set_target_properties(conv_T_test PROPERTIES EXCLUDE_FROM_ALL 1)
@@ -48,6 +50,7 @@ set_target_properties(diDVCS_Q2 PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(diDVCS_gen PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(diDVCS_gen_grid PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(diDVCS_gen_gridonly PROPERTIES EXCLUDE_FROM_ALL 1)
+set_target_properties(EMT_deut PROPERTIES EXCLUDE_FROM_ALL 1)
 endif()
 
 if(BUILD_PROGS)
@@ -62,4 +65,5 @@ install(TARGETS diDVCS_Q2 DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS diDVCS_gen DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS diDVCS_gen_grid DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
 install(TARGETS diDVCS_gen_gridonly DESTINATION "${CMAKE_SOURCE_DIR}/GPD_Partons/bin")
+install(TARGETS EMT_deut DESTINATION "${CMAKE_SOURCE_DIR}/bin")
 endif()
