@@ -26,7 +26,7 @@ void TwoVector_Deut::integrandum_omega_general(numint::vector_z & result, const 
     else{ 
         if(omegapol==TwoVector_Deut::komegaL){
             //only gpd u but isoscalar so d is equal to it (taken care of at end)
-            result[0]= twovector.deut_vector_grid.getDeut_GPD_V_set(-xi*(2.*u-1),xi,mandelstam_t,scale,1, 50).getAmp(helampindex); 
+            result[0]= twovector.deut_vector_grid.getDeut_GPD_V_set(-xi*(2.*u-1),xi,mandelstam_t,scale,1, 50,1).getAmp(helampindex); 
             for(int i =1; i<2;i++) result[i] = result[0];
         }
         if(omegapol==TwoVector_Deut::komegaT){

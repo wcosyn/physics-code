@@ -42,9 +42,10 @@ GPD_V_Nucl_grid(PARTONS::GPDService *pGPDService, PARTONS::GPDModule *pGPDModel)
  * @param xi skewness nucleon
  * @param t [MeV^2] momentum transfer sq.
  * @param scale [GeV] factorization = renormalization scale
+ * @param gpdvector 1 vector gpd, 0 axial gpd
  * @return [0] H, [1] E
  */
-std::vector<double> getVectorGPDSet(const double x, const double xi, const double t, const double scale);
+std::vector<double> getVectorGPDSet(const double x, const double xi, const double t, const double scale, const bool gpdvector);
 
 
 private:
@@ -52,6 +53,7 @@ private:
 double t_grid; ///< [MeV^2] momentum transfer sq value the grid has
 bool grid_set; ///< is the grid with transv gpds set or not
 bool ERBL_set; ///< is the grid only ERBL or not
+bool grid_vector; ///< 1 vector GPDs 0 axial GPDs
 double grid[201][101][2];
 
 PARTONS::GPDService* pGPDService;

@@ -141,9 +141,11 @@ static std::vector< std::complex<double> > lf_deut(const double Ek, const TVecto
  * @param xi [] skewness
  * @param x [] parton average lf momentum fraction
  * @param t [Gev^2] momentum transfer sq
+ * @param scale [GeV] mu_F
+ * @param gpdvector 1 vector GPD 0 axial GPD
  * @return std::vector< std::complex<double> > helicity amplitudes  deuteron helicities are (final,initial) [0]++,[1]00,[2]0+,[3]+0,[4]-+ 
  */
-std::vector< std::complex<double> > gpd_conv(const double xi, const double x, const double t, const double scale);
+std::vector< std::complex<double> > gpd_conv(const double xi, const double x, const double t, const double scale, const bool gpdvector);
 
 /**
  * @brief Computes the deuteron helicity amplitudes with the convolution formula for vector form factors
@@ -164,10 +166,11 @@ TInterpolatingWavefunction * getWf(){ return &wf;} ///< return deuteron wf objec
  * @param xi [] skewness
  * @param t [GeV^2] mom transfer sq
  * @param ERBL grid for only ERBL region or not?
- * @param size of grid
+ * @param gridsize size of grid
+ * @param gpdvector 1 vector gpd, 0 axial gpd
  * @return Deut_GPD_V_set 
  */
-Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int gridsize);
+Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t, const double scale, const bool ERBL, const int gridsize, const bool gpdvector);
 
 
 /**
@@ -179,19 +182,23 @@ Deut_GPD_V_set getDeut_GPD_V_set(const double x, const double xi, const double t
  * @param t [GeV^2] mom transfer sq
  * @param ERBL grid for only ERBL region or not?
  * @param size of grid
+ * @param gpdvector 1 vector gpd, 0 axial gpd
  * @return Deut_GPD_V_set 
  */
-Deut_GPD_V_set getDeut_GPD_V_set_full(const double x, const double xi, const double t, const double scale, const int gridsize);
+Deut_GPD_V_set getDeut_GPD_V_set_full(const double x, const double xi, const double t, 
+              const double scale, const int gridsize, const bool gpdvector);
 
 /**
  * @brief Get ann array containing deuteron Compton form factors in helicity basis
  * 
  * @param xi [] skewness
  * @param t [GeV^2] mom transfer sq
- * @param size of grid used in PV integration of x dependence
+ * @param gridsize size of grid used in PV integration of x dependence
+ * @param gpdvector 1 vector gpd, 0 axial gpd
  * @return vector< complex<double> > contains CFF but in helicity amplitude basis //add INDICES!!
  */
-std::vector< std::complex<double> > getDeut_CFF_hel_V_set(const double xi, const double t, const double scale, const int gridsize);
+std::vector< std::complex<double> > getDeut_CFF_hel_V_set(const double xi, const double t, 
+                                                          const double scale, const int gridsize, const bool gpdvector);
 
 
 
@@ -221,12 +228,12 @@ std::vector<double> calc_NR_ffs(double t);
  * @param phi [azimuthal angle \xiP+Delta fourvector]
  * @param gpd_H GPD H or Htilde
  * @param gpd_E GPD E or Etilde
- * @param [1] vector [0] axial GPDS
+ * @param gpdvectpr [1] vector [0] axial GPDS
  * @return std::complex<double> nucleon helicity amplitude
  */
 static std::complex<double> getGPD_even_nucl(const int sigma_in, const int sigma_out, const double xi_n, 
                                     const double t, const double t0, const double phi,
-                                    const double gpd_H, const double gpd_E, const bool vector);              
+                                    const double gpd_H, const double gpd_E, const bool gpdvector);              
 
 
 
@@ -241,8 +248,8 @@ struct Ftor_CFF {
     /*! integrandum function */
     static double exec(double x, void *param) {
       Ftor_CFF &p = * (Ftor_CFF *) param;
-      Deut_GPD_V_set out = (p.gpd->getDeut_GPD_V_set_full(x,p.xi,p.t,p.scale,p.gridsize)
-                            + p.gpd->getDeut_GPD_V_set_full(-x,p.xi,p.t,p.scale,p.gridsize)*(-1.));
+      Deut_GPD_V_set out = (p.gpd->getDeut_GPD_V_set_full(x,p.xi,p.t,p.scale,p.gridsize,p.gpdvector)
+                            + p.gpd->getDeut_GPD_V_set_full(-x,p.xi,p.t,p.scale,p.gridsize,p.gpdvector)*(-1.));
       return out.getAmp(p.index);
     }
     Deut_Conv_GPD_V *gpd;
@@ -251,6 +258,8 @@ struct Ftor_CFF {
     double scale; ///< [GeV]
     int gridsize; ///< size of interpolation grid in deuteron convolution
     int index; ///< which helicity amplitude are we computing
+    bool gpdvector; ///< 1 vector gpd, 0 axial gpd
+
     
     };
 
@@ -265,7 +274,7 @@ struct Ftor_conv {
     /*! integrandum function */
     static void exec(const numint::array<double,3> &x, void *param, numint::vector_z &ret) {
       Ftor_conv &p = * (Ftor_conv *) param;
-      p.f(ret,x[0],x[1],x[2], *p.gpd,p.x,p.xi,p.t,p.scale,p.pold_in, p.pold_out,p.deltax);
+      p.f(ret,x[0],x[1],x[2], *p.gpd,p.x,p.xi,p.t,p.scale,p.pold_in, p.pold_out,p.deltax,p.gpdvector);
     }
     Deut_Conv_GPD_V *gpd;
     double x;
@@ -275,9 +284,10 @@ struct Ftor_conv {
     int pold_in;
     int pold_out;
     double deltax; //[MeV]
+    bool gpdvector; // 1 vector 0 axial
     
     void (*f)(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
-              double x, double xi, double t, double scale, int pold_in, int pold_out,  double deltax);
+              double x, double xi, double t, double scale, int pold_in, int pold_out,  double deltax, bool gpdvector);
       };
 
 /**
@@ -351,9 +361,10 @@ struct Ftor_conv_FF {
  * @param model diff implementations of KG parametrization, see TransGPD_set for details
  * @param right [1] R matrix element [0] L matrix element
  * @param deltax [MeV!!!] perp component of the momentum transfer, along x-axis
+ * @param gpdvector 1 vector 0 axial
  */
 static void int_k3(numint::vector_z & res, double alpha_1, double kperp, double kphi, Deut_Conv_GPD_V &gpd,
-              double x, double xi, double t, double scale, int pold_in, int pold_out, double deltax);
+              double x, double xi, double t, double scale, int pold_in, int pold_out, double deltax, bool gpdvector);
 
 /**
  * @brief integrandum for the convolution integral, integration variables are alpha and k_perp of the initial nucleon
@@ -394,6 +405,7 @@ double xi_grid; ////< [] skewness value the grid has
 bool grid_set; ///< is the grid with transv gpds set or not
 bool ERBL_set; ///< is the grid only ERBL or not
 int grid_size; ///< size of grid
+bool grid_vector; ///< 1 vector gpds 0 axial gpds
 Deut_GPD_V_set *grid;
 
 bool incH; ///< include GPD H

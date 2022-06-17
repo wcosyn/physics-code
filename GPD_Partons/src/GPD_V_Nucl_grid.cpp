@@ -16,21 +16,30 @@ pGPDService(pGPDService),pGPDModel(pGPDModel){
 }
 
 
-vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi, const double t, const double scale){
-    if(xi<0) return getVectorGPDSet(x,-xi,t,scale);  //both GPDs are even
+vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi, const double t, const double scale, const bool gpdvector){
+    if(xi<0) return getVectorGPDSet(x,-xi,t,scale, gpdvector);  //both GPDs are even
     //make a grid in x,xi since the integrals to compute the chiral odd gpds take some time, t is normally constant for a computation
-    if(t!=t_grid||grid_set==false){
-        //cout << "constructing chiral even gpd grid " << t_grid << " " << t << " " << grid_set << endl;
+    if(t!=t_grid||grid_set==false||gpdvector != grid_vector){
+        //cout << "constructing chiral even gpd grid " << t_grid << " " << t << " " << grid_set << " " << grid_vector << endl;
         for(int i=0;i<=200;i++){
             for(int j=0;j<=100;j++){
                 double x = 0.01*(i-100)+(i==100?1.E-04:0.);
                 PARTONS::GPDKinematic gpdKinematic(x,0.01*(j)+(j==0?1.E-04:0.),t*1.E-06, scale*scale, scale*scale);
                 PARTONS::GPDResult gpdResult = pGPDService->computeSingleKinematic(gpdKinematic,
                     pGPDModel);
-                double H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
-                    +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
-                double E=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
-                    +gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+                double H=0.,E=0.;
+                if(gpdvector){
+                    H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+                        +gpdResult.getPartonDistribution(PARTONS::GPDType::H).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+                    E=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+                        +gpdResult.getPartonDistribution(PARTONS::GPDType::E).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+                }
+                else{
+                    H=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+                        +gpdResult.getPartonDistribution(PARTONS::GPDType::Ht).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+                    E=0.5*(gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::UP).getQuarkDistribution()
+                        +gpdResult.getPartonDistribution(PARTONS::GPDType::Et).getQuarkDistribution(PARTONS::QuarkFlavor::DOWN).getQuarkDistribution());
+                }
                 //if(isnan(H)||isnan(E)) cout << x << " " << 0.01*j << endl;
                 grid[i][j][0]=H;
                 grid[i][j][1]=E;
@@ -63,6 +72,7 @@ vector<double> GPD_V_Nucl_grid::getVectorGPDSet(const double x, const double xi,
         // // cout << "construction done" << endl;
         grid_set=true;
         t_grid=t;
+        grid_vector=gpdvector;
    }
    //interpolation
     double index_i=0.,index_j=0.;
