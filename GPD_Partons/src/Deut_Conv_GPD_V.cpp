@@ -321,7 +321,7 @@ void Deut_Conv_GPD_V::int_k3(numint::vector_z & res, double alpha1, double kperp
                result+=wf_in.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out.at((sigma1out+1)/2+(sigma2+1)))
                 // result+=(wf_in_S.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out_D.at((sigma1out+1)/2+(sigma2+1)))
                 //             + wf_in_D.at((sigma1in+1)/2+(sigma2+1))*conj(wf_out_S.at((sigma1out+1)/2+(sigma2+1))) )
-                            *gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E,1);
+                            *gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E,gpdvector);
                 //symmetry tests nucleon level (tested OK)
                 // cout << "N conj " << sigma1in << " " << sigma1out << " " << conj(gpd.getGPD_even_nucl(sigma1in, sigma1out, xi_n, t, t0_n,phin,H,E))
                 //     << " " << gpd.getGPD_even_nucl(sigma1out, sigma1in, -xi_n, t, t0_n,phin+PI,H,E) << endl;
@@ -575,7 +575,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         //cout << out[0] << endl;
 
         //symmetry checks!! [seems ok, but quite large differences for the small helicity amps]
-        cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
+        // cout << "normal " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
         // F.pold_in=i%3-1;
         // F.pold_out=i/3-1;
         // F.xi=-xi;
@@ -587,7 +587,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
         // F.xi=xi;
         // F.deltax=-Delta_perp*1.E03;
         // numint::cube_adaptive(mdf,lower,upper,abserr,relerr,5E02,maxEval,out,count,0);
-        // cout << "P " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << out[0] << " " << count << endl;
+        // cout << "P " << x << " " << i << " " << F.pold_in << " " << F.pold_out << " " << (gpdvector? 1.:-1.)*out[0] << " " << count << endl;
         // F.pold_in=i%3-1;
         // F.pold_out=i/3-1;
         // F.xi=-xi;
@@ -749,7 +749,8 @@ Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set(const double x, const double x
             xi_grid=xi;
             ERBL_set=ERBL;
             grid_size = gridsize;
-        }
+            grid_vector=gridvector;
+       }
    }
    //interpolation
     double index_i=0.;
@@ -764,7 +765,7 @@ Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set_full(const double x, const dou
     if(xi!=xi_grid||t!=t_grid||grid_set==false|| gridsize!=grid_size|| gridvector != grid_vector){
         if(grid!=NULL) delete [] grid;
         grid = new Deut_GPD_V_set[gridsize+1];
-        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/"+(gridvector? "V" : "A")+"V_grid_full."+to_string(gpdmodel_id)+".xi"+to_string(xi)
+        std::string filename = string(HOMEDIR)+"/gpd_deutgrids/"+(gridvector? "V" : "A")+"_grid_full."+to_string(gpdmodel_id)+".xi"+to_string(xi)
             +".t"+to_string(t)+".mu"+to_string(scale)+".size"+to_string(gridsize);
         ifstream infile(filename.c_str());
         if(!infile.is_open()){
@@ -806,6 +807,7 @@ Deut_GPD_V_set Deut_Conv_GPD_V::getDeut_GPD_V_set_full(const double x, const dou
             t_grid=t;
             xi_grid=xi;
             grid_size = gridsize;
+            grid_vector=gridvector;
         }
    }
    //interpolation
@@ -837,9 +839,9 @@ vector< complex<double> > Deut_Conv_GPD_V::getDeut_CFF_hel_V_set(const double xi
     vector<double> result(5,0.);
     vector<double> error(5,0.);
     vector< complex<double> > CFFs(5,0.);
-    
+    cout << "blaaaaaa " << xi << " " << t << " " << " " << gpdvector << endl;
     Deut_GPD_V_set imagpart = getDeut_GPD_V_set_full(xi,xi,t,scale,gridsize,gpdvector)
-                            + getDeut_GPD_V_set_full(-xi,xi,t,scale,gridsize,gpdvector)*(-1.);
+                            + getDeut_GPD_V_set_full(-xi,xi,t,scale,gridsize,gpdvector)*(gpdvector? -1.: 1.);
 
     for(int amp_index=0; amp_index<5; amp_index++){
         input.index = amp_index;

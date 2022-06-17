@@ -249,7 +249,7 @@ struct Ftor_CFF {
     static double exec(double x, void *param) {
       Ftor_CFF &p = * (Ftor_CFF *) param;
       Deut_GPD_V_set out = (p.gpd->getDeut_GPD_V_set_full(x,p.xi,p.t,p.scale,p.gridsize,p.gpdvector)
-                            + p.gpd->getDeut_GPD_V_set_full(-x,p.xi,p.t,p.scale,p.gridsize,p.gpdvector)*(-1.));
+                            + p.gpd->getDeut_GPD_V_set_full(-x,p.xi,p.t,p.scale,p.gridsize,p.gpdvector)*(p.gpdvector? -1.:1.));
       return out.getAmp(p.index);
     }
     Deut_Conv_GPD_V *gpd;
