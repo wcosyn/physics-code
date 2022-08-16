@@ -549,7 +549,7 @@ vector< complex<double> > Deut_Conv_GPD_V::gpd_conv(const double xi, const doubl
     unsigned count;
     vector< complex<double> > ret(9,0.);
     //we only need 5 Helicity amplitudes
-    for(int i=0;i<9;i++){  // order is [out,in] (0)-1-1, (1)0-1, (2)1-1, (3)-10, (4)00, (5)10, (6)-11, (7)01, (8)11
+    for(int i=4;i<9;i++){  // order is [out,in] (0)-1-1, (1)0-1, (2)1-1, (3)-10, (4)00, (5)10, (6)-11, (7)01, (8)11
         F.f=Deut_Conv_GPD_V::int_k3;
         F.pold_in=i/3-1;
         F.pold_out=i%3-1;
@@ -839,14 +839,14 @@ vector< complex<double> > Deut_Conv_GPD_V::getDeut_CFF_hel_V_set(const double xi
     vector<double> result(5,0.);
     vector<double> error(5,0.);
     vector< complex<double> > CFFs(5,0.);
-    cout << "blaaaaaa " << xi << " " << t << " " << " " << gpdvector << endl;
+    //cout << "blaaaaaa " << xi << " " << t << " " << " " << gpdvector << endl;
     Deut_GPD_V_set imagpart = getDeut_GPD_V_set_full(xi,xi,t,scale,gridsize,gpdvector)
                             + getDeut_GPD_V_set_full(-xi,xi,t,scale,gridsize,gpdvector)*(gpdvector? -1.: 1.);
 
     for(int amp_index=0; amp_index<5; amp_index++){
         input.index = amp_index;
         gsl_integration_qawc(&F, -1., 1., xi, epsabs, epsrel, 10000, w, &result[amp_index], &error[amp_index]);
-        cout << amp_index << " " << result[amp_index] << " " << error[amp_index] << endl;
+        //cout << amp_index << " " << result[amp_index] << " " << error[amp_index] << endl;
         CFFs[amp_index] = -result[amp_index] + I_UNIT*PI*(imagpart.getAmp(amp_index));
     }
     

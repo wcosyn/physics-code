@@ -37,8 +37,8 @@ using namespace std;
 
 int main(int argc, char *argv[]){
     std::string wf=argv[1];
-    double xi=atof(argv[3]);
-    double t=-atof(argv[2]); //[GeV^2] positive input!
+    double x=atof(argv[2]);
+    double t=-atof(argv[3]); //[GeV^2] positive input!
     //int ERBL = atoi(argv[4]);
     double scale = 2;//atof(argv[5]); //[GeV]
     bool setS = atoi(argv[4]);
@@ -116,20 +116,22 @@ int main(int argc, char *argv[]){
         test.setH(setH);
         test.setE(setE);
     
-        cout << "testing CFF" << endl;
+        //cout << "testing CFF" << endl;
         // xB (nucleon mass between 0,2), xi values:
         // 0.36 -> xi 0.0989 -> tmin = -0.14
         // 0.48 -> xi 0.1364 -> tmin = -0.267
         // 0.6 -> xi 0.176 -> tmin = -0.45
-        
-        // double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
+        double xi = x/(4.-x);
+        double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
         // double D=(t0-t)/(4.*MASSD_G*MASSD_G); // GeV^2
-        cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) <<  endl;
+        //cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) <<  endl;
+	//cout << "tmin " << t0 << endl;
 
-        for(int i=0; i<=20; i++){
+        //for(int i=0; i<=10; i++){
             
-            xi = 1./pow(2.,(20-i)/3);
-            cout << xi << " ";
+            //xi = 1./pow(2.,(20-i)/3);
+	    //t = t0-1.E-04 -0.1*i; 
+            cout << x << " " << xi << " " << t  << " " << t0 << " " << flush ;
             vector< complex<double> > outV = test.getDeut_CFF_hel_V_set(xi,t,scale,200,1);
             vector< complex<double> > outA = test.getDeut_CFF_hel_V_set(xi,t,scale,200,0);
             vector< complex<double> > CFFV = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,outV);
@@ -139,7 +141,7 @@ int main(int argc, char *argv[]){
             for(int i=0;i<5;i++) cout << real(outA[i]) << " " << imag(outA[i]) << " ";
             for(int i=0;i<4;i++) cout << real(CFFA[i]) << " " << imag(CFFA[i]) << " ";
             cout << endl;
-        }
+        //}
 
         //****************************
         /// testing transformation between GPDs and helicity amplitudes

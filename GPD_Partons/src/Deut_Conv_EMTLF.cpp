@@ -189,9 +189,9 @@ vector< complex<double> > Deut_Conv_EMTLF::getGFF_nucl(const int sigma_in, const
     // cout << "nucl " << xi << " " << gpd_nucl.getHtildeT_singlet(model) << " " << gpd_nucl.getET_singlet(model) << endl;
     if(sigma_in==sigma_out) {
         res[0] = alpha_1*alpha_1/4.*GFF_A;
-        res[1] = alpha_1/2.*(-2.*p1R/sqrt(-t)*GFF_A+sigma_in*GFF_J); //+R
+        //res[1] = alpha_1/2.*(-2.*p1R/sqrt(-t)*GFF_A+sigma_in*GFF_J); //+R
         //res[1] = alpha_1/2.*(2.*p1L/sqrt(-t)*GFF_A+sigma_in*GFF_J); //+L
-        //res[1] = alpha_1/2.*(-(p1R-p1L)/sqrt(-t)*GFF_A+sigma_in*GFF_J); // +R +L average
+        res[1] = alpha_1/2.*(-(p1R-p1L)/sqrt(-t)*GFF_A+sigma_in*GFF_J); // +R +L average
         //res[2] = 4.*p1R*p1L*GFF_A+t*GFF_D+2.*sqrt(-t)*sigma_in*(p1R-p1L)*GFF_J; //RL
         res[2] = -4.*p1R*p1R*GFF_A+t*GFF_D+4.*sqrt(-t)*sigma_in*p1R*GFF_J;  //RR
         //res[2] = -4.*p1L*p1L*GFF_A+t*GFF_D-4.*sqrt(-t)*sigma_in*p1L*GFF_J; //LL
@@ -199,10 +199,10 @@ vector< complex<double> > Deut_Conv_EMTLF::getGFF_nucl(const int sigma_in, const
 
     else{
         res[0] = (sigma_in==1?-1.:1.)*sqrt(-t)/(2.*MASSn)*pow(alpha_1/2.,2.)*(GFF_A-2.*GFF_J);
-        res[1] = (sigma_in==1?1.:-1.)*p1R/MASSn*alpha_1/2.*(GFF_A+(sigma_in==1?-2:(p1L/p1R-1.))*GFF_J); //+R
+        //res[1] = (sigma_in==1?1.:-1.)*p1R/MASSn*alpha_1/2.*(GFF_A+(sigma_in==1?-2:(p1L/p1R-1.))*GFF_J); //+R
         //res[1] = (sigma_in==1?-1.:+1.)*p1L/MASSn*alpha_1/2.*(GFF_A+(sigma_in==-1?-2:(p1R/p1L-1.))*GFF_J); //+L
-        //res[1] = (sigma_in==1?1.:-1.)*p1R/MASSn*alpha_1/4.*(GFF_A+(sigma_in==1?-2:(p1L/p1R-1.))*GFF_J)
-          //      + (sigma_in==1?-1.:+1.)*p1L/MASSn*alpha_1/4.*(GFF_A+(sigma_in==-1?-2:(p1R/p1L-1.))*GFF_J); //+L +R average
+        res[1] = (sigma_in==1?1.:-1.)*p1R/MASSn*alpha_1/4.*(GFF_A+(sigma_in==1?-2:(p1L/p1R-1.))*GFF_J)
+                + (sigma_in==1?-1.:+1.)*p1L/MASSn*alpha_1/4.*(GFF_A+(sigma_in==-1?-2:(p1R/p1L-1.))*GFF_J); //+L +R average
         //res[2] = (sigma_in==1?-1.:1.)*sqrt(-t)/(2.*MASSn)*(4.*p1R*p1L*GFF_A+t*GFF_D)-2.*(p1R-p1L)*sqrt(-t)/MASSn*GFF_J*(sigma_in==1?p1R:p1L); //RL
         res[2] = (sigma_in==1?-1.:1.)*sqrt(-t)/(2.*MASSn)*(-4.*p1R*p1R*GFF_A+t*GFF_D)-4.*sqrt(-t)*p1R/MASSn*GFF_J*(sigma_in==1?p1R:p1L); //RR
         //res[2] = (sigma_in==1?-1.:1.)*sqrt(-t)/(2.*MASSn)*(-4.*p1L*p1L*GFF_A+t*GFF_D)+4.*sqrt(-t)*p1L/MASSn*GFF_J*(sigma_in==1?p1R:p1L); //LL
@@ -217,9 +217,9 @@ vector< complex<double> > Deut_Conv_EMTLF::EMT_conv(const double t){
     double Delta_perp=sqrt(-t); //symmetric frame where \bar{P}^perp=0  //GeV
 
     
-    double A = 1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t);
+    double A = 1270.*1270/(1270*1270-t)*1430*1430/(1430*1430-t);
     double J = 0.5*1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t);
-    double D = -6*1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t)*800*800/(800*800-t);
+    double D = -2.*1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t)*800*800/(800*800-t);
 
     Deut_Conv_EMTLF::Ftor_conv F;
     F.t=t*1.E06; //[MeV^2]
