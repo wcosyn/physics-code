@@ -58,6 +58,8 @@ target_link_libraries(b1_calc DIS MePhys)
 add_executable(b1_calc_comp b1_calc_comp.cpp )  
 target_link_libraries(b1_calc_comp DIS MePhys)
 
+add_executable(band_calc band_calc.cpp )  
+target_link_libraries(band_calc DIS MePhys)
 
 if(NOT BUILD_PROGS)
 set_target_properties(deepstest PROPERTIES EXCLUDE_FROM_ALL 1)
@@ -74,9 +76,10 @@ set_target_properties(bonus_F2nfit_allangles PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(hermes_comp PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(b1_calc PROPERTIES EXCLUDE_FROM_ALL 1)
 set_target_properties(b1_calc_comp PROPERTIES EXCLUDE_FROM_ALL 1)
+set_target_properties(band_calc PROPERTIES EXCLUDE_FROM_ALL 1)
 endif()
 
 if(BUILD_PROGS)
-install(TARGETS deepstest deepsfit bonustest bonusscatterfit bonusfitreadout bonusfit_rig hermes_comp 
+install(TARGETS band_calc deepstest deepsfit bonustest bonusscatterfit bonusfitreadout bonusfit_rig hermes_comp 
             bonusextrapolate bonusextrapolate2 bonus_F2nfit bonus_F2nfit_sys bonus_F2nfit_allangles b1_calc b1_calc_comp  DESTINATION "${CMAKE_SOURCE_DIR}/bin")
 endif()
