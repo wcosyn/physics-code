@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     //double xprime = atof(argv[5]);
 
     int proton = 1;
-    int offshellset = 3;
+    int offshellset = 4;
     int looplimit=1;
 
     double sigmain = 40.;
@@ -56,13 +56,14 @@ int main(int argc, char *argv[])
     double xprime = Q2/(Wsq-massoff2+Q2);
 
     cout << ps*1.E-03 << " "<< theta*RADTODEGR << " " << sqrt(Wsq)*1.E-03 << " " << xprime << endl;
-    sigmain= DeuteronCross::sigmaparam(2.4*2.4*1.E06,Q2);  // get sigma parameter
-    cout << sigmain*10.*HBARC*HBARC << endl;
-    test.setScatter(sigmain*10.*HBARC*HBARC,8.,-0.5);
+    sigmain= DeuteronCross::sigmaparam(Wsq,Q2);  // get sigma parameter
+    //cout << sigmain*10.*HBARC*HBARC << endl;
+    cout << 53.444 << endl;
+    test.setScatter(53.444,8.,-0.5);
     for (int i=0;i<40;i+=1){
         double costhetar=-0.975+i*0.05;
         double pw=0.,fsi=0.;
-        test.getDeepsresult(Q2,sqrt(Wsq),11.E03,450,costhetar,proton,pw,fsi);
-        cout << fsi/pw << endl;
+        test.getDeepsresult(Q2,sqrt(Wsq),10.2E03,450,costhetar,proton,pw,fsi);
+        cout << costhetar << " " << pw << " " << fsi << " " << fsi/pw << endl;
     }
 }

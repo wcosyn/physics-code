@@ -265,7 +265,7 @@ double DeuteronCross::getavgVNALabCross(TKinematics2to2 &kin,TElectronKinematics
     double densy=momdistr.getMomDistr_y_fsi(kin,0.);
     double leptonSSAstruc=structure.getLeptonSSA_sf(kin,elec,Einoff);
   
-    cout << kin.GetCosthklab() << " "<< dens << " " << densy << " " << Dstrucs << " " << leptonSSAstruc << " " << densy*leptonSSAstruc/dens*Dstrucs << endl;
+    //cout << kin.GetCosthklab() << " "<< dens << " " << densy << " " << Dstrucs << " " << leptonSSAstruc << " " << densy*leptonSSAstruc/dens*Dstrucs << endl;
   }
 //   cout << Dstrucs << endl;
 //   cout << "VNA " << front*kin.GetQsquared()*kin.GetWlab()/kin.GetKlab()/kin.GetKlab() << " " << dens*kin.GetEklab() << " " << Dstrucs/(kin.GetQsquared()*kin.GetWlab()/kin.GetKlab()/kin.GetKlab()) << endl;
