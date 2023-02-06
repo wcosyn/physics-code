@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
     cout << ps*1.E-03 << " "<< theta*RADTODEGR << " " << sqrt(Wsq)*1.E-03 << " " << xprime << endl;
     sigmain= DeuteronCross::sigmaparam(Wsq,Q2);  // get sigma parameter
     //cout << sigmain*10.*HBARC*HBARC << endl;
-    cout << 53.444 << endl;
-    test.setScatter(53.444,8.,-0.5);
+    //cout << 53.444 << endl;
+    test.setScatter(sigmain*10.*HBARC*HBARC,8.,-0.5);
     for (int i=0;i<40;i+=1){
         double costhetar=-0.975+i*0.05;
         double pw=0.,fsi=0.;
