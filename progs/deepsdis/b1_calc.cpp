@@ -17,6 +17,29 @@ using namespace std;
 #include <numint/numint.hpp>
 
 
+/*
+ * @brief  declarations of the functions that we will later use as integrands, k_int integrates over the momentum of the nucleons inside the deuteron
+ * 
+ * @param[out] res results of the integrations 
+      //ret[0] b1 total
+      //ret[1] b1 sd part (of deuteron wf)
+      //ret[2] b1 dd part (of deuteron wf)
+      //ret[3] b1 total check
+      //ret[4-7] tensor struc functions F_T that allow to calculate b1-4.
+      //ret[8-9] FUUT,FUUL -> unpolarized structure functions
+      //ret[10-11] azz asymmetry nominator, denominator
+ * @param knorm [MeV] magnitude nucleon momenta
+ * @param kcosth  [] cos(theta) of the spherical coordinate of the nucleon momentum
+ * @param wfref deuteron wave function object
+ * @param Q2 [MeV^2] photon Q^2
+ * @param x  [] Bjorken x
+ * @param nu [MeV] photon energy
+ * @param qvec [MeV] photon momentum
+ * @param gamma [] invariant that controls target mass corrections ~M^2/Q^2
+ * @param eps [] invariant used in lepton kinematics
+ * @param thetaq [rad] angle between beam and photon 3momenta in target lab grame
+ * @param strp object that contains nucleon structure functions
+ */
 void k_int(numint::vector_d & res, double knorm, double kcosth, TDeuteron::Wavefunction *wfref,
           double Q2, double x, double nu, double qvec, double gamma, double eps, double thetaq, NucleonStructure &strp);
 
@@ -28,17 +51,20 @@ void p_int(numint::vector_d & res, double pnorm, double costh, TDeuteron::Wavefu
 
 int main(int argc, char *argv[])
 {
-  double Q2 = atof(argv[1])*1.E06; 
-  string wf = argv[2];
-  double Ein= atof(argv[4])*1.E03; //beam energy in GeV
-  string nuclstruc = argv[3];
+  double Q2 = atof(argv[1])*1.E06; // input in GeV^2, converted to MeV^2
+  string wf = argv[2]; // deuteron wf parametrization
+  double Ein= atof(argv[4])*1.E03; //beam energy in GeV, converted to MeV
+  string nuclstruc = argv[3]; // Nucleon structure function parametrization
   
+  // create deuteron wf object
   TDeuteron::Wavefunction *wfref;
   wfref = TDeuteron::Wavefunction::CreateWavefunction(wf);
 
+  // create nucleon structure function object (gives you F2n, F2p)
   NucleonStructure strp(nuclstruc);
   
   
+  // structure that we need to perform the numerical integration, contains the parameters and function we integrate over [abstract definition]
   struct Ftor_b1 {
 
     /*! integrandum function */
@@ -62,27 +88,30 @@ int main(int argc, char *argv[])
               double Q2, double x, double nu, double qvec, double gamma, double eps, double thetaq, NucleonStructure &strp);
   };
   
+  // for loop over Bjorken x values
   for(int i=1;i<200;i++){
-    double x=0.005*i;
-    double nu=Q2/(2.*MASSD*x);
-    double qvec=sqrt(Q2+nu*nu);
-    double gamma=sqrt(Q2)/nu;
+    double x=0.005*i; //Bjorken x, invariant for deuteron [0-2]
+    double nu=Q2/(2.*MASSD*x); //photon energy rest frame [MeV]
+    double qvec=sqrt(Q2+nu*nu); //photon momentum norm rest frame [MeV]
+    double gamma=sqrt(Q2)/nu; // gamma, see paper (invariant)
 //     double gamma=0.;
-    double Eout=Ein-nu;
-    double y=nu/Ein;
+    double Eout=Ein-nu; //scattered electron energy [MeV]
+    double y=nu/Ein; // inelasticity [0-1] (invariant)
     if(/*y<1.*/1){
-      double eps=(1-y-gamma*gamma*y*y/4.)/(1-y+y*y/2+gamma*gamma*y*y/4.);
-      double thetae=asin(sqrt(Q2/4/Ein/Eout))*2;
-      double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);
+      double eps=(1-y-gamma*gamma*y*y/4.)/(1-y+y*y/2+gamma*gamma*y*y/4.); //epsilon, see paper (invariant)
+      double thetae=asin(sqrt(Q2/4/Ein/Eout))*2; //angle between beam and scattered electron 3momenta [radians]
+      double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);  //angle between beam and virutal photon 3momenta [radians]
 
       
       
       
       
-      NucleonStructure stp(nuclstruc);
+      NucleonStructure stp(nuclstruc);  //create instance nucleon structure 
 
-      numint::array<double,2> lower = {{0.,-1.}};
+      numint::array<double,2> lower = {{0.,-1.}}; //first index momentum norm [MeV], second is costheta nucleon
       numint::array<double,2> upper = {{600.,1.}};
+      //Initialize an instance of the previously defined structure used in the numerical integration
+      // and then assign all the variables it contains
       Ftor_b1 F;
       F.wfref=wfref;
       F.Q2=Q2;
@@ -94,21 +123,25 @@ int main(int argc, char *argv[])
       F.thetaq=thetaq;
       F.strp=strp;
       
+      //nucleon structure functions at that x,Q^2 for reference (with the deuteron results)
       double F1p=0.,F2p=0.,F1n=0.,F2n=0.;
       if(x<0.5){
         strp.getF_xQ(F1p,F2p,1,x*MASSD/MASSn,Q2);  
         strp.getF_xQ(F1n,F2n,0,x*MASSD/MASSn,Q2);  
       }
+      //initialize 2D integrand
       numint::mdfunction<numint::vector_d,2> mdf;
       mdf.func = &Ftor_b1::exec;
       mdf.param = &F;
+      //we will generate 12 results
       numint::vector_d ret(12,0.);
-      F.f=k_int;
+      F.f=k_int;  //k_int is used as integrand
       int res=90;
       unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
-      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0);
+      res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0); //integration carried out
       cout << 2.*x << " " << ret[0] << " " <<   ret[1] << " " << ret[2] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << " " << 1./(1+gamma*gamma) <</*" " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] <<*/ endl;
+      //integral result output
       //ret[0] b1 total
       //ret[1] b1 sd
       //ret[2] b1 dd
@@ -119,7 +152,7 @@ int main(int argc, char *argv[])
       
 
       
-//pint and yint part (shunzo's formulas)
+//pint and yint part (shunzo's formulas in the b1 PRD paper), used for comparison
       
 //       numint::array<double,2> lower = {{2.*x,0.}};
 //       numint::array<double,2> upper = {{2.,2.E03}};
@@ -215,7 +248,7 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
 //   F1p=F1n=0.;
   double factor=(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*(6*costh*costh-2.)+knorm*knorm/piq*(F2p+F2n)*sinth2*sinth2;
 
-  double F_U_T = (2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_U;
+  double F_U_T = (2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_U;  //second term does not survive bjorken limit
   double F_U_L = (-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2),2.)/piq)*dens_U;
   double F_tensor_T = -sqrt(3./2.)*(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*(6.*costh*costh-2.);
   double F_tensor_L = -sqrt(3./2.)*(-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2),2.)/piq)*dens_tensor_tot*(6.*costh*costh-2.);
