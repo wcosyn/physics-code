@@ -121,7 +121,7 @@ void InclusiveCross::Azzplanewave_int(numint::vector_d & result, double prnorm, 
   double nu=Q2/(2.*cross.massi*x);
   double Wx=sqrt(MASSD*MASSD-Q2+cross.massr*cross.massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*prnorm*costheta);
   TKinematics2to2 kin("","",MASSD,cross.massr,Wx,"qsquared:wlab:pklab",Q2,nu,prnorm);
-  double structfactor=cross.structure.getavgStructure(kin,cross.electron,MASSD-Er);
+  double structfactor=cross.structure.getDeutStructure(kin,cross.electron,MASSD-Er,1,0.);
   if((abs(structfactor)<1E-09)||std::isnan(structfactor)||std::isinf(structfactor)) {result[0]=0.; return; }
   double ResTandL, ResTT, ResTL;
   cross.structure.getResponses(kin,cross.electron,ResTandL,ResTT,ResTL,MASSD-Er);
@@ -336,7 +336,7 @@ void InclusiveCross::AzzFSI_int(numint::vector_d & result, double prnorm, double
   cross.Wxprime2=MASSD*MASSD-Q2+cross.massr*cross.massr+2.*MASSD*(nu-Er)-2.*nu*Er+2.*qvec*prnorm*costheta;
   TKinematics2to2 kin("","",MASSD,cross.massr,sqrt(cross.Wxprime2),"qsquared:wlab:pklab",Q2,nu,prnorm);
 
-  double structfactor=cross.structure.getavgStructure(kin,cross.electron,MASSD-Er);
+  double structfactor=cross.structure.getDeutStructure(kin,cross.electron,MASSD-Er,1,0.);
   if((abs(structfactor)<1E-09)||std::isnan(structfactor)||std::isinf(structfactor)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
   double ResTandL, ResTT, ResTL;
   cross.structure.getResponses(kin,cross.electron,ResTandL,ResTT,ResTL,MASSD-Er);
@@ -378,7 +378,7 @@ void InclusiveCross::AzzFSI_int(numint::vector_d & result, double prnorm, double
   double xprime=kin.GetQsquared()/(2.*((MASSD-Erprime)*kin.GetWlab()+przprime*kin.GetKlab())
       -cross.massi*cross.massi+pow(MASSD-Erprime,2.)-pprime*pprime);
   if((Erprime>MASSD)/*||xprime>1*/) {result[0]=result[1]=result[2]=result[3]=0.; return;}
-  double structfactor2=cross.structure.getavgStructure(kin2,cross.electron,MASSD-Erprime);
+  double structfactor2=cross.structure.getDeutStructure(kin2,cross.electron,MASSD-Erprime,1,0.);
   if((abs(structfactor2)<1E-09)||std::isnan(structfactor2)||std::isinf(structfactor2)) {result[0]=result[1]=result[2]=result[3]=0.; return; }
   double ResTandL2, ResTT2, ResTL2;
   cross.structure.getResponses(kin2,cross.electron,ResTandL2,ResTT2,ResTL2,MASSD-Erprime);

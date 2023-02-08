@@ -129,7 +129,7 @@ void DeuteronCross::getBonusextrapolate(double Q2, double W, double Ein, double 
 		*(1-y-(x*x*y*y*massi*massi)/kin.GetQsquared());
   double denspw=momdistr.getMomDistrpw(kin);
   double densfsi=momdistr.getMomDistrfsi(kin,0.);
-  double Dstrucs=structure.getavgStructure(kin,*elec,Einoff);
+  double Dstrucs=structure.getDeutStructure(kin,*elec,Einoff,1,0.);
   double strucprefactor=structure.getavgPrefactor(kin,*elec,Einoff);
 //   cout << Dstrucs << endl;
 //   front*dens*Dstrucs*kin.GetEklab()*1.E18;
@@ -249,18 +249,18 @@ void DeuteronCross::getBonusMCresult(double &MCresult, double &modelresultpw, do
   if(std::isnan(asin(sqrt(Q2/(4.*Ein*Eout))))){ /*cout << sqrt(Q2/(4.*Ein*Eout)) << endl; */MCresult=modelresultpw=modelresultfsi=0.;return;}
   
   MCresult= getavgBonus(kin,*elec,lc)*1.E18; //GeV^-6
-  modelresultpw= getavgVNALabCross(kin,*elec,1, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in GeV-6
-  modelresultfsi= pw? modelresultpw: getavgVNALabCross(kin,*elec,0, Einoff)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in GeV-6
+  modelresultpw= getavgVNALabCross(kin,*elec,1, Einoff,1,0.)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in GeV-6
+  modelresultfsi= pw? modelresultpw: getavgVNALabCross(kin,*elec,0, Einoff,1,0.)/HBARC/HBARC/10.*2.*Ein*Eout*x/nu/Er;  //go to dEdOmegaed^3ps in GeV-6
 }
 
-double DeuteronCross::getavgVNALabCross(TKinematics2to2 &kin,TElectronKinematics &elec, bool pw, double Einoff){
+double DeuteronCross::getavgVNALabCross(TKinematics2to2 &kin,TElectronKinematics &elec, bool pw, double Einoff, bool avg, double phi){
   
   double y=kin.GetWlab()/elec.GetBeamEnergy(kin); 
   double x=kin.GetQsquared()/(2.*massi*kin.GetWlab());
   double front=(4.*PI*ALPHA*ALPHA)/(x*kin.GetQsquared()*kin.GetQsquared())
 		*(1-y-(x*x*y*y*massi*massi)/kin.GetQsquared());
   double dens=pw?momdistr.getMomDistrpw(kin):momdistr.getMomDistrfsi(kin,0.);
-  double Dstrucs=structure.getavgStructure(kin,elec,Einoff);
+  double Dstrucs=structure.getDeutStructure(kin,elec,Einoff,avg,phi);
   if(!pw){
     double densy=momdistr.getMomDistr_y_fsi(kin,0.);
     double leptonSSAstruc=structure.getLeptonSSA_sf(kin,elec,Einoff);
@@ -347,12 +347,12 @@ double DeuteronCross::getavgAzz(TKinematics2to2 &kin,TElectronKinematics &elec, 
 		*(1-y-(x*x*y*y*massi*massi)/kin.GetQsquared());
   double dens=azz?(pw?momdistr.getAzzDistrpw(kin):momdistr.getAzzDistrfsi(kin,0.)):
     (pw?momdistr.getMomDistrpw(kin):momdistr.getMomDistrfsi(kin,0.));
-  double Dstrucs=structure.getavgStructure(kin,elec,Einoff);
+  double Dstrucs=structure.getDeutStructure(kin,elec,Einoff,1,0.);
   return front*dens*Dstrucs*kin.GetEklab()*HBARC*HBARC*1.E19;
   
 }
 
-void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
+void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton, bool avg, double phi,
     double &planewave, double &fsi){
 
   double massi=proton? MASSP:MASSN;
@@ -399,8 +399,8 @@ void DeuteronCross::getDeepsresult(double Q2, double W, double Ein, double pr, d
   double dxprimedx=-2.*xprime*xprime*nu/(x*qvec)*((Einoff+prz)/(nu-qvec)+1./(2.*xprime));
   
   
-  planewave = getavgVNALabCross(kin,*elec,1,Einoff)/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10;
-  fsi= getavgVNALabCross(kin,*elec,0,Einoff)/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10;
+  planewave = getavgVNALabCross(kin,*elec,1,Einoff,avg,phi)/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10;
+  fsi= getavgVNALabCross(kin,*elec,0,Einoff,avg,phi)/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10;
   return;
     
 }
@@ -452,8 +452,8 @@ void DeuteronCross::getDeepsresultLC(double Q2, double W, double Ein, double pr,
   double dxprimedx=-2.*xprime*xprime*nu/(x*qvec)*((Einoff+prz)/(nu-qvec)+1./(2.*xprime));
   
   
-  planewave = getavgVNALabCross(kin,*elec,1,Einoff)/*/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10*/;
-  fsi= getavgVNALabCross(kin,*elec,0,Einoff)/*/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10*/;
+  planewave = getavgVNALabCross(kin,*elec,1,Einoff,1,0.)/*/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10*/;
+  fsi= getavgVNALabCross(kin,*elec,0,Einoff,1,0.)/*/frontdeeps/dxprimedx/Er/HBARC/HBARC/1.E10*/;
 
   TVector3 vecps(pr*sqrt(1-costhetar*costhetar),0.,-prz);
   TVector3 veckin(Ein*sin(thetain),0.,-Ein*cos(thetain));

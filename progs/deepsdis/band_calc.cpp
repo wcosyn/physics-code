@@ -60,10 +60,10 @@ int main(int argc, char *argv[])
     //cout << sigmain*10.*HBARC*HBARC << endl;
     //cout << 53.444 << endl;
     test.setScatter(sigmain*10.*HBARC*HBARC,8.,-0.5);
-    for (int i=0;i<40;i+=1){
+    for (int i=0;i<5;i+=1){
         double costhetar=-0.975+i*0.05;
         double pw=0.,fsi=0.;
-        test.getDeepsresult(Q2,sqrt(Wsq),10.2E03,450,costhetar,proton,pw,fsi);
+        test.getDeepsresult(Q2,sqrt(Wsq),10.2E03,450,costhetar,proton,1,0.,pw,fsi);
         cout << costhetar << " " << pw << " " << fsi << " " << fsi/pw << endl;
     }
 }

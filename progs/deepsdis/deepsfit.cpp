@@ -68,7 +68,7 @@ void Fcn(Int_t &npar, Double_t *gin, Double_t &f, Double_t *par, Int_t iflag)
       double costhetar=-0.975+j*0.05;
       if(deepsdata[Qindex][Windex][i][j][2]!=0.){
 	double pw=0.,fsi=0.;
-	DeepsCross.getDeepsresult(Qarray[Qindex], Warray[Windex], 5765, pr, costhetar, proton, pw,fsi);
+	DeepsCross.getDeepsresult(Qarray[Qindex], Warray[Windex], 5765, pr, costhetar, proton, 1, 0., pw,fsi);
 // 	cout << costhetar << " " << pw << " " << fsi << " " << deepsdata[Qindex][Windex][i][j][1] << endl;
 	if(!std::isnan(fsi)){ f+=pow((fsi-deepsdata[Qindex][Windex][i][j][1])/deepsdata[Qindex][Windex][i][j][2],2.); dof++;}
       }

@@ -81,8 +81,10 @@ public:
    * in TKinematics2to2 language: deuteron is N, nucleon is Kaon, X is hyperon
     * \param[in] el electron kinematics, see TElectronKinematics
      * \param Einoff [MeV] off-shell energy of interacting nucleon
+     * \param avg 0: not averaged over phi, 1 averaged over phi
+     * \param phi [rads] phi angle of tagged spectator, irrelevant if avg=1
    */
-  double getavgStructure(TKinematics2to2 &kin, TElectronKinematics &el, double Einoff) const;
+  double getDeutStructure(TKinematics2to2 &kin, TElectronKinematics &el, double Einoff, bool avg, double phi) const;
   /*! combination of all structure functions averaged over phi (angle between hadron and electron plane) for LC formalism
    * \param kin semi-exclusive gamma+D->X+N kinematics, see LightConeKin2to2 <BR>
    */

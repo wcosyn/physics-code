@@ -82,9 +82,11 @@ public:
    * \param electron has electron kinematics
    * \param pw plane-wave calculation [1] or not [0]
    * \param Einoff off-shell energy of the nucleon interacting with the photon
+   * \param avg average over phi or not
+   * \param phi [rads] azimuthal angle detected spectator, irrelevant if phi=0
    * \return [nb/GeV^4] semi-inclusive cross section \f$ \frac{d\sigma}{dxdQ^2\frac{d^3p_s}{E_s}} \f$ averaged over phi
    */
-  double getavgVNALabCross(TKinematics2to2 &kin, TElectronKinematics &electron, bool pw, double Einoff);
+  double getavgVNALabCross(TKinematics2to2 &kin, TElectronKinematics &electron, bool pw, double Einoff, bool avg, double phi);
   /*! get the average cross section in LC formalism, only valid for collinear LightConeKin2to2!!!
    * \param kin kinematics object containing the gamma+D->X+N kinematics <BR>
    * \param pw plane-wave calculation [1] or including FWI [0]
@@ -122,10 +124,12 @@ public:
    * \param pr [MeV] spectator momentum
    * \param costhetar angle of spectator with q
    * \param proton DIS on proton (1) or neutron (0)
+   * \param avg 1 is averaging over phi, 0 not
+   * \param phi [rads] azimuthal angle of tagged nucleon, irrelevant if avg=1
    * \param[out] planewave [MeV^-3] plane wave result
    * \param[out]  fsi [MeV^-3]  fsi result
    */
-  void getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton,
+  void getDeepsresult(double Q2, double W, double Ein, double pr, double costhetar, bool proton, bool avg, double phi,
     double &planewave, double &fsi);
   /*! computes the results like they are presented in the Deeps data in the LC formalism
    * \param Q2 [MeV^2] four-momentum transfer

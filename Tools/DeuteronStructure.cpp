@@ -194,11 +194,12 @@ void DeuteronStructure::getResponses_off(TKinematics2to2 &kin, TElectronKinemati
 }
 
 
-double DeuteronStructure::getavgStructure(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff) const{
+double DeuteronStructure::getDeutStructure(TKinematics2to2 &kin, TElectronKinematics &electron, double Einoff, bool avg, double phi) const{
   double FL, FT, FTT, FTL;
   getStructureFunctions(kin,FL, FT, FTT, FTL, Einoff);
   if(std::isnan(FL)) return FL;
-  return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT);
+  return (FL+(kin.GetQsquared()/(2.*kin.GetKlab()*kin.GetKlab())+electron.GetTan2HalfAngle(kin))*kin.GetWlab()/massi*FT
+  +(avg? 0: sqrt(kin.GetQsquared()/(kin.GetKlab()*kin.GetKlab()))*cos(phi)*FTL +cos(2*phi)*FTT));
   
 }
 
