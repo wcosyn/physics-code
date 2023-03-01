@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
       //ret[3] b1 total check
       //ret[4-7] tensor struc functions
       //ret[8-9] FUUT,FUUL
-      //ret[10-11] azz nom, denom
+      //ret[10-11] azz num, denom
       
 
       

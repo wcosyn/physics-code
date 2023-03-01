@@ -1,10 +1,13 @@
 #include<cmath>
 #include<iostream>
-#include<cstdlib>
+#include <ctime>
+#include <cstdlib>
+#include <cstdio>
 
 using namespace std;
 
 #include "Utilfunctions.hpp"
+#include "constants.hpp"
 
 ////////////////////////////////////////
 //calculates points between whom      //  
@@ -316,4 +319,38 @@ double Interp3d(double ***grid, double s, double t, double u,
 	+ s*grid[sindex+1][tindex][uindex+1]) 
 	+ t*(comps*grid[sindex][tindex+1][uindex+1]
 	+ s*grid[sindex+1][tindex+1][uindex+1]));
+}
+
+void Bookkeep(int argc, char* argv[], string* arg_names){
+  
+  std::time_t now = std::time(nullptr);
+  std::tm* tm = std::localtime(&now);
+    
+  // Print current date and time
+  std::cout << "Current date and time: " << std::asctime(tm) << std::endl;
+  
+  // Print command line arguments
+  std::cout << "Command line arguments:" << std::endl;
+  for (int i = 0; i < argc; i++) {
+      std::cout << arg_names[i] << "  " << argv[i] << std::endl;
+  }
+  
+  // Get git version
+  std::string git_version;
+  std::string git_command = "cd " + std::string(HOMEDIR) + " && git rev-parse --short HEAD";
+  FILE* git_pipe = popen(git_command.c_str(), "r");
+  if (git_pipe) {
+      char buffer[128];
+      while (!feof(git_pipe)) {
+          if (fgets(buffer, 128, git_pipe) != nullptr) {
+              git_version += buffer;
+          }
+      }
+      pclose(git_pipe);
+  }
+  
+  // Print git version
+  if (!git_version.empty()) {
+      std::cout << "Git version: " << git_version << std::endl;
+  }
 }
