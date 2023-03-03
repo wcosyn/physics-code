@@ -687,7 +687,7 @@ void Cross::printDensity_profile(const TKinematics2to2 &kin, const int shellinde
   cout << endl << endl;
   cout << kin.GetPklab() << " " << avg_dens/total << " " << avg_denspw/totalpw << " " 
     << avg_r/total << " " << avg_rpw/totalpw << " " 
-    << total*pnucl->getRange()/100. << " " << totalpw*pnucl->getRange()/100. << endl << endl;
+    << total*pnucl->getRange()/100. << " " << totalpw*pnucl->getRange()/100. << endl;
   cout << endl << endl;
 
 }

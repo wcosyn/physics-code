@@ -377,7 +377,7 @@ void GlauberGridThick::constructAllGrids() {
 void GlauberGridThick::constructCtGrid() {
   //mem reservation for treshold array
   if (treshold == NULL) {
-    cout << "Mem reservation for treshold array" << endl;
+    //cout << "Mem reservation for treshold array" << endl;
     treshold = new int *[getCthgrid() + 1];
     for (int i = 0; i <= getCthgrid(); i++) {
       treshold[i] = new int[getPhigrid() + 1];

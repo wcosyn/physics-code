@@ -54,18 +54,19 @@ int main(int argc, char *argv[])
   MeanFieldNucleusThick nucleus(MeanFieldNucleus::TypeNames.at(nucleus_name),homedir);
   TElectronKinematics *elec = TElectronKinematics::CreateWithBeamEnergy(Ein);
   
-  cout << "L of shellL: " << nucleus.getL_array()[shell] << endl;
+  cout << "L of shell: " << nucleus.getL_array()[shell] << endl;
 
   double qvec=sqrt(Ein*Ein+Eout*Eout-2.*Ein*Eout*cos(thetae));
   double Q2=qvec*qvec-omega*omega;
   double thetaq=atan2(-sin(thetae)*Eout,Ein-Eout*cos(thetae));
 
-  cout << thetaq*RADTODEGR << endl; 
+  cout << "thetaq: " << thetaq*RADTODEGR << endl; 
 
   Cross obs(*elec,&nucleus,prec,integrator,homedir,screening,scr);
 
   cout << "q|omega|nucl_p|nucl_thetaq|pm|pm_thetaq|xs_fsisrc|xs_pw|Tratio|rhod|rhopw" << endl;
-  for(int i=1;i<=30;++i){
+  cout << "pmiss <rho>_fsi <rho>_pw <r>_fsi <r>_pw rhod_fsi rhod_pw" << endl;
+  for(int i=1;i<=30;i+=2){
   double pm=i*10.;
   
   
@@ -73,7 +74,7 @@ int main(int argc, char *argv[])
 		,MASSP,"qsquared:wlab:pklab",Q2,omega,pm);
     // cout << i << endl;
     if(kin.IsPhysical()){
-         cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR 
+        cout << kin.GetKlab() << " " << kin.GetWlab() << " " << kin.GetPYlab() << " " << acos(kin.GetCosthYlab())*RADTODEGR 
       << " " << kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
 
     numint::vector_d cross=numint::vector_d(5,0.);
