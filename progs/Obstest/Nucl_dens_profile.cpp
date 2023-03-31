@@ -27,9 +27,10 @@ int main(int argc, char *argv[])
                             "nucleus shell",
                             "scattered electron angle [degrees]",
                             "scattered electron energy [MeV]",
-                            "phi angle between electron and hadron plane [degrees]"};
+                            "phi angle between electron and hadron plane [degrees]",
+                            "medium modifications ([0] no, [1] CQM, [2] QSM):"};
 
-  std::cout << "Called from file: " << __FILE__ << std::endl;
+  std::cout << "Compiled from file: " << __FILE__ << std::endl;
   Bookkeep(argc,argv,arg_names);  
 
   double Ein=600.;
@@ -37,6 +38,7 @@ int main(int argc, char *argv[])
   int shell=atoi(argv[2]);
   double thetae=atof(argv[3])*DEGRTORAD;
   double phi = atof(argv[5])*DEGRTORAD;
+  int mmod = atoi(argv[6]);
   //double thetap=atof(argv[3])*DEGRTORAD;
   double omega=Ein-Eout;
 //   int medium=atoi(argv[4]);
@@ -61,11 +63,14 @@ int main(int argc, char *argv[])
   double thetaq=atan2(-sin(thetae)*Eout,Ein-Eout*cos(thetae));
 
   cout << "thetaq: " << thetaq*RADTODEGR << endl; 
+  cout << "Q2: " << Q2*1.E-06 << endl;
 
   Cross obs(*elec,&nucleus,prec,integrator,homedir,screening,scr);
 
-  cout << "q|omega|nucl_p|nucl_thetaq|pm|pm_thetaq|xs_fsisrc|xs_pw|Tratio|rhod|rhopw" << endl;
-  cout << "pmiss <rho>_fsi <rho>_pw <r>_fsi <r>_pw rhod_fsi rhod_pw" << endl;
+  cout << "q|omega|nucl_p|nucl_thetaq|pm|pm_thetaq|";
+  cout << "Px/Pz PWIA" << " " << "Px/Pz RMSGA" << " " << "Px/Pz free" << endl;
+  //cout << "xs_fsisrc|xs_pw|Tratio|rhod|rhopw" << endl;
+  //cout << "pmiss <rho>_fsi <rho>_pw <r>_fsi <r>_pw rhod_fsi rhod_pw" << endl;
   for(int i=1;i<=30;i+=2){
   double pm=i*10.;
   
@@ -78,24 +83,34 @@ int main(int argc, char *argv[])
       << " " << kin.GetPklab() << " " << acos(kin.GetCosthklab())*RADTODEGR << " ";
 
     numint::vector_d cross=numint::vector_d(5,0.);
-    obs.getAllDiffCross(cross,kin,2,shell,1,phi,20000,0,0, 1.,1.);
+    obs.getAllDiffCross(cross,kin,2,shell,1,phi,20000,1,0, 1.,1.);
 
-    double rhod=0., rhopw=0.;
-    for(int ms=-1;ms<=1;ms+=2){
-      for(int mj = -nucleus.getJ_array()[shell]; mj <=nucleus.getJ_array()[shell]; mj+=2){
-        // cout << ms << " " << mj << " ";
-        numint::vector_z phid=numint::vector_z(5,0.);
-        obs.getPhid(phid,kin,shell,mj,ms,1,maxEval);
-        rhod+=norm(phid[1]);
-        rhopw+=norm(phid[4]);
-      }
-    }
+    numint::vector_d asymm=numint::vector_d(40,0.);
+    obs.getAllObs_xyz(asymm, kin, 2, shell, 1, mmod, phi, 20000, 1,1.,1.);
+    NucleonEMOperator nuclFF(Q2,1,0);
+    double free_ratio = -2.*MASSP/(Ein+Eout)/tan(thetae/2.)*nuclFF.getGE()/nuclFF.getGM();
+    
+    cout << asymm[37]/asymm[39] << " " << asymm[5]/asymm[7] << " " << free_ratio << endl;
+    // obs.getAllObs_tnl(asymm, kin, 2, shell, 1, 0, phi, 20000, 1,1.,1.);
+    // cout << asymm[37]/asymm[39] << " " << asymm[5]/asymm[7] << " " << free_ratio << endl;
 
-    cout << cross[1] << " " << cross[4] << " " << cross[1]/cross[4] << " " << rhod << " " << rhopw << endl;
 
-       obs.printDensity_profile(kin,shell,thick,maxEval);
-    }
-  }    
+  //   double rhod=0., rhopw=0.;
+  //   for(int ms=-1;ms<=1;ms+=2){
+  //     for(int mj = -nucleus.getJ_array()[shell]; mj <=nucleus.getJ_array()[shell]; mj+=2){
+  //       // cout << ms << " " << mj << " ";
+  //       numint::vector_z phid=numint::vector_z(5,0.);
+  //       obs.getPhid(phid,kin,shell,mj,ms,1,maxEval);
+  //       rhod+=norm(phid[1]);
+  //       rhopw+=norm(phid[4]);
+  //     }
+  //   }
+
+  //   cout << cross[1] << " " << cross[4] << " " << cross[1]/cross[4] << " " << rhod << " " << rhopw << endl;
+
+  //      obs.printDensity_profile(kin,shell,thick,maxEval);
+   }
+ }    
   delete elec;
   return 0;
 
