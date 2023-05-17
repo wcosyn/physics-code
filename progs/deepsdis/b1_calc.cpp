@@ -12,6 +12,8 @@ using namespace std;
 #include <constants.hpp>
 #include <NuclStructure.hpp>
 #include <NucleonStructure.hpp>
+#include <Utilfunctions.hpp>
+
 
 #include <TDeuteron.h>
 #include <numint/numint.hpp>
@@ -51,6 +53,18 @@ void p_int(numint::vector_d & res, double pnorm, double costh, TDeuteron::Wavefu
 
 int main(int argc, char *argv[])
 {
+
+  string arg_names[argc]={"exec name", 
+                            "Q^2 [GeV^2]", 
+                            "wave function",
+                            "nucleon structure function parametrization",
+                            "beam energy [GeV]"};
+
+  std::cout << "Compiled from file: " << __FILE__ << std::endl;
+  Bookkeep(argc,argv,arg_names);  
+
+
+
   double Q2 = atof(argv[1])*1.E06; // input in GeV^2, converted to MeV^2
   string wf = argv[2]; // deuteron wf parametrization
   double Ein= atof(argv[4])*1.E03; //beam energy in GeV, converted to MeV
@@ -102,8 +116,8 @@ int main(int argc, char *argv[])
       double thetae=asin(sqrt(Q2/4/Ein/Eout))*2; //angle between beam and scattered electron 3momenta [radians]
       double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);  //angle between beam and virutal photon 3momenta [radians]
 
-      
-      
+      cout << 2.*x << " " << thetaq*RADTODEGR << " " << (0.25+0.75*cos(thetaq)) << " " << 0.75*sin(2*thetaq) << " " << 0.75*(1.-cos(2.*thetaq)) << " " ;
+      cout << eps << " " << sqrt(2.*eps*(1.+eps)) << " ";
       
       
       NucleonStructure stp(nuclstruc);  //create instance nucleon structure 
@@ -140,7 +154,17 @@ int main(int argc, char *argv[])
       unsigned count=0;
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
       res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0); //integration carried out
-      cout << 2.*x << " " << ret[0] << " " <<   ret[1] << " " << ret[2] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << " " << 1./(1+gamma*gamma) <</*" " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] <<*/ endl;
+      //cout << 2.*x << " " << ret[0] << " " <<   ret[1] << " " << ret[2] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << " " << 1./(1+gamma*gamma) <</*" " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] <<*/;
+      cout << ret[0] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << " "  << ret[4] << " " << ret[5] << " " << ret[6] << " " << ret[7]  << " ";
+      double numerator = (0.25+0.75*cos(thetaq))*(ret[4]+eps*ret[5])+0.75*sin(2*thetaq)*sqrt(2.*eps*(1.+eps))*ret[6]+0.75*(1.-cos(2.*thetaq))*eps*ret[7];
+      double numerator_0 = (ret[4]+eps*ret[5]);
+      double denominator = ret[8]+eps*ret[9];
+      double Azz = numerator/denominator;
+      double Azz_0 = numerator_0/denominator;
+      double b1_estimate = -3/2.*Azz*ret[8]/2.;
+      double b1_estimate_0 = -3/2.*Azz_0*ret[8]/2.;
+      cout << b1_estimate << " " << b1_estimate_0 << endl;
+      
       //integral result output
       //ret[0] b1 total
       //ret[1] b1 sd
