@@ -22,7 +22,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 
-  string arg_names[argc]={"exec name", "nucleus shell","scattered electron angle [degrees]","scattered electron energy [MeV]"};
+  string arg_names[4]={"exec name", "nucleus shell","scattered electron angle [degrees]","scattered electron energy [MeV]"};
   std::cout << "Called from file: " << __FILE__ << std::endl;
   Bookkeep(argc,argv,arg_names);  
 

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <complex>
 #include <vector>
+#include <AuxFunction.hpp>
 
 class OldDeuteron{
 

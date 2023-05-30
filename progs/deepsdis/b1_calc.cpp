@@ -54,7 +54,7 @@ void p_int(numint::vector_d & res, double pnorm, double costh, TDeuteron::Wavefu
 int main(int argc, char *argv[])
 {
 
-  string arg_names[argc]={"exec name", 
+  string arg_names[5]={"exec name", 
                             "Q^2 [GeV^2]", 
                             "wave function",
                             "nucleon structure function parametrization",

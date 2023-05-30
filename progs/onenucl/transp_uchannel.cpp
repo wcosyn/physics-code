@@ -25,6 +25,7 @@ using namespace std;
 #include <numint/numint.hpp>
 #include <OneGlauberGrid.hpp>
 #include <TMFSpinor.hpp>
+#include <AuxFunction.hpp>
 
 void getBound(double &high, double &low, MeanFieldNucleusThick &nucleus, double Q2, double omega, int shell);
 void adap_intpiCM(numint::vector_d &, double costhetapiCM, double phipiCM, MeanFieldNucleusThick *pNucleus, TElectronKinematics *elec,

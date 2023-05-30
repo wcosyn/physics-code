@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iterator>
 #include <complex>
+#include <AuxFunction.hpp>
 
 #include <gsl/gsl_integration.h>
 

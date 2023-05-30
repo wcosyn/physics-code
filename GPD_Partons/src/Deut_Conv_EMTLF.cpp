@@ -7,6 +7,7 @@
 #include <sstream>
 #include <algorithm>
 #include <iterator>
+#include <AuxFunction.hpp>
 
 using namespace std;
 

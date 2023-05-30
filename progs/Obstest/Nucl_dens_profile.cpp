@@ -22,7 +22,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 
-  string arg_names[argc]={"exec name", 
+  string arg_names[7]={"exec name", 
                             "nucleus", 
                             "nucleus shell",
                             "scattered electron angle [degrees]",

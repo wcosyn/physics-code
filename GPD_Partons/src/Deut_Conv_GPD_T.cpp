@@ -3,6 +3,7 @@
 #include <mstwpdf.h>
 #include <cassert>
 #include <numint/numint.hpp>
+#include <AuxFunction.hpp>
 
 using namespace std;
 
