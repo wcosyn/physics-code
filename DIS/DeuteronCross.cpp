@@ -593,6 +593,6 @@ double DeuteronCross::sigmaparam(double W_sq, double Q2){
   /*cout << sqrt(W_sq) << " " << 65/10.*1.8E06/Q2*INVHBARC*INVHBARC << " " << (25.3*1.E-06*2.3+53*(sqrt(W_sq>5.76E06?5.76E06:W_sq)-MASSP)*1.E-03)
 	/(1.E-05*Q2)*INVHBARC*INVHBARC << " " << endl;
   */if(abs(W_sq-1.232*1.232E06)<2.5E5) return 65/10.*1.8E06/Q2*INVHBARC*INVHBARC;
-  return (25.3*1.E-06*2.3+53*(sqrt(W_sq>5.76E06?5.76E06:W_sq)-MASSP)*1.E-03)
+  return (50.3+53*(sqrt(W_sq>5.76E06?5.76E06:W_sq)-MASSP)*1.E-03)
 	/(1.E-05*Q2)*INVHBARC*INVHBARC;
 }
