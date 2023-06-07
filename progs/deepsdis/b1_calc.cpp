@@ -159,8 +159,8 @@ int main(int argc, char *argv[])
       double numerator = (0.25+0.75*cos(thetaq))*(ret[4]+eps*ret[5])+0.75*sin(2*thetaq)*sqrt(2.*eps*(1.+eps))*ret[6]+0.75*(1.-cos(2.*thetaq))*eps*ret[7];
       double numerator_0 = (ret[4]+eps*ret[5]);
       double denominator = ret[8]+eps*ret[9];
-      double Azz = sqrt(2./3.)*numerator/denominator;
-      double Azz_0 = sqrt(2./3.)*numerator_0/denominator;
+      double Azz = 2./3.*numerator/denominator;
+      double Azz_0 = 2./3.*numerator_0/denominator;
       double b1_estimate = -3/2.*Azz*ret[8]/2.;
       double b1_estimate_0 = -3/2.*Azz_0*ret[8]/2.;
       cout << b1_estimate << " " << b1_estimate_0 << endl;
@@ -274,10 +274,10 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
 
   double F_U_T = (2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_U;  //second term does not survive bjorken limit
   double F_U_L = (-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2),2.)/piq)*dens_U;
-  double F_tensor_T = -sqrt(3./2.)*(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*(6.*costh*costh-2.);
-  double F_tensor_L = -sqrt(3./2.)*(-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2),2.)/piq)*dens_tensor_tot*(6.*costh*costh-2.);
-  double F_tensor_cosphi = 2.*sqrt(6.)*(2.*knorm*sqrt(sinth2)/piq*(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2))*(F2p+F2n))*dens_tensor_tot*costh*sqrt(sinth2);
-  double F_tensor_cos2phi = -sqrt(3./2.)*(knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*sinth2;
+  double F_tensor_T = -3./2.*(2.*(F1p+F1n)+knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*(6.*costh*costh-2.);
+  double F_tensor_L = -3./2.*(-2.*(F1p+F1n)+2.*(F2p+F2n)*pow(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2),2.)/piq)*dens_tensor_tot*(6.*costh*costh-2.);
+  double F_tensor_cosphi = 6*(2.*knorm*sqrt(sinth2)/piq*(MASSD*sqrt(1+gamma*gamma)/gamma-(Es*qvec-nu*ps_z)/sqrt(Q2))*(F2p+F2n))*dens_tensor_tot*costh*sqrt(sinth2);
+  double F_tensor_cos2phi = -3./2.*(knorm*knorm*sinth2/piq*(F2p+F2n))*dens_tensor_tot*sinth2;
   
   //last factor is normalization for lightcone 1/alpha_i converted to k momentum (k is spectator momentum here, be careful with signs!)
 //   alpha_i=1.;
@@ -287,7 +287,7 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   res[0]=dens_tensor_tot*factor;  // without 1+ gamma^2 factor!
   res[1]=dens_tensor_SD*factor;
   res[2]=dens_tensor_DD *factor;
-  res[3]=-sqrt(3./8.)/(1.+gamma*gamma)*knorm*knorm/alpha_i*(F_tensor_T+F_tensor_cos2phi); //b1
+  res[3]=-1./2./(1.+gamma*gamma)*knorm*knorm/alpha_i*(F_tensor_T+F_tensor_cos2phi); //b1
     
   res[4]=F_tensor_T*knorm*knorm/alpha_i;
   res[5]=F_tensor_L*knorm*knorm/alpha_i;
@@ -297,7 +297,7 @@ void k_int(numint::vector_d & res, double knorm, double costh, TDeuteron::Wavefu
   res[8]=F_U_T*knorm*knorm/alpha_i;
   res[9]=F_U_L*knorm*knorm/alpha_i;
   
-  res[10]=(0.25+0.75*cos(thetaq))*(res[4]+eps*res[5])+0.75*sin(2*thetaq)*sqrt(2.*eps*(1.+eps))*res[6]+0.75*(1.-cos(2.*thetaq))*eps*res[7];
+  res[10]=(0.25+0.75*cos(2.*thetaq))*(res[4]+eps*res[5])+0.75*sin(2*thetaq)*sqrt(2.*eps*(1.+eps))*res[6]+0.75*(1.-cos(2.*thetaq))*eps*res[7];
   res[11]=res[8]+eps*res[9];
   
     
