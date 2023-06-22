@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     std::filesystem::path directoryPath = std::filesystem::path(exp_sample_file).parent_path();
 
     // Specify the new filename
-    std::string newFilename = "model_output_full"+to_string(argv[1])+"_"+to_string(shell)+".dat";
+    std::string newFilename = "model_output_full"+to_string(argv[1])+"_"+to_string(shell)+"mmod"+to_string(mmod)+".dat";
 
     // Create the new file path by combining the directory path and new filename
     std::string outputfilepath = (directoryPath / newFilename).string();
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
             Q2_sample << " " << Q2*1.E-06 << " " << thetaq_sample << " " << thetaq*RADTODEGR << " " << 
             kin.GetPYlab() << " " << pvec_sample << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << thetapq_sample << " " << phi*RADTODEGR << " "
             << acos(kin.GetCosthklab())*RADTODEGR << " " << theta_pm_beam << " ";
-        }
+        
 
 
         numint::vector_d cross=numint::vector_d(5,0.);
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
         << asymm[5] << " " << asymm[7] << " " << asymm[5]/asymm[7] << " " << free_ratio << endl;
         // // obs.getAllObs_tnl(asymm, kin, 2, shell, 1, 0, phi, 20000, 1,1.,1.);
         // // cout << asymm[37]/asymm[39] << " " << asymm[5]/asymm[7] << " " << free_ratio << endl;
-
+        }
 
         // delete elec;
 
