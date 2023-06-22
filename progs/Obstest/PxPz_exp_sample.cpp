@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     outputFile << "#Ebeam [MeV], Pmiss [MeV, no sign], Emiss [MeV], Q2 [GeV^2] out|in, thetaq [*] out|in, p_out [MeV] out|in,"
-    << " theta_p [*] out|in, phi [*], thetapmq [*], thetapm_beam [*] in, Px [PWIA], Pz [PWIA], Px/Pz [PWIA], Px [RMSGA], "
+    << " theta_p [*] out|in, phi [*], thetapmq [*], thetapm_beam [*] in, dsigma [PWIA], Px [PWIA], Pz [PWIA], Px/Pz [PWIA], dsigma [PWIA] Px [RMSGA], "
     << "Pz [RMSGA], Px/Pz [RMSGA], Px/Pz [free]" << endl;
 
 
@@ -165,8 +165,8 @@ int main(int argc, char *argv[])
         NucleonEMOperator nuclFF(Q2,1,0);
         double free_ratio = -2.*MASSP/(Ein+Eout)/tan(thetae/2.)*nuclFF.getGE()/nuclFF.getGM();
         
-        outputFile << asymm[37] << " " << asymm[39] << " " <<  asymm[37]/asymm[39] << " " 
-        << asymm[5] << " " << asymm[7] << " " << asymm[5]/asymm[7] << " " << free_ratio << endl;
+        outputFile << asymm[32] << " " << asymm[37] << " " << asymm[39] << " " <<  asymm[37]/asymm[39] << " " 
+        << asymm[0] << " " << asymm[5] << " " << asymm[7] << " " << asymm[5]/asymm[7] << " " << free_ratio << endl;
         // // obs.getAllObs_tnl(asymm, kin, 2, shell, 1, 0, phi, 20000, 1,1.,1.);
         // // cout << asymm[37]/asymm[39] << " " << asymm[5]/asymm[7] << " " << free_ratio << endl;
         }
