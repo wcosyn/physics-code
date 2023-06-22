@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     outputFile << "#Ebeam [MeV], Pmiss [MeV, no sign], Emiss [MeV], virtuality [GeV^2], Q2 [GeV^2] out|in, thetaq [*] out|in, p_out [MeV] out|in,"
     << " theta_p [*] out|in, phi [*], thetapmq [*], thetapm_beam [*] in, dsigma [PWIA], Px [PWIA], Pz [PWIA], Px/Pz [PWIA], dsigma [PWIA] Px [RMSGA], "
     << "Pz [RMSGA], Px/Pz [RMSGA], Px/Pz [free]" << endl;
-    outputFile << "#if more: avg density <\rho>[fm^-3] for RMSGA+SRC & plane-wave, the avg radius <r>[fm] for RSMGA & PW and the distorted momentum distribution \f$\rho^D(\vec{p}_m)\f$ [fm^3] for RMSGA & PW" << endl;
+    outputFile << "#if more: avg density <rho>[fm^-3] for RMSGA+SRC & plane-wave, the avg radius <r>[fm] for RSMGA & PW and the distorted momentum distribution  rho^D(pm) [fm^3] for RMSGA & PW" << endl;
 
 
     for (size_t i = 0; i < columns[0].size(); ++i) {
