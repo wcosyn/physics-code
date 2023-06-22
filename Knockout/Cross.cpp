@@ -359,11 +359,12 @@ void  Cross::getAllObs_xyz(std::vector<double> &obs, TKinematics2to2 &kin, int c
   getAllObs_tnl(obs,kin,current,shellindex,thick,medium,phi,maxEval,lab, lc_mod, nkt_mod);
   int total=thick?5:3;
   double sinphi,cosphi;
-  sincos(phi,&sinphi,&cosphi);
+  //passive rotation, negative angles
+  sincos(-phi,&sinphi,&cosphi);
   double costheta=kin.GetCosthYlab();
   if(costheta>1.) costheta=1.;
   if(costheta<-1.) costheta=-1.;
-  double sintheta=sqrt(1.-costheta*costheta);
+  double sintheta=-sqrt(1.-costheta*costheta);
   double Px,Py,Pz;
   for(int i=0;i<total;i++){
     Px = costheta*cosphi*obs[8*i+2]-sinphi*obs[8*i+3]+sintheta*cosphi*obs[8*i+4]; //Px
@@ -649,8 +650,9 @@ void Cross::klaas_phid(numint::vector_z & results, double r, double costheta, do
 }
 
 
-void Cross::printDensity_profile(const TKinematics2to2 &kin, const int shellindex, 
+vector<double>  Cross::printDensity_profile(const TKinematics2to2 &kin, const int shellindex, 
 		const int thick, const int maxEval){
+  vector<double> output(6,0.);
   vector<double > densr;
   double total=0.,totalpw=0.,avg_dens=0.,avg_denspw=0., avg_r=0., avg_rpw=0.;
   
@@ -668,8 +670,8 @@ void Cross::printDensity_profile(const TKinematics2to2 &kin, const int shellinde
     if(k!=0.) avg_dens+=densr[1]*dens/r/r;
     if(k!=0.) avg_denspw+=densr[4]*dens/r/r;
     
-    cout << kin.GetPklab() << " " << r << " " << densr[1] << " " << densr[4] << " " << dens
-   << endl;
+  //   cout << kin.GetPklab() << " " << r << " " << densr[1] << " " << densr[4] << " " << dens
+  //  << endl;
   }
 //   double phi_pm=0.,phi_pm_pw=0.;
 //   for(int m=1;m<=pnucl->getJ_array()[shellindex];m+=2){
@@ -684,10 +686,18 @@ void Cross::printDensity_profile(const TKinematics2to2 &kin, const int shellinde
 //   phi_pm*=2./pow(2.*PI,3.);
 //   phi_pm_pw*=2./pow(2.*PI,3.);
   
-  cout << endl << endl;
-  cout << kin.GetPklab() << " " << avg_dens/total << " " << avg_denspw/totalpw << " " 
-    << avg_r/total << " " << avg_rpw/totalpw << " " 
-    << total*pnucl->getRange()/100. << " " << totalpw*pnucl->getRange()/100. << endl;
-  cout << endl << endl;
+  //cout << endl << endl;
+  // cout //<< kin.GetPklab() 
+  // << " " << avg_dens/total << " " << avg_denspw/totalpw << " " 
+  //   << avg_r/total << " " << avg_rpw/totalpw << " " 
+  //   << total*pnucl->getRange()/100. << " " << totalpw*pnucl->getRange()/100. << endl;
+  // //cout << endl << endl;
+  output[0]=avg_dens/total;
+  output[1]=avg_denspw/totalpw;
+  output[2]=avg_r/total;
+  output[3]=avg_rpw/totalpw;
+  output[4]=total*pnucl->getRange()/100.;
+  output[5]=totalpw*pnucl->getRange()/100.;
 
+  return output;
 }

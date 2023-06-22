@@ -235,7 +235,7 @@ public:
    * \param thick do you want thickness in the Glauber FSI or not?
    * \param maxEval max # of evaluations in integrations
    */
-  void printDensity_profile(const TKinematics2to2 &kin, const int shellindex, 
+  std::vector<double> printDensity_profile(const TKinematics2to2 &kin, const int shellindex, 
 		const int thick, const int maxEval);
   
 private:

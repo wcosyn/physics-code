@@ -29,10 +29,11 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 
-    string arg_names[5]={"exec name", 
+    string arg_names[6]={"exec name", 
                                 "nucleus", 
                                 "nucleus shell",
                                 "medium modifications ([0] no, [1] CQM, [2] QSM):",
+                                "with density output as well",
                                 "filename that has exp kinematics sample"};
 
     std::cout << "Compiled from file: " << __FILE__ << std::endl;
@@ -42,8 +43,8 @@ int main(int argc, char *argv[])
     string nucleus_name=argv[1];//atoi(argv[6]);
     int shell=atoi(argv[2]);
     int mmod = atoi(argv[3]);
-
-    std::string exp_sample_file = argv[4];
+    bool withdens = atoi(argv[4]);
+    std::string exp_sample_file = argv[5];
 
     
 
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
     std::filesystem::path directoryPath = std::filesystem::path(exp_sample_file).parent_path();
 
     // Specify the new filename
-    std::string newFilename = "model_output_full"+to_string(argv[1])+"_"+to_string(shell)+"mmod"+to_string(mmod)+".dat";
+    std::string newFilename = "model_output_full"+to_string(argv[1])+"_"+to_string(shell)+"mmod"+to_string(mmod)+"v3.dat";
 
     // Create the new file path by combining the directory path and new filename
     std::string outputfilepath = (directoryPath / newFilename).string();
@@ -118,6 +119,7 @@ int main(int argc, char *argv[])
         double pm = abs(columns[1][i])*1.E03;
 
         double Emiss_sample = columns[2][i]*1.E03; //[MeV]
+        double virt_sample = columns[3][i]; // [GeV^2]
         double Q2_sample = -columns[4][i]; // [GeV]
         double thetaq_sample = columns[5][i]; // degrees
         double pvec_sample = columns[8][i]*1.E03; // [MeV]
@@ -150,7 +152,7 @@ int main(int argc, char *argv[])
 
         //this follows the columns in Tim Kolar's files (more or less)
         if(kin.IsPhysical()){
-            outputFile << Ein << " " << pm << " " << Emiss_sample << " " << //Emiss_model << " " << 
+            outputFile << Ein << " " << pm << " " << Emiss_sample << " " << virt_sample << " " << //Emiss_model << " " << 
             Q2_sample << " " << Q2*1.E-06 << " " << thetaq_sample << " " << thetaq*RADTODEGR << " " << 
             kin.GetPYlab() << " " << pvec_sample << " " << acos(kin.GetCosthYlab())*RADTODEGR << " " << thetapq_sample << " " << phi*RADTODEGR << " "
             << acos(kin.GetCosthklab())*RADTODEGR << " " << theta_pm_beam << " ";
@@ -166,11 +168,20 @@ int main(int argc, char *argv[])
         double free_ratio = -2.*MASSP/(Ein+Eout)/tan(thetae/2.)*nuclFF.getGE()/nuclFF.getGM();
         
         outputFile << asymm[32] << " " << asymm[37] << " " << asymm[39] << " " <<  asymm[37]/asymm[39] << " " 
-        << asymm[0] << " " << asymm[5] << " " << asymm[7] << " " << asymm[5]/asymm[7] << " " << free_ratio << endl;
+        << asymm[0] << " " << asymm[5] << " " << asymm[7] << " " << asymm[5]/asymm[7] << " " << free_ratio << " "; //endl;
         // // obs.getAllObs_tnl(asymm, kin, 2, shell, 1, 0, phi, 20000, 1,1.,1.);
         // // cout << asymm[37]/asymm[39] << " " << asymm[5]/asymm[7] << " " << free_ratio << endl;
-        }
 
+        if(withdens){
+            vector<double> densities(6,0.);
+            densities = obs.printDensity_profile(kin,shell,thick,maxEval);
+            for(int k=0;k<6;k++) outputFile << densities[k] << " ";
+            outputFile << endl;
+        }
+        else outputFile << endl;
+
+        }
+        
         // delete elec;
 
     }
