@@ -255,3 +255,47 @@ void Poldeut::Tensor_Compare_nonrel(double &lfratio, double &nrratio, double alp
   nrratio = W_lf;
 
 }
+
+
+
+void Poldeut::getLFdistributions(double alpha_p, double pt, double &S_L, double &S_T, double &deltaS_L, double &deltaS_T, double &deltaT_S_L, double &deltaT_S_T){
+
+  double E = sqrt((pt*pt+MASSn*MASSn)/(alpha_p*(2.-alpha_p))); //MeV
+  double kz = E*(alpha_p-1.);
+  double knorm = sqrt(pt*pt+kz*kz);
+  double costheta = kz/knorm;
+  double sintheta = pt/knorm;
+  if(knorm>1.E03) { S_L=S_T=1.;deltaS_L=deltaS_T=deltaT_S_L=deltaT_S_T=std::numeric_limits<double>::quiet_NaN() ; return;}
+
+  double f0 = getU(knorm)*sqrt(E/(4.*PI));  //MeV-1
+  double f2 = getW(knorm)*sqrt(E/(4.*PI)); //MeV-1
+
+  double S_unpol = (f0*f0 + f2*f2)/(2-alpha_p);
+  double S_tensor_L = -1./(2.-alpha_p)*(2.*f0+f2/sqrt(2.))*f2/sqrt(2.)*(1.-3./2.*sintheta*sintheta); 
+  double S_tensor_T = -1./(2.-alpha_p)*(2.*f0+f2/sqrt(2.))*f2/sqrt(2.)*(1.-3./2.*costheta*costheta); 
+
+  S_L = S_unpol+S_tensor_L;
+  S_T = S_unpol+S_tensor_T;
+
+  double C0L = 1-(E+kz)*pt*pt/(E+MASSn)/(MASSn*MASSn+pt*pt);
+  double C2L = 1-(E+2.*MASSn)*(E+kz)*pt*pt/(MASSn*MASSn+pt*pt)/(knorm*knorm);
+
+  deltaS_L = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(C0L*f0-C2L*f2/sqrt(2.));
+
+  double C0T = -(E+kz)*(E-kz+MASSn)*pt/(E+MASSn)/(MASSn*MASSn+pt*pt);
+  double C2T = (E+kz)*(-knorm*knorm+kz*(E+2.*MASSn))*pt/(knorm*knorm*(MASSn*MASSn+pt*pt));
+
+  deltaS_T = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(C0T*f0-C2T*f2/sqrt(2.));
+
+  double D0L = (E+kz)*(E-kz+MASSn)*pt/(E+MASSn)/(MASSn*MASSn+pt*pt); 
+  double D2L = -(E+kz)*(-knorm*knorm+(E+MASSn/2.)*kz)*pt/(knorm*knorm*(MASSn*MASSn+pt*pt));
+  
+  deltaT_S_L = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(D0L*f0+D2L*sqrt(2.)*f2);
+
+  double D0T = 1.-(E+kz)*pt*pt/(E+MASSn)/(MASSn*MASSn+pt*pt);
+  double D2T = 1.-(E+MASSn/2)*(E+kz)*pt*pt/(knorm*knorm*(MASSn*MASSn+pt*pt));
+  
+  deltaT_S_T = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(D0T*f0+D2T*sqrt(2.)*f2);
+
+  return;
+}
