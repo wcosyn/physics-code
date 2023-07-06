@@ -71,6 +71,19 @@ double calc_dsigma_unpol(const double x, const double Q2, const double s, const 
   void Tensor_Compare_nonrel(double &lfratio, double &nrratio, double alpha_p, double pt);
 
 
+  /**
+   * @brief calculate lf deuteron densities along Weiss/Cosyn PRC 2020 and deuteron IA paper
+   * 
+   * @param alpha_p [] lc mom fraction
+   * @param pt [MeV] transverse spectator momentum
+   * @param[out] S [GeV-2] unpol lf distribution
+   * @param[out] deltaS_L [GeV-2] helicity lf distribution for deuteron longitduinal polarized lambda +1
+   * @param[out] deltaS_T [GeV-2] helicity lf distribution for deuteron transverse polarized along x-axis
+   * @param[out] deltaT_S_L [GeV-2] transversity lf distribution for deuteron longitduinal polarized lambda +1
+   * @param[out] deltaT_S_T [GeV-2] transversity lf distribution for deuteron transverse polarized along x-axis
+   */
+  void getLFdistributions(double alpha_p, double pt, double &S_L, double &S_T, double &deltaS_L, double &deltaS_T, double &deltaT_S_L, double &deltaT_S_T);
+
 
 
 private:
@@ -94,6 +107,8 @@ private:
   */
   void getDensities(double knorm, double ktheta, double &rhou, double &rho_l_z, double &rho_l_x, double &rho_tensor_u);
   
+
+
   /*! obtain deuteron radial s_wave (normalized as int k^2 dk U(k)^2=1) 
    * \param k [MeV] relative momentum
    * \return [MeV^-3/2] radial s-wave U(k)

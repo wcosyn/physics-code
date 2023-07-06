@@ -15,6 +15,26 @@ int main(int argc, char *argv[])
 {
 
 
+//plotting lf deuteron densities
+
+double S_L=0., S_T=0., deltaS_L=0., deltaS_T=0.,deltaT_S_L=0.,deltaT_S_T=0.;  //MeV^-1
+Poldeut deuteron_obj("AV18","SLAC");
+
+for(int i=-20;i<=20;i++){
+  for(int j=0;j<=30;j++){
+    double alpha_p = 1.+i/100.*3.;
+    double pt = double(j)*20.;
+    deuteron_obj.getLFdistributions(alpha_p,pt,S_L,S_T,deltaS_L,deltaS_T,deltaT_S_L,deltaT_S_T);
+
+    cout << alpha_p << " " << pt*1.E-03 << " " << S_L*1.E06 << " " << S_T*1.E06 << " " << deltaS_L*1.E06 << " " << deltaS_T*1.E06 << " " << deltaT_S_L*1.E06 << " " << deltaT_S_T*1.E06 << endl;
+
+  }
+}
+exit(1);
+
+
+
+
   // unpolarized cross section test
   double s=2.*1000.E06;
   double x=0.05;
