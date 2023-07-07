@@ -17,7 +17,7 @@ d_wave(1),
 melosh(1)
 {
   wfref = TDeuteron::Wavefunction::CreateWavefunction(wfname);
-  for(int i=0;i<=1000;i++){
+  for(int i=0;i<=1200;i++){
     wf.AddUp(i,wfref->GetUp(i));
     wf.AddWp(i,wfref->GetWp(i));
   }
@@ -265,8 +265,10 @@ void Poldeut::getLFdistributions(double alpha_p, double pt, double &S_L, double 
   double knorm = sqrt(pt*pt+kz*kz);
   double costheta = kz/knorm;
   double sintheta = pt/knorm;
-  if(knorm>1.E03) { S_L=S_T=1.;deltaS_L=deltaS_T=deltaT_S_L=deltaT_S_T=std::numeric_limits<double>::quiet_NaN() ; return;}
-
+  if(knorm<1.E-02) {knorm=1.E-03;costheta=1.;sintheta=0.;}
+  
+  if(knorm>1.2E03) { S_L=S_T=1.;deltaS_L=deltaS_T=deltaT_S_L=deltaT_S_T=std::numeric_limits<double>::quiet_NaN() ; return;}
+  
   double f0 = getU(knorm)*sqrt(E/(4.*PI));  //MeV-1
   double f2 = getW(knorm)*sqrt(E/(4.*PI)); //MeV-1
 
