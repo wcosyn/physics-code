@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 //     if(y<1.){
       double eps=(1-y-gamma*gamma*y*y/4.)/(1-y+y*y/2+gamma*gamma*y*y/4.);
       double thetae=asin(sqrt(Q2/4/Ein/Eout))*2;
-      double thetaq=-acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);
+      double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);
 
       
       

@@ -114,7 +114,8 @@ int main(int argc, char *argv[])
     if(/*y<1.*/1){
       double eps=(1-y-gamma*gamma*y*y/4.)/(1-y+y*y/2+gamma*gamma*y*y/4.); //epsilon, see paper (invariant)
       double thetae=asin(sqrt(Q2/4/Ein/Eout))*2; //angle between beam and scattered electron 3momenta [radians]
-      double thetaq=-acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);  //angle between beam and virutal photon 3momenta [radians]
+      //angle between beam and virtual photon 3momenta [radians]  angle as used is positive because from photon dir to electron direction = polarization direction
+      double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);  
 
       cout << 2.*x << " " << thetaq*RADTODEGR << " " << (0.25+0.75*cos(thetaq)) << " " << 0.75*sin(2*thetaq) << " " << 0.75*(1.-cos(2.*thetaq)) << " " ;
       cout << eps << " " << sqrt(2.*eps*(1.+eps)) << " ";
