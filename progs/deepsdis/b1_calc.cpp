@@ -114,13 +114,12 @@ int main(int argc, char *argv[])
     if(/*y<1.*/1){
       double eps=(1-y-gamma*gamma*y*y/4.)/(1-y+y*y/2+gamma*gamma*y*y/4.); //epsilon, see paper (invariant)
       double thetae=asin(sqrt(Q2/4/Ein/Eout))*2; //angle between beam and scattered electron 3momenta [radians]
-      //angle between beam and virtual photon 3momenta [radians]  angle as used is positive because from photon dir to electron direction = polarization direction
-      double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);  
+      double thetaq=acos((Ein*Ein+qvec*qvec-Eout*Eout)/2/Ein/qvec);  //angle between beam and virutal photon 3momenta [radians]
 
-      cout << 2.*x << " " << thetaq*RADTODEGR << " " << (0.25+0.75*cos(thetaq)) << " " << 0.75*sin(2*thetaq) << " " << 0.75*(1.-cos(2.*thetaq)) << " " ;
-      cout << eps << " " << sqrt(2.*eps*(1.+eps)) << " ";
-      
-      
+      //cout << 2.*x << " " << thetaq*RADTODEGR << " " << (0.25+0.75*cos(thetaq)) << " " << 0.75*sin(2*thetaq) << " " << 0.75*(1.-cos(2.*thetaq)) << " " ;
+      //cout << eps << " " << sqrt(2.*eps*(1.+eps)) << " ";
+      cout << 2. *x << " ";
+      double thetaq1 = -acos(-1.0/3.0)/2.0;
       NucleonStructure stp(nuclstruc);  //create instance nucleon structure 
 
       numint::array<double,2> lower = {{0.,-1.}}; //first index momentum norm [MeV], second is costheta nucleon
@@ -156,16 +155,84 @@ int main(int argc, char *argv[])
   //     res = numint::cube_romb(mdf,lower,upper,1.E-08,PREC,ret,count,0);
       res = numint::cube_adaptive(mdf,lower,upper,1.E-08,PREC,1E02,2E05,ret,count,0); //integration carried out
       //cout << 2.*x << " " << ret[0] << " " <<   ret[1] << " " << ret[2] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << " " << 1./(1+gamma*gamma) <</*" " << sqrt(2./3.)*ret[4]/ret[8]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11]*2.*(F1p+F1n)*-3./2. << " " << sqrt(2./3.)*ret[10]/ret[11] <<*/;
-      cout << ret[0] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << " "  << ret[4] << " " << ret[5] << " " << ret[6] << " " << ret[7]  << " ";
-      double numerator = (0.25+0.75*cos(thetaq))*(ret[4]+eps*ret[5])+0.75*sin(2*thetaq)*sqrt(2.*eps*(1.+eps))*ret[6]+0.75*(1.-cos(2.*thetaq))*eps*ret[7];
+      //cout << ret[0] << " " << ret[3] << " "<< ret[8]/2. << " " << 2.*(F1p+F1n) << " "  << ret[4] << " " << ret[5] << " " << ret[6] << " " << ret[7]  << " ";
+      
+
+      double A=-1./2./(1.+gamma*gamma)*(ret[4]+ret[7]);
+      double D=-2.*ret[7]/gamma/gamma;
+      double C=(-2.*ret[6]/gamma-2.*D)/(1.+gamma*gamma);
+      double B=(2.*(1+gamma*gamma)*A-(1.+gamma*gamma)*C-D-ret[5])/pow(1.+gamma*gamma,2.);
+
+      double b1=A;
+      double b2=x*(B+C+D);
+      double b3=x*(B+C-2.*D)/3.;
+      double b4=x*(B-2.*C+D)/3.;
+
+      //b1 actual
+      cout << ret[0] << endl;
+      cout << " " << ret[3]<< " " << b1<< " " << b2<< " " << endl;
+      
+      double numerator = (0.25+0.75*cos(2.*thetaq))*(ret[4]+eps*ret[5])+0.75*sin(2*thetaq)*sqrt(2.*eps*(1.+eps))*ret[6]+0.75*(1.-cos(2.*thetaq))*eps*ret[7];
+      //numerator for theta = -arccos(-1/3)
+      double numerator1 = (0.25+0.75*cos(2.*thetaq1))*(ret[4]+eps*ret[5])+0.75*sin(2*thetaq1)*sqrt(2.*eps*(1.+eps))*ret[6]+0.75*(1.-cos(2.*thetaq1))*eps*ret[7];
+
+      //new structure functions
+
+      //double FuTlll= -2./3. * pow(gamma,2.) *(1.+pow(gamma,2.));
+      //double FuTllt= -(2.+5./3.*pow(gamma,2.));
+      //double Fcoslt = -gamma * (1.+pow(gamma,2.)/3.);
+      //double Fcostt = -pow(gamma,2.)/3.;
+
+
+      double FuTlll= -2./3.*pow(gamma,4.);
+
+      double FuTllt= -(2.+5./3.*pow(gamma,2.));
+      double Fcoslt = -gamma * (1.+pow(gamma,2.)/3.);
+      double Fcostt = -pow(gamma,2.)/3.;
+
+      double Tll = (3.0 *cos(2*thetaq)+1.)/12.0;
+
+      double Tll1 = (3.0 *cos(2*0)+1.)/12.0;
+
+      double tltcos= (sin(2*thetaq))/4.0;
+
+      double tltcos1 = (sin(2*0))/4.0;
+
+      double tttcos = (1.-cos(2.*thetaq))/4.0;
+
+      double tttcos1 = (1.-cos(2.*0))/4.0;
+      //Alan
+      double numeratorTest = 2.*(Tll*(FuTllt+eps*FuTlll)+tltcos*(pow(2.*eps*(1.+eps),0.5)*Fcoslt)+tttcos*eps*Fcostt);
+
+      double numeratorTest1 = 2.*(Tll1*(FuTllt+eps*FuTlll)+tltcos1*(pow(2.*eps*(1.+eps),0.5)*Fcoslt)+tttcos1*eps*Fcostt);
+
+      double denomTest = ret[8]*(1.+pow(gamma,2.0));
+      //brandon
+      double numeratorNew = (1./4.+3./4.* cos(2.*thetaq))*((2.0*(1.0+pow(gamma,2.0))*(eps-1))+2.0*(1.0/3.0*(pow(gamma,2.0)/2.0)-eps*(1.0+pow(gamma,2.0))-eps))-3.0/4.0*sin(2*thetaq)*(pow((2*eps*(1+eps)),1.0/2.0))*(1.0+pow(gamma,2.0)*gamma/6.0+1./3.*gamma)-3.0/4.*(1-cos(2*thetaq))/6.*eps*pow(gamma,2.0);
+      double numeratorNew_0= (1./4.+3./4.* cos(2.*0))*((2.0*(1.0+pow(gamma,2.0))*(eps-1))+2.0*(1.0/3.0*(pow(gamma,2.0)/2.0)-eps*(1.0+pow(gamma,2.0))-eps))-3.0/4.0*sin(2*0)*(pow((2*eps*(1+eps)),1.0/2.0))*(1.0+pow(gamma,2.0)*gamma/6.0+1./3.*gamma)-3.0/4.*(1-cos(2*0))/6.*eps*pow(gamma,2.0);
       double numerator_0 = (ret[4]+eps*ret[5]);
       double denominator = ret[8]+eps*ret[9];
       double Azz = 2./3.*numerator/denominator;
+      double Azz1 = 2./3. * numerator1/denominator;
+
+      double b1_estimateTestE = Azz * denomTest/numeratorTest;
+      double b1_estimateTest = Azz * denomTest/numeratorTest1;
+      double b1_estimateNew= Azz* denomTest/numeratorNew;
       double Azz_0 = 2./3.*numerator_0/denominator;
+      double b1_estimateTestE0 = Azz_0 * denominator/numeratorTest;
+      double b1_estimate_New0= Azz_0*denomTest/numeratorNew_0;
       double b1_estimate = -3/2.*Azz*ret[8]/2.;
+      double b1_estimate1 = -3/2.*Azz1*ret[8]/2.;
+      double b1_estimateTest0= Azz_0 * denomTest/numeratorTest1;
       double b1_estimate_0 = -3/2.*Azz_0*ret[8]/2.;
-      cout << b1_estimate << " " << b1_estimate_0 << endl;
-      
+
+      // explanation on what is what
+      // original 2 estimates                        test on different direction             Brandons                                          new approximations (test= theta=0)     (E= theta is finite)
+      //cout <<  b1_estimate << " " << b1_estimate_0 << " " << b1_estimate1 <<" "<< b1_estimateNew << " "<< b1_estimate_New0 << " " << b1_estimateTest << " "<< b1_estimateTest0<< " " << b1_estimateTestE << " "<< numeratorTest<< " " << numeratorTest1  << " "<< thetaq<< " "<< eps<< " "<< gamma<< endl;
+
+      //cout<< -3./2.*ret[8]/2. << " "<< denomTest/numeratorTest << " " << denomTest/numeratorTest1 << " "<< denomTest/numeratorNew<<  " "<< denomTest/numeratorNew_0<<endl;
+
+      // " "<< Azz << " " << Azz_0 << endl;
       //integral result output
       //ret[0] b1 total
       //ret[1] b1 sd
