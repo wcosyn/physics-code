@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
       double b4=x*(B-2.*C+D)/3.;
 
       //b1 actual
-      cout << ret[0] << endl;
+      cout << ret[0];
       cout << " " << ret[3]<< " " << b1<< " " << b2<< " " << endl;
       
       double numerator = (0.25+0.75*cos(2.*thetaq))*(ret[4]+eps*ret[5])+0.75*sin(2*thetaq)*sqrt(2.*eps*(1.+eps))*ret[6]+0.75*(1.-cos(2.*thetaq))*eps*ret[7];
