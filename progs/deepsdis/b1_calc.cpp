@@ -259,11 +259,23 @@ int main(int argc, char *argv[])
       double TF3_0= (0.75*sin(2*0)*sqrt(2.*eps*(1.+eps))*ret[6]);
       double TF4_0= (0.75*(1.-cos(2.*0))*eps*ret[7]);
 
+      double b1C= 1./3. * (1+pow(gamma,2.0))*(-1.+eps)*(1+3*cos(2*thetaq))*b1;
+      double b2C= 1./(36*x)*(pow(gamma,2.0)-(6.+9.*pow(gamma,2.0)+2*pow(gamma,4.0))*eps-3.*(6*eps+2*pow(gamma,4.0)*eps+pow(gamma,2.0)*(-1.+5.*eps))*cos(2.*thetaq)+3.*pow(2.,0.5)*pow(gamma,2.0)*(3.+pow(gamma,2.)*pow(eps*(1+eps),0.5)*sin(2.*thetaq)))*b2;
+      double b3C= pow(gamma,2.0)/(12.*x)*(1.+eps+2.*pow(gamma,2.)*eps+3.*(1.+5.*eps+2.*pow(gamma,2.)*eps)*cos(2.*thetaq)+6.*pow(2.,0.5)*pow(eps*(1+eps),0.5)*sin(2*thetaq))*b3;
+      double b4C= pow(gamma,2.0)/(12.*x)*(2.*(1.+pow(gamma,2.0))*(eps+3.*eps*cos(2*thetaq)+3.*pow(2,.5)*pow(eps*(1+eps),0.5)*cos(thetaq)*sin(thetaq)))*b4;
+
+
+      double b1C0= 1./3. * (1+pow(gamma,2.0))*(-1.+eps)*(1+3*cos(2*0))*b1;
+      double b2C0= 1./(36*x)*(pow(gamma,2.0)-(6.+9.*pow(gamma,2.0)+2*pow(gamma,4.0))*eps-3.*(6*eps+2*pow(gamma,4.0)*eps+pow(gamma,2.0)*(-1.+5.*eps))*cos(2.*0)+3.*pow(2.,0.5)*pow(gamma,2.0)*(3.+pow(gamma,2.)*pow(eps*(1+eps),0.5)*sin(2.*0)))*b2;
+      double b3C0= pow(gamma,2.0)/(12.*x)*(1.+eps+2.*pow(gamma,2.)*eps+3.*(1.+5.*eps+2.*pow(gamma,2.)*eps)*cos(2.*0)+6.*pow(2.,0.5)*pow(eps*(1+eps),0.5)*sin(2*0))*b3;
+      double b4C0= pow(gamma,2.0)/(12.*x)*(2.*(1.+pow(gamma,2.0))*(eps+3.*eps*cos(2*0)+3.*pow(2,.5)*pow(eps*(1+eps),0.5)*cos(0)*sin(0)))*b4;
 
 
 
     
-     cout<< numerator <<" " << numerator_0<<" " << TF1<<" " <<TF2<<" " <<TF3<<" " <<TF4<<" " <<TF1_0 <<" " <<TF2_0<<" " << TF3_0<<" " << TF4_0<<endl;
+    
+     cout<< numerator <<" " << numerator_0<<" " << TF1<<" " <<TF2<<" " <<TF3<<" " <<TF4<<" " <<TF1_0 <<" " <<TF2_0<<" " << TF3_0<<" " << TF4_0 ;
+     cout<<" "<<b1C<<" " <<b2C<<" " <<b3C<<" " <<b4C<<" " <<b1C0<<" " <<b2C0<<" " <<b3C0<<" " <<b4C0<<endl;
 
 //     cout<<gamma<<endl; 
 
