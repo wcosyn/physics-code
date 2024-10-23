@@ -301,3 +301,46 @@ void Poldeut::getLFdistributions(double alpha_p, double pt, double &S_L, double 
 
   return;
 }
+
+
+void Poldeut::getLFdistributions_new(double alpha_p, double pt, double &P_U, double &P_TLL, double &P_TLT, double &P_TTT, 
+                        double &P_SLSL, double &P_STSL, double &P_SLST, double &P_STST){
+
+  double E = sqrt((pt*pt+MASSn*MASSn)/(alpha_p*(2.-alpha_p))); //MeV
+  double kz = E*(alpha_p-1.);
+  double knorm = sqrt(pt*pt+kz*kz);
+  double costheta = kz/knorm;
+  double sintheta = pt/knorm;
+  if(knorm<1.E-02) {knorm=1.E-03;costheta=1.;sintheta=0.;}
+  
+  double f0 = getU(knorm)*sqrt(E/(4.*PI));  //MeV-1
+  double f2 = getW(knorm)*sqrt(E/(4.*PI)); //MeV-1
+
+  P_U = (f0*f0 + f2*f2)/(2-alpha_p);
+  P_TLL = -1./(2.-alpha_p)*(2.*f0+f2/sqrt(2.))*f2/sqrt(2.)*3./2.*(3.*costheta*costheta-1.); 
+  P_TLT = -1./(2.-alpha_p)*(2.*f0+f2/sqrt(2.))*f2/sqrt(2.)*6.*costheta*sintheta; 
+  P_TTT = -1./(2.-alpha_p)*(2.*f0+f2/sqrt(2.))*f2/sqrt(2.)*3.*sintheta*sintheta; 
+
+  
+  double C0L = 1-(E+kz)*pt*pt/(E+MASSn)/(MASSn*MASSn+pt*pt);
+  double C2L = 1-(E+2.*MASSn)*(E+kz)*pt*pt/(MASSn*MASSn+pt*pt)/(knorm*knorm);
+
+  P_SLSL = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(C0L*f0-C2L*f2/sqrt(2.));
+
+  double C0T = -(E+kz)*(E-kz+MASSn)*pt/(E+MASSn)/(MASSn*MASSn+pt*pt);
+  double C2T = (E+kz)*(-knorm*knorm+kz*(E+2.*MASSn))*pt/(knorm*knorm*(MASSn*MASSn+pt*pt));
+
+  P_STSL = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(C0T*f0-C2T*f2/sqrt(2.));
+
+  double D0L = (E+kz)*(E-kz+MASSn)*pt/(E+MASSn)/(MASSn*MASSn+pt*pt); 
+  double D2L = -(E+kz)*(-knorm*knorm+(E+MASSn/2.)*kz)*pt/(knorm*knorm*(MASSn*MASSn+pt*pt));
+  
+  P_SLST = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(D0L*f0+D2L*sqrt(2.)*f2);
+
+  double D0T = 1.-(E+kz)*pt*pt/(E+MASSn)/(MASSn*MASSn+pt*pt);
+  double D2T = 1.-(E+MASSn/2)*(E+kz)*pt*pt/(knorm*knorm*(MASSn*MASSn+pt*pt));
+  
+  P_STST = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(D0T*f0+D2T*sqrt(2.)*f2);
+
+  return;
+}

@@ -76,14 +76,31 @@ double calc_dsigma_unpol(const double x, const double Q2, const double s, const 
    * 
    * @param alpha_p [] lc mom fraction
    * @param pt [MeV] transverse spectator momentum
-   * @param[out] S_L [GeV-2] unpol nucleon lf distribution for deuteron longitduinal polarized lambda +1
-   * @param[out] S_T [GeV-2] unpol nucleon lf distribution for deuteron transverse polarized along x-axis
-   * @param[out] deltaS_L [GeV-2] helicity nucleon lf distribution for deuteron longitduinal polarized lambda +1
-   * @param[out] deltaS_T [GeV-2] helicity nucleon lf distribution for deuteron transverse polarized along x-axis
-   * @param[out] deltaT_S_L [GeV-2] transversity nucleon lf distribution for deuteron longitduinal polarized lambda +1
-   * @param[out] deltaT_S_T [GeV-2] transversity nucleon lf distribution for deuteron transverse polarized along x-axis
+   * @param[out] S_L [MeV-2] unpol nucleon lf distribution for deuteron longitduinal polarized lambda +1
+   * @param[out] S_T [MeV-2] unpol nucleon lf distribution for deuteron transverse polarized along x-axis
+   * @param[out] deltaS_L [MeV-2] helicity nucleon lf distribution for deuteron longitduinal polarized lambda +1
+   * @param[out] deltaS_T [MeV-2] helicity nucleon lf distribution for deuteron transverse polarized along x-axis
+   * @param[out] deltaT_S_L [MeV-2] transversity nucleon lf distribution for deuteron longitduinal polarized lambda +1
+   * @param[out] deltaT_S_T [MeV-2] transversity nucleon lf distribution for deuteron transverse polarized along x-axis
    */
   void getLFdistributions(double alpha_p, double pt, double &S_L, double &S_T, double &deltaS_L, double &deltaS_T, double &deltaT_S_L, double &deltaT_S_T);
+
+  /**
+   * @brief calculate lf deuteron densities along new deuteron 2024 paper
+   * 
+   * @param alpha_p [] lc mom fraction
+   * @param pt [MeV] transverse spectator momentum
+   * @param[out] P_U [MeV-2] unpolarized (4.18)
+   * @param[out] P_TLL [MeV-2] tensor TLL (4.19a)
+   * @param[out] P_TLT [MeV-2] tensor TLT (4.19b)
+   * @param[out] P_TTT [MeV-2] tensor TLT (4.19c)
+   * @param[out] P_SLSL [MeV-2] helicity nucleon lf distribution for deuteron longitduinal polarized lambda +1
+   * @param[out] P_STSL [MeV-2] helicity nucleon lf distribution for deuteron transverse polarized along x-axis
+   * @param[out] P_SLST [MeV-2] transversity nucleon lf distribution for deuteron longitduinal polarized lambda +1
+   * @param[out] P_STST [MeV-2] transversity nucleon lf distribution for deuteron transverse polarized along x-axis
+   */
+  void getLFdistributions_new(double alpha_p, double pt, double &P_U, double &P_TLL, double &P_TLT, double &P_TTT, 
+                        double &P_SLSL, double &P_STSL, double &P_SLST, double &P_STST);
 
 
 
