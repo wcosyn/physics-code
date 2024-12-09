@@ -319,7 +319,7 @@ void Poldeut::getLFdistributions_new(double alpha_p, double pt, double &P_U, dou
   P_U = (f0*f0 + f2*f2)/(2-alpha_p);
   P_TLL = -1./(2.-alpha_p)*(2.*f0+f2/sqrt(2.))*f2/sqrt(2.)*3./2.*(3.*costheta*costheta-1.); 
   P_TLT = -1./(2.-alpha_p)*(2.*f0+f2/sqrt(2.))*f2/sqrt(2.)*6.*costheta*sintheta; 
-  P_TTT = -1./(2.-alpha_p)*(2.*f0+f2/sqrt(2.))*f2/sqrt(2.)*3.*sintheta*sintheta; 
+  P_TTT = -1./(2.-alpha_p)*(2.*f0+f2/sqrt(2.))*f2/sqrt(2.)*3./2.*sintheta*sintheta; 
 
   
   double C0L = 1-(E+kz)*pt*pt/(E+MASSn)/(MASSn*MASSn+pt*pt);
