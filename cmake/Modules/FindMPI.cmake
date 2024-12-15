@@ -76,16 +76,16 @@ elseif (MPI_COMPILER)
   # Check whether the -showme:compile option works. This indicates
   # that we have either Open MPI or a newer version of LAM-MPI, and
   # implies that -showme:link will also work.
-  exec_program(${MPI_COMPILER} 
-    ARGS -showme:compile 
+  execute_process(COMMAND ${MPI_COMPILER} 
+    -showme:compile 
     OUTPUT_VARIABLE MPI_COMPILE_CMDLINE
     RETURN_VALUE MPI_COMPILER_RETURN)
 
   if (MPI_COMPILER_RETURN EQUAL 0)
     # If we appear to have -showme:compile, then we should also have
     # -showme:link. Try it.
-    exec_program(${MPI_COMPILER} 
-      ARGS -showme:link
+    execute_process(COMMAND ${MPI_COMPILER} 
+      -showme:link
       OUTPUT_VARIABLE MPI_LINK_CMDLINE
       RETURN_VALUE MPI_COMPILER_RETURN)
   endif (MPI_COMPILER_RETURN EQUAL 0)
@@ -94,8 +94,8 @@ elseif (MPI_COMPILER)
     # Do nothing: we have our command lines now
   else (MPI_COMPILER_RETURN EQUAL 0)
     # Older versions of LAM-MPI have "-showme". Try it.
-    exec_program(${MPI_COMPILER} 
-      ARGS -showme
+    execute_process(COMMAND ${MPI_COMPILER} 
+      -showme
       OUTPUT_VARIABLE MPI_COMPILE_CMDLINE
       RETURN_VALUE MPI_COMPILER_RETURN)
   endif (MPI_COMPILER_RETURN EQUAL 0)  
@@ -104,7 +104,7 @@ elseif (MPI_COMPILER)
     # Do nothing: we have our command lines now
   else (MPI_COMPILER_RETURN EQUAL 0)
     # MPICH uses "-show". Try it.
-    exec_program(${MPI_COMPILER} 
+    execute_process(COMMAND ${MPI_COMPILER} 
       ARGS -show
       OUTPUT_VARIABLE MPI_COMPILE_CMDLINE
       RETURN_VALUE MPI_COMPILER_RETURN)

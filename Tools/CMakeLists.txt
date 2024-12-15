@@ -130,6 +130,10 @@ SET(MePhys_LIBRARY_PROPERTIES ${MePhys_LIBRARY_PROPERTIES}
 ############### build the library #####################
 add_library(MePhys SHARED ${MePhys_SRCS_LI})
 target_include_directories(MePhys PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${MPI_INCLUDE_PATH} ${ROOT_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
+# message("CMAKE_CURRENT_SOURCE_DIR: -->${CMAKE_CURRENT_SOURCE_DIR}<--")
+# message("MPI_INCLUDE_PATH: -->${MPI_INCLUDE_PATH}<--")
+# message("ROOT_INCLUDE_DIR: -->${ROOT_INCLUDE_DIR}<--")
+# message("GSL_INCLUDE_DIRS: -->${GSL_INCLUDE_DIRS}<--")
 target_compile_options(MePhys PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_FLAGS}>")
 target_compile_options(MePhys PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_FLAGS}>")
 target_link_libraries(MePhys ${ROOT_LIBRARIES} "-lMathMore" ${GSL_LIBRARIES})

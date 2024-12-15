@@ -95,7 +95,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
   set(CMAKE_COMPILER_IS_CLANGCC 1)
 endif()
 
-EXEC_PROGRAM("hostname" OUTPUT_VARIABLE hostname)
+execute_process(COMMAND "hostname" OUTPUT_VARIABLE hostname)
 
 set(RELEASE_FLAGS -Wall -Wextra)
 set(DEBUG_FLAGS ${RELEASE_FLAGS})
@@ -148,8 +148,6 @@ IF(XIAR)
   SET(CMAKE_AR "${XIAR}")
 ENDIF(XIAR)
 MARK_AS_ADVANCED(XIAR)
-
-
 
 add_subdirectory(Integrator)
 add_subdirectory(Tools)
