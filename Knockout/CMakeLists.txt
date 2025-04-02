@@ -10,6 +10,7 @@ Cross.cpp
 DoubleNModel.cpp
 DoubleNCross.cpp
 RhoTCross.cpp
+PionTCross.cpp
 RhoDeuteron.cpp
 WeakQEHadronCurrent.cpp
 WeakQECross.cpp
