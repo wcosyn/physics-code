@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 {
   
   string homedir=HOMEDIR;
+  cout << homedir << endl;
 // 
 //   MeanFieldNucleusThick CarbonThick(3,homedir);
 //   FastParticle rho(4, 0, 2220,0.,0.,1.1,145.,homedir);

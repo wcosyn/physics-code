@@ -37,17 +37,30 @@ public:
  	  );
   ~PionTCross(); /*!<Destructor */
   /*! Calculate cross section integrated over z at fixed t, cross section is dsigma/dEe'dOmega_e'dtdphi
-   * \param results [GeV^-1] all the different computed cross sections
-   * \param Ebeam [GeV] beam energy
-   * \param Q2 [GeV^2] Q^2
-   * \param nu [GeV] virtual photon energy
-   * \param t [GeV^2] momentum transfer squared
+   * \param results [???] all the different computed cross sections
+   * \param Ebeam [MeV] beam energy
+   * \param Eout [MeV] scattered electron energy
+   * \param theta_e [rad] scattered electron angle w.r.t. beam
    */
-  void getCross(double *results, const double Ebeam, const double Q2, const double nu, const double t);
+  void getCross(double *results, const double Ebeam, const double Eout, const double theta_e);
   double getPrec() const{return prec;} /*!< returns the precision */
   int getNrofcross() const{return nrofcross;} /*!<returns number of different cross sections */
   const MeanFieldNucleusThick& getNucleusthick() const{return nucleusthick;}
   
+
+  /**
+   * @brief function that has parametrization for the free proton pion electroproduction cross section, taken from Tanja Horn's PhD thesis
+   * 
+   * @param [GeV^2] t Mandelstam t 
+   * @param [GeV^2] Q2 Q-squared
+   * @param [GeV] W invariant mass
+   * @param phipq [rad] azimuthal angle pion and electron plane
+   * @param thetapq [rad] polar angle pion and electron plane
+   * @param epsilon [] ratio of longitudinal to transverse virtual photon flux
+   * @return double 
+   */
+  static double crosselectronfree(double t, double Q2, double W, double phipq, double thetapq, double epsilon);
+
 private:
   std::string homedir; /*!< share dir where all input is located */
   double pmax; /*!< maximum p_miss in integrations*/
@@ -89,36 +102,30 @@ private:
    * \param t [GeV^2] momentum transfer squared
    * \param torz t [1] or z[0] integrations
    */
-  double getfrontfactor(double nu, double qvec, double Erho, double prho, double pzrho, double pxrho,
-				 double s, double Q2, double mN, double t, bool torz);
-  /*! struct that is used for integrators (clean ones)*/
+
+   /*! struct that is used for integrators (clean ones)*/
   struct Ftor_pion {
 
     /*! integrandum function */
-    static void exec(const numint::array<double,3> &x, void *param, numint::vector_d &ret) {
+    static void exec(const numint::array<double,4> &x, void *param, numint::vector_d &ret) {
       Ftor_pion &p = * (Ftor_pion *) param;
-      p.f(ret,x[0],x[1],x[2],*p.cross,p.Q2,p.nu,p.qvec,p.t,p.Erho,p.prho);
+      p.f(ret,x[0],x[1],x[2],x[3],*p.cross,p.Ebeam,p.theta_e);
     }
     PionTCross *cross;/*!< pointer to the class object where the integration is performed */
-    double Q2;/*!< [GeV^2] Qsquared */
-    double nu; /*!<[GeV] virtual photon energy */
-    double qvec; /*!< [GeV] virtual photon momentum */
-    double t; /*!< [GeV^2] momentum transfer sq */
-    double Erho; /*!< [GeV] rho energy */
-    double prho; /*!< [GeV] rho momentum */
+    double Ebeam;/*!< [GeV] Beam energy */
+    double theta_e; /*!<[rad] scattered electron angle w beam */
     /*! integrandum 
     * \param res results
+    * \param Eout scattered electron energy
     * \param pm first integration variable
     * \param costheta second integration variable
     * \param phi third integration variable
     * \param cross the PionTCross instance
     */
-    void (*f)(numint::vector_d & res, double pm, double costheta, double phi, PionTCross & cross, double Q2, double nu, double qvec,
-      double t, double Erho, double prho);
+    void (*f)(numint::vector_d & res, double Eout, double pm, double costheta, double phi, PionTCross & cross, double Ebeam, double theta_e);
   };
   /*! integrandum function (clean ones)*/
-  static void klaas_rho_t(numint::vector_d & res, double pm, double costheta, double phi, PionTCross & cross, double Q2, double nu, double qvec,
-      double t, double dummy, double dummy2);
+  static void dist_momdistr_integral(numint::vector_d & res, double Eout, double pm, double costheta, double phi, PionTCross & cross, double Ebeam, double theta_e);
   
   
   

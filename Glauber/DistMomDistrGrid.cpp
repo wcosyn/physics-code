@@ -476,8 +476,8 @@ void DistMomDistrGrid::constructAllGrids(TRotation & rot){
 	      else res = numint::cube_adaptive(mdf,lower,upper,absprec,prec,2E03,maxEval,ret,count,0);
 	      if(abs(ret[i])*prec*0.1>absprec) absprec=abs(ret[i])*prec*0.1;
 	      for(int l=0;l<number_of_Grids/2;l++){
-		rhogrid[l][i][j][k]+=norm(ret[l]);
-		rhoctgrid[l][i][j][k]+=norm(ret[l+number_of_Grids/2]);
+          rhogrid[l][i][j][k]+=norm(ret[l]);
+          rhoctgrid[l][i][j][k]+=norm(ret[l+number_of_Grids/2]);
 	      }
 	    }      
 	    else {cerr  << "integrator type not implemented" << endl; exit(1);}
