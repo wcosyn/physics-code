@@ -120,17 +120,21 @@ void PionTCross::dist_momdistr_integral(numint::vector_d & results, double Eout,
   double sintheta = sqrt(1.-costheta*costheta);
   double Ep = sqrt(pm*pm+MASSP*MASSP);
   
+  //  electron kinematics
   double omega = Ebeam-Eout;
   double Q2 = 2.*Ebeam*Eout*(1.-cos(theta_e));
   double qvec = sqrt(omega*omega+Q2);
-  cout << "Q2 " << Q2 << " omega " << omega << " qvec " << qvec << endl;
+  //cout << "Q2 " << Q2 << " omega " << omega << " qvec " << qvec << endl;
   double fScatterAngle = costheta;;
   double epsilon = 1./(1.+2.*(1.+omega*omega/Q2)
 	 	     *((1.-fScatterAngle)/(1.+fScatterAngle)));
 
-  double massA = cross.getNucleusthick().getMassA();
-  double massX=massA+100;
 
+  // kinematics is fixed such that the pion is parallel to the photon momentum, we give some excitation energy to the residual system       
+  double massA = cross.getNucleusthick().getMassA();
+  double massX=massA+100; //add 100 MeV excitation energy
+
+  //solve quadratic equation coming from energy conservation for pion momentum.  For momentum conservation we use q = p_pi + p_A*
   double CC=pow(omega+massA,2);
   double DD=CC+massX*massX+qvec*qvec-MASSPI*MASSPI;
   double a=4*(CC-qvec*qvec);

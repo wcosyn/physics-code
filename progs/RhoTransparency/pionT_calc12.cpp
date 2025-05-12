@@ -22,7 +22,11 @@ int main(int argc, char *argv[])
 
 
 
-    string nucleus_name=argv[1];
+    string nucleus_name=argv[1];  //nucleus name: options are He, C, O, Fe, Pb, Al, Cu, Au
+    if(nucleus_name!="He" && nucleus_name!="C" && nucleus_name!="O" && nucleus_name!="Fe" && nucleus_name!="Pb" && nucleus_name!="Al" && nucleus_name!="Cu" && nucleus_name!="Au"){
+        cout << "Nucleus name not recognized. Options are He, C, O, Fe, Pb, Al, Cu, Au." << endl;
+        return 1;
+    }
     double Ebeam  = atof(argv[2])*1.E03;  //Beam energy in GeV, converted to MeV
     double E_out = atof(argv[3])*1.E03;  // Scattered electron energy in GeV, converted to MeV
     double theta_e = atof(argv[4])*DEGRTORAD; // Scattered electron angle in degrees input converted to radians
