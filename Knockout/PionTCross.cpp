@@ -140,8 +140,8 @@ void PionTCross::dist_momdistr_integral(numint::vector_d & results, double Eout,
   if(discr<0) { cout << "discr <0 " << discr << endl; return;}
   double p_pi = (-b+sqrt(discr))*0.5/a;
   double E_pi = sqrt(p_pi*p_pi+MASSPI*MASSPI);
-  double t = (Q2*1e06 - MASSPI*MASSPI+2*omega*E_pi-2*qvec*p_pi)/1e06; //in GeV^2
-  double W = sqrt((-Q2+MASSP*MASSP+2*omega*MASSP)/1e06);
+  double t = (Q2 - MASSPI*MASSPI+2*omega*E_pi-2*qvec*p_pi)/1e06; //in GeV^2
+  double W = sqrt((-Q2+MASSP*MASSP+2*omega*MASSP)/1e06); // in GeV
   double sfree = -Q2+MASSP*MASSP+2*omega*sqrt(MASSP*MASSP+pm*pm)-2*qvec*pm*costheta; //mandelstam variable for the free nucleon process
 
   for(int i=0;i<cross.getNucleusthick().getPLevels();i++){
@@ -152,7 +152,8 @@ void PionTCross::dist_momdistr_integral(numint::vector_d & results, double Eout,
                   *p_pi/(8.*PI*PI)*massX/(MASSP*MASSN/pow(sfree-MASSP*MASSP,2)/4./PI);  //other factors
     //correct for not completely full shells
     if(i==cross.getNucleusthick().getPLevels()-1) front*=double((cross.getNucleusthick().getFinalMProton()+1)*2-cross.getNucleusthick().getOnlyOneProton())/(cross.getNucleusthick().getJ_array()[i]+1);
-    for(int dd=0;dd<cross.getNrofcross();dd++) results[dd]+=front*intresults[dd];
+    for(int dd=0;dd<cross.getNrofcross();dd++) { //cout << i << " " << dd<< " " << front << " " << intresults[dd] << endl;
+                                                  results[dd]+=front*intresults[dd];}
   }
   for(int i=0;i<cross.getNrofcross();i++){
     results[i]*=pm*pm;
