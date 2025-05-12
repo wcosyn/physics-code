@@ -31,13 +31,18 @@ target_link_libraries(rhoset Knockout Glauber MePhys)
 add_executable(rhodint rhodint.cpp )  #program used for single node deuteron rho cross sections, never used in actual calculations
 target_link_libraries(rhodint Knockout Glauber MePhys)
 
+add_executable(pionT_calc12 pionT_calc12.cpp )  #program used for pion transparency calculations
+target_link_libraries(pionT_calc12 Knockout Glauber MePhys)
+
+
 if(NOT BUILD_PROGS)
     set_target_properties(rhotest PROPERTIES EXCLUDE_FROM_ALL 1)
     set_target_properties(rhosingle PROPERTIES EXCLUDE_FROM_ALL 1)
     set_target_properties(rhoset PROPERTIES EXCLUDE_FROM_ALL 1)
     set_target_properties(rhodint PROPERTIES EXCLUDE_FROM_ALL 1)
+    set_target_properties(pionT_calc12 PROPERTIES EXCLUDE_FROM_ALL 1)
     endif()
 
 if(BUILD_PROGS)
-    install(TARGETS rhotest rhosingle rhoset rhodint DESTINATION "${CMAKE_SOURCE_DIR}/bin")
+    install(TARGETS rhotest rhosingle rhoset rhodint pionT_calc12 DESTINATION "${CMAKE_SOURCE_DIR}/bin")
 endif()
