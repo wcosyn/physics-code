@@ -27,6 +27,7 @@ maxEval(max_Eval){
 //     pdistgrid[i] = new DistMomDistrGrid(i, pmax, 30,20,5,pfsigrid[i],1.E-03,2,2E04,0.,homedir);
   }
   nrofcross=pfsigrid[0]->getNumber_of_grids()+1;
+  cout << "Number of cross sections: " << nrofcross << endl;
 }
 
 PionTCross::~PionTCross(){
@@ -47,7 +48,7 @@ void PionTCross::getCross(double *results, const double Ebeam, const double Eout
   unsigned count=0;
     numint::vector_d ret(nrofcross,0.);
     numint::array<double,4> lower = {{Eout-200,0.,-1.,0.}};
-    numint::array<double,4> upper = {{Eout+200,400.,1.,2.*PI}};
+    numint::array<double,4> upper = {{Eout+200,pmax,1.,2.*PI}};
 
     PionTCross::Ftor_pion F;
     F.cross = this;
@@ -120,9 +121,9 @@ void PionTCross::dist_momdistr_integral(numint::vector_d & results, double Eout,
   double Ep = sqrt(pm*pm+MASSP*MASSP);
   
   double omega = Ebeam-Eout;
-  double qvec = sqrt(omega*omega+2.*Ebeam*omega*(1.-costheta));
-  double Q2 = 2.*Ebeam*omega*(1.-costheta);
-  cout << "Q2 " << Q2 << " " << sqrt(-omega*omega+qvec*qvec)<< " omega " << omega << " qvec " << qvec << endl;
+  double Q2 = 2.*Ebeam*Eout*(1.-cos(theta_e));
+  double qvec = sqrt(omega*omega+Q2);
+  cout << "Q2 " << Q2 << " omega " << omega << " qvec " << qvec << endl;
   double fScatterAngle = costheta;;
   double epsilon = 1./(1.+2.*(1.+omega*omega/Q2)
 	 	     *((1.-fScatterAngle)/(1.+fScatterAngle)));
@@ -136,7 +137,7 @@ void PionTCross::dist_momdistr_integral(numint::vector_d & results, double Eout,
   double b=4*qvec*(DD-2*CC);
   double c=4*CC*(massX*massX+qvec*qvec)-DD*DD;
   double discr=b*b-4*a*c;
-  if(discr<0) { cout << "discr <0" << endl; return;}
+  if(discr<0) { cout << "discr <0 " << discr << endl; return;}
   double p_pi = (-b+sqrt(discr))*0.5/a;
   double E_pi = sqrt(p_pi*p_pi+MASSPI*MASSPI);
   double t = (Q2*1e06 - MASSPI*MASSPI+2*omega*E_pi-2*qvec*p_pi)/1e06; //in GeV^2
@@ -156,7 +157,7 @@ void PionTCross::dist_momdistr_integral(numint::vector_d & results, double Eout,
   for(int i=0;i<cross.getNrofcross();i++){
     results[i]*=pm*pm;
   }
-  cout << pm << " " << costheta << " " << phi << " " << Eout << " "  << p_pi << " " << results[0] << endl;
+  cout << pm << " " << costheta << " " << phi << " " << Eout << " "  << p_pi << " " << results[0] << " " << results[cross.getNrofcross()-1] << endl;
 }
 
 double PionTCross::crosselectronfree(double t, double Q2, double W, double phipq, double thetapq, double epsilon){
