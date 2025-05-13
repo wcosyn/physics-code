@@ -42,7 +42,11 @@ int main(int argc, char *argv[])
     for(int i=0;i<pionT_object.getNrofcross();i++){
         cout << results[i] << " ";
     }
+    for(int i=0;i<pionT_object.getNrofcross()-1;i++){
+        cout << results[i]/results[pionT_object.getNrofcross()-1] << " ";
+    }
     cout << endl;
+
     delete [] results;
     return 0;
 }

@@ -125,9 +125,8 @@ void PionTCross::dist_momdistr_integral(numint::vector_d & results, double Eout,
   double Q2 = 2.*Ebeam*Eout*(1.-cos(theta_e));
   double qvec = sqrt(omega*omega+Q2);
   //cout << "Q2 " << Q2 << " omega " << omega << " qvec " << qvec << endl;
-  double fScatterAngle = costheta;;
   double epsilon = 1./(1.+2.*(1.+omega*omega/Q2)
-	 	     *((1.-fScatterAngle)/(1.+fScatterAngle)));
+	 	     *((1.-cos(theta_e))/(1.+cos(theta_e))));
 
 
   // kinematics is fixed such that the pion is parallel to the photon momentum, we give some excitation energy to the residual system       
@@ -156,13 +155,14 @@ void PionTCross::dist_momdistr_integral(numint::vector_d & results, double Eout,
                   *p_pi/(8.*PI*PI)*massX/(MASSP*MASSN/pow(sfree-MASSP*MASSP,2)/4./PI);  //other factors
     //correct for not completely full shells
     if(i==cross.getNucleusthick().getPLevels()-1) front*=double((cross.getNucleusthick().getFinalMProton()+1)*2-cross.getNucleusthick().getOnlyOneProton())/(cross.getNucleusthick().getJ_array()[i]+1);
-    for(int dd=0;dd<cross.getNrofcross();dd++) { //cout << i << " " << dd<< " " << front << " " << intresults[dd] << endl;
+    cout << i << " " << pm << " " << costheta << " " << phi << " " << Eout << " "  << p_pi << " " << front << " " << intresults[0]*pm*pm << endl;
+    for(int dd=0;dd<cross.getNrofcross();dd++) { 
                                                   results[dd]+=front*intresults[dd];}
   }
   for(int i=0;i<cross.getNrofcross();i++){
     results[i]*=pm*pm;
   }
-  cout << pm << " " << costheta << " " << phi << " " << Eout << " "  << p_pi << " " << results[0] << " " << results[cross.getNrofcross()-1] << endl;
+  //cout << pm << " " << costheta << " " << phi << " " << Eout << " "  << p_pi << " " << results[0] << " " << results[cross.getNrofcross()-1] << endl;
 }
 
 double PionTCross::crosselectronfree(double t, double Q2, double W, double phipq, double thetapq, double epsilon){
