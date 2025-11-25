@@ -35,8 +35,6 @@ target_link_libraries(conv_V_test GPD  MePhys Glauber ${ElementaryUtils_LIBRARIE
 add_executable(Nucl_GPD Nucl_GPD.cpp)
 target_link_libraries(Nucl_GPD GPD ${ElementaryUtils_LIBRARIES} ${QT_LIBRARIES})
 
-add_executable(EMT_deut EMT_deut.cpp)
-target_link_libraries(EMT_deut GPD MePhys)
 
 if(NOT BUILD_PROGS)
 set_target_properties(conv_T_test PROPERTIES EXCLUDE_FROM_ALL 1)

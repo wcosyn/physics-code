@@ -89,20 +89,6 @@ private:
    */
   void getMomdistr(double *results, double prho, double thetarho, double t, int shell, 
 			    double pm, double pmcostheta, double pmphi);
-  /*! Calculates a kinematic frontfactor that enters in the integrations
-   * \param nu [GeV] virtual photon energy
-   * \param qvec [GeV] virtual photon momentum
-   * \param Erho [GeV] rho energy
-   * \param prho [GeV] rho momentum
-   * \param pzrho [GeV] component of rho momentum along q
-   * \param pxrho [GeV] transverse rho momentum
-   * \param s [GeV^2] invariant mass squared
-   * \param Q2 [GeV^2] Q^2
-   * \param mN [GeV] mass of nucleon that interacts with photon
-   * \param t [GeV^2] momentum transfer squared
-   * \param torz t [1] or z[0] integrations
-   */
-
    /*! struct that is used for integrators (clean ones)*/
   struct Ftor_pion {
 
