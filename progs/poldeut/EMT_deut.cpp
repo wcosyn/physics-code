@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
     Deut_Conv_EMTLF test("AV18");
 
     std::vector<double> arr;
+    arr.push_back(-1.0E-6);
     // 1) -1e-4, double 18 times
     double x = -1.0e-4;
     for (int i = 0; i < 19; i++) {

@@ -220,7 +220,8 @@ vector< complex<double> > Deut_Conv_EMTLF::EMT_conv(const double t){
     
     double A = 1270.*1270/(1270*1270-t)*1430*1430/(1430*1430-t);
     double J = 0.5*1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t);
-    double D = -2.*1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t)*800*800/(800*800-t);
+    //double D = -2*1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t)*800*800/(800*800-t); //used in original PRD
+    double D = -1.275*pow(1.+t/(0.963*0.963),-2.) -1.30*pow(1.+t/(0.81*0.81),-2.);  //He/Zahed parametrization
 
     Deut_Conv_EMTLF::Ftor_conv F;
     F.t=t*1.E06; //[MeV^2]
@@ -272,7 +273,8 @@ vector< double > Deut_Conv_EMTLF::EMT_conv_real(const double t){
     
     double A = 1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t);
     double J = 0.5*1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t);
-    double D = -2*1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t)*800*800/(800*800-t);
+    //double D = -2*1270*1270/(1270*1270-t)*1430*1430/(1430*1430-t)*800*800/(800*800-t); //used in original PRD
+    double D = -1.275*pow(1.+t/(0.963*0.963),-2.) -1.30*pow(1.+t/(0.81*0.81),-2.);  //He/Zahed parametrization
 
     Deut_Conv_EMTLF::Ftor_conv_real F;
     F.t=t*1.E06; //[MeV^2]
