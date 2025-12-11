@@ -16,26 +16,26 @@ int main(int argc, char *argv[])
 {
 
 
-// cout << "output is for neutron SF: Q2[GeV^2]|x|F1|F2|FT|FL|g1|g1+g2 (WW approx)" << endl;
-// int neutron=0;
-// for(int i=0;i<10;i++){
-//   double Q2= 2.+i;
-//   for(int j=1;j<=300;j++){
-//     double x_nucl=0.002*j;
-//     NuclStructure nucl(neutron,Q2*1.E06,x_nucl,0,"SLAC");
-//     double F1,F2,g1,g1pg2,FL,FT;
-//     g1=NuclStructure::getG1_grsv2000(neutron,x_nucl,Q2*1.E06);
-//     g1pg2=NuclStructure::getG1plusg2_grsv2000(neutron,x_nucl,Q2*1.E06);
-//     nucl.getF(F1,F2);
-//     double gamma_n = 2.*x_nucl*MASSn_G/sqrt(Q2);
-//     F1=(1+gamma_n*gamma_n)/(1.+0.18)/(2.*x_nucl)*F2;
-//     FT=2.*F1;
-//     FL=(1+gamma_n*gamma_n)*F2/x_nucl-2.*F1;
-//     cout << Q2 << " " << x_nucl << " " << F1 << " " << F2 << " " << FT << " " << FL << " " << g1 << " " << g1pg2 << endl;
-//   }
+cout << "output is for neutron SF: Q2[GeV^2]|x|F1|F2|FT|FL|g1|g1+g2 (WW approx)" << endl;
+int neutron=0;
+for(int i=0;i<10;i++){
+  double Q2= 2.+i;
+  for(int j=1;j<=300;j++){
+    double x_nucl=0.002*j;
+    NuclStructure nucl(neutron,Q2*1.E06,x_nucl,0,"SLAC");
+    double F1,F2,g1,g1pg2,FL,FT;
+    g1=NuclStructure::getG1_grsv2000(neutron,x_nucl,Q2*1.E06);
+    g1pg2=NuclStructure::getG1plusg2_grsv2000(neutron,x_nucl,Q2*1.E06);
+    nucl.getF(F1,F2);
+    double gamma_n = 2.*x_nucl*MASSn_G/sqrt(Q2);
+    F1=(1+gamma_n*gamma_n)/(1.+0.18)/(2.*x_nucl)*F2;
+    FT=2.*F1;
+    FL=(1+gamma_n*gamma_n)*F2/x_nucl-2.*F1;
+    cout << Q2 << " " << x_nucl << " " << F1 << " " << F2 << " " << FT << " " << FL << " " << g1 << " " << g1pg2 << endl;
+  }
 
-// }
-// exit(1);
+}
+exit(1);
 
 
 
