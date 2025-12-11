@@ -341,7 +341,7 @@ void Poldeut::getLFdistributions_new(double alpha_p, double pt, double &P_U, dou
   double D2T = 1.-(E+MASSn/2)*(E+kz)*pt*pt/(knorm*knorm*(MASSn*MASSn+pt*pt));
   
   P_STST_perp = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(D0T*f0+D2T*sqrt(2.)*f2);
-  P_STST_par = -1./(2.-alpha_p)*(f0-f2/sqrt(2.))*(f0+sqrt(2.)*f2);
+  P_STST_par = 1./(2.-alpha_p)*(f0-f2/sqrt(2.))*(f0+sqrt(2.)*f2);
 
   return;
 }
