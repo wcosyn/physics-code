@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 // int neutron=0;
 // for(int i=0;i<10;i++){
 //   double Q2= 2.+i;
-//   for(int j=1;j<=100;j++){
+//   for(int j=1;j<=300;j++){
 //     double x_nucl=0.002*j;
 //     NuclStructure nucl(neutron,Q2*1.E06,x_nucl,0,"SLAC");
 //     double F1,F2,g1,g1pg2,FL,FT;
@@ -65,7 +65,7 @@ Bookkeep(argc,argv,arg_names);
 
 //plotting lf deuteron densities
 
-double P_U=0., P_TLL=0., P_TLT=0., P_TTT=0.,P_SLSL=0.,P_STSL=0.,P_SLST=0.,P_STST=0.;  //MeV^-2
+double P_U=0., P_TLL=0., P_TLT=0., P_TTT=0.,P_SLSL=0.,P_STSL=0.,P_SLST=0.,P_STST_par=0., P_STST_perp=0.;  //MeV^-2
 Poldeut deuteron_obj(wf,"SLAC");
 cout << "// output is (all densities GeV-2) alpha|pt[MeV]|P_U|P_TLL|P_TLT|P_TTT|P_SLSL|P_STSL|P_SLST|P_STST" << endl;
 
@@ -73,10 +73,10 @@ for(int i=-60;i<=60;i++){
   for(int j=0;j<=300;j++){
     double alpha_p = 1.+i/100.;
     double pt = double(j)*2.;
-    deuteron_obj.getLFdistributions_new(alpha_p,pt,P_U,P_TLL,P_TLT,P_TTT,P_SLSL,P_STSL,P_SLST,P_STST);
+    deuteron_obj.getLFdistributions_new(alpha_p,pt,P_U,P_TLL,P_TLT,P_TTT,P_SLSL,P_STSL,P_SLST,P_STST_par,P_STST_perp);
 
     cout << alpha_p << " " << pt*1.E-03 << " " << P_U*1.E06 << " " << P_TLL*1.E06 << " " << P_TLT*1.E06 << 
-            " " << P_TTT*1.E06 << " " << P_SLSL*1.E06 << " " << P_STSL*1.E06 << " " << P_SLST*1.E06 << " " << P_STST*1.E06 << endl;
+            " " << P_TTT*1.E06 << " " << P_SLSL*1.E06 << " " << P_STSL*1.E06 << " " << P_SLST*1.E06 << " " << P_STST_par*1.E06 << " " << P_STST_perp*1.E06 << endl;
 
   }
 }

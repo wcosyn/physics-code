@@ -304,7 +304,7 @@ void Poldeut::getLFdistributions(double alpha_p, double pt, double &S_L, double 
 
 
 void Poldeut::getLFdistributions_new(double alpha_p, double pt, double &P_U, double &P_TLL, double &P_TLT, double &P_TTT, 
-                        double &P_SLSL, double &P_STSL, double &P_SLST, double &P_STST){
+                        double &P_SLSL, double &P_STSL, double &P_SLST, double &P_STST_perp, double &P_STST_par){
 
   double E = sqrt((pt*pt+MASSn*MASSn)/(alpha_p*(2.-alpha_p))); //MeV
   double kz = E*(alpha_p-1.);
@@ -340,7 +340,8 @@ void Poldeut::getLFdistributions_new(double alpha_p, double pt, double &P_U, dou
   double D0T = 1.-(E+kz)*pt*pt/(E+MASSn)/(MASSn*MASSn+pt*pt);
   double D2T = 1.-(E+MASSn/2)*(E+kz)*pt*pt/(knorm*knorm*(MASSn*MASSn+pt*pt));
   
-  P_STST = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(D0T*f0+D2T*sqrt(2.)*f2);
+  P_STST_perp = 1/(2.-alpha_p)*(f0-f2/sqrt(2.))*(D0T*f0+D2T*sqrt(2.)*f2);
+  P_STST_par = -1./(2.-alpha_p)*(f0-f2/sqrt(2.))*(f0+sqrt(2.)*f2);
 
   return;
 }
