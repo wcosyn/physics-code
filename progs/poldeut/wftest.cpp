@@ -1,3 +1,9 @@
+/*
+testing some deuteron wavefunction properties, e.g. normalization.
+Used to compute sum rule integrals for the deuteron structure functions
+*/
+
+
 #include<OldDeuteron.hpp>
 #include<TDeuteron.h>
 #include<TInterpolatingWavefunction.h>
@@ -47,20 +53,52 @@ int main(int argc, char *argv[]){
     }
 
      double sum1=0.,sum2=0.,sum3=0.,sum4=0., sum5=0.;
+     double omega=0., ISL_approx=0.,ISL_unapprox=0., eps_SL_approx=0., eps_SL_unapprox=0.;
+     double IST_unapprox=0.;
+     double ST_unapprox=0., eps_ST_unapprox=0., ST_approx=0., eps_ST_approx=0., ST_perp=0.;
 
     //normalization test
-    for(int i=0; i<=1000; i++){
-        sum1+=i*i*(pow(wf1.U(i),2.)+pow(wf1.W(i),2.));
-        sum2+=i*i*(pow(wf2.U(i),2.)+pow(wf2.W(i),2.));
-        sum3+=i*i*(pow(wf3.U(i),2.)+pow(wf3.W(i),2.));
-        sum4+=i*i*(pow(wf4.U(i),2.)+pow(wf4.W(i),2.));
-        sum5+=i*i*(pow(wf.GetUp(i),2.)+pow(wf.GetWp(i),2.))/4./PI;
-        cout << i*1.E-03 << " " << pow(wf.GetUp(i),2.)/4./PI*1.E09 << " " << (pow(wf.GetUp(i),2.)+pow(wf.GetWp(i),2.))/4./PI*1.E09 << endl;
+    for(int i=0; i<=5000; i++){
+        double k=i/5.;
+        sum1+=k*k*(pow(wf1.U(k),2.)+pow(wf1.W(k),2.))/5.;
+        sum2+=k*k*(pow(wf2.U(k),2.)+pow(wf2.W(k),2.))/5.;
+        sum3+=k*k*(pow(wf3.U(k),2.)+pow(wf3.W(k),2.))/5.;
+        sum4+=k*k*(pow(wf4.U(k),2.)+pow(wf4.W(k),2.))/5.;
+        sum5+=k*k*(pow(wf.GetUp(k),2.)+pow(wf.GetWp(k),2.))/4./PI/5.;
+        omega+=k*k*(pow(wf.GetWp(k),2.))/4./PI/5.;
+        double x = k/MASSn;
+        double Ai_equal=(-x+sqrt(1+pow(x,2.))*asinh(x))/pow(x,3.);
+        double Bi_equal=(x*sqrt(1+pow(x,2.))-asinh(x))/pow(x,3.);
+        ISL_approx+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(1./3.*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+2./3.*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        if(k>0) ISL_unapprox+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(Ai_equal*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+Bi_equal*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        if(k>0) IST_unapprox+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(Bi_equal/2*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+(1./2.+Ai_equal/2.)*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        ST_approx+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(2./3.*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+1./3.*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        if(k>0) ST_unapprox+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(Bi_equal*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+Ai_equal*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        double Ai_diff=-PI*(2.+(pow(x,2.)-2)*sqrt(1+pow(x,2.)))/pow(x,3.)/4.;
+        double Bi_diff=PI*(2.+x*x-2.*sqrt(1+x*x))/pow(x,3.)/4.;
+        eps_SL_approx+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*((-3.*PI*k/MASSn/16.)*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+(PI*k/MASSn/16.)*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        if(k>0) eps_SL_unapprox+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(Ai_diff*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+Bi_diff*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        eps_ST_approx+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*((PI*k/MASSn/16.)*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+(3.*PI*k/MASSn/16.)*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        if(k>0) eps_ST_unapprox+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(Bi_diff*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))-Ai_diff*(wf.GetUp(k)+sqrt(2)*wf.GetWp(k)))/4./PI/5.;
+        ST_perp+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k))/4./PI/5.;
+
+        //cout << i*1.E-03 << " " << pow(wf.GetUp(i),2.)/4./PI*1.E09 << " " << (pow(wf.GetUp(i),2.)+pow(wf.GetWp(i),2.))/4./PI*1.E09 << endl;
     }
 
     cout << endl << endl;
     cout << "normalization OldDeuteron " << sum1*4.*PI << " " << sum2*4.*PI << " " << sum3*4.*PI << " " << sum4*4.*PI << endl;
     cout << "normalization new deuteron "<< sum5*4.*PI << endl;
+    cout << "D-state probability " << omega*4.*PI << " " << 1.-3./2.*omega*4.*PI << endl;
+    cout << "ISL/IST approximated " << ISL_approx*4.*PI << endl;
+    cout << "ISL unapproximated " << ISL_unapprox*4.*PI << endl;
+    cout << "IST unapproximated " << IST_unapprox*4.*PI << endl;
+    cout << "epsilon SL approximated " << eps_SL_approx*4.*PI << endl;
+    cout << "epsilon SL unapproximated " << eps_SL_unapprox*4.*PI << endl;
+    cout << "delta_par approximated " << 1.-ST_approx*4.*PI << endl;
+    cout << "delta_par unapproximated " << 1.-ST_unapprox*4.*PI << endl;
+    cout << "delta_perp perpendicular " << 1.-ST_perp*4.*PI << endl;
+    cout << "epsilon ST approximated " << eps_ST_approx*4.*PI << endl;
+    cout << "epsilon ST unapproximated " << eps_ST_unapprox*4.*PI << endl;
     exit(1);
     
    // for(int dspin=-2;dspin<=2;dspin+=2){
