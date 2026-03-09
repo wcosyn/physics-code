@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
   
     double pw=0.,fsi=0.,azz=0.,azzfsi=0.;
     test.getDeepsresult(Q2,Wprime,Ein,pr,costhetar,proton,1,0.,pw,fsi);
-//     cout << costhetar << " " << pw << " " << fsi << endl;
+     cout << costhetar << " " << pw << " " << fsi << endl;
 //     test.getDeepsAzz(Q2,Wprime,Ein,pr,costhetar,proton,azz,azzfsi,pw,fsi);
 //     cout << costhetar << " " << azz << " " << azzfsi << " " << pw << " " << fsi << endl;
   }
