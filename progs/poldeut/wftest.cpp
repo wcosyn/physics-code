@@ -76,8 +76,8 @@ int main(int argc, char *argv[]){
         if(k>0) ST_unapprox+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(Bi_equal*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+Ai_equal*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
         double Ai_diff=-PI*(2.+(pow(x,2.)-2)*sqrt(1+pow(x,2.)))/pow(x,3.)/4.;
         double Bi_diff=PI*(2.+x*x-2.*sqrt(1+x*x))/pow(x,3.)/4.;
-        eps_SL_approx+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*((-3.*PI*k/MASSn/16.)*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+(PI*k/MASSn/16.)*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
-        if(k>0) eps_SL_unapprox+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(Ai_diff*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+Bi_diff*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        eps_SL_approx+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*((-3.*PI*k/MASSn/16.)*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))-(PI*k/MASSn/16.)*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
+        if(k>0) eps_SL_unapprox+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(Ai_diff*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))-Bi_diff*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
         eps_ST_approx+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*((PI*k/MASSn/16.)*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))+(3.*PI*k/MASSn/16.)*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k)))/4./PI/5.;
         if(k>0) eps_ST_unapprox+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(Bi_diff*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))-Ai_diff*(wf.GetUp(k)+sqrt(2)*wf.GetWp(k)))/4./PI/5.;
         ST_perp+=k*k*(wf.GetUp(k)-wf.GetWp(k)/sqrt(2.))*(wf.GetUp(k)+sqrt(2.)*wf.GetWp(k))/4./PI/5.;
