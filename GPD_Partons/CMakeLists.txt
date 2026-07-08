@@ -19,6 +19,11 @@ project(GPD)
 # as moc files are generated in the binary dir, tell cmake to always look for includes there
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# Provide a safe alias for the NumA++ library variable (avoid using pluses in variable names later)
+if(NumA++_LIBRARIES)
+  set(NumApp_LIBRARIES ${NumA++_LIBRARIES})
+endif()
+
 # FIND LIBRARIES ===========================================================================
 
 
@@ -51,17 +56,23 @@ SET(GPD_LIBRARY_PROPERTIES ${GPD_LIBRARY_PROPERTIES}
 add_library(GPD SHARED ${source_files})
 target_include_directories(GPD PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(GPD 
-         ${QT_LIBRARIES}
+   ${QT_LIBRARIES}
 
  	${SFML_LIBRARIES}
 
-         ${ElementaryUtils_LIBRARIES}
- 
-         ${NumA++_LIBRARIES}
+   ${ElementaryUtils_LIBRARIES}
+
+   ${NumApp_LIBRARIES}
         
-         ${PARTONS_LIBRARIES} 
+   ${PARTONS_LIBRARIES} 
 MePhys Integrator Glauber ${CMAKE_SOURCE_DIR}/lib/libcuba.a)
 set_target_properties(GPD PROPERTIES ${GPD_LIBRARY_PROPERTIES})
+
+# Ensure runtime linker can find dependent libs placed in the project's lib/ directory
+set_target_properties(GPD PROPERTIES
+  BUILD_RPATH "${CMAKE_SOURCE_DIR}/lib"
+  INSTALL_RPATH "${CMAKE_SOURCE_DIR}/lib"
+)
 ############### install the library ###################
 install(TARGETS GPD DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 
@@ -75,11 +86,15 @@ if(STATIC_BUILD)
 
   ${ElementaryUtils_LIBRARIES}
 
-  ${NumA++_LIBRARIES}
+  ${NumApp_LIBRARIES}
  
   ${PARTONS_LIBRARIES} 
 MePhys Integrator ${CMAKE_SOURCE_DIR}/lib/libcuba.a -Wl,-no-whole-archive)
   set_target_properties(GPDST PROPERTIES OUTPUT_NAME DIS)
+  set_target_properties(GPDST PROPERTIES
+    BUILD_RPATH "${CMAKE_SOURCE_DIR}/lib"
+    INSTALL_RPATH "${CMAKE_SOURCE_DIR}/lib"
+  )
   install(TARGETS GPDST DESTINATION "${CMAKE_SOURCE_DIR}/lib")
 endif(STATIC_BUILD)
 
