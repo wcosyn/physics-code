@@ -46,7 +46,7 @@ int main(int argc, char *argv[]){
     bool setH = atoi(argv[6]);
     bool setE = atoi(argv[7]);
     string GPD_model = argv[8];  // "GPDMMS13" or "GPDVGG99" or "GPDGK16" or "GPDGK16Numerical"
-
+    double xi=0.08;
     // cout << "xi " << xi << " t " << t << " model " << model << endl;
     // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
 
@@ -121,27 +121,27 @@ int main(int argc, char *argv[]){
         // 0.36 -> xi 0.0989 -> tmin = -0.14
         // 0.48 -> xi 0.1364 -> tmin = -0.267
         // 0.6 -> xi 0.176 -> tmin = -0.45
-        double xi = x/(4.-x);
-        double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
-        // double D=(t0-t)/(4.*MASSD_G*MASSD_G); // GeV^2
-        //cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) <<  endl;
-	//cout << "tmin " << t0 << endl;
+    //     double xi = x/(4.-x);
+    //     double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
+    //     // double D=(t0-t)/(4.*MASSD_G*MASSD_G); // GeV^2
+    //     //cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) <<  endl;
+	// //cout << "tmin " << t0 << endl;
 
-        //for(int i=0; i<=10; i++){
+    //     //for(int i=0; i<=10; i++){
             
-            //xi = 1./pow(2.,(20-i)/3);
-	    //t = t0-1.E-04 -0.1*i; 
-            cout << x << " " << xi << " " << t  << " " << t0 << " " << flush ;
-            vector< complex<double> > outV = test.getDeut_CFF_hel_V_set(xi,t,scale,200,1);
-            vector< complex<double> > outA = test.getDeut_CFF_hel_V_set(xi,t,scale,200,0);
-            vector< complex<double> > CFFV = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,outV);
-            vector< complex<double> > CFFA = Deut_Conv_GPD_V::helamps_to_gpds_A(xi,t,outA);
-            for(int i=0;i<5;i++) cout << real(outV[i]) << " " << imag(outV[i]) << " ";
-            for(int i=0;i<5;i++) cout << real(CFFV[i]) << " " << imag(CFFV[i]) << " ";
-            for(int i=0;i<5;i++) cout << real(outA[i]) << " " << imag(outA[i]) << " ";
-            for(int i=0;i<4;i++) cout << real(CFFA[i]) << " " << imag(CFFA[i]) << " ";
-            cout << endl;
-        //}
+    //         //xi = 1./pow(2.,(20-i)/3);
+	//     //t = t0-1.E-04 -0.1*i; 
+    //         cout << x << " " << xi << " " << t  << " " << t0 << " " << flush ;
+    //         vector< complex<double> > outV = test.getDeut_CFF_hel_V_set(xi,t,scale,200,1);
+    //         vector< complex<double> > outA = test.getDeut_CFF_hel_V_set(xi,t,scale,200,0);
+    //         vector< complex<double> > CFFV = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,outV);
+    //         vector< complex<double> > CFFA = Deut_Conv_GPD_V::helamps_to_gpds_A(xi,t,outA);
+    //         for(int i=0;i<5;i++) cout << real(outV[i]) << " " << imag(outV[i]) << " ";
+    //         for(int i=0;i<5;i++) cout << real(CFFV[i]) << " " << imag(CFFV[i]) << " ";
+    //         for(int i=0;i<5;i++) cout << real(outA[i]) << " " << imag(outA[i]) << " ";
+    //         for(int i=0;i<4;i++) cout << real(CFFA[i]) << " " << imag(CFFA[i]) << " ";
+    //         cout << endl;
+    //     //}
 
         //****************************
         /// testing transformation between GPDs and helicity amplitudes
@@ -236,34 +236,34 @@ int main(int argc, char *argv[]){
 
 
 
-        // double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
-        // double D=(t0-t)/(4.*MASSD_G*MASSD_G); // GeV^2
-        // cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) << " D " << D << endl;
-        // NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
-        // //cout << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
-        // cout << (proton.getF1()+neutron.getF1())/2. << " " <<  (proton.getF2()+neutron.getF2())/2. << endl << endl << endl;
-        // for(int i=-99;i<=99;i++){
-        //     double x=i*0.01;
+        double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
+        double D=(t0-t)/(4.*MASSD_G*MASSD_G); // GeV^2
+        cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) << " D " << D << endl;
+        NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
+        //cout << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
+        cout << (proton.getF1()+neutron.getF1())/2. << " " <<  (proton.getF2()+neutron.getF2())/2. << endl << endl << endl;
+        for(int i=-99;i<=99;i++){
+            double x=i*0.01;
 
-        //     if(t>t0){
-        //         cout << x << " ";
-        //         for(int j=0;j<5;j++) cout << 0. << " ";
-        //         for(int j=0;j<5;j++) cout << 0. << " ";
-        //         // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
-        //         cout << endl;
-        //     }
-        //     else{
-        //         vector< complex<double> > out = test.gpd_conv(xi,x,t,scale,0);
-        //         vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_A(xi,t,out);
-        //         // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
+            if(t>t0){
+                cout << x << " ";
+                for(int j=0;j<5;j++) cout << 0. << " ";
+                for(int j=0;j<5;j++) cout << 0. << " ";
+                // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
+                cout << endl;
+            }
+            else{
+                vector< complex<double> > out = test.gpd_conv(xi,x,t,scale,0);
+                vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_A(xi,t,out);
+                // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
                 
-        //         cout << x << " ";
-        //         for(int j=0;j<5;j++) cout << out[j].real() << " ";
-        //         for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
-        //         // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
-        //         cout << endl;
-        //     }
-        // }
+                cout << x << " ";
+                for(int j=0;j<5;j++) cout << out[j].real() << " ";
+                for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
+                // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
+                cout << endl;
+            }
+        }
 
         //////***********
         // end of calculation vector GPDS
