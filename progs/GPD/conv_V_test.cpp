@@ -8,6 +8,7 @@ using namespace std;
 #include <iostream>
 #include <cmath>
 #include "constants.hpp"
+#include <Utilfunctions.hpp>
 
 #include <Deut_Conv_GPD_V.hpp>
 #include <GPD_V_Nucl_grid.hpp>
@@ -37,7 +38,7 @@ using namespace std;
 
 int main(int argc, char *argv[]){
     std::string wf=argv[1];
-    double x=atof(argv[2]);
+    double xi=atof(argv[2]);
     double t=-atof(argv[3]); //[GeV^2] positive input!
     //int ERBL = atoi(argv[4]);
     double scale = 2;//atof(argv[5]); //[GeV]
@@ -46,10 +47,22 @@ int main(int argc, char *argv[]){
     bool setH = atoi(argv[6]);
     bool setE = atoi(argv[7]);
     string GPD_model = argv[8];  // "GPDMMS13" or "GPDVGG99" or "GPDGK16" or "GPDGK16Numerical"
-    double xi=0.08;
     // cout << "xi " << xi << " t " << t << " model " << model << endl;
     // cout << -4.*MASSD*MASSD*xi*xi/(1-xi*xi)-t << endl;
 
+ string arg_names[9]={"exec name:", 
+                            "deuteron wave function name [AV18, CD-Bonn, Paris, WJC1, WJC2]:",
+                            "xi []:", 
+                            "-t [GeV^2]:",
+                            "deuteron S-wave included [0/1]:",
+                            "deuteron D-wave included [0/1]:",
+                            "nucleon GPD H/Htilde included [0/1]:",
+                            "nucleon GPD E/Etilde included [0/1]:",
+                            "GPD model name [GPDMMS13, GPDVGG99, GPDGK16, GPDGK16Numerical]:"
+                            };
+
+  std::cout << "Compiled from file: " << __FILE__ << std::endl;
+  Bookkeep(argc,argv,arg_names);  
 
     //QCoreApplication a(argc, argv);
     PARTONS::Partons* pPartons = 0;
@@ -238,10 +251,11 @@ int main(int argc, char *argv[]){
 
         double t0=-4.*MASSD_G*MASSD_G*xi*xi/(1-xi*xi); // GeV^2
         double D=(t0-t)/(4.*MASSD_G*MASSD_G); // GeV^2
+        cout << endl << endl << "xi " << xi << " t [GeV^2] " << t <<  endl;
         cout << "ximax " << sqrt(-t)/(sqrt(4.*MASSD_G*MASSD_G-t)) << " D " << D << endl;
         NucleonEMOperator proton(-t*1.E06,1,0), neutron(-t*1.E06,0,0);
         //cout << proton.getF1() << " " << proton.getF2() << " " << neutron.getF1() << " " << neutron.getF2() << endl;
-        cout << (proton.getF1()+neutron.getF1())/2. << " " <<  (proton.getF2()+neutron.getF2())/2. << endl << endl << endl;
+        cout << "nucleon F1 and F2 isoscalar avg " << (proton.getF1()+neutron.getF1())/2. << " " <<  (proton.getF2()+neutron.getF2())/2. << endl << endl << endl;
         for(int i=-99;i<=99;i++){
             double x=i*0.01;
 
@@ -249,17 +263,23 @@ int main(int argc, char *argv[]){
                 cout << x << " ";
                 for(int j=0;j<5;j++) cout << 0. << " ";
                 for(int j=0;j<5;j++) cout << 0. << " ";
+                for(int j=0;j<5;j++) cout << 0. << " ";
+                for(int j=0;j<4;j++) cout << 0. << " ";
                 // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
                 cout << endl;
             }
             else{
-                vector< complex<double> > out = test.gpd_conv(xi,x,t,scale,0);
-                vector< complex<double> > gpd = Deut_Conv_GPD_V::helamps_to_gpds_A(xi,t,out);
+                cout << x << " ";
+                vector< complex<double> > outV = test.gpd_conv(xi,x,t,scale,1);
+                vector< complex<double> > gpdV = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,outV);
+                for(int j=0;j<5;j++) cout << outV[j].real() << " ";
+                for(int j=0;j<5;j++) cout << gpdV[j].real() << " ";
                 // vector< complex<double> > hel = Deut_Conv_GPD_V::gpds_to_helamps_V(xi,t,gpd);
                 
-                cout << x << " ";
-                for(int j=0;j<5;j++) cout << out[j].real() << " ";
-                for(int j=0;j<5;j++) cout << gpd[j].real() << " ";
+                vector< complex<double> > outA = test.gpd_conv(xi,x,t,scale,0);
+                vector< complex<double> > gpdA = Deut_Conv_GPD_V::helamps_to_gpds_V(xi,t,outA);
+                for(int j=0;j<5;j++) cout << outA[j].real() << " ";
+                for(int j=0;j<4;j++) cout << gpdA[j].real() << " ";
                 // for(int j=0;j<5;j++) cout << hel[j].real() << " ";
                 cout << endl;
             }
